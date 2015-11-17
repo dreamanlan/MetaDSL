@@ -1,0 +1,6 @@
+skill(kkk)
+{
+	section(80)
+{
+};
+};

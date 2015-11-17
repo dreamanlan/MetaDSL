@@ -45,24 +45,21 @@ namespace Dsl
       AddCrypto("!", encodeTable, decodeTable);
 
       ScriptableDataFile file = new ScriptableDataFile();
-      ScriptableDataFile file2 = new ScriptableDataFile();
       file.Load("test.txt", logCallback);
-      file2.Load("test.txt", logCallback);
 #if FULL_VERSION
       file.Save("copy.txt");
-      string code1 = file2.GenerateBinaryCode(File.ReadAllText("test.txt"), encodeTable, logCallback);
+      string code1 = file.GenerateBinaryCode(File.ReadAllText("test.txt"), encodeTable, logCallback);
       File.WriteAllText("binary.txt", code1);
 #endif
       file.ScriptableDatas.Clear();
-      string code2 = File.ReadAllText("binary.txt");
-      file2.LoadBinaryCode(code2, decodeTable);
+      string code = File.ReadAllText("binary.txt");
+      file.LoadBinaryCode(code, decodeTable);
 #if FULL_VERSION
-      file.Save("unobfuscation.txt");
-      file2.Save("unbinary.txt");
+      file.Save("unbinary.txt");
 #endif
       long t1 = GetLocalMilliseconds();
       for (int i = 0; i < 1000; ++i) {
-        file2.LoadBinaryCode(code2, decodeTable);
+        file.LoadBinaryCode(code, decodeTable);
       }
       long t2 = GetLocalMilliseconds();
       Console.WriteLine("time:{0}", t2 - t1);
