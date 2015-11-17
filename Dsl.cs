@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Dsl
 {
+  public delegate void DslLogDelegation(string msg);
   internal enum DslBinaryCode
   {
     BeginStatement = 1,
@@ -820,22 +821,24 @@ namespace Dsl
       mScriptableDatas.Add(data);
     }
 
-    public bool Load(string file)
+    public bool Load(string file, DslLogDelegation logCallback)
     {
 #if FULL_VERSION
       string content = File.ReadAllText(file);
       //DashFire.LogSystem.Debug("ScriptableDataFile.Load {0}:\n{1}", file, content);
-      return LoadFromString(content, file);
+      return LoadFromString(content, file, logCallback);
 #else
       return false;
 #endif
     }
-    public bool LoadFromString(string content, string resourceName)
+    public bool LoadFromString(string content, string resourceName, DslLogDelegation logCallback)
     {
 #if FULL_VERSION
       mScriptableDatas.Clear();
-		  Parser.DslToken tokens = new Parser.DslToken(content);
-		  Parser.DslError error = new Parser.DslError(tokens);
+      Parser.DslLog log = new Parser.DslLog();
+      log.OnLog += logCallback;
+		  Parser.DslToken tokens = new Parser.DslToken(log, content);
+		  Parser.DslError error = new Parser.DslError(log, tokens);
       Parser.RuntimeAction action = new Parser.RuntimeAction(mScriptableDatas);
       action.onGetLastToken = () => { return tokens.getLastToken(); };
       action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
@@ -875,13 +878,15 @@ namespace Dsl
       }
 #endif
     }
-    
-    public string GenerateBinaryCode(string content, Dictionary<string, string> encodeTable)
+
+    public string GenerateBinaryCode(string content, Dictionary<string, string> encodeTable, DslLogDelegation logCallback)
     {
 #if FULL_VERSION
       List<DslInfo> infos = new List<DslInfo>();
-      Parser.DslToken tokens = new Parser.DslToken(content);
-      Parser.DslError error = new Parser.DslError(tokens);
+      Parser.DslLog log = new Parser.DslLog();
+      log.OnLog += logCallback;
+      Parser.DslToken tokens = new Parser.DslToken(log, content);
+      Parser.DslError error = new Parser.DslError(log, tokens);
       Parser.RuntimeAction action = new Parser.RuntimeAction(infos);
       action.onGetLastToken = () => { return tokens.getLastToken(); };
       action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };

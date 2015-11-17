@@ -11,6 +11,9 @@ namespace Dsl
     [STAThread]
     public static void Main(string[] args)
     {
+      DslLogDelegation logCallback = (string msg) => {
+        Console.WriteLine("{0}", msg);
+      };
       Dictionary<string, string> encodeTable = new Dictionary<string, string>();
       Dictionary<string, string> decodeTable = new Dictionary<string, string>();
 
@@ -43,11 +46,11 @@ namespace Dsl
 
       ScriptableDataFile file = new ScriptableDataFile();
       ScriptableDataFile file2 = new ScriptableDataFile();
-      file.Load("test.txt");
-      file2.Load("test.txt");
+      file.Load("test.txt", logCallback);
+      file2.Load("test.txt", logCallback);
 #if FULL_VERSION
       file.Save("copy.txt");
-      string code1 = file2.GenerateBinaryCode(File.ReadAllText("test.txt"), encodeTable);
+      string code1 = file2.GenerateBinaryCode(File.ReadAllText("test.txt"), encodeTable, logCallback);
       File.WriteAllText("binary.txt", code1);
 #endif
       file.ScriptableDatas.Clear();
@@ -76,8 +79,7 @@ namespace Dsl
     {
       return (long)(Stopwatch.GetTimestamp() / s_TickPerUs);
     }
-
-
+    
     private static double s_TickPerUs = Stopwatch.Frequency / 1000000.0;
     private static int s_NextIndex = 1;
   }

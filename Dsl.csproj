@@ -45,6 +45,7 @@
     <Compile Include="Parser\DslAction.cs" />
     <Compile Include="Parser\DslConstants.cs" />
     <Compile Include="Parser\DslError.cs" />
+    <Compile Include="Parser\DslLog.cs" />
     <Compile Include="Parser\DslParser.cs" />
     <Compile Include="Parser\DslString.cs" />
     <Compile Include="Parser\DslToken.cs" />

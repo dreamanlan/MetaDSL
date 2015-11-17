@@ -7,8 +7,9 @@ namespace Dsl.Parser
 #if FULL_VERSION
   class DslToken
   {
-    internal DslToken(string input)
+    internal DslToken(DslLog log, string input)
     {
+      mLog = log;
       mInput = input;
       mIterator = 0;
 
@@ -87,7 +88,7 @@ namespace Dsl.Parser
           }
         }
         if (CurChar == 0) {
-          //::printf("[行 %d ]：ExternScript can't finish！\n",line);
+          mLog.Log("[error][行 {0} ]：ExternScript can't finish！\n",line);
         }
         mCurToken = mTokenBuilder.ToString();
         return DslConstants.SCRIPT_CONTENT_;
@@ -147,7 +148,7 @@ namespace Dsl.Parser
           if (CurChar != 0) {
             ++mIterator;
           } else {
-            //::printf("[行 %d ]：字符串无法结束！\n",line);
+            mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
           }
           mCurToken = mTokenBuilder.ToString();
           return DslConstants.STRING_;
@@ -198,7 +199,7 @@ namespace Dsl.Parser
     internal short peek(int level) // scan next token without consuming it
     {
       short token = 0;
-      //Console.WriteLine("peek_token is not called in an LL(1) grammar\n");
+      mLog.Log("[info] peek_token is not called in an LL(1) grammar\n");
       return token;
     }
 
@@ -428,6 +429,7 @@ namespace Dsl.Parser
       return ret;
     }
 
+    private DslLog mLog;
     private string mInput;
     private int mIterator;
     private string mCurToken;
