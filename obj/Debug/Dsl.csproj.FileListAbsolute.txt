@@ -1,4 +1,0 @@
-F:\Old\DSL\bin\Debug\Dsl.dll
-F:\Old\DSL\bin\Debug\Dsl.pdb
-F:\Old\DSL\obj\Debug\Dsl.dll
-F:\Old\DSL\obj\Debug\Dsl.pdb
