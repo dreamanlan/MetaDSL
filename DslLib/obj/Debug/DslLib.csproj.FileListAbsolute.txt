@@ -1,0 +1,4 @@
+F:\Old\DSL\DslLib\bin\Debug\Dsl.dll
+F:\Old\DSL\DslLib\bin\Debug\Dsl.pdb
+F:\Old\DSL\DslLib\obj\Debug\Dsl.dll
+F:\Old\DSL\DslLib\obj\Debug\Dsl.pdb

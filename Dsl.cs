@@ -810,15 +810,15 @@ namespace Dsl
     private bool mLoaded = false;
     private string mResourceName = "";
   };
-  public class ScriptableDataFile
+  public class DslFile
   {
-    public List<DslInfo> ScriptableDatas
+    public List<DslInfo> DslInfos
     {
-      get { return mScriptableDatas; }
+      get { return mDslInfos; }
     }
-    public void AddScriptableData(DslInfo data)
+    public void AddDslInfo(DslInfo data)
     {
-      mScriptableDatas.Add(data);
+      mDslInfos.Add(data);
     }
 
     public bool Load(string file, DslLogDelegation logCallback)
@@ -834,27 +834,27 @@ namespace Dsl
     public bool LoadFromString(string content, string resourceName, DslLogDelegation logCallback)
     {
 #if FULL_VERSION
-      mScriptableDatas.Clear();
+      mDslInfos.Clear();
       Parser.DslLog log = new Parser.DslLog();
       log.OnLog += logCallback;
 		  Parser.DslToken tokens = new Parser.DslToken(log, content);
 		  Parser.DslError error = new Parser.DslError(log, tokens);
-      Parser.RuntimeAction action = new Parser.RuntimeAction(mScriptableDatas);
+      Parser.RuntimeAction action = new Parser.RuntimeAction(mDslInfos);
       action.onGetLastToken = () => { return tokens.getLastToken(); };
       action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
 		  Parser.DslParser.parse(action,tokens,error,0);
 		  if(error.HasError)
 		  {
-        for (int i = 0; i < mScriptableDatas.Count; i++ )
+        for (int i = 0; i < mDslInfos.Count; i++ )
         {
-          mScriptableDatas[i].Clear();
+          mDslInfos[i].Clear();
         }
 		  }
       else
       {
-        for (int i = 0; i < mScriptableDatas.Count; i++)
+        for (int i = 0; i < mDslInfos.Count; i++)
         {
-          mScriptableDatas[i].SetResourceName(resourceName);
+          mDslInfos[i].SetResourceName(resourceName);
         }
 		  }
 		  return !error.HasError;
@@ -868,9 +868,9 @@ namespace Dsl
       using (StreamWriter sw = new StreamWriter(file)) {
         if (null != sw)
         {
-          for (int i = 0; i < mScriptableDatas.Count; i++)
+          for (int i = 0; i < mDslInfos.Count; i++)
           {
-            sw.Write(mScriptableDatas[i].ToScriptString());
+            sw.Write(mDslInfos[i].ToScriptString());
             sw.Write("\r\n");
           }
           sw.Close();
@@ -944,7 +944,7 @@ namespace Dsl
     }
     public void LoadBinaryCode(string binaryCode, Dictionary<string, string> decodeTable)
     {
-      mScriptableDatas.Clear();
+      mDslInfos.Clear();
       if (string.IsNullOrEmpty(binaryCode))
         return;
       int split = binaryCode.IndexOf('|');
@@ -978,7 +978,7 @@ namespace Dsl
           }
         }
         List<DslInfo> infos = Utility.readBinary(bytes, ids);
-        mScriptableDatas.AddRange(infos);
+        mDslInfos.AddRange(infos);
       }
     }
 
@@ -1024,7 +1024,7 @@ namespace Dsl
       return s0;
     }
 
-    private List<DslInfo> mScriptableDatas = new List<DslInfo>();
+    private List<DslInfo> mDslInfos = new List<DslInfo>();
   };
 
   public sealed class Utility

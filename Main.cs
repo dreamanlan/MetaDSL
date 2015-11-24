@@ -44,14 +44,14 @@ namespace Dsl
       AddCrypto("||", encodeTable, decodeTable);
       AddCrypto("!", encodeTable, decodeTable);
 
-      ScriptableDataFile file = new ScriptableDataFile();
+      DslFile file = new DslFile();
       file.Load("test.txt", logCallback);
 #if FULL_VERSION
       file.Save("copy.txt");
       string code1 = file.GenerateBinaryCode(File.ReadAllText("test.txt"), encodeTable, logCallback);
       File.WriteAllText("binary.txt", code1);
 #endif
-      file.ScriptableDatas.Clear();
+      file.DslInfos.Clear();
       string code = File.ReadAllText("binary.txt");
       file.LoadBinaryCode(code, decodeTable);
 #if FULL_VERSION
