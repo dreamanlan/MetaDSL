@@ -1,0 +1,124 @@
+PROGRAM:
+	STATEMENTS
+
+STATEMENTS:
+	STATEMENT { SEP STATEMENT }
+	
+STATEMENT:
+	OPERATOR_STATEMENT_DESC_0 _action_endStatement	
+
+OPERATOR_STATEMENT_1:
+	OPERATOR_STATEMENT_DESC_1 _action_endStatement
+
+OPERATOR_STATEMENT_2:
+	OPERATOR_STATEMENT_DESC_2 _action_endStatement
+
+OPERATOR_STATEMENT_3:
+	OPERATOR_STATEMENT_DESC_3 _action_endStatement
+
+OPERATOR_STATEMENT_4:
+	OPERATOR_STATEMENT_DESC_4 _action_endStatement
+
+OPERATOR_STATEMENT_5:
+	OPERATOR_STATEMENT_DESC_5 _action_endStatement
+
+OPERATOR_STATEMENT_6:
+	OPERATOR_STATEMENT_DESC_6 _action_endStatement
+
+OPERATOR_STATEMENT_7:
+	OPERATOR_STATEMENT_DESC_7 _action_endStatement
+
+OPERATOR_STATEMENT_8:
+	OPERATOR_STATEMENT_DESC_8 _action_endStatement
+
+OPERATOR_STATEMENT_9:
+	OPERATOR_STATEMENT_DESC_9 _action_endStatement
+
+OPERATOR_STATEMENT_10:
+	OPERATOR_STATEMENT_DESC_10 _action_endStatement
+
+OPERATOR_STATEMENT_11:
+	OPERATOR_STATEMENT_DESC_11 _action_endStatement
+
+OPERATOR_STATEMENT_12:
+	OPERATOR_STATEMENT_DESC_12 _action_endStatement
+	
+OPERATOR_STATEMENT_DESC_0:
+	OPERATOR_STATEMENT_DESC_1 { OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 }
+	
+OPERATOR_STATEMENT_DESC_1:
+	OPERATOR_STATEMENT_DESC_2 { OP_TOKEN_1 _action_pushId _action_buildFirstTernaryOperator OPERATOR_STATEMENT_2 OP_TOKEN_1 _action_pushId _action_buildSecondTernaryOperator OPERATOR_STATEMENT_2 }
+
+OPERATOR_STATEMENT_DESC_2:
+	OPERATOR_STATEMENT_DESC_3 { OP_TOKEN_2 _action_pushId _action_buildOperator OPERATOR_STATEMENT_3 }
+	
+OPERATOR_STATEMENT_DESC_3:
+	OPERATOR_STATEMENT_DESC_4 { OP_TOKEN_3 _action_pushId _action_buildOperator OPERATOR_STATEMENT_4 }
+	
+OPERATOR_STATEMENT_DESC_4:
+	OPERATOR_STATEMENT_DESC_5 { OP_TOKEN_4 _action_pushId _action_buildOperator OPERATOR_STATEMENT_5 }
+	
+OPERATOR_STATEMENT_DESC_5:
+	OPERATOR_STATEMENT_DESC_6 { OP_TOKEN_5 _action_pushId _action_buildOperator OPERATOR_STATEMENT_6 }
+	
+OPERATOR_STATEMENT_DESC_6:
+	OPERATOR_STATEMENT_DESC_7 { OP_TOKEN_6 _action_pushId _action_buildOperator OPERATOR_STATEMENT_7 }
+	
+OPERATOR_STATEMENT_DESC_7:
+	OPERATOR_STATEMENT_DESC_8 { OP_TOKEN_7 _action_pushId _action_buildOperator OPERATOR_STATEMENT_8 }
+	
+OPERATOR_STATEMENT_DESC_8:
+	OPERATOR_STATEMENT_DESC_9 { OP_TOKEN_8 _action_pushId _action_buildOperator OPERATOR_STATEMENT_9 }
+	
+OPERATOR_STATEMENT_DESC_9:
+	OPERATOR_STATEMENT_DESC_10 { OP_TOKEN_9 _action_pushId _action_buildOperator OPERATOR_STATEMENT_10 }
+	
+OPERATOR_STATEMENT_DESC_10:
+	OPERATOR_STATEMENT_DESC_11 { OP_TOKEN_10 _action_pushId _action_buildOperator OPERATOR_STATEMENT_11 }
+	
+OPERATOR_STATEMENT_DESC_11:
+	OPERATOR_STATEMENT_DESC_12 { OP_TOKEN_11 _action_pushId _action_buildOperator OPERATOR_STATEMENT_12 }
+	
+OPERATOR_STATEMENT_DESC_12:
+	FUNCTION_STATEMENT_DESC { OP_TOKEN_12 _action_pushId _action_buildOperator FUNCTION_STATEMENT }
+
+FUNCTION_STATEMENT:
+	FUNCTION_STATEMENT_DESC _action_endStatement
+
+FUNCTION_STATEMENT_DESC:
+	_action_beginStatement FUNCTION_CALLS
+	
+FUNCTION_CALLS:
+	{ _action_beginFunction FUNCTION_EX_CALL _action_endFunction }
+	_action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction
+	
+FUNCTION_EX_CALL:
+	FUNCTION_ID _action_setFunctionId [ FUNCTION_PARAMS ] [ FUNCTION_EX ]
+	
+FUNCTION_EX_CALL_SPECIAL:
+	FUNCTION_PARAMS [ FUNCTION_EX ]
+	FUNCTION_EX
+	
+FUNCTION_EX:
+	\{ _action_markHaveStatement STATEMENTS \}
+	_action_markHaveExternScript SCRIPT_CONTENT _action_setExternScript
+
+FUNCTION_PARAMS:
+	( _action_markParenthesisParam STATEMENTS ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
+	\[ _action_markBracketParam STATEMENTS \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	. MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	
+MEMBER_DESC:
+	_action_markPeriodParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	( _action_markPeriodParenthesisParam STATEMENTS )
+	\[ _action_markPeriodBracketParam STATEMENTS \]
+	\{ _action_markPeriodBraceParam STATEMENTS \}
+
+FUNCTION_ID:
+	IDENTIFIER _action_pushId
+	STRING	_action_pushStr
+	NUMBER _action_pushNum
+	
+SEP:
+	,
+	;

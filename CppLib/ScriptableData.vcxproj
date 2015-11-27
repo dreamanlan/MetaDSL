@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{245F2C8D-C2B9-4267-84A7-0BBBA43EAF0E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ScriptableData</RootNamespace>
+    <ProjectName>CppDsl</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;__WINDOWS__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\Parser;.\Common;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;__WINDOWS__;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\Parser;.\Common;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Common\Hashtable.cpp" />
+    <ClCompile Include="Common\StringFormat.cpp" />
+    <ClCompile Include="Dsl.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Parser\ByteCode.cpp" />
+    <ClCompile Include="Parser\RuntimeBuilderData.cpp" />
+    <ClCompile Include="Parser\SlkAction.cpp" />
+    <ClCompile Include="Parser\SlkError.cpp" />
+    <ClCompile Include="Parser\SlkParse.cpp" />
+    <ClCompile Include="Parser\SlkString.cpp" />
+    <ClCompile Include="Parser\SlkToken.cpp" />
+    <ClCompile Include="Parser\SourceCodeScript.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\StaticCheck.h" />
+    <ClInclude Include="Common\StringFormat.h" />
+    <ClInclude Include="Common\tsnprintf.h" />
+    <ClInclude Include="Common\Type.h" />
+    <ClInclude Include="Common\Chain.h" />
+    <ClInclude Include="Common\Delegation.h" />
+    <ClInclude Include="Common\BaseType.h" />
+    <ClInclude Include="Common\Hashtable.h" />
+    <ClInclude Include="Common\LockEx.h" />
+    <ClInclude Include="Common\Queue.h" />
+    <ClInclude Include="Dsl.h" />
+    <ClInclude Include="Parser\ByteCode.h" />
+    <ClInclude Include="Parser\RuntimeBuilderData.h" />
+    <ClInclude Include="Parser\SlkAction.h" />
+    <ClInclude Include="Parser\SlkConstants.h" />
+    <ClInclude Include="Parser\SlkError.h" />
+    <ClInclude Include="Parser\SlkInc.h" />
+    <ClInclude Include="Parser\SlkParse.h" />
+    <ClInclude Include="Parser\SlkString.h" />
+    <ClInclude Include="Parser\SlkTerminals.h" />
+    <ClInclude Include="Parser\SlkToken.h" />
+    <ClInclude Include="Parser\SourceCodeScript.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Common\Chain.inl" />
+    <None Include="Parser\ByteCode.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Common\Hashtable.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\ByteCode.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\RuntimeBuilderData.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\SlkAction.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\SlkError.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\SlkParse.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\SlkString.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\SlkToken.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser\SourceCodeScript.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Dsl.cpp" />
+    <ClCompile Include="Common\StringFormat.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{4d0908f4-2d67-4864-aefe-6ab347b2d04b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{0dfca8ff-04ea-4e90-a554-a529daf4adfd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Common\Chain.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Delegation.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Hashtable.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\LockEx.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Queue.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\ByteCode.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\RuntimeBuilderData.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkAction.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkConstants.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkError.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkInc.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkParse.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkString.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkTerminals.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SlkToken.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\SourceCodeScript.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Dsl.h" />
+    <ClInclude Include="Common\Type.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\BaseType.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\StaticCheck.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\StringFormat.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\tsnprintf.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Common\Chain.inl">
+      <Filter>Common</Filter>
+    </None>
+    <None Include="Parser\ByteCode.inl">
+      <Filter>Parser</Filter>
+    </None>
+  </ItemGroup>
+</Project>
