@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Common\Hashtable.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="Parser\ByteCode.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
@@ -43,19 +40,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common\Chain.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\Delegation.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Hashtable.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\LockEx.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\Queue.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Parser\ByteCode.h">
@@ -92,9 +77,6 @@
       <Filter>Parser</Filter>
     </ClInclude>
     <ClInclude Include="Dsl.h" />
-    <ClInclude Include="Common\Type.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Common\BaseType.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -107,11 +89,11 @@
     <ClInclude Include="Common\tsnprintf.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Queue.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Common\Chain.inl">
-      <Filter>Common</Filter>
-    </None>
     <None Include="Parser\ByteCode.inl">
       <Filter>Parser</Filter>
     </None>

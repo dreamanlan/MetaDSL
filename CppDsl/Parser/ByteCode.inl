@@ -14,7 +14,7 @@ namespace Dsl
     if (!preconditionCheck())return;
     Function* p = mData.getLastFunctionRef();
     if (0 != p) {
-      CHAR* pStr = mThis->getLastToken();
+      char* pStr = mThis->getLastToken();
       if (0 != pStr) {
         if (mDataFile->IsDebugInfoEnable()) {
           PRINT_FUNCTION_SCRIPT_DEBUG_INFO("script:%s\n", pStr);
@@ -222,7 +222,7 @@ namespace Dsl
     Function* p = mData.getLastFunctionRef();
     if (0 != p && !p->IsValid()) {
       Value val = tokenInfo.ToValue();
-      if (TRUE == val.IsValid()) {        
+      if (TRUE == val.IsValid()) {
         val.SetLine(mThis->getLastLineNumber());
         p->GetCall().SetName(val);
       }
@@ -380,8 +380,8 @@ namespace Dsl
       ISyntaxComponent& temp = *data.GetParam(0);
       if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
         Value& val = dynamic_cast<Value&>(temp);
-        INT size = strlen(val.GetId()) + 1;
-        CHAR* pBuf = mDataFile->AllocString(size);
+        int size = strlen(val.GetId()) + 1;
+        char* pBuf = mDataFile->AllocString(size);
         tsnprintf(pBuf, size + 1, "-%s", val.GetId());
         val.SetInt(pBuf);
         return val;
@@ -393,8 +393,8 @@ namespace Dsl
       ISyntaxComponent& temp = *data.GetParam(0);
       if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
         Value& val = dynamic_cast<Value&>(temp);
-        INT size = strlen(val.GetId()) + 1;
-        CHAR* pBuf = mDataFile->AllocString(size);
+        int size = strlen(val.GetId()) + 1;
+        char* pBuf = mDataFile->AllocString(size);
         tsnprintf(pBuf, size + 1, "+%s", val.GetId());
         val.SetInt(pBuf);
         return val;

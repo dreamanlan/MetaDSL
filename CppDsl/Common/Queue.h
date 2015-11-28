@@ -6,11 +6,11 @@
 
 namespace CollectionMemory
 {
-	template<typename T,INT MaxSizeV>
+	template<typename T,int MaxSizeV>
 	class StaticT
 	{
 	public:
-		inline T* Create(INT& size)
+		inline T* Create(int& size)
 		{
 			if(size>MaxSizeV)
 			{
@@ -19,11 +19,11 @@ namespace CollectionMemory
 			}
 			return m_Data;
 		}
-		inline VOID Clear(VOID)
+		inline void Clear(void)
 		{
 			memset(m_Data,0,sizeof(m_Data));
 		}
-		size_t GetMemoryInUsed(VOID) const
+		size_t GetMemoryInUsed(void) const
 		{
 			return sizeof(T) * MaxSizeV;
 		}
@@ -35,7 +35,7 @@ namespace CollectionMemory
 	class DynamicT
 	{
 	public:
-		inline T* Create(INT& size)
+		inline T* Create(int& size)
 		{
 			Cleanup();
 			m_Data = new T[size];
@@ -47,26 +47,26 @@ namespace CollectionMemory
 			m_MaxSize = size;
 			return m_Data;
 		}
-		inline VOID Clear(VOID)
+		inline void Clear(void)
 		{
 			if(m_MaxSize>0 && NULL!=m_Data)
 			{
 				memset(m_Data,0,sizeof(T)*m_MaxSize);
 			}
 		}
-		size_t GetMemoryInUsed(VOID) const
+		size_t GetMemoryInUsed(void) const
 		{
 			return (m_Data == NULL ? 0 : (sizeof(T) * m_MaxSize));	
 		}
 	public:
-		DynamicT(VOID):m_Data(NULL),m_MaxSize(0)
+		DynamicT(void):m_Data(NULL),m_MaxSize(0)
 		{}
-		virtual ~DynamicT(VOID)
+		virtual ~DynamicT(void)
 		{
 			Cleanup();
 		}
 	private:
-		inline VOID Cleanup(VOID)
+		inline void Cleanup(void)
 		{
 			if(NULL!=m_Data)
 			{
@@ -77,9 +77,9 @@ namespace CollectionMemory
 		}
 	private:
 		T*	m_Data;
-		INT	m_MaxSize;
+		int	m_MaxSize;
 	};
-	template<typename T,INT MaxSizeV>
+	template<typename T,int MaxSizeV>
 	class SelectorT
 	{
 	public:
@@ -95,40 +95,40 @@ namespace CollectionMemory
 
 //
 //T是队列元素类型，SizeV是所期望的队列的最大元素数目(为0时采用动态内存分配方案)
-template<typename T,INT SizeV=0>
+template<typename T,int SizeV=0>
 class DequeT
 {
 	typedef typename CollectionMemory::SelectorT<T,(SizeV == 0 ? 0 : SizeV+1)>::Type MemoryType;
 public://标准双向队列访问方法
 	//队列是否空
-	inline BOOL Empty(VOID) const
+	inline int Empty(void) const
 	{
 		return m_Head==m_Tail;
 	}
 	//队列是否满
-	inline BOOL Full(VOID) const
+	inline int Full(void) const
 	{
 		return m_Head==(m_Tail+1)%m_MaxSize;
 	}
 	//清空队列
-	inline VOID Clear(VOID)
+	inline void Clear(void)
 	{
 		m_Size=0;
 		m_Head=m_Tail=0;
 		m_Memory.Clear();
 	}
 	//当前队列中的元素个数
-	inline INT Size(VOID) const
+	inline int Size(void) const
 	{
 		return m_Size;
 	}
 	//队列尾加一个元素
-	inline INT PushBack(const T& t)
+	inline int PushBack(const T& t)
 	{
-		CrashAssert(m_Data);
-		CrashAssert(!Full());
+		MyAssert(m_Data);
+		MyAssert(!Full());
 
-		INT id=m_Tail;
+		int id=m_Tail;
 		m_Data[id]=t;
 		m_Tail=(m_Tail+1) % m_MaxSize;
 
@@ -136,10 +136,10 @@ public://标准双向队列访问方法
 		return id;
 	}
 	//队列头加一个元素
-	inline INT PushFront(const T& t)
+	inline int PushFront(const T& t)
 	{
-		CrashAssert(m_Data);
-		CrashAssert(!Full());
+		MyAssert(m_Data);
+		MyAssert(!Full());
 
 		m_Head=(m_MaxSize+m_Head-1) % m_MaxSize;
 		m_Data[m_Head]=t;
@@ -148,83 +148,83 @@ public://标准双向队列访问方法
 		return m_Head;
 	}
 	//删除队列尾一个元素
-	inline T PopBack(VOID)
+	inline T PopBack(void)
 	{
-		CrashAssert(m_Data);
-		CrashAssert(!Empty());
+		MyAssert(m_Data);
+		MyAssert(!Empty());
 
-		INT id=BackID();
+		int id=BackID();
 		m_Tail=id;
 
 		UpdateSize();
 		return m_Data[id];
 	}
 	//删除队列头一个元素
-	inline T PopFront(VOID)
+	inline T PopFront(void)
 	{
-		CrashAssert(m_Data);
-		CrashAssert(!Empty());
+		MyAssert(m_Data);
+		MyAssert(!Empty());
 
-		INT id=m_Head;
+		int id=m_Head;
 		m_Head = (m_Head+1) % m_MaxSize;
 
 		UpdateSize();
 		return m_Data[id];
 	}
 	//读队列尾元素
-	inline const T& Back(VOID) const
+	inline const T& Back(void) const
 	{
 		return m_Data[BackID()];
 	}
 	//读队列尾元素可写引用（用于修改队列尾元素）
-	inline T& Back(VOID)
+	inline T& Back(void)
 	{
 		return m_Data[BackID()];
 	}
 	//读队列头元素
-	inline const T& Front(VOID) const
+	inline const T& Front(void) const
 	{
 		return m_Data[FrontID()];
 	}
 	//读队列头元素可写引用（用于修改队列头元素）
-	inline T& Front(VOID)
+	inline T& Front(void)
 	{
 		return m_Data[FrontID()];
 	}
 public://扩展双向队列访问方法（遍历与读写方法）
 	//FrontID是队列头元素的ID
-	inline INT FrontID(VOID) const
+	inline int FrontID(void) const
 	{
 		return m_Head;
 	}
 	//BackID是队列尾元素的ID
-	inline INT BackID(VOID) const
+	inline int BackID(void) const
 	{
 		if(Empty())
 		{			
 			return m_Head;
 		}
-		INT newId = (m_MaxSize+m_Tail-1) % m_MaxSize;
+		int newId = (m_MaxSize+m_Tail-1) % m_MaxSize;
 		return newId;
 	}
 	//取当前ID的前一个ID，如果已经是头元素ID，则返回INVALID_ID
-	inline INT PrevID(INT id) const
+	inline int PrevID(int id) const
 	{
 		if(id==m_Head)
 			return INVALID_ID;
-		INT newId = (m_MaxSize+id-1) % m_MaxSize;
+		int newId = (m_MaxSize+id-1) % m_MaxSize;
 		return newId;
 	}
 	//取当前ID的后一个ID，如果已经是尾元素ID，则返回INVALID_ID
-	inline INT NextID(INT id) const
+	inline int NextID(int id) const
 	{
 		if(id==BackID())
 			return INVALID_ID;
-		INT newId = (id+1) % m_MaxSize;
+		int newId = (id+1) % m_MaxSize;
 		return newId;
 	}
 	//判断是否是有效的ID，对空队列，头ID与尾ID均属无效ID
-	inline BOOL IsValidID(INT id) const
+	inline int IsValidID(int id) const
 	{
 		if(Empty())
 		{
@@ -234,14 +234,14 @@ public://扩展双向队列访问方法（遍历与读写方法）
 		{
 			return FALSE;
 		}
-		INT idVal=CalcIndex(id);
-		INT tailVal=CalcIndex(m_Tail);
+		int idVal=CalcIndex(id);
+		int tailVal=CalcIndex(m_Tail);
 		if(idVal>=tailVal)
 			return FALSE;
 		return TRUE;
 	}
 	//取指定ID的元素
-	inline const T& operator [] (INT id) const
+	inline const T& operator [] (int id) const
 	{
 		if(id<0 || id>=m_MaxSize)
 		{
@@ -253,7 +253,7 @@ public://扩展双向队列访问方法（遍历与读写方法）
 		}
 	}
 	//取指定ID的元素的可写引用（用于修改元素）
-	inline T& operator [] (INT id)
+	inline T& operator [] (int id)
 	{
 		if(id<0 || id>=m_MaxSize)
 		{
@@ -265,35 +265,35 @@ public://扩展双向队列访问方法（遍历与读写方法）
 		}
 	}
 	//求2个ID的距离（间隔元素个数+1）
-	inline INT Distance(INT id1,INT id2) const
+	inline int Distance(int id1,int id2) const
 	{
-		INT val=Difference(id1,id2);
+		int val=Difference(id1,id2);
 		if(val<0)
 			return -val;
 		else
 			return val;
 	}
 	//求2个ID之差（按从头到尾的顺序编号元素，编号之差）
-	inline INT Difference(INT id1,INT id2) const
+	inline int Difference(int id1,int id2) const
 	{
-		INT id1Val=CalcIndex(id1);
-		INT id2Val=CalcIndex(id2);
-		CrashAssert(id1Val>=0 && id2Val>=0);
+		int id1Val=CalcIndex(id1);
+		int id2Val=CalcIndex(id2);
+		MyAssert(id1Val>=0 && id2Val>=0);
 		return id2Val-id1Val;
 	}
 public:
-	DequeT(VOID):m_Size(0),m_MaxSize(1),m_Head(0),m_Tail(0),m_Data(NULL)
+	DequeT(void):m_Size(0),m_MaxSize(1),m_Head(0),m_Tail(0),m_Data(NULL)
 	{
 		if(SizeV>0)
 		{
 			Init(SizeV);
 		}
 	}
-	DequeT(INT size):m_Size(0),m_MaxSize(1),m_Head(0),m_Tail(0),m_Data(NULL)
+	DequeT(int size):m_Size(0),m_MaxSize(1),m_Head(0),m_Tail(0),m_Data(NULL)
 	{
 		Init(size);
 	}
-	virtual ~DequeT(VOID)
+	virtual ~DequeT(void)
 	{
 		m_Size = 0;
 		m_MaxSize = 1;
@@ -317,21 +317,21 @@ public:
 		return *this;
 	}
 public:
-	inline VOID	Init(INT size)
+	inline void	Init(int size)
 	{
 		Create(size+1);
 	}
 protected:
-	inline VOID Create(INT size)
+	inline void Create(int size)
 	{
 		m_MaxSize = size;
 		m_Data = m_Memory.Create(m_MaxSize);
-		CrashAssert(m_Data);
+		MyAssert(m_Data);
 		Clear();
 	}
 private:
 	//计算元素的索引（头元素索引为0）
-	inline INT CalcIndex(INT id) const
+	inline int CalcIndex(int id) const
 	{
 		if(id<m_Head)
 			return id+m_MaxSize-m_Head;
@@ -339,15 +339,15 @@ private:
 			return id-m_Head;
 	}
 	//更新队列尺寸
-	inline VOID UpdateSize(VOID)
+	inline void UpdateSize(void)
 	{
 		m_Size=(m_MaxSize+m_Tail-m_Head)%m_MaxSize;
 	}
 private:
-	VOID CopyFrom(const DequeT& other)
+	void CopyFrom(const DequeT& other)
 	{
 		Clear();
-		for(INT id=other.FrontID();TRUE==other.IsValidID(id);id=other.NextID(id))
+		for(int id=other.FrontID();TRUE==other.IsValidID(id);id=other.NextID(id))
 		{
 			PushBack(other[id]);
 		}
@@ -355,14 +355,14 @@ private:
 private:
 	MemoryType m_Memory;
 	T* m_Data;
-	INT m_Size;
-	INT m_MaxSize;
+	int m_Size;
+	int m_MaxSize;
 	//头元素的ID
-	INT m_Head;
+	int m_Head;
 	//尾元素后面一个位置的ID，它标明队列尾的位置，它的值总是一个无效的ID
-	INT m_Tail;
+	int m_Tail;
 public:
-	static T& GetInvalidValueRef(VOID)
+	static T& GetInvalidValueRef(void)
 	{
 		static T s_Temp;
 		return s_Temp;

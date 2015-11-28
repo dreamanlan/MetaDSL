@@ -12,42 +12,42 @@
 class SlkToken
 {
 public:
-  SHORT get(void);
-  SHORT peek(INT level);
-  CHAR* getCurToken(void) const
+  short get(void);
+  short peek(int level);
+  char* getCurToken(void) const
   {
     return mCurToken;
   }
-  CHAR* getLastToken(void) const
+  char* getLastToken(void) const
   {
     return mLastToken;
   }
-  INT getLineNumber(void) const
+  int getLineNumber(void) const
   {
     return mLineNumber;
   }
-  INT getLastLineNumber(void) const
+  int getLastLineNumber(void) const
   {
     return mLastLineNumber;
   }
 public:
-  void setCanFinish(BOOL val)
+  void setCanFinish(int val)
   {
     mCanFinish = val;
   }
 private:
   void getOperatorToken(void);
-  SHORT getOperatorTokenValue(void)const;
-  BOOL isCanFinish(void)const
+  short getOperatorTokenValue(void)const;
+  int isCanFinish(void)const
   {
     return mCanFinish;
   }
-  BOOL isWhiteSpace(CHAR c) const;
-  BOOL isDelimiter(CHAR c) const;
-  BOOL isOperator(CHAR c) const;
+  int isWhiteSpace(char c) const;
+  int isDelimiter(char c) const;
+  int isOperator(char c) const;
 private:
   void newToken(void);
-  void pushTokenChar(CHAR c);
+  void pushTokenChar(char c);
   void endToken(void);
   void endTokenWithEof(void);
 public:
@@ -56,20 +56,20 @@ private:
   Dsl::IScriptSource* mSource;
   Dsl::IScriptSource::Iterator mIterator;
 
-  CHAR* mCurToken;
-  CHAR* mLastToken;
-  INT mTokenCharIndex;
+  char* mCurToken;
+  char* mLastToken;
+  int mTokenCharIndex;
 
   Dsl::ErrorAndStringBuffer* mErrorAndStringBuffer;
 
-  INT mLineNumber;
-  INT mLastLineNumber;
-  BOOL mIsExternScript;
-  BOOL mCanFinish;
+  int mLineNumber;
+  int mLastLineNumber;
+  int mIsExternScript;
+  int mCanFinish;
 
-  const CHAR* mWhiteSpaces;
-  const CHAR* mDelimiters;
-  const CHAR* mOperators;
+  const char* mWhiteSpaces;
+  const char* mDelimiters;
+  const char* mOperators;
 };
 
 #endif

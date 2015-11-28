@@ -10,9 +10,9 @@ class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < Act
 {
   typedef RuntimeBuilderT<ActionForSourceCodeScript> BaseType;
 public:
-  inline CHAR* getLastToken(void) const;
-  inline INT getLastLineNumber(void) const;
-  inline void setCanFinish(BOOL val);
+  inline char* getLastToken(void) const;
+  inline int getLastLineNumber(void) const;
+  inline void setCanFinish(int val);
 public:
   ActionForSourceCodeScript(SlkToken &scanner, Dsl::DslFile& dataFile);
 public:
@@ -21,12 +21,12 @@ public:
   inline void    pushNum(void);
   void    (ActionForSourceCodeScript::*Action[MAX_ACTION_NUM]) (void);
   inline void    initialize_table(void);
-  inline void	execute(INT  number)   { (this->*Action[number]) (); }
+  inline void	execute(int  number)   { (this->*Action[number]) (); }
 private:
   SlkToken   *mScanner;
 };
 //--------------------------------------------------------------------------------------
-inline CHAR* ActionForSourceCodeScript::getLastToken(void) const
+inline char* ActionForSourceCodeScript::getLastToken(void) const
 {
   if (NULL != mScanner) {
     return mScanner->getLastToken();
@@ -34,7 +34,7 @@ inline CHAR* ActionForSourceCodeScript::getLastToken(void) const
     return NULL;
   }
 }
-inline INT ActionForSourceCodeScript::getLastLineNumber(void) const
+inline int ActionForSourceCodeScript::getLastLineNumber(void) const
 {
   if (NULL != mScanner) {
     return mScanner->getLastLineNumber();
@@ -42,7 +42,7 @@ inline INT ActionForSourceCodeScript::getLastLineNumber(void) const
     return -1;
   }
 }
-inline void ActionForSourceCodeScript::setCanFinish(BOOL val)
+inline void ActionForSourceCodeScript::setCanFinish(int val)
 {
   if (NULL != mScanner) {
     mScanner->setCanFinish(val);
@@ -52,21 +52,21 @@ inline void ActionForSourceCodeScript::setCanFinish(BOOL val)
 //±êÊ¶·û
 inline void ActionForSourceCodeScript::pushId(void)
 {
-  CHAR* lastToken = getLastToken();
+  char* lastToken = getLastToken();
   if (NULL != lastToken) {
     mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::VARIABLE_TOKEN));
   }
 }
 inline void ActionForSourceCodeScript::pushNum(void)
 {
-  CHAR* lastToken = getLastToken();
+  char* lastToken = getLastToken();
   if (NULL != lastToken) {
     mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::INT_TOKEN));
   }
 }
 inline void ActionForSourceCodeScript::pushStr(void)
 {
-  CHAR* lastToken = getLastToken();
+  char* lastToken = getLastToken();
   if (NULL != lastToken) {
     mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::STRING_TOKEN));
   }
@@ -111,22 +111,22 @@ namespace Dsl
   class CachedScriptSource : public IScriptSource
   {
   public:
-    explicit CachedScriptSource(const CHAR* p) :m_Source(p)
+    explicit CachedScriptSource(const char* p) :m_Source(p)
     {}
   protected:
-    virtual BOOL Load(void)
+    virtual int Load(void)
     {
       return FALSE;
     }
-    virtual const CHAR* GetBuffer(void)const
+    virtual const char* GetBuffer(void)const
     {
       return m_Source;
     }
   private:
-    const CHAR* m_Source;
+    const char* m_Source;
   };
   //------------------------------------------------------------------------------------------------------
-  void SourceCodeScript::Parse(const CHAR* buf)
+  void SourceCodeScript::Parse(const char* buf)
   {
     if (0 == buf)
       return;

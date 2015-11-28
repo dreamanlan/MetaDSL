@@ -3,6 +3,7 @@
 
 #include "Dsl.h"
 #include "RuntimeBuilderData.h"
+#include "tsnprintf.h"
 
 namespace Dsl
 {
@@ -12,12 +13,12 @@ namespace Dsl
   public:
     RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile)
     {
-      CrashAssert(mDataFile);
+      MyAssert(mDataFile);
     }
     inline void    setEnvironmentObjRef(RealTypeT& thisObj)
     {
       mThis = &thisObj;
-      CrashAssert(mThis);
+      MyAssert(mThis);
     }
   public:
     inline void    beginStatement(void);

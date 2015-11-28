@@ -4,12 +4,13 @@ SlkToken.cpp
 
 ******************************************************************************/
 #include "SlkParse.h"
+#include "tsnprintf.h"
 
 //mIterator,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
 
-static inline BOOL myisdigit(CHAR c, BOOL isHex)
+static inline int myisdigit(char c, int isHex)
 {
-  BOOL ret = FALSE;
+  int ret = FALSE;
   if (TRUE == isHex) {
     if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
       ret = TRUE;
@@ -153,11 +154,11 @@ void SlkToken::getOperatorToken(void)
   endToken();
 }
 
-SHORT SlkToken::getOperatorTokenValue(void)const
+short SlkToken::getOperatorTokenValue(void)const
 {
-  const CHAR* pOperator = mCurToken;
-  const CHAR* pLastToken = mLastToken;
-  BOOL lastIsOperator = TRUE;
+  const char* pOperator = mCurToken;
+  const char* pLastToken = mLastToken;
+  int lastIsOperator = TRUE;
   if (pLastToken && pLastToken[0]) {
     if (isDelimiter(pLastToken[0])) {
       lastIsOperator = TRUE;
@@ -165,7 +166,7 @@ SHORT SlkToken::getOperatorTokenValue(void)const
       lastIsOperator = isOperator(pLastToken[0]);
     }
   }
-  SHORT val = OP_TOKEN_0_;
+  short val = OP_TOKEN_0_;
   if (pOperator && pOperator[0]) {
     if ((pOperator[0] == '?' || pOperator[0] == ':') && pOperator[1] == '\0') {
       val = OP_TOKEN_1_;
@@ -201,7 +202,7 @@ SHORT SlkToken::getOperatorTokenValue(void)const
   return val;
 }
 
-BOOL SlkToken::isWhiteSpace(CHAR c) const
+int SlkToken::isWhiteSpace(char c) const
 {
   if (0 == c)
     return FALSE;
@@ -209,7 +210,7 @@ BOOL SlkToken::isWhiteSpace(CHAR c) const
     return (0 != strchr(mWhiteSpaces, c) ? TRUE : FALSE);
 }
 
-BOOL SlkToken::isOperator(CHAR c) const
+int SlkToken::isOperator(char c) const
 {
   if (0 == c)
     return FALSE;
@@ -217,7 +218,7 @@ BOOL SlkToken::isOperator(CHAR c) const
     return (0 != strchr(mOperators, c) ? TRUE : FALSE);
 }
 
-BOOL SlkToken::isDelimiter(CHAR c) const
+int SlkToken::isDelimiter(char c) const
 {
   if (0 == c)
     return FALSE;
@@ -225,7 +226,7 @@ BOOL SlkToken::isDelimiter(CHAR c) const
     return (0 != strchr(mDelimiters, c) ? TRUE : FALSE);
 }
 
-SHORT SlkToken::get(void)
+short SlkToken::get(void)
 {
   if (NULL == mSource || NULL == mErrorAndStringBuffer) {
     return END_OF_SLK_INPUT_;
@@ -245,7 +246,7 @@ SHORT SlkToken::get(void)
       }
     }
 
-    BOOL isSkip = TRUE;
+    int isSkip = TRUE;
     //跳过注释与白空格
     for (; isSkip && *mIterator != '\0';) {
       isSkip = FALSE;
@@ -299,7 +300,7 @@ SHORT SlkToken::get(void)
   if (*mIterator == '{' && *(mIterator + 1) == ':') {
     ++mIterator;
     ++mIterator;
-    INT line = mLineNumber;
+    int line = mLineNumber;
     //搜索脚本结束 :}
     for (; *mIterator != '\0';) {
       while (*mIterator != '\0' && *mIterator != ':') {
@@ -323,7 +324,7 @@ SHORT SlkToken::get(void)
       }
     }
     if (*mIterator == '\0') {
-      CHAR* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+      char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
       if (pInfo)
         tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish！", line);
     }
@@ -334,7 +335,7 @@ SHORT SlkToken::get(void)
     getOperatorToken();
     return getOperatorTokenValue();
   } else if (*mIterator == '.' && 0 == myisdigit(*(mIterator + 1), FALSE)) {
-    CHAR c = *mIterator;
+    char c = *mIterator;
     ++mIterator;
 
     pushTokenChar(c);
@@ -342,7 +343,7 @@ SHORT SlkToken::get(void)
     return DOT_;
   } else if (isDelimiter(*mIterator))//分隔符
   {
-    CHAR c = *mIterator;
+    char c = *mIterator;
     ++mIterator;
 
     pushTokenChar(c);
@@ -372,8 +373,8 @@ SHORT SlkToken::get(void)
   {
     if (*mIterator == '"' || *mIterator == '\'')//引号括起来的名称或关键字
     {
-      INT line = mLineNumber;
-      CHAR c = *mIterator;
+      int line = mLineNumber;
+      char c = *mIterator;
       for (++mIterator; *mIterator != '\0' && *mIterator != c;) {
         if (*mIterator == '\n')++mLineNumber;
         if (*mIterator == '\\') {
@@ -388,7 +389,7 @@ SHORT SlkToken::get(void)
           if (mIterator.Load()) {
             continue;
           } else {
-            CHAR* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+            char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
             if (pInfo)
               tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
             endTokenWithEof();
@@ -399,15 +400,15 @@ SHORT SlkToken::get(void)
       if (*mIterator != '\0') {
         ++mIterator;
       } else {
-        CHAR* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+        char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
         if (pInfo)
           tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
       }
       endToken();
       return STRING_;
     } else {
-      BOOL isNum = TRUE;
-      BOOL isHex = FALSE;
+      int isNum = TRUE;
+      int isHex = FALSE;
       if (*mIterator == '0' && *(mIterator + 1) == 'x') {
         isHex = TRUE;
         pushTokenChar(*mIterator);
@@ -447,9 +448,9 @@ SHORT SlkToken::get(void)
   }
 }
 
-SHORT SlkToken::peek(INT level)
+short SlkToken::peek(int level)
 {
-  SHORT     token = 0;
+  short     token = 0;
 
   printf("peek_token is not called in an LL(1) grammar\n");
 
@@ -470,7 +471,7 @@ void SlkToken::newToken(void)
   }
 }
 
-void SlkToken::pushTokenChar(CHAR c)
+void SlkToken::pushTokenChar(char c)
 {
   if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurToken)
     return;
@@ -489,7 +490,7 @@ void SlkToken::endToken(void)
 void SlkToken::endTokenWithEof(void)
 {
   static const char* s_c_Eof = "<<eof>>";
-  if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= (INT)strlen(s_c_Eof) + 1 || NULL == mCurToken || NULL == mErrorAndStringBuffer->GetUnusedStringPtrRef())
+  if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= (int)strlen(s_c_Eof) + 1 || NULL == mCurToken || NULL == mErrorAndStringBuffer->GetUnusedStringPtrRef())
     return;
   strcpy(mCurToken, s_c_Eof);
   mErrorAndStringBuffer->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
@@ -497,8 +498,8 @@ void SlkToken::endTokenWithEof(void)
 
 SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorAndStringBuffer) :mSource(&source), mErrorAndStringBuffer(&errorAndStringBuffer)
 {
-  CrashAssert(mSource);
-  CrashAssert(mErrorAndStringBuffer);
+  MyAssert(mSource);
+  MyAssert(mErrorAndStringBuffer);
 
   mIterator = mSource->GetIterator();
 

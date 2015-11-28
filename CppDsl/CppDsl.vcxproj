@@ -78,7 +78,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Common\Hashtable.cpp" />
     <ClCompile Include="Common\StringFormat.cpp" />
     <ClCompile Include="Dsl.cpp" />
     <ClCompile Include="main.cpp" />
@@ -92,16 +91,12 @@
     <ClCompile Include="Parser\SourceCodeScript.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\Queue.h" />
     <ClInclude Include="Common\StaticCheck.h" />
     <ClInclude Include="Common\StringFormat.h" />
     <ClInclude Include="Common\tsnprintf.h" />
-    <ClInclude Include="Common\Type.h" />
-    <ClInclude Include="Common\Chain.h" />
     <ClInclude Include="Common\Delegation.h" />
     <ClInclude Include="Common\BaseType.h" />
-    <ClInclude Include="Common\Hashtable.h" />
-    <ClInclude Include="Common\LockEx.h" />
-    <ClInclude Include="Common\Queue.h" />
     <ClInclude Include="Dsl.h" />
     <ClInclude Include="Parser\ByteCode.h" />
     <ClInclude Include="Parser\RuntimeBuilderData.h" />
@@ -116,7 +111,6 @@
     <ClInclude Include="Parser\SourceCodeScript.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Common\Chain.inl" />
     <None Include="Parser\ByteCode.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

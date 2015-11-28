@@ -1,7 +1,6 @@
 #ifndef __RuntimeBuilderData_H__
 #define __RuntimeBuilderData_H__
 
-#include "Type.h"
 #include "Queue.h"
 
 #define STACKSIZE			255
@@ -26,14 +25,14 @@ public:
   };
   struct TokenInfo
   {
-    CHAR*	mString;
-    INT mType;
+    char*	mString;
+    int mType;
 
     TokenInfo(void) :mString(0), mType(UNKNOWN_TOKEN)
     {}
-    TokenInfo(CHAR* pstr, INT type) :mString(pstr), mType(type)
+    TokenInfo(char* pstr, int type) :mString(pstr), mType(type)
     {}
-    BOOL IsValid(void)const
+    int IsValid(void)const
     {
       if (UNKNOWN_TOKEN != mType)
         return TRUE;
@@ -50,7 +49,7 @@ public:
 public:
   void push(const TokenInfo& info);
   TokenInfo pop(void);
-  BOOL isSemanticStackEmpty(void)const;
+  int isSemanticStackEmpty(void)const;
   void pushStatement(Dsl::Statement* p);
   Dsl::Statement* popStatement(void);
   Dsl::Statement* getCurStatement(void)const;

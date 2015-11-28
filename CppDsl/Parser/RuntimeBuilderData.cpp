@@ -9,7 +9,7 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
   switch (mType) {
   case VARIABLE_TOKEN:
   {
-    CHAR* pStr = mString;
+    char* pStr = mString;
     if (0 != pStr) {
       Value val(pStr, Value::TYPE_VARIABLE_NAME);
       return val;
@@ -18,7 +18,7 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
     break;
   case STRING_TOKEN:
   {
-    CHAR* pStr = mString;
+    char* pStr = mString;
     if (0 != pStr) {
       Value val(pStr, Value::TYPE_STRING);
       return val;
@@ -27,7 +27,7 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
     break;
   case INT_TOKEN:
   {
-    CHAR* pStr = mString;
+    char* pStr = mString;
     if (0 != pStr) {
       Value val(pStr, Value::TYPE_INT);
       return val;
@@ -36,7 +36,7 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
     break;
   case FLOAT_TOKEN:
   {
-    CHAR* pStr = mString;
+    char* pStr = mString;
     if (0 != pStr) {
       Value val(pStr, Value::TYPE_FLOAT);
       return val;
@@ -59,7 +59,7 @@ RuntimeBuilderData::TokenInfo RuntimeBuilderData::pop(void)
   mTokenStack.PopBack();
   return info;
 }
-BOOL RuntimeBuilderData::isSemanticStackEmpty(void)const
+int RuntimeBuilderData::isSemanticStackEmpty(void)const
 {
   return mSemanticStack.Empty();
 }

@@ -109,27 +109,27 @@ inline VOID Format(ParserRepeatArg2_##X(P,p))	\
 
 namespace StringFormatUtility
 {
-	BOOL CopyBuffer(CHAR* dest,INT& pos,INT size,const CHAR* src);
+	int CopyBuffer(char* dest,int& pos,int size,const char* src);
 
-	inline VOID MyTrimRight(CHAR* dest)
+	inline void MyTrimRight(char* dest)
 	{
 		if(NULL==dest)
 			return;
 		size_t len = strlen(dest);
-		for(INT i=(INT)len-1;i>=0;--i)
+		for(int i=(int)len-1;i>=0;--i)
 		{
-			if(static_cast<UCHAR>(dest[i])<=32)
+			if(static_cast<unsigned char>(dest[i])<=32)
 				dest[i]=0;
 			else
 				break;
 		}
 	}
 
-	inline CHAR* MyStrNCpy(CHAR* dest,const CHAR* src,size_t len)
+	inline char* MyStrNCpy(char* dest,const char* src,size_t len)
 	{
 		if(NULL==dest || NULL==src)
 			return NULL;
-		CHAR* res = strncpy(dest,src,len);		
+		char* res = strncpy(dest,src,len);		
 		if(len<=strlen(src))
 		{
 			//发生字符串截断时，补一个空字符
@@ -139,12 +139,12 @@ namespace StringFormatUtility
 	}
 	
 	template<typename T>
-	inline BOOL BasicValue2String(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T t)
+	inline int BasicValue2String(char* dest,int& pos,int size,const char* fmt,T t)
 	{
 		//基础格式化处理
 		if(pos>=size-1)
 			return FALSE;
-		INT r = t_snprintf(dest+pos,size-pos,fmt,t);
+		int r = t_snprintf(dest+pos,size-pos,fmt,t);
 		if(r>=0 && pos+r<size)
 			pos+=r;
 		else
@@ -156,9 +156,9 @@ namespace StringFormatUtility
 	struct _impl_for_format_check
 	{
 		enum{value=0};
-		static inline BOOL format(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T t,INT argIndex)
+		static inline int format(char* dest,int& pos,int size,const char* fmt,T t,int argIndex)
 		{
-			INT len=(INT)::strlen(fmt);
+			int len=(int)::strlen(fmt);
 			if(len<=0)
 			{
 				return BasicValue2String(dest,pos,size," @format:%d,unexpected_value ",argIndex);
@@ -178,9 +178,9 @@ namespace StringFormatUtility
 	struct _impl_for_format_check<T*>
 	{
 		enum{value=1};
-		static inline BOOL format(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T* t,INT argIndex)
+		static inline int format(char* dest,int& pos,int size,const char* fmt,T* t,int argIndex)
 		{
-			INT len=(INT)::strlen(fmt);
+			int len=(int)::strlen(fmt);
 			if(len<=0)
 			{
 				return BasicValue2String(dest,pos,size," @format:%d,unexpected_pointer ",argIndex);
@@ -197,15 +197,15 @@ namespace StringFormatUtility
 	};
 
 	template<typename T>
-	inline BOOL GeneralValue2String(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T t,INT argIndex)
+	inline int GeneralValue2String(char* dest,int& pos,int size,const char* fmt,T t,int argIndex)
 	{
 		return _impl_for_format_check<T>::format(dest,pos,size,fmt,t,argIndex);
 	}
 
-	template<typename T,INT k>
+	template<typename T,int k>
 	struct _impl_for_64
 	{
-		static inline BOOL format(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T t,INT argIndex)
+		static inline int format(char* dest,int& pos,int size,const char* fmt,T t,int argIndex)
 		{
 			return GeneralValue2String(dest,pos,size,fmt,t,argIndex);
 		}
@@ -214,14 +214,14 @@ namespace StringFormatUtility
 	template<typename T>
 	struct _impl_for_64<T,8>
 	{
-		static inline BOOL format(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T t,INT argIndex)
+		static inline int format(char* dest,int& pos,int size,const char* fmt,T t,int argIndex)
 		{
 			if(pos>=size-1)
 				return FALSE;
-			ULONGLONG val;
+			unsigned long long val;
 			memcpy(&val,&t,sizeof(val));
-			INT r = 0;
-			INT len=strlen(fmt);
+			int r = 0;
+			int len=strlen(fmt);
 			if(len<=0)
 			{
 				return BasicValue2String(dest,pos,size," @format:%d,unexpected_value ",argIndex);
@@ -248,7 +248,7 @@ namespace StringFormatUtility
 			}
 			else
 			{
-				r = t_snprintf(dest+pos,size-pos,"%lld",(LONGLONG)val);
+				r = t_snprintf(dest+pos,size-pos,"%lld",(long long)val);
 			}
 			if(r>=0 && pos+r<size)
 				pos+=r;
@@ -260,18 +260,18 @@ namespace StringFormatUtility
 	template<typename T>
 	struct _impl_for_64<T*,8>
 	{
-		static inline BOOL format(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T* t,INT argIndex)
+		static inline int format(char* dest,int& pos,int size,const char* fmt,T* t,int argIndex)
 		{
 			return GeneralValue2String(dest,pos,size,fmt,t,argIndex);
 		}
 	};
 	
 	template<>
-	struct _impl_for_64<DOUBLE,8>
+	struct _impl_for_64<double,8>
 	{
-		static inline BOOL format(CHAR* dest,INT& pos,INT size,const CHAR* fmt,DOUBLE t,INT argIndex)
+		static inline int format(char* dest,int& pos,int size,const char* fmt,double t,int argIndex)
 		{
-			INT len=strlen(fmt);
+			int len=strlen(fmt);
 			if(len<=0)
 			{
 				return BasicValue2String(dest,pos,size," @format:%d,unexpected_value ",argIndex);
@@ -288,7 +288,7 @@ namespace StringFormatUtility
 	};
 
 	template<typename T>
-	inline BOOL Value2String(CHAR* dest,INT& pos,INT size,const CHAR* fmt,T t,INT argIndex)
+	inline int Value2String(char* dest,int& pos,int size,const char* fmt,T t,int argIndex)
 	{
 	#ifdef VALUE64_FORMAT_AS_ERROR
 		dest,pos,size,fmt,t,argIndex;
@@ -303,7 +303,7 @@ namespace StringFormatUtility
 class StringParser
 {	
 public:
-	inline VOID	Format(VOID)
+	inline void	Format(void)
 	{
 		ParseToEnd();
 	}
@@ -343,13 +343,13 @@ public:
 	DEF_PARSER_FORMAT(34);
 public:
 	//使用方（snprintf_）保证buf、fmt不会为空，StringFormat类及其实现辅助都不再检查这2个指针是否为空。
-	StringParser(CHAR* buf,INT size,const CHAR* fmt);
-	inline INT GetLength(VOID)const{return m_BufPos;}
+	StringParser(char* buf,int size,const char* fmt);
+	inline int GetLength(void)const{return m_BufPos;}
 private:
 	template<typename P1>
-	inline VOID	_Format(P1 p1)
+	inline void	_Format(P1 p1)
 	{
-		const CHAR* fmt=ParseToNextFormat();
+		const char* fmt=ParseToNextFormat();
 		if(NULL!=fmt)
 			StringFormatUtility::Value2String(m_pBuffer,m_BufPos,m_BufLen,fmt,p1,0);
 		else
@@ -389,17 +389,17 @@ private:
 	DEF_PARSER_FORMAT_IMPL(33,32);
 	DEF_PARSER_FORMAT_IMPL(34,33);
 private:
-	const CHAR* ParseToNextFormat(VOID);
-	VOID		ParseToEnd(VOID);
+	const char* ParseToNextFormat(void);
+	void		ParseToEnd(void);
 private:
-	CHAR*		m_pBuffer;
-	const CHAR*	m_pFmt;
-	CHAR		m_TempFmt[STRING_PARSER_FMT_TEMP];
-	INT			m_BufPos;
-	INT			m_FmtPos;
-	INT			m_FmtIndex;
-	INT			m_BufLen;
-	INT			m_FmtLen;
+	char*		m_pBuffer;
+	const char*	m_pFmt;
+	char		m_TempFmt[STRING_PARSER_FMT_TEMP];
+	int			m_BufPos;
+	int			m_FmtPos;
+	int			m_FmtIndex;
+	int			m_BufLen;
+	int			m_FmtLen;
 };
 
 #endif //__STRINGFORMAT_H__

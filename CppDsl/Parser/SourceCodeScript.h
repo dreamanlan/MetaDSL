@@ -8,7 +8,7 @@ namespace Dsl
   class SourceCodeScript
   {
   public:
-    void						                  Parse(const CHAR* buf);
+    void						                  Parse(const char* buf);
     void						                  Parse(IScriptSource& source);
   public:
     inline DslFile&			  GetDslFile(void){ return mDataFile; }

@@ -5,9 +5,9 @@ class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 {
   typedef RuntimeBuilderT<TestRuntimeBuilder> BaseType;
 public:
-  CHAR* getLastToken(void) const{ return ""; }
-  INT getLastLineNumber(void) const{ return 0; }
-  void setCanFinish(BOOL val){}
+  char* getLastToken(void) const{ return ""; }
+  int getLastLineNumber(void) const{ return 0; }
+  void setCanFinish(int val){}
 public:
   TestRuntimeBuilder(DslFile& dataFile) :BaseType(dataFile)
   {}

@@ -1,1 +1,7 @@
-obj/Debug/Dsl.csproj.FileListAbsolute.txt
+obj
+Debug
+Release
+DslLib/obj
+CppDsl/Debug
+CppDsl/Release
+Dsl.v12.suo

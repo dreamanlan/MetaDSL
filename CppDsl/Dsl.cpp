@@ -4,6 +4,7 @@ Dsl.cpp
 
 ******************************************************************************/
 #include "Dsl.h"
+#include "tsnprintf.h"
 
 #if defined(__LINUX__)
 #include <ctype.h>
@@ -60,7 +61,7 @@ namespace Dsl
         m_ParamSpace = DELTA_FUNCTION_PARAM;
       }
     } else if (HaveParam() && m_ParamNum >= m_ParamSpace) {
-      INT newSpace = m_ParamSpace + DELTA_FUNCTION_PARAM;
+      int newSpace = m_ParamSpace + DELTA_FUNCTION_PARAM;
       if (newSpace <= MAX_FUNCTION_PARAM_NUM) {
         SyntaxComponentPtr* pNew = new SyntaxComponentPtr[newSpace];
         if (pNew) {
@@ -106,7 +107,7 @@ namespace Dsl
         m_StatementSpace = DELTA_FUNCTION_STATEMENT;
       }
     } else if (HaveStatement() && m_StatementNum >= m_StatementSpace) {
-      INT newSpace = m_StatementSpace + DELTA_FUNCTION_STATEMENT;
+      int newSpace = m_StatementSpace + DELTA_FUNCTION_STATEMENT;
       if (newSpace <= m_MaxStatementNum) {
         SyntaxComponentPtr* pNew = new SyntaxComponentPtr[newSpace];
         if (pNew) {
@@ -145,7 +146,7 @@ namespace Dsl
         m_FunctionSpace = DELTA_STATEMENT_FUNCTION;
       }
     } else if (m_FunctionNum >= m_FunctionSpace) {
-      INT newSpace = m_FunctionSpace + DELTA_STATEMENT_FUNCTION;
+      int newSpace = m_FunctionSpace + DELTA_STATEMENT_FUNCTION;
       if (newSpace <= m_MaxFunctionNum) {
         Function** pNew = new Function*[newSpace];
         if (pNew) {
@@ -213,12 +214,12 @@ namespace Dsl
     ++m_SyntaxComponentNum;
   }
 
-  CHAR* DslFile::AllocString(INT len)
+  char* DslFile::AllocString(int len)
   {
     if (m_UnusedStringPtr + len - m_StringBuffer >= m_Options.GetStringBufferSize()) {
       return 0;
     }
-    CHAR* p = m_UnusedStringPtr;
+    char* p = m_UnusedStringPtr;
     if (0 != p) {
       m_UnusedStringPtr[len] = 0;
       m_UnusedStringPtr += len + 1;
@@ -226,12 +227,12 @@ namespace Dsl
     return p;
   }
 
-  CHAR* DslFile::AllocString(const CHAR* src)
+  char* DslFile::AllocString(const char* src)
   {
     if (0 == src)
       return 0;
-    INT len = (INT)strlen(src);
-    CHAR* p = AllocString(len);
+    int len = (int)strlen(src);
+    char* p = AllocString(len);
     if (0 != p) {
       strcpy(p, src);
     }
@@ -269,7 +270,7 @@ namespace Dsl
 
   void DslFile::Init(void)
   {
-    m_StringBuffer = new CHAR[m_Options.GetStringBufferSize()];
+    m_StringBuffer = new char[m_Options.GetStringBufferSize()];
     m_UnusedStringPtr = m_StringBuffer;
     m_SyntaxComponentPool = new SyntaxComponentPtr[m_Options.GetSyntaxComponentPoolSize()];
     m_SyntaxComponentNum = 0;
@@ -286,7 +287,7 @@ namespace Dsl
       m_UnusedStringPtr = 0;
     }
     if (0 != m_SyntaxComponentPool) {
-      for (INT i = 0; i < m_SyntaxComponentNum; ++i) {
+      for (int i = 0; i < m_SyntaxComponentNum; ++i) {
         if (0 != m_SyntaxComponentPool[i])
           delete m_SyntaxComponentPool[i];
       }
@@ -306,9 +307,9 @@ namespace Dsl
     memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
   }
 
-  void ErrorAndStringBuffer::AddError(const CHAR* error)
+  void ErrorAndStringBuffer::AddError(const char* error)
   {
-    CHAR* p = NewErrorInfo();
+    char* p = NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "%s", error);
   }
@@ -362,7 +363,7 @@ namespace Dsl
   void Call::WriteToFile(FILE* fp, int indent)const
   {
 #if _DEBUG
-    INT paramClass = GetParamClass();
+    int paramClass = GetParamClass();
     if (paramClass == Call::PARAM_CLASS_OPERATOR){
       if (GetParamNum() == 2){
         ISyntaxComponent& component0 = *GetParam(0);
