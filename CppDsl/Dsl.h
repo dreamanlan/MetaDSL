@@ -47,10 +47,10 @@ namespace Dsl
     SYNTAXCOMPONENT_POOL_SIZE = 16 * 1024,
   };
 
-  class ParserOptions
+  class DslOptions
   {
   public:
-    ParserOptions(void) :
+    DslOptions(void) :
       m_MaxFunctionDimensionNum(MAX_FUNCTION_DIMENSION_NUM),
       m_MaxStatementNum(MAX_STATEMENT_NUM),
       m_MaxProgramSize(MAX_PROGRAM_SIZE),
@@ -545,6 +545,7 @@ namespace Dsl
     int		m_MaxStringBufferLength;
   };
 
+  class IScriptSource;
   class DslFile
   {
     typedef ISyntaxComponent* SyntaxComponentPtr;
@@ -576,9 +577,11 @@ namespace Dsl
     char*&	      GetUnusedStringPtrRef(void){ return m_UnusedStringPtr; }
   public:
     DslFile(void);
-    DslFile(const ParserOptions& options);
+    DslFile(const DslOptions& options);
     ~DslFile(void);
     void				  Reset(void);
+    void          Parse(const char* buf);
+    void          Parse(IScriptSource& source);
   private:
     void				  Init(void);
     void				  Release(void);
@@ -590,13 +593,13 @@ namespace Dsl
   public:
     void		      EnableDebugInfo(void){ m_IsDebugInfoEnable = TRUE; }
     void		      DisableDebugInfo(void){ m_IsDebugInfoEnable = FALSE; }
-    int		      IsDebugInfoEnable(void)const{ return m_IsDebugInfoEnable; }
+    int		        IsDebugInfoEnable(void)const{ return m_IsDebugInfoEnable; }
   private:
-    int				  m_IsDebugInfoEnable;
+    int				    m_IsDebugInfoEnable;
   public:
     void		      ClearErrorInfo(void){ m_ErrorAndStringBuffer.ClearErrorInfo(); }
     void		      AddError(const char* error){ m_ErrorAndStringBuffer.AddError(error); }
-    int		      HasError(void)const{ return m_ErrorAndStringBuffer.HasError(); }
+    int		        HasError(void)const{ return m_ErrorAndStringBuffer.HasError(); }
     int		        GetErrorNum(void){ return m_ErrorAndStringBuffer.GetErrorNum(); }
     const char*	  GetErrorInfo(int index) const{ return m_ErrorAndStringBuffer.GetErrorInfo(index); }
     char*	        NewErrorInfo(void){ return m_ErrorAndStringBuffer.NewErrorInfo(); }
@@ -606,10 +609,10 @@ namespace Dsl
   private:
     ErrorAndStringBuffer        m_ErrorAndStringBuffer;
   public:
-    ParserOptions&			        GetOptions(void){ return m_Options; }
-    const ParserOptions&	      GetOptions(void)const{ return m_Options; }
+    DslOptions&			        GetOptions(void){ return m_Options; }
+    const DslOptions&	      GetOptions(void)const{ return m_Options; }
   private:
-    ParserOptions	              m_Options;
+    DslOptions	              m_Options;
   };
 
   class IScriptSource

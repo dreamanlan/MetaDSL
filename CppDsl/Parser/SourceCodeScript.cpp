@@ -126,20 +126,20 @@ namespace Dsl
     const char* m_Source;
   };
   //------------------------------------------------------------------------------------------------------
-  void SourceCodeScript::Parse(const char* buf)
+  void Parse(const char* buf, DslFile& file)
   {
     if (0 == buf)
       return;
     CachedScriptSource source(buf);
-    Parse(source);
+    Parse(source, file);
   }
 
-  void SourceCodeScript::Parse(IScriptSource& source)
+  void Parse(IScriptSource& source, DslFile& file)
   {
-    mDataFile.ClearErrorInfo();
-    SlkToken tokens(source, mDataFile.GetErrorAndStringBuffer());
-    SlkError error(tokens, mDataFile.GetErrorAndStringBuffer());
-    ActionForSourceCodeScript action(tokens, mDataFile);
+    file.ClearErrorInfo();
+    SlkToken tokens(source, file.GetErrorAndStringBuffer());
+    SlkError error(tokens, file.GetErrorAndStringBuffer());
+    ActionForSourceCodeScript action(tokens, file);
     SlkParse(action, tokens, error, 0);
   }
 }

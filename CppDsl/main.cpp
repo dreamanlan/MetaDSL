@@ -1,7 +1,7 @@
 // Dsl.cpp : 定义控制台应用程序的入口点。
 //
 #include "BaseType.h"
-#include "SourceCodeScript.h"
+#include "Dsl.h"
 
 int main(int argc, char* argv[])
 {
@@ -10,9 +10,8 @@ int main(int argc, char* argv[])
   size_t size = fread(pbuf, 1, 1024 * 1024, fp);
   pbuf[size] = 0;
   fclose(fp);
-  SourceCodeScript script;
-  script.Parse(pbuf);
-  const Dsl::DslFile& dataFile = script.GetDslFile();
+  Dsl::DslFile dataFile;
+  dataFile.Parse(pbuf);
   FILE* fp2 = fopen("copy.txt", "wb");
   dataFile.WriteToFile(fp2, 0);
   fclose(fp2);

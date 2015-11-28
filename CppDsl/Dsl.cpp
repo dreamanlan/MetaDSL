@@ -4,6 +4,7 @@ Dsl.cpp
 
 ******************************************************************************/
 #include "Dsl.h"
+#include "SourceCodeScript.h"
 #include "tsnprintf.h"
 
 #if defined(__LINUX__)
@@ -90,7 +91,7 @@ namespace Dsl
     m_ExtentClass(EXTENT_CLASS_NOTHING),
     m_ExternScript(0)
   {
-    const ParserOptions& options = dataFile.GetOptions();
+    const DslOptions& options = dataFile.GetOptions();
     m_MaxStatementNum = options.GetMaxStatementNum();
   }
 
@@ -134,7 +135,7 @@ namespace Dsl
     m_FunctionNum(0),
     m_FunctionSpace(0)
   {
-    const ParserOptions& options = dataFile.GetOptions();
+    const DslOptions& options = dataFile.GetOptions();
     m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();
   }
 
@@ -248,7 +249,7 @@ namespace Dsl
     Init();
   }
 
-  DslFile::DslFile(const ParserOptions& options) :m_Options(options), m_IsDebugInfoEnable(FALSE),
+  DslFile::DslFile(const DslOptions& options) :m_Options(options), m_IsDebugInfoEnable(FALSE),
     m_StringBuffer(NULL),
     m_UnusedStringPtr(NULL),
     m_SyntaxComponentPool(NULL),
@@ -266,6 +267,16 @@ namespace Dsl
   {
     Release();
     Init();
+  }
+
+  void DslFile::Parse(const char* buf)
+  {
+    Dsl::Parse(buf, *this);
+  }
+
+  void DslFile::Parse(IScriptSource& source)
+  {
+    Dsl::Parse(source, *this);
   }
 
   void DslFile::Init(void)
