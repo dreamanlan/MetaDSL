@@ -4,4 +4,6 @@ Release
 DslLib/obj
 CppDsl/Debug
 CppDsl/Release
-Dsl.v12.suo
+*.sdf
+*.suo
+*.user
