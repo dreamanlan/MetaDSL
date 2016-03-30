@@ -8,6 +8,8 @@ public:
   char* getLastToken(void) const{ return ""; }
   int getLastLineNumber(void) const{ return 0; }
   void setCanFinish(int val){}
+  void setStringDelimiter(const char* delimiter){}
+  void setScriptDelimiter(const char* delimiter){}
 public:
   TestRuntimeBuilder(DslFile& dataFile) :BaseType(dataFile)
   {}

@@ -341,7 +341,11 @@ namespace Dsl
   {
     const char* escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\";
     WriteIndent(fp, indent);
-    fprintf(fp, "\"%s\"", str);
+    if (strchr(str, '\n')) {
+      fprintf(fp, "\"\n%s\"", str);
+    } else {
+      fprintf(fp, "\"%s\"", str);
+    }
   }
   void WriteComponent(FILE* fp, ISyntaxComponent& component, int indent)
   {
@@ -479,9 +483,19 @@ namespace Dsl
     }
     if (HaveExternScript()){
       WriteIndent(fp, indent);
-      fwrite("{:\n", 3, 1, fp);
-      fwrite(m_ExternScript, strlen(m_ExternScript), 1, fp);
-      fwrite(":}", 2, 1, fp);
+      size_t len = strlen(m_ExternScript);
+      if (strchr(m_ExternScript, '\n')) {
+        fwrite("{:\n", 3, 1, fp);
+      } else {
+        fwrite("{:", 2, 1, fp);
+      }
+      fwrite(m_ExternScript, len, 1, fp);
+      if (len>0 && m_ExternScript[len - 1] == '\n'){
+        WriteIndent(fp, indent);
+        fwrite(":}", 2, 1, fp);
+      } else {
+        fwrite(":}", 2, 1, fp);
+      }
     }
 #endif
   }
@@ -495,7 +509,7 @@ namespace Dsl
       ISyntaxComponent* pcomp0 = func1->GetCall().GetParam(0);
       ISyntaxComponent* pcomp1 = func1->GetStatement(0);
       ISyntaxComponent* pcomp2 = func2->GetStatement(0);
-      if (NULL!=pcomp0 && NULL != pcomp1 && NULL != pcomp2){
+      if (NULL != pcomp0 && NULL != pcomp1 && NULL != pcomp2){
         WriteComponent(fp, *pcomp0, indent);
         fwrite(" ? ", 3, 1, fp);
         WriteComponent(fp, *pcomp1, 0);

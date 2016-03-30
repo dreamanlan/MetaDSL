@@ -13,6 +13,8 @@ public:
   inline char* getLastToken(void) const;
   inline int getLastLineNumber(void) const;
   inline void setCanFinish(int val);
+  inline void setStringDelimiter(const char* delimiter);
+  inline void setScriptDelimiter(const char* delimiter);
 public:
   ActionForSourceCodeScript(SlkToken &scanner, Dsl::DslFile& dataFile);
 public:
@@ -46,6 +48,18 @@ inline void ActionForSourceCodeScript::setCanFinish(int val)
 {
   if (NULL != mScanner) {
     mScanner->setCanFinish(val);
+  }
+}
+inline void ActionForSourceCodeScript::setStringDelimiter(const char* delimiter)
+{
+  if (NULL != mScanner){
+    mScanner->setStringDelimiter(delimiter);
+  }
+}
+inline void ActionForSourceCodeScript::setScriptDelimiter(const char* delimiter)
+{
+  if (NULL != mScanner){
+    mScanner->setScriptDelimiter(delimiter);
   }
 }
 //--------------------------------------------------------------------------------------

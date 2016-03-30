@@ -25,6 +25,11 @@ static inline int myisdigit(char c, int isHex)
   return ret;
 }
 
+static inline int myhavelinefeed(const char* str)
+{
+  return strchr(str, '\n') != 0 ? 1 : 0;
+}
+
 void SlkToken::getOperatorToken(void)
 {
   switch (*mIterator) {
@@ -329,9 +334,11 @@ short SlkToken::get(void)
         tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish！", line);
     }
     endToken();
+    if (myhavelinefeed(mCurToken)){
+      removeFirstAndLastEmptyLine();
+    }
     return SCRIPT_CONTENT_;
-  } else if (isOperator(*mIterator))//操作符
-  {
+  } else if (isOperator(*mIterator)) {//操作符
     getOperatorToken();
     return getOperatorTokenValue();
   } else if (*mIterator == '.' && 0 == myisdigit(*(mIterator + 1), FALSE)) {
@@ -341,8 +348,7 @@ short SlkToken::get(void)
     pushTokenChar(c);
     endToken();
     return DOT_;
-  } else if (isDelimiter(*mIterator))//分隔符
-  {
+  } else if (isDelimiter(*mIterator)) {//分隔符
     char c = *mIterator;
     ++mIterator;
 
@@ -369,10 +375,8 @@ short SlkToken::get(void)
     default:
       return END_OF_SLK_INPUT_;
     }
-  } else//关键字、标识符或常数
-  {
-    if (*mIterator == '"' || *mIterator == '\'')//引号括起来的名称或关键字
-    {
+  } else {//关键字、标识符或常数
+    if (*mIterator == '"' || *mIterator == '\'') {//引号括起来的名称或关键字
       int line = mLineNumber;
       char c = *mIterator;
       for (++mIterator; *mIterator != '\0' && *mIterator != c;) {
@@ -405,6 +409,9 @@ short SlkToken::get(void)
           tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
       }
       endToken();
+      if (myhavelinefeed(mCurToken)){
+        removeFirstAndLastEmptyLine();
+      }
       return STRING_;
     } else {
       int isNum = TRUE;
@@ -440,10 +447,14 @@ short SlkToken::get(void)
         pushTokenChar(*mIterator);
       }
       endToken();
-      if (isNum)
+      if (isNum) {
         return NUMBER_;
-      else
+      } else {
+        int token = handleStringOrScriptDelimiter();
+        if (token)
+          return token;
         return IDENTIFIER_;
+      }
     }
   }
 }
@@ -455,6 +466,67 @@ short SlkToken::peek(int level)
   printf("peek_token is not called in an LL(1) grammar\n");
 
   return  token;
+}
+
+void SlkToken::setStringDelimiter(const char* delimiter)
+{
+  tsnprintf(mStringDelimiter, c_MaxDelimiterSize, "%s", delimiter);
+}
+
+void SlkToken::setScriptDelimiter(const char* delimiter)
+{
+  tsnprintf(mScriptDelimiter, c_MaxDelimiterSize, "%s", delimiter);
+}
+
+int SlkToken::handleStringOrScriptDelimiter(void)
+{
+  if (strcmp(mCurToken, mStringDelimiter) == 0){
+    getBlockString(mStringDelimiter);
+    return STRING_;
+  }
+  if (strcmp(mCurToken, mScriptDelimiter) == 0){
+    getBlockString(mScriptDelimiter);
+    return SCRIPT_CONTENT_;
+  }
+  return 0;
+}
+
+void SlkToken::getBlockString(const char* delimiter)
+{
+  newToken();
+  const char* pLeft = mIterator.GetLeft();
+  const char* pFind = strstr(pLeft, delimiter);
+  if (!pFind) {
+    char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+    if (pInfo)
+      tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:Block can't finish, delimiter: %s！", mLineNumber, delimiter);
+    endToken();
+    return;
+  }
+  int len = (int)strlen(delimiter);
+  const char* p = pLeft;
+  while (p != pFind){
+    pushTokenChar(*p++);
+    ++mIterator;
+  }
+  endToken();
+  mIterator = mIterator + len;
+  return removeFirstAndLastEmptyLine();
+}
+
+void SlkToken::removeFirstAndLastEmptyLine(void)
+{
+  int len = (int)strlen(mCurToken);
+  int start = 0;
+  while (start < len && isWhiteSpace(mCurToken[start]) && mCurToken[start] != '\n')
+    ++start;
+  if (mCurToken[start] == '\n')
+    ++start;
+  int end = len - 1;
+  while (end > 0 && isWhiteSpace(mCurToken[end]) && mCurToken[end] != '\n') {
+    mCurToken[end--] = 0;
+  }
+  mCurToken = &(mCurToken[start]);
 }
 
 void SlkToken::newToken(void)
@@ -509,11 +581,12 @@ SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorA
 
   mLineNumber = 1;
   mLastLineNumber = 1;
-  mIsExternScript = FALSE;
 
   mCurToken = 0;
   mLastToken = 0;
   mTokenCharIndex = 0;
 
   setCanFinish(FALSE);
+  setStringDelimiter("");
+  setScriptDelimiter("");
 }

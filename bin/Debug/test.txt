@@ -1,6 +1,20 @@
+delimiter(string,STRING);
+delimiter(script,SCRIPT);
 skill(kkk)
 {
 	section(80)
-{
-};
+	{
+		ok(
+    STRING
+		yyyy yyyy yyyy
+		STRING
+    );
+	};
+	script(sss)
+	SCRIPT
+		ok, this is a test, "yeah!!!";
+	SCRIPT;
+  script(ttt)
+  {:
+  :};
 };

@@ -2,6 +2,15 @@ skill(kkk)
 {
 	section(80)
 	{
+		ok("
+		yyyy yyyy yyyy
+");
 	};
-};
+	script(sss)
+	{:
+		ok, this is a test, "yeah!!!";
+	:};
+}
+script(ttt)
+{::};
 

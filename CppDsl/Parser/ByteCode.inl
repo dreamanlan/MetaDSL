@@ -137,6 +137,29 @@ namespace Dsl
     Statement* statement = mData.popStatement();
     if (0 == statement)
       return;
+    if (strcmp(statement->GetId(), "delimiter") == 0 && statement->GetFunctionNum() == 1 && statement->GetLastFunctionRef()->GetCall().GetParamNum() >= 1 && statement->GetLastFunctionRef()->GetCall().GetParamNum() <= 2 && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
+      const Call& call = statement->GetLastFunctionRef()->GetCall();
+      const char* type = call.GetParam(0)->GetId();
+      if (call.GetParamNum() == 2) {
+        const char* delimiter = call.GetParam(1)->GetId();
+        if (strcmp(type, "string") == 0) {
+          mThis->setStringDelimiter(delimiter);
+        } else if (strcmp(type, "script") == 0) {
+          mThis->setScriptDelimiter(delimiter);
+        } else {
+          //invalid
+        }
+      } else {
+        if (strcmp(type, "string") == 0) {
+          mThis->setStringDelimiter("");
+        } else if (strcmp(type, "script") == 0) {
+          mThis->setScriptDelimiter("");
+        } else {
+          //invalid
+        }
+      }
+      return;
+    }
     if (mData.isSemanticStackEmpty()) {
       simplifyStatementData(*statement);
       if (!statement->IsValid()) {
@@ -380,7 +403,7 @@ namespace Dsl
       ISyntaxComponent& temp = *data.GetParam(0);
       if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
         Value& val = dynamic_cast<Value&>(temp);
-        int size = strlen(val.GetId()) + 1;
+        int size = (int)strlen(val.GetId()) + 1;
         char* pBuf = mDataFile->AllocString(size);
         tsnprintf(pBuf, size + 1, "-%s", val.GetId());
         val.SetInt(pBuf);
@@ -393,7 +416,7 @@ namespace Dsl
       ISyntaxComponent& temp = *data.GetParam(0);
       if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
         Value& val = dynamic_cast<Value&>(temp);
-        int size = strlen(val.GetId()) + 1;
+        int size = (int)strlen(val.GetId()) + 1;
         char* pBuf = mDataFile->AllocString(size);
         tsnprintf(pBuf, size + 1, "+%s", val.GetId());
         val.SetInt(pBuf);

@@ -35,6 +35,8 @@ public:
   {
     mCanFinish = val;
   }
+  void setStringDelimiter(const char* delimiter);
+  void setScriptDelimiter(const char* delimiter);
 private:
   void getOperatorToken(void);
   short getOperatorTokenValue(void)const;
@@ -46,6 +48,9 @@ private:
   int isDelimiter(char c) const;
   int isOperator(char c) const;
 private:
+  int handleStringOrScriptDelimiter(void);
+  void getBlockString(const char* delimiter);
+  void removeFirstAndLastEmptyLine(void);
   void newToken(void);
   void pushTokenChar(char c);
   void endToken(void);
@@ -64,12 +69,15 @@ private:
 
   int mLineNumber;
   int mLastLineNumber;
-  int mIsExternScript;
   int mCanFinish;
 
   const char* mWhiteSpaces;
   const char* mDelimiters;
   const char* mOperators;
+  
+  static const int c_MaxDelimiterSize = 1024;
+  char mScriptDelimiter[c_MaxDelimiterSize + 1];
+  char mStringDelimiter[c_MaxDelimiterSize + 1];
 };
 
 #endif
