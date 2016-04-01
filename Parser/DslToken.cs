@@ -134,9 +134,9 @@ namespace Dsl.Parser
                 if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
                     int line = mLineNumber;
                     char c = CurChar;
-                    for (++mIterator; CurChar != 0 && (CurChar != c || NextChar == c); ++mIterator) {
+                    for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
                         if (CurChar == '\n') ++mLineNumber;
-                        if (CurChar == '\\' || CurChar == c) {
+                        if (CurChar == '\\') {
                             mTokenBuilder.Append(CurChar);
                             ++mIterator;
                             if (CurChar == 0)
