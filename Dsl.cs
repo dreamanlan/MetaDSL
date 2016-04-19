@@ -825,7 +825,7 @@ namespace Dsl
         {
 #if FULL_VERSION
             string content = File.ReadAllText(file);
-            logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
+            //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
             return LoadFromString(content, file, logCallback);
 #else
       return false;
