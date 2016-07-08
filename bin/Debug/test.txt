@@ -1,19 +1,19 @@
-delimiter(string,STRING);
-delimiter(script,SCRIPT);
+@@delimiter(string,BEGIN_STRING,END_STRING);
+@@delimiter(script,BEGIN_SCRIPT,END_SCRIPT);
 skill(kkk)
 {
 	section(80)
 	{
 		ok(
-    STRING
+    BEGIN_STRING
 		yyyy yyyy yyyy
-		STRING
+		END_STRING
     );
 	};
 	script(sss)
-	SCRIPT
+	BEGIN_SCRIPT
 		ok, this is a test, "yeah!!!";
-	SCRIPT;
+	END_SCRIPT;
   script(ttt)
   {:
   :};

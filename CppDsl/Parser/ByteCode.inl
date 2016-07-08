@@ -137,23 +137,24 @@ namespace Dsl
     Statement* statement = mData.popStatement();
     if (0 == statement)
       return;
-    if (strcmp(statement->GetId(), "delimiter") == 0 && statement->GetFunctionNum() == 1 && statement->GetLastFunctionRef()->GetCall().GetParamNum() >= 1 && statement->GetLastFunctionRef()->GetCall().GetParamNum() <= 2 && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
+    if (strcmp(statement->GetId(), "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && (statement->GetLastFunctionRef()->GetCall().GetParamNum() == 1 || statement->GetLastFunctionRef()->GetCall().GetParamNum() == 3) && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
       const Call& call = statement->GetLastFunctionRef()->GetCall();
       const char* type = call.GetParam(0)->GetId();
-      if (call.GetParamNum() == 2) {
-        const char* delimiter = call.GetParam(1)->GetId();
+      if (call.GetParamNum() == 3) {
+        const char* begin = call.GetParam(1)->GetId();
+        const char* end = call.GetParam(2)->GetId();
         if (strcmp(type, "string") == 0) {
-          mThis->setStringDelimiter(delimiter);
+          mThis->setStringDelimiter(begin, end);
         } else if (strcmp(type, "script") == 0) {
-          mThis->setScriptDelimiter(delimiter);
+          mThis->setScriptDelimiter(begin, end);
         } else {
           //invalid
         }
       } else {
         if (strcmp(type, "string") == 0) {
-          mThis->setStringDelimiter("");
+          mThis->setStringDelimiter("", "");
         } else if (strcmp(type, "script") == 0) {
-          mThis->setScriptDelimiter("");
+          mThis->setScriptDelimiter("", "");
         } else {
           //invalid
         }

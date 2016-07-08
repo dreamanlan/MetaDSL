@@ -11,7 +11,7 @@ namespace Dsl.Parser
     }
     delegate string GetLastTokenDelegation();
     delegate int GetLastLineNumberDelegation();
-    delegate void SetDelimiterDelegation(string delimiter);
+    delegate void SetDelimiterDelegation(string begin, string end);
     class RuntimeAction : DslAction
     {
         class SemanticInfo
@@ -170,23 +170,24 @@ namespace Dsl.Parser
         internal void endStatement()
         {
             StatementData statement = popStatement();
-            if (statement.GetId() == "delimiter" && statement.Functions.Count == 1 && statement.First.Call.GetParamNum() >= 1 && statement.First.Call.GetParamNum() <= 2 && !statement.First.Call.IsHighOrder) {
+            if (statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.Call.GetParamNum() == 1 || statement.First.Call.GetParamNum() == 3) && !statement.First.Call.IsHighOrder) {
                 CallData call = statement.First.Call;
                 string type = call.GetParamId(0);
-                if (call.GetParamNum() == 2) {
-                    string delimiter = call.GetParamId(1);
+                if (call.GetParamNum() == 3) {
+                    string begin = call.GetParamId(1);
+                    string end = call.GetParamId(2);
                     if (type == "string") {
-                        setStringDelimiter(delimiter);
+                        setStringDelimiter(begin, end);
                     } else if(type=="script") {
-                        setScriptDelimiter(delimiter);
+                        setScriptDelimiter(begin, end);
                     } else {
                         //invalid
                     }
                 } else {
                     if (type == "string") {
-                        setStringDelimiter(string.Empty);
+                        setStringDelimiter(string.Empty, string.Empty);
                     } else if (type == "script") {
-                        setScriptDelimiter(string.Empty);
+                        setScriptDelimiter(string.Empty, string.Empty);
                     } else {
                         //invalid
                     }
@@ -533,16 +534,16 @@ namespace Dsl.Parser
             else
                 return -1;
         }
-        private void setStringDelimiter(string delimiter)
+        private void setStringDelimiter(string begin, string end)
         {
             if (null != mSetStringDelimiter) {
-                mSetStringDelimiter(delimiter);
+                mSetStringDelimiter(begin, end);
             }
         }
-        private void setScriptDelimiter(string delimiter)
+        private void setScriptDelimiter(string begin, string end)
         {
             if (null != mSetScriptDelimiter) {
-                mSetScriptDelimiter(delimiter);
+                mSetScriptDelimiter(begin, end);
             }
         }
 

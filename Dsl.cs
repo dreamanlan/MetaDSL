@@ -842,8 +842,8 @@ namespace Dsl
             Parser.RuntimeAction action = new Parser.RuntimeAction(mDslInfos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
-            action.onSetStringDelimiter = (string delimiter) => { tokens.setStringDelimiter(delimiter); };
-            action.onSetScriptDelimiter = (string delimiter) => { tokens.setScriptDelimiter(delimiter); };
+            action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
+            action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
 
             Parser.DslParser.parse(action, tokens, error, 0);
             if (error.HasError) {
@@ -886,8 +886,8 @@ namespace Dsl
             Parser.RuntimeAction action = new Parser.RuntimeAction(infos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
-            action.onSetStringDelimiter = (string delimiter) => { tokens.setStringDelimiter(delimiter); };
-            action.onSetScriptDelimiter = (string delimiter) => { tokens.setScriptDelimiter(delimiter); };
+            action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
+            action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
             Parser.DslParser.parse(action, tokens, error, 0);
             if (error.HasError) {
                 return string.Empty;

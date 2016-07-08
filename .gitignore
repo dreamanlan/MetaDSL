@@ -7,3 +7,4 @@ CppDsl/Release
 *.sdf
 *.suo
 *.user
+*.opensdf

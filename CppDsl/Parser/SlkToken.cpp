@@ -468,24 +468,26 @@ short SlkToken::peek(int level)
   return  token;
 }
 
-void SlkToken::setStringDelimiter(const char* delimiter)
+void SlkToken::setStringDelimiter(const char* begin, const char* end)
 {
-  tsnprintf(mStringDelimiter, c_MaxDelimiterSize, "%s", delimiter);
+    tsnprintf(mStringBeginDelimiter, c_MaxDelimiterSize, "%s", begin);
+    tsnprintf(mStringEndDelimiter, c_MaxDelimiterSize, "%s", end);
 }
 
-void SlkToken::setScriptDelimiter(const char* delimiter)
+void SlkToken::setScriptDelimiter(const char* begin, const char* end)
 {
-  tsnprintf(mScriptDelimiter, c_MaxDelimiterSize, "%s", delimiter);
+    tsnprintf(mScriptBeginDelimiter, c_MaxDelimiterSize, "%s", begin);
+    tsnprintf(mScriptEndDelimiter, c_MaxDelimiterSize, "%s", end);
 }
 
 int SlkToken::handleStringOrScriptDelimiter(void)
 {
-  if (strcmp(mCurToken, mStringDelimiter) == 0){
-    getBlockString(mStringDelimiter);
+  if (strcmp(mCurToken, mStringBeginDelimiter) == 0){
+    getBlockString(mStringEndDelimiter);
     return STRING_;
   }
-  if (strcmp(mCurToken, mScriptDelimiter) == 0){
-    getBlockString(mScriptDelimiter);
+  if (strcmp(mCurToken, mScriptBeginDelimiter) == 0){
+    getBlockString(mScriptEndDelimiter);
     return SCRIPT_CONTENT_;
   }
   return 0;
@@ -587,6 +589,6 @@ SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorA
   mTokenCharIndex = 0;
 
   setCanFinish(FALSE);
-  setStringDelimiter("");
-  setScriptDelimiter("");
+  setStringDelimiter("", "");
+  setScriptDelimiter("", "");
 }

@@ -188,12 +188,12 @@ namespace Dsl.Parser
                     if (isNum) {
                         return DslConstants.NUMBER_;
                     } else {
-                        if (mCurToken == StringDelimiter && !string.IsNullOrEmpty(StringDelimiter)) {
-                            mCurToken = getBlockString(StringDelimiter);
+                        if (mCurToken == StringBeginDelimiter && !string.IsNullOrEmpty(StringBeginDelimiter) && !string.IsNullOrEmpty(StringEndDelimiter)) {
+                            mCurToken = getBlockString(StringEndDelimiter);
                             return DslConstants.STRING_;
                         }
-                        if (mCurToken == ScriptDelimiter && !string.IsNullOrEmpty(ScriptDelimiter)) {
-                            mCurToken = getBlockString(ScriptDelimiter);
+                        if (mCurToken == ScriptBeginDelimiter && !string.IsNullOrEmpty(ScriptBeginDelimiter) && !string.IsNullOrEmpty(ScriptEndDelimiter)) {
+                            mCurToken = getBlockString(ScriptEndDelimiter);
                             return DslConstants.SCRIPT_CONTENT_;
                         }
                         short ret;
@@ -229,13 +229,15 @@ namespace Dsl.Parser
         {
             return mLastLineNumber;
         }
-        internal void setStringDelimiter(string delimiter)
+        internal void setStringDelimiter(string begin, string end)
         {
-            mStringDelimiter = delimiter;
+            mStringBeginDelimiter = begin;
+            mStringEndDelimiter = end;
         }
-        internal void setScriptDelimiter(string delimiter)
+        internal void setScriptDelimiter(string begin, string end)
         {
-            mScriptDelimiter = delimiter;
+            mScriptBeginDelimiter = begin;
+            mScriptEndDelimiter = end;
         }
         
         private string getBlockString(string delimiter)
@@ -453,13 +455,21 @@ namespace Dsl.Parser
                 return c;
             }
         }
-        private string StringDelimiter
+        private string StringBeginDelimiter
         {
-            get { return mStringDelimiter; }
+            get { return mStringBeginDelimiter; }
         }
-        private string ScriptDelimiter
+        private string StringEndDelimiter
         {
-            get { return mScriptDelimiter; }
+            get { return mStringEndDelimiter; }
+        }
+        private string ScriptBeginDelimiter
+        {
+            get { return mScriptBeginDelimiter; }
+        }
+        private string ScriptEndDelimiter
+        {
+            get { return mScriptEndDelimiter; }
         }
 
         private static bool myisdigit(char c, bool isHex)
@@ -494,8 +504,10 @@ namespace Dsl.Parser
         private Dictionary<string, short> mKeywords = new Dictionary<string, short>();
         private StringBuilder mTokenBuilder = new StringBuilder();
 
-        private string mStringDelimiter = string.Empty;
-        private string mScriptDelimiter = string.Empty;
+        private string mStringBeginDelimiter = string.Empty;
+        private string mStringEndDelimiter = string.Empty;
+        private string mScriptBeginDelimiter = string.Empty;
+        private string mScriptEndDelimiter = string.Empty;
     }
 #endif
 }
