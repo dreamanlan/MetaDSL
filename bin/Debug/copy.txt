@@ -1,11 +1,18 @@
 skill(kkk)
 {
-	section(80)
+	section(80)//fdafds
 	{
-		ok("
+		#fdafdsa
+//fdfdasfdsa;
+ok("
 		yyyy yyyy yyyy
 ");
+		#fdafdsa
+a/*123*/ "+" /*345*/b "*" c;
+		//animation(abc);
+test(123,/*fda*/345,678/*7888*/)//fdasfdas;
 	};
+	//fdafdas
 	script(sss)
 	{:
 		ok, this is a test, "yeah!!!";

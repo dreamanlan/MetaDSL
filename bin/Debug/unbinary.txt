@@ -5,6 +5,8 @@ skill(kkk)
 		ok("
 		yyyy yyyy yyyy
 ");
+		a "+" b "*" c;
+		test(123,345,678);
 	};
 	script(sss)
 	{:

@@ -7,6 +7,9 @@ class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 public:
   char* getLastToken(void) const{ return ""; }
   int getLastLineNumber(void) const{ return 0; }
+  int getCommentNum(int& commentOnNewLine) const { return 0; }
+  char* getComment(int index) const { return ""; }
+  void resetComments(void) {}
   void setCanFinish(int val){}
   void setStringDelimiter(const char* begin, const char* end){}
   void setScriptDelimiter(const char* begin, const char* end){}

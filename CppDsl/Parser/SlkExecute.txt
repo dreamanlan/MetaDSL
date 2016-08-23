@@ -3,6 +3,7 @@
 
 private:
 void    endStatement ( void );
+void    markOperator ( void );
 void    pushId ( void );
 void    buildOperator ( void );
 void    buildFirstTernaryOperator ( void );
@@ -17,6 +18,7 @@ void    setExternScript ( void );
 void    markParenthesisParam ( void );
 void    buildHighOrderFunction ( void );
 void    markBracketParam ( void );
+void    markPeriod ( void );
 void    markPeriodParam ( void );
 void    setMemberId ( void );
 void    markPeriodParenthesisParam ( void );
@@ -30,26 +32,28 @@ void execute ( slk_size_t  number )
 {
   switch ( number ) {
     case 1:  endStatement();  break;
-    case 2:  pushId();  break;
-    case 3:  buildOperator();  break;
-    case 4:  buildFirstTernaryOperator();  break;
-    case 5:  buildSecondTernaryOperator();  break;
-    case 6:  beginStatement();  break;
-    case 7:  beginFunction();  break;
-    case 8:  endFunction();  break;
-    case 9:  setFunctionId();  break;
-    case 10:  markHaveStatement();  break;
-    case 11:  markHaveExternScript();  break;
-    case 12:  setExternScript();  break;
-    case 13:  markParenthesisParam();  break;
-    case 14:  buildHighOrderFunction();  break;
-    case 15:  markBracketParam();  break;
-    case 16:  markPeriodParam();  break;
-    case 17:  setMemberId();  break;
-    case 18:  markPeriodParenthesisParam();  break;
-    case 19:  markPeriodBracketParam();  break;
-    case 20:  markPeriodBraceParam();  break;
-    case 21:  pushStr();  break;
-    case 22:  pushNum();  break;
+    case 2:  markOperator();  break;
+    case 3:  pushId();  break;
+    case 4:  buildOperator();  break;
+    case 5:  buildFirstTernaryOperator();  break;
+    case 6:  buildSecondTernaryOperator();  break;
+    case 7:  beginStatement();  break;
+    case 8:  beginFunction();  break;
+    case 9:  endFunction();  break;
+    case 10:  setFunctionId();  break;
+    case 11:  markHaveStatement();  break;
+    case 12:  markHaveExternScript();  break;
+    case 13:  setExternScript();  break;
+    case 14:  markParenthesisParam();  break;
+    case 15:  buildHighOrderFunction();  break;
+    case 16:  markBracketParam();  break;
+    case 17:  markPeriod();  break;
+    case 18:  markPeriodParam();  break;
+    case 19:  setMemberId();  break;
+    case 20:  markPeriodParenthesisParam();  break;
+    case 21:  markPeriodBracketParam();  break;
+    case 22:  markPeriodBraceParam();  break;
+    case 23:  pushStr();  break;
+    case 24:  pushNum();  break;
   }
 }

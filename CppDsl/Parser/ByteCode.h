@@ -23,6 +23,7 @@ namespace Dsl
   public:
     inline void    beginStatement(void);
     inline void    endStatement(void);
+    inline void    markOperator(void);
     inline void    buildOperator(void);
     inline void    buildFirstTernaryOperator(void);
     inline void    buildSecondTernaryOperator(void);
@@ -35,6 +36,7 @@ namespace Dsl
     inline void    buildHighOrderFunction(void);
     inline void    markParenthesisParam(void);
     inline void    markBracketParam(void);
+    inline void    markPeriod(void);
     inline void    markPeriodParam(void);
     inline void    setMemberId(void);
     inline void    markPeriodParenthesisParam(void);
@@ -52,8 +54,8 @@ namespace Dsl
       return NULL != mThis && NULL != mDataFile;
     }
   protected:
-    RuntimeBuilderData		mData;
-    DslFile*		mDataFile;
+    RuntimeBuilderData		        mData;
+    DslFile*		                mDataFile;
     RealTypeT*						mThis;
   };
 }

@@ -2,14 +2,19 @@
 @@delimiter(script,BEGIN_SCRIPT,END_SCRIPT);
 skill(kkk)
 {
-	section(80)
+	section(80)//fdafds
 	{
+		#fdafdsa
+		//fdfdasfdsa;
 		ok(
     BEGIN_STRING
 		yyyy yyyy yyyy
 		END_STRING
-    );
-	};
+    );		#fdafdsa
+    a/*123*/+/*345*/b*c;
+    //animation(abc);
+    test(123,/*fda*/345,678/*7888*/);	//fdasfdas
+	};	//fdafdas
 	script(sss)
 	BEGIN_SCRIPT
 		ok, this is a test, "yeah!!!";

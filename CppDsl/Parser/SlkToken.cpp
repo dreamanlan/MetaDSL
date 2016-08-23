@@ -236,15 +236,16 @@ short SlkToken::get(void)
   if (NULL == mSource || NULL == mErrorAndStringBuffer) {
     return END_OF_SLK_INPUT_;
   }
-  newToken();
 
   for (;;) {
     if (*mIterator == '\0') {
       if (isCanFinish()) {
+        newToken();
         endTokenWithEof();
         return END_OF_SLK_INPUT_;
       } else {
         if (!mIterator.Load()) {
+          newToken();
           endTokenWithEof();
           return END_OF_SLK_INPUT_;
         }
@@ -256,35 +257,60 @@ short SlkToken::get(void)
     for (; isSkip && *mIterator != '\0';) {
       isSkip = FALSE;
       for (; isWhiteSpace(*mIterator); ++mIterator) {
-        if (*mIterator == '\n')++mLineNumber;
+        if (*mIterator == '\n') {
+          ++mLineNumber;
+          if (mCommentNum > 0) {
+            mCommentOnNewLine = TRUE;
+          }
+        }
         isSkip = TRUE;
       }
       //#引导的单行注释
       if (*mIterator == '#') {
-        for (; *mIterator != '\0' && *mIterator != '\n'; ++mIterator);
+        newComment();
+        for (; *mIterator != '\0' && *mIterator != '\n'; ++mIterator) {
+          if (*mIterator != '\r')
+            pushCommentChar(*mIterator);
+        }
+        endComment();
         isSkip = TRUE;
       }
       //C++风格的单行注释与多行注释
       if (*mIterator == '/' && (*(mIterator + 1) == '/' || *(mIterator + 1) == '*')) {
+        newComment();
+        pushCommentChar(*mIterator);
         ++mIterator;
         if (*mIterator == '/') {
+          pushCommentChar(*mIterator);
           ++mIterator;
-          for (; *mIterator != '\0' && *mIterator != '\n'; ++mIterator);
+          for (; *mIterator != '\0' && *mIterator != '\n'; ++mIterator) {
+            if (*mIterator != '\r')
+              pushCommentChar(*mIterator);
+          }
           isSkip = TRUE;
         } else if (*mIterator == '*') {
+          pushCommentChar(*mIterator);
           ++mIterator;
           for (;;) {
             if (*mIterator != '\0') {
-              if (*mIterator == '\n')++mLineNumber;
-              if (*mIterator == '*' && *(mIterator + 1) == '/') {
+              if (*mIterator == '\n') {
+                pushCommentChar(*mIterator);
+                ++mLineNumber;
+              } else if (*mIterator == '*' && *(mIterator + 1) == '/') {
+                pushCommentChar(*mIterator);
                 ++mIterator;
+                pushCommentChar(*mIterator);
                 ++mIterator;
                 break;
+              } else if (*mIterator != '\r') {
+                pushCommentChar(*mIterator);
               }
             } else {
               if (mIterator.Load()) {
                 continue;
               } else {
+                endComment();
+                newToken();
                 endTokenWithEof();
                 return END_OF_SLK_INPUT_;
               }
@@ -293,12 +319,14 @@ short SlkToken::get(void)
           }
           isSkip = TRUE;
         }
+        endComment();
       }
     }
     if (*mIterator != '\0')
       break;
   }
 
+  newToken();
   if (isCanFinish())
     setCanFinish(FALSE);
 
@@ -508,6 +536,8 @@ void SlkToken::getBlockString(const char* delimiter)
   int len = (int)strlen(delimiter);
   const char* p = pLeft;
   while (p != pFind){
+    if (*p == '\n')
+      ++mLineNumber;
     pushTokenChar(*p++);
     ++mIterator;
   }
@@ -529,6 +559,36 @@ void SlkToken::removeFirstAndLastEmptyLine(void)
     mCurToken[end--] = 0;
   }
   mCurToken = &(mCurToken[start]);
+}
+
+void SlkToken::newComment(void)
+{
+  if (mErrorAndStringBuffer) {
+    mCurComment = mErrorAndStringBuffer->GetUnusedStringPtrRef();
+
+    mCommentCharIndex = 0;
+    if (mCurComment) {
+      mCurComment[mCommentCharIndex] = '\0';
+    }
+  }
+}
+
+void SlkToken::pushCommentChar(char c)
+{
+  if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurComment)
+    return;
+  mCurComment[mCommentCharIndex] = c;
+  ++mCommentCharIndex;
+}
+
+void SlkToken::endComment(void)
+{
+  if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurComment || NULL == mErrorAndStringBuffer->GetUnusedStringPtrRef())
+    return;
+  mCurComment[mCommentCharIndex] = '\0';
+  mErrorAndStringBuffer->GetUnusedStringPtrRef() += mCommentCharIndex + 1;
+
+  mComments[mCommentNum++] = mCurComment;
 }
 
 void SlkToken::newToken(void)
@@ -587,6 +647,11 @@ SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorA
   mCurToken = 0;
   mLastToken = 0;
   mTokenCharIndex = 0;
+
+  mCurComment = 0;
+  mCommentCharIndex = 0;
+  mCommentNum = 0;
+  mCommentOnNewLine = FALSE;
 
   setCanFinish(FALSE);
   setStringDelimiter("", "");

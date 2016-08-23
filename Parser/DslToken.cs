@@ -30,29 +30,55 @@ namespace Dsl.Parser
             for (; isSkip && CurChar != 0; ) {
                 isSkip = false;
                 for (; CurChar != 0 && mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
-                    if (CurChar == '\n') ++mLineNumber;
+                    if (CurChar == '\n') {
+                        ++mLineNumber;
+                        if (mComments.Length > 0) {
+                            mCommentOnNewLine = true;
+                        }
+                    }
                     isSkip = true;
                 }
                 //#引导的单行注释
                 if (CurChar != 0 && CurChar == '#') {
-                    for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
+                    if (mComments.Length > 0) {
+                        mComments.AppendLine();
+                    }
+                    for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
+                        if (CurChar != '\r')
+                            mComments.Append(CurChar);
+                    }
                     isSkip = true;
                 }
                 //C++风格的单行注释与多行注释
                 if (CurChar != 0 && CurChar == '/' && (NextChar == '/' || NextChar == '*')) {
+                    if (mComments.Length > 0) {
+                        mComments.AppendLine();
+                    }
+                    mComments.Append(CurChar);
                     ++mIterator;
                     if (CurChar != 0 && CurChar == '/') {
+                        mComments.Append(CurChar);
                         ++mIterator;
-                        for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
+                        for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
+                            if (CurChar != '\r')
+                                mComments.Append(CurChar);
+                        }
                         isSkip = true;
                     } else if (CurChar != 0 && CurChar == '*') {
+                        mComments.Append(CurChar);
                         ++mIterator;
                         for (; CurChar != 0; ++mIterator) {
-                            if (CurChar == '\n') ++mLineNumber;
-                            if (CurChar == '*' && NextChar == '/') {
+                            if (CurChar == '\n') {
+                                mComments.AppendLine();
+                                ++mLineNumber;
+                            } else if (CurChar == '*' && NextChar == '/') {
+                                mComments.Append(CurChar);
+                                mComments.Append(NextChar);
                                 ++mIterator;
                                 ++mIterator;
                                 break;
+                            } else if (CurChar != '\r') {
+                                mComments.Append(CurChar);
                             }
                         }
                         isSkip = true;
@@ -229,6 +255,19 @@ namespace Dsl.Parser
         {
             return mLastLineNumber;
         }
+        internal bool IsCommentOnNewLine()
+        {
+            return mCommentOnNewLine;
+        }
+        internal string GetComment()
+        {
+            return mComments.ToString();
+        }
+        internal void ResetComment()
+        {
+            mCommentOnNewLine = false;
+            mComments.Length = 0;
+        }
         internal void setStringDelimiter(string begin, string end)
         {
             mStringBeginDelimiter = begin;
@@ -249,6 +288,11 @@ namespace Dsl.Parser
                 return string.Empty;
             }
             mIterator = end + delimiter.Length;
+            int lineStart = mInput.IndexOf('\n', start, end - start);
+            while (lineStart >= 0) {
+                ++mLineNumber;
+                lineStart = mInput.IndexOf('\n', lineStart + 1, end - lineStart - 1);
+            }
             return removeFirstAndLastEmptyLine(mInput.Substring(start, end - start));
         }
         private string removeFirstAndLastEmptyLine(string str)
@@ -497,6 +541,9 @@ namespace Dsl.Parser
 
         private int mLineNumber;
         private int mLastLineNumber;
+
+        private StringBuilder mComments = new StringBuilder();
+        private bool mCommentOnNewLine;
 
         private const string mWhiteSpaces = " \t\r\n";
         private const string mDelimiters = "{}()[],;";

@@ -3,7 +3,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	23
+#define MAX_ACTION_NUM	25
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < ActionForSourceCodeScript >
@@ -12,6 +12,9 @@ class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < Act
 public:
   inline char* getLastToken(void) const;
   inline int getLastLineNumber(void) const;
+  inline int getCommentNum(int& commentOnNewLine) const;
+  inline char* getComment(int index) const;
+  inline void resetComments(void);
   inline void setCanFinish(int val);
   inline void setStringDelimiter(const char* begin, const char* end);
   inline void setScriptDelimiter(const char* begin, const char* end);
@@ -42,6 +45,29 @@ inline int ActionForSourceCodeScript::getLastLineNumber(void) const
     return mScanner->getLastLineNumber();
   } else {
     return -1;
+  }
+}
+inline int ActionForSourceCodeScript::getCommentNum(int& commentOnNewLine) const
+{
+  if (NULL != mScanner) {
+    return mScanner->getCommentNum(commentOnNewLine);
+  } else {
+    commentOnNewLine = FALSE;
+    return 0;
+  }
+}
+inline char* ActionForSourceCodeScript::getComment(int index) const
+{
+  if (NULL != mScanner) {
+    return mScanner->getComment(index);
+  } else {
+    return NULL;
+  }
+}
+inline void ActionForSourceCodeScript::resetComments(void)
+{
+  if (NULL != mScanner) {
+    mScanner->resetComments();
   }
 }
 inline void ActionForSourceCodeScript::setCanFinish(int val)
@@ -96,27 +122,29 @@ inline void ActionForSourceCodeScript::initialize_table(void)
 {
   Action[0] = 0;
   Action[1] = &ActionForSourceCodeScript::endStatement;
-  Action[2] = &ActionForSourceCodeScript::pushId;
-  Action[3] = &ActionForSourceCodeScript::buildOperator;
-  Action[4] = &ActionForSourceCodeScript::buildFirstTernaryOperator;
-  Action[5] = &ActionForSourceCodeScript::buildSecondTernaryOperator;
-  Action[6] = &ActionForSourceCodeScript::beginStatement;
-  Action[7] = &ActionForSourceCodeScript::beginFunction;
-  Action[8] = &ActionForSourceCodeScript::endFunction;
-  Action[9] = &ActionForSourceCodeScript::setFunctionId;
-  Action[10] = &ActionForSourceCodeScript::markHaveStatement;
-  Action[11] = &ActionForSourceCodeScript::markHaveExternScript;
-  Action[12] = &ActionForSourceCodeScript::setExternScript;
-  Action[13] = &ActionForSourceCodeScript::markParenthesisParam;
-  Action[14] = &ActionForSourceCodeScript::buildHighOrderFunction;
-  Action[15] = &ActionForSourceCodeScript::markBracketParam;
-  Action[16] = &ActionForSourceCodeScript::markPeriodParam;
-  Action[17] = &ActionForSourceCodeScript::setMemberId;
-  Action[18] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
-  Action[19] = &ActionForSourceCodeScript::markPeriodBracketParam;
-  Action[20] = &ActionForSourceCodeScript::markPeriodBraceParam;
-  Action[21] = &ActionForSourceCodeScript::pushStr;
-  Action[22] = &ActionForSourceCodeScript::pushNum;
+  Action[2] = &ActionForSourceCodeScript::markOperator;
+  Action[3] = &ActionForSourceCodeScript::pushId;
+  Action[4] = &ActionForSourceCodeScript::buildOperator;
+  Action[5] = &ActionForSourceCodeScript::buildFirstTernaryOperator;
+  Action[6] = &ActionForSourceCodeScript::buildSecondTernaryOperator;
+  Action[7] = &ActionForSourceCodeScript::beginStatement;
+  Action[8] = &ActionForSourceCodeScript::beginFunction;
+  Action[9] = &ActionForSourceCodeScript::endFunction;
+  Action[10] = &ActionForSourceCodeScript::setFunctionId;
+  Action[11] = &ActionForSourceCodeScript::markHaveStatement;
+  Action[12] = &ActionForSourceCodeScript::markHaveExternScript;
+  Action[13] = &ActionForSourceCodeScript::setExternScript;
+  Action[14] = &ActionForSourceCodeScript::markParenthesisParam;
+  Action[15] = &ActionForSourceCodeScript::buildHighOrderFunction;
+  Action[16] = &ActionForSourceCodeScript::markBracketParam;
+  Action[17] = &ActionForSourceCodeScript::markPeriod;
+  Action[18] = &ActionForSourceCodeScript::markPeriodParam;
+  Action[19] = &ActionForSourceCodeScript::setMemberId;
+  Action[20] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
+  Action[21] = &ActionForSourceCodeScript::markPeriodBracketParam;
+  Action[22] = &ActionForSourceCodeScript::markPeriodBraceParam;
+  Action[23] = &ActionForSourceCodeScript::pushStr;
+  Action[24] = &ActionForSourceCodeScript::pushNum;  
 }
 //--------------------------------------------------------------------------------------
 

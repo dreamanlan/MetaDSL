@@ -11,6 +11,7 @@ namespace Dsl.Parser
     }
     delegate string GetLastTokenDelegation();
     delegate int GetLastLineNumberDelegation();
+    delegate string GetCommentDelegation(out bool commentOnNewLine);
     delegate void SetDelimiterDelegation(string begin, string end);
     class RuntimeAction : DslAction
     {
@@ -43,6 +44,11 @@ namespace Dsl.Parser
             get { return mGetLastLineNumber; }
             set { mGetLastLineNumber = value; }
         }
+        internal GetCommentDelegation onGetComment
+        {
+            get { return mGetComment; }
+            set { mGetComment = value; }
+        }
         internal SetDelimiterDelegation onSetStringDelimiter
         {
             get { return mSetStringDelimiter; }
@@ -64,32 +70,47 @@ namespace Dsl.Parser
         {
             switch (number) {
                 case 1: endStatement(); break;
-                case 2: pushId(); break;
-                case 3: buildOperator(); break;
-                case 4: buildFirstTernaryOperator(); break;
-                case 5: buildSecondTernaryOperator(); break;
-                case 6: beginStatement(); break;
-                case 7: beginFunction(); break;
-                case 8: endFunction(); break;
-                case 9: setFunctionId(); break;
-                case 10: markHaveStatement(); break;
-                case 11: markHaveExternScript(); break;
-                case 12: setExternScript(); break;
-                case 13: markParenthesisParam(); break;
-                case 14: buildHighOrderFunction(); break;
-                case 15: markBracketParam(); break;
-                case 16: markPeriodParam(); break;
-                case 17: setMemberId(); break;
-                case 18: markPeriodParenthesisParam(); break;
-                case 19: markPeriodBracketParam(); break;
-                case 20: markPeriodBraceParam(); break;
-                case 21: pushStr(); break;
-                case 22: pushNum(); break;
-                case 23: pushTrue(); break;
-                case 24: pushFalse(); break;
+                case 2: markOperator(); break;
+                case 3: pushId(); break;
+                case 4: buildOperator(); break;
+                case 5: buildFirstTernaryOperator(); break;
+                case 6: buildSecondTernaryOperator(); break;
+                case 7: beginStatement(); break;
+                case 8: beginFunction(); break;
+                case 9: endFunction(); break;
+                case 10: setFunctionId(); break;
+                case 11: markHaveStatement(); break;
+                case 12: markHaveExternScript(); break;
+                case 13: setExternScript(); break;
+                case 14: markParenthesisParam(); break;
+                case 15: buildHighOrderFunction(); break;
+                case 16: markBracketParam(); break;
+                case 17: markPeriod(); break;
+                case 18: markPeriodParam(); break;
+                case 19: setMemberId(); break;
+                case 20: markPeriodParenthesisParam(); break;
+                case 21: markPeriodBracketParam(); break;
+                case 22: markPeriodBraceParam(); break;
+                case 23: pushStr(); break;
+                case 24: pushNum(); break;
+                case 25: pushTrue(); break;
+                case 26: pushFalse(); break;
             }
         }
 
+        internal void markOperator()
+        {
+            StatementData statement = getCurStatement();
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                if (statement.LastComments.Count <= 0) {
+                    statement.LastCommentOnNewLine = commentOnNewLine;
+                }
+                statement.LastComments.Add(cmt);
+            }
+        }
         internal void buildOperator()
         {
             int type;
@@ -165,6 +186,16 @@ namespace Dsl.Parser
             StatementData statement = newStatement();
             FunctionData first = statement.First;
             first.Call.Name.SetLine(getLastLineNumber());
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                if (statement.FirstComments.Count <= 0) {
+                    statement.FirstCommentOnNewLine = commentOnNewLine;
+                }
+                statement.FirstComments.Add(cmt);
+            }
+
             mStatementSemanticStack.Push(statement);
         }
         internal void endStatement()
@@ -194,10 +225,27 @@ namespace Dsl.Parser
                 }
                 return;
             }
+            
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                if (statement.LastComments.Count <= 0) {
+                    statement.LastCommentOnNewLine = commentOnNewLine;
+                }
+                statement.LastComments.Add(cmt);
+            }
+            
             if (mStatementSemanticStack.Count == 0) {
                 simplifyStatementData(statement);
                 if (!statement.IsValid()) {
                     //_epsilon_表达式无语句语义
+                    if (mScriptDatas.Count > 0 && statement.FirstComments.Count > 0) {
+                        DslInfo last = mScriptDatas[mScriptDatas.Count - 1];
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statement.FirstComments);
+                    }
                     return;
                 }
                 //顶层元素结束
@@ -216,13 +264,23 @@ namespace Dsl.Parser
                               return;//操作符就不支持空语句作参数了
                             //函数参数，允许空语句，用于表达默认状态(副作用是a()与a[]将总是会有一个空语句参数)。
                             */
-                            if (statement.IsValid())
+                            if (statement.IsValid()) {
                                 func.Call.AddParams(statementSyntax);
+                            } else if (statement.FirstComments.Count > 0) {
+                                func.Call.Comments.AddRange(statement.FirstComments);
+                            }                          
                         }
                         break;
                     case (int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT: {
                             if (!statement.IsValid()) {
                                 //_epsilon_表达式无语句语义
+                                if (func.Statements.Count > 0 && statement.FirstComments.Count > 0) {
+                                    AbstractSyntaxCompoent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxCompoent;
+                                    if (last.LastComments.Count <= 0) {
+                                        last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                                    }
+                                    last.LastComments.AddRange(statement.FirstComments);
+                                }
                                 return;
                             }
                             //函数扩展语句部分
@@ -243,6 +301,7 @@ namespace Dsl.Parser
                 ValueData name = new ValueData();
                 call.Name = name;
                 newFunc.Call = call;
+
                 statement.Functions.Add(newFunc);
             }
         }
@@ -270,7 +329,6 @@ namespace Dsl.Parser
         }
         internal void endFunction()
         {
-
         }
         internal void buildHighOrderFunction()
         {
@@ -284,12 +342,36 @@ namespace Dsl.Parser
         internal void markParenthesisParam()
         {
             FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                func.Call.Comments.Add(cmt);
+            }
+
             func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
         }
         internal void markBracketParam()
         {
             FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                func.Call.Comments.Add(cmt);
+            }
+
             func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_BRACKET);
+        }
+        internal void markPeriod()
+        {
+            FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                func.Call.Comments.Add(cmt);
+            }
         }
         internal void markPeriodParam()
         {
@@ -314,11 +396,25 @@ namespace Dsl.Parser
         internal void markHaveStatement()
         {
             FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                func.Call.Comments.Add(cmt);
+            }
+
             func.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT);
         }
         internal void markHaveExternScript()
         {
             FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            string cmt = GetComment(out commentOnNewLine);
+            if (!string.IsNullOrEmpty(cmt)) {
+                func.Call.Comments.Add(cmt);
+            }
+
             func.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_EXTERN_SCRIPT);
         }
         internal void setExternScript()
@@ -407,6 +503,7 @@ namespace Dsl.Parser
             if (data.Functions.Count == 1) {
                 //只有一个函数的语句退化为函数（再按函数进一步退化）。
                 FunctionData func = data.Functions[0];
+                func.CopyComment(data);
                 return simplifyStatement(func);
             } else {
                 //多个函数构成的语句不会退化，只对各个函数的参数与语句部分进行化简。
@@ -420,6 +517,7 @@ namespace Dsl.Parser
                 //没有语句部分的函数退化为函数调用（再按函数调用进一步退化）。
                 CallData call = data.Call;
                 if (null != call) {
+                    call.CopyComment(data);
                     return simplifyStatement(call);
                 } else {
                     //error
@@ -439,13 +537,17 @@ namespace Dsl.Parser
                     //这种情况应该不会出现
                     return data;
                 } else {
+                    data.Name.CopyComment(data);
                     return data.Name;
                 }
             } else if (data.GetId() == "-" && data.GetParamNum() == 1) {
                 ISyntaxComponent val = data.GetParam(0);
                 ValueData temp = val as ValueData;
                 if (null != temp && temp.IsNumber()) {
-                    return new ValueData("-" + temp.GetId(), ValueData.NUM_TOKEN);
+                    ValueData ret = new ValueData("-" + temp.GetId(), ValueData.NUM_TOKEN);
+                    ret.CopyComment(temp);
+                    ret.CopyComment(data);
+                    return ret;
                 } else {
                     simplifyCallData(data);
                     return data;
@@ -454,7 +556,10 @@ namespace Dsl.Parser
                 ISyntaxComponent val = data.GetParam(0);
                 ValueData temp = val as ValueData;
                 if (null != temp && temp.IsNumber()) {
-                    return new ValueData(temp.GetId(), ValueData.NUM_TOKEN);
+                    ValueData ret = new ValueData(temp.GetId(), ValueData.NUM_TOKEN);
+                    ret.CopyComment(temp);
+                    ret.CopyComment(data);
+                    return ret;
                 } else {
                     simplifyCallData(data);
                     return data;
@@ -525,7 +630,7 @@ namespace Dsl.Parser
             if (null != mGetLastToken)
                 return mGetLastToken();
             else
-                return "";
+                return string.Empty;
         }
         private int getLastLineNumber()
         {
@@ -533,6 +638,16 @@ namespace Dsl.Parser
                 return mGetLastLineNumber();
             else
                 return -1;
+        }
+        private string GetComment(out bool commentOnNewLine)
+        {
+            if (null != mGetComment) {
+                return mGetComment(out commentOnNewLine);
+            } else {
+                commentOnNewLine = false;
+                return string.Empty;
+            }
+
         }
         private void setStringDelimiter(string begin, string end)
         {
@@ -549,6 +664,7 @@ namespace Dsl.Parser
 
         private GetLastTokenDelegation mGetLastToken;
         private GetLastLineNumberDelegation mGetLastLineNumber;
+        private GetCommentDelegation mGetComment;
         private SetDelimiterDelegation mSetStringDelimiter;
         private SetDelimiterDelegation mSetScriptDelimiter;
         private List<DslInfo> mScriptDatas;

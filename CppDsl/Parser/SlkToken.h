@@ -30,6 +30,24 @@ public:
   {
     return mLastLineNumber;
   }
+  int getCommentNum(int& commentOnNewLine) const
+  {
+    commentOnNewLine = mCommentOnNewLine;
+    return mCommentNum;
+  }
+  char* getComment(int index) const
+  {
+    if (index >= 0 && index < mCommentNum) {
+      return mComments[index];
+    } else {
+      return 0;
+    }
+  }
+  void resetComments(void)
+  {
+    mCommentNum = 0;
+    mCommentOnNewLine = FALSE;
+  }
 public:
   void setCanFinish(int val)
   {
@@ -51,6 +69,9 @@ private:
   int handleStringOrScriptDelimiter(void);
   void getBlockString(const char* delimiter);
   void removeFirstAndLastEmptyLine(void);
+  void newComment(void);
+  void pushCommentChar(char c);
+  void endComment(void);
   void newToken(void);
   void pushTokenChar(char c);
   void endToken(void);
@@ -64,6 +85,14 @@ private:
   char* mCurToken;
   char* mLastToken;
   int mTokenCharIndex;
+
+  char* mCurComment;
+  int mCommentCharIndex;
+
+  static const int c_MaxCommentNum = 256;
+  char* mComments[c_MaxCommentNum];
+  int mCommentNum;
+  int mCommentOnNewLine;
 
   Dsl::ErrorAndStringBuffer* mErrorAndStringBuffer;
 

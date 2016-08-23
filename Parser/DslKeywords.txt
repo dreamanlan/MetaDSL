@@ -3,13 +3,9 @@
 
 // Assumes all alpha terminals are keywords, usually needs manual editing to remove non-keywords.
 
-namespace ScriptableData.Parser {
+class DslKeywords {
 
-class DslConstants {
-
-public class DslKeywords {
-
-public  string[] name = {
+public static string[] name = {
 
  "OP_TOKEN_0"
 ,"OP_TOKEN_1"

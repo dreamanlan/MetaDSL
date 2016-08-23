@@ -36,6 +36,7 @@ namespace Dsl
     DELTA_FUNCTION_PARAM = 2,
     DELTA_FUNCTION_STATEMENT = 8,
     DELTA_STATEMENT_FUNCTION = 1,
+    DELTA_COMMENT = 2,
   };
 
   enum
@@ -56,7 +57,8 @@ namespace Dsl
       m_MaxProgramSize(MAX_PROGRAM_SIZE),
       m_StringBufferSize(STRING_BUFFER_SIZE),
       m_SyntaxComponentPoolSize(SYNTAXCOMPONENT_POOL_SIZE)
-    {}
+    {
+    }
   public:
     int GetMaxFunctionDimensionNum() const { return m_MaxFunctionDimensionNum; }
     void SetMaxFunctionDimensionNum(int val) { m_MaxFunctionDimensionNum = val; }
@@ -88,8 +90,8 @@ namespace Dsl
       TYPE_STATEMENT,
     };
   public:
-    ISyntaxComponent(int syntaxType) :mSyntaxType(syntaxType){}
-    virtual ~ISyntaxComponent(void){}
+    ISyntaxComponent(int syntaxType);
+    virtual ~ISyntaxComponent(void);
   public:
     virtual int IsValid(void) const = 0;
     virtual const char* GetId(void) const = 0;
@@ -98,8 +100,76 @@ namespace Dsl
     virtual void WriteToFile(FILE* fp, int indent) const = 0;
   public:
     int GetSyntaxType(void) const { return mSyntaxType; }
+    void AddFirstComment(const char* cmt)
+    {
+      PrepareFirstComments();
+      if (m_FirstCommentNum < m_FirstCommentSpace) {
+        m_FirstComments[m_FirstCommentNum++] = cmt;
+      }
+    }
+    int GetFirstCommentNum(void) const { return m_FirstCommentNum; }
+    const char* GetFirstComment(int index) const 
+    { 
+      if (index >= 0 && index < m_FirstCommentNum) {
+        return m_FirstComments[index];
+      } else {
+        return 0;
+      }
+    }
+    int IsFirstCommentOnNewLine(void) const { return m_FirstCommentOnNewLine; }
+    void SetFirstCommentOnNewLine(int v) { m_FirstCommentOnNewLine = v; }
+    void AddLastComment(const char* cmt)
+    {
+      PrepareLastComments();
+      if (m_LastCommentNum < m_LastCommentSpace) {
+        m_LastComments[m_LastCommentNum++] = cmt;
+      }
+    }
+    int GetLastCommentNum(void) const { return m_LastCommentNum; }
+    const char* GetLastComment(int index) const
+    {
+      if (index >= 0 && index < m_LastCommentNum) {
+        return m_LastComments[index];
+      } else {
+        return 0;
+      }
+    }
+    int IsLastCommentOnNewLine(void) const { return m_LastCommentOnNewLine; }
+    void SetLastCommentOnNewLine(int v) { m_LastCommentOnNewLine = v; }
+    void CopyComments(const ISyntaxComponent& other)
+    {
+      int fnum = other.GetFirstCommentNum();
+      if (fnum > 0) {
+        m_FirstCommentOnNewLine = other.m_FirstCommentOnNewLine;
+        for (int i = 0; i<fnum; ++i) {
+          AddFirstComment(other.GetFirstComment(i));
+        }
+      }
+      int lnum = other.GetLastCommentNum();
+      if (lnum > 0) {
+        m_LastCommentOnNewLine = other.m_LastCommentOnNewLine;
+        for (int i = 0; i < lnum; ++i) {
+          AddLastComment(other.GetLastComment(i));
+        }
+      }
+    }
   protected:
+    void CopyFrom(const ISyntaxComponent& other);
+  private:
+    void PrepareFirstComments(void);
+    void ReleaseFirstComments(void);
+    void PrepareLastComments(void);
+    void ReleaseLastComments(void);
+  private:
     int mSyntaxType;
+    const char**              m_FirstComments;
+    int                       m_FirstCommentNum;
+    int                       m_FirstCommentSpace;
+    int                       m_FirstCommentOnNewLine;
+    const char**              m_LastComments;
+    int                       m_LastCommentNum;
+    int                       m_LastCommentSpace;
+    int                       m_LastCommentOnNewLine;
   };
 
   class Call;
@@ -116,12 +186,12 @@ namespace Dsl
       TYPE_CALL,
     };
 
-    Value(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_INVALID), m_StringVal(0), m_Line(0){}
-    explicit Value(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0){}
-    explicit Value(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0){}
-    explicit Value(Call* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL), m_Call(val), m_Line(0){}
-    explicit Value(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0){}
-    explicit Value(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0){}
+    Value(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_INVALID), m_StringVal(0), m_Line(0) {}
+    explicit Value(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
+    explicit Value(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
+    explicit Value(Call* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL), m_Call(val), m_Line(0) {}
+    explicit Value(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
+    explicit Value(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
     Value(const Value& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_INVALID), m_StringVal(0), m_Line(0)
     {
       CopyFrom(other);
@@ -134,20 +204,20 @@ namespace Dsl
       return *this;
     }
 
-    virtual int IsValid(void)const{ return (m_Type != TYPE_INVALID ? TRUE : FALSE); }
-    virtual int GetIdType(void)const{ return m_Type; }
-    virtual const char* GetId(void)const{ return m_StringVal; }
-    virtual int GetLine(void)const{ return m_Line; }
+    virtual int IsValid(void)const { return (m_Type != TYPE_INVALID ? TRUE : FALSE); }
+    virtual int GetIdType(void)const { return m_Type; }
+    virtual const char* GetId(void)const { return m_StringVal; }
+    virtual int GetLine(void)const { return m_Line; }
     virtual void WriteToFile(FILE* fp, int indent) const;
 
-    Call* GetCall(void)const{ return m_Call; }
+    Call* GetCall(void)const { return m_Call; }
 
-    int IsInt(void)const{ return (m_Type == TYPE_INT ? TRUE : FALSE); }
-    int IsFloat(void)const{ return (m_Type == TYPE_FLOAT ? TRUE : FALSE); }
-    int IsString(void)const{ return (m_Type == TYPE_STRING ? TRUE : FALSE); }
-    int IsVariableName(void)const{ return (m_Type == TYPE_VARIABLE_NAME ? TRUE : FALSE); }
-    int IsCall(void)const{ return (m_Type == TYPE_CALL ? TRUE : FALSE); }
-    
+    int IsInt(void)const { return (m_Type == TYPE_INT ? TRUE : FALSE); }
+    int IsFloat(void)const { return (m_Type == TYPE_FLOAT ? TRUE : FALSE); }
+    int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
+    int IsVariableName(void)const { return (m_Type == TYPE_VARIABLE_NAME ? TRUE : FALSE); }
+    int IsCall(void)const { return (m_Type == TYPE_CALL ? TRUE : FALSE); }
+
     void SetInvalid(void)
     {
       m_Type = TYPE_INVALID;
@@ -225,13 +295,16 @@ namespace Dsl
   class NullSyntax : public ISyntaxComponent
   {
   public:
-    NullSyntax(void) : ISyntaxComponent(ISyntaxComponent::TYPE_NULL){}
+    NullSyntax(void) : ISyntaxComponent(ISyntaxComponent::TYPE_NULL) {}
   public:
     virtual int IsValid(void) const { return FALSE; }
     virtual const char* GetId(void) const { return ""; }
     virtual int GetIdType(void) const { return Value::TYPE_INVALID; }
     virtual int GetLine(void) const { return 0; }
     virtual void WriteToFile(FILE* fp, int indent) const {}
+  private:
+    NullSyntax(const NullSyntax&);
+    NullSyntax& operator=(const NullSyntax&);
   public:
     static NullSyntax& GetNullSyntaxRef()
     {
@@ -266,14 +339,14 @@ namespace Dsl
       else
         return FALSE;
     }
-    virtual int GetIdType(void)const{ return m_Name.GetIdType(); }
-    virtual const char* GetId(void)const{ return m_Name.GetId(); }
-    virtual int GetLine(void)const{ return m_Name.GetLine(); }
+    virtual int GetIdType(void)const { return m_Name.GetIdType(); }
+    virtual const char* GetId(void)const { return m_Name.GetId(); }
+    virtual int GetLine(void)const { return m_Name.GetLine(); }
     virtual void WriteToFile(FILE* fp, int indent) const;
   public:
-    void		SetName(const Value& val){ m_Name = val; }
-    Value&	GetName(void){ return m_Name; }
-    void		ClearParams(void){ m_ParamNum = 0; }
+    void		SetName(const Value& val) { m_Name = val; }
+    Value&	GetName(void) { return m_Name; }
+    void		ClearParams(void) { m_ParamNum = 0; }
     void		AddParam(ISyntaxComponent*	pVal)
     {
       if (0 == pVal || m_ParamNum < 0 || m_ParamNum >= MAX_FUNCTION_PARAM_NUM)
@@ -290,19 +363,36 @@ namespace Dsl
         return;
       m_Params[index] = pVal;
     }
-    void		SetParamClass(int v){ m_ParamClass = v; }
-    int		  GetParamClass(void)const{ return m_ParamClass; }
-    int		HaveName(void)const{ return m_Name.IsValid(); }
-    int		HaveParam(void)const{ return m_ParamClass != PARAM_CLASS_NOTHING; }
-    int    IsHighOrder(void)const{ return m_Name.IsCall(); }
+    void		SetParamClass(int v) { m_ParamClass = v; }
+    int		  GetParamClass(void)const { return m_ParamClass; }
+    int		HaveName(void)const { return m_Name.IsValid(); }
+    int		HaveParam(void)const { return m_ParamClass != PARAM_CLASS_NOTHING; }
+    int    IsHighOrder(void)const { return m_Name.IsCall(); }
   public:
-    const Value&	GetName(void)const{ return m_Name; }
-    int			GetParamNum(void)const{ return m_ParamNum; }
+    const Value&	GetName(void)const { return m_Name; }
+    int			GetParamNum(void)const { return m_ParamNum; }
     ISyntaxComponent*	GetParam(int index)const
     {
       if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= MAX_FUNCTION_PARAM_NUM)
         return 0;
       return m_Params[index];
+    }
+  public:
+    void AddComment(const char* cmt)
+    {
+      PrepareComments();
+      if (m_CommentNum < m_CommentSpace) {
+        m_Comments[m_CommentNum++] = cmt;
+      }
+    }
+    int GetCommentNum(void) const { return m_CommentNum; }
+    const char* GetComment(int index) const
+    {
+      if (index >= 0 && index < m_CommentNum) {
+        return m_Comments[index];
+      } else {
+        return 0;
+      }
     }
   public:
     Call(void);
@@ -313,12 +403,17 @@ namespace Dsl
     void          CopyFrom(const Call& other);
     void          PrepareParams(void);
     void          ReleaseParams(void);
+    void          PrepareComments(void);
+    void          ReleaseComments(void);
   private:
     Value			          m_Name;
     ISyntaxComponent**	m_Params;
     int				          m_ParamNum;
     int				          m_ParamSpace;
     int				          m_ParamClass;
+    const char**        m_Comments;
+    int                 m_CommentNum;
+    int                 m_CommentSpace;
   public:
     static Call*& GetNullCallPtrRef(void)
     {
@@ -348,14 +443,14 @@ namespace Dsl
       else
         return FALSE;
     }
-    virtual int GetIdType(void)const{ return m_Call.GetIdType(); }
-    virtual const char* GetId(void)const{ return m_Call.GetId(); }
-    virtual int GetLine(void)const{ return m_Call.GetLine(); }
+    virtual int GetIdType(void)const { return m_Call.GetIdType(); }
+    virtual const char* GetId(void)const { return m_Call.GetId(); }
+    virtual int GetLine(void)const { return m_Call.GetLine(); }
     virtual void WriteToFile(FILE* fp, int indent) const;
   public:
-    void		SetCall(const Call& val){ m_Call = val; }
-    Call&	  GetCall(void){ return m_Call; }
-    void		ClearStatements(void){ m_StatementNum = 0; }
+    void		SetCall(const Call& val) { m_Call = val; }
+    Call&	  GetCall(void) { return m_Call; }
+    void		ClearStatements(void) { m_StatementNum = 0; }
     void		AddStatement(ISyntaxComponent* pVal)
     {
       if (0 == pVal || m_StatementNum < 0 || m_StatementNum >= m_MaxStatementNum)
@@ -372,24 +467,27 @@ namespace Dsl
         return;
       m_Statements[index] = pVal;
     }
-    void		SetExternScript(const char* scp){ m_ExternScript = scp; }
-    void		SetExtentClass(int v){ m_ExtentClass = v; }
-    int		  GetExtentClass(void)const{ return m_ExtentClass; }
-    int		HaveStatement(void)const{ return m_ExtentClass == EXTENT_CLASS_STATEMENT; }
-    int		HaveExternScript(void)const{ return m_ExtentClass == EXTENT_CLASS_EXTERN_SCRIPT; }
+    void		SetExternScript(const char* scp) { m_ExternScript = scp; }
+    void		SetExtentClass(int v) { m_ExtentClass = v; }
+    int		  GetExtentClass(void)const { return m_ExtentClass; }
+    int		HaveStatement(void)const { return m_ExtentClass == EXTENT_CLASS_STATEMENT; }
+    int		HaveExternScript(void)const { return m_ExtentClass == EXTENT_CLASS_EXTERN_SCRIPT; }
   public:
-    const Call&	GetCall(void)const{ return m_Call; }
-    int			    GetStatementNum(void)const{ return m_StatementNum; }
+    const Call&	GetCall(void)const { return m_Call; }
+    int			    GetStatementNum(void)const { return m_StatementNum; }
     ISyntaxComponent*	GetStatement(int index)const
     {
       if (0 == m_Statements || index < 0 || index >= m_StatementNum || index >= m_MaxStatementNum)
         return 0;
       return m_Statements[index];
     }
-    const char*	GetExternScript(void)const{ return m_ExternScript; }
+    const char*	GetExternScript(void)const { return m_ExternScript; }
   public:
     Function(DslFile& dataFile);
     virtual ~Function(void);
+  private:
+    Function(const Function&);
+    Function& operator=(const Function&);
   private:
     void          PrepareStatements(void);
     void          ReleaseStatements(void);
@@ -445,7 +543,7 @@ namespace Dsl
     }
     virtual void WriteToFile(FILE* fp, int indent) const;
   public:
-    void		ClearFunctions(void){ m_FunctionNum = 0; }
+    void		ClearFunctions(void) { m_FunctionNum = 0; }
     void		AddFunction(Function* pVal)
     {
       if (NULL == pVal || m_FunctionNum < 0 || m_FunctionNum >= m_MaxFunctionNum)
@@ -464,7 +562,7 @@ namespace Dsl
         return m_Functions[m_FunctionNum - 1];
     }
   public:
-    int			GetFunctionNum(void)const{ return m_FunctionNum; }
+    int			GetFunctionNum(void)const { return m_FunctionNum; }
     Function*	GetFunction(int index)const
     {
       if (NULL == m_Functions || index < 0 || index >= m_FunctionNum || index >= m_MaxFunctionNum)
@@ -477,6 +575,9 @@ namespace Dsl
     {
       ReleaseFunctions();
     }
+  private:
+    Statement(const Statement&);
+    Statement& operator=(const Statement&);
   private:
     void				  PrepareFunctions(void);
     void				  ReleaseFunctions(void);
@@ -492,8 +593,8 @@ namespace Dsl
   public:
     void				    ClearErrorInfo(void);
     void				    AddError(const char* error);
-    int			HasError(void)const{ return m_HasError; }
-    int			GetErrorNum(void)const{ return m_ErrorNum; }
+    int			HasError(void)const { return m_HasError; }
+    int			GetErrorNum(void)const { return m_ErrorNum; }
     const char*	GetErrorInfo(int index) const
     {
       if (index < 0 || index >= m_ErrorNum || index >= MAX_RECORD_ERROR_NUM)
@@ -537,6 +638,9 @@ namespace Dsl
       MyAssert(m_ppUnusedStringRef);
     }
   private:
+    ErrorAndStringBuffer(const ErrorAndStringBuffer&);
+    ErrorAndStringBuffer& operator=(const ErrorAndStringBuffer&);
+  private:
     int	m_HasError;
     char	m_ErrorInfo[MAX_RECORD_ERROR_NUM][MAX_ERROR_INFO_CAPACITY];
     int		m_ErrorNum;
@@ -551,7 +655,7 @@ namespace Dsl
     typedef ISyntaxComponent* SyntaxComponentPtr;
     typedef Statement* StatementPtr;
   public:
-    int		        GetDslInfoNum(void)const{ return m_DslInfoNum; }
+    int		        GetDslInfoNum(void)const { return m_DslInfoNum; }
     Statement*    GetDslInfo(int index)const
     {
       if (index < 0 || index >= m_DslInfoNum)
@@ -573,8 +677,8 @@ namespace Dsl
   public:
     char*				  AllocString(int len);
     char*				  AllocString(const char* src);
-    char*	        GetStringBuffer(void)const{ return m_StringBuffer; }
-    char*&	      GetUnusedStringPtrRef(void){ return m_UnusedStringPtr; }
+    char*	        GetStringBuffer(void)const { return m_StringBuffer; }
+    char*&	      GetUnusedStringPtrRef(void) { return m_UnusedStringPtr; }
   public:
     DslFile(void);
     DslFile(const DslOptions& options);
@@ -582,6 +686,9 @@ namespace Dsl
     void				  Reset(void);
     void          Parse(const char* buf);
     void          Parse(IScriptSource& source);
+  private:
+    DslFile(const DslFile&);
+    DslFile& operator=(const DslFile&);
   private:
     void				  Init(void);
     void				  Release(void);
@@ -591,26 +698,26 @@ namespace Dsl
     StatementPtr*	m_DslInfos;
     int					  m_DslInfoNum;
   public:
-    void		      EnableDebugInfo(void){ m_IsDebugInfoEnable = TRUE; }
-    void		      DisableDebugInfo(void){ m_IsDebugInfoEnable = FALSE; }
-    int		        IsDebugInfoEnable(void)const{ return m_IsDebugInfoEnable; }
+    void		      EnableDebugInfo(void) { m_IsDebugInfoEnable = TRUE; }
+    void		      DisableDebugInfo(void) { m_IsDebugInfoEnable = FALSE; }
+    int		        IsDebugInfoEnable(void)const { return m_IsDebugInfoEnable; }
   private:
     int				    m_IsDebugInfoEnable;
   public:
-    void		      ClearErrorInfo(void){ m_ErrorAndStringBuffer.ClearErrorInfo(); }
-    void		      AddError(const char* error){ m_ErrorAndStringBuffer.AddError(error); }
-    int		        HasError(void)const{ return m_ErrorAndStringBuffer.HasError(); }
-    int		        GetErrorNum(void){ return m_ErrorAndStringBuffer.GetErrorNum(); }
-    const char*	  GetErrorInfo(int index) const{ return m_ErrorAndStringBuffer.GetErrorInfo(index); }
-    char*	        NewErrorInfo(void){ return m_ErrorAndStringBuffer.NewErrorInfo(); }
+    void		      ClearErrorInfo(void) { m_ErrorAndStringBuffer.ClearErrorInfo(); }
+    void		      AddError(const char* error) { m_ErrorAndStringBuffer.AddError(error); }
+    int		        HasError(void)const { return m_ErrorAndStringBuffer.HasError(); }
+    int		        GetErrorNum(void) { return m_ErrorAndStringBuffer.GetErrorNum(); }
+    const char*	  GetErrorInfo(int index) const { return m_ErrorAndStringBuffer.GetErrorInfo(index); }
+    char*	        NewErrorInfo(void) { return m_ErrorAndStringBuffer.NewErrorInfo(); }
   public:
-    ErrorAndStringBuffer&		    GetErrorAndStringBuffer(void){ return m_ErrorAndStringBuffer; }
-    const ErrorAndStringBuffer&	GetErrorAndStringBuffer(void)const{ return m_ErrorAndStringBuffer; }
+    ErrorAndStringBuffer&		    GetErrorAndStringBuffer(void) { return m_ErrorAndStringBuffer; }
+    const ErrorAndStringBuffer&	GetErrorAndStringBuffer(void)const { return m_ErrorAndStringBuffer; }
   private:
     ErrorAndStringBuffer        m_ErrorAndStringBuffer;
   public:
-    DslOptions&			        GetOptions(void){ return m_Options; }
-    const DslOptions&	      GetOptions(void)const{ return m_Options; }
+    DslOptions&			        GetOptions(void) { return m_Options; }
+    const DslOptions&	      GetOptions(void)const { return m_Options; }
   private:
     DslOptions	              m_Options;
   };
@@ -618,7 +725,7 @@ namespace Dsl
   class IScriptSource
   {
   public:
-    virtual ~IScriptSource(void){}
+    virtual ~IScriptSource(void) {}
   public:
     class Iterator
     {
@@ -676,7 +783,8 @@ namespace Dsl
       }
     public:
       Iterator(void) :m_pSource(NULL), m_Iterator(""), m_EndIterator(m_Iterator)
-      {}
+      {
+      }
       explicit Iterator(IScriptSource& source) :m_pSource(&source)
       {
         const char* p = m_pSource->GetBuffer();

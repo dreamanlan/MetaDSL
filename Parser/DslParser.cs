@@ -16,35 +16,35 @@ namespace Dsl.Parser
 ,3,47,48,71 ,3,48,49,72 ,3,49,50,73 ,3,50,51,74 
 ,3,51,52,75 ,3,52,53,76 ,3,53,54,77 ,3,54,55,78 
 ,3,55,56,79 ,3,56,57,80 ,3,57,59,81 ,3,58,59,89 
-,3,59,94,60 ,2,60,82 ,4,60,95,62,96 ,5,61,66,97,83,84 
-,3,62,64,85 ,2,62,63 ,5,63,14,98,31,15 ,4,63,99,16,100 
-,6,64,17,101,31,18,86 ,6,64,19,103,31,20,87 ,4,64,21,65,88 
-,8,65,104,94,95,66,105,96,89 ,5,65,17,106,31,18 ,5,65,19,107,31,20 
-,5,65,14,108,31,15 ,3,66,22,90 ,3,66,23,109 ,3,66,24,110 
-,3,66,25,111 ,3,66,26,112 ,2,67,27 ,2,67,28 ,4,68,67,32,68 
-,1,68 ,6,69,1,90,91,33,69 ,1,69 ,10,70,2,90,92,34,2,90,93,34,70 
-,1,70 ,6,71,3,90,91,35,71 ,1,71 ,6,72,4,90,91,36,72 
-,1,72 ,6,73,5,90,91,37,73 ,1,73 ,6,74,6,90,91,38,74 
-,1,74 ,6,75,7,90,91,39,75 ,1,75 ,6,76,8,90,91,40,76 
-,1,76 ,6,77,9,90,91,41,77 ,1,77 ,6,78,10,90,91,42,78 
-,1,78 ,6,79,11,90,91,43,79 ,1,79 ,6,80,12,90,91,44,80 
-,1,80 ,6,81,13,90,91,58,81 ,1,81 ,5,82,95,61,96,82 
+,3,59,95,60 ,2,60,82 ,4,60,96,62,97 ,5,61,66,98,83,84 
+,3,62,64,85 ,2,62,63 ,5,63,99,14,31,15 ,4,63,100,16,101 
+,6,64,102,17,31,18,86 ,6,64,104,19,31,20,87 ,5,64,105,21,65,88 
+,8,65,106,95,96,66,107,97,89 ,5,65,108,17,31,18 ,5,65,109,19,31,20 
+,5,65,110,14,31,15 ,3,66,22,91 ,3,66,23,111 ,3,66,24,112 
+,3,66,25,113 ,3,66,26,114 ,2,67,27 ,2,67,28 ,4,68,67,32,68 
+,1,68 ,7,69,90,1,91,92,33,69 ,1,69 ,11,70,90,2,91,93,34,2,91,94,34,70 
+,1,70 ,7,71,90,3,91,92,35,71 ,1,71 ,7,72,90,4,91,92,36,72 
+,1,72 ,7,73,90,5,91,92,37,73 ,1,73 ,7,74,90,6,91,92,38,74 
+,1,74 ,7,75,90,7,91,92,39,75 ,1,75 ,7,76,90,8,91,92,40,76 
+,1,76 ,7,77,90,9,91,92,41,77 ,1,77 ,7,78,90,10,91,92,42,78 
+,1,78 ,7,79,90,11,91,92,43,79 ,1,79 ,7,80,90,12,91,92,44,80 
+,1,80 ,7,81,90,13,91,92,58,81 ,1,81 ,5,82,96,61,97,82 
 ,1,82 ,2,83,64 ,1,83 ,2,84,63 ,1,84 ,2,85,63 ,1,85 
-,3,86,102,64 ,1,86 ,3,87,102,64 ,1,87 ,3,88,102,64 
+,3,86,103,64 ,1,86 ,3,87,103,64 ,1,87 ,3,88,103,64 
 ,1,88 
 ,0};
 
-        private static int[] Production_row = {0
+private static int[] Production_row = {0
 
 ,1,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60
 ,64,68,72,76,80,84,88,92,96,100,104,108,112,116,120,123
-,128,134,138,141,147,152,159,166,171,180,186,192,198,202,206,210
-,214,218,221,224,229,231,238,240,251,253,260,262,269,271,278,280
-,287,289,296,298,305,307,314,316,323,325,332,334,341,343,350,352
-,358,360,363,365,368,370,373,375,379,381,385,387,391
+,128,134,138,141,147,152,159,166,172,181,187,193,199,203,207,211
+,215,219,222,225,230,232,240,242,254,256,264,266,274,276,284,286
+,294,296,304,306,314,316,324,326,334,336,344,346,354,356,364,366
+,372,374,377,379,382,384,387,389,393,395,399,401,405
 ,0};
 
-        private static short[] Parse = {
+private static short[] Parse = {
 
 0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
 ,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3
@@ -118,7 +118,7 @@ namespace Dsl.Parser
 ,0,0,0,0,52,52,53
 };
 
-        private static int[] Parse_row = {0
+private static int[] Parse_row = {0
 
 ,987,1,30,59,88,117,146,175,204,233,262,291,320,349,378,407
 ,436,465,494,523,552,581,610,639,668,697,726,755,784,813,842,1073
@@ -126,208 +126,202 @@ namespace Dsl.Parser
 ,1190,1161,1132,1103,1045,871,1016,1074,900,929,958
 ,0};
 
-        private static short[] Conflict = {
+private static short[] Conflict = {
 
 0
 };
 
-        private static int[] Conflict_row = {0
+private static int[] Conflict_row = {0
 
 
 ,0};
 
-        private static short get_conditional_production(short symbol) { return (short)0; }
+private static short get_conditional_production ( short symbol ) { return (short) 0; }
 
-        private const short END_OF_SLK_INPUT_ = 29;
-        private const short START_SYMBOL = 30;
-        private const short START_STATE = 0;
-        private const short START_CONFLICT = 94;
-        private const short END_CONFLICT = 94;
-        private const short START_ACTION = 89;
-        private const short END_ACTION = 113;
-        private const short TOTAL_CONFLICTS = 0;
+private const short   END_OF_SLK_INPUT_ = 29;
+private const short   START_SYMBOL = 30;
+private const short   START_STATE = 0;
+private const short   START_CONFLICT = 94;
+private const short   END_CONFLICT = 94;
+private const short   START_ACTION = 89;
+private const short   END_ACTION = 115;
+private const short   TOTAL_CONFLICTS = 0;
 
-        internal const int NOT_A_SYMBOL = 0;
-        internal const int NONTERMINAL_SYMBOL = 1;
-        internal const int TERMINAL_SYMBOL = 2;
-        internal const int ACTION_SYMBOL = 3;
+internal const int   NOT_A_SYMBOL = 0;
+internal const int   NONTERMINAL_SYMBOL = 1;
+internal const int   TERMINAL_SYMBOL = 2;
+internal const int   ACTION_SYMBOL = 3;
 
-        internal static short[]
-        GetProductionArray(short production_number)
-        {
-            short index = (short)Production_row[production_number],
-                    array_length = (short)Production[index],
-                    new_index = 0;
-            short[] productionArray = new short[17];
+internal static short[]
+GetProductionArray ( short  production_number )
+{
+   short   index = (short)  Production_row [ production_number ],
+           array_length = (short)  Production [ index ],
+           new_index = 0;
+   short[] productionArray = new short[18];        
 
-            while (array_length-- >= 0) {
-                productionArray[new_index++] = Production[index++];
-            }
-            return productionArray;
+   while ( array_length-- >= 0 ) {
+       productionArray [ new_index++ ] = Production [ index++ ];
+   }
+   return  productionArray;
+}
+
+internal static int GetSymbolType ( short   symbol )
+{
+   int   symbol_type = NOT_A_SYMBOL;
+
+   if ( symbol >= START_ACTION  &&  symbol < END_ACTION ) {
+       symbol_type = ACTION_SYMBOL;
+   } else if ( symbol >= START_SYMBOL ) {
+       symbol_type = NONTERMINAL_SYMBOL;
+   } else if ( symbol > 0 ) {
+       symbol_type = TERMINAL_SYMBOL;
+   }
+   return  symbol_type;
+}
+
+internal static bool    IsNonterminal ( short   symbol )
+{
+   return ( symbol >= START_SYMBOL  &&  symbol < START_ACTION );
+}
+
+internal static bool    IsTerminal ( short   symbol )
+{
+   return ( symbol > 0  &&  symbol < START_SYMBOL );
+}
+
+internal static bool    IsAction ( short   symbol )
+{
+   return ( symbol >= START_ACTION  &&  symbol < END_ACTION );
+}
+
+internal static short GetTerminalIndex ( short   token ){
+ return ( token );
+}
+
+internal static short
+get_production ( short     conflict_number,
+                 DslToken  tokens )
+{
+    short   entry = 0;
+    int     index, level;
+
+    if ( conflict_number <= TOTAL_CONFLICTS ) {
+        entry = (short) ( conflict_number + (START_CONFLICT - 1) );
+        level = 1;
+        while ( entry >= START_CONFLICT ) {
+            index = Conflict_row [entry - (START_CONFLICT -1)];
+            index += tokens.peek ( level );
+            entry = Conflict [ index ];
+            ++level;
         }
+    }
 
-        internal static int GetSymbolType(short symbol)
-        {
-            int symbol_type = NOT_A_SYMBOL;
+    return  entry;
+}
 
-            if (symbol >= START_ACTION && symbol < END_ACTION) {
-                symbol_type = ACTION_SYMBOL;
-            } else if (symbol >= START_SYMBOL) {
-                symbol_type = NONTERMINAL_SYMBOL;
-            } else if (symbol > 0) {
-                symbol_type = TERMINAL_SYMBOL;
-            }
-            return symbol_type;
-        }
+private static short
+get_predicted_entry ( DslToken   tokens,
+                      short      production_number,
+                      short      token,
+                      int        scan_level,
+                      int        depth )
+{
+ return  0;
+}
 
-        internal static bool IsNonterminal(short symbol)
-        {
-            return (symbol >= START_SYMBOL && symbol < START_ACTION);
-        }
+internal static void
+parse ( DslAction   action,
+        DslToken    tokens,
+        DslError    error,
+        short       start_symbol )
+{
+ short     rhs, lhs;
+ short     production_number, entry, symbol, token, new_token;
+ int       production_length, top, index, level;
+ short[]   stack = new short[512];
 
-        internal static bool IsTerminal(short symbol)
-        {
-            return (symbol > 0 && symbol < START_SYMBOL);
-        }
+ top = 511;
+ stack [ top ] = 0;
+ if ( start_symbol == 0 ) {
+     start_symbol = START_SYMBOL;
+ }
+ if ( top > 0 ) { stack [--top] = start_symbol;
+ } else { error.message ("DslParse: stack overflow\n"); return; }
+ token = tokens.get();
+ new_token = token;
 
-        internal static bool IsAction(short symbol)
-        {
-            return (symbol >= START_ACTION && symbol < END_ACTION);
-        }
+ for ( symbol = (stack[top] != 0  ? stack[top++] : (short) 0);  symbol != 0; ) {
 
-        internal static short GetTerminalIndex(short token)
-        {
-            return (token);
-        }
+     if ( symbol >= START_ACTION ) {
+         action.execute ( symbol - (START_ACTION-1) );
 
-        internal static short
-        get_production(short conflict_number,
-                         DslToken tokens)
-        {
-            short entry = 0;
-            int index, level;
+     } else if ( symbol >= START_SYMBOL ) {
+         entry = 0;
+         level = 1;
+         production_number = get_conditional_production ( symbol );
+         if ( production_number != 0 ) {
+             entry = get_predicted_entry ( tokens,
+                                           production_number, token,
+                                           level, 1 );
+         }
+         if ( entry == 0 ) {
+             index = Parse_row [ symbol - (START_SYMBOL-1) ];
+             index += token;
+             entry = Parse [ index ];
+         }
+         while ( entry >= START_CONFLICT ) {
+             index = Conflict_row [entry - (START_CONFLICT -1)];
+             index += tokens.peek (level);
+             entry = Conflict [ index ];
+             ++level;
+         }
+         if ( entry != 0 ) {
+             index = Production_row [ entry ];
+             production_length = Production [ index ] - 1;
+             lhs = Production [ ++index ];
+             if ( lhs == symbol ) {
+                 action.predict ( entry );
+                 index += production_length;
+                 for (;  production_length-- > 0;  --index ) {
+                     if ( top > 0 ) { stack [--top] = Production [index];
+                     } else { error.message ("DslParse: stack overflow\n"); return; }
+                 }
+             } else {
+                 new_token = error.no_entry ( symbol, token, level-1 );
+             }
+         } else {                                       // no table entry
+             new_token = error.no_entry ( symbol, token, level-1 );
+         }
+     } else if ( symbol > 0 ) {
+         if ( symbol == token ) {
+             token = tokens.get();
+             new_token = token;
+         } else {
+             new_token = error.mismatch ( symbol, token );
+         }
+     } else {
+         error.message ( "\n parser error: symbol value 0\n" );
+     }
+     if ( token != new_token ) {
+         if ( new_token != 0 ) {
+             token = new_token;
+         }
+         if ( token != END_OF_SLK_INPUT_ ) {
+             continue;
+         }
+     }
+     symbol = (stack[top] != 0  ? stack[top++] : (short) 0);
+ }
+ if ( token != END_OF_SLK_INPUT_ ) {
+     error.input_left ();
+ }
+}
 
-            if (conflict_number <= TOTAL_CONFLICTS) {
-                entry = (short)(conflict_number + (START_CONFLICT - 1));
-                level = 1;
-                while (entry >= START_CONFLICT) {
-                    index = Conflict_row[entry - (START_CONFLICT - 1)];
-                    index += tokens.peek(level);
-                    entry = Conflict[index];
-                    ++level;
-                }
-            }
 
-            return entry;
-        }
 
-        private static short
-        get_predicted_entry(DslToken tokens,
-                              short production_number,
-                              short token,
-                              int scan_level,
-                              int depth)
-        {
-            return 0;
-        }
+};
 
-        internal static void
-        parse(DslAction action,
-                DslToken tokens,
-                DslError error,
-                short start_symbol)
-        {
-            short lhs;
-            short production_number, entry, symbol, token, new_token;
-            int production_length, top, index, level;
-            short[] stack = new short[512];
-
-            top = 511;
-            stack[top] = 0;
-            if (start_symbol == 0) {
-                start_symbol = START_SYMBOL;
-            }
-            if (top > 0) {
-                stack[--top] = start_symbol;
-            } else { error.message("DslParse: stack overflow\n"); return; }
-            token = tokens.get();
-            new_token = token;
-
-            for (symbol = (stack[top] != 0 ? stack[top++] : (short)0); symbol != 0; ) {
-
-                if (symbol >= START_ACTION) {
-                    action.execute(symbol - (START_ACTION - 1));
-
-                } else if (symbol >= START_SYMBOL) {
-                    entry = 0;
-                    level = 1;
-                    production_number = get_conditional_production(symbol);
-                    if (production_number != 0) {
-                        entry = get_predicted_entry(tokens,
-                                                      production_number, token,
-                                                      level, 1);
-                    }
-                    if (entry == 0) {
-                        index = Parse_row[symbol - (START_SYMBOL - 1)];
-                        index += token;
-                        entry = Parse[index];
-                    }
-                    while (entry >= START_CONFLICT) {
-                        index = Conflict_row[entry - (START_CONFLICT - 1)];
-                        index += tokens.peek(level);
-                        entry = Conflict[index];
-                        ++level;
-                    }
-                    if (entry != 0) {
-                        index = Production_row[entry];
-                        production_length = Production[index] - 1;
-                        lhs = Production[++index];
-                        if (lhs == symbol) {
-                            action.predict(entry);
-                            index += production_length;
-                            for (; production_length-- > 0; --index) {
-                                if (top > 0) {
-                                    stack[--top] = Production[index];
-                                } else { error.message("DslParse: stack overflow\n"); return; }
-                            }
-                        } else {
-                            new_token = error.no_entry(symbol, token, level - 1);
-                        }
-                    } else {                                       // no table entry
-                        new_token = error.no_entry(symbol, token, level - 1);
-                    }
-
-                } else if (symbol > 0) {
-                    if (symbol == token) {
-                        token = tokens.get();
-                        new_token = token;
-                    } else {
-                        new_token = error.mismatch(symbol, token);
-                    }
-
-                } else {
-                    error.message("\n parser error: symbol value 0\n");
-                }
-
-                if (token != new_token) {
-                    if (new_token != 0) {
-                        token = new_token;
-                    }
-                    if (token != END_OF_SLK_INPUT_) {
-                        continue;
-                    }
-                }
-
-                symbol = (stack[top] != 0 ? stack[top++] : (short)0);
-            }
-
-            if (token != END_OF_SLK_INPUT_) {
-                error.input_left();
-            }
-
-        }
-
-    };
 
 }
 #endif

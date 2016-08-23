@@ -16,22 +16,91 @@ Dsl.cpp
 
 namespace Dsl
 {
+
+  ISyntaxComponent::ISyntaxComponent(int syntaxType) :mSyntaxType(syntaxType),
+    m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
+    m_LastComments(0), m_LastCommentNum(0), m_LastCommentSpace(0), m_LastCommentOnNewLine(0)
+  {
+  }
+  ISyntaxComponent::~ISyntaxComponent(void)
+  {
+    ReleaseFirstComments();
+    ReleaseLastComments();
+  }
+  void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
+  {
+    m_FirstCommentNum = other.m_FirstCommentNum;
+    m_FirstCommentSpace = other.m_FirstCommentSpace;
+    m_FirstComments = new const char*[m_FirstCommentSpace];
+    memcpy(m_FirstComments, other.m_FirstComments, m_FirstCommentNum*sizeof(const char*));
+    m_LastCommentNum = other.m_LastCommentNum;
+    m_LastCommentSpace = other.m_LastCommentSpace;
+    m_LastComments = new const char*[m_LastCommentSpace];
+    memcpy(m_LastComments, other.m_LastComments, m_LastCommentNum*sizeof(const char*));
+  }
+  void ISyntaxComponent::PrepareFirstComments(void)
+  {
+    if (m_FirstCommentNum >= m_FirstCommentSpace) {
+      int newSpace = m_FirstCommentSpace + DELTA_COMMENT;
+      const char** pNew = new const char*[newSpace];
+      if (pNew) {
+        memcpy(pNew, m_FirstComments, m_FirstCommentNum*sizeof(const char*));
+        memset(pNew + m_FirstCommentNum, 0, DELTA_COMMENT*sizeof(const char*));
+        delete[] m_FirstComments;
+        m_FirstComments = pNew;
+        m_FirstCommentSpace = newSpace;
+      }
+    }
+  }
+  void ISyntaxComponent::ReleaseFirstComments(void)
+  {
+    if (NULL != m_FirstComments) {
+      delete[] m_FirstComments;
+      m_FirstComments = NULL;
+    }
+  }
+  void ISyntaxComponent::PrepareLastComments(void)
+  {
+    if (m_LastCommentNum >= m_LastCommentSpace) {
+      int newSpace = m_LastCommentSpace + DELTA_COMMENT;
+      const char** pNew = new const char*[newSpace];
+      if (pNew) {
+        memcpy(pNew, m_LastComments, m_LastCommentNum*sizeof(const char*));
+        memset(pNew + m_LastCommentNum, 0, DELTA_COMMENT*sizeof(const char*));
+        delete[] m_LastComments;
+        m_LastComments = pNew;
+        m_LastCommentSpace = newSpace;
+      }
+    }
+  }
+  void ISyntaxComponent::ReleaseLastComments(void)
+  {
+    if (NULL != m_LastComments) {
+      delete[] m_LastComments;
+      m_LastComments = NULL;
+    }
+  }
   //------------------------------------------------------------------------------------------------------
   Call::Call(void) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL),
     m_Params(0),
     m_ParamNum(0),
     m_ParamSpace(0),
-    m_ParamClass(PARAM_CLASS_NOTHING)
+    m_ParamClass(PARAM_CLASS_NOTHING),
+    m_Comments(0),
+    m_CommentNum(0),
+    m_CommentSpace(0)
   {
   }
 
   Call::~Call(void)
   {
     ReleaseParams();
+    ReleaseComments();
   }
 
   Call::Call(const Call& other) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL)
   {
+    ISyntaxComponent::CopyFrom(other);
     CopyFrom(other);
   }
 
@@ -40,6 +109,8 @@ namespace Dsl
     if (this == &other)
       return *this;
     ReleaseParams();
+    ReleaseComments();
+    ISyntaxComponent::CopyFrom(other);
     CopyFrom(other);
     return *this;
   }
@@ -52,6 +123,10 @@ namespace Dsl
     m_ParamClass = other.m_ParamClass;
     m_Params = new SyntaxComponentPtr[m_ParamSpace];
     memcpy(m_Params, other.m_Params, m_ParamNum*sizeof(SyntaxComponentPtr));
+    m_CommentNum = other.m_CommentNum;
+    m_CommentSpace = other.m_CommentSpace;
+    m_Comments = new const char*[m_CommentSpace];
+    memcpy(m_Comments, other.m_Comments, m_CommentNum*sizeof(char*));
   }
 
   void Call::PrepareParams(void)
@@ -81,6 +156,29 @@ namespace Dsl
     if (NULL != m_Params) {
       delete[] m_Params;
       m_Params = NULL;
+    }
+  }
+
+  void Call::PrepareComments(void)
+  {
+    if (m_CommentNum >= m_CommentSpace) {
+      int newSpace = m_CommentSpace + DELTA_COMMENT;
+      const char** pNew = new const char*[newSpace];
+      if (pNew) {
+        memcpy(pNew, m_Comments, m_CommentNum*sizeof(const char*));
+        memset(pNew + m_CommentNum, 0, DELTA_COMMENT*sizeof(const char*));
+        delete[] m_Comments;
+        m_Comments = pNew;
+        m_CommentSpace = newSpace;
+      }
+    }
+  }
+
+  void Call::ReleaseComments(void)
+  {
+    if (NULL != m_Comments) {
+      delete[] m_Comments;
+      m_Comments = NULL;
     }
   }
 
@@ -368,16 +466,31 @@ namespace Dsl
   void Value::WriteToFile(FILE* fp, int indent)const
   {
 #if _DEBUG
+    int fnum = GetFirstCommentNum();
+    for (int i = 0; i < fnum; ++i) {
+      WriteId(fp, GetFirstComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
     if (IsString()){
       WriteString(fp, m_ConstStringVal, indent);
     } else {
       WriteId(fp, m_ConstStringVal, indent);
+    }
+    int lnum = GetLastCommentNum();
+    for (int i = 0; i < lnum; ++i) {
+      WriteId(fp, GetLastComment(i), indent);
+      WriteId(fp, "\r\n", 0);
     }
 #endif
   }
   void Call::WriteToFile(FILE* fp, int indent)const
   {
 #if _DEBUG
+    int fnum = GetFirstCommentNum();
+    for (int i = 0; i < fnum; ++i) {
+      WriteId(fp, GetFirstComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
     int paramClass = GetParamClass();
     if (paramClass == Call::PARAM_CLASS_OPERATOR){
       if (GetParamNum() == 2){
@@ -461,11 +574,26 @@ namespace Dsl
         }
       }
     }
+    int cnum = GetCommentNum();
+    for (int i = 0; i < cnum; ++i) {
+      WriteId(fp, GetComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
+    int lnum = GetLastCommentNum();
+    for (int i = 0; i < lnum; ++i) {
+      WriteId(fp, GetLastComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
 #endif
   }
   void Function::WriteToFile(FILE* fp, int indent)const
   {
 #if _DEBUG
+    int fnum = GetFirstCommentNum();
+    for (int i = 0; i < fnum; ++i) {
+      WriteId(fp, GetFirstComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
     if (m_Call.IsValid()){
       m_Call.WriteToFile(fp, indent);
       fwrite("\n", 1, 1, fp);
@@ -497,11 +625,21 @@ namespace Dsl
         fwrite(":}", 2, 1, fp);
       }
     }
+    int lnum = GetLastCommentNum();
+    for (int i = 0; i < lnum; ++i) {
+      WriteId(fp, GetLastComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
 #endif
   }
   void Statement::WriteToFile(FILE* fp, int indent)const
   {
 #if _DEBUG
+    int fnum = GetFirstCommentNum();
+    for (int i = 0; i < fnum; ++i) {
+      WriteId(fp, GetFirstComment(i), indent);
+      WriteId(fp, "\r\n", 0);
+    }
     int num = GetFunctionNum();
     Function* func1 = GetFunction(0);
     Function* func2 = GetFunction(1);
@@ -524,6 +662,11 @@ namespace Dsl
           fwrite("\n", 1, 1, fp);
         }
       }
+    }
+    int lnum = GetLastCommentNum();
+    for (int i = 0; i < lnum; ++i) {
+      WriteId(fp, GetLastComment(i), indent);
+      WriteId(fp, "\r\n", 0);
     }
 #endif
   }
