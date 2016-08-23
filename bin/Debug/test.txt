@@ -13,6 +13,7 @@ skill(kkk)
     );		#fdafdsa
     a/*123*/+/*345*/b*c;
     //animation(abc);
+    test(/*0987*/);
     test(123,/*fda*/345,678/*7888*/);	//fdasfdas
 	};	//fdafdas
 	script(sss)

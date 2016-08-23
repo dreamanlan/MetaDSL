@@ -6,6 +6,7 @@ skill(kkk)
 		yyyy yyyy yyyy
 ");
 		a "+" b "*" c;
+		test();
 		test(123,345,678);
 	};
 	script(sss)
