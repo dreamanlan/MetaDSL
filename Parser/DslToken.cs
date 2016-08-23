@@ -22,7 +22,6 @@ namespace Dsl.Parser
 
         internal short get()
         {
-            mTokenBuilder.Length = 0;
             mLastToken = mCurToken;
             mLastLineNumber = mLineNumber;
             bool isSkip = true;
@@ -32,7 +31,7 @@ namespace Dsl.Parser
                 for (; CurChar != 0 && mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
                     if (CurChar == '\n') {
                         ++mLineNumber;
-                        if (mComments.Length > 0) {
+                        if (mComments.Count <= 0) {
                             mCommentOnNewLine = true;
                         }
                     }
@@ -40,51 +39,50 @@ namespace Dsl.Parser
                 }
                 //#引导的单行注释
                 if (CurChar != 0 && CurChar == '#') {
-                    if (mComments.Length > 0) {
-                        mComments.AppendLine();
-                    }
+                    mCommentBuilder.Length = 0;
                     for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
                         if (CurChar != '\r')
-                            mComments.Append(CurChar);
+                            mCommentBuilder.Append(CurChar);
                     }
                     isSkip = true;
+                    mComments.Add(mCommentBuilder.ToString());
                 }
                 //C++风格的单行注释与多行注释
                 if (CurChar != 0 && CurChar == '/' && (NextChar == '/' || NextChar == '*')) {
-                    if (mComments.Length > 0) {
-                        mComments.AppendLine();
-                    }
-                    mComments.Append(CurChar);
+                    mCommentBuilder.Length = 0;
+                    mCommentBuilder.Append(CurChar);
                     ++mIterator;
                     if (CurChar != 0 && CurChar == '/') {
-                        mComments.Append(CurChar);
+                        mCommentBuilder.Append(CurChar);
                         ++mIterator;
                         for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
                             if (CurChar != '\r')
-                                mComments.Append(CurChar);
+                                mCommentBuilder.Append(CurChar);
                         }
                         isSkip = true;
                     } else if (CurChar != 0 && CurChar == '*') {
-                        mComments.Append(CurChar);
+                        mCommentBuilder.Append(CurChar);
                         ++mIterator;
                         for (; CurChar != 0; ++mIterator) {
                             if (CurChar == '\n') {
-                                mComments.AppendLine();
+                                mCommentBuilder.AppendLine();
                                 ++mLineNumber;
                             } else if (CurChar == '*' && NextChar == '/') {
-                                mComments.Append(CurChar);
-                                mComments.Append(NextChar);
+                                mCommentBuilder.Append(CurChar);
+                                mCommentBuilder.Append(NextChar);
                                 ++mIterator;
                                 ++mIterator;
                                 break;
                             } else if (CurChar != '\r') {
-                                mComments.Append(CurChar);
+                                mCommentBuilder.Append(CurChar);
                             }
                         }
                         isSkip = true;
                     }
+                    mComments.Add(mCommentBuilder.ToString());
                 }
             }
+            mTokenBuilder.Length = 0;
             if (CurChar == 0) {//输入结束
                 mCurToken = "<<eof>>";
                 return DslConstants.END_OF_SLK_INPUT_;
@@ -259,14 +257,14 @@ namespace Dsl.Parser
         {
             return mCommentOnNewLine;
         }
-        internal string GetComment()
+        internal IList<string> GetComments()
         {
-            return mComments.ToString();
+            return mComments;
         }
-        internal void ResetComment()
+        internal void ResetComments()
         {
             mCommentOnNewLine = false;
-            mComments.Length = 0;
+            mComments.Clear();
         }
         internal void setStringDelimiter(string begin, string end)
         {
@@ -542,7 +540,8 @@ namespace Dsl.Parser
         private int mLineNumber;
         private int mLastLineNumber;
 
-        private StringBuilder mComments = new StringBuilder();
+        private StringBuilder mCommentBuilder = new StringBuilder();
+        private List<string> mComments = new List<string>();
         private bool mCommentOnNewLine;
 
         private const string mWhiteSpaces = " \t\r\n";

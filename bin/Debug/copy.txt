@@ -1,24 +1,24 @@
 skill(kkk)
 {
-	section(80)//fdafds
+	section(80)//fdafds#fdafdsa
 	{
-		#fdafdsa
-//fdfdasfdsa;
-ok("
+		//fdfdasfdsa;
+		ok("
 		yyyy yyyy yyyy
-");
-		#fdafdsa
-a/*123*/ "+" /*345*/b "*" c;
+");	#fdafdsa
+		a ">" b/*3456*/ ? 1 : 0;
+		a/*123*/ "+" /*345*/b "*" c;
 		//animation(abc);
-test()/*0987*/;
-		test(123,/*fda*/345,678/*7888*/)//fdasfdas;
-	};
-	//fdafdas
+		test();/*0987*/
+		test(123,/*fda*/345,678/*7888*/);	//fdasfdas
+	};	//fdafdas
 	script(sss)
 	{:
 		ok, this is a test, "yeah!!!";
 	:};
 	script(ttt)
 	{::};
+};//test test test
+skill(ttt)
+{
 };
-

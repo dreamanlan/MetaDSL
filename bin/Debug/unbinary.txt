@@ -5,6 +5,7 @@ skill(kkk)
 		ok("
 		yyyy yyyy yyyy
 ");
+		a ">" b ? 1 : 0;
 		a "+" b "*" c;
 		test();
 		test(123,345,678);
@@ -13,7 +14,8 @@ skill(kkk)
 	{:
 		ok, this is a test, "yeah!!!";
 	:};
-}
-script(ttt)
+}script(ttt)
 {::};
-
+skill(ttt)
+{
+};

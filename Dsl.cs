@@ -34,7 +34,7 @@ namespace Dsl
         string GetId();
         int GetIdType();
         int GetLine();
-        string ToScriptString();
+        string ToScriptString(bool includeComment);
     }
 
     public abstract class AbstractSyntaxCompoent : ISyntaxComponent
@@ -49,9 +49,14 @@ namespace Dsl
         public abstract string GetId();
         public abstract int GetIdType();
         public abstract int GetLine();
-        public abstract string ToScriptString();
+        public abstract string ToScriptString(bool includeComment);
 
-        public void CopyComment(AbstractSyntaxCompoent other)
+        public void CopyComments(AbstractSyntaxCompoent other)
+        {
+            CopyFirstComments(other);
+            CopyLastComments(other);
+        }
+        public void CopyFirstComments(AbstractSyntaxCompoent other)
         {
             if (other.FirstComments.Count > 0) {
                 if (null == mFirstComments) {
@@ -60,6 +65,9 @@ namespace Dsl
                 mFirstComments.AddRange(other.FirstComments);
                 mFirstCommentOnNewLine = other.FirstCommentOnNewLine;
             }
+        }
+        public void CopyLastComments(AbstractSyntaxCompoent other)
+        {
             if (other.LastComments.Count > 0) {
                 if (null == mLastComments) {
                     mLastComments = new List<string>();
@@ -73,7 +81,7 @@ namespace Dsl
             if (null == mFirstComments) {
                 return string.Empty;
             } else {
-                return string.Join("\r\n", mFirstComments.ToArray());
+                return string.Join("", mFirstComments.ToArray());
             }
         }
         public string CalcLastComment()
@@ -81,7 +89,7 @@ namespace Dsl
             if (null == mLastComments) {
                 return string.Empty;
             } else {
-                return string.Join("\r\n", mLastComments.ToArray());
+                return string.Join("", mLastComments.ToArray());
             }
         }
 
@@ -142,7 +150,7 @@ namespace Dsl
         {
             return -1;
         }
-        public override string ToScriptString()
+        public override string ToScriptString(bool includeComment)
         {
             return ToString();
         }
@@ -177,15 +185,14 @@ namespace Dsl
         {
             return m_Line;
         }
-        public override string ToScriptString()
+        public override string ToScriptString(bool includeComment)
         {
 #if FULL_VERSION
-            string firstCmt = CalcFirstComment();
-            string lastCmt = CalcLastComment();
-            if (string.IsNullOrEmpty(firstCmt) || firstCmt.StartsWith("/*") && firstCmt.EndsWith("*/"))
-                return firstCmt + Utility.quoteString(m_Id, m_Type) + lastCmt;
-            else
-                return firstCmt + "\r\n" + Utility.quoteString(m_Id, m_Type) + lastCmt;
+            if (includeComment) {
+                return CalcFirstComment() + Utility.quoteString(m_Id, m_Type) + CalcLastComment();
+            } else {
+                return Utility.quoteString(m_Id, m_Type);
+            }
 #else
       return ToString();
 #endif
@@ -317,22 +324,20 @@ namespace Dsl
         }
         public string CalcComment()
         {
-            string cmt = string.Join("\r\n", m_Comments.ToArray());
+            string cmt = string.Join("", m_Comments.ToArray());
             if (null != m_Call) {
-                cmt += m_Call.CalcComment();
+                cmt = m_Call.CalcComment() + cmt;
             }
             return cmt;
         }
-        public override string ToScriptString()
+        public override string ToScriptString(bool includeComment)
         {
 #if FULL_VERSION
-            string firstCmt = CalcFirstComment();
-            string lastCmt = CalcLastComment();
-            string cmt = CalcComment();
-            if (string.IsNullOrEmpty(firstCmt) || firstCmt.StartsWith("/*") && firstCmt.EndsWith("*/"))
-                return firstCmt + Utility.getCallString(this) + cmt + lastCmt;
-            else
-                return firstCmt + "\r\n" + Utility.getCallString(this) + cmt + lastCmt;
+            if (includeComment) {
+                return CalcFirstComment() + Utility.getCallString(this, true) + CalcComment() + CalcLastComment();
+            } else {
+                return Utility.getCallString(this, true);
+            }
 #else
       return ToString();
 #endif
@@ -543,22 +548,24 @@ namespace Dsl
             else
                 return -1;
         }
-        public override string ToScriptString()
+        public override string ToScriptString(bool includeComment)
         {
 #if FULL_VERSION
             //与write方法不同，这里输出无缩进单行表示
             string line = "";
             if (null != m_Call)
-                line = m_Call.ToScriptString();
+                line = m_Call.ToScriptString(includeComment);
             StringBuilder stream = new StringBuilder();
-            stream.Append(CalcFirstComment());
+            if (includeComment) {
+                stream.Append(CalcFirstComment());
+            }
             stream.Append(line);
             if (HaveStatement()) {
                 stream.Append("{");
                 int ct = GetStatementNum();
                 for (int i = 0; i < ct; ++i) {
                     ISyntaxComponent data = GetStatement(i);
-                    stream.Append(data.ToScriptString());
+                    stream.Append(data.ToScriptString(includeComment));
                     stream.Append(";");
                 }
                 stream.Append("}");
@@ -567,7 +574,9 @@ namespace Dsl
                 stream.Append(GetExternScript());
                 stream.Append(":}");
             }
-            stream.Append(CalcLastComment());
+            if (includeComment) {
+                stream.Append(CalcLastComment());
+            }
             return stream.ToString();
 #else
       return ToString();
@@ -777,7 +786,7 @@ namespace Dsl
             else
                 return m_Functions[0].GetLine();
         }
-        public override string ToScriptString()
+        public override string ToScriptString(bool includeComment)
         {
 #if FULL_VERSION
             //与write方法不同，这里输出无缩进单行表示
@@ -786,25 +795,37 @@ namespace Dsl
             callData = tempData.Call;
             if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
                 if (callData.HaveId() && callData.HaveParam() && tempData.HaveStatement()) {
-                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(), callData.GetId(), tempData.GetStatement(0).ToScriptString());
+                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(includeComment), callData.GetId(), tempData.GetStatement(0).ToScriptString(includeComment));
                     if (Functions.Count == 2) {
                         FunctionData funcData = Functions[1];
                         if (funcData.HaveId() && funcData.HaveStatement())
-                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString());
+                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(includeComment));
                     }
-                    return CalcFirstComment() + line + CalcLastComment();
+                    if (includeComment) {
+                        return CalcFirstComment() + line + CalcLastComment();
+                    } else {
+                        return line;
+                    }
                 } else {
-                    return CalcFirstComment() + CalcLastComment();
+                    if (includeComment) {
+                        return CalcFirstComment() + CalcLastComment();
+                    } else {
+                        return string.Empty;
+                    }
                 }
             } else {
                 StringBuilder stream = new StringBuilder();
-                stream.Append(CalcFirstComment());
+                if (includeComment) {
+                    stream.Append(CalcFirstComment());
+                }
                 int ct = Functions.Count;
                 for (int i = 0; i < ct; ++i) {
                     FunctionData funcData = Functions[i];
-                    stream.Append(funcData.ToScriptString());
+                    stream.Append(funcData.ToScriptString(includeComment));
                 }
-                stream.Append(CalcLastComment());
+                if (includeComment) {
+                    stream.Append(CalcLastComment());
+                }
                 return stream.ToString();
             }
 #else
@@ -852,6 +873,7 @@ namespace Dsl
         }
         public void CopyFrom(StatementData other)
         {
+            CopyComments(other);
             m_Functions = other.m_Functions;
         }
 
@@ -869,10 +891,10 @@ namespace Dsl
 
     public class DslInfo : StatementData
     {
-        public override string ToScriptString()
+        public override string ToScriptString(bool includeComment)
         {
             StringBuilder stream = new StringBuilder();
-            Utility.writeStatementData(stream, this, 0);
+            Utility.writeSyntaxComponent(stream, this, 0);
             return stream.ToString();
         }
 
@@ -940,7 +962,7 @@ namespace Dsl
             Parser.RuntimeAction action = new Parser.RuntimeAction(mDslInfos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
-            action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); string ret = tokens.GetComment(); tokens.ResetComment(); return ret; };
+            action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>();ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
             action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
 
@@ -965,8 +987,7 @@ namespace Dsl
             using (StreamWriter sw = new StreamWriter(file)) {
                 if (null != sw) {
                     for (int i = 0; i < mDslInfos.Count; i++) {
-                        sw.Write(mDslInfos[i].ToScriptString());
-                        sw.Write("\r\n");
+                        sw.Write(mDslInfos[i].ToScriptString(true));
                     }
                     sw.Close();
                 }
@@ -1182,13 +1203,13 @@ namespace Dsl
             return str;
         }
 
-        public static string getCallString(CallData data)
+        public static string getCallString(CallData data, bool includeComment)
         {
 #if FULL_VERSION
             string lineNo = "";//formatString("/* %d */",data.GetLine());
             string line = "";
             if (data.IsHighOrder) {
-                line = getCallString(data.Call);
+                line = getCallString(data.Call, includeComment);
             } else if (data.HaveId()) {
                 line = quoteString(data.GetId(), data.GetIdType());
             }
@@ -1197,9 +1218,9 @@ namespace Dsl
                 if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
                     switch (data.GetParamNum()) {
                         case 1:
-                            return string.Format("{0} {1}", line, data.GetParam(0).ToScriptString());
+                            return string.Format("{0} {1}", line, data.GetParam(0).ToScriptString(includeComment));
                         case 2:
-                            return string.Format("{0} {1} {2}", data.GetParam(0).ToScriptString(), line, data.GetParam(1).ToScriptString());
+                            return string.Format("{0} {1} {2}", data.GetParam(0).ToScriptString(includeComment), line, data.GetParam(1).ToScriptString(includeComment));
                         default:
                             return line;
                     }
@@ -1240,9 +1261,9 @@ namespace Dsl
                             stream.Append(",");
                         ISyntaxComponent param = data.GetParam(i);
                         if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass)
-                            stream.Append(unquoteString(param.ToScriptString()));
+                            stream.Append(unquoteString(param.ToScriptString(includeComment)));
                         else
-                            stream.Append(param.ToScriptString());
+                            stream.Append(param.ToScriptString(includeComment));
                     }
                     stream.Append(rbracket);
                     return string.Format("{0}{1}{2}", lineNo, line, stream.ToString());
@@ -1273,46 +1294,63 @@ namespace Dsl
 #endif
         }
 
-        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool isLastOfStatement)
+        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent)
         {
 #if FULL_VERSION
+            AbstractSyntaxCompoent syntaxComp = data as AbstractSyntaxCompoent;
+            bool isFirst = true;
+            foreach (string cmt in syntaxComp.FirstComments) {
+                if (isFirst && !syntaxComp.FirstCommentOnNewLine) {
+                    writeContent(stream, cmt, indent > 0 ? 1 : 0);
+                } else {
+                    writeLine(stream, cmt, indent);
+                }
+                isFirst = false;
+            }
             ValueData val = data as ValueData;
             if (null != val) {
-                if (isLastOfStatement)
-                    writeLine(stream, val.ToScriptString() + ";", indent);
-                else
-                    writeLine(stream, val.ToScriptString(), indent);
+                writeContent(stream, val.ToScriptString(false) + ";", indent);
             } else {
                 CallData call = data as CallData;
                 if (null != call) {
-                    if (isLastOfStatement)
-                        writeLine(stream, call.ToScriptString() + ";", indent);
-                    else
-                        writeLine(stream, call.ToScriptString(), indent);
+                    writeContent(stream, call.ToScriptString(false) + ";", indent);
+                    writeContent(stream, call.CalcComment(), 0);
                 } else {
                     FunctionData function = data as FunctionData;
                     if (null != function) {
-                        writeFunctionData(stream, function, indent, isLastOfStatement, true);
+                        writeFunctionData(stream, function, indent, true);
                     } else {
                         StatementData statement = data as StatementData;
                         writeStatementData(stream, statement, indent);
                     }
                 }
             }
+            if (syntaxComp.LastComments.Count > 0) {
+                if (syntaxComp.LastCommentOnNewLine) {
+                    writeLine(stream, string.Empty, 0);
+                }
+                isFirst = true;
+                foreach (string cmt in syntaxComp.LastComments) {
+                    if (isFirst && !syntaxComp.LastCommentOnNewLine) {
+                        writeLine(stream, cmt, indent > 0 ? 1 : 0);
+                    } else {
+                        writeLine(stream, cmt, indent);
+                    }
+                    isFirst = false;
+                }
+            } else {
+                writeLine(stream, string.Empty, 0);
+            }
 #endif
         }
 
-        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool isLastOfStatement, bool isAlone)
+        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool isLastOfStatement)
         {
 #if FULL_VERSION
-            if (isAlone) {
-                foreach (string cmt in data.FirstComments) {
-                    writeLine(stream, cmt, indent);
-                }
-            }
             string line = "";
-            if (null != data.Call)
-                line = data.Call.ToScriptString();
+            if (null != data.Call) {
+                line = data.Call.ToScriptString(false) + data.Call.CalcComment();
+            }
             if (data.HaveStatement()) {
                 if (line.Length > 0) {
                     writeLine(stream, line, indent);
@@ -1323,14 +1361,14 @@ namespace Dsl
                 int ct = data.GetStatementNum();
                 for (int i = 0; i < ct; ++i) {
                     ISyntaxComponent tempData = data.GetStatement(i);
-                    writeSyntaxComponent(stream, tempData, indent, true);
+                    writeSyntaxComponent(stream, tempData, indent);
                 }
 
                 --indent;
                 if (isLastOfStatement)
-                    writeLine(stream, "};", indent);
+                    writeContent(stream, "};", indent);
                 else
-                    writeLine(stream, "}", indent);
+                    writeContent(stream, "}", indent);
             } else if (data.HaveExternScript()) {
                 if (line.Length > 0) {
                     writeLine(stream, line, indent);
@@ -1347,25 +1385,20 @@ namespace Dsl
                 stream.Append(script);
                 if (script.Length>0 && script[script.Length - 1] == '\n') {
                     if (isLastOfStatement)
-                        writeLine(stream, ":};", indent);
+                        writeContent(stream, ":};", indent);
                     else
-                        writeLine(stream, ":}", indent);
+                        writeContent(stream, ":}", indent);
                 } else {
                     if (isLastOfStatement)
-                        stream.AppendLine(":};");
+                        stream.Append(":};");
                     else
-                        stream.AppendLine(":}");
+                        stream.Append(":}");
                 }
             } else {
                 if (isLastOfStatement)
-                    writeLine(stream, line + ";", indent);
+                    writeContent(stream, line + ";", indent);
                 else
-                    writeLine(stream, line, indent);
-            }
-            if (isAlone) {
-                foreach (string cmt in data.LastComments) {
-                    writeLine(stream, cmt, indent);
-                }
+                    writeContent(stream, line, indent);
             }
 #endif
         }
@@ -1373,20 +1406,17 @@ namespace Dsl
         public static void writeStatementData(StringBuilder stream, StatementData data, int indent)
         {
 #if FULL_VERSION
-            foreach (string cmt in data.FirstComments) {
-                writeLine(stream, cmt, indent);
-            }
             FunctionData tempData = data.First;
             CallData callData = tempData.Call;
             if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
                 if (callData.HaveId() && callData.HaveParam() && tempData.HaveStatement()) {
-                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(), callData.GetId(), tempData.GetStatement(0).ToScriptString());
+                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(true), callData.GetId(), tempData.GetStatement(0).ToScriptString(true));
                     if (data.Functions.Count == 2) {
                         FunctionData funcData = data.Functions[1];
                         if (funcData.HaveId() && funcData.HaveStatement())
-                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString());
+                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(true));
                     }
-                    writeLine(stream, line + ";", indent);
+                    writeContent(stream, line + ";", indent);
                 }
             } else {
                 int ct = data.Functions.Count;
@@ -1397,11 +1427,8 @@ namespace Dsl
                     if (i == ct - 1)
                         isLastOfStatement = true;
                     FunctionData func = data.Functions[i];
-                    writeFunctionData(stream, func, indent, isLastOfStatement, false);
+                    writeFunctionData(stream, func, indent, isLastOfStatement);
                 }
-            }
-            foreach (string cmt in data.LastComments) {
-                writeLine(stream, cmt, indent);
             }
 #endif
         }

@@ -259,7 +259,7 @@ short SlkToken::get(void)
       for (; isWhiteSpace(*mIterator); ++mIterator) {
         if (*mIterator == '\n') {
           ++mLineNumber;
-          if (mCommentNum > 0) {
+          if (mCommentNum <= 0) {
             mCommentOnNewLine = TRUE;
           }
         }

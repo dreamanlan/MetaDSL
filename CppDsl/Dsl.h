@@ -97,7 +97,7 @@ namespace Dsl
     virtual const char* GetId(void) const = 0;
     virtual int GetIdType(void) const = 0;
     virtual int GetLine(void) const = 0;
-    virtual void WriteToFile(FILE* fp, int indent) const = 0;
+    virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const = 0;
   public:
     int GetSyntaxType(void) const { return mSyntaxType; }
     void AddFirstComment(const char* cmt)
@@ -106,6 +106,19 @@ namespace Dsl
       if (m_FirstCommentNum < m_FirstCommentSpace) {
         m_FirstComments[m_FirstCommentNum++] = cmt;
       }
+    }
+    void RemoveFirstComment(int index)
+    {
+      if (index >= 0 && index < m_FirstCommentNum) {
+        for (int ix = index; ix < m_FirstCommentNum - 1; ++ix) {
+          m_FirstComments[ix] = m_FirstComments[ix + 1];
+        }
+        --m_FirstCommentNum;
+      }
+    }
+    void ClearFirstComments()
+    {
+      m_FirstCommentNum = 0;
     }
     int GetFirstCommentNum(void) const { return m_FirstCommentNum; }
     const char* GetFirstComment(int index) const 
@@ -125,6 +138,19 @@ namespace Dsl
         m_LastComments[m_LastCommentNum++] = cmt;
       }
     }
+    void RemoveLastComment(int index)
+    {
+      if (index >= 0 && index < m_LastCommentNum) {
+        for (int ix = index; ix < m_LastCommentNum - 1; ++ix) {
+          m_LastComments[ix] = m_LastComments[ix + 1];
+        }
+        --m_LastCommentNum;
+      }
+    }
+    void ClearLastComments()
+    {
+      m_LastCommentNum = 0;
+    }
     int GetLastCommentNum(void) const { return m_LastCommentNum; }
     const char* GetLastComment(int index) const
     {
@@ -138,13 +164,21 @@ namespace Dsl
     void SetLastCommentOnNewLine(int v) { m_LastCommentOnNewLine = v; }
     void CopyComments(const ISyntaxComponent& other)
     {
+      CopyFirstComments(other);
+      CopyLastComments(other);
+    }
+    void CopyFirstComments(const ISyntaxComponent& other)
+    {
       int fnum = other.GetFirstCommentNum();
       if (fnum > 0) {
         m_FirstCommentOnNewLine = other.m_FirstCommentOnNewLine;
-        for (int i = 0; i<fnum; ++i) {
+        for (int i = 0; i < fnum; ++i) {
           AddFirstComment(other.GetFirstComment(i));
         }
       }
+    }
+    void CopyLastComments(const ISyntaxComponent& other)
+    {
       int lnum = other.GetLastCommentNum();
       if (lnum > 0) {
         m_LastCommentOnNewLine = other.m_LastCommentOnNewLine;
@@ -208,7 +242,7 @@ namespace Dsl
     virtual int GetIdType(void)const { return m_Type; }
     virtual const char* GetId(void)const { return m_StringVal; }
     virtual int GetLine(void)const { return m_Line; }
-    virtual void WriteToFile(FILE* fp, int indent) const;
+    virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
 
     Call* GetCall(void)const { return m_Call; }
 
@@ -301,7 +335,7 @@ namespace Dsl
     virtual const char* GetId(void) const { return ""; }
     virtual int GetIdType(void) const { return Value::TYPE_INVALID; }
     virtual int GetLine(void) const { return 0; }
-    virtual void WriteToFile(FILE* fp, int indent) const {}
+    virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const {}
   private:
     NullSyntax(const NullSyntax&);
     NullSyntax& operator=(const NullSyntax&);
@@ -342,7 +376,7 @@ namespace Dsl
     virtual int GetIdType(void)const { return m_Name.GetIdType(); }
     virtual const char* GetId(void)const { return m_Name.GetId(); }
     virtual int GetLine(void)const { return m_Name.GetLine(); }
-    virtual void WriteToFile(FILE* fp, int indent) const;
+    virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
   public:
     void		SetName(const Value& val) { m_Name = val; }
     Value&	GetName(void) { return m_Name; }
@@ -384,6 +418,19 @@ namespace Dsl
       if (m_CommentNum < m_CommentSpace) {
         m_Comments[m_CommentNum++] = cmt;
       }
+    }
+    void RemoveComment(int index)
+    {
+      if (index >= 0 && index < m_CommentNum) {
+        for (int ix = index; ix < m_CommentNum - 1; ++ix) {
+          m_Comments[ix] = m_Comments[ix + 1];
+        }
+        --m_CommentNum;
+      }
+    }
+    void ClearComments()
+    {
+      m_CommentNum = 0;
     }
     int GetCommentNum(void) const { return m_CommentNum; }
     const char* GetComment(int index) const
@@ -446,7 +493,7 @@ namespace Dsl
     virtual int GetIdType(void)const { return m_Call.GetIdType(); }
     virtual const char* GetId(void)const { return m_Call.GetId(); }
     virtual int GetLine(void)const { return m_Call.GetLine(); }
-    virtual void WriteToFile(FILE* fp, int indent) const;
+    virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
   public:
     void		SetCall(const Call& val) { m_Call = val; }
     Call&	  GetCall(void) { return m_Call; }
@@ -541,7 +588,7 @@ namespace Dsl
       }
       return line;
     }
-    virtual void WriteToFile(FILE* fp, int indent) const;
+    virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
   public:
     void		ClearFunctions(void) { m_FunctionNum = 0; }
     void		AddFunction(Function* pVal)

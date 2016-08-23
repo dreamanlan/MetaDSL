@@ -3,14 +3,14 @@
 skill(kkk)
 {
 	section(80)//fdafds
-	{
-		#fdafdsa
+	{ #fdafdsa
 		//fdfdasfdsa;
 		ok(
     BEGIN_STRING
 		yyyy yyyy yyyy
 		END_STRING
     );		#fdafdsa
+    a>b /*3456*/ ? 1 : 0;
     a/*123*/+/*345*/b*c;
     //animation(abc);
     test(/*0987*/);
@@ -23,4 +23,7 @@ skill(kkk)
   script(ttt)
   {:
   :};
+};	//test test test
+skill(ttt)
+{
 };
