@@ -234,6 +234,12 @@ namespace Dsl
 
                                                  //函数参数，允许空语句，用于表达默认状态(副作用是a()与a[]将总是会有一个空语句参数)。
                                                  call.AddParam(&statementSyntax);
+                                                 if (!statementSyntax.IsValid() && statement->GetFirstCommentNum() > 0) {
+                                                   int fnum = statement->GetFirstCommentNum();
+                                                   for (int ix = 0; ix < fnum; ++ix) {
+                                                     call.AddComment(statement->GetFirstComment(ix));
+                                                   }
+                                                 }
           }
             break;
           case Function::EXTENT_CLASS_STATEMENT: {
