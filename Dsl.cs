@@ -35,9 +35,18 @@ namespace Dsl
         int GetIdType();
         int GetLine();
         string ToScriptString(bool includeComment);
+        void CopyComments(ISyntaxComponent other);
+        void CopyFirstComments(ISyntaxComponent other);
+        void CopyLastComments(ISyntaxComponent other);
+        string CalcFirstComment();
+        string CalcLastComment();
+        List<string> FirstComments { get; }
+        bool FirstCommentOnNewLine { get; set; }
+        List<string> LastComments { get; }
+        bool LastCommentOnNewLine { get; set; }
     }
 
-    public abstract class AbstractSyntaxCompoent : ISyntaxComponent
+    public abstract class AbstractSyntaxComponent : ISyntaxComponent
     {
         public const int ID_TOKEN = 0;
         public const int NUM_TOKEN = 1;
@@ -51,29 +60,23 @@ namespace Dsl
         public abstract int GetLine();
         public abstract string ToScriptString(bool includeComment);
 
-        public void CopyComments(AbstractSyntaxCompoent other)
+        public void CopyComments(ISyntaxComponent other)
         {
             CopyFirstComments(other);
             CopyLastComments(other);
         }
-        public void CopyFirstComments(AbstractSyntaxCompoent other)
+        public void CopyFirstComments(ISyntaxComponent other)
         {
             if (other.FirstComments.Count > 0) {
-                if (null == mFirstComments) {
-                    mFirstComments = new List<string>();
-                }
-                mFirstComments.AddRange(other.FirstComments);
-                mFirstCommentOnNewLine = other.FirstCommentOnNewLine;
+                FirstComments.AddRange(other.FirstComments);
+                FirstCommentOnNewLine = other.FirstCommentOnNewLine;
             }
         }
-        public void CopyLastComments(AbstractSyntaxCompoent other)
+        public void CopyLastComments(ISyntaxComponent other)
         {
             if (other.LastComments.Count > 0) {
-                if (null == mLastComments) {
-                    mLastComments = new List<string>();
-                }
-                mLastComments.AddRange(other.LastComments);
-                mLastCommentOnNewLine = other.LastCommentOnNewLine;
+                LastComments.AddRange(other.LastComments);
+                LastCommentOnNewLine = other.LastCommentOnNewLine;
             }
         }
         public string CalcFirstComment()
@@ -132,7 +135,7 @@ namespace Dsl
     /// <summary>
     /// 空语法单件
     /// </summary>
-    public class NullSyntax : AbstractSyntaxCompoent
+    public class NullSyntax : AbstractSyntaxComponent
     {
         public override bool IsValid()
         {
@@ -167,7 +170,7 @@ namespace Dsl
     /// <summary>
     /// 用于描述变量、常量与无参命令语句。可能会出现在函数调用参数表与函数语句列表中。
     /// </summary>
-    public class ValueData : AbstractSyntaxCompoent
+    public class ValueData : AbstractSyntaxComponent
     {
         public override bool IsValid()
         {
@@ -273,7 +276,7 @@ namespace Dsl
     /// <summary>
     /// 函数调用数据，可能出现在函数头、参数表与函数语句列表中。
     /// </summary>
-    public class CallData : AbstractSyntaxCompoent
+    public class CallData : AbstractSyntaxComponent
     {
         public enum ParamClassEnum
         {
@@ -513,7 +516,7 @@ namespace Dsl
     /// <summary>
     /// 函数数据，由函数调用数据+语句列表构成。
     /// </summary>
-    public class FunctionData : AbstractSyntaxCompoent
+    public class FunctionData : AbstractSyntaxComponent
     {
         public enum ExtentClassEnum
         {
@@ -751,7 +754,7 @@ namespace Dsl
     /// <summary>
     /// 语句数据，由多个函数数据连接而成。
     /// </summary>
-    public class StatementData : AbstractSyntaxCompoent
+    public class StatementData : AbstractSyntaxComponent
     {
         public override bool IsValid()
         {
@@ -1175,15 +1178,15 @@ namespace Dsl
         public static string quoteString(string str, int _Type)
         {
             switch (_Type) {
-                case AbstractSyntaxCompoent.STRING_TOKEN: {
+                case AbstractSyntaxComponent.STRING_TOKEN: {
                     if (str.IndexOf('\n') >= 0)
                         return "\"\r\n" + str + "\"";
                     else
                         return "\"" + str + "\"";
                     }
-                case AbstractSyntaxCompoent.NUM_TOKEN:
-                case AbstractSyntaxCompoent.BOOL_TOKEN:
-                case AbstractSyntaxCompoent.ID_TOKEN:
+                case AbstractSyntaxComponent.NUM_TOKEN:
+                case AbstractSyntaxComponent.BOOL_TOKEN:
+                case AbstractSyntaxComponent.ID_TOKEN:
                     return str;
                 default:
                     return str;
@@ -1293,7 +1296,7 @@ namespace Dsl
         public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent)
         {
 #if FULL_VERSION
-            AbstractSyntaxCompoent syntaxComp = data as AbstractSyntaxCompoent;
+            AbstractSyntaxComponent syntaxComp = data as AbstractSyntaxComponent;
             bool isFirst = true;
             foreach (string cmt in syntaxComp.FirstComments) {
                 if (isFirst && !syntaxComp.FirstCommentOnNewLine) {

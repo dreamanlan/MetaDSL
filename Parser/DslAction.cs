@@ -275,7 +275,7 @@ namespace Dsl.Parser
                 scriptData.SetLoaded(true);
                 mScriptDatas.Add(scriptData);
             } else {
-                AbstractSyntaxCompoent statementSyntax = simplifyStatement(statement);
+                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
 
                 FunctionData func = getLastFunction();
                 switch (func.GetExtentClass()) {
@@ -296,7 +296,7 @@ namespace Dsl.Parser
                             if (!statementSyntax.IsValid()) {
                                 //_epsilon_表达式无语句语义
                                 if (func.Statements.Count > 0 && statementSyntax.FirstComments.Count > 0) {
-                                    AbstractSyntaxCompoent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxCompoent;
+                                    AbstractSyntaxComponent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxComponent;
                                     if (last.LastComments.Count <= 0) {
                                         last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
                                     }
@@ -309,7 +309,7 @@ namespace Dsl.Parser
                                     statementSyntax.FirstComments.RemoveAt(0);
                                     statementSyntax.FirstCommentOnNewLine = true;
                                     if (func.Statements.Count > 0) {
-                                        AbstractSyntaxCompoent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxCompoent;
+                                        AbstractSyntaxComponent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxComponent;
                                         if (last.LastComments.Count <= 0) {
                                             last.LastCommentOnNewLine = false;
                                         }
@@ -535,7 +535,7 @@ namespace Dsl.Parser
             data.Functions.Add(func);
             return data;
         }
-        private AbstractSyntaxCompoent simplifyStatement(StatementData data)
+        private AbstractSyntaxComponent simplifyStatement(StatementData data)
         {
             //对语句进行化简（语法分析过程中为了方便，全部按完整StatementData来构造，这里化简为原来的类型：ValueData/CallData/FunctionData等，主要涉及参数与语句部分）
             if (data.Functions.Count == 1) {
@@ -549,7 +549,7 @@ namespace Dsl.Parser
                 return data;
             }
         }
-        private AbstractSyntaxCompoent simplifyStatement(FunctionData data)
+        private AbstractSyntaxComponent simplifyStatement(FunctionData data)
         {
             if (!data.HaveStatement() && !data.HaveExternScript()) {
                 //没有语句部分的函数退化为函数调用（再按函数调用进一步退化）。
@@ -567,7 +567,7 @@ namespace Dsl.Parser
                 return data;
             }
         }
-        private AbstractSyntaxCompoent simplifyStatement(CallData data)
+        private AbstractSyntaxComponent simplifyStatement(CallData data)
         {
             if (!data.HaveParam()) {
                 //没有参数的调用退化为基本值数据
