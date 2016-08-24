@@ -81,7 +81,7 @@ namespace Dsl
             if (null == mFirstComments) {
                 return string.Empty;
             } else {
-                return string.Join("", mFirstComments.ToArray());
+                return string.Join(string.Empty, mFirstComments.ToArray());
             }
         }
         public string CalcLastComment()
@@ -89,7 +89,7 @@ namespace Dsl
             if (null == mLastComments) {
                 return string.Empty;
             } else {
-                return string.Join("", mLastComments.ToArray());
+                return string.Join(string.Empty, mLastComments.ToArray());
             }
         }
 
@@ -140,7 +140,7 @@ namespace Dsl
         }
         public override string GetId()
         {
-            return "";
+            return string.Empty;
         }
         public override int GetIdType()
         {
@@ -233,7 +233,7 @@ namespace Dsl
         public void Clear()
         {
             m_Type = ID_TOKEN;
-            m_Id = "";
+            m_Id = string.Empty;
             m_Line = -1;
         }
         public void CopyFrom(ValueData other)
@@ -267,7 +267,7 @@ namespace Dsl
         }
 
         private int m_Type = ID_TOKEN;
-        private string m_Id = "";
+        private string m_Id = string.Empty;
         private int m_Line = -1;
     }
     /// <summary>
@@ -302,7 +302,7 @@ namespace Dsl
             else if (null != m_Call)
                 return m_Call.GetId();
             else
-                return "";
+                return string.Empty;
         }
         public override int GetIdType()
         {
@@ -324,7 +324,7 @@ namespace Dsl
         }
         public string CalcComment()
         {
-            string cmt = string.Join("", m_Comments.ToArray());
+            string cmt = string.Join(string.Empty, m_Comments.ToArray());
             if (null != m_Call) {
                 cmt = m_Call.CalcComment() + cmt;
             }
@@ -430,7 +430,7 @@ namespace Dsl
         public string GetParamId(int index)
         {
             if (index < 0 || index >= (int)m_Params.Count)
-                return "";
+                return string.Empty;
             return m_Params[index].GetId();
         }
         public void ClearParams()
@@ -532,7 +532,7 @@ namespace Dsl
             if (null != m_Call)
                 return m_Call.GetId();
             else
-                return "";
+                return string.Empty;
         }
         public override int GetIdType()
         {
@@ -552,7 +552,7 @@ namespace Dsl
         {
 #if FULL_VERSION
             //与write方法不同，这里输出无缩进单行表示
-            string line = "";
+            string line = string.Empty;
             if (null != m_Call)
                 line = m_Call.ToScriptString(includeComment);
             StringBuilder stream = new StringBuilder();
@@ -663,7 +663,7 @@ namespace Dsl
         public string GetStatementId(int index)
         {
             if (index < 0 || index >= m_Statements.Count)
-                return "";
+                return string.Empty;
             return m_Statements[index].GetId();
         }
         public void ClearStatements()
@@ -768,7 +768,7 @@ namespace Dsl
         public override string GetId()
         {
             if (m_Functions.Count <= 0)
-                return "";
+                return string.Empty;
             else
                 return m_Functions[0].GetId();
         }
@@ -918,7 +918,7 @@ namespace Dsl
         {
             base.Clear();
             mLoaded = false;
-            mResourceName = "";
+            mResourceName = string.Empty;
         }
         public void CopyFrom(DslInfo other)
         {
@@ -928,7 +928,7 @@ namespace Dsl
         }
 
         private bool mLoaded = false;
-        private string mResourceName = "";
+        private string mResourceName = string.Empty;
     };
     public class DslFile
     {
@@ -1119,7 +1119,7 @@ namespace Dsl
             }
             return str.ToString();
 #else
-      return "";
+      return string.Empty;
 #endif
         }
         private string Decode(string s, Dictionary<string, string> decodeTable)
@@ -1183,15 +1183,11 @@ namespace Dsl
                     }
                 case AbstractSyntaxCompoent.NUM_TOKEN:
                 case AbstractSyntaxCompoent.BOOL_TOKEN:
+                case AbstractSyntaxCompoent.ID_TOKEN:
+                    return str;
+                default:
                     return str;
             }
-            if (needQuote(str)) {
-                if (str.IndexOf('\n') >= 0)
-                    return "\"\r\n" + str + "\"";
-                else
-                    return "\"" + str + "\"";
-            }
-            return str;
         }
 
         public static string unquoteString(string str)
@@ -1206,8 +1202,8 @@ namespace Dsl
         public static string getCallString(CallData data, bool includeComment)
         {
 #if FULL_VERSION
-            string lineNo = "";//formatString("/* %d */",data.GetLine());
-            string line = "";
+            string lineNo = string.Empty;// string.Format("/* {0} */", data.GetLine());
+            string line = string.Empty;
             if (data.IsHighOrder) {
                 line = getCallString(data.Call, includeComment);
             } else if (data.HaveId()) {
@@ -1225,8 +1221,8 @@ namespace Dsl
                             return line;
                     }
                 } else {
-                    string lbracket = "";
-                    string rbracket = "";
+                    string lbracket = string.Empty;
+                    string rbracket = string.Empty;
                     switch (paramClass) {
                         case (int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
                             lbracket = "(";
@@ -1238,7 +1234,7 @@ namespace Dsl
                             break;
                         case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD:
                             lbracket = ".";
-                            rbracket = "";
+                            rbracket = string.Empty;
                             break;
                         case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
                             lbracket = ".(";
@@ -1272,7 +1268,7 @@ namespace Dsl
                 return string.Format("{0}{1}", lineNo, line);
             }
 #else
-      return "";
+      return string.Empty;
 #endif
         }
 
@@ -1347,7 +1343,7 @@ namespace Dsl
         public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool isLastOfStatement)
         {
 #if FULL_VERSION
-            string line = "";
+            string line = string.Empty;
             if (null != data.Call) {
                 line = data.Call.ToScriptString(false) + data.Call.CalcComment();
             }
