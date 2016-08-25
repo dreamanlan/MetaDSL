@@ -167,6 +167,8 @@ short SlkToken::getOperatorTokenValue(void)const
   if (pLastToken && pLastToken[0]) {
     if (isDelimiter(pLastToken[0])) {
       lastIsOperator = TRUE;
+    } else if (isBeginParentheses(pLastToken[0])) {
+      lastIsOperator = TRUE;
     } else {
       lastIsOperator = isOperator(pLastToken[0]);
     }
@@ -229,6 +231,30 @@ int SlkToken::isDelimiter(char c) const
     return FALSE;
   else
     return (0 != strchr(mDelimiters, c) ? TRUE : FALSE);
+}
+
+int SlkToken::isBeginParentheses(char c) const
+{
+  if (0 == c)
+    return FALSE;
+  else
+    return (0 != strchr(mBeginParentheses, c) ? TRUE : FALSE);
+}
+
+int SlkToken::isEndParentheses(char c) const
+{
+  if (0 == c)
+    return FALSE;
+  else
+    return (0 != strchr(mEndParentheses, c) ? TRUE : FALSE);
+}
+
+int SlkToken::isSpecialChar(char c) const
+{
+  if (0 == c)
+    return TRUE;
+  else
+    return (0 != strchr(mSpecialChars, c) ? TRUE : FALSE);
 }
 
 short SlkToken::get(void)
@@ -376,33 +402,46 @@ short SlkToken::get(void)
     pushTokenChar(c);
     endToken();
     return DOT_;
-  } else if (isDelimiter(*mIterator)) {//分隔符
-    char c = *mIterator;
+  } else if (*mIterator == '(') {
     ++mIterator;
-
-    pushTokenChar(c);
+    pushTokenChar('(');
     endToken();
-
-    switch (c) {
-    case '(':
-      return LPAREN_;
-    case ')':
-      return RPAREN_;
-    case '[':
-      return LBRACK_;
-    case ']':
-      return RBRACK_;
-    case '{':
-      return LBRACE_;
-    case '}':
-      return RBRACE_;
-    case ',':
-      return COMMA_;
-    case ';':
-      return SEMI_;
-    default:
-      return END_OF_SLK_INPUT_;
-    }
+    return LPAREN_;
+  } else if (*mIterator == ')') {
+    ++mIterator;
+    pushTokenChar(')');
+    endToken();
+    return RPAREN_;
+  } else if (*mIterator == '[') {
+    ++mIterator;
+    pushTokenChar('[');
+    endToken();
+    return LBRACK_;
+  } else if (*mIterator == ']') {
+    ++mIterator;
+    pushTokenChar(']');
+    endToken();
+    return RBRACK_;
+  } else if (*mIterator == '{') {
+    ++mIterator;
+    pushTokenChar('{');
+    endToken();
+    return LBRACE_;
+  } else if (*mIterator == '}') {
+    ++mIterator;
+    pushTokenChar('}');
+    endToken();
+    return RBRACE_;
+  } else if (*mIterator == ',') {
+    ++mIterator;
+    pushTokenChar(',');
+    endToken();
+    return COMMA_;
+  } else if (*mIterator == ';') {
+    ++mIterator;
+    pushTokenChar(';');
+    endToken();
+    return SEMI_;
   } else {//关键字、标识符或常数
     if (*mIterator == '"' || *mIterator == '\'') {//引号括起来的名称或关键字
       int line = mLineNumber;
@@ -451,7 +490,7 @@ short SlkToken::get(void)
         pushTokenChar(*mIterator);
         ++mIterator;
       }
-      for (; *mIterator != '\0' && !isDelimiter(*mIterator) && !isWhiteSpace(*mIterator) && !isOperator(*mIterator); ++mIterator) {
+      for (; !isSpecialChar(*mIterator); ++mIterator) {
         if (*mIterator == '#')
           break;
         else if (*mIterator == '/') {
@@ -638,8 +677,12 @@ SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorA
   mIterator = mSource->GetIterator();
 
   mWhiteSpaces = " \t\r\n";
-  mDelimiters = "()[]{},;";
+  mDelimiters = ",;";
+  mBeginParentheses = "([{";
+  mEndParentheses = ")]}";
   mOperators = "~`!%^&*-+=|<>/?:";
+  mSpecialChars = " \t\r\n,;([{)]}~`!%^&*-+=|<>/?:";
+
 
   mLineNumber = 1;
   mLastLineNumber = 1;

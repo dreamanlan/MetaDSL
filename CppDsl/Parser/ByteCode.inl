@@ -174,7 +174,8 @@ namespace Dsl
     Statement* statement = mData.popStatement();
     if (0 == statement)
       return;
-    if (strcmp(statement->GetId(), "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && (statement->GetLastFunctionRef()->GetCall().GetParamNum() == 1 || statement->GetLastFunctionRef()->GetCall().GetParamNum() == 3) && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
+    const char* id = statement->GetId();
+    if (0 != id && strcmp(id, "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && (statement->GetLastFunctionRef()->GetCall().GetParamNum() == 1 || statement->GetLastFunctionRef()->GetCall().GetParamNum() == 3) && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
       const Call& call = statement->GetLastFunctionRef()->GetCall();
       const char* type = call.GetParam(0)->GetId();
       if (call.GetParamNum() == 3) {

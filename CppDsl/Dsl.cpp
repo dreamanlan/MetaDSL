@@ -477,7 +477,7 @@ namespace Dsl
     }
     if (IsString()) {
       WriteString(fp, m_ConstStringVal, indent);
-    } else {
+    } else if(IsValid()) {
       WriteId(fp, m_ConstStringVal, indent);
     }
     if (isLastOfStatement) {

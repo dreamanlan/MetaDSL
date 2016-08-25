@@ -128,32 +128,38 @@ namespace Dsl.Parser
                 mTokenBuilder.Append(c);
                 mCurToken = mTokenBuilder.ToString();
                 return DslConstants.DOT_;
-            } else if (mDelimiters.IndexOf(CurChar) >= 0) {//分隔符
-                char c = CurChar;
+            } else if (CurChar == '{') {
                 ++mIterator;
-
-                mTokenBuilder.Append(c);
-                mCurToken = mTokenBuilder.ToString();
-                switch (c) {
-                    case '{':
-                        return DslConstants.LBRACE_;
-                    case '}':
-                        return DslConstants.RBRACE_;
-                    case '[':
-                        return DslConstants.LBRACK_;
-                    case ']':
-                        return DslConstants.RBRACK_;
-                    case '(':
-                        return DslConstants.LPAREN_;
-                    case ')':
-                        return DslConstants.RPAREN_;
-                    case ',':
-                        return DslConstants.COMMA_;
-                    case ';':
-                        return DslConstants.SEMI_;
-                    default:
-                        return (short)c;
-                }
+                mCurToken = "{";
+                return DslConstants.LBRACE_;
+            } else if (CurChar == '}') {
+                ++mIterator;
+                mCurToken = "}";
+                return DslConstants.RBRACE_;
+            } else if (CurChar == '[') {
+                ++mIterator;
+                mCurToken = "[";
+                return DslConstants.LBRACK_;
+            } else if (CurChar == ']') {
+                ++mIterator;
+                mCurToken = "]";
+                return DslConstants.RBRACK_;
+            } else if (CurChar == '(') {
+                ++mIterator;
+                mCurToken = "(";
+                return DslConstants.LPAREN_;
+            } else if (CurChar == ')') {
+                ++mIterator;
+                mCurToken = ")";
+                return DslConstants.RPAREN_;
+            } else if (CurChar == ',') {
+                ++mIterator;
+                mCurToken = ",";
+                return DslConstants.COMMA_;
+            } else if (CurChar == ';') {
+                ++mIterator;
+                mCurToken = ";";
+                return DslConstants.SEMI_;
             } else {//关键字、标识符或常数
                 if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
                     int line = mLineNumber;
@@ -188,7 +194,7 @@ namespace Dsl.Parser
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; CurChar != 0 && (mDelimiters.IndexOf(CurChar) < 0 && mWhiteSpaces.IndexOf(CurChar) < 0 && mOperators.IndexOf(CurChar) < 0); ++mIterator) {
+                    for (; !isSpecialChar(CurChar); ++mIterator) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '/') {
@@ -409,6 +415,8 @@ namespace Dsl.Parser
             if (lastToken.Length > 0) {
                 if (isDelimiter(lastToken[0])) {
                     lastIsOperator = true;
+                } else if (isBeginParentheses(lastToken[0])) {
+                    lastIsOperator = true;
                 } else {
                     lastIsOperator = isOperator(lastToken[0]);
                 }
@@ -469,12 +477,33 @@ namespace Dsl.Parser
             else
                 return mDelimiters.IndexOf(c) >= 0;
         }
+        private bool isBeginParentheses(char c)
+        {
+            if (0 == c)
+                return false;
+            else
+                return mBeginParentheses.IndexOf(c) >= 0;
+        }
+        private bool isEndParentheses(char c)
+        {
+            if (0 == c)
+                return false;
+            else
+                return mEndParentheses.IndexOf(c) >= 0;
+        }
         private bool isOperator(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mOperators.IndexOf(c) >= 0;
+        }
+        private bool isSpecialChar(char c)
+        {
+            if (0 == c)
+                return true;
+            else
+                return mSpecialChars.IndexOf(c) >= 0;
         }
 
         private char CurChar
@@ -545,8 +574,11 @@ namespace Dsl.Parser
         private bool mCommentOnNewLine;
 
         private const string mWhiteSpaces = " \t\r\n";
-        private const string mDelimiters = "{}()[],;";
+        private const string mDelimiters = ",;";
+        private const string mBeginParentheses = "{([";
+        private const string mEndParentheses = "})]";
         private const string mOperators = "~`!%^&*-+=|:<>?/";
+        private const string mSpecialChars = mWhiteSpaces + mDelimiters + mBeginParentheses + mEndParentheses + mOperators;
         private Dictionary<string, short> mKeywords = new Dictionary<string, short>();
         private StringBuilder mTokenBuilder = new StringBuilder();
 
