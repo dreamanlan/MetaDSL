@@ -835,7 +835,32 @@ namespace Dsl
       return ToString();
 #endif
         }
-
+        public int GetFunctionNum()
+        {
+            return m_Functions.Count;
+        }
+        public void SetFunction(int index, FunctionData funcData)
+        {
+            if (index < 0 || index >= m_Functions.Count)
+                return;
+            m_Functions[index] = funcData;
+        }
+        public FunctionData GetFunction(int index)
+        {
+            if (index < 0 || index >= m_Functions.Count)
+                return FunctionData.NullFunctionData;
+            return m_Functions[index];
+        }
+        public string GetFunctionId(int index)
+        {
+            if (index < 0 || index >= m_Functions.Count)
+                return string.Empty;
+            return m_Functions[index].GetId();
+        }
+        public void AddFunction(FunctionData funcData)
+        {
+            m_Functions.Add(funcData);
+        }
         public List<FunctionData> Functions
         {
             get { return m_Functions; }
