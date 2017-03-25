@@ -59,7 +59,7 @@ OPERATOR_STATEMENT_DESC_0:
 	OPERATOR_STATEMENT_DESC_1 { _action_markOperator OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 }
 	
 OPERATOR_STATEMENT_DESC_1:
-	OPERATOR_STATEMENT_DESC_2 { _action_markOperator OP_TOKEN_1 _action_pushId _action_buildFirstTernaryOperator OPERATOR_STATEMENT_2 OP_TOKEN_1 _action_pushId _action_buildSecondTernaryOperator OPERATOR_STATEMENT_2 }
+	OPERATOR_STATEMENT_DESC_2 { _action_markOperator OP_TOKEN_1 _action_pushId _action_buildOperator OPERATOR_STATEMENT_2 }
 
 OPERATOR_STATEMENT_DESC_2:
 	OPERATOR_STATEMENT_DESC_3 { _action_markOperator OP_TOKEN_2 _action_pushId _action_buildOperator OPERATOR_STATEMENT_3 }
@@ -68,7 +68,7 @@ OPERATOR_STATEMENT_DESC_3:
 	OPERATOR_STATEMENT_DESC_4 { _action_markOperator OP_TOKEN_3 _action_pushId _action_buildOperator OPERATOR_STATEMENT_4 }
 	
 OPERATOR_STATEMENT_DESC_4:
-	OPERATOR_STATEMENT_DESC_5 { _action_markOperator OP_TOKEN_4 _action_pushId _action_buildOperator OPERATOR_STATEMENT_5 }
+	OPERATOR_STATEMENT_DESC_5 { _action_markOperator OP_TOKEN_4 _action_pushId _action_buildFirstTernaryOperator OPERATOR_STATEMENT_5 OP_TOKEN_4 _action_pushId _action_buildSecondTernaryOperator OPERATOR_STATEMENT_5 }	
 	
 OPERATOR_STATEMENT_DESC_5:
 	OPERATOR_STATEMENT_DESC_6 { _action_markOperator OP_TOKEN_5 _action_pushId _action_buildOperator OPERATOR_STATEMENT_6 }
@@ -131,12 +131,35 @@ FUNCTION_PARAMS:
 	_action_markParenthesisParam ( STATEMENTS ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 	_action_markBracketParam \[ STATEMENTS \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	_action_markPeriod . MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markQuestion QUESTION_PERIOD MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markQuestion _action_markQuestionParenthesisParam QUESTION_PARENTHESIS STATEMENTS )
+	_action_markQuestion _action_markQuestionBracketParam QUESTION_BRACKET STATEMENTS \]
+	_action_markQuestion _action_markQuestionBraceParam QUESTION_BRACE STATEMENTS \}
+	_action_markPointer POINTER MEMBER_DESC3 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markPeriod PERIOD_STAR MEMBER_DESC4 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markQuestion QUESTION_PERIOD_STAR MEMBER_DESC5 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markPointer POINTER_STAR MEMBER_DESC6 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	
 MEMBER_DESC:
 	_action_markPeriodParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
 	_action_markPeriodParenthesisParam ( STATEMENTS )
 	_action_markPeriodBracketParam \[ STATEMENTS \]
 	_action_markPeriodBraceParam \{ STATEMENTS \}
+	
+MEMBER_DESC2:
+	_action_markQuestionPeriodParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	
+MEMBER_DESC3:
+	_action_markPointerParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	
+MEMBER_DESC4:
+	_action_markPeriodStarParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	
+MEMBER_DESC5:
+	_action_markQuestionPeriodStarParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	
+MEMBER_DESC6:
+	_action_markPointerStarParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
 
 FUNCTION_ID:
 	IDENTIFIER _action_pushId

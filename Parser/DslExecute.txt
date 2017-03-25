@@ -23,14 +23,24 @@ public void execute  ( int  number )
     case 15:  buildHighOrderFunction();  break;
     case 16:  markBracketParam();  break;
     case 17:  markPeriod();  break;
-    case 18:  markPeriodParam();  break;
-    case 19:  setMemberId();  break;
-    case 20:  markPeriodParenthesisParam();  break;
-    case 21:  markPeriodBracketParam();  break;
-    case 22:  markPeriodBraceParam();  break;
-    case 23:  pushStr();  break;
-    case 24:  pushNum();  break;
-    case 25:  pushTrue();  break;
-    case 26:  pushFalse();  break;
+    case 18:  markQuestion();  break;
+    case 19:  markQuestionParenthesisParam();  break;
+    case 20:  markQuestionBracketParam();  break;
+    case 21:  markQuestionBraceParam();  break;
+    case 22:  markPointer();  break;
+    case 23:  markPeriodParam();  break;
+    case 24:  setMemberId();  break;
+    case 25:  markPeriodParenthesisParam();  break;
+    case 26:  markPeriodBracketParam();  break;
+    case 27:  markPeriodBraceParam();  break;
+    case 28:  markQuestionPeriodParam();  break;
+    case 29:  markPointerParam();  break;
+    case 30:  markPeriodStarParam();  break;
+    case 31:  markQuestionPeriodStarParam();  break;
+    case 32:  markPointerStarParam();  break;
+    case 33:  pushStr();  break;
+    case 34:  pushNum();  break;
+    case 35:  pushTrue();  break;
+    case 36:  pushFalse();  break;
   }
 }

@@ -3,7 +3,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	25
+#define MAX_ACTION_NUM	35
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < ActionForSourceCodeScript >
@@ -138,13 +138,23 @@ inline void ActionForSourceCodeScript::initialize_table(void)
   Action[15] = &ActionForSourceCodeScript::buildHighOrderFunction;
   Action[16] = &ActionForSourceCodeScript::markBracketParam;
   Action[17] = &ActionForSourceCodeScript::markPeriod;
-  Action[18] = &ActionForSourceCodeScript::markPeriodParam;
-  Action[19] = &ActionForSourceCodeScript::setMemberId;
-  Action[20] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
-  Action[21] = &ActionForSourceCodeScript::markPeriodBracketParam;
-  Action[22] = &ActionForSourceCodeScript::markPeriodBraceParam;
-  Action[23] = &ActionForSourceCodeScript::pushStr;
-  Action[24] = &ActionForSourceCodeScript::pushNum;  
+  Action[18] = &ActionForSourceCodeScript::markQuestion;
+  Action[19] = &ActionForSourceCodeScript::markQuestionParenthesisParam;
+  Action[20] = &ActionForSourceCodeScript::markQuestionBracketParam;
+  Action[21] = &ActionForSourceCodeScript::markQuestionBraceParam;
+  Action[22] = &ActionForSourceCodeScript::markPointer;
+  Action[23] = &ActionForSourceCodeScript::markPeriodParam;
+  Action[24] = &ActionForSourceCodeScript::setMemberId;
+  Action[25] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
+  Action[26] = &ActionForSourceCodeScript::markPeriodBracketParam;
+  Action[27] = &ActionForSourceCodeScript::markPeriodBraceParam;
+  Action[28] = &ActionForSourceCodeScript::markQuestionPeriodParam;
+  Action[29] = &ActionForSourceCodeScript::markPointerParam;
+  Action[30] = &ActionForSourceCodeScript::markPeriodStarParam;
+  Action[31] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
+  Action[32] = &ActionForSourceCodeScript::markPointerStarParam;
+  Action[33] = &ActionForSourceCodeScript::pushStr;
+  Action[34] = &ActionForSourceCodeScript::pushNum;
 }
 //--------------------------------------------------------------------------------------
 

@@ -8,6 +8,22 @@ skill(1006)
 		enablemoveagent(false);
 		a .. b;
 		a(b,c,d,...);
+		a ?? b;
+		a?.b(c,d,...);
+		a->c(e,f);
+		a = (b) => {c->d(...);};
+		a = (b) -> {c->d(...);};
+		a?.*b();
+		a?[b];
+		a?(b);
+		a?{b};
+		a.*b();
+		a->b();
+		a->*b();
+		a.(b);
+		a.[b];
+		a.{b};
+		a.b();
 	};
 	section(5833)
 	{

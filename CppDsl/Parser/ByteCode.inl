@@ -475,6 +475,120 @@ namespace Dsl
     call.SetParamClass(Call::PARAM_CLASS_PERIOD_BRACE);
   }
   template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markQuestion(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+
+	  int commentOnNewLine;
+	  int num = mThis->getCommentNum(commentOnNewLine);
+	  for (int ix = 0; ix < num; ++ix) {
+		  char* cmt = mThis->getComment(ix);
+		  call.AddComment(cmt);
+	  }
+	  mThis->resetComments();
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markQuestionPeriodParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_QUESTION_PERIOD);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markQuestionParenthesisParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_QUESTION_PARENTHESIS);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markQuestionBracketParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_QUESTION_BRACKET);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markQuestionBraceParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_QUESTION_BRACE);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markPointer(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+
+	  int commentOnNewLine;
+	  int num = mThis->getCommentNum(commentOnNewLine);
+	  for (int ix = 0; ix < num; ++ix) {
+		  char* cmt = mThis->getComment(ix);
+		  call.AddComment(cmt);
+	  }
+	  mThis->resetComments();
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markPointerParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_POINTER);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markPeriodStarParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_PERIOD_STAR);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markQuestionPeriodStarParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_QUESTION_PERIOD_STAR);
+  }
+  template<class RealTypeT> inline
+	  void RuntimeBuilderT<RealTypeT>::markPointerStarParam(void)
+  {
+	  if (!preconditionCheck())return;
+	  Function* p = mData.getLastFunctionRef();
+	  if (0 == p)
+		  return;
+	  Call& call = p->GetCall();
+	  call.SetParamClass(Call::PARAM_CLASS_POINTER_STAR);
+  }
+  template<class RealTypeT> inline
     void RuntimeBuilderT<RealTypeT>::markHaveStatement(void)
   {
     if (!preconditionCheck())return;

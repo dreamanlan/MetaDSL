@@ -86,15 +86,25 @@ namespace Dsl.Parser
                 case 15: buildHighOrderFunction(); break;
                 case 16: markBracketParam(); break;
                 case 17: markPeriod(); break;
-                case 18: markPeriodParam(); break;
-                case 19: setMemberId(); break;
-                case 20: markPeriodParenthesisParam(); break;
-                case 21: markPeriodBracketParam(); break;
-                case 22: markPeriodBraceParam(); break;
-                case 23: pushStr(); break;
-                case 24: pushNum(); break;
-                case 25: pushTrue(); break;
-                case 26: pushFalse(); break;
+                case 18: markQuestion(); break;
+                case 19: markQuestionParenthesisParam(); break;
+                case 20: markQuestionBracketParam(); break;
+                case 21: markQuestionBraceParam(); break;
+                case 22: markPointer(); break;
+                case 23: markPeriodParam(); break;
+                case 24: setMemberId(); break;
+                case 25: markPeriodParenthesisParam(); break;
+                case 26: markPeriodBracketParam(); break;
+                case 27: markPeriodBraceParam(); break;
+                case 28: markQuestionPeriodParam(); break;
+                case 29: markPointerParam(); break;
+                case 30: markPeriodStarParam(); break;
+                case 31: markQuestionPeriodStarParam(); break;
+                case 32: markPointerStarParam(); break;
+                case 33: pushStr(); break;
+                case 34: pushNum(); break;
+                case 35: pushTrue(); break;
+                case 36: pushFalse(); break;
             }
         }
 
@@ -430,6 +440,66 @@ namespace Dsl.Parser
         {
             FunctionData func = getLastFunction();
             func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
+        }
+        internal void markQuestion()
+        {
+            FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            IList<string> cmts = GetComments(out commentOnNewLine);
+            if (cmts.Count > 0) {
+                func.Call.Comments.AddRange(cmts);
+            }
+        }
+        internal void markQuestionPeriodParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD);
+        }
+        internal void markQuestionParenthesisParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS);
+        }
+        internal void markQuestionBracketParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET);
+        }
+        internal void markQuestionBraceParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
+        }
+        internal void markPointer()
+        {
+            FunctionData func = getLastFunction();
+
+            bool commentOnNewLine;
+            IList<string> cmts = GetComments(out commentOnNewLine);
+            if (cmts.Count > 0) {
+                func.Call.Comments.AddRange(cmts);
+            }
+        }
+        internal void markPointerParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_POINTER);
+        }
+        internal void markPeriodStarParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
+        }
+        internal void markQuestionPeriodStarParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR);
+        }
+        internal void markPointerStarParam()
+        {
+            FunctionData func = getLastFunction();
+            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR);
         }
         internal void markHaveStatement()
         {

@@ -288,6 +288,14 @@ namespace Dsl
             PARAM_CLASS_PERIOD_PARENTHESIS,
             PARAM_CLASS_PERIOD_BRACKET,
             PARAM_CLASS_PERIOD_BRACE,
+            PARAM_CLASS_QUESTION_PERIOD,
+            PARAM_CLASS_QUESTION_PARENTHESIS,
+            PARAM_CLASS_QUESTION_BRACKET,
+            PARAM_CLASS_QUESTION_BRACE,
+            PARAM_CLASS_POINTER,
+            PARAM_CLASS_PERIOD_STAR,
+            PARAM_CLASS_QUESTION_PERIOD_STAR,
+            PARAM_CLASS_POINTER_STAR,
             PARAM_CLASS_OPERATOR,
             PARAM_CLASS_TERNARY_OPERATOR,
             PARAM_CLASS_MAX,
@@ -1276,6 +1284,38 @@ namespace Dsl
                             lbracket = ".{";
                             rbracket = "}";
                             break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
+                            lbracket = "?.";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
+                            lbracket = "?(";
+                            rbracket = ")";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
+                            lbracket = "?[";
+                            rbracket = "]";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
+                            lbracket = "?{";
+                            rbracket = "}";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER:
+                            lbracket = "->";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
+                            lbracket = ".*";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
+                            lbracket = "?.*";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
+                            lbracket = "->*";
+                            rbracket = string.Empty;
+                            break;
                     }
                     StringBuilder stream = new StringBuilder();
                     stream.Append(lbracket);
@@ -1284,7 +1324,12 @@ namespace Dsl
                         if (i > 0)
                             stream.Append(",");
                         ISyntaxComponent param = data.GetParam(i);
-                        if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass)
+                        if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                             stream.Append(unquoteString(param.ToScriptString(includeComment)));
                         else
                             stream.Append(param.ToScriptString(includeComment));

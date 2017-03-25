@@ -118,24 +118,86 @@ namespace Dsl.Parser
                     mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                 }
                 return DslConstants.SCRIPT_CONTENT_;
+            } else if (CurChar == '?') {
+                if (NextChar == '.') {
+                    ++mIterator;
+                    ++mIterator;
+                    if (CurChar == '*') {
+                        ++mIterator;
+                        mCurToken = "?.*";
+                        return DslConstants.QUESTION_PERIOD_STAR_;
+                    } else {
+                        mCurToken = "?.";
+                        return DslConstants.QUESTION_PERIOD_;
+                    }
+                } else if (NextChar == '(') {
+                    ++mIterator;
+                    ++mIterator;
+                    mCurToken = "?(";
+                    return DslConstants.QUESTION_PARENTHESIS_;
+                } else if (NextChar == '[') {
+                    ++mIterator;
+                    ++mIterator;
+                    mCurToken = "?[";
+                    return DslConstants.QUESTION_BRACKET_;
+                } else if (NextChar == '{') {
+                    ++mIterator;
+                    ++mIterator;
+                    mCurToken = "?{";
+                    return DslConstants.QUESTION_BRACE_;
+                } else {
+                    getOperatorToken();
+                    return getOperatorTokenValue();
+                }
+            } else if (CurChar == '-') {
+                if (NextChar == '>') {
+                    char nextChar = '\0';
+                    for (int start = mIterator + 2; start < mInput.Length; ++start) {
+                        if (mWhiteSpaces.IndexOf(mInput[start]) >= 0) {
+                            continue;
+                        } else {
+                            nextChar = mInput[start];
+                            break;
+                        }
+                    }
+                    if (nextChar == '{') {
+                        getOperatorToken();
+                        return getOperatorTokenValue();
+                    } else if (nextChar == '*') {
+                        ++mIterator;
+                        ++mIterator;
+                        ++mIterator;
+                        mCurToken = "->*";
+                        return DslConstants.POINTER_STAR_;
+                    } else {
+                        ++mIterator;
+                        ++mIterator;
+                        mCurToken = "->";
+                        return DslConstants.POINTER_;
+                    }
+                } else {
+                    getOperatorToken();
+                    return getOperatorTokenValue();
+                }
+            } else if (CurChar == '.' && NextChar == '*') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = ".*";
+                return DslConstants.PERIOD_STAR_;
+            } else if (CurChar == '.' && NextChar == '.') {
+                ++mIterator;
+                ++mIterator;
+                if (CurChar == '.') {
+                    ++mIterator;
+                    mCurToken = "...";
+                    return DslConstants.IDENTIFIER_;
+                } else {
+                    mCurToken = "..";
+                    return DslConstants.OP_TOKEN_13_;
+                }
             } else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
                 return getOperatorTokenValue();
-            } else if (CurChar == '.' && NextChar == '.') {
-                char c = CurChar;
-                ++mIterator;
-                ++mIterator;
-                mTokenBuilder.Append(c); 
-                mTokenBuilder.Append(c);
-                if (CurChar == '.') {
-                    ++mIterator;
-                    mTokenBuilder.Append(c);
-                    mCurToken = mTokenBuilder.ToString();
-                    return DslConstants.IDENTIFIER_;
-                } else {
-                    mCurToken = mTokenBuilder.ToString();
-                    return DslConstants.OP_TOKEN_0_;
-                }
             } else if (CurChar == '.' && !myisdigit(NextChar, false)) {
                 char c = CurChar;
                 ++mIterator;
@@ -416,7 +478,7 @@ namespace Dsl.Parser
                     break;
                 case '?': {
                         ++mIterator;
-                        if (CurChar == '?' || CurChar == '.') {
+                        if (CurChar == '?') {
                             ++mIterator;
                         }
                     }
@@ -466,38 +528,40 @@ namespace Dsl.Parser
                     val = DslConstants.OP_TOKEN_0_;
                 } else if (c1 != '\0' && c2 != '\0' && c3 == '=' && c4 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;
-                } else if (c0 == '=' && c1 == '>') {
+                } else if (c0 == '=' && c1 == '>' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_1_;
-                } else if ((c0 == '?' || c0 == ':') && curOperator.Length == 1) {
+                } else if (c0 == '-' && c1 == '>' && c2 == '\0') {
+                    val = DslConstants.OP_TOKEN_1_;
+                } else if (c0 == '?' && c1 == '?' && c2 == '?' && c3 == '\0') {
                     val = DslConstants.OP_TOKEN_3_;
-                } else if (c0 == '|' && c1 == '|' || c0 == '?' && c1 == '?') {
+                } else if ((c0 == '?' || c0 == ':') && curOperator.Length == 1) {
                     val = DslConstants.OP_TOKEN_4_;
-                } else if (c0 == '&' && c1 == '&') {
+                } else if (c0 == '|' && c1 == '|' && c2 == '\0' || c0 == '?' && c1 == '?' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_5_;
-                } else if (c0 == '|' && c1 == 0) {
+                } else if (c0 == '&' && c1 == '&' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_6_;
-                } else if (c0 == '^' && c1 == 0) {
+                } else if (c0 == '|' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_7_;
-                } else if (c0 == '&' && c1 == 0) {
+                } else if (c0 == '^' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_8_;
-                } else if ((c0 == '=' || c0 == '!') && c1 == '=') {
+                } else if (c0 == '&' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_9_;
-                } else if ((c0 == '<' || c0 == '>') && (c1 == '=' || c1 == 0)) {
+                } else if ((c0 == '=' || c0 == '!') && c1 == '=' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_10_;
-                } else if ((c0 == '<' && c1 == '<') || (c0 == '>' && c1 == '>') || (c0 == '>' && c1 == '>' && c2 == '>')) {
+                } else if ((c0 == '<' || c0 == '>') && (c1 == '=' && c2 == '\0' || c1 == 0)) {
                     val = DslConstants.OP_TOKEN_11_;
-                } else if ((c0 == '+' || c0 == '-') && c1 == 0) {
+                } else if ((c0 == '<' && c1 == '<' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '>' && c3 == '\0')) {
+                    val = DslConstants.OP_TOKEN_12_;
+                } else if ((c0 == '+' || c0 == '-') && c1 == '\0') {
                     if (lastIsOperator)
-                        val = DslConstants.OP_TOKEN_14_;
+                        val = DslConstants.OP_TOKEN_15_;
                     else
-                        val = DslConstants.OP_TOKEN_12_;
-                } else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == 0) {
-                    val = DslConstants.OP_TOKEN_13_;
-                } else if ((c0 == '+' && c1 == '+') || (c0 == '-' && c1 == '-') || (c0 == '~' && c1 == 0) || (c0 == '!' && c1 == 0)) {
+                        val = DslConstants.OP_TOKEN_13_;
+                } else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_14_;
-                } else if (c0 == '?' && c1 == '?' && c2 == '?' && c3 == '?' && c4 == '\0') {
+                } else if ((c0 == '+' && c1 == '+' && c2 == '\0') || (c0 == '-' && c1 == '-' && c2 == '\0') || (c0 == '~' && c1 == '\0') || (c0 == '!' && c1 == '\0')) {
                     val = DslConstants.OP_TOKEN_15_;
-                } else if (c0 == '-' && c1 == '>' || c0 == '?' && c1 == '.') {
+                } else if (c0 == '?' && c1 == '?' && c2 == '?' && c3 == '?' && c4 == '\0') {
                     val = DslConstants.OP_TOKEN_16_;
                 } else {
                     val = DslConstants.OP_TOKEN_2_;

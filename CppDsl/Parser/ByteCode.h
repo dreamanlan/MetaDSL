@@ -41,7 +41,17 @@ namespace Dsl
     inline void    setMemberId(void);
     inline void    markPeriodParenthesisParam(void);
     inline void    markPeriodBracketParam(void);
-    inline void    markPeriodBraceParam(void);
+	inline void    markPeriodBraceParam(void);
+	inline void    markQuestion(void);
+	inline void    markQuestionPeriodParam(void);
+	inline void    markQuestionParenthesisParam(void);
+	inline void    markQuestionBracketParam(void);
+	inline void    markQuestionBraceParam(void);
+	inline void    markPointer(void);
+	inline void    markPointerParam(void);
+	inline void    markPeriodStarParam(void);
+	inline void    markQuestionPeriodStarParam(void);
+	inline void    markPointerStarParam(void);
   private:
     inline ISyntaxComponent& simplifyStatement(Statement& data)const;
     inline ISyntaxComponent& simplifyStatement(Function& data)const;
