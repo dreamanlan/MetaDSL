@@ -395,6 +395,21 @@ short SlkToken::get(void)
   } else if (isOperator(*mIterator)) {//²Ù×÷·û
     getOperatorToken();
     return getOperatorTokenValue();
+  } else if (*mIterator == '.' && *(mIterator + 1) == '.') {
+	  char c = *mIterator;
+	  ++mIterator;
+	  ++mIterator;
+	  pushTokenChar(c);
+	  pushTokenChar(c);
+	  if (*mIterator == '.') {
+		  ++mIterator;
+		  pushTokenChar(c);
+		  endToken();
+		  return IDENTIFIER_;
+	  } else {
+		  endToken();
+		  return OP_TOKEN_0_;
+	  }
   } else if (*mIterator == '.' && 0 == myisdigit(*(mIterator + 1), FALSE)) {
     char c = *mIterator;
     ++mIterator;

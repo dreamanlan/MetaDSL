@@ -121,7 +121,22 @@ namespace Dsl.Parser
             } else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
                 return getOperatorTokenValue();
-            } else if (CurChar == '.' && NextChar != 0 && !myisdigit(NextChar, false)) {
+            } else if (CurChar == '.' && NextChar == '.') {
+                char c = CurChar;
+                ++mIterator;
+                ++mIterator;
+                mTokenBuilder.Append(c); 
+                mTokenBuilder.Append(c);
+                if (CurChar == '.') {
+                    ++mIterator;
+                    mTokenBuilder.Append(c);
+                    mCurToken = mTokenBuilder.ToString();
+                    return DslConstants.IDENTIFIER_;
+                } else {
+                    mCurToken = mTokenBuilder.ToString();
+                    return DslConstants.OP_TOKEN_0_;
+                }
+            } else if (CurChar == '.' && !myisdigit(NextChar, false)) {
                 char c = CurChar;
                 ++mIterator;
 

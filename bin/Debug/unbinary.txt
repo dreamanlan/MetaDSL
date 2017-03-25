@@ -6,6 +6,8 @@ skill(1006)
 		sendgfxmessage(0,"ForGame","FadeToSkillForSkill");
 		sendgfxmessage(0,"StartScript","ToggleMotionBlur","0");
 		enablemoveagent(false);
+		a .. b;
+		a(b,c,d,...);
 	};
 	section(5833)
 	{
