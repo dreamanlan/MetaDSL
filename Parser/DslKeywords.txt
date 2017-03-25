@@ -20,6 +20,10 @@ public static string[] name = {
 ,"OP_TOKEN_10"
 ,"OP_TOKEN_11"
 ,"OP_TOKEN_12"
+,"OP_TOKEN_13"
+,"OP_TOKEN_14"
+,"OP_TOKEN_15"
+,"OP_TOKEN_16"
 ,"SCRIPT_CONTENT"
 ,"IDENTIFIER"
 ,"STRING"
@@ -43,6 +47,10 @@ public  short[] token = {
 ,DslConstants.OP_TOKEN_10_ 
 ,DslConstants.OP_TOKEN_11_ 
 ,DslConstants.OP_TOKEN_12_ 
+,DslConstants.OP_TOKEN_13_ 
+,DslConstants.OP_TOKEN_14_ 
+,DslConstants.OP_TOKEN_15_ 
+,DslConstants.OP_TOKEN_16_ 
 ,DslConstants.SCRIPT_CONTENT_ 
 ,DslConstants.IDENTIFIER_ 
 ,DslConstants.STRING_ 

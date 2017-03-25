@@ -27,6 +27,10 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ OP_TOKEN_10_, "OP_TOKEN_10" } 
 ,{ OP_TOKEN_11_, "OP_TOKEN_11" } 
 ,{ OP_TOKEN_12_, "OP_TOKEN_12" } 
+,{ OP_TOKEN_13_, "OP_TOKEN_13" } 
+,{ OP_TOKEN_14_, "OP_TOKEN_14" } 
+,{ OP_TOKEN_15_, "OP_TOKEN_15" } 
+,{ OP_TOKEN_16_, "OP_TOKEN_16" } 
 ,{ LBRACE_, "{" } 
 ,{ RBRACE_, "}" } 
 ,{ SCRIPT_CONTENT_, "SCRIPT_CONTENT" } 

@@ -24,6 +24,10 @@ namespace Dsl.Parser
 ,"OPERATOR_STATEMENT_10"
 ,"OPERATOR_STATEMENT_11"
 ,"OPERATOR_STATEMENT_12"
+,"OPERATOR_STATEMENT_13"
+,"OPERATOR_STATEMENT_14"
+,"OPERATOR_STATEMENT_15"
+,"OPERATOR_STATEMENT_16"
 ,"OPERATOR_STATEMENT_DESC_0"
 ,"OPERATOR_STATEMENT_DESC_1"
 ,"OPERATOR_STATEMENT_DESC_2"
@@ -37,6 +41,10 @@ namespace Dsl.Parser
 ,"OPERATOR_STATEMENT_DESC_10"
 ,"OPERATOR_STATEMENT_DESC_11"
 ,"OPERATOR_STATEMENT_DESC_12"
+,"OPERATOR_STATEMENT_DESC_13"
+,"OPERATOR_STATEMENT_DESC_14"
+,"OPERATOR_STATEMENT_DESC_15"
+,"OPERATOR_STATEMENT_DESC_16"
 ,"FUNCTION_STATEMENT"
 ,"FUNCTION_STATEMENT_DESC"
 ,"FUNCTION_CALLS"
@@ -60,7 +68,11 @@ namespace Dsl.Parser
 ,"OP_TOKEN_9_OPERATOR_STATEMENT_10_*"
 ,"OP_TOKEN_10_OPERATOR_STATEMENT_11_*"
 ,"OP_TOKEN_11_OPERATOR_STATEMENT_12_*"
-,"OP_TOKEN_12_FUNCTION_STATEMENT_*"
+,"OP_TOKEN_12_OPERATOR_STATEMENT_13_*"
+,"OP_TOKEN_13_OPERATOR_STATEMENT_14_*"
+,"OP_TOKEN_14_OPERATOR_STATEMENT_15_*"
+,"OP_TOKEN_15_OPERATOR_STATEMENT_16_*"
+,"OP_TOKEN_16_FUNCTION_STATEMENT_*"
 ,"FUNCTION_EX_CALL_*"
 ,"FUNCTION_PARAMS_opt"
 ,"FUNCTION_EX_opt"
@@ -70,7 +82,7 @@ namespace Dsl.Parser
 ,"FUNCTION_PARAMS_4_opt"
 };
 
-private static string[] Terminal_name ={"0"
+        private static string[] Terminal_name ={"0"
 
 ,"OP_TOKEN_0"
 ,"OP_TOKEN_1"
@@ -85,6 +97,10 @@ private static string[] Terminal_name ={"0"
 ,"OP_TOKEN_10"
 ,"OP_TOKEN_11"
 ,"OP_TOKEN_12"
+,"OP_TOKEN_13"
+,"OP_TOKEN_14"
+,"OP_TOKEN_15"
+,"OP_TOKEN_16"
 ,"{"
 ,"}"
 ,"SCRIPT_CONTENT"
@@ -103,7 +119,7 @@ private static string[] Terminal_name ={"0"
 ,"END_OF_SLK_INPUT"
 };
 
-private static string[] Action_name ={"0"
+        private static string[] Action_name ={"0"
 
 ,"_action_endStatement"
 ,"_action_markOperator"
@@ -133,7 +149,7 @@ private static string[] Action_name ={"0"
 ,"_action_pushFalse"
 };
 
-private static string[] Production_name ={"0"
+        private static string[] Production_name ={"0"
 
 ,"PROGRAM --> STATEMENTS"
 ,"STATEMENTS --> STATEMENT SEP_STATEMENT_*"
@@ -150,6 +166,10 @@ private static string[] Production_name ={"0"
 ,"OPERATOR_STATEMENT_10 --> OPERATOR_STATEMENT_DESC_10 _action_endStatement"
 ,"OPERATOR_STATEMENT_11 --> OPERATOR_STATEMENT_DESC_11 _action_endStatement"
 ,"OPERATOR_STATEMENT_12 --> OPERATOR_STATEMENT_DESC_12 _action_endStatement"
+,"OPERATOR_STATEMENT_13 --> OPERATOR_STATEMENT_DESC_13 _action_endStatement"
+,"OPERATOR_STATEMENT_14 --> OPERATOR_STATEMENT_DESC_14 _action_endStatement"
+,"OPERATOR_STATEMENT_15 --> OPERATOR_STATEMENT_DESC_15 _action_endStatement"
+,"OPERATOR_STATEMENT_16 --> OPERATOR_STATEMENT_DESC_16 _action_endStatement"
 ,"OPERATOR_STATEMENT_DESC_0 --> OPERATOR_STATEMENT_DESC_1 OP_TOKEN_0_OPERATOR_STATEMENT_1_*"
 ,"OPERATOR_STATEMENT_DESC_1 --> OPERATOR_STATEMENT_DESC_2 OP_TOKEN_1_OPERATOR_STATEMENT_2_OP_TOKEN_1_OPERATOR_STATEMENT_2_*"
 ,"OPERATOR_STATEMENT_DESC_2 --> OPERATOR_STATEMENT_DESC_3 OP_TOKEN_2_OPERATOR_STATEMENT_3_*"
@@ -162,7 +182,11 @@ private static string[] Production_name ={"0"
 ,"OPERATOR_STATEMENT_DESC_9 --> OPERATOR_STATEMENT_DESC_10 OP_TOKEN_9_OPERATOR_STATEMENT_10_*"
 ,"OPERATOR_STATEMENT_DESC_10 --> OPERATOR_STATEMENT_DESC_11 OP_TOKEN_10_OPERATOR_STATEMENT_11_*"
 ,"OPERATOR_STATEMENT_DESC_11 --> OPERATOR_STATEMENT_DESC_12 OP_TOKEN_11_OPERATOR_STATEMENT_12_*"
-,"OPERATOR_STATEMENT_DESC_12 --> FUNCTION_STATEMENT_DESC OP_TOKEN_12_FUNCTION_STATEMENT_*"
+,"OPERATOR_STATEMENT_DESC_12 --> OPERATOR_STATEMENT_DESC_13 OP_TOKEN_12_OPERATOR_STATEMENT_13_*"
+,"OPERATOR_STATEMENT_DESC_13 --> OPERATOR_STATEMENT_DESC_14 OP_TOKEN_13_OPERATOR_STATEMENT_14_*"
+,"OPERATOR_STATEMENT_DESC_14 --> OPERATOR_STATEMENT_DESC_15 OP_TOKEN_14_OPERATOR_STATEMENT_15_*"
+,"OPERATOR_STATEMENT_DESC_15 --> OPERATOR_STATEMENT_DESC_16 OP_TOKEN_15_OPERATOR_STATEMENT_16_*"
+,"OPERATOR_STATEMENT_DESC_16 --> FUNCTION_STATEMENT_DESC OP_TOKEN_16_FUNCTION_STATEMENT_*"
 ,"FUNCTION_STATEMENT --> FUNCTION_STATEMENT_DESC _action_endStatement"
 ,"FUNCTION_STATEMENT_DESC --> _action_beginStatement FUNCTION_CALLS"
 ,"FUNCTION_CALLS --> FUNCTION_EX_CALL_*"
@@ -212,8 +236,16 @@ private static string[] Production_name ={"0"
 ,"OP_TOKEN_10_OPERATOR_STATEMENT_11_* -->"
 ,"OP_TOKEN_11_OPERATOR_STATEMENT_12_* --> _action_markOperator OP_TOKEN_11 _action_pushId _action_buildOperator OPERATOR_STATEMENT_12 OP_TOKEN_11_OPERATOR_STATEMENT_12_*"
 ,"OP_TOKEN_11_OPERATOR_STATEMENT_12_* -->"
-,"OP_TOKEN_12_FUNCTION_STATEMENT_* --> _action_markOperator OP_TOKEN_12 _action_pushId _action_buildOperator FUNCTION_STATEMENT OP_TOKEN_12_FUNCTION_STATEMENT_*"
-,"OP_TOKEN_12_FUNCTION_STATEMENT_* -->"
+,"OP_TOKEN_12_OPERATOR_STATEMENT_13_* --> _action_markOperator OP_TOKEN_12 _action_pushId _action_buildOperator OPERATOR_STATEMENT_13 OP_TOKEN_12_OPERATOR_STATEMENT_13_*"
+,"OP_TOKEN_12_OPERATOR_STATEMENT_13_* -->"
+,"OP_TOKEN_13_OPERATOR_STATEMENT_14_* --> _action_markOperator OP_TOKEN_13 _action_pushId _action_buildOperator OPERATOR_STATEMENT_14 OP_TOKEN_13_OPERATOR_STATEMENT_14_*"
+,"OP_TOKEN_13_OPERATOR_STATEMENT_14_* -->"
+,"OP_TOKEN_14_OPERATOR_STATEMENT_15_* --> _action_markOperator OP_TOKEN_14 _action_pushId _action_buildOperator OPERATOR_STATEMENT_15 OP_TOKEN_14_OPERATOR_STATEMENT_15_*"
+,"OP_TOKEN_14_OPERATOR_STATEMENT_15_* -->"
+,"OP_TOKEN_15_OPERATOR_STATEMENT_16_* --> _action_markOperator OP_TOKEN_15 _action_pushId _action_buildOperator OPERATOR_STATEMENT_16 OP_TOKEN_15_OPERATOR_STATEMENT_16_*"
+,"OP_TOKEN_15_OPERATOR_STATEMENT_16_* -->"
+,"OP_TOKEN_16_FUNCTION_STATEMENT_* --> _action_markOperator OP_TOKEN_16 _action_pushId _action_buildOperator FUNCTION_STATEMENT OP_TOKEN_16_FUNCTION_STATEMENT_*"
+,"OP_TOKEN_16_FUNCTION_STATEMENT_* -->"
 ,"FUNCTION_EX_CALL_* --> _action_beginFunction FUNCTION_EX_CALL _action_endFunction FUNCTION_EX_CALL_*"
 ,"FUNCTION_EX_CALL_* -->"
 ,"FUNCTION_PARAMS_opt --> FUNCTION_PARAMS"
@@ -230,29 +262,29 @@ private static string[] Production_name ={"0"
 ,"FUNCTION_PARAMS_4_opt -->"
 };
 
-private const short   START_SYMBOL = 30;
-private const short   START_ACTION = 89;
-private const short   END_ACTION = 115;
+        private const short START_SYMBOL = 34;
+        private const short START_ACTION = 105;
+        private const short END_ACTION = 131;
 
-internal static string  GetSymbolName ( short symbol )
-{
-  if ( symbol >= START_ACTION && symbol < END_ACTION ) {
-      return ( Action_name [symbol - (START_ACTION-1)] );
-  } else if ( symbol >= START_SYMBOL ) {
-      return ( Nonterminal_name [symbol - (START_SYMBOL-1)] );
-  } else if ( symbol > 0 ) {
-      return ( Terminal_name [ symbol ] );
-  }
-  return ( "not a symbol" );
-}
+        internal static string GetSymbolName(short symbol)
+        {
+            if (symbol >= START_ACTION && symbol < END_ACTION) {
+                return (Action_name[symbol - (START_ACTION - 1)]);
+            } else if (symbol >= START_SYMBOL) {
+                return (Nonterminal_name[symbol - (START_SYMBOL - 1)]);
+            } else if (symbol > 0) {
+                return (Terminal_name[symbol]);
+            }
+            return ("not a symbol");
+        }
 
-internal static string  GetProductionName ( short production_number )
-{
-  return ( Production_name [production_number] );
-}
+        internal static string GetProductionName(short production_number)
+        {
+            return (Production_name[production_number]);
+        }
 
 
-};
+    };
 
 
 }

@@ -173,37 +173,51 @@ short SlkToken::getOperatorTokenValue(void)const
       lastIsOperator = isOperator(pLastToken[0]);
     }
   }
-  short val = OP_TOKEN_0_;
+  short val = OP_TOKEN_2_;
   if (pOperator && pOperator[0]) {
-    if ((pOperator[0] == '?' || pOperator[0] == ':') && pOperator[1] == '\0') {
-      val = OP_TOKEN_1_;
-    } else if (pOperator[0] == '|' && pOperator[1] == '|') {
-      val = OP_TOKEN_2_;
-    } else if (pOperator[0] == '&' && pOperator[1] == '&') {
+	if (pOperator[0] == '=' && pOperator[1] == '\0') {
+		val = OP_TOKEN_0_;
+	} else if (pOperator[1] == '=' && pOperator[2] == '\0') {
+		val = OP_TOKEN_0_;
+	} else if (pOperator[1] && pOperator[2] == '=' && pOperator[3] == '\0') {
+		val = OP_TOKEN_0_;
+	} else if (pOperator[1] && pOperator[2] && pOperator[3] == '=' && pOperator[4] == '\0') {
+		val = OP_TOKEN_0_;
+	} else if (pOperator[0] == '=' && pOperator[1] == '>') {
+		val = OP_TOKEN_1_;
+	} else if ((pOperator[0] == '?' || pOperator[0] == ':') && pOperator[1] == '\0') {
       val = OP_TOKEN_3_;
-    } else if (pOperator[0] == '|' && pOperator[1] == '\0') {
+	} else if (pOperator[0] == '|' && pOperator[1] == '|' || pOperator[0] == '?' && pOperator[1] == '?') {
       val = OP_TOKEN_4_;
-    } else if (pOperator[0] == '^' && pOperator[1] == '\0') {
+    } else if (pOperator[0] == '&' && pOperator[1] == '&') {
       val = OP_TOKEN_5_;
-    } else if (pOperator[0] == '&' && pOperator[1] == '\0') {
+    } else if (pOperator[0] == '|' && pOperator[1] == '\0') {
       val = OP_TOKEN_6_;
-    } else if ((pOperator[0] == '=' || pOperator[0] == '!') && pOperator[1] == '=') {
+    } else if (pOperator[0] == '^' && pOperator[1] == '\0') {
       val = OP_TOKEN_7_;
-    } else if ((pOperator[0] == '<' || pOperator[0] == '>') && (pOperator[1] == '=' || pOperator[1] == '\0')) {
+    } else if (pOperator[0] == '&' && pOperator[1] == '\0') {
       val = OP_TOKEN_8_;
-    } else if ((pOperator[0] == '<' && pOperator[1] == '<') || (pOperator[0] == '>' && pOperator[1] == '>') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '>')) {
+    } else if ((pOperator[0] == '=' || pOperator[0] == '!') && pOperator[1] == '=') {
       val = OP_TOKEN_9_;
+    } else if ((pOperator[0] == '<' || pOperator[0] == '>') && (pOperator[1] == '=' || pOperator[1] == '\0')) {
+      val = OP_TOKEN_10_;
+    } else if ((pOperator[0] == '<' && pOperator[1] == '<') || (pOperator[0] == '>' && pOperator[1] == '>') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '>')) {
+      val = OP_TOKEN_11_;
     } else if ((pOperator[0] == '+' || pOperator[0] == '-') && pOperator[1] == '\0') {
       if (lastIsOperator)
-        val = OP_TOKEN_12_;
+        val = OP_TOKEN_14_;
       else
-        val = OP_TOKEN_10_;
+        val = OP_TOKEN_12_;
     } else if ((pOperator[0] == '*' || pOperator[0] == '/' || pOperator[0] == '%') && pOperator[1] == '\0') {
-      val = OP_TOKEN_11_;
+      val = OP_TOKEN_13_;
     } else if ((pOperator[0] == '+' && pOperator[1] == '+') || (pOperator[0] == '-' && pOperator[1] == '-') || (pOperator[0] == '~' && pOperator[1] == '\0') || (pOperator[0] == '!' && pOperator[1] == '\0')) {
-      val = OP_TOKEN_12_;
+		val = OP_TOKEN_14_;
+	} else if (pOperator[0] == '?' && pOperator[1] == '?' && pOperator[2] == '?' && pOperator[3] == '?' && pOperator[4] == '\0') {
+		val = OP_TOKEN_15_;
+	} else if (pOperator[0] == '-' && pOperator[1] == '>' || pOperator[0] == '?' && pOperator[1] == '.') {
+		val = OP_TOKEN_16_;
     } else {
-      val = OP_TOKEN_0_;
+      val = OP_TOKEN_2_;
     }
   }
   return val;

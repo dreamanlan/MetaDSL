@@ -414,6 +414,13 @@ namespace Dsl.Parser
                         }
                     }
                     break;
+                case '?': {
+                        ++mIterator;
+                        if (CurChar == '?' || CurChar == '.') {
+                            ++mIterator;
+                        }
+                    }
+                    break;
                 default: {
                         ++mIterator;
                     }
@@ -436,44 +443,64 @@ namespace Dsl.Parser
                     lastIsOperator = isOperator(lastToken[0]);
                 }
             }
-            short val = DslConstants.OP_TOKEN_0_;
+            short val = DslConstants.OP_TOKEN_2_;
             if (curOperator.Length > 0) {
                 char c0 = curOperator[0];
                 char c1 = (char)0;
                 char c2 = (char)0;
+                char c3 = (char)0;
+                char c4 = (char)0;
                 if (curOperator.Length > 1)
                     c1 = curOperator[1];
                 if (curOperator.Length > 2)
                     c2 = curOperator[2];
-                if ((c0 == '?' || c0 == ':') && curOperator.Length == 1) {
+                if (curOperator.Length > 3)
+                    c3 = curOperator[3];
+                if (curOperator.Length > 4)
+                    c4 = curOperator[4];
+                if (c0 == '=' && c1 == '\0') {
+                    val = DslConstants.OP_TOKEN_0_;
+                } else if (c1 == '=' && c2 == '\0') {
+                    val = DslConstants.OP_TOKEN_0_;
+                } else if (c1 != '\0' && c2 == '=' && c3 == '\0') {
+                    val = DslConstants.OP_TOKEN_0_;
+                } else if (c1 != '\0' && c2 != '\0' && c3 == '=' && c4 == '\0') {
+                    val = DslConstants.OP_TOKEN_0_;
+                } else if (c0 == '=' && c1 == '>') {
                     val = DslConstants.OP_TOKEN_1_;
-                } else if (c0 == '|' && c1 == '|') {
-                    val = DslConstants.OP_TOKEN_2_;
-                } else if (c0 == '&' && c1 == '&') {
+                } else if ((c0 == '?' || c0 == ':') && curOperator.Length == 1) {
                     val = DslConstants.OP_TOKEN_3_;
-                } else if (c0 == '|' && c1 == 0) {
+                } else if (c0 == '|' && c1 == '|' || c0 == '?' && c1 == '?') {
                     val = DslConstants.OP_TOKEN_4_;
-                } else if (c0 == '^' && c1 == 0) {
+                } else if (c0 == '&' && c1 == '&') {
                     val = DslConstants.OP_TOKEN_5_;
-                } else if (c0 == '&' && c1 == 0) {
+                } else if (c0 == '|' && c1 == 0) {
                     val = DslConstants.OP_TOKEN_6_;
-                } else if ((c0 == '=' || c0 == '!') && c1 == '=') {
+                } else if (c0 == '^' && c1 == 0) {
                     val = DslConstants.OP_TOKEN_7_;
-                } else if ((c0 == '<' || c0 == '>') && (c1 == '=' || c1 == 0)) {
+                } else if (c0 == '&' && c1 == 0) {
                     val = DslConstants.OP_TOKEN_8_;
-                } else if ((c0 == '<' && c1 == '<') || (c0 == '>' && c1 == '>') || (c0 == '>' && c1 == '>' && c2 == '>')) {
+                } else if ((c0 == '=' || c0 == '!') && c1 == '=') {
                     val = DslConstants.OP_TOKEN_9_;
+                } else if ((c0 == '<' || c0 == '>') && (c1 == '=' || c1 == 0)) {
+                    val = DslConstants.OP_TOKEN_10_;
+                } else if ((c0 == '<' && c1 == '<') || (c0 == '>' && c1 == '>') || (c0 == '>' && c1 == '>' && c2 == '>')) {
+                    val = DslConstants.OP_TOKEN_11_;
                 } else if ((c0 == '+' || c0 == '-') && c1 == 0) {
                     if (lastIsOperator)
-                        val = DslConstants.OP_TOKEN_12_;
+                        val = DslConstants.OP_TOKEN_14_;
                     else
-                        val = DslConstants.OP_TOKEN_10_;
+                        val = DslConstants.OP_TOKEN_12_;
                 } else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == 0) {
-                    val = DslConstants.OP_TOKEN_11_;
+                    val = DslConstants.OP_TOKEN_13_;
                 } else if ((c0 == '+' && c1 == '+') || (c0 == '-' && c1 == '-') || (c0 == '~' && c1 == 0) || (c0 == '!' && c1 == 0)) {
-                    val = DslConstants.OP_TOKEN_12_;
+                    val = DslConstants.OP_TOKEN_14_;
+                } else if (c0 == '?' && c1 == '?' && c2 == '?' && c3 == '?' && c4 == '\0') {
+                    val = DslConstants.OP_TOKEN_15_;
+                } else if (c0 == '-' && c1 == '>' || c0 == '?' && c1 == '.') {
+                    val = DslConstants.OP_TOKEN_16_;
                 } else {
-                    val = DslConstants.OP_TOKEN_0_;
+                    val = DslConstants.OP_TOKEN_2_;
                 }
             }
             return val;
