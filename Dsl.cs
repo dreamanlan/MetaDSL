@@ -1542,7 +1542,7 @@ namespace Dsl
                 bool haveCall = false;
                 if (null != data.Call) {
                     haveCall = data.Call.IsValid();
-                    writeContent(stream, data.Call.CalcFirstComment(), indent);
+                    writeContent(stream, data.Call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
                     writeCallData(stream, data.Call, indent, true);
                     writeContent(stream, data.Call.CalcComment(), 0);
                     writeLine(stream, data.Call.CalcLastComment(), 0);
@@ -1565,7 +1565,7 @@ namespace Dsl
                 bool haveCall = false;
                 if (null != data.Call) {
                     haveCall = data.Call.IsValid();
-                    writeContent(stream, data.Call.CalcFirstComment(), indent);
+                    writeContent(stream, data.Call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
                     writeCallData(stream, data.Call, indent, true);
                     writeContent(stream, data.Call.CalcComment(), 0);
                     writeLine(stream, data.Call.CalcLastComment(), 0);
@@ -1590,7 +1590,7 @@ namespace Dsl
                 }
             } else {
                 if (null != data.Call) {
-                    writeContent(stream, data.Call.CalcFirstComment(), indent);
+                    writeContent(stream, data.Call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
                     writeCallData(stream, data.Call, indent, true);
                     writeContent(stream, data.Call.CalcComment(), 0);
                     writeContent(stream, data.Call.CalcLastComment(), 0);
@@ -1618,6 +1618,7 @@ namespace Dsl
                 }
             } else {
                 int ct = data.Functions.Count;
+                bool lastFuncHasntStatements = false;
                 bool isLastOfStatement = false;
                 if (ct == 0)
                     isLastOfStatement = true;
@@ -1625,7 +1626,11 @@ namespace Dsl
                     if (i == ct - 1)
                         isLastOfStatement = true;
                     FunctionData func = data.Functions[i];
-                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0, isLastOfStatement, endDelimiter);
+                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || lastFuncHasntStatements, isLastOfStatement, endDelimiter);
+                    lastFuncHasntStatements = !func.HaveStatement() && !func.HaveExternScript();
+                    if (lastFuncHasntStatements) {
+                        writeContent(stream, " ", 0);
+                    }
                 }
             }
 #endif
