@@ -1,161 +1,38 @@
-skill(1006)
+story(main)
 {
-	attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
-	section
+	local
 	{
-		sendgfxmessage(0,"ForGame","FadeToSkillForSkill");
-		sendgfxmessage(0,"StartScript","ToggleMotionBlur","0");
-		enablemoveagent(false);
-		a .. b;
-		a(b,c,d,...);
-		a ?? b;
-		a?.b(c,d,...);
-		a->c(e,f);
-		a = (b) => 
+		@user(0);
+		@pass(0);
+	};
+	onmessage("start")
+	{
+		bindui(@window)
 		{
-			c->d(...);
+			inputs("Panel/Account","Panel/Passwd");
+			onevent("button","ok","Panel/Button");
 		};
-		a = (b) -> 
+		log("LoginDlg start");
+		@window.SetActive(changetype(0,"bool"));
+	};
+	onmessage("show_login")
+	{
+		publishgfxevent("ui_hide","ui");
+		@window.SetActive(changetype(1,"bool"));
+	};
+	onnamespacedmessage("on_click")
+	{
+		log("LoginDlg on click");
+		@user = listget($1,0,"");
+		@pass = listget($1,1,"");
+		if(@user == "" || @pass == "")
 		{
-			c->d(...);
-		};
-		a?.*b();
-		a?[b];
-		a?(b);
-		a?{b};
-		a.*b();
-		a->b();
-		a->*b();
-		a.(b);
-		a.[b];
-		a.{b};
-		a.b();
-	};
-	section(5833)//分镜1：旋风腿+升龙拳
-	{
-		keeptarget();
-		animation(dazhao1);
-		selfeffect(selfEffect,4000,"",100);//旋风腿	//旋风腿
-		impact(0,0,0,0,false);
-		sendgfxmessage(0,"StartScript","StartUniqueSkillEffect");
-		sendgfxmessage(0,"StartScript","SetActorsVisible",true,true,false,false);//显示自己和目标	//显示自己和目标
-		sendgfxmessage(30,"StartScript","SetCameraFollowTarget");//摄像机跟随	//摄像机跟随
-		sendgfxmessage(30,"StartScript","SetCameraMode_UniqueSkill_Ryu_Phase3");//摄像机Mask设置    场景变黑	//摄像机Mask设置    场景变黑
-		selfeffect(selfEffect10,2000,"",2800);//升龙拳	//升龙拳
-		selfeffect(selfEffect1,533,"",3500);//升龙拳//selfeffect(selfEffect2,12000,'',3600);						//后跳落地散开的蓝色圆圈与树叶	//升龙拳
-		//selfeffect(selfEffect2,12000,'',3600);						//后跳落地散开的蓝色圆圈与树叶
-	};
-	section(7000)//分镜2：蓄力
-	{
-		keeptarget();
-		animation(dazhao2);
-		sendgfxmessage(2300,"StartScript","ShowQTE2",3,15);
-		//sendgfxmessage(1,"StartScript","SetLayerForSkill","DeActive",false);
-		//sendgfxmessage(1,"StartScript","SetLayerForSkill","DeActive",false);sendgfxmessage(1,"StartScript","SetActorsLayer","Actor","DeActive","Actor","Actor");//替换SetLayerForSkill,隐藏目标	//替换SetLayerForSkill,隐藏目标
-		selfeffect(selfEffect3,5000,"",0);//Effects/Skill/Ryu_aoyi_skill_03 波动拳起手特效	//Effects/Skill/Ryu_aoyi_skill_03 波动拳起手特效
-		selfeffect(selfEffect2,5000,"",0);//Effects/Skill/Ryu_aoyi_skill_03 波动拳起手特效	//Effects/Skill/Ryu_aoyi_skill_03 波动拳起手特效
-		selfeffect(selfEffect4,5000,"",3500);//Effects/Skill/R_BDQ_balla 光球//		selfeffect(selfEffect6,3000,'Bip001 L Hand',3800)					//手上光球//	  	    {//			transform(vector3(-0.063, 0.252,-0.107));//	  		};	//Effects/Skill/R_BDQ_balla 光球
-		//		selfeffect(selfEffect6,3000,'Bip001 L Hand',3800)					//手上光球
-		//	  	    {
-		//			transform(vector3(-0.063, 0.252,-0.107));
-		//	  		};
-	};
-	section(933)//分镜3：第一/二个波
-	{
-		keeptarget();
-		//sendgfxmessage(1,"StartScript","SetLayerForSkill","DeActive",false);
-		//sendgfxmessage(1,"StartScript","SetLayerForSkill","DeActive",false);sendgfxmessage(1,"StartScript","SetActorsLayer","Actor","DeActive","Actor","Actor");//替换SetLayerForSkill,隐藏目标	//替换SetLayerForSkill,隐藏目标
-		//切换特效镜头（水平飞）
-		//切换特效镜头（水平飞）sendgfxmessage(1,"StartScript","CameraEnableForSkill","Camera",0);
-		sendgfxmessage(1,"StartScript","CameraEnableForSkill","SecondaryInMain",0);
-		sendgfxmessage(1,"StartScript","CameraEnableForSkill","Ryu_Camera 1",1);
-		sendgfxmessage(1,"StartScript","CameraEnableForSkill","Ryu_Camera 2",0);
-		selfeffect(selfEffect7,933,"",0,false);// 第一次波	// 第一次波
-		//切换镜头到波飞行特效（向左下飞）
-		//切换镜头到波飞行特效（向左下飞）sendgfxmessage(467,"StartScript","CameraEnableForSkill","Ryu_Camera 1",0);
-		sendgfxmessage(467,"StartScript","CameraEnableForSkill","Ryu_Camera 2",1);// 第二次波	// 第二次波
-	};
-	section(500)//分镜4：第三个波
-	{
-		keeptarget();
-		animation(Idle);
-		sendgfxmessage(0,"StartScript","GotoInitPos");
-		//切换镜头到飞行线特效
-		//切换镜头到飞行线特效sendgfxmessage(1,"StartScript","CameraEnableForSkill","Ryu_Camera 2",0);
-		sendgfxmessage(1,"StartScript","CameraEnableForSkill","Custom_Camera 3",1);
-		selfeffect(selfEffect8,500,"",0,false);// 第三次波	// 第三次波
-	};
-	section(1800)//分镜5：切回普通镜头
-	{
-		keeptarget(0,1000);
-		animation(Idle);
-		//恢复到大招轨迹镜头
-		//sendgfxmessage(0,"StartScript","SetLayerForSkill","DeActive",true);
-		//		sendgfxmessage(0,"StartScript","SetActorsLayer","DeActive","DeActive","Actor","Actor");//替换SetLayerForSkill，隐藏目标和自己
-		//恢复到大招轨迹镜头//sendgfxmessage(0,"StartScript","SetLayerForSkill","DeActive",true);//		sendgfxmessage(0,"StartScript","SetActorsLayer","DeActive","DeActive","Actor","Actor");//替换SetLayerForSkill，隐藏目标和自己sendgfxmessage(0,"StartScript","CameraEnableForSkill","Custom_Camera 3",0);
-		sendgfxmessage(0,"StartScript","CameraEnableForSkill","Camera",1);
-		sendgfxmessage(0,"StartScript","CameraEnableForSkill","SecondaryInMain",1);
-		animation(dazhao3);
-		animation(Idle,467,0);
-		//放波特效
-		//selfeffect(selfEffect5,490,'',0);
-		//放波特效//selfeffect(selfEffect5,490,'',0);impact(0,0,0,0,false);
-		useimpact(2,0);
-		//镜头轨迹结束，切换到普通状态
-		//		sendgfxmessage(100,"StartScript","SetActorsLayer","DeActive","Actor","Actor","Actor");//替换SetLayerForSkill，隐藏自己，显示目标
-		//镜头轨迹结束，切换到普通状态//		sendgfxmessage(100,"StartScript","SetActorsLayer","DeActive","Actor","Actor","Actor");//替换SetLayerForSkill，隐藏自己，显示目标sendgfxmessage(0,"StartScript","SetActorsLayer","Actor","Actor","Actor","Actor");//替换SetLayerForSkill，显示自己，显示目标	//替换SetLayerForSkill，显示自己，显示目标
-		sendgfxmessage(0,"StartScript","ClearCameraFollowTarget");//取消摄像机跟随	//取消摄像机跟随
-		sendgfxmessage(0,"StartScript","SetCameraMode_Normal");//取消摄像机Mask设置	//取消摄像机Mask设置
-		sendgfxmessage(0,"StartScript","FinishUniqueSkillEffect");//不再隐藏其他玩家		//不再隐藏其他玩家	
-		sendgfxmessage(0,"StartScript","SetActorsVisible",true,true,true,true);//显示所有人	//显示所有人
-	};
-	onstop
-	{
-		sendgfxmessage(0,"ForGame","FadeToSceneForSkill");
-		enablemoveagent(true);
-	};
-	hitskill
-	{
-		section(1500)
+			highlightprompt(0,"Err_LoginNameOrPass");
+		}
+		else
 		{
-			animation(hit2_1);
-			damage(0);
-			selfeffect(hitEffect,1000,hit,0)
-			{
-				transform(vector3(0.05,0.3140004,-0.4397666));
-			};
-			damage(200);
-			selfeffect(hitEffect,1000,hit,200)
-			{
-				transform(vector3(0.05,0.3140004,-0.4397666));
-			};
-			damage(400);
-			selfeffect(hitEffect,1000,hit,400)
-			{
-				transform(vector3(0.05,0.3140004,-0.4397666));
-			};
-			damage(600);
-			selfeffect(hitEffect,1000,hit,600)
-			{
-				transform(vector3(0.05,0.3140004,-0.4397666));
-			};
-			damage(1100);
-			selfeffect(hitEffect1,1000,hit,1100)
-			{
-				transform(vector3(-0.002,1.368,-1.322111));
-			};
-		};
-	};
-	hitskill(2)
-	{
-		section(2000)
-		{
-			animation(hit2_2);
-			damage(500);
-			selfeffect(hitEffect2,2000,"",200)
-			{
-				transform(vector3(-0.31,1.39,1.17));
-			};
+			firemessage("do_login",@user,@pass);
+			@window.SetActive(changetype(0,"bool"));
 		};
 	};
 };

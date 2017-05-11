@@ -522,7 +522,7 @@ namespace Dsl.Parser
                     c4 = curOperator[4];
                 if (c0 == '=' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;
-                } else if (c1 == '=' && c2 == '\0') {
+                } else if (c0 != '=' && c0 != '!' && c0 != '>' && c0 != '<' && c1 == '=' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;
                 } else if (c1 != '\0' && c2 == '=' && c3 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;

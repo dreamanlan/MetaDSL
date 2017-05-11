@@ -185,7 +185,7 @@ short SlkToken::getOperatorTokenValue(void)const
 	if (pOperator && pOperator[0]) {
 		if (pOperator[0] == '=' && pOperator[1] == '\0') {
 			val = OP_TOKEN_0_;
-		} else if (pOperator[1] == '=' && pOperator[2] == '\0') {
+		} else if (pOperator[0] != '=' && pOperator[0] != '!' && pOperator[0] != '>' && pOperator[0] != '<' && pOperator[1] == '=' && pOperator[2] == '\0') {
 			val = OP_TOKEN_0_;
 		} else if (pOperator[1] && pOperator[2] == '=' && pOperator[3] == '\0') {
 			val = OP_TOKEN_0_;

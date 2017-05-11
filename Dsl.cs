@@ -1626,6 +1626,9 @@ namespace Dsl
                     if (i == ct - 1)
                         isLastOfStatement = true;
                     FunctionData func = data.Functions[i];
+                    if (i > 0 && !lastFuncHasntStatements) {
+                        writeLine(stream, string.Empty, 0);
+                    }
                     writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || lastFuncHasntStatements, isLastOfStatement, endDelimiter);
                     lastFuncHasntStatements = !func.HaveStatement() && !func.HaveExternScript();
                     if (lastFuncHasntStatements) {
