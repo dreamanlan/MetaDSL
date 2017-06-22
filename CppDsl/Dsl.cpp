@@ -437,7 +437,7 @@ namespace Dsl
 	}
 	void WriteString(FILE* fp, const char* str, int indent)
 	{
-		const char* escapeChars = "'\\\"";
+		const char* escapeChars = "\\\"";
 		WriteIndent(fp, indent);
 		fwrite("\"", 1, 1, fp);
 		const char* p = str;
