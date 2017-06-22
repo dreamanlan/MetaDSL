@@ -33,3 +33,6 @@ story(main)
 	  };
   };
 };
+story("fd\"saf\"dsads\\")
+{
+};

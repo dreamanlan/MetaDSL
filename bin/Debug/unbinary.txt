@@ -14,12 +14,12 @@ story(main)
 			onevent("button","ok","Panel/Button");
 		};
 		log("LoginDlg start");
-		@window.SetActive(changetype(0,"bool"));
+		@window."SetActive"(changetype(0,"bool"));
 	};
 	onmessage("show_login")
 	{
 		publishgfxevent("ui_hide","ui");
-		@window.SetActive(changetype(1,"bool"));
+		@window."SetActive"(changetype(1,"bool"));
 	};
 	onnamespacedmessage("on_click")
 	{
@@ -33,7 +33,10 @@ story(main)
 		else
 		{
 			firemessage("do_login",@user,@pass);
-			@window.SetActive(changetype(0,"bool"));
+			@window."SetActive"(changetype(0,"bool"));
 		};
 	};
+};
+story("fd\"saf\"dsads\\")
+{
 };

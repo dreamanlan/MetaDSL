@@ -1185,7 +1185,7 @@ namespace Dsl
     {
         public static bool needQuote(string str)
         {
-            const string escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\";
+            const string escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\'\"";
             if (str.Length == 0) {
                 return true;
             }
@@ -1212,6 +1212,10 @@ namespace Dsl
         {
             switch (_Type) {
                 case AbstractSyntaxComponent.STRING_TOKEN: {
+                    if (str.Contains("\\"))
+                        str = str.Replace("\\", "\\\\");
+                    if(str.Contains("\""))
+                        str=str.Replace("\"", "\\\"");
                     if (str.IndexOf('\n') >= 0)
                         return "\"\r\n" + str + "\"";
                     else
