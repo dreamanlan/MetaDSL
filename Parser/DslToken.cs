@@ -243,12 +243,7 @@ namespace Dsl.Parser
                     char c = CurChar;
                     for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
                         if (CurChar == '\n') ++mLineNumber;
-                        if (CurChar == '\\') {
-                            mTokenBuilder.Append(CurChar);
-                            ++mIterator;
-                            if (CurChar == 0)
-                                break;
-                        }
+                        if (CurChar == '\\') ++mIterator;
                         mTokenBuilder.Append(CurChar);
                     }
                     if (CurChar != 0) {
