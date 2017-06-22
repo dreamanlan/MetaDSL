@@ -1212,13 +1212,10 @@ namespace Dsl
         {
             switch (_Type) {
                 case AbstractSyntaxComponent.STRING_TOKEN: {
-                    if (str.Contains("\\"))
-                        str = str.Replace("\\", "\\\\");
-                    if(str.Contains("\""))
-                        str=str.Replace("\"", "\\\"");
-                    if (str.IndexOf('\n') >= 0)
-                        return "\"\r\n" + str + "\"";
-                    else
+                        if (str.Contains("\\"))
+                            str = str.Replace("\\", "\\\\");
+                        if(str.Contains("\""))
+                            str=str.Replace("\"", "\\\"");
                         return "\"" + str + "\"";
                     }
                 case AbstractSyntaxComponent.NUM_TOKEN:

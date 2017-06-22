@@ -437,13 +437,25 @@ namespace Dsl
 	}
 	void WriteString(FILE* fp, const char* str, int indent)
 	{
-		const char* escapeChars = " \t\n{}()[],;~`!%^&*-+=|:<>?/#\\";
+		const char* escapeChars = "'\\\"";
 		WriteIndent(fp, indent);
-		if (strchr(str, '\n')) {
-			fprintf(fp, "\"\n%s\"", str);
-		} else {
-			fprintf(fp, "\"%s\"", str);
+		fwrite("\"", 1, 1, fp);
+		const char* p = str;
+		int len = strlen(p);
+		while(*p) {
+			int n = strcspn(p, escapeChars);
+			if (n < len) {
+				fwrite(p, 1, n, fp);
+				fwrite("\\", 1, 1, fp);
+				fwrite(p + n, 1, 1, fp);
+				p += n + 1;
+				len = strlen(p);
+			} else {
+				fwrite(p, 1, len, fp);
+				break;
+			}
 		}
+		fwrite("\"", 1, 1, fp);
 	}
 	void WriteComponent(FILE* fp, ISyntaxComponent& component, int indent, int isLastOfStatement)
 	{

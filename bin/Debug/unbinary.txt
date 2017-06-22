@@ -37,6 +37,8 @@ story(main)
 		};
 	};
 };
-story("fd\"saf\"dsads\\")
+story("
+fd\"saf\"
+dsads\\")
 {
 };
