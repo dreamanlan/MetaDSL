@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Dsl.Parser
 {
-#if FULL_VERSION
     class DslLog
     {
         internal DslLogDelegation OnLog;
@@ -15,5 +14,4 @@ namespace Dsl.Parser
             }
         }
     }
-#endif
 }

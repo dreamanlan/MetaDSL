@@ -26,7 +26,7 @@ namespace Dsl
     /// 基于函数样式的脚本化数据解析工具。可以用作DSL元语言。
     /// </summary>
     /// <remarks>
-    /// 混淆的当前实现要求脚本里不能出现`字符。另外，测试代码的加解密表的设计要求脚本里不能出现以@开头的标识符。
+    /// 混淆的当前实现要求脚本里不能出现`字符。另外，测试代码的加解密表的设计要求脚本里不能出现以形如“_数字_”的标识符。
     /// </remarks>
     public interface ISyntaxComponent
     {
@@ -979,17 +979,12 @@ namespace Dsl
 
         public bool Load(string file, DslLogDelegation logCallback)
         {
-#if FULL_VERSION
             string content = File.ReadAllText(file);
             //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
             return LoadFromString(content, file, logCallback);
-#else
-      return false;
-#endif
         }
         public bool LoadFromString(string content, string resourceName, DslLogDelegation logCallback)
         {
-#if FULL_VERSION
             mDslInfos.Clear();
             Parser.DslLog log = new Parser.DslLog();
             log.OnLog += logCallback;
@@ -1013,9 +1008,6 @@ namespace Dsl
                 }
             }
             return !error.HasError;
-#else
-      return false;
-#endif
         }
         public void Save(string file)
         {

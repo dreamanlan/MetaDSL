@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Dsl.Parser
 {
-#if FULL_VERSION
     class DslToken
     {
         internal DslToken(DslLog log, string input)
@@ -688,5 +687,4 @@ namespace Dsl.Parser
         private string mScriptBeginDelimiter = string.Empty;
         private string mScriptEndDelimiter = string.Empty;
     }
-#endif
 }

@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Dsl.Parser
 {
-#if FULL_VERSION
     class DslError
     {
         internal DslError(DslLog log, DslToken tokens)
@@ -49,5 +48,4 @@ namespace Dsl.Parser
         private DslToken mToken;
         private bool mHasError;
     }
-#endif
 }
