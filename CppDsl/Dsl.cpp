@@ -136,7 +136,8 @@ namespace Dsl
 			if (m_Params) {
 				m_ParamSpace = DELTA_FUNCTION_PARAM;
 			}
-		} else if (HaveParam() && m_ParamNum >= m_ParamSpace) {
+		}
+		else if (HaveParam() && m_ParamNum >= m_ParamSpace) {
 			int newSpace = m_ParamSpace + DELTA_FUNCTION_PARAM;
 			if (newSpace <= MAX_FUNCTION_PARAM_NUM) {
 				SyntaxComponentPtr* pNew = new SyntaxComponentPtr[newSpace];
@@ -205,7 +206,8 @@ namespace Dsl
 			if (m_Statements) {
 				m_StatementSpace = DELTA_FUNCTION_STATEMENT;
 			}
-		} else if (HaveStatement() && m_StatementNum >= m_StatementSpace) {
+		}
+		else if (HaveStatement() && m_StatementNum >= m_StatementSpace) {
 			int newSpace = m_StatementSpace + DELTA_FUNCTION_STATEMENT;
 			if (newSpace <= m_MaxStatementNum) {
 				SyntaxComponentPtr* pNew = new SyntaxComponentPtr[newSpace];
@@ -244,7 +246,8 @@ namespace Dsl
 			if (m_Functions) {
 				m_FunctionSpace = DELTA_STATEMENT_FUNCTION;
 			}
-		} else if (m_FunctionNum >= m_FunctionSpace) {
+		}
+		else if (m_FunctionNum >= m_FunctionSpace) {
 			int newSpace = m_FunctionSpace + DELTA_STATEMENT_FUNCTION;
 			if (newSpace <= m_MaxFunctionNum) {
 				Function** pNew = new Function*[newSpace];
@@ -442,7 +445,7 @@ namespace Dsl
 		fwrite("\"", 1, 1, fp);
 		const char* p = str;
 		int len = strlen(p);
-		while(*p) {
+		while (*p) {
 			int n = strcspn(p, escapeChars);
 			if (n < len) {
 				fwrite(p, 1, n, fp);
@@ -450,7 +453,8 @@ namespace Dsl
 				fwrite(p + n, 1, 1, fp);
 				p += n + 1;
 				len = strlen(p);
-			} else {
+			}
+			else {
 				fwrite(p, 1, len, fp);
 				break;
 			}
@@ -482,14 +486,16 @@ namespace Dsl
 		for (int i = 0; i < fnum; ++i) {
 			if (i == 0 && !IsFirstCommentOnNewLine()) {
 				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			} else {
+			}
+			else {
 				WriteId(fp, GetFirstComment(i), indent);
 				WriteId(fp, "\n", 0);
 			}
 		}
 		if (IsString()) {
 			WriteString(fp, m_ConstStringVal, indent);
-		} else if (IsValid()) {
+		}
+		else if (IsValid()) {
 			WriteId(fp, m_ConstStringVal, indent);
 		}
 		if (isLastOfStatement) {
@@ -503,14 +509,16 @@ namespace Dsl
 			for (int i = 0; i < lnum; ++i) {
 				if (i == 0 && !IsLastCommentOnNewLine()) {
 					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				} else {
+				}
+				else {
 					WriteId(fp, GetLastComment(i), indent);
 				}
 				if (isLastOfStatement) {
 					WriteId(fp, "\n", 0);
 				}
 			}
-		} else if (isLastOfStatement) {
+		}
+		else if (isLastOfStatement) {
 			fwrite("\n", 1, 1, fp);
 		}
 #endif
@@ -522,7 +530,8 @@ namespace Dsl
 		for (int i = 0; i < fnum; ++i) {
 			if (i == 0 && !IsFirstCommentOnNewLine()) {
 				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			} else {
+			}
+			else {
 				WriteId(fp, GetFirstComment(i), indent);
 				WriteId(fp, "\n", 0);
 			}
@@ -536,29 +545,34 @@ namespace Dsl
 				if (IsHighOrder() && NULL != m_Name.GetCall()) {
 					Call& call = *m_Name.GetCall();
 					call.WriteToFile(fp, 0, FALSE);
-				} else {
+				}
+				else {
 					m_Name.WriteToFile(fp, 0, FALSE);
 				}
 				fwrite(" ", 1, 1, fp);
 				ISyntaxComponent& component1 = *GetParam(1);
 				WriteComponent(fp, component1, 0, FALSE);
-			} else {
+			}
+			else {
 				fwrite(" ", 1, 1, fp);
 				if (IsHighOrder() && NULL != m_Name.GetCall()) {
 					Call& call = *m_Name.GetCall();
 					call.WriteToFile(fp, 0, FALSE);
-				} else {
+				}
+				else {
 					m_Name.WriteToFile(fp, 0, FALSE);
 				}
 				fwrite(" ", 1, 1, fp);
 				ISyntaxComponent& component0 = *GetParam(0);
 				WriteComponent(fp, component0, indent, FALSE);
 			}
-		} else {
+		}
+		else {
 			if (IsHighOrder() && NULL != m_Name.GetCall()) {
 				Call& call = *m_Name.GetCall();
 				call.WriteToFile(fp, indent, FALSE);
-			} else {
+			}
+			else {
 				m_Name.WriteToFile(fp, indent, FALSE);
 			}
 			if (HaveParam()) {
@@ -668,14 +682,16 @@ namespace Dsl
 			for (int i = 0; i < lnum; ++i) {
 				if (i == 0 && !IsLastCommentOnNewLine()) {
 					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				} else {
+				}
+				else {
 					WriteId(fp, GetLastComment(i), indent);
 				}
 				if (isLastOfStatement) {
 					WriteId(fp, "\n", 0);
 				}
 			}
-		} else if (isLastOfStatement) {
+		}
+		else if (isLastOfStatement) {
 			fwrite("\n", 1, 1, fp);
 		}
 #endif
@@ -687,7 +703,8 @@ namespace Dsl
 		for (int i = 0; i < fnum; ++i) {
 			if (i == 0 && !IsFirstCommentOnNewLine()) {
 				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			} else {
+			}
+			else {
 				WriteId(fp, GetFirstComment(i), indent);
 				WriteId(fp, "\n", 0);
 			}
@@ -711,14 +728,16 @@ namespace Dsl
 			size_t len = strlen(m_ExternScript);
 			if (strchr(m_ExternScript, '\n')) {
 				fwrite("{:\n", 3, 1, fp);
-			} else {
+			}
+			else {
 				fwrite("{:", 2, 1, fp);
 			}
 			fwrite(m_ExternScript, len, 1, fp);
-			if (len>0 && m_ExternScript[len - 1] == '\n') {
+			if (len > 0 && m_ExternScript[len - 1] == '\n') {
 				WriteIndent(fp, indent);
 				fwrite(":}", 2, 1, fp);
-			} else {
+			}
+			else {
 				fwrite(":}", 2, 1, fp);
 			}
 		}
@@ -733,12 +752,14 @@ namespace Dsl
 			for (int i = 0; i < lnum; ++i) {
 				if (i == 0 && !IsLastCommentOnNewLine()) {
 					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				} else {
+				}
+				else {
 					WriteId(fp, GetLastComment(i), indent);
 				}
 				WriteId(fp, "\n", 0);
 			}
-		} else if (isLastOfStatement) {
+		}
+		else if (isLastOfStatement) {
 			fwrite("\n", 1, 1, fp);
 		}
 #endif
@@ -750,7 +771,8 @@ namespace Dsl
 		for (int i = 0; i < fnum; ++i) {
 			if (i == 0 && !IsFirstCommentOnNewLine()) {
 				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			} else {
+			}
+			else {
 				WriteId(fp, GetFirstComment(i), indent);
 				WriteId(fp, "\n", 0);
 			}
@@ -769,7 +791,8 @@ namespace Dsl
 				fwrite(" : ", 3, 1, fp);
 				WriteComponent(fp, *pcomp2, 0, FALSE);
 			}
-		} else {
+		}
+		else {
 			for (int ix = 0; ix < num; ++ix) {
 				ISyntaxComponent& component = *GetFunction(ix);
 				WriteComponent(fp, component, indent, FALSE);
@@ -786,12 +809,14 @@ namespace Dsl
 			for (int i = 0; i < lnum; ++i) {
 				if (i == 0 && !IsLastCommentOnNewLine()) {
 					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				} else {
+				}
+				else {
 					WriteId(fp, GetLastComment(i), indent);
 				}
 				WriteId(fp, "\n", 0);
 			}
-		} else if (isLastOfStatement) {
+		}
+		else if (isLastOfStatement) {
 			fwrite("\n", 1, 1, fp);
 		}
 #endif

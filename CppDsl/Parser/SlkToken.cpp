@@ -648,6 +648,10 @@ short SlkToken::get(void)
 				int token = handleStringOrScriptDelimiter();
 				if (token)
 					return token;
+				else if (0 == strcmp(mCurToken, "true"))
+					return TRUE_;
+				else if (0 == strcmp(mCurToken, "false"))
+					return FALSE_;
 				return IDENTIFIER_;
 			}
 		}

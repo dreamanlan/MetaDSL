@@ -165,6 +165,8 @@ FUNCTION_ID:
 	IDENTIFIER _action_pushId
 	STRING	_action_pushStr
 	NUMBER _action_pushNum
+	TRUE _action_pushTrue
+	FALSE _action_pushFalse
 	
 SEP:
 	,

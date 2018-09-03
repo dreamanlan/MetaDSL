@@ -36,6 +36,8 @@ void    markQuestionPeriodStarParam ( void );
 void    markPointerStarParam ( void );
 void    pushStr ( void );
 void    pushNum ( void );
+void    pushTrue ( void );
+void    pushFalse ( void );
 
 public:
 void execute ( slk_size_t  number )
@@ -75,5 +77,7 @@ void execute ( slk_size_t  number )
     case 32:  markPointerStarParam();  break;
     case 33:  pushStr();  break;
     case 34:  pushNum();  break;
+    case 35:  pushTrue();  break;
+    case 36:  pushFalse();  break;
   }
 }

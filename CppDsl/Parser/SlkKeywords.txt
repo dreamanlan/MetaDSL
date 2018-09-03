@@ -43,6 +43,8 @@ static Slk_keyword_t Slk_keyword [] = {
 ,{ IDENTIFIER_, "IDENTIFIER" } 
 ,{ STRING_, "STRING" } 
 ,{ NUMBER_, "NUMBER" } 
+,{ TRUE_, "TRUE" } 
+,{ FALSE_, "FALSE" } 
 ,{ 0, NULL } 
 }; 
 

@@ -126,6 +126,8 @@ static char * Terminal_name[] ={"0"
 ,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
+,"TRUE"
+,"FALSE"
 ,","
 ,";"
 ,"END_OF_SLK_INPUT"
@@ -167,6 +169,8 @@ static char * Action_name[] ={"0"
 ,"_action_markPointerStarParam"
 ,"_action_pushStr"
 ,"_action_pushNum"
+,"_action_pushTrue"
+,"_action_pushFalse"
 };
 
 static char * Production_name[] ={"0"
@@ -239,6 +243,8 @@ static char * Production_name[] ={"0"
 ,"FUNCTION_ID --> IDENTIFIER _action_pushId"
 ,"FUNCTION_ID --> STRING _action_pushStr"
 ,"FUNCTION_ID --> NUMBER _action_pushNum"
+,"FUNCTION_ID --> TRUE _action_pushTrue"
+,"FUNCTION_ID --> FALSE _action_pushFalse"
 ,"SEP --> ,"
 ,"SEP --> ;"
 ,"SEP_STATEMENT_* --> SEP STATEMENT SEP_STATEMENT_*"
@@ -303,10 +309,10 @@ static char * Production_name[] ={"0"
 ,"FUNCTION_PARAMS_9_opt -->"
 };
 
-#define START_SYMBOL 40
-#define START_ACTION 121
-#define END_ACTION 155
-#define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 39])
+#define START_SYMBOL 42
+#define START_ACTION 123
+#define END_ACTION 159
+#define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 41])
 #define GET_TERMINAL_NAME(symbol) (Terminal_name [symbol])
 #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])
 #define GET_PRODUCTION_NAME(number) (Production_name [number])

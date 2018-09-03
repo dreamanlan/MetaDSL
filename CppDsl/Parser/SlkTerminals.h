@@ -50,6 +50,8 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ IDENTIFIER_, "IDENTIFIER" } 
 ,{ STRING_, "STRING" } 
 ,{ NUMBER_, "NUMBER" } 
+,{ TRUE_, "TRUE" } 
+,{ FALSE_, "FALSE" } 
 ,{ COMMA_, "," } 
 ,{ SEMI_, ";" } 
 ,{ END_OF_SLK_INPUT_, "END_OF_SLK_INPUT" } 
