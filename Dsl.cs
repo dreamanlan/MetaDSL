@@ -1136,32 +1136,13 @@ namespace Dsl
                 s = s0;
             byte[] bytes = Encoding.UTF8.GetBytes(s);
             s = Convert.ToBase64String(bytes);
-            int len = s.Length;
-            StringBuilder str = new StringBuilder();
-            for (int i = 0; i < len; ++i) {
-                char c = (char)((char)158 - s[i]);
-                if (c != '`')
-                    str.Append(c);
-                else
-                    str.Append(s[i]);
-            }
-            return str.ToString();
+            return s;
 #else
       return string.Empty;
 #endif
         }
         private string Decode(string s, Dictionary<string, string> decodeTable)
-        {
-            int len = s.Length;
-            StringBuilder str = new StringBuilder();
-            for (int i = 0; i < len; ++i) {
-                char c = (char)((char)158 - s[i]);
-                if (c != '`')
-                    str.Append(c);
-                else
-                    str.Append(s[i]);
-            }
-            s = str.ToString();
+        {            
             byte[] bytes = Convert.FromBase64String(s);
             s = Encoding.UTF8.GetString(bytes);
             string s0;

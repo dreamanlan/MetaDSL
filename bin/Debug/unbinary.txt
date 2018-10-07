@@ -37,8 +37,7 @@ story(main)
 		};
 	};
 };
-story("
-fd\"saf\"
+story("fd\"saf\"
 dsads\\")
 {
 };
