@@ -490,7 +490,7 @@ namespace Dsl.Parser
             string curOperator = mCurToken;
             string lastToken = mLastToken;
             bool lastIsOperator = true;
-            if (lastToken.Length > 0) {
+            if (null != lastToken && lastToken.Length > 0) {
                 if (isDelimiter(lastToken[0])) {
                     lastIsOperator = true;
                 } else if (isBeginParentheses(lastToken[0])) {
