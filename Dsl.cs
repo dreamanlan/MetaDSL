@@ -990,7 +990,7 @@ namespace Dsl
             log.OnLog += logCallback;
             Parser.DslToken tokens = new Parser.DslToken(log, content);
             Parser.DslError error = new Parser.DslError(log, tokens);
-            Parser.RuntimeAction action = new Parser.RuntimeAction(mDslInfos);
+            Parser.RuntimeAction action = new Parser.RuntimeAction(log, mDslInfos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>();ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
@@ -1031,7 +1031,7 @@ namespace Dsl
             log.OnLog += logCallback;
             Parser.DslToken tokens = new Parser.DslToken(log, content);
             Parser.DslError error = new Parser.DslError(log, tokens);
-            Parser.RuntimeAction action = new Parser.RuntimeAction(infos);
+            Parser.RuntimeAction action = new Parser.RuntimeAction(log, infos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };

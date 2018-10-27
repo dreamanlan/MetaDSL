@@ -214,7 +214,7 @@ static slk_size_t Conflict_row[] = {0
 #define START_ACTION 123
 #define END_ACTION 159
 #define TOTAL_CONFLICTS 0
-#define PARSE_STACK_SIZE 512
+#define PARSE_STACK_SIZE 65535
 #define SLK_PUSH(symbol,stack,top) if ( top > stack ) *--top = symbol
 #define SLK_POP(top)   (*top ? *top++ : 0)
 

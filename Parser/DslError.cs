@@ -41,7 +41,7 @@ namespace Dsl.Parser
         internal void message(string message)
         {
             mHasError = true;
-            mLog.Log("[info] {0}", message);
+            mLog.Log("[info] {0}, last token {1} line {2}, cur token {3} line {4}", message, mToken.getLastToken(), mToken.getLastLineNumber(), mToken.getCurToken(), mToken.getLineNumber());
         }
 
         private DslLog mLog;

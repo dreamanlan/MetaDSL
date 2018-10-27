@@ -29,8 +29,9 @@ namespace Dsl.Parser
             }
         };
 
-        internal RuntimeAction(List<DslInfo> datas)
+        internal RuntimeAction(DslLog log, List<DslInfo> datas)
         {
+            mLog = log;
             mScriptDatas = datas;
         }
 
@@ -62,9 +63,7 @@ namespace Dsl.Parser
 
         internal override void predict(short production_number)
         {
-#if FULL_VERSION
-            //LogSystem.Info("{0}", DslString.GetProductionName(production_number));
-#endif
+            //mLog.Log("{0}", DslString.GetProductionName(production_number));
         }
         internal override void execute(int number)
         {
@@ -770,6 +769,7 @@ namespace Dsl.Parser
             }
         }
 
+        private DslLog mLog;
         private GetLastTokenDelegation mGetLastToken;
         private GetLastLineNumberDelegation mGetLastLineNumber;
         private GetCommentsDelegation mGetComments;
