@@ -25,6 +25,18 @@ static inline int myisdigit(char c, int isHex)
 	return ret;
 }
 
+static inline int mychar2int(char c)
+{
+	if (c >= '0' && c <= '9')
+		return c - '0';
+	else if (c >= 'a' && c <= 'f')
+		return 10 + c - 'a';
+	else if (c >= 'A' && c <= 'F')
+		return 10 + c - 'A';
+	else
+		return 0;
+}
+
 static inline int myhavelinefeed(const char* str)
 {
 	return strchr(str, '\n') != 0 ? 1 : 0;
@@ -577,11 +589,45 @@ short SlkToken::get(void)
 			for (++mIterator; *mIterator != '\0' && *mIterator != c;) {
 				if (*mIterator == '\n')++mLineNumber;
 				if (*mIterator == '\\') {
-					//pushTokenChar(*mIterator);
 					++mIterator;
+					if (*mIterator == 'x' && myisdigit(*(mIterator + 1), true)) {
+						++mIterator;
+						//1~2位16进制数
+						char h1 = *mIterator;
+						if (myisdigit(*(mIterator + 1), true)) {
+							++mIterator;
+							char h2 = *mIterator;
+							char nc = (char)(mychar2int(h1) * 16 + mychar2int(h2));
+							pushTokenChar(nc);
+						} else {
+							char nc = (char)mychar2int(h1);
+							pushTokenChar(nc);
+						}
+					} else if (myisdigit(*mIterator, false)) {
+						//1~3位8进制数
+						char o1 = *mIterator;
+						if (myisdigit(*(mIterator + 1), false)) {
+							++mIterator;
+							char o2 = *mIterator;
+							if (myisdigit(*(mIterator + 1), false)) {
+								++mIterator;
+								char o3 = *mIterator;
+								char nc = (char)(mychar2int(o1) * 64 + mychar2int(o2) * 8 + mychar2int(o3));
+								pushTokenChar(nc);
+							} else {
+								char nc = (char)(mychar2int(o1) * 8 + mychar2int(o2));
+								pushTokenChar(nc);
+							}
+						} else {
+							char nc = (char)mychar2int(o1);
+							pushTokenChar(nc);
+						}
+					} else {
+						pushTokenChar(*mIterator);
+					}
+				} else {
+					pushTokenChar(*mIterator);
 				}
-
-				pushTokenChar(*mIterator);
 				++mIterator;
 
 				if (*mIterator == '\0') {

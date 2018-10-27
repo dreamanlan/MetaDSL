@@ -242,8 +242,46 @@ namespace Dsl.Parser
                     char c = CurChar;
                     for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
                         if (CurChar == '\n') ++mLineNumber;
-                        if (CurChar == '\\') ++mIterator;
-                        mTokenBuilder.Append(CurChar);
+                        if (CurChar == '\\') {
+                            ++mIterator;
+                            if (CurChar == 'x' && myisdigit(NextChar, true)) {
+                                ++mIterator;
+                                //1~2位16进制数
+                                char h1 = CurChar;
+                                if (myisdigit(NextChar, true)) {
+                                    ++mIterator;
+                                    char h2 = CurChar;
+                                    char nc = (char)(mychar2int(h1) * 16 + mychar2int(h2));
+                                    mTokenBuilder.Append(nc);
+                                } else {
+                                    char nc = (char)mychar2int(h1);
+                                    mTokenBuilder.Append(nc);
+                                }
+                            } else if (myisdigit(CurChar, false)) {
+                                //1~3位8进制数
+                                char o1 = CurChar;
+                                if (myisdigit(NextChar, false)) {
+                                    ++mIterator;
+                                    char o2 = CurChar;
+                                    if (myisdigit(NextChar, false)) {
+                                        ++mIterator;
+                                        char o3 = CurChar;
+                                        char nc = (char)(mychar2int(o1) * 64 + mychar2int(o2) * 8 + mychar2int(o3));
+                                        mTokenBuilder.Append(nc);
+                                    } else {
+                                        char nc = (char)(mychar2int(o1) * 8 + mychar2int(o2));
+                                        mTokenBuilder.Append(nc);
+                                    }
+                                } else {
+                                    char nc = (char)mychar2int(o1);
+                                    mTokenBuilder.Append(nc);
+                                }
+                            } else {
+                                mTokenBuilder.Append(CurChar);
+                            }
+                        } else {
+                            mTokenBuilder.Append(CurChar);
+                        }
                     }
                     if (CurChar != 0) {
                         ++mIterator;
@@ -658,6 +696,17 @@ namespace Dsl.Parser
                     ret = false;
             }
             return ret;
+        }
+        private static int mychar2int(char c)
+        {
+            if (c >= '0' && c <= '9')
+                return c - '0';
+            else if (c >= 'a' && c <= 'f')
+                return 10 + c - 'a';
+            else if (c >= 'A' && c <= 'F')
+                return 10 + c - 'A';
+            else
+                return 0;
         }
 
         private DslLog mLog;

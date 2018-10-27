@@ -1188,7 +1188,9 @@ namespace Dsl
                         if (str.Contains("\\"))
                             str = str.Replace("\\", "\\\\");
                         if(str.Contains("\""))
-                            str=str.Replace("\"", "\\\"");
+                            str = str.Replace("\"", "\\\"");
+                        if (str.Contains("\0"))
+                            str = str.Replace("\0", "\\0");
                         return "\"" + str + "\"";
                     }
                 case AbstractSyntaxComponent.NUM_TOKEN:
