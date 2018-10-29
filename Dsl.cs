@@ -893,6 +893,16 @@ namespace Dsl
                     return FunctionData.NullFunctionData;
             }
         }
+        public FunctionData Third
+        {
+            get
+            {
+                if (m_Functions.Count > 2)
+                    return m_Functions[2];
+                else
+                    return FunctionData.NullFunctionData;
+            }
+        }
         public FunctionData Last
         {
             get
