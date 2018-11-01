@@ -244,7 +244,21 @@ namespace Dsl.Parser
                         if (CurChar == '\n') ++mLineNumber;
                         if (CurChar == '\\') {
                             ++mIterator;
-                            if (CurChar == 'x' && myisdigit(NextChar, true)) {
+                            if (CurChar == 'n') {
+                                mTokenBuilder.Append('\n');
+                            } else if (CurChar == 'r') {
+                                mTokenBuilder.Append('\r');
+                            } else if (CurChar == 't') {
+                                mTokenBuilder.Append('\t');
+                            } else if (CurChar == 'v') {
+                                mTokenBuilder.Append('\v');
+                            } else if (CurChar == 'a') {
+                                mTokenBuilder.Append('\a');
+                            } else if (CurChar == 'b') {
+                                mTokenBuilder.Append('\b');
+                            } else if (CurChar == 'f') {
+                                mTokenBuilder.Append('\f');
+                            } else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
                                 //1~2位16进制数
                                 char h1 = CurChar;
@@ -289,9 +303,11 @@ namespace Dsl.Parser
                         mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
                     }
                     mCurToken = mTokenBuilder.ToString();
+                    /*普通字符串保持源码的样子，不去掉首尾空行
                     if (mCurToken.IndexOf('\n') >= 0) {
                         mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                     }
+                    */
                     return DslConstants.STRING_;
                 } else {
                     bool isNum = true;

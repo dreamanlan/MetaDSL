@@ -590,7 +590,21 @@ short SlkToken::get(void)
 				if (*mIterator == '\n')++mLineNumber;
 				if (*mIterator == '\\') {
 					++mIterator;
-					if (*mIterator == 'x' && myisdigit(*(mIterator + 1), true)) {
+					if (*mIterator == 'n') {
+						pushTokenChar('\n');
+					} else if (*mIterator == 'r') {
+						pushTokenChar('\r');
+					} else if (*mIterator == 't') {
+						pushTokenChar('\t');
+					} else if (*mIterator == 'v') {
+						pushTokenChar('\v');
+					} else if (*mIterator == 'a') {
+						pushTokenChar('\a');
+					} else if (*mIterator == 'b') {
+						pushTokenChar('\b');
+					} else if (*mIterator == 'f') {
+						pushTokenChar('\f');
+					} else if (*mIterator == 'x' && myisdigit(*(mIterator + 1), true)) {
 						++mIterator;
 						//1~2位16进制数
 						char h1 = *mIterator;
@@ -650,9 +664,11 @@ short SlkToken::get(void)
 					tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
 			}
 			endToken();
+			/*普通字符串保持源码的样子，不去掉首尾空行
 			if (myhavelinefeed(mCurToken)) {
 				removeFirstAndLastEmptyLine();
 			}
+			*/
 			return STRING_;
 		} else {
 			int isNum = TRUE;
