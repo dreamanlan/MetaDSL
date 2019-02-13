@@ -1033,7 +1033,7 @@ namespace Dsl
 #endif
         }
 
-        public string GenerateBinaryCode(string content, Dictionary<string, string> encodeTable, DslLogDelegation logCallback)
+        public byte[] GenerateBinaryCode(string content, DslLogDelegation logCallback)
         {
 #if FULL_VERSION
             List<DslInfo> infos = new List<DslInfo>();
@@ -1048,7 +1048,7 @@ namespace Dsl
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
             Parser.DslParser.parse(action, tokens, error, 0);
             if (error.HasError) {
-                return string.Empty;
+                return null;
             } else {
                 MemoryStream stream = new MemoryStream();
                 List<string> identifiers = new List<string>();
@@ -1056,18 +1056,19 @@ namespace Dsl
                     Utility.writeBinary(stream, identifiers, (StatementData)info);
                 }
 
+                if (null == mStringComparer) {
+                    mStringComparer = new MyStringComparer();
+                }
                 byte[] bytes = stream.ToArray();
-                SortedDictionary<string, int> dict = new SortedDictionary<string, int>();
+                SortedDictionary<string, int> dict = new SortedDictionary<string, int>(mStringComparer);
                 int ct = identifiers.Count;
                 if (ct > 0x00004000) {
                     System.Diagnostics.Debug.Assert(false);
                     //Console.WriteLine("Identifiers count {0} too large than 0x04000", ct);
-                    return string.Empty;
+                    return null;
                 }
                 for (int i = 0; i < ct; ++i) {
                     string key = identifiers[i];
-                    key = Encode(key, encodeTable);
-                    identifiers[i] = key;
                     if (!dict.ContainsKey(key)) {
                         dict.Add(key, 0);
                     }
@@ -1077,7 +1078,7 @@ namespace Dsl
                 using (MemoryStream ms = new MemoryStream()) {
                     for (int i = 0; i < ct; ++i) {
                         string key = identifiers[i];
-                        int ix = keys.BinarySearch(key);
+                        int ix = keys.BinarySearch(key, mStringComparer);
                         if (ix < 0x80) {
                             ms.WriteByte((byte)ix);
                         } else {
@@ -1087,81 +1088,185 @@ namespace Dsl
                     }
                     bytes2 = ms.ToArray();
                 }
-                return string.Format("{0}|{1}|{2}", Convert.ToBase64String(bytes), Convert.ToBase64String(bytes2), string.Join("`", keys.ToArray()));
+                using (MemoryStream bdsl = new MemoryStream()) {
+                    bdsl.Write(BinaryIdentity, 0, c_BinaryIdentity.Length);
+                    WriteInt(bdsl, bytes.Length);
+                    WriteInt(bdsl, bytes2.Length);
+                    WriteInt(bdsl, keys.Count);
+                    bdsl.Write(bytes, 0, bytes.Length);
+                    bdsl.Write(bytes2, 0, bytes2.Length);
+                    foreach (var str in keys) {
+                        var bstr = Encoding.UTF8.GetBytes(str);
+                        Write7BitEncodedInt(bdsl, bstr.Length);
+                        bdsl.Write(bstr, 0, bstr.Length);
+                    }
+                    return bdsl.ToArray();
+                }
             }
 #else
-      return string.Empty;
+            return null;
 #endif
         }
-        public void LoadBinaryFile(string file, Dictionary<string, string> decodeTable)
+        public void LoadBinaryFile(string file)
         {
-            string code = File.ReadAllText(file);
-            LoadBinaryCode(code, decodeTable);
+            var code = File.ReadAllBytes(file);
+            LoadBinaryCode(code);
         }
-        public void LoadBinaryCode(string binaryCode, Dictionary<string, string> decodeTable)
+        public void LoadBinaryCode(byte[] binaryCode)
         {
             mDslInfos.Clear();
-            if (string.IsNullOrEmpty(binaryCode))
+            if (null == binaryCode)
                 return;
-            int split = binaryCode.IndexOf('|');
-            if (split <= 0)
-                return;
-            string code = binaryCode.Substring(0, split);
-            string left = binaryCode.Substring(split + 1);
-            int split2 = left.IndexOf('|');
-            if (split2 <= 0)
-                return;
-            string code2 = left.Substring(0, split2);
-            byte[] bytes = Convert.FromBase64String(code);
-            byte[] bytes2 = Convert.FromBase64String(code2);
-            string[] keys = left.Substring(split2 + 1).Split('`');
-            if (null != bytes && null != bytes2) {
-                List<string> ids = new List<string>();
-                for (int i = 0; i < bytes2.Length; ++i) {
-                    int ix;
-                    byte first = bytes2[i];
-                    if ((first & 0x80) == 0x80) {
-                        ++i;
-                        byte second = bytes2[i];
-                        ix = (int)(((int)first & 0x0000007f) | ((int)second << 7));
-                    } else {
-                        ix = first;
-                    }
-                    if (ix >= 0 && ix < keys.Length) {
-                        ids.Add(Decode(keys[ix], decodeTable));
-                    } else {
-                        ids.Add(string.Empty);
-                    }
+            int pos = c_BinaryIdentity.Length;
+            int bytesLen = ReadInt(binaryCode, pos);
+            pos += 4;
+            int bytes2Len = ReadInt(binaryCode, pos);
+            pos += 4;
+            int keyCount = ReadInt(binaryCode, pos);
+            pos += 4;
+            int bytesStart = pos;
+            int bytes2Start = bytesStart + bytesLen;
+            int keyStart = bytes2Start + bytes2Len;            
+            List<string> keys = new List<string>();
+            pos = keyStart;
+            for (int i = 0; i < keyCount; ++i) {
+                int byteCount;
+                int len = Read7BitEncodedInt(binaryCode, pos, out byteCount);
+                if (len >= 0) {
+                    pos += byteCount;
+                    var key = Encoding.UTF8.GetString(binaryCode, pos, len);
+                    keys.Add(key);
+                    pos += len;
+                } else {
+                    break;
                 }
-                List<DslInfo> infos = Utility.readBinary(bytes, ids);
-                mDslInfos.AddRange(infos);
+            }
+            List<string> ids = new List<string>();
+            for (int i = bytes2Start; i < bytes2Start + bytes2Len && i < binaryCode.Length; ++i) {
+                int ix;
+                byte first = binaryCode[i];
+                if ((first & 0x80) == 0x80) {
+                    ++i;
+                    byte second = binaryCode[i];
+                    ix = (int)(((int)first & 0x0000007f) | ((int)second << 7));
+                } else {
+                    ix = first;
+                }
+                if (ix >= 0 && ix < keys.Count) {
+                    ids.Add(keys[ix]);
+                } else {
+                    ids.Add(string.Empty);
+                }
+            }
+            List<DslInfo> infos = Utility.readBinary(binaryCode, bytesStart, bytesLen, ids);
+            mDslInfos.AddRange(infos);
+        }
+
+        private void WriteInt(Stream s, int val)
+        {
+            if (null == mBuffer) {
+                mBuffer = new byte[4];
+            }
+            mBuffer[0] = (byte)val;
+            mBuffer[1] = (byte)(val >> 8);
+            mBuffer[2] = (byte)(val >> 16);
+            mBuffer[3] = (byte)(val >> 24);
+            s.Write(mBuffer, 0, 4);
+        }
+        private void Write7BitEncodedInt(Stream s, int val)
+        {
+	        uint num;
+	        for (num = (uint)val; num >= 128; num >>= 7)
+	        {
+		        s.WriteByte((byte)(num | 0x80));
+	        }
+	        s.WriteByte((byte)num);
+        }
+        private int ReadInt(byte[] bytes, int pos)
+        {
+            if (null != bytes && pos >= 0 && pos + 3 < bytes.Length) {
+                return bytes[pos] | (bytes[pos + 1] << 8) | (bytes[pos + 2] << 16) | (bytes[pos + 3] << 24);
+            } else {
+                return -1;
+            }
+        }
+        private int Read7BitEncodedInt(byte[] bytes, int pos, out int byteCount)
+        {
+            int num = -1;
+            byteCount = 0;
+            if (null != bytes && pos < bytes.Length) {
+                int bitCount = 0;
+                byte b;
+                num = 0;
+                do {
+                    if (bitCount == 35) {
+                        num = -1;
+                        break;
+                    }
+                    b = bytes[pos++];
+                    num |= (b & 0x7F) << bitCount;
+                    bitCount += 7;
+                }
+                while (pos < bytes.Length && (b & 0x80) != 0);
+                byteCount = bitCount / 7;
+            }
+            return num;
+        }
+
+        private class MyStringComparer : IComparer<string>
+        {
+            public int Compare(string x, string y)
+            {
+                if (object.ReferenceEquals(x, y)) {
+                    return 0;
+                }
+                if (x == null) {
+                    return -1;
+                }
+                if (y == null) {
+                    return 1;
+                }
+                if (x.Length != y.Length) {
+                    if (x.Length < y.Length)
+                        return -1;
+                    else
+                        return 1;
+                }
+                return string.CompareOrdinal(x, y);
             }
         }
 
-        private string Encode(string s0, Dictionary<string, string> encodeTable)
+        private byte[] mBuffer = null;
+        private MyStringComparer mStringComparer = null;
+        private List<DslInfo> mDslInfos = new List<DslInfo>();
+
+        public static byte[] BinaryIdentity
         {
-#if FULL_VERSION
-            string s;
-            if (!encodeTable.TryGetValue(s0, out s))
-                s = s0;
-            byte[] bytes = Encoding.UTF8.GetBytes(s);
-            s = Convert.ToBase64String(bytes);
-            return s;
-#else
-      return string.Empty;
-#endif
+            get
+            {
+                if (null == sBinaryIdentity) {
+                    sBinaryIdentity = Encoding.ASCII.GetBytes(c_BinaryIdentity);
+                }
+                return sBinaryIdentity;
+            }
         }
-        private string Decode(string s, Dictionary<string, string> decodeTable)
-        {            
-            byte[] bytes = Convert.FromBase64String(s);
-            s = Encoding.UTF8.GetString(bytes);
-            string s0;
-            if (!decodeTable.TryGetValue(s, out s0))
-                s0 = s;
-            return s0;
+        public static bool IsBinaryDsl(byte[] data, int start)
+        {
+            if (null == data || data.Length < c_BinaryIdentity.Length)
+                return false;
+            bool r = true;
+            for (int i = 0; i < BinaryIdentity.Length && start + i < data.Length; ++i) {
+                if (BinaryIdentity[i] != data[start + i]) {
+                    r = false;
+                    break;
+                }
+            }
+            return r;
         }
 
-        private List<DslInfo> mDslInfos = new List<DslInfo>();
+        public const string c_BinaryIdentity = "BDSL";
+
+        private static byte[] sBinaryIdentity = null;
     };
 
     public sealed class Utility
@@ -1639,17 +1744,17 @@ namespace Dsl
             else
                 return string.Empty;
         }
-        internal static List<DslInfo> readBinary(byte[] bytes, List<string> identifiers)
+        internal static List<DslInfo> readBinary(byte[] bytes, int start, int count, List<string> identifiers)
         {
             List<DslInfo> infos = new List<DslInfo>();
             int curCodeIndex = 0;
             int curIdIndex = 0;
-            while (curCodeIndex < bytes.Length) {
-                while (curCodeIndex < bytes.Length && bytes[curCodeIndex] != (byte)DslBinaryCode.BeginStatement)
+            while (curCodeIndex < count) {
+                while (curCodeIndex < count && bytes[start + curCodeIndex] != (byte)DslBinaryCode.BeginStatement)
                     ++curCodeIndex;
-                if (curCodeIndex < bytes.Length) {
+                if (curCodeIndex < count) {
                     DslInfo info = new DslInfo();
-                    readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, (StatementData)info);
+                    readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, (StatementData)info);
                     if (info.IsValid()) {
                         info.SetLoaded(true);
                         infos.Add(info);
@@ -1658,71 +1763,71 @@ namespace Dsl
             }
             return infos;
         }
-        internal static ISyntaxComponent readBinary(byte[] bytes, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex)
+        internal static ISyntaxComponent readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex)
         {
             ISyntaxComponent ret = null;
-            byte code = readByte(bytes, curCodeIndex);
+            byte code = readByte(bytes, start + curCodeIndex);
             if (code == (byte)DslBinaryCode.BeginValue) {
                 ValueData data = new ValueData();
-                readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, data);
+                readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
             } else if (code == (byte)DslBinaryCode.BeginCall) {
                 CallData data = new CallData();
-                readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, data);
+                readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
             } else if (code == (byte)DslBinaryCode.BeginFunction) {
                 FunctionData data = new FunctionData();
-                readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, data);
+                readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
             } else if (code == (byte)DslBinaryCode.BeginStatement) {
                 StatementData data = new StatementData();
-                readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, data);
+                readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
             }
             return ret;
         }
-        internal static void readBinary(byte[] bytes, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, ValueData data)
+        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, ValueData data)
         {
-            byte code = readByte(bytes, curCodeIndex++);
+            byte code = readByte(bytes, start + curCodeIndex++);
             if (code == (byte)DslBinaryCode.BeginValue) {
-                code = readByte(bytes, curCodeIndex);
+                code = readByte(bytes, start + curCodeIndex);
                 if (code >= (byte)DslBinaryCode.ValueTypeBegin) {
                     ++curCodeIndex;
                     data.SetType(code - (byte)DslBinaryCode.ValueTypeBegin);
                     data.SetId(readIdentifier(identifiers, curIdIndex++));
                 }
-                code = readByte(bytes, curCodeIndex);
+                code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.EndValue) {
                     ++curCodeIndex;
                 }
             }
         }
-        internal static void readBinary(byte[] bytes, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, CallData data)
+        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, CallData data)
         {
-            byte code = readByte(bytes, curCodeIndex++);
+            byte code = readByte(bytes, start + curCodeIndex++);
             if (code == (byte)DslBinaryCode.BeginCall) {
-                code = readByte(bytes, curCodeIndex);
+                code = readByte(bytes, start + curCodeIndex);
                 if (code >= (byte)DslBinaryCode.ParamTypeBegin) {
                     ++curCodeIndex;
                     data.SetParamClass(code - (byte)DslBinaryCode.ParamTypeBegin);
                 }
-                code = readByte(bytes, curCodeIndex);
+                code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.BeginValue) {
                     ValueData valueData = new ValueData();
-                    readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, valueData);
+                    readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, valueData);
                     data.Name = valueData;
                 } else if (code == (byte)DslBinaryCode.BeginCall) {
                     CallData callData = new CallData();
-                    readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, callData);
+                    readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, callData);
                     data.Call = callData;
                 }
                 for (; ; ) {
-                    code = readByte(bytes, curCodeIndex);
+                    code = readByte(bytes, start + curCodeIndex);
                     if (code == (byte)DslBinaryCode.EndCall) {
                         ++curCodeIndex;
                         break;
                     } else {
-                        ISyntaxComponent syntaxData = readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex);
+                        ISyntaxComponent syntaxData = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
                         if (null != syntaxData) {
                             data.Params.Add(syntaxData);
                         } else {
@@ -1732,35 +1837,35 @@ namespace Dsl
                 }
             }
         }
-        internal static void readBinary(byte[] bytes, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, FunctionData data)
+        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, FunctionData data)
         {
-            byte code = readByte(bytes, curCodeIndex++);
+            byte code = readByte(bytes, start + curCodeIndex++);
             if (code == (byte)DslBinaryCode.BeginFunction) {
-                code = readByte(bytes, curCodeIndex);
+                code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.BeginCall) {
                     CallData callData = new CallData();
-                    readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, callData);
+                    readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, callData);
                     data.Call = callData;
                 }
-                code = readByte(bytes, curCodeIndex);
+                code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.BeginExternScript) {
                     ++curCodeIndex;
                     data.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_EXTERN_SCRIPT);
                     data.SetExternScript(readIdentifier(identifiers, curIdIndex++));
 
-                    code = readByte(bytes, curCodeIndex);
+                    code = readByte(bytes, start + curCodeIndex);
                     if (code == (byte)DslBinaryCode.EndExternScript) {
                         ++curCodeIndex;
                     }
                 } else {
                     data.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT);
                     for (; ; ) {
-                        code = readByte(bytes, curCodeIndex);
+                        code = readByte(bytes, start + curCodeIndex);
                         if (code == (byte)DslBinaryCode.EndFunction) {
                             ++curCodeIndex;
                             break;
                         } else {
-                            ISyntaxComponent syntaxData = readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex);
+                            ISyntaxComponent syntaxData = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
                             if (null != syntaxData) {
                                 data.Statements.Add(syntaxData);
                             } else {
@@ -1771,15 +1876,15 @@ namespace Dsl
                 }
             }
         }
-        internal static void readBinary(byte[] bytes, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, StatementData data)
+        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, StatementData data)
         {
-            byte code = readByte(bytes, curCodeIndex++);
+            byte code = readByte(bytes, start + curCodeIndex++);
             if (code == (byte)DslBinaryCode.BeginStatement) {
                 for (; ; ) {
-                    code = readByte(bytes, curCodeIndex);
+                    code = readByte(bytes, start + curCodeIndex);
                     if (code == (byte)DslBinaryCode.BeginFunction) {
                         FunctionData funcData = new FunctionData();
-                        readBinary(bytes, ref curCodeIndex, identifiers, ref curIdIndex, funcData);
+                        readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, funcData);
                         data.Functions.Add(funcData);
                     } else if (code == (byte)DslBinaryCode.EndStatement) {
                         ++curCodeIndex;
