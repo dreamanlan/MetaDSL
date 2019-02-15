@@ -75,6 +75,7 @@ static char * Nonterminal_name[] ={"0"
 ,"OP_TOKEN_15_OPERATOR_STATEMENT_16_*"
 ,"OP_TOKEN_16_FUNCTION_STATEMENT_*"
 ,"FUNCTION_EX_CALL_*"
+,"FUNCTION_EX_CALL_2_*"
 ,"FUNCTION_PARAMS_opt"
 ,"FUNCTION_EX_opt"
 ,"FUNCTION_EX_2_opt"
@@ -214,7 +215,7 @@ static char * Production_name[] ={"0"
 ,"FUNCTION_STATEMENT --> FUNCTION_STATEMENT_DESC _action_endStatement"
 ,"FUNCTION_STATEMENT_DESC --> _action_beginStatement FUNCTION_CALLS"
 ,"FUNCTION_CALLS --> FUNCTION_EX_CALL_*"
-,"FUNCTION_CALLS --> _action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction"
+,"FUNCTION_CALLS --> _action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction FUNCTION_EX_CALL_2_*"
 ,"FUNCTION_EX_CALL --> FUNCTION_ID _action_setFunctionId FUNCTION_PARAMS_opt FUNCTION_EX_opt"
 ,"FUNCTION_EX_CALL_SPECIAL --> FUNCTION_PARAMS FUNCTION_EX_2_opt"
 ,"FUNCTION_EX_CALL_SPECIAL --> FUNCTION_EX"
@@ -285,6 +286,8 @@ static char * Production_name[] ={"0"
 ,"OP_TOKEN_16_FUNCTION_STATEMENT_* -->"
 ,"FUNCTION_EX_CALL_* --> _action_beginFunction FUNCTION_EX_CALL _action_endFunction FUNCTION_EX_CALL_*"
 ,"FUNCTION_EX_CALL_* -->"
+,"FUNCTION_EX_CALL_2_* --> _action_beginFunction FUNCTION_EX_CALL _action_endFunction FUNCTION_EX_CALL_2_*"
+,"FUNCTION_EX_CALL_2_* -->"
 ,"FUNCTION_PARAMS_opt --> FUNCTION_PARAMS"
 ,"FUNCTION_PARAMS_opt -->"
 ,"FUNCTION_EX_opt --> FUNCTION_EX"
@@ -310,8 +313,8 @@ static char * Production_name[] ={"0"
 };
 
 #define START_SYMBOL 42
-#define START_ACTION 123
-#define END_ACTION 159
+#define START_ACTION 124
+#define END_ACTION 160
 #define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 41])
 #define GET_TERMINAL_NAME(symbol) (Terminal_name [symbol])
 #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])

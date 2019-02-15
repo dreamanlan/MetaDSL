@@ -78,6 +78,7 @@ namespace Dsl.Parser
 ,"OP_TOKEN_15_OPERATOR_STATEMENT_16_*"
 ,"OP_TOKEN_16_FUNCTION_STATEMENT_*"
 ,"FUNCTION_EX_CALL_*"
+,"FUNCTION_EX_CALL_2_*"
 ,"FUNCTION_PARAMS_opt"
 ,"FUNCTION_EX_opt"
 ,"FUNCTION_EX_2_opt"
@@ -217,7 +218,7 @@ private static string[] Production_name ={"0"
 ,"FUNCTION_STATEMENT --> FUNCTION_STATEMENT_DESC _action_endStatement"
 ,"FUNCTION_STATEMENT_DESC --> _action_beginStatement FUNCTION_CALLS"
 ,"FUNCTION_CALLS --> FUNCTION_EX_CALL_*"
-,"FUNCTION_CALLS --> _action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction"
+,"FUNCTION_CALLS --> _action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction FUNCTION_EX_CALL_2_*"
 ,"FUNCTION_EX_CALL --> FUNCTION_ID _action_setFunctionId FUNCTION_PARAMS_opt FUNCTION_EX_opt"
 ,"FUNCTION_EX_CALL_SPECIAL --> FUNCTION_PARAMS FUNCTION_EX_2_opt"
 ,"FUNCTION_EX_CALL_SPECIAL --> FUNCTION_EX"
@@ -288,6 +289,8 @@ private static string[] Production_name ={"0"
 ,"OP_TOKEN_16_FUNCTION_STATEMENT_* -->"
 ,"FUNCTION_EX_CALL_* --> _action_beginFunction FUNCTION_EX_CALL _action_endFunction FUNCTION_EX_CALL_*"
 ,"FUNCTION_EX_CALL_* -->"
+,"FUNCTION_EX_CALL_2_* --> _action_beginFunction FUNCTION_EX_CALL _action_endFunction FUNCTION_EX_CALL_2_*"
+,"FUNCTION_EX_CALL_2_* -->"
 ,"FUNCTION_PARAMS_opt --> FUNCTION_PARAMS"
 ,"FUNCTION_PARAMS_opt -->"
 ,"FUNCTION_EX_opt --> FUNCTION_EX"
@@ -313,8 +316,8 @@ private static string[] Production_name ={"0"
 };
 
 private const short   START_SYMBOL = 42;
-private const short   START_ACTION = 123;
-private const short   END_ACTION = 159;
+private const short   START_ACTION = 124;
+private const short   END_ACTION = 160;
 
         internal static string GetSymbolName(short symbol)
         {

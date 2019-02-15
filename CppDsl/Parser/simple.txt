@@ -114,7 +114,7 @@ FUNCTION_STATEMENT_DESC:
 	
 FUNCTION_CALLS:
 	{ _action_beginFunction FUNCTION_EX_CALL _action_endFunction }
-	_action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction
+	_action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction { _action_beginFunction FUNCTION_EX_CALL _action_endFunction }
 	
 FUNCTION_EX_CALL:
 	FUNCTION_ID _action_setFunctionId [ FUNCTION_PARAMS ] [ FUNCTION_EX ]
