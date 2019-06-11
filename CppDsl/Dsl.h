@@ -420,6 +420,12 @@ namespace Dsl
 				return 0;
 			return m_Params[index];
 		}
+		const char*		GetParamId(int index)const
+		{
+			if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= MAX_FUNCTION_PARAM_NUM)
+				return 0;
+			return m_Params[index]->GetId();
+		}
 	public:
 		void AddComment(const char* cmt)
 		{

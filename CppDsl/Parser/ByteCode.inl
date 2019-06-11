@@ -177,10 +177,10 @@ namespace Dsl
 		const char* id = statement->GetId();
 		if (0 != id && strcmp(id, "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && (statement->GetLastFunctionRef()->GetCall().GetParamNum() == 1 || statement->GetLastFunctionRef()->GetCall().GetParamNum() == 3) && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
 			const Call& call = statement->GetLastFunctionRef()->GetCall();
-			const char* type = call.GetParam(0)->GetId();
+			const char* type = call.GetParamId(0);
 			if (call.GetParamNum() == 3) {
-				const char* begin = call.GetParam(1)->GetId();
-				const char* end = call.GetParam(2)->GetId();
+				const char* begin = call.GetParamId(1);
+				const char* end = call.GetParamId(2);
 				if (strcmp(type, "string") == 0) {
 					mThis->setStringDelimiter(begin, end);
 				}
