@@ -2,8 +2,8 @@ story(main)
 {
 	local
 	{
-		@user(0);
-		@pass(0);
+		@user(10e+2);
+		@pass(10E-2);
 	};
 	onmessage("start")
 	{
@@ -23,7 +23,7 @@ story(main)
 	};
 	onnamespacedmessage("on_click")
 	{
-		log("LoginDlg on click");
+		log("LoginDlg on click {0}",0.13e+2."ToString"());
 		@user = listget($1,0,"\0");
 		@pass = listget($1,1,"");
 		if(@user == "" || @pass == "")

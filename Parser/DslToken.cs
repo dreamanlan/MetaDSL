@@ -312,6 +312,8 @@ namespace Dsl.Parser
                 } else {
                     bool isNum = true;
                     bool isHex = false;
+                    bool includeEPart = false;
+                    int dotCt = 0;
                     if (CurChar == '0' && NextChar == 'x') {
                         isHex = true;
                         mTokenBuilder.Append(CurChar);
@@ -319,7 +321,7 @@ namespace Dsl.Parser
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; !isSpecialChar(CurChar); ++mIterator) {
+                    for (; myisdigit(CurChar, isHex, includeEPart) || !isSpecialChar(CurChar); ++mIterator) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '/') {
@@ -330,14 +332,18 @@ namespace Dsl.Parser
                             if (!isNum) {
                                 break;
                             } else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex)) {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart)) {
                                     break;
                                 }
                             }
-                        } else if (!myisdigit(CurChar, isHex)) {
+                            ++dotCt;
+                            if (dotCt > 1)
+                                break;
+                        } else if (!myisdigit(CurChar, isHex, includeEPart)) {
                             isNum = false;
                         }
                         mTokenBuilder.Append(CurChar);
+                        includeEPart = true;
                     }
                     mCurToken = mTokenBuilder.ToString();
                     if (isNum) {
@@ -699,14 +705,20 @@ namespace Dsl.Parser
 
         private static bool myisdigit(char c, bool isHex)
         {
+            return myisdigit(c, isHex, false);
+        }
+        private static bool myisdigit(char c, bool isHex, bool includeEPart)
+        {
             bool ret = false;
-            if (true == isHex) {
+            if (isHex) {
                 if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
                     ret = true;
                 else
                     ret = false;
             } else {
-                if ((c >= '0' && c <= '9'))
+                if (includeEPart && (c=='E' || c=='e' || c=='+' || c=='-'))
+                    ret = true;
+                else if ((c >= '0' && c <= '9'))
                     ret = true;
                 else
                     ret = false;

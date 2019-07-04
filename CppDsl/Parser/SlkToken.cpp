@@ -8,7 +8,7 @@ SlkToken.cpp
 
 //mIterator,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
 
-static inline int myisdigit(char c, int isHex)
+static inline int myisdigit(char c, int isHex, int includeEPart)
 {
 	int ret = FALSE;
 	if (TRUE == isHex) {
@@ -17,12 +17,18 @@ static inline int myisdigit(char c, int isHex)
 		else
 			ret = FALSE;
 	} else {
-		if ((c >= '0' && c <= '9'))
+		if (TRUE == includeEPart && (c == 'E' || c == 'e' || c == '+' || c == '-'))
+			ret = TRUE;
+		else if ((c >= '0' && c <= '9'))
 			ret = TRUE;
 		else
 			ret = FALSE;
 	}
 	return ret;
+}
+static inline int myisdigit(char c, int isHex)
+{
+	return myisdigit(c, isHex, FALSE);
 }
 
 static inline int mychar2int(char c)
@@ -673,6 +679,8 @@ short SlkToken::get(void)
 		} else {
 			int isNum = TRUE;
 			int isHex = FALSE;
+			int includeEPart = FALSE;
+			int dotCt = 0;
 			if (*mIterator == '0' && *(mIterator + 1) == 'x') {
 				isHex = TRUE;
 				pushTokenChar(*mIterator);
@@ -680,7 +688,7 @@ short SlkToken::get(void)
 				pushTokenChar(*mIterator);
 				++mIterator;
 			}
-			for (; !isSpecialChar(*mIterator); ++mIterator) {
+			for (; TRUE == myisdigit(*mIterator, isHex, includeEPart) || !isSpecialChar(*mIterator); ++mIterator) {
 				if (*mIterator == '#')
 					break;
 				else if (*mIterator == '/') {
@@ -693,15 +701,19 @@ short SlkToken::get(void)
 						break;
 					} else {
 						IScriptSource::Iterator next = mIterator + 1;
-						if (0 == myisdigit(*next, isHex)) {
+						if (FALSE == myisdigit(*next, isHex, includeEPart)) {
 							break;
 						}
 					}
-				} else if (0 == myisdigit(*mIterator, isHex)) {
+					++dotCt;
+					if (dotCt > 1)
+						break;
+				} else if (FALSE == myisdigit(*mIterator, isHex, includeEPart)) {
 					isNum = FALSE;
 				}
 
 				pushTokenChar(*mIterator);
+				includeEPart = TRUE;
 			}
 			endToken();
 			if (isNum) {
