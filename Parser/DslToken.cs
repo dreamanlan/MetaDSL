@@ -321,7 +321,7 @@ namespace Dsl.Parser
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; myisdigit(CurChar, isHex, includeEPart) || !isSpecialChar(CurChar); ++mIterator) {
+                    for (; isNum && myisdigit(CurChar, isHex, includeEPart) || !isSpecialChar(CurChar); ++mIterator) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '/') {
@@ -329,7 +329,7 @@ namespace Dsl.Parser
                                 break;
                             }
                         } else if (CurChar == '.') {
-                            if (!isNum) {
+                            if (!isNum || isHex) {
                                 break;
                             } else {
                                 if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart)) {

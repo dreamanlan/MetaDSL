@@ -688,7 +688,7 @@ short SlkToken::get(void)
 				pushTokenChar(*mIterator);
 				++mIterator;
 			}
-			for (; TRUE == myisdigit(*mIterator, isHex, includeEPart) || !isSpecialChar(*mIterator); ++mIterator) {
+			for (; isNum && myisdigit(*mIterator, isHex, includeEPart) || !isSpecialChar(*mIterator); ++mIterator) {
 				if (*mIterator == '#')
 					break;
 				else if (*mIterator == '/') {
@@ -697,7 +697,7 @@ short SlkToken::get(void)
 						break;
 					}
 				} else if (*mIterator == '.') {
-					if (!isNum) {
+					if (!isNum || isHex) {
 						break;
 					} else {
 						IScriptSource::Iterator next = mIterator + 1;
