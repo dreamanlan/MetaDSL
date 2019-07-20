@@ -20,7 +20,7 @@ namespace Dsl
         EndExternScript,
         ValueTypeBegin,
         ValueTypeEnd = ValueTypeBegin + ValueData.MAX_TYPE,
-        ParamTypeBegin
+        ParamOrExternClassBegin
     }
     /// <summary>
     /// 基于函数样式的脚本化数据解析工具。可以用作DSL元语言。
@@ -1807,9 +1807,9 @@ namespace Dsl
             byte code = readByte(bytes, start + curCodeIndex++);
             if (code == (byte)DslBinaryCode.BeginCall) {
                 code = readByte(bytes, start + curCodeIndex);
-                if (code >= (byte)DslBinaryCode.ParamTypeBegin) {
+                if (code >= (byte)DslBinaryCode.ParamOrExternClassBegin) {
                     ++curCodeIndex;
-                    data.SetParamClass(code - (byte)DslBinaryCode.ParamTypeBegin);
+                    data.SetParamClass(code - (byte)DslBinaryCode.ParamOrExternClassBegin);
                 }
                 code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.BeginValue) {
@@ -1858,7 +1858,10 @@ namespace Dsl
                         ++curCodeIndex;
                     }
                 } else {
-                    data.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT);
+                    if (code >= (byte)DslBinaryCode.ParamOrExternClassBegin) {
+                        ++curCodeIndex;
+                        data.SetExtentClass(code - (byte)DslBinaryCode.ParamOrExternClassBegin);
+                    }
                     for (; ; ) {
                         code = readByte(bytes, start + curCodeIndex);
                         if (code == (byte)DslBinaryCode.EndFunction) {
@@ -1930,7 +1933,7 @@ namespace Dsl
         {
             stream.WriteByte((byte)DslBinaryCode.BeginCall);
             if (null != data) {
-                stream.WriteByte((byte)((int)DslBinaryCode.ParamTypeBegin + data.GetParamClass()));
+                stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetParamClass()));
                 if (data.IsHighOrder) {
                     writeBinary(stream, identifiers, data.Call);
                 } else {
@@ -1951,6 +1954,7 @@ namespace Dsl
                 identifiers.Add(data.GetExternScript());
                 stream.WriteByte((byte)DslBinaryCode.EndExternScript);
             } else {
+                stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetExtentClass()));
                 foreach (ISyntaxComponent syntaxData in data.Statements) {
                     writeBinary(stream, identifiers, syntaxData);
                 }
