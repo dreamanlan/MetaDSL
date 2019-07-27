@@ -8,7 +8,7 @@ SlkToken.cpp
 
 //mIterator,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
 
-static inline int myisdigit(char c, int isHex, int includeEPart)
+static inline int myisdigit(char c, int isHex, int includeEPart, int includeAddSub)
 {
 	int ret = FALSE;
 	if (TRUE == isHex) {
@@ -17,7 +17,9 @@ static inline int myisdigit(char c, int isHex, int includeEPart)
 		else
 			ret = FALSE;
 	} else {
-		if (TRUE == includeEPart && (c == 'E' || c == 'e' || c == '+' || c == '-'))
+		if (TRUE == includeEPart && (c == 'E' || c == 'e'))
+			ret = TRUE;
+		else if (TRUE == includeAddSub && (c == '+' || c == '-'))
 			ret = TRUE;
 		else if ((c >= '0' && c <= '9'))
 			ret = TRUE;
@@ -28,7 +30,7 @@ static inline int myisdigit(char c, int isHex, int includeEPart)
 }
 static inline int myisdigit(char c, int isHex)
 {
-	return myisdigit(c, isHex, FALSE);
+	return myisdigit(c, isHex, FALSE, FALSE);
 }
 
 static inline int mychar2int(char c)
@@ -680,6 +682,7 @@ short SlkToken::get(void)
 			int isNum = TRUE;
 			int isHex = FALSE;
 			int includeEPart = FALSE;
+			int includeAddSub = FALSE;
 			int dotCt = 0;
 			if (*mIterator == '0' && *(mIterator + 1) == 'x') {
 				isHex = TRUE;
@@ -688,7 +691,7 @@ short SlkToken::get(void)
 				pushTokenChar(*mIterator);
 				++mIterator;
 			}
-			for (; isNum && myisdigit(*mIterator, isHex, includeEPart) || !isSpecialChar(*mIterator); ++mIterator) {
+			for (; isNum && myisdigit(*mIterator, isHex, includeEPart, includeAddSub) || !isSpecialChar(*mIterator); ++mIterator) {
 				if (*mIterator == '#')
 					break;
 				else if (*mIterator == '/') {
@@ -701,19 +704,25 @@ short SlkToken::get(void)
 						break;
 					} else {
 						IScriptSource::Iterator next = mIterator + 1;
-						if (FALSE == myisdigit(*next, isHex, includeEPart)) {
+						if (FALSE == myisdigit(*next, isHex, includeEPart, includeAddSub)) {
 							break;
 						}
 					}
 					++dotCt;
 					if (dotCt > 1)
 						break;
-				} else if (FALSE == myisdigit(*mIterator, isHex, includeEPart)) {
+				} else if (FALSE == myisdigit(*mIterator, isHex, includeEPart, includeAddSub)) {
 					isNum = FALSE;
 				}
 
 				pushTokenChar(*mIterator);
 				includeEPart = TRUE;
+				if (includeEPart && (*mIterator == 'e' || *mIterator == 'E')) {
+					includeEPart = FALSE;
+					includeAddSub = TRUE;
+				} else if (includeAddSub) {
+					includeAddSub = FALSE;
+				}
 			}
 			endToken();
 			if (isNum) {

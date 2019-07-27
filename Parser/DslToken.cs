@@ -313,6 +313,7 @@ namespace Dsl.Parser
                     bool isNum = true;
                     bool isHex = false;
                     bool includeEPart = false;
+                    bool includeAddSub = false;
                     int dotCt = 0;
                     if (CurChar == '0' && NextChar == 'x') {
                         isHex = true;
@@ -321,7 +322,7 @@ namespace Dsl.Parser
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; isNum && myisdigit(CurChar, isHex, includeEPart) || !isSpecialChar(CurChar); ++mIterator) {
+                    for (; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '/') {
@@ -332,18 +333,24 @@ namespace Dsl.Parser
                             if (!isNum || isHex) {
                                 break;
                             } else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart)) {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
                                     break;
                                 }
                             }
                             ++dotCt;
                             if (dotCt > 1)
                                 break;
-                        } else if (!myisdigit(CurChar, isHex, includeEPart)) {
+                        } else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
                             isNum = false;
                         }
                         mTokenBuilder.Append(CurChar);
                         includeEPart = true;
+                        if(includeEPart && (CurChar=='e' || CurChar == 'E')) {
+                            includeEPart = false;
+                            includeAddSub = true;
+                        } else if (includeAddSub) {
+                            includeAddSub = false;
+                        }
                     }
                     mCurToken = mTokenBuilder.ToString();
                     if (isNum) {
@@ -705,9 +712,9 @@ namespace Dsl.Parser
 
         private static bool myisdigit(char c, bool isHex)
         {
-            return myisdigit(c, isHex, false);
+            return myisdigit(c, isHex, false, false);
         }
-        private static bool myisdigit(char c, bool isHex, bool includeEPart)
+        private static bool myisdigit(char c, bool isHex, bool includeEPart, bool includeAddSub)
         {
             bool ret = false;
             if (isHex) {
@@ -716,7 +723,9 @@ namespace Dsl.Parser
                 else
                     ret = false;
             } else {
-                if (includeEPart && (c=='E' || c=='e' || c=='+' || c=='-'))
+                if (includeEPart && (c == 'E' || c == 'e'))
+                    ret = true;
+                else if (includeAddSub && (c == '+' || c == '-'))
                     ret = true;
                 else if ((c >= '0' && c <= '9'))
                     ret = true;
