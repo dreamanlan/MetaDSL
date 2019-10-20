@@ -1,4 +1,4 @@
-//--------------------------------------------------------------------------------------
+ï»¿//--------------------------------------------------------------------------------------
 //**************************************************************************************
 //**************************************************************************************
 //**************************************************************************************
@@ -219,7 +219,7 @@ namespace Dsl
 		if (mData.isSemanticStackEmpty()) {
 			simplifyStatementData(*statement);
 			if (!statement->IsValid()) {
-				//_epsilon_±í´ïÊ½ÎŞÓï¾äÓïÒå
+				//_epsilon_è¡¨è¾¾å¼æ— è¯­å¥è¯­ä¹‰
 				if (mDataFile->GetDslInfoNum() > 0 && statement->GetFirstCommentNum() > 0) {
 					Statement* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
 					if (last->GetLastCommentNum() <= 0) {
@@ -244,7 +244,7 @@ namespace Dsl
 					last->AddLastComment(cmt);
 				}
 			}
-			//¶¥²ãÔªËØ½áÊø
+			//é¡¶å±‚å…ƒç´ ç»“æŸ
 			mDataFile->AddStatement(statement);
 			mThis->setCanFinish(TRUE);
 		}
@@ -256,12 +256,12 @@ namespace Dsl
 				Call& call = p->GetCall();
 				switch (p->GetExtentClass()) {
 				case Function::EXTENT_CLASS_NOTHING: {
-					/* Õâ¶ÎÏÈ×¢µô£¬ÏÖÔÚÓ¦¸Ã²»ĞèÒªÔÊĞí¿ÕÓï¾ä²ÎÊıÁË
+					/* è¿™æ®µå…ˆæ³¨æ‰ï¼Œç°åœ¨åº”è¯¥ä¸éœ€è¦å…è®¸ç©ºè¯­å¥å‚æ•°äº†
 					if (call.GetParamClass() == Call::PARAM_CLASS_OPERATOR && !statement->IsValid())
-					return;//²Ù×÷·û¾Í²»Ö§³Ö¿Õ²ÎÊıÁË
-					//º¯Êı²ÎÊı£¬ÔÊĞí¿ÕÓï¾ä£¬ÓÃÓÚ±í´ïÄ¬ÈÏ×´Ì¬(¸±×÷ÓÃÊÇa()Óëa[]½«×ÜÊÇ»áÓĞÒ»¸ö¿ÕÓï¾ä²ÎÊı)¡£
+					return;//æ“ä½œç¬¦å°±ä¸æ”¯æŒç©ºå‚æ•°äº†
+					//å‡½æ•°å‚æ•°ï¼Œå…è®¸ç©ºè¯­å¥ï¼Œç”¨äºè¡¨è¾¾é»˜è®¤çŠ¶æ€(å‰¯ä½œç”¨æ˜¯a()ä¸a[]å°†æ€»æ˜¯ä¼šæœ‰ä¸€ä¸ªç©ºè¯­å¥å‚æ•°)ã€‚
 					*/
-					//Óëc#±£³ÖÒ»ÖÂ£¬º¯Êı²ÎÊı²»ÔÊĞí¿ÕÓï¾ä
+					//ä¸c#ä¿æŒä¸€è‡´ï¼Œå‡½æ•°å‚æ•°ä¸å…è®¸ç©ºè¯­å¥
 					if (statementSyntax.IsValid()) {
 						call.AddParam(&statementSyntax);
 					}
@@ -275,7 +275,7 @@ namespace Dsl
 													 break;
 				case Function::EXTENT_CLASS_STATEMENT: {
 					if (!statementSyntax.IsValid()) {
-						//_epsilon_±í´ïÊ½ÎŞÓï¾äÓïÒå
+						//_epsilon_è¡¨è¾¾å¼æ— è¯­å¥è¯­ä¹‰
 						if (p->GetStatementNum() > 0 && statementSyntax.GetFirstCommentNum() > 0) {
 							ISyntaxComponent* last = p->GetStatement(p->GetStatementNum() - 1);
 							if (last->GetLastCommentNum() <= 0) {
@@ -305,7 +305,7 @@ namespace Dsl
 							}
 						}
 					}
-					//º¯ÊıÀ©Õ¹Óï¾ä²¿·Ö
+					//å‡½æ•°æ‰©å±•è¯­å¥éƒ¨åˆ†
 					p->AddStatement(&statementSyntax);
 				}
 													   break;
@@ -374,7 +374,7 @@ namespace Dsl
 		void RuntimeBuilderT<RealTypeT>::buildHighOrderFunction(void)
 	{
 		if (!preconditionCheck())return;
-		//¸ß½×º¯Êı¹¹Ôì£¨µ±Ç°º¯Êı·µ»ØÒ»¸öº¯Êı£©
+		//é«˜é˜¶å‡½æ•°æ„é€ ï¼ˆå½“å‰å‡½æ•°è¿”å›ä¸€ä¸ªå‡½æ•°ï¼‰
 		Function*& p = mData.getLastFunctionRef();
 		if (0 == p)
 			return;
@@ -640,15 +640,15 @@ namespace Dsl
 		ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(Statement& data)const
 	{
 		int num = data.GetFunctionNum();
-		//¶ÔÓï¾ä½øĞĞ»¯¼ò£¨Óï·¨·ÖÎö¹ı³ÌÖĞÎªÁË·½±ã£¬È«²¿°´ÍêÕûStatementDataÀ´¹¹Ôì£¬ÕâÀï»¯¼òÎªÔ­À´µÄÀàĞÍ£ºValueData/CallData/FunctionDataµÈ£¬Ö÷ÒªÉæ¼°²ÎÊıÓëÓï¾ä²¿·Ö£©
+		//å¯¹è¯­å¥è¿›è¡ŒåŒ–ç®€ï¼ˆè¯­æ³•åˆ†æè¿‡ç¨‹ä¸­ä¸ºäº†æ–¹ä¾¿ï¼Œå…¨éƒ¨æŒ‰å®Œæ•´StatementDataæ¥æ„é€ ï¼Œè¿™é‡ŒåŒ–ç®€ä¸ºåŸæ¥çš„ç±»å‹ï¼šValueData/CallData/FunctionDataç­‰ï¼Œä¸»è¦æ¶‰åŠå‚æ•°ä¸è¯­å¥éƒ¨åˆ†ï¼‰
 		if (num == 1) {
-			//Ö»ÓĞÒ»¸öº¯ÊıµÄÓï¾äÍË»¯Îªº¯Êı£¨ÔÙ°´º¯Êı½øÒ»²½ÍË»¯£©¡£
+			//åªæœ‰ä¸€ä¸ªå‡½æ•°çš„è¯­å¥é€€åŒ–ä¸ºå‡½æ•°ï¼ˆå†æŒ‰å‡½æ•°è¿›ä¸€æ­¥é€€åŒ–ï¼‰ã€‚
 			Function& func = *data.GetFunction(0);
 			func.CopyComments(data);
 			return simplifyStatement(func);
 		}
 		else {
-			//¶à¸öº¯Êı¹¹³ÉµÄÓï¾ä²»»áÍË»¯£¬Ö»¶Ô¸÷¸öº¯ÊıµÄ²ÎÊıÓëÓï¾ä²¿·Ö½øĞĞ»¯¼ò¡£
+			//å¤šä¸ªå‡½æ•°æ„æˆçš„è¯­å¥ä¸ä¼šé€€åŒ–ï¼Œåªå¯¹å„ä¸ªå‡½æ•°çš„å‚æ•°ä¸è¯­å¥éƒ¨åˆ†è¿›è¡ŒåŒ–ç®€ã€‚
 			simplifyStatementData(data);
 			return data;
 		}
@@ -657,7 +657,7 @@ namespace Dsl
 		ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(Function& data)const
 	{
 		if (!data.HaveStatement() && !data.HaveExternScript()) {
-			//Ã»ÓĞÓï¾ä²¿·ÖµÄº¯ÊıÍË»¯Îªº¯Êıµ÷ÓÃ£¨ÔÙ°´º¯Êıµ÷ÓÃ½øÒ»²½ÍË»¯£©¡£
+			//æ²¡æœ‰è¯­å¥éƒ¨åˆ†çš„å‡½æ•°é€€åŒ–ä¸ºå‡½æ•°è°ƒç”¨ï¼ˆå†æŒ‰å‡½æ•°è°ƒç”¨è¿›ä¸€æ­¥é€€åŒ–ï¼‰ã€‚
 			Call& call = data.GetCall();
 			if (call.IsValid()) {
 				call.CopyComments(data);
@@ -669,7 +669,7 @@ namespace Dsl
 			}
 		}
 		else {
-			//°üº¬Óï¾äÔò²»»áÍË»¯£¬Ö»½øĞĞ»¯¼ò
+			//åŒ…å«è¯­å¥åˆ™ä¸ä¼šé€€åŒ–ï¼Œåªè¿›è¡ŒåŒ–ç®€
 			simplifyFunctionData(data);
 			return data;
 		}
@@ -678,9 +678,9 @@ namespace Dsl
 		ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(Call& data)const
 	{
 		if (!data.HaveParam()) {
-			//Ã»ÓĞ²ÎÊıµÄµ÷ÓÃÍË»¯Îª»ù±¾ÖµÊı¾İ
+			//æ²¡æœ‰å‚æ•°çš„è°ƒç”¨é€€åŒ–ä¸ºåŸºæœ¬å€¼æ•°æ®
 			if (data.IsHighOrder()) {
-				//ÕâÖÖÇé¿öÓ¦¸Ã²»»á³öÏÖ
+				//è¿™ç§æƒ…å†µåº”è¯¥ä¸ä¼šå‡ºç°
 				return data;
 			}
 			else {
@@ -722,7 +722,7 @@ namespace Dsl
 			}
 		}
 		else {
-			//ÓĞ²ÎÊı²»»áÍË»¯£¬¶Ô¸÷²ÎÊı½øĞĞ»¯¼ò
+			//æœ‰å‚æ•°ä¸ä¼šé€€åŒ–ï¼Œå¯¹å„å‚æ•°è¿›è¡ŒåŒ–ç®€
 			simplifyCallData(data);
 			return data;
 		}
