@@ -757,7 +757,7 @@ namespace Dsl.Parser
 
         private StringBuilder mCommentBuilder = new StringBuilder();
         private List<string> mComments = new List<string>();
-        private bool mCommentOnNewLine;
+        private bool mCommentOnNewLine = false;
 
         private const string mWhiteSpaces = " \t\r\n";
         private const string mDelimiters = ",;";

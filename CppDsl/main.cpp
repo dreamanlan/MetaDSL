@@ -10,8 +10,13 @@ int main(int argc, char* argv[])
 	size_t size = fread(pbuf, 1, 1024 * 1024, fp);
 	pbuf[size] = 0;
 	fclose(fp);
+	char* p = pbuf;
+	if (size >= 3 && pbuf[0] == (char)0xef && pbuf[1] == (char)0xbb && pbuf[2] == (char)0xbf) {
+		//skip utf-8 bom
+		p += 3;
+	}
 	Dsl::DslFile dataFile;
-	dataFile.Parse(pbuf);
+	dataFile.Parse(p);
 	FILE* fp2 = fopen("copy.txt", "wb");
 	dataFile.WriteToFile(fp2, 0);
 	fclose(fp2);

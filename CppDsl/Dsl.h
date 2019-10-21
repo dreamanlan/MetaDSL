@@ -97,9 +97,9 @@ namespace Dsl
 		virtual const char* GetId(void) const = 0;
 		virtual int GetIdType(void) const = 0;
 		virtual int GetLine(void) const = 0;
-		virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const = 0;
+		virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const = 0;
 	public:
-		int GetSyntaxType(void) const { return mSyntaxType; }
+		int GetSyntaxType(void) const { return m_SyntaxType; }
 		void AddFirstComment(const char* cmt)
 		{
 			PrepareFirstComments();
@@ -191,13 +191,15 @@ namespace Dsl
 		}
 	protected:
 		void CopyFrom(const ISyntaxComponent& other);
+		void WriteFirstCommentsToFile(FILE* fp, int indent, int firstLineNoIndent) const;
+		void WriteLastCommentsToFile(FILE* fp, int indent, int isLastOfStatement) const;
 	private:
 		void PrepareFirstComments(void);
 		void ReleaseFirstComments(void);
 		void PrepareLastComments(void);
 		void ReleaseLastComments(void);
 	private:
-		int mSyntaxType;
+		int						  m_SyntaxType;
 		const char**              m_FirstComments;
 		int                       m_FirstCommentNum;
 		int                       m_FirstCommentSpace;
@@ -244,10 +246,11 @@ namespace Dsl
 		virtual int GetIdType(void)const { return m_Type; }
 		virtual const char* GetId(void)const { return m_StringVal; }
 		virtual int GetLine(void)const { return m_Line; }
-		virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
+		virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 
 		Call* GetCall(void)const { return m_Call; }
 
+		bool HaveId()const { return IsValid(); }
 		int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
 		int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
 		int IsVariableName(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
@@ -336,7 +339,7 @@ namespace Dsl
 		virtual const char* GetId(void) const { return ""; }
 		virtual int GetIdType(void) const { return Value::TYPE_INVALID; }
 		virtual int GetLine(void) const { return 0; }
-		virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const {}
+		virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const {}
 	private:
 		NullSyntax(const NullSyntax&);
 		NullSyntax& operator=(const NullSyntax&);
@@ -375,7 +378,7 @@ namespace Dsl
 	public:
 		virtual int IsValid(void)const
 		{
-			if (HaveName())
+			if (HaveId())
 				return TRUE;
 			else if (HaveParam())
 				return TRUE;
@@ -385,10 +388,10 @@ namespace Dsl
 		virtual int GetIdType(void)const { return m_Name.GetIdType(); }
 		virtual const char* GetId(void)const { return m_Name.GetId(); }
 		virtual int GetLine(void)const { return m_Name.GetLine(); }
-		virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
+		virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 	public:
 		void		SetName(const Value& val) { m_Name = val; }
-		Value&	GetName(void) { return m_Name; }
+		Value&		GetName(void) { return m_Name; }
 		void		ClearParams(void) { m_ParamNum = 0; }
 		void		AddParam(ISyntaxComponent*	pVal)
 		{
@@ -400,27 +403,27 @@ namespace Dsl
 			m_Params[m_ParamNum] = pVal;
 			++m_ParamNum;
 		}
-		void    SetParam(int index, ISyntaxComponent* pVal)
+		void		SetParam(int index, ISyntaxComponent* pVal)
 		{
 			if (NULL == pVal || index < 0 || index >= MAX_FUNCTION_PARAM_NUM)
 				return;
 			m_Params[index] = pVal;
 		}
 		void		SetParamClass(int v) { m_ParamClass = v; }
-		int		  GetParamClass(void)const { return m_ParamClass; }
-		int		HaveName(void)const { return m_Name.IsValid(); }
-		int		HaveParam(void)const { return m_ParamClass != PARAM_CLASS_NOTHING; }
-		int    IsHighOrder(void)const { return m_Name.IsCall(); }
+		int			GetParamClass(void)const { return m_ParamClass; }
+		int			HaveId(void)const { return m_Name.HaveId(); }
+		int			HaveParam(void)const { return m_ParamClass != PARAM_CLASS_NOTHING; }
+		int			IsHighOrder(void)const { return m_Name.IsCall(); }
 	public:
-		const Value&	GetName(void)const { return m_Name; }
-		int			GetParamNum(void)const { return m_ParamNum; }
+		const Value&		GetName(void)const { return m_Name; }
+		int					GetParamNum(void)const { return m_ParamNum; }
 		ISyntaxComponent*	GetParam(int index)const
 		{
 			if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= MAX_FUNCTION_PARAM_NUM)
 				return 0;
 			return m_Params[index];
 		}
-		const char*		GetParamId(int index)const
+		const char*			GetParamId(int index)const
 		{
 			if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= MAX_FUNCTION_PARAM_NUM)
 				return 0;
@@ -509,10 +512,10 @@ namespace Dsl
 		virtual int GetIdType(void)const { return m_Call.GetIdType(); }
 		virtual const char* GetId(void)const { return m_Call.GetId(); }
 		virtual int GetLine(void)const { return m_Call.GetLine(); }
-		virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
+		virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 	public:
 		void		SetCall(const Call& val) { m_Call = val; }
-		Call&	  GetCall(void) { return m_Call; }
+		Call&		GetCall(void) { return m_Call; }
 		void		ClearStatements(void) { m_StatementNum = 0; }
 		void		AddStatement(ISyntaxComponent* pVal)
 		{
@@ -524,7 +527,7 @@ namespace Dsl
 			m_Statements[m_StatementNum] = pVal;
 			++m_StatementNum;
 		}
-		void    SetStatement(int index, ISyntaxComponent* pVal)
+		void		SetStatement(int index, ISyntaxComponent* pVal)
 		{
 			if (NULL == pVal || index < 0 || index >= m_MaxStatementNum)
 				return;
@@ -532,9 +535,11 @@ namespace Dsl
 		}
 		void		SetExternScript(const char* scp) { m_ExternScript = scp; }
 		void		SetExtentClass(int v) { m_ExtentClass = v; }
-		int		  GetExtentClass(void)const { return m_ExtentClass; }
-		int		HaveStatement(void)const { return m_ExtentClass == EXTENT_CLASS_STATEMENT; }
-		int		HaveExternScript(void)const { return m_ExtentClass == EXTENT_CLASS_EXTERN_SCRIPT; }
+		int			GetExtentClass(void)const { return m_ExtentClass; }
+		int			HaveId(void)const { return m_Call.HaveId(); }
+		int			HaveParam(void)const { return m_Call.HaveParam(); }
+		int			HaveStatement(void)const { return m_ExtentClass == EXTENT_CLASS_STATEMENT; }
+		int			HaveExternScript(void)const { return m_ExtentClass == EXTENT_CLASS_EXTERN_SCRIPT; }
 	public:
 		const Call&	GetCall(void)const { return m_Call; }
 		int			    GetStatementNum(void)const { return m_StatementNum; }
@@ -604,7 +609,7 @@ namespace Dsl
 			}
 			return line;
 		}
-		virtual void WriteToFile(FILE* fp, int indent, int isLastOfStatement) const;
+		virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 	public:
 		void		ClearFunctions(void) { m_FunctionNum = 0; }
 		void		AddFunction(Function* pVal)

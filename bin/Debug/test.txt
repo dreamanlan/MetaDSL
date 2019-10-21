@@ -1,4 +1,5 @@
-﻿skill(1006)
+﻿//注释
+skill(1006)
 {
 	attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
   section
@@ -25,6 +26,10 @@
     	a.{b};
     	a.b();
     	a.b=c;
+    	a(a,b,c)d
+    	{
+    		e(f)g(h);
+    	};
 	};
 	
 	section(5833)						//分镜1：旋风腿+升龙拳

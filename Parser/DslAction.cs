@@ -365,8 +365,6 @@ namespace Dsl.Parser
         {
             int type;
             string name = pop(out type);
-            if (type == CallData.ID_TOKEN)
-                type = CallData.STRING_TOKEN;
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
                 func.Call.Name.SetId(name);

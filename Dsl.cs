@@ -940,7 +940,7 @@ namespace Dsl
         public override string ToScriptString(bool includeComment)
         {
             StringBuilder stream = new StringBuilder();
-            Utility.writeSyntaxComponent(stream, this, 0, false, ";");
+            Utility.writeSyntaxComponent(stream, this, 0, false, true);
             return stream.ToString();
         }
 
@@ -1317,15 +1317,6 @@ namespace Dsl
             }
         }
 
-        public static string unquoteString(string str)
-        {
-            int len = str.Length;
-            if (len > 2 && (str[0] == '\"' && str[len - 1] == '\"' || str[0] == '\'' && str[len - 1] == '\'') && !needQuote(str)) {
-                return str.Substring(1, len - 2);
-            }
-            return str;
-        }
-
         public static string getCallString(CallData data, bool includeComment)
         {
 #if FULL_VERSION
@@ -1421,7 +1412,7 @@ namespace Dsl
                              || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
                              || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
                              || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
-                            stream.Append(unquoteString(param.ToScriptString(includeComment)));
+                            stream.Append(param.ToScriptString(includeComment));
                         else
                             stream.Append(param.ToScriptString(includeComment));
                     }
@@ -1436,7 +1427,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeContent(StringBuilder stream, string line, int indent)
+        public static void writeText(StringBuilder stream, string line, int indent)
         {
 #if FULL_VERSION
             for (int i = 0; i < indent; ++i) {
@@ -1449,93 +1440,75 @@ namespace Dsl
         public static void writeLine(StringBuilder stream, string line, int indent)
         {
 #if FULL_VERSION
-            writeContent(stream, line, indent);
+            writeText(stream, line, indent);
             stream.Append("\r\n");
 #endif
         }
 
-        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, string endDelimiter)
+        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
-            AbstractSyntaxComponent syntaxComp = data as AbstractSyntaxComponent;
-            bool isFirst = true;
-            foreach (string cmt in syntaxComp.FirstComments) {
-                if (isFirst && !syntaxComp.FirstCommentOnNewLine) {
-                    writeContent(stream, cmt, firstLineNoIndent ? 0 : indent);
-                } else {
-                    writeLine(stream, cmt, isFirst && firstLineNoIndent ? 0 : indent);
-                }
-                isFirst = false;
-            }
             ValueData val = data as ValueData;
             if (null != val) {
-                writeContent(stream, val.ToScriptString(false) + endDelimiter, firstLineNoIndent ? 0 : indent);
+                writeValueData(stream, val, indent, firstLineNoIndent, isLastOfStatement);
             } else {
                 CallData call = data as CallData;
                 if (null != call) {
-                    writeContent(stream, call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
-                    writeCallData(stream, call, indent, true);
-                    writeContent(stream, endDelimiter, 0);
-                    writeContent(stream, call.CalcComment(), 0);
-                    writeContent(stream, call.CalcLastComment(), 0);
+                    writeCallData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
                 } else {
                     FunctionData function = data as FunctionData;
                     if (null != function) {
-                        writeFunctionData(stream, function, indent, firstLineNoIndent, true, endDelimiter);
+                        writeFunctionData(stream, function, indent, firstLineNoIndent, isLastOfStatement);
                     } else {
                         StatementData statement = data as StatementData;
-                        writeStatementData(stream, statement, indent, firstLineNoIndent, endDelimiter);
+                        writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
                     }
                 }
-            }
-            if (syntaxComp.LastComments.Count > 0) {
-                if (syntaxComp.LastCommentOnNewLine) {
-                    writeLine(stream, string.Empty, 0);
-                }
-                isFirst = true;
-                foreach (string cmt in syntaxComp.LastComments) {
-                    if (isFirst && !syntaxComp.LastCommentOnNewLine) {
-                        writeLine(stream, cmt, indent > 0 ? 1 : 0);
-                    } else {
-                        writeLine(stream, cmt, indent);
-                    }
-                    isFirst = false;
-                }
-            } else if(!string.IsNullOrEmpty(endDelimiter)) {
-                writeLine(stream, string.Empty, 0);
             }
 #endif
         }
 
-        public static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent)
+        public static void writeValueData(StringBuilder stream, ValueData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
+            writeText(stream, data.ToScriptString(false), firstLineNoIndent ? 0 : indent);
+            if (isLastOfStatement)
+                stream.Append(';');
+            writeLastComments(stream, data, indent, isLastOfStatement);
+#endif
+        }
+
+        public static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             string lineNo = string.Format("/* {0} */", data.GetLine());
             //writeLine(stream, lineNo, indent);
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
             if (data.HaveParam()) {
                 int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
                 if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
                     int paramNum = data.GetParamNum();
                     if (paramNum > 0) {
-                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, string.Empty);
-                        writeContent(stream, " ", 0);
+                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
+                        writeText(stream, " ", 0);
                     }
                     if (data.IsHighOrder) {
-                        writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent);
+                        writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
                     } else if (data.HaveId()) {
                         string line = quoteString(data.GetId(), data.GetIdType());
-                        writeContent(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
+                        writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
                     }
                     if (paramNum > 1) {
-                        writeContent(stream, " ", 0);
-                        writeSyntaxComponent(stream, data.GetParam(1), indent, true, string.Empty);
+                        writeText(stream, " ", 0);
+                        writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
                     }
                 } else {
                     if (data.IsHighOrder) {
-                        writeCallData(stream, data.Call, indent, firstLineNoIndent);
+                        writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
                     } else if (data.HaveId()) {
                         string line = quoteString(data.GetId(), data.GetIdType());
-                        writeContent(stream, line, firstLineNoIndent ? 0 : indent);
+                        writeText(stream, line, firstLineNoIndent ? 0 : indent);
                     }
                     string lbracket = string.Empty;
                     string rbracket = string.Empty;
@@ -1609,92 +1582,74 @@ namespace Dsl
                              || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
                              || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
                              || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
-                            stream.Append(unquoteString(param.ToScriptString(true)));
+                            stream.Append(param.ToScriptString(true));
                         else
-                            writeSyntaxComponent(stream, param, indent, true, string.Empty);
+                            writeSyntaxComponent(stream, param, indent, true, false);
                     }
                     stream.Append(rbracket);
                 }
             } else {
                 if (data.IsHighOrder) {
-                    writeCallData(stream, data.Call, indent, firstLineNoIndent);
+                    writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
                 } else if (data.HaveId()) {
                     string line = quoteString(data.GetId(), data.GetIdType());
-                    writeContent(stream, line, firstLineNoIndent ? 0 : indent);
+                    writeText(stream, line, firstLineNoIndent ? 0 : indent);
                 }
             }
+            if (isLastOfStatement)
+                stream.Append(';');
+            foreach (string cmt in data.Comments) {
+                writeText(stream, cmt, 1);
+            }
+            writeLastComments(stream, data, indent, isLastOfStatement);
 #endif
         }
 
-        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement, string endDelimiter)
+        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
+            if (null != data.Call) {
+                writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
+            }
             if (data.HaveStatement()) {
-                bool haveCall = false;
-                if (null != data.Call) {
-                    haveCall = data.Call.IsValid();
-                    writeContent(stream, data.Call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
-                    writeCallData(stream, data.Call, indent, true);
-                    writeContent(stream, data.Call.CalcComment(), 0);
-                    writeLine(stream, data.Call.CalcLastComment(), 0);
-                }
+                writeLine(stream, string.Empty, 0);
                 writeLine(stream, "{", indent);
                 ++indent;
 
                 int ct = data.GetStatementNum();
                 for (int i = 0; i < ct; ++i) {
                     ISyntaxComponent tempData = data.GetStatement(i);
-                    writeSyntaxComponent(stream, tempData, indent, false, ";");
+                    writeSyntaxComponent(stream, tempData, indent, false, true);
                 }
 
                 --indent;
-                if (isLastOfStatement)
-                    writeContent(stream, "}" + endDelimiter, indent);
-                else
-                    writeContent(stream, "}", indent);
+                writeText(stream, "}", indent);
             } else if (data.HaveExternScript()) {
-                bool haveCall = false;
-                if (null != data.Call) {
-                    haveCall = data.Call.IsValid();
-                    writeContent(stream, data.Call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
-                    writeCallData(stream, data.Call, indent, true);
-                    writeContent(stream, data.Call.CalcComment(), 0);
-                    writeLine(stream, data.Call.CalcLastComment(), 0);
-                }
+                writeLine(stream, string.Empty, 0);
                 string script = data.GetExternScript();
                 if (script.IndexOf('\n') >= 0) {
                     writeLine(stream, "{:", indent);
                 } else {
-                    writeContent(stream, "{:", indent);
+                    writeText(stream, "{:", indent);
                 }
                 stream.Append(script);
                 if (script.Length>0 && script[script.Length - 1] == '\n') {
-                    if (isLastOfStatement)
-                        writeContent(stream, ":}" + endDelimiter, indent);
-                    else
-                        writeContent(stream, ":}", indent);
+                    writeText(stream, ":}", indent);
                 } else {
-                    if (isLastOfStatement)
-                        stream.Append(":}" + endDelimiter);
-                    else
-                        stream.Append(":}");
+                    stream.Append(":}");
                 }
-            } else {
-                if (null != data.Call) {
-                    writeContent(stream, data.Call.CalcFirstComment(), firstLineNoIndent ? 0 : indent);
-                    writeCallData(stream, data.Call, indent, true);
-                    writeContent(stream, data.Call.CalcComment(), 0);
-                    writeContent(stream, data.Call.CalcLastComment(), 0);
-                }
-                if (isLastOfStatement)
-                    writeContent(stream, endDelimiter, 0);
             }
+            if (isLastOfStatement)
+                stream.Append(';');
+            writeLastComments(stream, data, indent, isLastOfStatement);
 #endif
         }
 
-        public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, string endDelimiter)
+        public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
             FunctionData tempData = data.First;
             CallData callData = tempData.Call;
             if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
@@ -1705,27 +1660,91 @@ namespace Dsl
                         if (funcData.HaveId() && funcData.HaveStatement())
                             line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(true));
                     }
-                    writeContent(stream, line + endDelimiter, firstLineNoIndent ? 0 : indent);
+                    writeText(stream, line, firstLineNoIndent ? 0 : indent);
                 }
             } else {
                 int ct = data.Functions.Count;
-                bool lastFuncHasntStatements = false;
-                bool isLastOfStatement = false;
-                if (ct == 0)
-                    isLastOfStatement = true;
+                bool lastFuncNoParam = false;
+                bool lastFuncNoStatement = false;
                 for (int i = 0; i < ct; ++i) {
-                    if (i == ct - 1)
-                        isLastOfStatement = true;
                     FunctionData func = data.Functions[i];
-                    if (i > 0 && !lastFuncHasntStatements) {
+                    bool noIndent = false;
+                    bool funcNoParam = !func.HaveParam();
+                    bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
+                    if (i > 0) {
+                        if (lastFuncNoParam && lastFuncNoStatement) {
+                            writeText(stream, " ", 0);
+                            noIndent = true;
+                        }
+                        else if (lastFuncNoStatement && funcNoStatement) {
+                            noIndent = true;
+                        }
+                        else {
+                            writeLine(stream, string.Empty, 0);
+                            noIndent = false;
+                        }
+                    }
+                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false);
+                    lastFuncNoParam = funcNoParam;
+                    lastFuncNoStatement = funcNoStatement;
+                }
+            }
+            if (isLastOfStatement)
+                stream.Append(';');
+            writeLastComments(stream, data, indent, isLastOfStatement);
+#endif
+        }
+
+        private static void writeFirstComments(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent)
+        {
+#if FULL_VERSION
+            AbstractSyntaxComponent syntaxComp = data as AbstractSyntaxComponent;
+            bool isFirst = true;
+            bool haveComments = false;
+            bool newLine = false;
+            foreach (string cmt in syntaxComp.FirstComments) {
+                if (isFirst && !syntaxComp.FirstCommentOnNewLine) {
+                    writeText(stream, cmt, firstLineNoIndent ? 0 : indent);
+                }
+                else {
+                    writeLine(stream, cmt, isFirst && firstLineNoIndent ? 0 : indent);
+                    newLine = true;
+                }
+                isFirst = false;
+                haveComments = true;
+            }
+            if (haveComments && !newLine) {
+                //行首注释必须要换行，否则可能会把代码注释掉
+                writeLine(stream, string.Empty, 0);
+            }
+#endif
+        }
+
+        private static void writeLastComments(StringBuilder stream, ISyntaxComponent data, int indent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            AbstractSyntaxComponent syntaxComp = data as AbstractSyntaxComponent;
+            bool isFirst = true;
+            if (syntaxComp.LastComments.Count > 0) {
+                if (syntaxComp.LastCommentOnNewLine) {
+                    writeLine(stream, string.Empty, 0);
+                }
+                isFirst = true;
+                foreach (string cmt in syntaxComp.LastComments) {
+                    if (isFirst && !syntaxComp.LastCommentOnNewLine) {
+                        writeText(stream, cmt, 1);
+                    }
+                    else {
+                        writeText(stream, cmt, indent);
+                    }
+                    if (isLastOfStatement) {
                         writeLine(stream, string.Empty, 0);
                     }
-                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || lastFuncHasntStatements, isLastOfStatement, endDelimiter);
-                    lastFuncHasntStatements = !func.HaveStatement() && !func.HaveExternScript();
-                    if (lastFuncHasntStatements) {
-                        writeContent(stream, " ", 0);
-                    }
+                    isFirst = false;
                 }
+            }
+            else if (isLastOfStatement) {
+                writeLine(stream, string.Empty, 0);
             }
 #endif
         }

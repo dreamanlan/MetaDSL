@@ -17,7 +17,7 @@ Dsl.cpp
 namespace Dsl
 {
 
-	ISyntaxComponent::ISyntaxComponent(int syntaxType) :mSyntaxType(syntaxType),
+	ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType),
 		m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
 		m_LastComments(0), m_LastCommentNum(0), m_LastCommentSpace(0), m_LastCommentOnNewLine(0)
 	{
@@ -44,9 +44,11 @@ namespace Dsl
 			int newSpace = m_FirstCommentSpace + DELTA_COMMENT;
 			const char** pNew = new const char*[newSpace];
 			if (pNew) {
-				memcpy(pNew, m_FirstComments, m_FirstCommentNum*sizeof(const char*));
-				memset(pNew + m_FirstCommentNum, 0, DELTA_COMMENT*sizeof(const char*));
-				delete[] m_FirstComments;
+				if (NULL != m_FirstComments) {
+					memcpy(pNew, m_FirstComments, m_FirstCommentNum * sizeof(const char*));
+					memset(pNew + m_FirstCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+					delete[] m_FirstComments;
+				}
 				m_FirstComments = pNew;
 				m_FirstCommentSpace = newSpace;
 			}
@@ -65,9 +67,11 @@ namespace Dsl
 			int newSpace = m_LastCommentSpace + DELTA_COMMENT;
 			const char** pNew = new const char*[newSpace];
 			if (pNew) {
-				memcpy(pNew, m_LastComments, m_LastCommentNum*sizeof(const char*));
-				memset(pNew + m_LastCommentNum, 0, DELTA_COMMENT*sizeof(const char*));
-				delete[] m_LastComments;
+				if (NULL != m_LastComments) {
+					memcpy(pNew, m_LastComments, m_LastCommentNum * sizeof(const char*));
+					memset(pNew + m_LastCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+					delete[] m_LastComments;
+				}
 				m_LastComments = pNew;
 				m_LastCommentSpace = newSpace;
 			}
@@ -461,60 +465,64 @@ namespace Dsl
 		}
 		fwrite("\"", 1, 1, fp);
 	}
-	void WriteComponent(FILE* fp, ISyntaxComponent& component, int indent, int isLastOfStatement)
+	void WriteComponent(FILE* fp, ISyntaxComponent& component, int indent, int firstLineNoIndent, int isLastOfStatement)
 	{
 		switch (component.GetSyntaxType()) {
 		case ISyntaxComponent::TYPE_VALUE:
-			dynamic_cast<Value&>(component).WriteToFile(fp, indent, isLastOfStatement);
+			dynamic_cast<Value&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
 			break;
 		case ISyntaxComponent::TYPE_CALL:
-			dynamic_cast<Call&>(component).WriteToFile(fp, indent, isLastOfStatement);
+			dynamic_cast<Call&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
 			break;
 		case ISyntaxComponent::TYPE_FUNCTION:
-			dynamic_cast<Function&>(component).WriteToFile(fp, indent, isLastOfStatement);
+			dynamic_cast<Function&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
 			break;
 		case ISyntaxComponent::TYPE_STATEMENT:
-			dynamic_cast<Statement&>(component).WriteToFile(fp, indent, isLastOfStatement);
+			dynamic_cast<Statement&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
 			break;
 		}
 	}
 	//------------------------------------------------------------------------------------------------------------------------------------
-	void Value::WriteToFile(FILE* fp, int indent, int isLastOfStatement)const
+	void ISyntaxComponent::WriteFirstCommentsToFile(FILE* fp, int indent, int firstLineNoIndent) const
 	{
 #if _DEBUG
+		int haveComments = FALSE;
+		int newLine = FALSE;
 		int fnum = GetFirstCommentNum();
 		for (int i = 0; i < fnum; ++i) {
 			if (i == 0 && !IsFirstCommentOnNewLine()) {
-				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
+				WriteId(fp, GetFirstComment(i), firstLineNoIndent ? 0 : indent);
 			}
 			else {
-				WriteId(fp, GetFirstComment(i), indent);
-				WriteId(fp, "\n", 0);
+				WriteId(fp, GetFirstComment(i), i==0 && firstLineNoIndent ? 0 : indent);
+				fwrite("\n", 1, 1, fp);
+				newLine = true;
 			}
+			haveComments = TRUE;
 		}
-		if (IsString()) {
-			WriteString(fp, m_ConstStringVal, indent);
+		if (haveComments && !newLine) {
+			//行首注释必须要换行，否则可能会把代码注释掉
+			fwrite("\n", 1, 1, fp);
 		}
-		else if (IsValid()) {
-			WriteId(fp, m_ConstStringVal, indent);
-		}
-		if (isLastOfStatement) {
-			fwrite(";", 1, 1, fp);
-		}
+#endif
+	}
+	void ISyntaxComponent::WriteLastCommentsToFile(FILE* fp, int indent, int isLastOfStatement) const
+	{
+#if _DEBUG
 		int lnum = GetLastCommentNum();
 		if (lnum > 0) {
 			if (IsLastCommentOnNewLine()) {
-				WriteId(fp, "\n", 0);
+				fwrite("\n", 1, 1, fp);
 			}
 			for (int i = 0; i < lnum; ++i) {
 				if (i == 0 && !IsLastCommentOnNewLine()) {
-					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
+					WriteId(fp, GetLastComment(i), 1);
 				}
 				else {
 					WriteId(fp, GetLastComment(i), indent);
 				}
 				if (isLastOfStatement) {
-					WriteId(fp, "\n", 0);
+					fwrite("\n", 1, 1, fp);
 				}
 			}
 		}
@@ -523,57 +531,64 @@ namespace Dsl
 		}
 #endif
 	}
-	void Call::WriteToFile(FILE* fp, int indent, int isLastOfStatement)const
+	void Value::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
 	{
 #if _DEBUG
-		int fnum = GetFirstCommentNum();
-		for (int i = 0; i < fnum; ++i) {
-			if (i == 0 && !IsFirstCommentOnNewLine()) {
-				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			}
-			else {
-				WriteId(fp, GetFirstComment(i), indent);
-				WriteId(fp, "\n", 0);
-			}
+		WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
+		if (IsString()) {
+			WriteString(fp, m_ConstStringVal, firstLineNoIndent ? 0 : indent);
 		}
+		else if (IsValid()) {
+			WriteId(fp, m_ConstStringVal, firstLineNoIndent ? 0 : indent);
+		}
+		if (isLastOfStatement) {
+			fwrite(";", 1, 1, fp);
+		}
+		WriteLastCommentsToFile(fp, indent, isLastOfStatement);
+#endif
+	}
+	void Call::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+	{
+#if _DEBUG
+		WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
 		int paramClass = GetParamClass();
 		if (paramClass == Call::PARAM_CLASS_OPERATOR) {
 			if (GetParamNum() == 2) {
 				ISyntaxComponent& component0 = *GetParam(0);
-				WriteComponent(fp, component0, indent, FALSE);
+				WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
 				fwrite(" ", 1, 1, fp);
 				if (IsHighOrder() && NULL != m_Name.GetCall()) {
 					Call& call = *m_Name.GetCall();
-					call.WriteToFile(fp, 0, FALSE);
+					call.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				else {
-					m_Name.WriteToFile(fp, 0, FALSE);
+					m_Name.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				fwrite(" ", 1, 1, fp);
 				ISyntaxComponent& component1 = *GetParam(1);
-				WriteComponent(fp, component1, 0, FALSE);
+				WriteComponent(fp, component1, indent, TRUE, FALSE);
 			}
 			else {
 				fwrite(" ", 1, 1, fp);
 				if (IsHighOrder() && NULL != m_Name.GetCall()) {
 					Call& call = *m_Name.GetCall();
-					call.WriteToFile(fp, 0, FALSE);
+					call.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				else {
-					m_Name.WriteToFile(fp, 0, FALSE);
+					m_Name.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				fwrite(" ", 1, 1, fp);
 				ISyntaxComponent& component0 = *GetParam(0);
-				WriteComponent(fp, component0, indent, FALSE);
+				WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
 			}
 		}
 		else {
 			if (IsHighOrder() && NULL != m_Name.GetCall()) {
 				Call& call = *m_Name.GetCall();
-				call.WriteToFile(fp, indent, FALSE);
+				call.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
 			}
 			else {
-				m_Name.WriteToFile(fp, indent, FALSE);
+				m_Name.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
 			}
 			if (HaveParam()) {
 				switch (paramClass) {
@@ -625,7 +640,7 @@ namespace Dsl
 						fwrite(",", 1, 1, fp);
 					}
 					ISyntaxComponent& component = *GetParam(ix);
-					WriteComponent(fp, component, 0, FALSE);
+					WriteComponent(fp, component, indent, TRUE, FALSE);
 				}
 				switch (paramClass) {
 				case Call::PARAM_CLASS_PARENTHESIS:
@@ -672,58 +687,31 @@ namespace Dsl
 		}
 		int cnum = GetCommentNum();
 		for (int i = 0; i < cnum; ++i) {
-			WriteId(fp, GetComment(i), indent);
+			WriteId(fp, GetComment(i), 1);
 		}
-		int lnum = GetLastCommentNum();
-		if (lnum > 0) {
-			if (IsLastCommentOnNewLine()) {
-				WriteId(fp, "\n", 0);
-			}
-			for (int i = 0; i < lnum; ++i) {
-				if (i == 0 && !IsLastCommentOnNewLine()) {
-					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				}
-				else {
-					WriteId(fp, GetLastComment(i), indent);
-				}
-				if (isLastOfStatement) {
-					WriteId(fp, "\n", 0);
-				}
-			}
-		}
-		else if (isLastOfStatement) {
-			fwrite("\n", 1, 1, fp);
-		}
+		WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
 	}
-	void Function::WriteToFile(FILE* fp, int indent, int isLastOfStatement)const
+	void Function::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
 	{
 #if _DEBUG
-		int fnum = GetFirstCommentNum();
-		for (int i = 0; i < fnum; ++i) {
-			if (i == 0 && !IsFirstCommentOnNewLine()) {
-				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			}
-			else {
-				WriteId(fp, GetFirstComment(i), indent);
-				WriteId(fp, "\n", 0);
-			}
-		}
+		WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
 		if (m_Call.IsValid()) {
-			m_Call.WriteToFile(fp, indent, FALSE);
-			fwrite("\n", 1, 1, fp);
+			m_Call.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
 		}
 		if (HaveStatement()) {
+			fwrite("\n", 1, 1, fp);
 			WriteIndent(fp, indent);
 			fwrite("{\n", 2, 1, fp);
 			for (int ix = 0; ix < GetStatementNum(); ++ix) {
 				ISyntaxComponent& component = *GetStatement(ix);
-				WriteComponent(fp, component, indent + 1, TRUE);
+				WriteComponent(fp, component, indent + 1, FALSE, TRUE);
 			}
 			WriteIndent(fp, indent);
 			fwrite("}", 1, 1, fp);
 		}
 		if (HaveExternScript()) {
+			fwrite("\n", 1, 1, fp);
 			WriteIndent(fp, indent);
 			size_t len = strlen(m_ExternScript);
 			if (strchr(m_ExternScript, '\n')) {
@@ -744,39 +732,13 @@ namespace Dsl
 		if (isLastOfStatement) {
 			fwrite(";", 1, 1, fp);
 		}
-		int lnum = GetLastCommentNum();
-		if (lnum > 0) {
-			if (IsLastCommentOnNewLine()) {
-				WriteId(fp, "\n", 0);
-			}
-			for (int i = 0; i < lnum; ++i) {
-				if (i == 0 && !IsLastCommentOnNewLine()) {
-					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				}
-				else {
-					WriteId(fp, GetLastComment(i), indent);
-				}
-				WriteId(fp, "\n", 0);
-			}
-		}
-		else if (isLastOfStatement) {
-			fwrite("\n", 1, 1, fp);
-		}
+		WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
 	}
-	void Statement::WriteToFile(FILE* fp, int indent, int isLastOfStatement)const
+	void Statement::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
 	{
 #if _DEBUG
-		int fnum = GetFirstCommentNum();
-		for (int i = 0; i < fnum; ++i) {
-			if (i == 0 && !IsFirstCommentOnNewLine()) {
-				WriteId(fp, GetFirstComment(i), indent > 0 ? 1 : 0);
-			}
-			else {
-				WriteId(fp, GetFirstComment(i), indent);
-				WriteId(fp, "\n", 0);
-			}
-		}
+		WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
 		int num = GetFunctionNum();
 		Function* func1 = GetFunction(0);
 		Function* func2 = GetFunction(1);
@@ -785,40 +747,43 @@ namespace Dsl
 			ISyntaxComponent* pcomp1 = func1->GetStatement(0);
 			ISyntaxComponent* pcomp2 = func2->GetStatement(0);
 			if (NULL != pcomp0 && NULL != pcomp1 && NULL != pcomp2) {
-				WriteComponent(fp, *pcomp0, indent, FALSE);
+				WriteComponent(fp, *pcomp0, indent, firstLineNoIndent, FALSE);
 				fwrite(" ? ", 3, 1, fp);
-				WriteComponent(fp, *pcomp1, 0, FALSE);
+				WriteComponent(fp, *pcomp1, indent, TRUE, FALSE);
 				fwrite(" : ", 3, 1, fp);
-				WriteComponent(fp, *pcomp2, 0, FALSE);
+				WriteComponent(fp, *pcomp2, indent, TRUE, FALSE);
 			}
 		}
 		else {
+			int lastFuncNoParam = FALSE;
+			int lastFuncNoStatement = FALSE;
 			for (int ix = 0; ix < num; ++ix) {
-				ISyntaxComponent& component = *GetFunction(ix);
-				WriteComponent(fp, component, indent, FALSE);
+				Function& func = *GetFunction(ix);
+				int noIndent = FALSE;
+				int funcNoParam = !func.HaveParam();
+				int funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
+				if (ix > 0){
+					if (lastFuncNoParam && lastFuncNoStatement) {
+						fwrite(" ", 1, 1, fp);
+						noIndent = TRUE;
+					}
+					else if (lastFuncNoStatement && funcNoStatement) {
+						noIndent = TRUE;
+					}
+					else {
+						fwrite("\n", 1, 1, fp);
+						noIndent = FALSE;
+					}
+				}
+				WriteComponent(fp, func, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE);
+				lastFuncNoParam = funcNoParam;
+				lastFuncNoStatement = funcNoStatement;
 			}
 		}
 		if (isLastOfStatement) {
 			fwrite(";", 1, 1, fp);
 		}
-		int lnum = GetLastCommentNum();
-		if (lnum > 0) {
-			if (IsLastCommentOnNewLine()) {
-				WriteId(fp, "\n", 0);
-			}
-			for (int i = 0; i < lnum; ++i) {
-				if (i == 0 && !IsLastCommentOnNewLine()) {
-					WriteId(fp, GetLastComment(i), indent > 0 ? 1 : 0);
-				}
-				else {
-					WriteId(fp, GetLastComment(i), indent);
-				}
-				WriteId(fp, "\n", 0);
-			}
-		}
-		else if (isLastOfStatement) {
-			fwrite("\n", 1, 1, fp);
-		}
+		WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
 	}
 	void DslFile::WriteToFile(FILE* fp, int indent)const
@@ -827,7 +792,7 @@ namespace Dsl
 		for (int ix = 0; ix < GetDslInfoNum(); ++ix) {
 			Statement* pStatement = GetDslInfo(ix);
 			if (pStatement) {
-				pStatement->WriteToFile(fp, indent, TRUE);
+				pStatement->WriteToFile(fp, indent, FALSE, TRUE);
 			}
 		}
 #endif
