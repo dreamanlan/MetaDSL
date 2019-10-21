@@ -1489,19 +1489,34 @@ namespace Dsl
                 int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
                 if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
                     int paramNum = data.GetParamNum();
-                    if (paramNum > 0) {
+                    if (paramNum == 1) {
+                        writeText(stream, " ", 0);
+                        if (data.IsHighOrder) {
+                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                        }
+                        else if (data.HaveId()) {
+                            string line = quoteString(data.GetId(), data.GetIdType());
+                            writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
+                        }
+                        writeText(stream, " ", 0);
                         writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
-                        writeText(stream, " ", 0);
                     }
-                    if (data.IsHighOrder) {
-                        writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
-                    } else if (data.HaveId()) {
-                        string line = quoteString(data.GetId(), data.GetIdType());
-                        writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
-                    }
-                    if (paramNum > 1) {
-                        writeText(stream, " ", 0);
-                        writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
+                    else {
+                        if (paramNum > 0) {
+                            writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
+                            writeText(stream, " ", 0);
+                        }
+                        if (data.IsHighOrder) {
+                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                        }
+                        else if (data.HaveId()) {
+                            string line = quoteString(data.GetId(), data.GetIdType());
+                            writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
+                        }
+                        if (paramNum > 1) {
+                            writeText(stream, " ", 0);
+                            writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
+                        }
                     }
                 } else {
                     if (data.IsHighOrder) {
