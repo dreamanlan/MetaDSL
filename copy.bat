@@ -55,6 +55,9 @@ copy /y DslLib\bin\Debug\Dsl.pdb ..\DotnetPatch\dep\Dsl.pdb
 copy /y DslLib\bin\Debug\Dsl.dll ..\mallochook\dep\Dsl.dll
 copy /y DslLib\bin\Debug\Dsl.pdb ..\mallochook\dep\Dsl.pdb
 
+copy /y DslLib\bin\Debug\Dsl.dll ..\UnusedClass\dep\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.pdb ..\UnusedClass\dep\Dsl.pdb
+
 copy /y DslLib\bin\Debug\Dsl.dll ..\ScriptInterpreterByDsl\deps\Dsl.dll
 copy /y DslLib\bin\Debug\Dsl.pdb ..\ScriptInterpreterByDsl\deps\Dsl.pdb
 
