@@ -4,16 +4,11 @@ using System.Text;
 
 namespace Dsl.Parser
 {
-    abstract class DslAction
-    {
-        internal abstract void predict(short production_number);
-        internal abstract void execute(int number);
-    }
     delegate string GetLastTokenDelegation();
     delegate int GetLastLineNumberDelegation();
     delegate IList<string> GetCommentsDelegation(out bool commentOnNewLine);
     delegate void SetDelimiterDelegation(string begin, string end);
-    class RuntimeAction : DslAction
+    struct DslAction
     {
         class SemanticInfo
         {
@@ -29,10 +24,19 @@ namespace Dsl.Parser
             }
         };
 
-        internal RuntimeAction(DslLog log, List<DslInfo> datas)
+        internal DslAction(DslLog log, List<DslInfo> datas)
         {
             mLog = log;
             mScriptDatas = datas;
+
+            mSemanticStack = new Stack<SemanticInfo>();
+            mStatementSemanticStack = new Stack<StatementData>();
+
+            mGetLastToken = null;
+            mGetLastLineNumber = null;
+            mGetComments = null;
+            mSetStringDelimiter = null;
+            mSetScriptDelimiter = null;
         }
 
         internal GetLastTokenDelegation onGetLastToken
@@ -61,11 +65,11 @@ namespace Dsl.Parser
             set { mSetScriptDelimiter = value; }
         }
 
-        internal override void predict(short production_number)
+        internal void predict(short production_number)
         {
             //mLog.Log("{0}", DslString.GetProductionName(production_number));
         }
-        internal override void execute(int number)
+        internal void execute(int number)
         {
             switch (number) {
                 case 1: endStatement(); break;
@@ -774,8 +778,8 @@ namespace Dsl.Parser
         private SetDelimiterDelegation mSetStringDelimiter;
         private SetDelimiterDelegation mSetScriptDelimiter;
         private List<DslInfo> mScriptDatas;
-        private Stack<SemanticInfo> mSemanticStack = new Stack<SemanticInfo>();
-        private Stack<StatementData> mStatementSemanticStack = new Stack<StatementData>();
+        private Stack<SemanticInfo> mSemanticStack;
+        private Stack<StatementData> mStatementSemanticStack;
 
         private static List<string> s_EmptyList = new List<string>();
     }

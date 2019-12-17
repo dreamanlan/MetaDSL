@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Dsl.Parser
 {
-    class DslToken
+    struct DslToken
     {
         internal DslToken(DslLog log, string input)
         {
@@ -15,8 +15,23 @@ namespace Dsl.Parser
             mLineNumber = 1;
             mLastLineNumber = 1;
 
+            mKeywords = new Dictionary<string, short>();
             mKeywords["true"] = DslConstants.TRUE_;
             mKeywords["false"] = DslConstants.FALSE_;
+
+            mCurToken = string.Empty;
+            mLastToken = string.Empty;
+
+            mCommentBuilder = new StringBuilder();
+            mComments = new List<string>();
+            mCommentOnNewLine = false;
+
+            mTokenBuilder = new StringBuilder();
+
+            mStringBeginDelimiter = string.Empty;
+            mStringEndDelimiter = string.Empty;
+            mScriptBeginDelimiter = string.Empty;
+            mScriptEndDelimiter = string.Empty;
         }
 
         internal short get()
@@ -755,9 +770,9 @@ namespace Dsl.Parser
         private int mLineNumber;
         private int mLastLineNumber;
 
-        private StringBuilder mCommentBuilder = new StringBuilder();
-        private List<string> mComments = new List<string>();
-        private bool mCommentOnNewLine = false;
+        private StringBuilder mCommentBuilder;
+        private List<string> mComments;
+        private bool mCommentOnNewLine;
 
         private const string mWhiteSpaces = " \t\r\n";
         private const string mDelimiters = ",;";
@@ -765,12 +780,13 @@ namespace Dsl.Parser
         private const string mEndParentheses = "})]";
         private const string mOperators = "~`!%^&*-+=|:<>?/";
         private const string mSpecialChars = mWhiteSpaces + mDelimiters + mBeginParentheses + mEndParentheses + mOperators;
-        private Dictionary<string, short> mKeywords = new Dictionary<string, short>();
-        private StringBuilder mTokenBuilder = new StringBuilder();
 
-        private string mStringBeginDelimiter = string.Empty;
-        private string mStringEndDelimiter = string.Empty;
-        private string mScriptBeginDelimiter = string.Empty;
-        private string mScriptEndDelimiter = string.Empty;
+        private Dictionary<string, short> mKeywords;
+        private StringBuilder mTokenBuilder;
+
+        private string mStringBeginDelimiter;
+        private string mStringEndDelimiter;
+        private string mScriptBeginDelimiter;
+        private string mScriptEndDelimiter;
     }
 }

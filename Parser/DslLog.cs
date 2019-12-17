@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Dsl.Parser
 {
-    class DslLog
+    struct DslLog
     {
         internal DslLogDelegation OnLog;
         internal void Log(string format, params object[] args)

@@ -3,7 +3,7 @@
 namespace Dsl.Parser
 {
 
-    class DslParser
+    static class DslParser
     {
 
         private static short[] Production = {0
@@ -303,16 +303,17 @@ namespace Dsl.Parser
             return 0;
         }
 
-        internal static void
-        parse(DslAction action,
-                DslToken tokens,
-                DslError error,
+        internal unsafe static void
+        parse(ref DslAction action,
+                ref DslToken tokens,
+                ref DslError error,
                 short start_symbol)
         {
             short rhs, lhs;
             short production_number, entry, symbol, token, new_token;
             int production_length, top, index, level;
-            short[] stack = new short[65535];
+            
+            short* stack = stackalloc short[65535];
 
             top = 65534;
             stack[top] = 0;
@@ -321,7 +322,7 @@ namespace Dsl.Parser
             }
             if (top > 0) {
                 stack[--top] = start_symbol;
-            } else { error.message("DslParse: stack overflow\n"); return; }
+            } else { error.message("DslParse: stack overflow\n", ref tokens); return; }
             token = tokens.get();
             new_token = token;
 
@@ -360,23 +361,23 @@ namespace Dsl.Parser
                             for (; production_length-- > 0; --index) {
                                 if (top > 0) {
                                     stack[--top] = Production[index];
-                                } else { error.message("DslParse: stack overflow\n"); return; }
+                                } else { error.message("DslParse: stack overflow\n", ref tokens); return; }
                             }
                         } else {
-                            new_token = error.no_entry(symbol, token, level - 1);
+                            new_token = error.no_entry(symbol, token, level - 1, ref tokens);
                         }
                     } else {                                       // no table entry
-                        new_token = error.no_entry(symbol, token, level - 1);
+                        new_token = error.no_entry(symbol, token, level - 1, ref tokens);
                     }
                 } else if (symbol > 0) {
                     if (symbol == token) {
                         token = tokens.get();
                         new_token = token;
                     } else {
-                        new_token = error.mismatch(symbol, token);
+                        new_token = error.mismatch(symbol, token, ref tokens);
                     }
                 } else {
-                    error.message("\n parser error: symbol value 0\n");
+                    error.message("\n parser error: symbol value 0\n", ref tokens);
                 }
                 if (token != new_token) {
                     if (new_token != 0) {
@@ -389,7 +390,7 @@ namespace Dsl.Parser
                 symbol = (stack[top] != 0 ? stack[top++] : (short)0);
             }
             if (token != END_OF_SLK_INPUT_) {
-                error.input_left();
+                error.input_left(ref tokens);
             }
         }
     };

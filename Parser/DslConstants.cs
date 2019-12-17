@@ -2,10 +2,8 @@
 
 namespace Dsl.Parser
 {
-
-    class DslConstants
+    static class DslConstants
     {
-
         internal const short OP_TOKEN_0_ = 1;
         internal const short OP_TOKEN_1_ = 2;
         internal const short OP_TOKEN_2_ = 3;

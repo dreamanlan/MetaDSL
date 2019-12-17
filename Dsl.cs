@@ -999,15 +999,15 @@ namespace Dsl
             Parser.DslLog log = new Parser.DslLog();
             log.OnLog += logCallback;
             Parser.DslToken tokens = new Parser.DslToken(log, content);
-            Parser.DslError error = new Parser.DslError(log, tokens);
-            Parser.RuntimeAction action = new Parser.RuntimeAction(log, mDslInfos);
+            Parser.DslError error = new Parser.DslError(log);
+            Parser.DslAction action = new Parser.DslAction(log, mDslInfos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>();ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
             action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
 
-            Parser.DslParser.parse(action, tokens, error, 0);
+            Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (error.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos[i].Clear();
@@ -1040,13 +1040,13 @@ namespace Dsl
             Parser.DslLog log = new Parser.DslLog();
             log.OnLog += logCallback;
             Parser.DslToken tokens = new Parser.DslToken(log, content);
-            Parser.DslError error = new Parser.DslError(log, tokens);
-            Parser.RuntimeAction action = new Parser.RuntimeAction(log, infos);
+            Parser.DslError error = new Parser.DslError(log);
+            Parser.DslAction action = new Parser.DslAction(log, infos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
-            Parser.DslParser.parse(action, tokens, error, 0);
+            Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (error.HasError) {
                 return null;
             } else {

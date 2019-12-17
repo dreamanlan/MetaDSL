@@ -2,10 +2,8 @@
 
 namespace Dsl.Parser
 {
-
-    class DslString
+    static class DslString
     {
-
         private static string[] Nonterminal_name ={"0"
 
 ,"PROGRAM"
