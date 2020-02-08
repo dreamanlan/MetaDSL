@@ -130,14 +130,15 @@ namespace Dsl.Parser
             string name = pop(out type);
 
             StatementData arg = popStatement();
+            ISyntaxComponent argComp = simplifyStatement(arg);
 
             StatementData _statement = newStatement();
             FunctionData first = _statement.First;
             first.Call.Name.SetLine(getLastLineNumber());
 
-            _statement.CopyFirstComments(arg);
-            arg.FirstComments.Clear();
-            
+            _statement.CopyFirstComments(argComp);
+            argComp.FirstComments.Clear();
+
             mStatementSemanticStack.Push(_statement);
 
             StatementData statement = getCurStatement();
@@ -148,8 +149,8 @@ namespace Dsl.Parser
                 func.Call.Name.SetId(name);
                 func.Call.Name.SetType(type);
 
-                if (arg.IsValid()) {
-                    func.Call.AddParams(arg);
+                if (argComp.IsValid()) {
+                    func.Call.AddParams(argComp);
                 }
             }
         }
@@ -159,14 +160,15 @@ namespace Dsl.Parser
             string name = pop(out type);
 
             StatementData arg = popStatement();
+            ISyntaxComponent argComp = simplifyStatement(arg);
 
             StatementData _statement = newStatement();
             FunctionData first = _statement.First;
             first.Call.Name.SetLine(getLastLineNumber());
 
-            _statement.CopyFirstComments(arg);
-            arg.FirstComments.Clear();
-            
+            _statement.CopyFirstComments(argComp);
+            argComp.FirstComments.Clear();
+
             mStatementSemanticStack.Push(_statement);
 
             StatementData statement = getCurStatement();
@@ -178,8 +180,8 @@ namespace Dsl.Parser
                 func.Call.Name.SetId(name);
                 func.Call.Name.SetType(type);
 
-                if (arg.IsValid()) {
-                    func.Call.AddParams(arg);
+                if (argComp.IsValid()) {
+                    func.Call.AddParams(argComp);
                 }
             }
         }
@@ -232,23 +234,28 @@ namespace Dsl.Parser
                     string end = call.GetParamId(2);
                     if (type == "string") {
                         setStringDelimiter(begin, end);
-                    } else if(type=="script") {
+                    }
+                    else if (type == "script") {
                         setScriptDelimiter(begin, end);
-                    } else {
+                    }
+                    else {
                         //invalid
                     }
-                } else {
+                }
+                else {
                     if (type == "string") {
                         setStringDelimiter(string.Empty, string.Empty);
-                    } else if (type == "script") {
+                    }
+                    else if (type == "script") {
                         setScriptDelimiter(string.Empty, string.Empty);
-                    } else {
+                    }
+                    else {
                         //invalid
                     }
                 }
                 return;
             }
-            
+
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
@@ -257,9 +264,9 @@ namespace Dsl.Parser
                 }
                 statement.LastComments.AddRange(cmts);
             }
-            
+
             if (mStatementSemanticStack.Count == 0) {
-                simplifyStatementData(statement);
+                //顶层元素不能化简，必须是语句的样式，适应DslInfo表示
                 if (!statement.IsValid()) {
                     //_epsilon_表达式无语句语义
                     if (mScriptDatas.Count > 0 && statement.FirstComments.Count > 0) {
@@ -270,7 +277,8 @@ namespace Dsl.Parser
                         last.LastComments.AddRange(statement.FirstComments);
                     }
                     return;
-                } else {
+                }
+                else {
                     if (mScriptDatas.Count > 0 && !statement.FirstCommentOnNewLine && statement.FirstComments.Count > 0) {
                         string cmt = statement.FirstComments[0];
                         statement.FirstComments.RemoveAt(0);
@@ -287,10 +295,10 @@ namespace Dsl.Parser
                 scriptData.CopyFrom(statement);
                 scriptData.SetLoaded(true);
                 mScriptDatas.Add(scriptData);
-            } else {
-                //只在顶层元素这一级化简就可以了（会递归处理）
-                //AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
-                AbstractSyntaxComponent statementSyntax = statement;
+            }
+            else {
+                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
 
                 FunctionData func = getLastFunction();
                 switch (func.GetExtentClass()) {
@@ -302,9 +310,10 @@ namespace Dsl.Parser
                             */
                             if (statementSyntax.IsValid()) {
                                 func.Call.AddParams(statementSyntax);
-                            } else if (statementSyntax.FirstComments.Count > 0) {
+                            }
+                            else if (statementSyntax.FirstComments.Count > 0) {
                                 func.Call.Comments.AddRange(statementSyntax.FirstComments);
-                            }                          
+                            }
                         }
                         break;
                     case (int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT: {
@@ -318,7 +327,8 @@ namespace Dsl.Parser
                                     last.LastComments.AddRange(statementSyntax.FirstComments);
                                 }
                                 return;
-                            } else {
+                            }
+                            else {
                                 if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
                                     string cmt = statementSyntax.FirstComments[0];
                                     statementSyntax.FirstComments.RemoveAt(0);
@@ -329,7 +339,8 @@ namespace Dsl.Parser
                                             last.LastCommentOnNewLine = false;
                                         }
                                         last.LastComments.Add(cmt);
-                                    } else {
+                                    }
+                                    else {
                                         func.Call.Comments.Add(cmt);
                                     }
                                 }
@@ -616,11 +627,8 @@ namespace Dsl.Parser
                 FunctionData func = data.Functions[0];
                 func.CopyComments(data);
                 return simplifyStatement(func);
-            } else {
-                //多个函数构成的语句不会退化，只对各个函数的参数与语句部分进行化简。
-                simplifyStatementData(data);
-                return data;
             }
+            return data;
         }
         private AbstractSyntaxComponent simplifyStatement(FunctionData data)
         {
@@ -630,15 +638,13 @@ namespace Dsl.Parser
                 if (null != call) {
                     call.CopyComments(data);
                     return simplifyStatement(call);
-                } else {
+                }
+                else {
                     //error
                     return NullSyntax.Instance;
                 }
-            } else {
-                //包含语句则不会退化，只进行化简
-                simplifyFunctionData(data);
-                return data;
             }
+            return data;
         }
         private AbstractSyntaxComponent simplifyStatement(CallData data)
         {
@@ -647,11 +653,13 @@ namespace Dsl.Parser
                 if (data.IsHighOrder) {
                     //这种情况应该不会出现
                     return data;
-                } else {
+                }
+                else {
                     data.Name.CopyComments(data);
                     return data.Name;
                 }
-            } else if (data.GetId() == "-" && data.GetParamNum() == 1) {
+            }
+            else if (data.GetId() == "-" && data.GetParamNum() == 1) {
                 ISyntaxComponent val = data.GetParam(0);
                 ValueData temp = val as ValueData;
                 if (null != temp && temp.IsNumber()) {
@@ -659,11 +667,12 @@ namespace Dsl.Parser
                     ret.CopyComments(temp);
                     ret.CopyComments(data);
                     return ret;
-                } else {
-                    simplifyCallData(data);
+                }
+                else {
                     return data;
                 }
-            } else if (data.GetId() == "+" && data.GetParamNum() == 1) {
+            }
+            else if (data.GetId() == "+" && data.GetParamNum() == 1) {
                 ISyntaxComponent val = data.GetParam(0);
                 ValueData temp = val as ValueData;
                 if (null != temp && temp.IsNumber()) {
@@ -671,68 +680,13 @@ namespace Dsl.Parser
                     ret.CopyComments(temp);
                     ret.CopyComments(data);
                     return ret;
-                } else {
-                    simplifyCallData(data);
+                }
+                else {
                     return data;
                 }
-            } else {
-                //有参数不会退化，对各参数进行化简
-                simplifyCallData(data);
+            }
+            else {
                 return data;
-            }
-        }
-        private void simplifyStatementData(StatementData data)
-        {
-            for (int i = 0; i < data.Functions.Count; ++i) {
-                FunctionData func = data.Functions[i];
-                simplifyFunctionData(func);
-            }
-        }
-        private void simplifyFunctionData(FunctionData data)
-        {
-            if (null != data.Call) {
-                simplifyCallData(data.Call);
-            }
-            if (data.HaveStatement()) {
-                int ct = data.GetStatementNum();
-                for (int i = 0; i < ct; ++i) {
-                    ISyntaxComponent temp = data.GetStatement(i);
-                    StatementData statement = temp as StatementData;
-                    if (null != statement) {
-                        data.SetStatement(i, simplifyStatement(statement));
-                    } else {
-                        FunctionData func = temp as FunctionData;
-                        if (null != func) {
-                            data.SetStatement(i, simplifyStatement(func));
-                        } else {
-                            CallData call = temp as CallData;
-                            if (null != call) {
-                                data.SetStatement(i, simplifyStatement(call));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        private void simplifyCallData(CallData data)
-        {
-            int ct = data.GetParamNum();
-            for (int i = 0; i < ct; ++i) {
-                ISyntaxComponent param = data.GetParam(i);
-                StatementData statement = param as StatementData;
-                if (null != statement) {
-                    data.SetParam(i, simplifyStatement(statement));
-                } else {
-                    FunctionData func = param as FunctionData;
-                    if (null != func) {
-                        data.SetParam(i, simplifyStatement(func));
-                    } else {
-                        CallData call = param as CallData;
-                        if (null != call) {
-                            data.SetParam(i, simplifyStatement(call));
-                        }
-                    }
-                }
             }
         }
 
@@ -754,7 +708,8 @@ namespace Dsl.Parser
         {
             if (null != mGetComments) {
                 return mGetComments(out commentOnNewLine);
-            } else {
+            }
+            else {
                 commentOnNewLine = false;
                 return s_EmptyList;
             }

@@ -111,27 +111,27 @@ skill(1006)
 			damage(0);
 			selfeffect(hitEffect,1000,hit,0)
 			{
-				transform(vector3(0.05,0.3140004, - 0.4397666));
+				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(200);
 			selfeffect(hitEffect,1000,hit,200)
 			{
-				transform(vector3(0.05,0.3140004, - 0.4397666));
+				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(400);
 			selfeffect(hitEffect,1000,hit,400)
 			{
-				transform(vector3(0.05,0.3140004, - 0.4397666));
+				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(600);
 			selfeffect(hitEffect,1000,hit,600)
 			{
-				transform(vector3(0.05,0.3140004, - 0.4397666));
+				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(1100);
 			selfeffect(hitEffect1,1000,hit,1100)
 			{
-				transform(vector3( - 0.002,1.368, - 1.322111));
+				transform(vector3(-0.002,1.368,-1.322111));
 			};
 		};
 	};
@@ -143,7 +143,7 @@ skill(1006)
 			damage(500);
 			selfeffect(hitEffect2,2000,"",200)
 			{
-				transform(vector3( - 0.31,1.39,1.17));
+				transform(vector3(-0.31,1.39,1.17));
 			};
 		};
 	};

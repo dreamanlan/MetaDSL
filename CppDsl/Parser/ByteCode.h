@@ -56,9 +56,6 @@ namespace Dsl
 		inline ISyntaxComponent& simplifyStatement(Statement& data)const;
 		inline ISyntaxComponent& simplifyStatement(Function& data)const;
 		inline ISyntaxComponent& simplifyStatement(Call& data)const;
-		inline void simplifyStatementData(Statement& data)const;
-		inline void simplifyFunctionData(Function& data)const;
-		inline void simplifyCallData(Call& data)const;
 		inline bool	preconditionCheck(void)const
 		{
 			return NULL != mThis && NULL != mDataFile;
