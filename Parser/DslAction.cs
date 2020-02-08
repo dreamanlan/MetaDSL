@@ -288,7 +288,9 @@ namespace Dsl.Parser
                 scriptData.SetLoaded(true);
                 mScriptDatas.Add(scriptData);
             } else {
-                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
+                //只在顶层元素这一级化简就可以了（会递归处理）
+                //AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
+                AbstractSyntaxComponent statementSyntax = statement;
 
                 FunctionData func = getLastFunction();
                 switch (func.GetExtentClass()) {

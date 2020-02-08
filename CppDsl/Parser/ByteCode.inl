@@ -249,7 +249,9 @@ namespace Dsl
 			mThis->setCanFinish(TRUE);
 		}
 		else {
-			ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
+            //只在顶层元素这一级化简就可以了（会递归处理）
+			//ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
+            ISyntaxComponent& statementSyntax = *statement;
 
 			Function* p = mData.getLastFunctionRef();
 			if (0 != p) {
