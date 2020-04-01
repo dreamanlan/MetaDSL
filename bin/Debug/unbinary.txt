@@ -36,6 +36,8 @@ skill(1006)
 		{
 			e(f)g(h);
 		};
+		a <- abc `<*> def <=> 123;
+		b <- abc `as int <=> 456;
 	};
 	section(5833)
 	{

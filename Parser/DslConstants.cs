@@ -102,8 +102,8 @@ namespace Dsl.Parser
         internal const short NT_OP_TOKEN_0_OPERATOR_STATEMENT_1_STAR_ = 94;
         internal const short NT_OP_TOKEN_1_OPERATOR_STATEMENT_2_STAR_ = 95;
         internal const short NT_OP_TOKEN_2_OPERATOR_STATEMENT_3_STAR_ = 96;
-        internal const short NT_OP_TOKEN_3_OPERATOR_STATEMENT_4_STAR_ = 97;
-        internal const short NT_OP_TOKEN_4_OPERATOR_STATEMENT_5_OP_TOKEN_4_OPERATOR_STATEMENT_5_STAR_ = 98;
+        internal const short NT_OP_TOKEN_3_OPERATOR_STATEMENT_4_OP_TOKEN_3_OPERATOR_STATEMENT_4_STAR_ = 97;
+        internal const short NT_OP_TOKEN_4_OPERATOR_STATEMENT_5_STAR_ = 98;
         internal const short NT_OP_TOKEN_5_OPERATOR_STATEMENT_6_STAR_ = 99;
         internal const short NT_OP_TOKEN_6_OPERATOR_STATEMENT_7_STAR_ = 100;
         internal const short NT_OP_TOKEN_7_OPERATOR_STATEMENT_8_STAR_ = 101;

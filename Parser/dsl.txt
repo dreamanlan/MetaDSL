@@ -65,10 +65,10 @@ OPERATOR_STATEMENT_DESC_2:
 	OPERATOR_STATEMENT_DESC_3 { _action_markOperator OP_TOKEN_2 _action_pushId _action_buildOperator OPERATOR_STATEMENT_3 }
 	
 OPERATOR_STATEMENT_DESC_3:
-	OPERATOR_STATEMENT_DESC_4 { _action_markOperator OP_TOKEN_3 _action_pushId _action_buildOperator OPERATOR_STATEMENT_4 }
+	OPERATOR_STATEMENT_DESC_4 { _action_markOperator OP_TOKEN_3 _action_pushId _action_buildFirstTernaryOperator OPERATOR_STATEMENT_4 OP_TOKEN_3 _action_pushId _action_buildSecondTernaryOperator OPERATOR_STATEMENT_4 }
 	
 OPERATOR_STATEMENT_DESC_4:
-	OPERATOR_STATEMENT_DESC_5 { _action_markOperator OP_TOKEN_4 _action_pushId _action_buildFirstTernaryOperator OPERATOR_STATEMENT_5 OP_TOKEN_4 _action_pushId _action_buildSecondTernaryOperator OPERATOR_STATEMENT_5 }	
+	OPERATOR_STATEMENT_DESC_5 { _action_markOperator OP_TOKEN_4 _action_pushId _action_buildOperator OPERATOR_STATEMENT_5 }	
 	
 OPERATOR_STATEMENT_DESC_5:
 	OPERATOR_STATEMENT_DESC_6 { _action_markOperator OP_TOKEN_5 _action_pushId _action_buildOperator OPERATOR_STATEMENT_6 }

@@ -68,6 +68,7 @@ private:
 	int isBeginParentheses(char c) const;
 	int isEndParentheses(char c) const;
 	int isOperator(char c) const;
+    int isQuote(char c) const;
 	int isSpecialChar(char c) const;
 private:
 	int handleStringOrScriptDelimiter(void);
@@ -109,6 +110,7 @@ private:
 	const char* mBeginParentheses;
 	const char* mEndParentheses;
 	const char* mOperators;
+    const char* mQuotes;
 	const char* mSpecialChars;
 
 	static const int c_MaxDelimiterSize = 1024;
