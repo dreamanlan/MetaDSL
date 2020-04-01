@@ -83,7 +83,8 @@ namespace Dsl
         {
             if (null == mFirstComments) {
                 return string.Empty;
-            } else {
+            }
+            else {
                 return string.Join(string.Empty, mFirstComments.ToArray());
             }
         }
@@ -91,19 +92,19 @@ namespace Dsl
         {
             if (null == mLastComments) {
                 return string.Empty;
-            } else {
+            }
+            else {
                 return string.Join(string.Empty, mLastComments.ToArray());
             }
         }
 
         public List<string> FirstComments
         {
-            get 
-            {
+            get {
                 if (null == mFirstComments) {
                     mFirstComments = new List<string>();
                 }
-                return mFirstComments; 
+                return mFirstComments;
             }
         }
         public bool FirstCommentOnNewLine
@@ -113,8 +114,7 @@ namespace Dsl
         }
         public List<string> LastComments
         {
-            get
-            {
+            get {
                 if (null == mLastComments) {
                     mLastComments = new List<string>();
                 }
@@ -160,8 +160,7 @@ namespace Dsl
 
         public static NullSyntax Instance
         {
-            get
-            {
+            get {
                 return s_Instance;
             }
         }
@@ -193,7 +192,8 @@ namespace Dsl
 #if FULL_VERSION
             if (includeComment) {
                 return CalcFirstComment() + Utility.quoteString(m_Id, m_Type) + CalcLastComment();
-            } else {
+            }
+            else {
                 return Utility.quoteString(m_Id, m_Type);
             }
 #else
@@ -335,6 +335,8 @@ namespace Dsl
         }
         public string CalcComment()
         {
+            if (null == m_Comments)
+                return string.Empty;
             string cmt = string.Join(string.Empty, m_Comments.ToArray());
             if (null != m_Call) {
                 cmt = m_Call.CalcComment() + cmt;
@@ -346,7 +348,8 @@ namespace Dsl
 #if FULL_VERSION
             if (includeComment) {
                 return CalcFirstComment() + Utility.getCallString(this, true) + CalcComment() + CalcLastComment();
-            } else {
+            }
+            else {
                 return Utility.getCallString(this, true);
             }
 #else
@@ -356,14 +359,16 @@ namespace Dsl
 
         public List<ISyntaxComponent> Params
         {
-            get
-            {
+            get {
+                PrepareParams();
                 return m_Params;
             }
-            set
-            {
+            set {
                 m_Params = value;
-                if (value.Count > 0) {
+                if (null == m_Params) {
+                    m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
+                }
+                else if (m_Params.Count > 0) {
                     if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                         m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
                     }
@@ -377,8 +382,7 @@ namespace Dsl
         public ValueData Name
         {
             get { return m_Name; }
-            set
-            {
+            set {
                 m_Name = value;
                 m_Call = null;
                 m_IsHighOrder = false;
@@ -387,8 +391,7 @@ namespace Dsl
         public CallData Call
         {
             get { return m_Call; }
-            set
-            {
+            set {
                 m_Name = null;
                 m_Call = value;
                 m_IsHighOrder = true;
@@ -396,7 +399,12 @@ namespace Dsl
         }
         public List<string> Comments
         {
-            get { return m_Comments; }
+            get {
+                if (null == m_Comments) {
+                    m_Comments = new List<string>();
+                }
+                return m_Comments;
+            }
         }
         public bool HaveId()
         {
@@ -424,32 +432,42 @@ namespace Dsl
         }
         public int GetParamNum()
         {
+            if (null == m_Params)
+                return 0;
             return m_Params.Count;
         }
         public void SetParam(int index, ISyntaxComponent data)
         {
+            if (null == m_Params)
+                return;
             if (index < 0 || index >= m_Params.Count)
                 return;
             m_Params[index] = data;
         }
         public ISyntaxComponent GetParam(int index)
         {
+            if (null == m_Params)
+                return NullSyntax.Instance;
             if (index < 0 || index >= (int)m_Params.Count)
-                return null;
+                return NullSyntax.Instance;
             return m_Params[index];
         }
         public string GetParamId(int index)
         {
+            if (null == m_Params)
+                return string.Empty;
             if (index < 0 || index >= (int)m_Params.Count)
                 return string.Empty;
             return m_Params[index].GetId();
         }
         public void ClearParams()
         {
+            PrepareParams();
             m_Params.Clear();
         }
         public void AddParams(string id)
         {
+            PrepareParams();
             m_Params.Add(new ValueData(id));
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -457,6 +475,7 @@ namespace Dsl
         }
         public void AddParams(string id, int type)
         {
+            PrepareParams();
             m_Params.Add(new ValueData(id, type));
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -464,6 +483,7 @@ namespace Dsl
         }
         public void AddParams(ValueData param)
         {
+            PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -471,6 +491,7 @@ namespace Dsl
         }
         public void AddParams(CallData param)
         {
+            PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -478,6 +499,7 @@ namespace Dsl
         }
         public void AddParams(FunctionData param)
         {
+            PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -485,6 +507,7 @@ namespace Dsl
         }
         public void AddParams(StatementData param)
         {
+            PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -492,6 +515,7 @@ namespace Dsl
         }
         public void AddParams(ISyntaxComponent param)
         {
+            PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
@@ -502,7 +526,7 @@ namespace Dsl
             m_Name = null;
             m_Call = null;
             m_IsHighOrder = false;
-            m_Params = new List<ISyntaxComponent>();
+            m_Params = null;
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
         }
         public void CopyFrom(CallData other)
@@ -513,13 +537,19 @@ namespace Dsl
             m_Params = other.m_Params;
             m_ParamClass = other.m_ParamClass;
         }
+        private void PrepareParams()
+        {
+            if (null == m_Params) {
+                m_Params = new List<ISyntaxComponent>();
+            }
+        }
 
         private bool m_IsHighOrder = false;
         private ValueData m_Name = null;
         private CallData m_Call = null;
-        private List<ISyntaxComponent> m_Params = new List<ISyntaxComponent>();
+        private List<ISyntaxComponent> m_Params = null;
         private int m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
-        private List<string> m_Comments = new List<string>();
+        private List<string> m_Comments = null;
     }
     /// <summary>
     /// 函数数据，由函数调用数据+语句列表构成。
@@ -580,7 +610,8 @@ namespace Dsl
                     stream.Append(";");
                 }
                 stream.Append("}");
-            } else if (HaveExternScript()) {
+            }
+            else if (HaveExternScript()) {
                 stream.Append("{:");
                 stream.Append(GetExternScript());
                 stream.Append(":}");
@@ -601,14 +632,16 @@ namespace Dsl
         }
         public List<ISyntaxComponent> Statements
         {
-            get
-            {
+            get {
+                PrepareStatements();
                 return m_Statements;
             }
-            set
-            {
+            set {
                 m_Statements = value;
-                if (value.Count > 0) {
+                if (null == m_Statements) {
+                    m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_NOTHING;
+                }
+                else if (m_Statements.Count > 0) {
                     if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                         m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
                     }
@@ -657,32 +690,42 @@ namespace Dsl
         }
         public int GetStatementNum()
         {
+            if (null == m_Statements)
+                return 0;
             return m_Statements.Count;
         }
         public void SetStatement(int index, ISyntaxComponent data)
         {
+            if (null == m_Statements)
+                return;
             if (index < 0 || index >= m_Statements.Count)
                 return;
             m_Statements[index] = data;
         }
         public ISyntaxComponent GetStatement(int index)
         {
+            if (null == m_Statements)
+                return NullSyntax.Instance;
             if (index < 0 || index >= m_Statements.Count)
                 return NullSyntax.Instance;
             return m_Statements[index];
         }
         public string GetStatementId(int index)
         {
+            if (null == m_Statements)
+                return string.Empty;
             if (index < 0 || index >= m_Statements.Count)
                 return string.Empty;
             return m_Statements[index].GetId();
         }
         public void ClearStatements()
         {
+            PrepareStatements();
             m_Statements.Clear();
         }
         public void AddStatement(string id)
         {
+            PrepareStatements();
             m_Statements.Add(new ValueData(id));
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -690,6 +733,7 @@ namespace Dsl
         }
         public void AddStatement(string id, int type)
         {
+            PrepareStatements();
             m_Statements.Add(new ValueData(id, type));
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -697,6 +741,7 @@ namespace Dsl
         }
         public void AddStatement(ValueData statement)
         {
+            PrepareStatements();
             m_Statements.Add(statement);
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -704,6 +749,7 @@ namespace Dsl
         }
         public void AddStatement(CallData statement)
         {
+            PrepareStatements();
             m_Statements.Add(statement);
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -711,6 +757,7 @@ namespace Dsl
         }
         public void AddStatement(FunctionData statement)
         {
+            PrepareStatements();
             m_Statements.Add(statement);
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -718,6 +765,7 @@ namespace Dsl
         }
         public void AddStatement(StatementData statement)
         {
+            PrepareStatements();
             m_Statements.Add(statement);
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -725,6 +773,7 @@ namespace Dsl
         }
         public void AddStatement(ISyntaxComponent statement)
         {
+            PrepareStatements();
             m_Statements.Add(statement);
             if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
                 m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
@@ -733,7 +782,7 @@ namespace Dsl
         public void Clear()
         {
             m_Call = null;
-            m_Statements = new List<ISyntaxComponent>();
+            m_Statements = null;
             m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_NOTHING;
             m_ExternScript = null;
         }
@@ -744,16 +793,21 @@ namespace Dsl
             m_ExtentClass = other.m_ExtentClass;
             m_ExternScript = other.m_ExternScript;
         }
+        private void PrepareStatements()
+        {
+            if (null == m_Statements) {
+                m_Statements = new List<ISyntaxComponent>();
+            }
+        }
 
         private CallData m_Call = null;
-        private List<ISyntaxComponent> m_Statements = new List<ISyntaxComponent>();
+        private List<ISyntaxComponent> m_Statements = null;
         private int m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_NOTHING;
         private string m_ExternScript = null;
 
         public static FunctionData NullFunctionData
         {
-            get
-            {
+            get {
                 return s_NullFunctionData;
             }
         }
@@ -769,7 +823,8 @@ namespace Dsl
             bool ret = true;
             if (m_Functions.Count <= 0) {
                 ret = false;
-            } else {
+            }
+            else {
                 for (int i = 0; i < m_Functions.Count; ++i) {
                     ret = ret && m_Functions[i].IsValid();
                 }
@@ -814,17 +869,21 @@ namespace Dsl
                     }
                     if (includeComment) {
                         return CalcFirstComment() + line + CalcLastComment();
-                    } else {
+                    }
+                    else {
                         return line;
                     }
-                } else {
+                }
+                else {
                     if (includeComment) {
                         return CalcFirstComment() + CalcLastComment();
-                    } else {
+                    }
+                    else {
                         return string.Empty;
                     }
                 }
-            } else {
+            }
+            else {
                 StringBuilder stream = new StringBuilder();
                 if (includeComment) {
                     stream.Append(CalcFirstComment());
@@ -875,8 +934,7 @@ namespace Dsl
         }
         public FunctionData First
         {
-            get
-            {
+            get {
                 if (m_Functions.Count > 0)
                     return m_Functions[0];
                 else
@@ -885,8 +943,7 @@ namespace Dsl
         }
         public FunctionData Second
         {
-            get
-            {
+            get {
                 if (m_Functions.Count > 1)
                     return m_Functions[1];
                 else
@@ -895,8 +952,7 @@ namespace Dsl
         }
         public FunctionData Third
         {
-            get
-            {
+            get {
                 if (m_Functions.Count > 2)
                     return m_Functions[2];
                 else
@@ -905,8 +961,7 @@ namespace Dsl
         }
         public FunctionData Last
         {
-            get
-            {
+            get {
                 if (m_Functions.Count > 0)
                     return m_Functions[m_Functions.Count - 1];
                 else
@@ -927,8 +982,7 @@ namespace Dsl
 
         public static StatementData NullStatementData
         {
-            get
-            {
+            get {
                 return s_NullStatementData;
             }
         }
@@ -1003,7 +1057,7 @@ namespace Dsl
             Parser.DslAction action = new Parser.DslAction(log, mDslInfos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
-            action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>();ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
+            action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
             action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
 
@@ -1012,7 +1066,8 @@ namespace Dsl
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos[i].Clear();
                 }
-            } else {
+            }
+            else {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos[i].SetResourceName(resourceName);
                 }
@@ -1049,7 +1104,8 @@ namespace Dsl
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (error.HasError) {
                 return null;
-            } else {
+            }
+            else {
                 MemoryStream stream = new MemoryStream();
                 List<string> identifiers = new List<string>();
                 foreach (DslInfo info in infos) {
@@ -1081,7 +1137,8 @@ namespace Dsl
                         int ix = keys.BinarySearch(key, mStringComparer);
                         if (ix < 0x80) {
                             ms.WriteByte((byte)ix);
-                        } else {
+                        }
+                        else {
                             ms.WriteByte((byte)((ix & 0x0000007f) | 0x00000080));
                             ms.WriteByte((byte)(ix >> 7));
                         }
@@ -1126,7 +1183,7 @@ namespace Dsl
             pos += 4;
             int bytesStart = pos;
             int bytes2Start = bytesStart + bytesLen;
-            int keyStart = bytes2Start + bytes2Len;            
+            int keyStart = bytes2Start + bytes2Len;
             List<string> keys = new List<string>();
             pos = keyStart;
             for (int i = 0; i < keyCount; ++i) {
@@ -1137,7 +1194,8 @@ namespace Dsl
                     var key = Encoding.UTF8.GetString(binaryCode, pos, len);
                     keys.Add(key);
                     pos += len;
-                } else {
+                }
+                else {
                     break;
                 }
             }
@@ -1149,12 +1207,14 @@ namespace Dsl
                     ++i;
                     byte second = binaryCode[i];
                     ix = (int)(((int)first & 0x0000007f) | ((int)second << 7));
-                } else {
+                }
+                else {
                     ix = first;
                 }
                 if (ix >= 0 && ix < keys.Count) {
                     ids.Add(keys[ix]);
-                } else {
+                }
+                else {
                     ids.Add(string.Empty);
                 }
             }
@@ -1175,18 +1235,18 @@ namespace Dsl
         }
         private void Write7BitEncodedInt(Stream s, int val)
         {
-	        uint num;
-	        for (num = (uint)val; num >= 128; num >>= 7)
-	        {
-		        s.WriteByte((byte)(num | 0x80));
-	        }
-	        s.WriteByte((byte)num);
+            uint num;
+            for (num = (uint)val; num >= 128; num >>= 7) {
+                s.WriteByte((byte)(num | 0x80));
+            }
+            s.WriteByte((byte)num);
         }
         private int ReadInt(byte[] bytes, int pos)
         {
             if (null != bytes && pos >= 0 && pos + 3 < bytes.Length) {
                 return bytes[pos] | (bytes[pos + 1] << 8) | (bytes[pos + 2] << 16) | (bytes[pos + 3] << 24);
-            } else {
+            }
+            else {
                 return -1;
             }
         }
@@ -1242,8 +1302,7 @@ namespace Dsl
 
         public static byte[] BinaryIdentity
         {
-            get
-            {
+            get {
                 if (null == sBinaryIdentity) {
                     sBinaryIdentity = Encoding.ASCII.GetBytes(c_BinaryIdentity);
                 }
@@ -1286,7 +1345,8 @@ namespace Dsl
                 }
                 if (c == '.') {
                     haveDot = true;
-                } else if (!notNum && !char.IsDigit(c)) {
+                }
+                else if (!notNum && !char.IsDigit(c)) {
                     notNum = true;
                 }
                 if (haveDot && notNum) {
@@ -1302,7 +1362,7 @@ namespace Dsl
                 case AbstractSyntaxComponent.STRING_TOKEN: {
                         if (str.Contains("\\"))
                             str = str.Replace("\\", "\\\\");
-                        if(str.Contains("\""))
+                        if (str.Contains("\""))
                             str = str.Replace("\"", "\\\"");
                         if (str.Contains("\0"))
                             str = str.Replace("\0", "\\0");
@@ -1324,7 +1384,8 @@ namespace Dsl
             string line = string.Empty;
             if (data.IsHighOrder) {
                 line = getCallString(data.Call, includeComment);
-            } else if (data.HaveId()) {
+            }
+            else if (data.HaveId()) {
                 line = quoteString(data.GetId(), data.GetIdType());
             }
             if (data.HaveParam()) {
@@ -1338,7 +1399,8 @@ namespace Dsl
                         default:
                             return line;
                     }
-                } else {
+                }
+                else {
                     string lbracket = string.Empty;
                     string rbracket = string.Empty;
                     switch (paramClass) {
@@ -1419,7 +1481,8 @@ namespace Dsl
                     stream.Append(rbracket);
                     return string.Format("{0}{1}{2}", lineNo, line, stream.ToString());
                 }
-            } else {
+            }
+            else {
                 return string.Format("{0}{1}", lineNo, line);
             }
 #else
@@ -1451,15 +1514,18 @@ namespace Dsl
             ValueData val = data as ValueData;
             if (null != val) {
                 writeValueData(stream, val, indent, firstLineNoIndent, isLastOfStatement);
-            } else {
+            }
+            else {
                 CallData call = data as CallData;
                 if (null != call) {
                     writeCallData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
-                } else {
+                }
+                else {
                     FunctionData function = data as FunctionData;
                     if (null != function) {
                         writeFunctionData(stream, function, indent, firstLineNoIndent, isLastOfStatement);
-                    } else {
+                    }
+                    else {
                         StatementData statement = data as StatementData;
                         writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
                     }
@@ -1518,10 +1584,12 @@ namespace Dsl
                             writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
                         }
                     }
-                } else {
+                }
+                else {
                     if (data.IsHighOrder) {
                         writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
-                    } else if (data.HaveId()) {
+                    }
+                    else if (data.HaveId()) {
                         string line = quoteString(data.GetId(), data.GetIdType());
                         writeText(stream, line, firstLineNoIndent ? 0 : indent);
                     }
@@ -1603,10 +1671,12 @@ namespace Dsl
                     }
                     stream.Append(rbracket);
                 }
-            } else {
+            }
+            else {
                 if (data.IsHighOrder) {
                     writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
-                } else if (data.HaveId()) {
+                }
+                else if (data.HaveId()) {
                     string line = quoteString(data.GetId(), data.GetIdType());
                     writeText(stream, line, firstLineNoIndent ? 0 : indent);
                 }
@@ -1640,18 +1710,21 @@ namespace Dsl
 
                 --indent;
                 writeText(stream, "}", indent);
-            } else if (data.HaveExternScript()) {
+            }
+            else if (data.HaveExternScript()) {
                 writeLine(stream, string.Empty, 0);
                 string script = data.GetExternScript();
                 if (script.IndexOf('\n') >= 0) {
                     writeLine(stream, "{:", indent);
-                } else {
+                }
+                else {
                     writeText(stream, "{:", indent);
                 }
                 stream.Append(script);
-                if (script.Length>0 && script[script.Length - 1] == '\n') {
+                if (script.Length > 0 && script[script.Length - 1] == '\n') {
                     writeText(stream, ":}", indent);
-                } else {
+                }
+                else {
                     stream.Append(":}");
                 }
             }
@@ -1677,7 +1750,8 @@ namespace Dsl
                     }
                     writeText(stream, line, firstLineNoIndent ? 0 : indent);
                 }
-            } else {
+            }
+            else {
                 int ct = data.Functions.Count;
                 bool lastFuncNoParam = false;
                 bool lastFuncNoStatement = false;
@@ -1805,15 +1879,18 @@ namespace Dsl
                 ValueData data = new ValueData();
                 readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
-            } else if (code == (byte)DslBinaryCode.BeginCall) {
+            }
+            else if (code == (byte)DslBinaryCode.BeginCall) {
                 CallData data = new CallData();
                 readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
-            } else if (code == (byte)DslBinaryCode.BeginFunction) {
+            }
+            else if (code == (byte)DslBinaryCode.BeginFunction) {
                 FunctionData data = new FunctionData();
                 readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
-            } else if (code == (byte)DslBinaryCode.BeginStatement) {
+            }
+            else if (code == (byte)DslBinaryCode.BeginStatement) {
                 StatementData data = new StatementData();
                 readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
@@ -1850,7 +1927,8 @@ namespace Dsl
                     ValueData valueData = new ValueData();
                     readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, valueData);
                     data.Name = valueData;
-                } else if (code == (byte)DslBinaryCode.BeginCall) {
+                }
+                else if (code == (byte)DslBinaryCode.BeginCall) {
                     CallData callData = new CallData();
                     readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, callData);
                     data.Call = callData;
@@ -1860,11 +1938,13 @@ namespace Dsl
                     if (code == (byte)DslBinaryCode.EndCall) {
                         ++curCodeIndex;
                         break;
-                    } else {
+                    }
+                    else {
                         ISyntaxComponent syntaxData = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
                         if (null != syntaxData) {
                             data.Params.Add(syntaxData);
-                        } else {
+                        }
+                        else {
                             break;
                         }
                     }
@@ -1891,7 +1971,8 @@ namespace Dsl
                     if (code == (byte)DslBinaryCode.EndExternScript) {
                         ++curCodeIndex;
                     }
-                } else {
+                }
+                else {
                     if (code >= (byte)DslBinaryCode.ParamOrExternClassBegin) {
                         ++curCodeIndex;
                         data.SetExtentClass(code - (byte)DslBinaryCode.ParamOrExternClassBegin);
@@ -1901,11 +1982,13 @@ namespace Dsl
                         if (code == (byte)DslBinaryCode.EndFunction) {
                             ++curCodeIndex;
                             break;
-                        } else {
+                        }
+                        else {
                             ISyntaxComponent syntaxData = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
                             if (null != syntaxData) {
                                 data.Statements.Add(syntaxData);
-                            } else {
+                            }
+                            else {
                                 break;
                             }
                         }
@@ -1923,10 +2006,12 @@ namespace Dsl
                         FunctionData funcData = new FunctionData();
                         readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, funcData);
                         data.Functions.Add(funcData);
-                    } else if (code == (byte)DslBinaryCode.EndStatement) {
+                    }
+                    else if (code == (byte)DslBinaryCode.EndStatement) {
                         ++curCodeIndex;
                         break;
-                    } else {
+                    }
+                    else {
                         break;
                     }
                 }
@@ -1939,15 +2024,18 @@ namespace Dsl
             ValueData val = data as ValueData;
             if (null != val) {
                 writeBinary(stream, identifiers, val);
-            } else {
+            }
+            else {
                 CallData call = data as CallData;
                 if (null != call) {
                     writeBinary(stream, identifiers, call);
-                } else {
+                }
+                else {
                     FunctionData function = data as FunctionData;
                     if (null != function) {
                         writeBinary(stream, identifiers, function);
-                    } else {
+                    }
+                    else {
                         StatementData statement = data as StatementData;
                         writeBinary(stream, identifiers, statement);
                     }
@@ -1970,7 +2058,8 @@ namespace Dsl
                 stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetParamClass()));
                 if (data.IsHighOrder) {
                     writeBinary(stream, identifiers, data.Call);
-                } else {
+                }
+                else {
                     writeBinary(stream, identifiers, data.Name);
                 }
                 foreach (ISyntaxComponent syntaxData in data.Params) {
@@ -1987,7 +2076,8 @@ namespace Dsl
                 stream.WriteByte((byte)DslBinaryCode.BeginExternScript);
                 identifiers.Add(data.GetExternScript());
                 stream.WriteByte((byte)DslBinaryCode.EndExternScript);
-            } else {
+            }
+            else {
                 stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetExtentClass()));
                 foreach (ISyntaxComponent syntaxData in data.Statements) {
                     writeBinary(stream, identifiers, syntaxData);
