@@ -373,6 +373,9 @@ namespace Dsl
 			PARAM_CLASS_POINTER_STAR,
 			PARAM_CLASS_OPERATOR,
 			PARAM_CLASS_TERNARY_OPERATOR,
+            PARAM_CLASS_MAX,
+            PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x40,
+            PARAM_CLASS_UNMASK = 0x3F,
 		};
 		typedef ISyntaxComponent* SyntaxComponentPtr;
 	public:
@@ -497,6 +500,7 @@ namespace Dsl
 			EXTENT_CLASS_NOTHING = 0,
 			EXTENT_CLASS_STATEMENT,
 			EXTENT_CLASS_EXTERN_SCRIPT,
+            EXTENT_CLASS_MAX,
 		};
 		typedef ISyntaxComponent* SyntaxComponentPtr;
 	public:

@@ -69,12 +69,22 @@ namespace Dsl
         Function* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
             Call& call = p->GetCall();
-            call.SetParamClass(Call::PARAM_CLASS_OPERATOR);
+            if (0 != tokenInfo.mString && tokenInfo.mString[0] == '`') {
+                call.SetParamClass(Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK | Call::PARAM_CLASS_OPERATOR);
 
-            Value v = call.GetName();
-            Value op(tokenInfo.mString, Value::TYPE_IDENTIFIER);
-            op.SetLine(mThis->getLastLineNumber());
-            call.SetName(op);
+                Value v = call.GetName();
+                Value op(tokenInfo.mString + 1, Value::TYPE_IDENTIFIER);
+                op.SetLine(mThis->getLastLineNumber());
+                call.SetName(op);
+            }
+            else {
+                call.SetParamClass(Call::PARAM_CLASS_OPERATOR);
+
+                Value v = call.GetName();
+                Value op(tokenInfo.mString, Value::TYPE_IDENTIFIER);
+                op.SetLine(mThis->getLastLineNumber());
+                call.SetName(op);
+            }
             if (argComp.IsValid()) {
                 call.AddParam(&argComp);
             }

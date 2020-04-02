@@ -144,11 +144,18 @@ namespace Dsl.Parser
             StatementData statement = getCurStatement();
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR);
+                if (name.Length > 0 && name[0] == '`') {
+                    func.Call.SetParamClass((int)(CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | CallData.ParamClassEnum.PARAM_CLASS_OPERATOR));
 
-                func.Call.Name.SetId(name);
-                func.Call.Name.SetType(type);
+                    func.Call.Name.SetId(name.Substring(1));
+                    func.Call.Name.SetType(type);
+                }
+                else {
+                    func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR);
 
+                    func.Call.Name.SetId(name);
+                    func.Call.Name.SetType(type);
+                }
                 if (argComp.IsValid()) {
                     func.Call.AddParams(argComp);
                 }

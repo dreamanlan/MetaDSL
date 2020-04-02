@@ -299,8 +299,8 @@ namespace Dsl
             PARAM_CLASS_OPERATOR,
             PARAM_CLASS_TERNARY_OPERATOR,
             PARAM_CLASS_MAX,
-            PARAM_CLASS_WRAP_OBJECT_MEMBER_ASSIGN_MASK = 0x80,
-            PARAM_CLASS_UNMASK = 0x7F,
+            PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x40,
+            PARAM_CLASS_UNMASK = 0x3F,
         }
         public override bool IsValid()
         {
@@ -1386,7 +1386,11 @@ namespace Dsl
                 line = getCallString(data.Call, includeComment);
             }
             else if (data.HaveId()) {
-                line = quoteString(data.GetId(), data.GetIdType());
+                int infix = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+                string op = data.GetId();
+                if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                    op = "`" + op;
+                line = quoteString(op, data.GetIdType());
             }
             if (data.HaveParam()) {
                 int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
@@ -1554,6 +1558,7 @@ namespace Dsl
             if (data.HaveParam()) {
                 int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
                 if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
+                    int infix = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
                     int paramNum = data.GetParamNum();
                     if (paramNum == 1) {
                         writeText(stream, " ", 0);
@@ -1561,7 +1566,10 @@ namespace Dsl
                             writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
                         }
                         else if (data.HaveId()) {
-                            string line = quoteString(data.GetId(), data.GetIdType());
+                            string op = data.GetId();
+                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                                op = "`" + op;
+                            string line = quoteString(op, data.GetIdType());
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
                         }
                         writeText(stream, " ", 0);
@@ -1576,7 +1584,10 @@ namespace Dsl
                             writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
                         }
                         else if (data.HaveId()) {
-                            string line = quoteString(data.GetId(), data.GetIdType());
+                            string op = data.GetId();
+                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                                op = "`" + op;
+                            string line = quoteString(op, data.GetIdType());
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
                         }
                         if (paramNum > 1) {

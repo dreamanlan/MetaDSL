@@ -551,8 +551,9 @@ namespace Dsl
 	{
 #if _DEBUG
 		WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
-		int paramClass = GetParamClass();
+		int paramClass = GetParamClass() & Call::PARAM_CLASS_UNMASK;
 		if (paramClass == Call::PARAM_CLASS_OPERATOR) {
+            int infix = GetParamClass() & Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK;
 			if (GetParamNum() == 2) {
 				ISyntaxComponent& component0 = *GetParam(0);
 				WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
@@ -562,6 +563,9 @@ namespace Dsl
 					call.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				else {
+                    if (infix == Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
+                        fwrite("`", 1, 1, fp);
+                    }
 					m_Name.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				fwrite(" ", 1, 1, fp);
@@ -575,6 +579,9 @@ namespace Dsl
 					call.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				else {
+                    if (infix == Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
+                        fwrite("`", 1, 1, fp);
+                    }
 					m_Name.WriteToFile(fp, indent, TRUE, FALSE);
 				}
 				fwrite(" ", 1, 1, fp);
