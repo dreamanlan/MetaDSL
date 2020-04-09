@@ -374,8 +374,8 @@ namespace Dsl
 			PARAM_CLASS_OPERATOR,
 			PARAM_CLASS_TERNARY_OPERATOR,
             PARAM_CLASS_MAX,
-            PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x40,
-            PARAM_CLASS_UNMASK = 0x3F,
+            PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x20,
+            PARAM_CLASS_UNMASK = 0x1F,
 		};
 		typedef ISyntaxComponent* SyntaxComponentPtr;
 	public:
