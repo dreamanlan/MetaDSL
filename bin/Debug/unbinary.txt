@@ -6,9 +6,16 @@ skill(1006)
 		sendgfxmessage(0,"ForGame","FadeToSkillFor00Skill");
 		sendgfxmessage(0,"StartScript","ToggleMotionBlur","0");
 		enablemoveagent(false);
+		0.12e+2.ToString();
+		0x6AB.ToString();
 		a .. b;
 		a(b,c,d,...);
+		a < b ? 1 : 0;
 		a ?? b;
+		a || b;
+		a && b;
+		a | b;
+		a & b;
 		a?.b(c,d,...);
 		a->c(e,f);
 		a = (b) => 
@@ -31,6 +38,10 @@ skill(1006)
 		a.{b};
 		a.b();
 		a.b = c;
+		if(a == b || c == d)
+		{
+			print("yeah");
+		};
 		a(a,b,c)
 		d
 		{
@@ -39,11 +50,11 @@ skill(1006)
 		a <- abc `<*> def <=> 123;
 		b <- abc `as int <=> 456;
 	};
-	section(5833)
+	section(5833e+2)
 	{
 		keeptarget();
 		animation(dazhao1);
-		selfeffect(selfEffect,4000,"",100);
+		selfeffect(selfEffect,40e+2,"",100E-2);
 		impact(0,0,0,0,false);
 		sendgfxmessage(0,"StartScript","StartUniqueSkillEffect");
 		sendgfxmessage(0,"StartScript","SetActorsVisible",true,true,false,false);

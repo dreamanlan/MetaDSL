@@ -19,8 +19,7 @@ namespace Dsl
             file.Load("test.txt", logCallback);
 #if FULL_VERSION
             file.Save("copy.txt");
-            var code1 = file.GenerateBinaryCode(File.ReadAllText("test.txt"), logCallback);
-            File.WriteAllBytes("binary.txt", code1);
+            file.SaveBinaryFile("binary.txt");
 #endif
             file.DslInfos.Clear();
             var code = File.ReadAllBytes("binary.txt");

@@ -20,6 +20,12 @@ int main(int argc, char* argv[])
 	FILE* fp2 = fopen("copy.txt", "wb");
 	dataFile.WriteToFile(fp2, 0);
 	fclose(fp2);
+    dataFile.SaveBinaryFile("binary.txt");
+    Dsl::DslFile dataFile2;
+    dataFile2.LoadBinaryFile("binary.txt");
+    FILE* fp3 = fopen("unbinary.txt", "wb");
+    dataFile2.WriteToFile(fp3, 0);
+    fclose(fp3);
 	delete[] pbuf;
 	return 0;
 }

@@ -1088,82 +1088,6 @@ namespace Dsl
 #endif
         }
 
-        public byte[] GenerateBinaryCode(string content, DslLogDelegation logCallback)
-        {
-#if FULL_VERSION
-            List<DslInfo> infos = new List<DslInfo>();
-            Parser.DslLog log = new Parser.DslLog();
-            log.OnLog += logCallback;
-            Parser.DslToken tokens = new Parser.DslToken(log, content);
-            Parser.DslError error = new Parser.DslError(log);
-            Parser.DslAction action = new Parser.DslAction(log, infos);
-            action.onGetLastToken = () => { return tokens.getLastToken(); };
-            action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
-            action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
-            action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
-            Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
-            if (error.HasError) {
-                return null;
-            }
-            else {
-                MemoryStream stream = new MemoryStream();
-                List<string> identifiers = new List<string>();
-                foreach (DslInfo info in infos) {
-                    Utility.writeBinary(stream, identifiers, (StatementData)info);
-                }
-
-                if (null == mStringComparer) {
-                    mStringComparer = new MyStringComparer();
-                }
-                byte[] bytes = stream.ToArray();
-                SortedDictionary<string, int> dict = new SortedDictionary<string, int>(mStringComparer);
-                int ct = identifiers.Count;
-                if (ct > 0x00004000) {
-                    System.Diagnostics.Debug.Assert(false);
-                    //Console.WriteLine("Identifiers count {0} too large than 0x04000", ct);
-                    return null;
-                }
-                for (int i = 0; i < ct; ++i) {
-                    string key = identifiers[i];
-                    if (!dict.ContainsKey(key)) {
-                        dict.Add(key, 0);
-                    }
-                }
-                List<string> keys = new List<string>(dict.Keys);
-                byte[] bytes2;
-                using (MemoryStream ms = new MemoryStream()) {
-                    for (int i = 0; i < ct; ++i) {
-                        string key = identifiers[i];
-                        int ix = keys.BinarySearch(key, mStringComparer);
-                        if (ix < 0x80) {
-                            ms.WriteByte((byte)ix);
-                        }
-                        else {
-                            ms.WriteByte((byte)((ix & 0x0000007f) | 0x00000080));
-                            ms.WriteByte((byte)(ix >> 7));
-                        }
-                    }
-                    bytes2 = ms.ToArray();
-                }
-                using (MemoryStream bdsl = new MemoryStream()) {
-                    bdsl.Write(BinaryIdentity, 0, c_BinaryIdentity.Length);
-                    WriteInt(bdsl, bytes.Length);
-                    WriteInt(bdsl, bytes2.Length);
-                    WriteInt(bdsl, keys.Count);
-                    bdsl.Write(bytes, 0, bytes.Length);
-                    bdsl.Write(bytes2, 0, bytes2.Length);
-                    foreach (var str in keys) {
-                        var bstr = Encoding.UTF8.GetBytes(str);
-                        Write7BitEncodedInt(bdsl, bstr.Length);
-                        bdsl.Write(bstr, 0, bstr.Length);
-                    }
-                    return bdsl.ToArray();
-                }
-            }
-#else
-            return null;
-#endif
-        }
         public void LoadBinaryFile(string file)
         {
             var code = File.ReadAllBytes(file);
@@ -1199,7 +1123,7 @@ namespace Dsl
                     break;
                 }
             }
-            List<string> ids = new List<string>();
+            List<string> identifiers = new List<string>();
             for (int i = bytes2Start; i < bytes2Start + bytes2Len && i < binaryCode.Length; ++i) {
                 int ix;
                 byte first = binaryCode[i];
@@ -1212,14 +1136,75 @@ namespace Dsl
                     ix = first;
                 }
                 if (ix >= 0 && ix < keys.Count) {
-                    ids.Add(keys[ix]);
+                    identifiers.Add(keys[ix]);
                 }
                 else {
-                    ids.Add(string.Empty);
+                    identifiers.Add(string.Empty);
                 }
             }
-            List<DslInfo> infos = Utility.readBinary(binaryCode, bytesStart, bytesLen, ids);
+            List<DslInfo> infos = Utility.readBinary(binaryCode, bytesStart, bytesLen, identifiers);
             mDslInfos.AddRange(infos);
+        }
+        public void SaveBinaryFile(string file)
+        {
+#if FULL_VERSION
+            MemoryStream stream = new MemoryStream();
+            List<string> identifiers = new List<string>();
+            foreach (DslInfo info in DslInfos) {
+                Utility.writeBinary(stream, identifiers, (StatementData)info);
+            }
+
+            if (null == mStringComparer) {
+                mStringComparer = new MyStringComparer();
+            }
+            byte[] bytes = stream.ToArray();
+            SortedDictionary<string, int> dict = new SortedDictionary<string, int>(mStringComparer);
+            int ct = identifiers.Count;
+            if (ct > 0x00004000) {
+                System.Diagnostics.Debug.Assert(false);
+                //Console.WriteLine("Identifiers count {0} too large than 0x04000", ct);
+                return;
+            }
+            for (int i = 0; i < ct; ++i) {
+                string key = identifiers[i];
+                if (!dict.ContainsKey(key)) {
+                    dict.Add(key, 0);
+                }
+            }
+            List<string> keys = new List<string>(dict.Keys);
+            byte[] bytes2;
+            using (MemoryStream ms = new MemoryStream()) {
+                for (int i = 0; i < ct; ++i) {
+                    string key = identifiers[i];
+                    int ix = keys.BinarySearch(key, mStringComparer);
+                    if (ix < 0x80) {
+                        ms.WriteByte((byte)ix);
+                    }
+                    else {
+                        ms.WriteByte((byte)((ix & 0x0000007f) | 0x00000080));
+                        ms.WriteByte((byte)(ix >> 7));
+                    }
+                }
+                bytes2 = ms.ToArray();
+            }
+            using (MemoryStream bdsl = new MemoryStream()) {
+                bdsl.Write(BinaryIdentity, 0, c_BinaryIdentity.Length);
+                WriteInt(bdsl, bytes.Length);
+                WriteInt(bdsl, bytes2.Length);
+                WriteInt(bdsl, keys.Count);
+                bdsl.Write(bytes, 0, bytes.Length);
+                bdsl.Write(bytes2, 0, bytes2.Length);
+                foreach (var str in keys) {
+                    var bstr = Encoding.UTF8.GetBytes(str);
+                    Write7BitEncodedInt(bdsl, bstr.Length);
+                    bdsl.Write(bstr, 0, bstr.Length);
+                }
+                using(FileStream fs = new FileStream(file, FileMode.Create)) {
+                    fs.Write(bdsl.GetBuffer(), 0, (int)bdsl.Length);
+                    fs.Close();
+                }
+            }
+#endif
         }
 
         private void WriteInt(Stream s, int val)
@@ -1286,13 +1271,13 @@ namespace Dsl
                 if (y == null) {
                     return 1;
                 }
-                if (x.Length != y.Length) {
-                    if (x.Length < y.Length)
-                        return -1;
-                    else
-                        return 1;
-                }
-                return string.CompareOrdinal(x, y);
+
+                if (x.Length < y.Length)
+                    return -1;
+                else if (x.Length > y.Length)
+                    return 1;
+                else
+                    return string.CompareOrdinal(x, y);
             }
         }
 
