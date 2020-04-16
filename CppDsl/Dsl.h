@@ -19,8 +19,8 @@ namespace Dsl
         {
             union
             {
-                SrcT	m_Src;
-                DestT	m_Dest;
+                SrcT m_Src;
+                DestT m_Dest;
             } tmp;
             tmp.m_Src = v;
             return tmp.m_Dest;
@@ -199,15 +199,15 @@ namespace Dsl
         void PrepareLastComments(void);
         void ReleaseLastComments(void);
     private:
-        int						  m_SyntaxType;
-        const char**              m_FirstComments;
-        int                       m_FirstCommentNum;
-        int                       m_FirstCommentSpace;
-        int                       m_FirstCommentOnNewLine;
-        const char**              m_LastComments;
-        int                       m_LastCommentNum;
-        int                       m_LastCommentSpace;
-        int                       m_LastCommentOnNewLine;
+        int m_SyntaxType;
+        const char** m_FirstComments;
+        int m_FirstCommentNum;
+        int m_FirstCommentSpace;
+        int m_FirstCommentOnNewLine;
+        const char** m_LastComments;
+        int m_LastCommentNum;
+        int m_LastCommentSpace;
+        int m_LastCommentOnNewLine;
     };
 
     class Call;
@@ -346,8 +346,8 @@ namespace Dsl
         virtual int GetLine(void) const { return 0; }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const {}
     private:
-        NullSyntax(const NullSyntax&);
-        NullSyntax& operator=(const NullSyntax&);
+        NullSyntax(const NullSyntax&) = delete;
+        NullSyntax& operator=(const NullSyntax&) = delete;
     public:
         static NullSyntax& GetNullSyntaxRef()
         {
@@ -563,8 +563,8 @@ namespace Dsl
         Function(DslFile& dataFile);
         virtual ~Function(void);
     private:
-        Function(const Function&);
-        Function& operator=(const Function&);
+        Function(const Function&) = delete;
+        Function& operator=(const Function&) = delete;
     private:
         void PrepareStatements(void);
         void ReleaseStatements(void);
@@ -646,6 +646,12 @@ namespace Dsl
                 return 0;
             return m_Functions[index];
         }
+        const char* GetFunctionId(int index)const
+        {
+            if (0 == m_Functions || index < 0 || index >= m_FunctionNum || index >= m_MaxFunctionNum)
+                return 0;
+            return m_Functions[index]->GetId();
+        }
     public:
         Statement(DslFile& dataFile);
         virtual ~Statement(void)
@@ -653,8 +659,8 @@ namespace Dsl
             ReleaseFunctions();
         }
     private:
-        Statement(const Statement&);
-        Statement& operator=(const Statement&);
+        Statement(const Statement&) = delete;
+        Statement& operator=(const Statement&) = delete;
     private:
         void PrepareFunctions(void);
         void ReleaseFunctions(void);
