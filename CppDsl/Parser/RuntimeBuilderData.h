@@ -7,10 +7,10 @@
 
 namespace Dsl
 {
-	class Function;
-	class Statement;
+	class FunctionData;
+	class StatementData;
 	class DslFile;
-	class Value;
+	class ValueData;
 }
 class RuntimeBuilderData
 {
@@ -39,21 +39,21 @@ public:
 			else
 				return FALSE;
 		}
-		Dsl::Value ToValue(void)const;
+		Dsl::ValueData ToValue(void)const;
 	};
 private:
 	typedef DequeT<TokenInfo, STACKSIZE> TokenStack;
-	typedef DequeT<Dsl::Statement*, STACKSIZE> SemanticStack;
+	typedef DequeT<Dsl::StatementData*, STACKSIZE> SemanticStack;
 public:
 	RuntimeBuilderData(void);
 public:
 	void push(const TokenInfo& info);
 	TokenInfo pop(void);
 	int isSemanticStackEmpty(void)const;
-	void pushStatement(Dsl::Statement* p);
-	Dsl::Statement* popStatement(void);
-	Dsl::Statement* getCurStatement(void)const;
-	Dsl::Function*& getLastFunctionRef(void)const;
+	void pushStatement(Dsl::StatementData* p);
+	Dsl::StatementData* popStatement(void);
+	Dsl::StatementData* getCurStatement(void)const;
+	Dsl::FunctionData*& getLastFunctionRef(void)const;
 private:
 	TokenStack		mTokenStack;
 	SemanticStack	mSemanticStack;

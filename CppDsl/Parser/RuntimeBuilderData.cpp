@@ -4,14 +4,14 @@
 #define BYTECODE_PRINTF	nullprintf
 
 //--------------------------------------------------------------------------------------
-Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
+Dsl::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
 {
 	switch (mType) {
 	case ID_TOKEN:
 	{
 		char* pStr = mString;
 		if (0 != pStr) {
-			Value val(pStr, Value::TYPE_IDENTIFIER);
+			ValueData val(pStr, ValueData::TYPE_IDENTIFIER);
 			return val;
 		}
 	}
@@ -20,7 +20,7 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
 	{
 		char* pStr = mString;
 		if (0 != pStr) {
-			Value val(pStr, Value::TYPE_NUM);
+			ValueData val(pStr, ValueData::TYPE_NUM);
 			return val;
 		}
 	}
@@ -29,7 +29,7 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
 	{
 		char* pStr = mString;
 		if (0 != pStr) {
-			Value val(pStr, Value::TYPE_STRING);
+			ValueData val(pStr, ValueData::TYPE_STRING);
 			return val;
 		}
 	}
@@ -38,13 +38,13 @@ Dsl::Value RuntimeBuilderData::TokenInfo::ToValue(void)const
 	{
 		char* pStr = mString;
 		if (0 != pStr) {
-			Value val(pStr, Value::TYPE_BOOL);
+			ValueData val(pStr, ValueData::TYPE_BOOL);
 			return val;
 		}
 	}
 	break;
 	}
-	return Value();
+	return ValueData();
 }
 //--------------------------------------------------------------------------------------
 void RuntimeBuilderData::push(const TokenInfo& info)
@@ -63,33 +63,33 @@ int RuntimeBuilderData::isSemanticStackEmpty(void)const
 {
 	return mSemanticStack.Empty();
 }
-void RuntimeBuilderData::pushStatement(Dsl::Statement* p)
+void RuntimeBuilderData::pushStatement(Dsl::StatementData* p)
 {
 	mSemanticStack.PushBack(p);
 }
-Dsl::Statement* RuntimeBuilderData::popStatement(void)
+Dsl::StatementData* RuntimeBuilderData::popStatement(void)
 {
 	if (mSemanticStack.Empty()) {
 		return 0;
 	}
-	Statement* cdata = mSemanticStack.Back();
+	StatementData* cdata = mSemanticStack.Back();
 	mSemanticStack.PopBack();
 	return cdata;
 }
-Dsl::Statement* RuntimeBuilderData::getCurStatement(void)const
+Dsl::StatementData* RuntimeBuilderData::getCurStatement(void)const
 {
 	if (mSemanticStack.Empty())
 		return 0;
-	Statement* topData = mSemanticStack.Back();
+	StatementData* topData = mSemanticStack.Back();
 	return topData;
 }
-Dsl::Function*& RuntimeBuilderData::getLastFunctionRef(void)const
+Dsl::FunctionData*& RuntimeBuilderData::getLastFunctionRef(void)const
 {
-	Statement* statement = getCurStatement();
+	StatementData* statement = getCurStatement();
 	if (0 != statement)
 		return statement->GetLastFunctionRef();
 	else
-		return Function::GetNullFunctionPtrRef();
+		return FunctionData::GetNullFunctionPtrRef();
 }
 //--------------------------------------------------------------------------------------
 RuntimeBuilderData::RuntimeBuilderData(void)

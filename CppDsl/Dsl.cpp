@@ -29,7 +29,7 @@ namespace Dsl
         BinCode_BeginExternScript,
         BinCode_EndExternScript,
         BinCode_ValueTypeBegin,
-        BinCode_ValueTypeEnd = BinCode_ValueTypeBegin + Value::TYPE_MAX,
+        BinCode_ValueTypeEnd = BinCode_ValueTypeBegin + ValueData::TYPE_MAX,
         BinCode_ParamOrExternClassBegin
     };
     ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType),
@@ -100,7 +100,7 @@ namespace Dsl
         }
     }
     //------------------------------------------------------------------------------------------------------
-    Call::Call(void) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL),
+    CallData::CallData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL),
         m_Params(0),
         m_ParamNum(0),
         m_ParamSpace(0),
@@ -111,19 +111,19 @@ namespace Dsl
     {
     }
 
-    Call::~Call(void)
+    CallData::~CallData(void)
     {
         ReleaseParams();
         ReleaseComments();
     }
 
-    Call::Call(const Call& other) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL)
+    CallData::CallData(const CallData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL)
     {
         ISyntaxComponent::CopyFrom(other);
         CopyFrom(other);
     }
 
-    Call Call::operator=(const Call& other)
+    CallData CallData::operator=(const CallData& other)
     {
         if (this == &other)
             return *this;
@@ -134,7 +134,7 @@ namespace Dsl
         return *this;
     }
 
-    void Call::CopyFrom(const Call& other)
+    void CallData::CopyFrom(const CallData& other)
     {
         m_Name = other.m_Name;
         m_ParamNum = other.m_ParamNum;
@@ -148,7 +148,7 @@ namespace Dsl
         memcpy(m_Comments, other.m_Comments, m_CommentNum * sizeof(char*));
     }
 
-    void Call::PrepareParams(void)
+    void CallData::PrepareParams(void)
     {
         if (NULL == m_Params && TRUE == HaveParam()) {
             m_Params = new SyntaxComponentPtr[DELTA_FUNCTION_PARAM];
@@ -171,7 +171,7 @@ namespace Dsl
         }
     }
 
-    void Call::ReleaseParams(void)
+    void CallData::ReleaseParams(void)
     {
         if (NULL != m_Params) {
             delete[] m_Params;
@@ -179,7 +179,7 @@ namespace Dsl
         }
     }
 
-    void Call::PrepareComments(void)
+    void CallData::PrepareComments(void)
     {
         if (m_CommentNum >= m_CommentSpace) {
             int newSpace = m_CommentSpace + DELTA_COMMENT;
@@ -194,7 +194,7 @@ namespace Dsl
         }
     }
 
-    void Call::ReleaseComments(void)
+    void CallData::ReleaseComments(void)
     {
         if (NULL != m_Comments) {
             delete[] m_Comments;
@@ -202,7 +202,7 @@ namespace Dsl
         }
     }
 
-    Function::Function(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
+    FunctionData::FunctionData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
         m_Statements(0),
         m_StatementNum(0),
         m_StatementSpace(0),
@@ -213,12 +213,12 @@ namespace Dsl
         m_MaxStatementNum = options.GetMaxStatementNum();
     }
 
-    Function::~Function(void)
+    FunctionData::~FunctionData(void)
     {
         ReleaseStatements();
     }
 
-    void Function::PrepareStatements(void)
+    void FunctionData::PrepareStatements(void)
     {
         if (NULL == m_Statements && TRUE == HaveStatement()) {
             m_Statements = new SyntaxComponentPtr[DELTA_FUNCTION_STATEMENT];
@@ -241,7 +241,7 @@ namespace Dsl
         }
     }
 
-    void Function::ReleaseStatements(void)
+    void FunctionData::ReleaseStatements(void)
     {
         if (NULL != m_Statements) {
             delete[] m_Statements;
@@ -249,7 +249,7 @@ namespace Dsl
         }
     }
 
-    Statement::Statement(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
+    StatementData::StatementData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
         m_Functions(0),
         m_FunctionNum(0),
         m_FunctionSpace(0)
@@ -258,10 +258,10 @@ namespace Dsl
         m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();
     }
 
-    void Statement::PrepareFunctions(void)
+    void StatementData::PrepareFunctions(void)
     {
         if (NULL == m_Functions) {
-            m_Functions = new Function*[DELTA_STATEMENT_FUNCTION];
+            m_Functions = new FunctionData*[DELTA_STATEMENT_FUNCTION];
             if (m_Functions) {
                 m_FunctionSpace = DELTA_STATEMENT_FUNCTION;
             }
@@ -269,10 +269,10 @@ namespace Dsl
         else if (m_FunctionNum >= m_FunctionSpace) {
             int newSpace = m_FunctionSpace + DELTA_STATEMENT_FUNCTION;
             if (newSpace <= m_MaxFunctionNum) {
-                Function** pNew = new Function*[newSpace];
+                FunctionData** pNew = new FunctionData*[newSpace];
                 if (pNew) {
-                    memcpy(pNew, m_Functions, m_FunctionNum * sizeof(Function*));
-                    memset(pNew + m_FunctionNum, 0, DELTA_STATEMENT_FUNCTION * sizeof(Function*));
+                    memcpy(pNew, m_Functions, m_FunctionNum * sizeof(FunctionData*));
+                    memset(pNew + m_FunctionNum, 0, DELTA_STATEMENT_FUNCTION * sizeof(FunctionData*));
                     delete[] m_Functions;
                     m_Functions = pNew;
                     m_FunctionSpace = newSpace;
@@ -281,7 +281,7 @@ namespace Dsl
         }
     }
 
-    void Statement::ReleaseFunctions(void)
+    void StatementData::ReleaseFunctions(void)
     {
         if (NULL != m_Functions) {
             delete[] m_Functions;
@@ -289,7 +289,7 @@ namespace Dsl
         }
     }
 
-    void DslFile::AddStatement(Statement* p)
+    void DslFile::AddStatement(StatementData* p)
     {
         if (0 == p || 0 == m_DslInfos)
             return;
@@ -299,30 +299,30 @@ namespace Dsl
         ++m_DslInfoNum;
     }
 
-    Value* DslFile::AddNewValueComponent(void)
+    ValueData* DslFile::AddNewValueComponent(void)
     {
-        Value* p = new Value();
+        ValueData* p = new ValueData();
         AddSyntaxComponent(p);
         return p;
     }
 
-    Call* DslFile::AddNewCallComponent(void)
+    CallData* DslFile::AddNewCallComponent(void)
     {
-        Call* p = new Call();
+        CallData* p = new CallData();
         AddSyntaxComponent(p);
         return p;
     }
 
-    Function* DslFile::AddNewFunctionComponent(void)
+    FunctionData* DslFile::AddNewFunctionComponent(void)
     {
-        Function* p = new Function(*this);
+        FunctionData* p = new FunctionData(*this);
         AddSyntaxComponent(p);
         return p;
     }
 
-    Statement* DslFile::AddNewStatementComponent(void)
+    StatementData* DslFile::AddNewStatementComponent(void)
     {
-        Statement* p = new Statement(*this);
+        StatementData* p = new StatementData(*this);
         AddSyntaxComponent(p);
         return p;
     }
@@ -471,7 +471,7 @@ namespace Dsl
         return num;
     }
 
-    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, Statement& data);
+    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, StatementData& data);
     void DslFile::LoadBinaryFile(const char* file)
     {
         char buffer[0x80000];
@@ -550,7 +550,7 @@ namespace Dsl
                 while (curCodeIndex < bytesLen && buffer[bytesStart + curCodeIndex] != (char)BinCode_BeginStatement)
                     ++curCodeIndex;
                 if (curCodeIndex < bytesLen) {
-                    Statement* p = AddNewStatementComponent();
+                    StatementData* p = AddNewStatementComponent();
                     readBinary(*this, buffer, bufferSize, bytesStart, curCodeIndex, identifiers, idCount, curIdIndex, *p);
                     if (p->IsValid()) {
                         AddStatement(p);
@@ -559,7 +559,7 @@ namespace Dsl
             }
         }
     }
-    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const Statement& data);
+    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const StatementData& data);
     void DslFile::SaveBinaryFile(const char* file) const
     {
 #if FULL_VERSION
@@ -570,7 +570,7 @@ namespace Dsl
         const char* identifiers[0x10000];
         int idCount = 0;
         for (int i = 0; i < GetDslInfoNum(); ++i) {
-            Statement* info = GetDslInfo(i);
+            StatementData* info = GetDslInfo(i);
             writeBinary(bytes1, 0x10000, pos1, identifiers, 0x10000, idCount, *info);
         }
 
@@ -729,16 +729,16 @@ namespace Dsl
     {
         switch (component.GetSyntaxType()) {
         case ISyntaxComponent::TYPE_VALUE:
-            dynamic_cast<Value&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<ValueData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
             break;
         case ISyntaxComponent::TYPE_CALL:
-            dynamic_cast<Call&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<CallData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
             break;
         case ISyntaxComponent::TYPE_FUNCTION:
-            dynamic_cast<Function&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<FunctionData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
             break;
         case ISyntaxComponent::TYPE_STATEMENT:
-            dynamic_cast<Statement&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<StatementData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
             break;
         }
     }
@@ -791,7 +791,7 @@ namespace Dsl
         }
 #endif
     }
-    void Value::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void ValueData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
@@ -807,23 +807,23 @@ namespace Dsl
         WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
     }
-    void Call::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void CallData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
-        int paramClass = GetParamClass() & Call::PARAM_CLASS_UNMASK;
-        if (paramClass == Call::PARAM_CLASS_OPERATOR) {
-            int infix = GetParamClass() & Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK;
+        int paramClass = GetParamClass() & CallData::PARAM_CLASS_UNMASK;
+        if (paramClass == CallData::PARAM_CLASS_OPERATOR) {
+            int infix = GetParamClass() & CallData::PARAM_CLASS_WRAP_INFIX_CALL_MASK;
             if (GetParamNum() == 2) {
                 ISyntaxComponent& component0 = *GetParam(0);
                 WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
                 fwrite(" ", 1, 1, fp);
                 if (IsHighOrder() && NULL != m_Name.GetCall()) {
-                    Call& call = *m_Name.GetCall();
+                    CallData& call = *m_Name.GetCall();
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
-                    if (infix == Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
+                    if (infix == CallData::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
                         fwrite("`", 1, 1, fp);
                     }
                     m_Name.WriteToFile(fp, indent, TRUE, FALSE);
@@ -835,11 +835,11 @@ namespace Dsl
             else {
                 fwrite(" ", 1, 1, fp);
                 if (IsHighOrder() && NULL != m_Name.GetCall()) {
-                    Call& call = *m_Name.GetCall();
+                    CallData& call = *m_Name.GetCall();
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
-                    if (infix == Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
+                    if (infix == CallData::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
                         fwrite("`", 1, 1, fp);
                     }
                     m_Name.WriteToFile(fp, indent, TRUE, FALSE);
@@ -851,7 +851,7 @@ namespace Dsl
         }
         else {
             if (IsHighOrder() && NULL != m_Name.GetCall()) {
-                Call& call = *m_Name.GetCall();
+                CallData& call = *m_Name.GetCall();
                 call.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
             }
             else {
@@ -859,46 +859,46 @@ namespace Dsl
             }
             if (HaveParam()) {
                 switch (paramClass) {
-                case Call::PARAM_CLASS_PARENTHESIS:
+                case CallData::PARAM_CLASS_PARENTHESIS:
                     fwrite("(", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_BRACKET:
+                case CallData::PARAM_CLASS_BRACKET:
                     fwrite("[", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD:
+                case CallData::PARAM_CLASS_PERIOD:
                     fwrite(".", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD_PARENTHESIS:
+                case CallData::PARAM_CLASS_PERIOD_PARENTHESIS:
                     fwrite(".(", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD_BRACKET:
+                case CallData::PARAM_CLASS_PERIOD_BRACKET:
                     fwrite(".[", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD_BRACE:
+                case CallData::PARAM_CLASS_PERIOD_BRACE:
                     fwrite(".{", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_PERIOD:
+                case CallData::PARAM_CLASS_QUESTION_PERIOD:
                     fwrite("?.", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_PARENTHESIS:
+                case CallData::PARAM_CLASS_QUESTION_PARENTHESIS:
                     fwrite("?(", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_BRACKET:
+                case CallData::PARAM_CLASS_QUESTION_BRACKET:
                     fwrite("?[", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_BRACE:
+                case CallData::PARAM_CLASS_QUESTION_BRACE:
                     fwrite("?{", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_POINTER:
+                case CallData::PARAM_CLASS_POINTER:
                     fwrite("->", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD_STAR:
+                case CallData::PARAM_CLASS_PERIOD_STAR:
                     fwrite(".*", 2, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_PERIOD_STAR:
+                case CallData::PARAM_CLASS_QUESTION_PERIOD_STAR:
                     fwrite("?.*", 3, 1, fp);
                     break;
-                case Call::PARAM_CLASS_POINTER_STAR:
+                case CallData::PARAM_CLASS_POINTER_STAR:
                     fwrite("->*", 3, 1, fp);
                     break;
                 }
@@ -910,41 +910,41 @@ namespace Dsl
                     WriteComponent(fp, component, indent, TRUE, FALSE);
                 }
                 switch (paramClass) {
-                case Call::PARAM_CLASS_PARENTHESIS:
+                case CallData::PARAM_CLASS_PARENTHESIS:
                     fwrite(")", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_BRACKET:
+                case CallData::PARAM_CLASS_BRACKET:
                     fwrite("]", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD:
+                case CallData::PARAM_CLASS_PERIOD:
                     break;
-                case Call::PARAM_CLASS_PERIOD_PARENTHESIS:
+                case CallData::PARAM_CLASS_PERIOD_PARENTHESIS:
                     fwrite(")", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD_BRACKET:
+                case CallData::PARAM_CLASS_PERIOD_BRACKET:
                     fwrite("]", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_PERIOD_BRACE:
+                case CallData::PARAM_CLASS_PERIOD_BRACE:
                     fwrite("}", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_PERIOD:
+                case CallData::PARAM_CLASS_QUESTION_PERIOD:
                     break;
-                case Call::PARAM_CLASS_QUESTION_PARENTHESIS:
+                case CallData::PARAM_CLASS_QUESTION_PARENTHESIS:
                     fwrite(")", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_BRACKET:
+                case CallData::PARAM_CLASS_QUESTION_BRACKET:
                     fwrite("]", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_QUESTION_BRACE:
+                case CallData::PARAM_CLASS_QUESTION_BRACE:
                     fwrite("}", 1, 1, fp);
                     break;
-                case Call::PARAM_CLASS_POINTER:
+                case CallData::PARAM_CLASS_POINTER:
                     break;
-                case Call::PARAM_CLASS_PERIOD_STAR:
+                case CallData::PARAM_CLASS_PERIOD_STAR:
                     break;
-                case Call::PARAM_CLASS_QUESTION_PERIOD_STAR:
+                case CallData::PARAM_CLASS_QUESTION_PERIOD_STAR:
                     break;
-                case Call::PARAM_CLASS_POINTER_STAR:
+                case CallData::PARAM_CLASS_POINTER_STAR:
                     break;
                 }
             }
@@ -959,7 +959,7 @@ namespace Dsl
         WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
     }
-    void Function::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void FunctionData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
@@ -1002,14 +1002,14 @@ namespace Dsl
         WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
     }
-    void Statement::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void StatementData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
         int num = GetFunctionNum();
-        Function* func1 = GetFunction(0);
-        Function* func2 = GetFunction(1);
-        if (num == 2 && NULL != func1 && NULL != func2 && func1->GetCall().GetParamClass() == Call::PARAM_CLASS_TERNARY_OPERATOR && func2->GetCall().GetParamClass() == Call::PARAM_CLASS_TERNARY_OPERATOR) {
+        FunctionData* func1 = GetFunction(0);
+        FunctionData* func2 = GetFunction(1);
+        if (num == 2 && NULL != func1 && NULL != func2 && func1->GetCall().GetParamClass() == CallData::PARAM_CLASS_TERNARY_OPERATOR && func2->GetCall().GetParamClass() == CallData::PARAM_CLASS_TERNARY_OPERATOR) {
             ISyntaxComponent* pcomp0 = func1->GetCall().GetParam(0);
             ISyntaxComponent* pcomp1 = func1->GetStatement(0);
             ISyntaxComponent* pcomp2 = func2->GetStatement(0);
@@ -1025,7 +1025,7 @@ namespace Dsl
             int lastFuncNoParam = FALSE;
             int lastFuncNoStatement = FALSE;
             for (int ix = 0; ix < num; ++ix) {
-                Function& func = *GetFunction(ix);
+                FunctionData& func = *GetFunction(ix);
                 int noIndent = FALSE;
                 int funcNoParam = !func.HaveParam();
                 int funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
@@ -1057,7 +1057,7 @@ namespace Dsl
     {
 #if FULL_VERSION
         for (int ix = 0; ix < GetDslInfoNum(); ++ix) {
-            Statement* pStatement = GetDslInfo(ix);
+            StatementData* pStatement = GetDslInfo(ix);
             if (pStatement) {
                 pStatement->WriteToFile(fp, indent, FALSE, TRUE);
             }
@@ -1080,7 +1080,7 @@ namespace Dsl
             return 0;
     }
     static ISyntaxComponent* readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex);
-    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, Value& data)
+    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, ValueData& data)
     {
         char code = readByte(bytes, size, start + curCodeIndex++);
         if (code == (char)BinCode_BeginValue) {
@@ -1095,7 +1095,7 @@ namespace Dsl
             }
         }
     }
-    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, Call& data)
+    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, CallData& data)
     {
         char code = readByte(bytes, size, start + curCodeIndex++);
         if (code == (char)BinCode_BeginCall) {
@@ -1106,13 +1106,13 @@ namespace Dsl
             }
             code = readByte(bytes, size, start + curCodeIndex);
             if (code == (char)BinCode_BeginValue) {
-                Value& name = data.GetName();
+                ValueData& name = data.GetName();
                 readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, name);
             }
             else if (code == (char)BinCode_BeginCall) {
-                Call* p = file.AddNewCallComponent();
+                CallData* p = file.AddNewCallComponent();
                 readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
-                Value& name = data.GetName();
+                ValueData& name = data.GetName();
                 name.SetCall(p);
             }
             for (; ; ) {
@@ -1133,19 +1133,19 @@ namespace Dsl
             }
         }
     }
-    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, Function& data)
+    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, FunctionData& data)
     {
         char code = readByte(bytes, size, start + curCodeIndex++);
         if (code == (char)BinCode_BeginFunction) {
             code = readByte(bytes, size, start + curCodeIndex);
             if (code == (char)BinCode_BeginCall) {
-                Call& call = data.GetCall();
+                CallData& call = data.GetCall();
                 readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, call);
             }
             code = readByte(bytes, size, start + curCodeIndex);
             if (code == (char)BinCode_BeginExternScript) {
                 ++curCodeIndex;
-                data.SetExtentClass((int)Function::EXTENT_CLASS_EXTERN_SCRIPT);
+                data.SetExtentClass((int)FunctionData::EXTENT_CLASS_EXTERN_SCRIPT);
                 data.SetExternScript(readIdentifier(identifiers, idCount, curIdIndex++));
 
                 code = readByte(bytes, size, start + curCodeIndex);
@@ -1177,14 +1177,14 @@ namespace Dsl
             }
         }
     }
-    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, Statement& data)
+    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, StatementData& data)
     {
         char code = readByte(bytes, size, start + curCodeIndex++);
         if (code == (char)BinCode_BeginStatement) {
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
                 if (code == (char)BinCode_BeginFunction) {
-                    Function* p = file.AddNewFunctionComponent();
+                    FunctionData* p = file.AddNewFunctionComponent();
                     readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
                     data.AddFunction(p);
                 }
@@ -1203,22 +1203,22 @@ namespace Dsl
         ISyntaxComponent* ret = 0;
         char code = readByte(bytes, size, start + curCodeIndex);
         if (code == (char)BinCode_BeginValue) {
-            Value* p = file.AddNewValueComponent();
+            ValueData* p = file.AddNewValueComponent();
             readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
             ret = p;
         }
         else if (code == (char)BinCode_BeginCall) {
-            Call* p = file.AddNewCallComponent();
+            CallData* p = file.AddNewCallComponent();
             readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
             ret = p;
         }
         else if (code == (char)BinCode_BeginFunction) {
-            Function* p = file.AddNewFunctionComponent();
+            FunctionData* p = file.AddNewFunctionComponent();
             readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
             ret = p;
         }
         else if (code == (char)BinCode_BeginStatement) {
-            Statement* p = file.AddNewStatementComponent();
+            StatementData* p = file.AddNewStatementComponent();
             readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
             ret = p;
         }
@@ -1227,19 +1227,19 @@ namespace Dsl
     //---------------------------------------------------------------------------------------------
 #if FULL_VERSION
     static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const ISyntaxComponent& data);
-    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const Value& data)
+    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const ValueData& data)
     {
         s[pos++] = (char)BinCode_BeginValue;
         s[pos++] = (char)((int)BinCode_ValueTypeBegin + data.GetIdType());
         identifiers[idCount++] = data.GetId();
         s[pos++] = (char)BinCode_EndValue;
     }
-    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const Call& data)
+    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const CallData& data)
     {
         s[pos++] = (char)BinCode_BeginCall;
         s[pos++] = (char)((int)BinCode_ParamOrExternClassBegin + data.GetParamClass());
         if (data.IsHighOrder()) {
-            const Value& name = data.GetName();
+            const ValueData& name = data.GetName();
             writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetCall());
         }
         else {
@@ -1252,7 +1252,7 @@ namespace Dsl
         }
         s[pos++] = (char)BinCode_EndCall;
     }
-    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const Function& data)
+    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const FunctionData& data)
     {
         s[pos++] = (char)BinCode_BeginFunction;
         writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, data.GetCall());
@@ -1270,11 +1270,11 @@ namespace Dsl
         }
         s[pos++] = (char)BinCode_EndFunction;
     }
-    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const Statement& data)
+    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const StatementData& data)
     {
         s[pos++] = (char)BinCode_BeginStatement;
         for (int i = 0; i < data.GetFunctionNum(); ++i) {
-            const Function* funcData = data.GetFunction(i);
+            const FunctionData* funcData = data.GetFunction(i);
             writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *funcData);
         }
         s[pos++] = (char)BinCode_EndStatement;
@@ -1284,28 +1284,28 @@ namespace Dsl
         int syntaxType = data.GetSyntaxType();
         switch (syntaxType) {
         case ISyntaxComponent::TYPE_VALUE: {
-            const Value* val = dynamic_cast<const Value*>(&data);
+            const ValueData* val = dynamic_cast<const ValueData*>(&data);
             if (0 != val) {
                 writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *val);
             }
             break;
         }
         case ISyntaxComponent::TYPE_CALL: {
-            const Call* val = dynamic_cast<const Call*>(&data);
+            const CallData* val = dynamic_cast<const CallData*>(&data);
             if (0 != val) {
                 writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *val);
             }
             break;
         }
         case ISyntaxComponent::TYPE_FUNCTION: {
-            const Function* val = dynamic_cast<const Function*>(&data);
+            const FunctionData* val = dynamic_cast<const FunctionData*>(&data);
             if (0 != val) {
                 writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *val);
             }
             break;
         }
         case ISyntaxComponent::TYPE_STATEMENT: {
-            const Statement* val = dynamic_cast<const Statement*>(&data);
+            const StatementData* val = dynamic_cast<const StatementData*>(&data);
             if (0 != val) {
                 writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *val);
             }

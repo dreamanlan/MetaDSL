@@ -12,7 +12,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::setExternScript(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 != p) {
             char* pStr = mThis->getLastToken();
             if (0 != pStr) {
@@ -28,7 +28,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markOperator(void)
     {
         if (!preconditionCheck())return;
-        Statement* pStatement = mData.getCurStatement();
+        StatementData* pStatement = mData.getCurStatement();
         if (0 == pStatement)
             return;
 
@@ -52,12 +52,12 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op:%s\n", tokenInfo.mString);
         }
 
-        Statement* pArg = mData.getCurStatement();
+        StatementData* pArg = mData.getCurStatement();
         if (0 == pArg)
             return;
         mData.popStatement();
         ISyntaxComponent& argComp = simplifyStatement(*pArg);
-        Statement* pStatement = mDataFile->AddNewStatementComponent();
+        StatementData* pStatement = mDataFile->AddNewStatementComponent();
         if (0 == pStatement)
             return;
 
@@ -66,22 +66,22 @@ namespace Dsl
 
         mData.pushStatement(pStatement);
 
-        Function* p = mDataFile->AddNewFunctionComponent();
+        FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
-            Call& call = p->GetCall();
+            CallData& call = p->GetCall();
             if (0 != tokenInfo.mString && tokenInfo.mString[0] == '`') {
-                call.SetParamClass(Call::PARAM_CLASS_WRAP_INFIX_CALL_MASK | Call::PARAM_CLASS_OPERATOR);
+                call.SetParamClass(CallData::PARAM_CLASS_WRAP_INFIX_CALL_MASK | CallData::PARAM_CLASS_OPERATOR);
 
-                Value v = call.GetName();
-                Value op(tokenInfo.mString + 1, Value::TYPE_IDENTIFIER);
+                ValueData v = call.GetName();
+                ValueData op(tokenInfo.mString + 1, ValueData::TYPE_IDENTIFIER);
                 op.SetLine(mThis->getLastLineNumber());
                 call.SetName(op);
             }
             else {
-                call.SetParamClass(Call::PARAM_CLASS_OPERATOR);
+                call.SetParamClass(CallData::PARAM_CLASS_OPERATOR);
 
-                Value v = call.GetName();
-                Value op(tokenInfo.mString, Value::TYPE_IDENTIFIER);
+                ValueData v = call.GetName();
+                ValueData op(tokenInfo.mString, ValueData::TYPE_IDENTIFIER);
                 op.SetLine(mThis->getLastLineNumber());
                 call.SetName(op);
             }
@@ -103,11 +103,11 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op1/2:%s\n", tokenInfo.mString);
         }
 
-        Statement* pArg = mData.popStatement();
+        StatementData* pArg = mData.popStatement();
         if (0 == pArg)
             return;
         ISyntaxComponent& argComp = simplifyStatement(*pArg);
-        Statement* pStatement = mDataFile->AddNewStatementComponent();
+        StatementData* pStatement = mDataFile->AddNewStatementComponent();
         if (0 == pStatement)
             return;
 
@@ -116,13 +116,13 @@ namespace Dsl
 
         mData.pushStatement(pStatement);
 
-        Function* p = mDataFile->AddNewFunctionComponent();
+        FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
-            Call& call = p->GetCall();
-            call.SetParamClass(Call::PARAM_CLASS_TERNARY_OPERATOR);
-            p->SetExtentClass(Function::EXTENT_CLASS_STATEMENT);
+            CallData& call = p->GetCall();
+            call.SetParamClass(CallData::PARAM_CLASS_TERNARY_OPERATOR);
+            p->SetExtentClass(FunctionData::EXTENT_CLASS_STATEMENT);
 
-            Value op(tokenInfo.mString, Value::TYPE_IDENTIFIER);
+            ValueData op(tokenInfo.mString, ValueData::TYPE_IDENTIFIER);
             op.SetLine(mThis->getLastLineNumber());
             call.SetName(op);
             if (argComp.IsValid()) {
@@ -143,15 +143,15 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op2/2:%s\n", tokenInfo.mString);
         }
 
-        Statement* statement = mData.getCurStatement();
+        StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
-            Function* p = mDataFile->AddNewFunctionComponent();
+            FunctionData* p = mDataFile->AddNewFunctionComponent();
             if (0 != p) {
-                Call& call = p->GetCall();
-                call.SetParamClass(Call::PARAM_CLASS_TERNARY_OPERATOR);
-                p->SetExtentClass(Function::EXTENT_CLASS_STATEMENT);
+                CallData& call = p->GetCall();
+                call.SetParamClass(CallData::PARAM_CLASS_TERNARY_OPERATOR);
+                p->SetExtentClass(FunctionData::EXTENT_CLASS_STATEMENT);
 
-                Value op(tokenInfo.mString, Value::TYPE_IDENTIFIER);
+                ValueData op(tokenInfo.mString, ValueData::TYPE_IDENTIFIER);
                 op.SetLine(mThis->getLastLineNumber());
                 call.SetName(op);
 
@@ -164,7 +164,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::beginStatement(void)
     {
         if (!preconditionCheck())return;
-        Statement* p = mDataFile->AddNewStatementComponent();
+        StatementData* p = mDataFile->AddNewStatementComponent();
         if (0 == p)
             return;
 
@@ -185,12 +185,12 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::endStatement(void)
     {
         if (!preconditionCheck())return;
-        Statement* statement = mData.popStatement();
+        StatementData* statement = mData.popStatement();
         if (0 == statement)
             return;
         const char* id = statement->GetId();
         if (0 != id && strcmp(id, "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && (statement->GetLastFunctionRef()->GetCall().GetParamNum() == 1 || statement->GetLastFunctionRef()->GetCall().GetParamNum() == 3) && !statement->GetLastFunctionRef()->GetCall().IsHighOrder()) {
-            const Call& call = statement->GetLastFunctionRef()->GetCall();
+            const CallData& call = statement->GetLastFunctionRef()->GetCall();
             const char* type = call.GetParamId(0);
             if (call.GetParamNum() == 3) {
                 const char* begin = call.GetParamId(1);
@@ -235,7 +235,7 @@ namespace Dsl
             if (!statement->IsValid()) {
                 //_epsilon_表达式无语句语义
                 if (mDataFile->GetDslInfoNum() > 0 && statement->GetFirstCommentNum() > 0) {
-                    Statement* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
+                    StatementData* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
                         last->SetLastCommentOnNewLine(statement->IsFirstCommentOnNewLine());
                     }
@@ -251,7 +251,7 @@ namespace Dsl
                     const char* cmt = statement->GetFirstComment(0);
                     statement->RemoveFirstComment(0);
                     statement->SetFirstCommentOnNewLine(TRUE);
-                    Statement* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
+                    StatementData* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
                         last->SetLastCommentOnNewLine(FALSE);
                     }
@@ -266,11 +266,11 @@ namespace Dsl
             //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
             ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
 
-            Function* p = mData.getLastFunctionRef();
+            FunctionData* p = mData.getLastFunctionRef();
             if (0 != p) {
-                Call& call = p->GetCall();
+                CallData& call = p->GetCall();
                 switch (p->GetExtentClass()) {
-                case Function::EXTENT_CLASS_NOTHING: {
+                case FunctionData::EXTENT_CLASS_NOTHING: {
                     /* 这段先注掉，现在应该不需要允许空语句参数了
                     if (call.GetParamClass() == Call::PARAM_CLASS_OPERATOR && !statement->IsValid())
                     return;//操作符就不支持空参数了
@@ -288,7 +288,7 @@ namespace Dsl
                     }
                 }
                                                      break;
-                case Function::EXTENT_CLASS_STATEMENT: {
+                case FunctionData::EXTENT_CLASS_STATEMENT: {
                     if (!statementSyntax.IsValid()) {
                         //_epsilon_表达式无语句语义
                         if (p->GetStatementNum() > 0 && statementSyntax.GetFirstCommentNum() > 0) {
@@ -332,9 +332,9 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::beginFunction(void)
     {
         if (!preconditionCheck())return;
-        Statement* statement = mData.getCurStatement();
+        StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
-            Function* newFunc = mDataFile->AddNewFunctionComponent();
+            FunctionData* newFunc = mDataFile->AddNewFunctionComponent();
             if (0 != newFunc) {
                 statement->AddFunction(newFunc);
             }
@@ -351,9 +351,9 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("id:%s\n", tokenInfo.mString);
         }
 
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 != p && !p->IsValid()) {
-            Value val = tokenInfo.ToValue();
+            ValueData val = tokenInfo.ToValue();
             if (TRUE == val.IsValid()) {
                 val.SetLine(mThis->getLastLineNumber());
                 p->GetCall().SetName(val);
@@ -371,9 +371,9 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("member:%s\n", tokenInfo.mString);
         }
 
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 != p && !p->IsValid()) {
-            Value val = tokenInfo.ToValue();
+            ValueData val = tokenInfo.ToValue();
             if (TRUE == val.IsValid()) {
                 val.SetLine(mThis->getLastLineNumber());
                 p->GetCall().SetName(val);
@@ -390,15 +390,15 @@ namespace Dsl
     {
         if (!preconditionCheck())return;
         //高阶函数构造（当前函数返回一个函数）
-        Function*& p = mData.getLastFunctionRef();
+        FunctionData*& p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Function* newP = mDataFile->AddNewFunctionComponent();
+        FunctionData* newP = mDataFile->AddNewFunctionComponent();
         if (0 != newP) {
-            Call& call = newP->GetCall();
+            CallData& call = newP->GetCall();
             call.ClearParams();
             newP->ClearStatements();
-            Value val(&p->GetCall());
+            ValueData val(&p->GetCall());
             val.SetLine(p->GetLine());
             call.SetName(val);
             p = newP;
@@ -408,10 +408,10 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -421,16 +421,16 @@ namespace Dsl
         }
         mThis->resetComments();
 
-        call.SetParamClass(Call::PARAM_CLASS_PARENTHESIS);
+        call.SetParamClass(CallData::PARAM_CLASS_PARENTHESIS);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -440,16 +440,16 @@ namespace Dsl
         }
         mThis->resetComments();
 
-        call.SetParamClass(Call::PARAM_CLASS_BRACKET);
+        call.SetParamClass(CallData::PARAM_CLASS_BRACKET);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriod(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -463,50 +463,50 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPeriodParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_PERIOD);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_PERIOD);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_PERIOD_PARENTHESIS);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_PERIOD_PARENTHESIS);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodBracketParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_PERIOD_BRACKET);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_PERIOD_BRACKET);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodBraceParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_PERIOD_BRACE);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_PERIOD_BRACE);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markQuestion(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -520,50 +520,50 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markQuestionPeriodParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_QUESTION_PERIOD);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_QUESTION_PERIOD);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markQuestionParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_QUESTION_PARENTHESIS);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_QUESTION_PARENTHESIS);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markQuestionBracketParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_QUESTION_BRACKET);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_QUESTION_BRACKET);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markQuestionBraceParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_QUESTION_BRACE);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_QUESTION_BRACE);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPointer(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -577,50 +577,50 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPointerParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_POINTER);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_POINTER);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodStarParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_PERIOD_STAR);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_PERIOD_STAR);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markQuestionPeriodStarParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_QUESTION_PERIOD_STAR);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_QUESTION_PERIOD_STAR);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPointerStarParam(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
-        call.SetParamClass(Call::PARAM_CLASS_POINTER_STAR);
+        CallData& call = p->GetCall();
+        call.SetParamClass(CallData::PARAM_CLASS_POINTER_STAR);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markHaveStatement(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -630,16 +630,16 @@ namespace Dsl
         }
         mThis->resetComments();
 
-        p->SetExtentClass(Function::EXTENT_CLASS_STATEMENT);
+        p->SetExtentClass(FunctionData::EXTENT_CLASS_STATEMENT);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markHaveExternScript(void)
     {
         if (!preconditionCheck())return;
-        Function* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
-        Call& call = p->GetCall();
+        CallData& call = p->GetCall();
 
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -649,27 +649,27 @@ namespace Dsl
         }
         mThis->resetComments();
 
-        p->SetExtentClass(Function::EXTENT_CLASS_EXTERN_SCRIPT);
+        p->SetExtentClass(FunctionData::EXTENT_CLASS_EXTERN_SCRIPT);
     }
     template<class RealTypeT> inline
-        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(Statement& data)const
+        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(StatementData& data)const
     {
         int num = data.GetFunctionNum();
         //对语句进行化简（语法分析过程中为了方便，全部按完整StatementData来构造，这里化简为原来的类型：ValueData/CallData/FunctionData等，主要涉及参数与语句部分）
         if (num == 1) {
             //只有一个函数的语句退化为函数（再按函数进一步退化）。
-            Function& func = *data.GetFunction(0);
+            FunctionData& func = *data.GetFunction(0);
             func.CopyComments(data);
             return simplifyStatement(func);
         }
         return data;
     }
     template<class RealTypeT> inline
-        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(Function& data)const
+        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(FunctionData& data)const
     {
         if (!data.HaveStatement() && !data.HaveExternScript()) {
             //没有语句部分的函数退化为函数调用（再按函数调用进一步退化）。
-            Call& call = data.GetCall();
+            CallData& call = data.GetCall();
             if (call.IsValid()) {
                 call.CopyComments(data);
                 return simplifyStatement(call);
@@ -682,7 +682,7 @@ namespace Dsl
         return data;
     }
     template<class RealTypeT> inline
-        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(Call& data)const
+        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(CallData& data)const
     {
         if (!data.HaveParam()) {
             //没有参数的调用退化为基本值数据
@@ -691,7 +691,7 @@ namespace Dsl
                 return data;
             }
             else {
-                Value& name = data.GetName();
+                ValueData& name = data.GetName();
                 name.CopyComments(data);
                 return name;
             }
@@ -699,7 +699,7 @@ namespace Dsl
         else if (NULL != data.GetId() && data.GetId()[0] == '-' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
-                Value& val = dynamic_cast<Value&>(temp);
+                ValueData& val = dynamic_cast<ValueData&>(temp);
                 val.CopyComments(data);
                 int size = (int)strlen(val.GetId()) + 1;
                 char* pBuf = mDataFile->AllocString(size);
@@ -714,7 +714,7 @@ namespace Dsl
         else if (NULL != data.GetId() && data.GetId()[0] == '+' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
-                Value& val = dynamic_cast<Value&>(temp);
+                ValueData& val = dynamic_cast<ValueData&>(temp);
                 val.CopyComments(data);
                 int size = (int)strlen(val.GetId()) + 1;
                 char* pBuf = mDataFile->AllocString(size);
