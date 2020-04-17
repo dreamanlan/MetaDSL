@@ -8,6 +8,14 @@
 
 namespace Dsl
 {
+    /*
+     * 备忘：为什么采用约简的方式而不是延迟一次性构造
+     * 1、已尝试过采用一个临时的结构比如SyntaxMaterial来收集语法解析过程中的数据，到语句完成时再构造语句
+     * 2、临时的结构与最终语义数据结构上相似度很高，也需要表示递归结构并且要与现有语义数据关联，代码重复并且逻辑不够清晰。
+     * 3、约简方式已经尽量重用语法解析中构造的实例，基本不会产生额外内存占用
+     * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
+     * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
+     */
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::setExternScript(void)
     {
@@ -231,27 +239,28 @@ namespace Dsl
         mThis->resetComments();
 
         if (mData.isSemanticStackEmpty()) {
-            //顶层元素不能化简，必须是语句的样式，适应DslInfo表示
-            if (!statement->IsValid()) {
+            //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+            ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
+            if (!statementSyntax.IsValid()) {
                 //_epsilon_表达式无语句语义
-                if (mDataFile->GetDslInfoNum() > 0 && statement->GetFirstCommentNum() > 0) {
-                    StatementData* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
+                if (mDataFile->GetDslInfoNum() > 0 && statementSyntax.GetFirstCommentNum() > 0) {
+                    ISyntaxComponent* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
-                        last->SetLastCommentOnNewLine(statement->IsFirstCommentOnNewLine());
+                        last->SetLastCommentOnNewLine(statementSyntax.IsFirstCommentOnNewLine());
                     }
-                    int fnum = statement->GetFirstCommentNum();
+                    int fnum = statementSyntax.GetFirstCommentNum();
                     for (int ix = 0; ix < fnum; ++ix) {
-                        last->AddLastComment(statement->GetFirstComment(ix));
+                        last->AddLastComment(statementSyntax.GetFirstComment(ix));
                     }
                 }
                 return;
             }
             else {
-                if (mDataFile->GetDslInfoNum() > 0 && !statement->IsFirstCommentOnNewLine() && statement->GetFirstCommentNum() > 0) {
-                    const char* cmt = statement->GetFirstComment(0);
-                    statement->RemoveFirstComment(0);
-                    statement->SetFirstCommentOnNewLine(TRUE);
-                    StatementData* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
+                if (mDataFile->GetDslInfoNum() > 0 && !statementSyntax.IsFirstCommentOnNewLine() && statementSyntax.GetFirstCommentNum() > 0) {
+                    const char* cmt = statementSyntax.GetFirstComment(0);
+                    statementSyntax.RemoveFirstComment(0);
+                    statementSyntax.SetFirstCommentOnNewLine(TRUE);
+                    ISyntaxComponent* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
                         last->SetLastCommentOnNewLine(FALSE);
                     }
@@ -259,7 +268,7 @@ namespace Dsl
                 }
             }
             //顶层元素结束
-            mDataFile->AddStatement(statement);
+            mDataFile->AddDslInfo(&statementSyntax);
             mThis->setCanFinish(TRUE);
         }
         else {

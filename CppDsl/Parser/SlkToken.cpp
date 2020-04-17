@@ -1,4 +1,4 @@
-/*****************************************************************************
+Ôªø/*****************************************************************************
 
 SlkToken.cpp
 
@@ -6,7 +6,7 @@ SlkToken.cpp
 #include "SlkParse.h"
 #include "tsnprintf.h"
 
-//mIterator,mErrorInfo”…ππ‘Ï∫Ø ˝µƒ“˝”√≤Œ ˝¥´»Î£¨≤ªª·Œ™ø’°£À˘“‘ π”√ ±≤ª‘ŸºÏ≤È «∑ÒŒ™ø’°£
+//mIterator,mErrorInfoÁî±ÊûÑÈÄ†ÂáΩÊï∞ÁöÑÂºïÁî®ÂèÇÊï∞‰º†ÂÖ•Ôºå‰∏ç‰ºö‰∏∫Á©∫„ÄÇÊâÄ‰ª•‰ΩøÁî®Êó∂‰∏çÂÜçÊ£ÄÊü•ÊòØÂê¶‰∏∫Á©∫„ÄÇ
 
 static inline int myisdigit(char c, int isHex, int includeEPart, int includeAddSub)
 {
@@ -390,7 +390,7 @@ short SlkToken::get(void)
         }
 
         int isSkip = TRUE;
-        //Ã¯π˝◊¢ Õ”Î∞◊ø’∏Ò
+        //Ë∑≥ËøáÊ≥®Èáä‰∏éÁôΩÁ©∫Ê†º
         for (; isSkip && *mIterator != '\0';) {
             isSkip = FALSE;
             for (; isWhiteSpace(*mIterator); ++mIterator) {
@@ -402,7 +402,7 @@ short SlkToken::get(void)
                 }
                 isSkip = TRUE;
             }
-            //#“˝µºµƒµ•––◊¢ Õ
+            //#ÂºïÂØºÁöÑÂçïË°åÊ≥®Èáä
             if (*mIterator == '#') {
                 newComment();
                 for (; *mIterator != '\0' && *mIterator != '\n'; ++mIterator) {
@@ -412,7 +412,7 @@ short SlkToken::get(void)
                 endComment();
                 isSkip = TRUE;
             }
-            //C++∑Á∏Òµƒµ•––◊¢ Õ”Î∂‡––◊¢ Õ
+            //C++È£éÊ†ºÁöÑÂçïË°åÊ≥®Èáä‰∏éÂ§öË°åÊ≥®Èáä
             if (*mIterator == '/' && (*(mIterator + 1) == '/' || *(mIterator + 1) == '*')) {
                 newComment();
                 pushCommentChar(*mIterator);
@@ -476,7 +476,7 @@ short SlkToken::get(void)
         ++mIterator;
         ++mIterator;
         int line = mLineNumber;
-        //À—À˜Ω≈±æΩ· ¯ :}
+        //ÊêúÁ¥¢ËÑöÊú¨ÁªìÊùü :}
         for (; *mIterator != '\0';) {
             while (*mIterator != '\0' && *mIterator != ':') {
                 if (*mIterator == '\n')++mLineNumber;
@@ -502,7 +502,7 @@ short SlkToken::get(void)
         if (*mIterator == '\0') {
             char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
             if (pInfo)
-                tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish£°", line);
+                tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finishÔºÅ", line);
         }
         endToken();
         if (myhavelinefeed(mCurToken)) {
@@ -629,7 +629,7 @@ short SlkToken::get(void)
             return OP_TOKEN_12_;
         }
     }
-    else if (isOperator(*mIterator)) {//≤Ÿ◊˜∑˚
+    else if (isOperator(*mIterator)) {//Êìç‰ΩúÁ¨¶
         getOperatorToken();
         return getOperatorTokenValue();
     }
@@ -689,8 +689,8 @@ short SlkToken::get(void)
         endToken();
         return SEMI_;
     }
-    else {//πÿº¸◊÷°¢±Í ∂∑˚ªÚ≥£ ˝
-        if (*mIterator == '"' || *mIterator == '\'') {//“˝∫≈¿®∆¿¥µƒ√˚≥∆ªÚπÿº¸◊÷
+    else {//ÂÖ≥ÈîÆÂ≠ó„ÄÅÊ†áËØÜÁ¨¶ÊàñÂ∏∏Êï∞
+        if (*mIterator == '"' || *mIterator == '\'') {//ÂºïÂè∑Êã¨Ëµ∑Êù•ÁöÑÂêçÁß∞ÊàñÂÖ≥ÈîÆÂ≠ó
             int line = mLineNumber;
             char c = *mIterator;
             for (++mIterator; *mIterator != '\0' && *mIterator != c;) {
@@ -720,7 +720,7 @@ short SlkToken::get(void)
                     }
                     else if (*mIterator == 'x' && myisdigit(*(mIterator + 1), true)) {
                         ++mIterator;
-                        //1~2Œª16Ω¯÷∆ ˝
+                        //1~2‰Ωç16ËøõÂà∂Êï∞
                         char h1 = *mIterator;
                         if (myisdigit(*(mIterator + 1), true)) {
                             ++mIterator;
@@ -734,7 +734,7 @@ short SlkToken::get(void)
                         }
                     }
                     else if (myisdigit(*mIterator, false)) {
-                        //1~3Œª8Ω¯÷∆ ˝
+                        //1~3‰Ωç8ËøõÂà∂Êï∞
                         char o1 = *mIterator;
                         if (myisdigit(*(mIterator + 1), false)) {
                             ++mIterator;
@@ -771,7 +771,7 @@ short SlkToken::get(void)
                     else {
                         char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
                         if (pInfo)
-                            tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish£°", line);
+                            tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finishÔºÅ", line);
                         endTokenWithEof();
                         return END_OF_SLK_INPUT_;
                     }
@@ -783,10 +783,10 @@ short SlkToken::get(void)
             else {
                 char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
                 if (pInfo)
-                    tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish£°", line);
+                    tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finishÔºÅ", line);
             }
             endToken();
-            /*∆’Õ®◊÷∑˚¥Æ±£≥÷‘¥¬Îµƒ—˘◊”£¨≤ª»•µÙ ◊Œ≤ø’––
+            /*ÊôÆÈÄöÂ≠óÁ¨¶‰∏≤‰øùÊåÅÊ∫êÁ†ÅÁöÑÊ†∑Â≠êÔºå‰∏çÂéªÊéâÈ¶ñÂ∞æÁ©∫Ë°å
             if (myhavelinefeed(mCurToken)) {
                 removeFirstAndLastEmptyLine();
             }
@@ -897,7 +897,7 @@ void SlkToken::getBlockString(const char* delimiter)
     if (!pFind) {
         char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
         if (pInfo)
-            tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:Block can't finish, delimiter: %s£°", mLineNumber, delimiter);
+            tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:Block can't finish, delimiter: %sÔºÅ", mLineNumber, delimiter);
         endToken();
         return;
     }

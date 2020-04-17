@@ -1,4 +1,4 @@
-#ifndef __SourceCodeScript_H__
+﻿#ifndef __SourceCodeScript_H__
 #define __SourceCodeScript_H__
 
 #include "Dsl.h"

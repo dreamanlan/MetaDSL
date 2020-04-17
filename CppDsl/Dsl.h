@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
 
 calc.h
 
@@ -322,7 +322,7 @@ namespace Dsl
         union
         {
             char* m_StringVal;
-            const char* m_ConstStringVal;//�ڽű�����m_StringVal������ͬ,����ʵ���Զ�const_cast
+            const char* m_ConstStringVal;//在脚本里与m_StringVal类型相同,用于实现自动const_cast
             CallData* m_Call;
         };
         int m_Line;
@@ -584,6 +584,10 @@ namespace Dsl
         }
     };
 
+    /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
+     * 1、虽然语法上这里的FunctionData可以退化为CallData与ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
+     * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
+     */
     class StatementData : public ISyntaxComponent
     {
     public:
@@ -737,10 +741,9 @@ namespace Dsl
     class DslFile
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
-        typedef StatementData* StatementPtr;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
-        StatementData* GetDslInfo(int index)const
+        ISyntaxComponent* GetDslInfo(int index)const
         {
             if (index < 0 || index >= m_DslInfoNum)
                 return NULL;
@@ -748,7 +751,7 @@ namespace Dsl
         }
         void WriteToFile(FILE* fp, int indent) const;
     public:
-        void AddStatement(StatementData* p);
+        void AddDslInfo(ISyntaxComponent* p);
         ValueData* AddNewValueComponent(void);
         CallData* AddNewCallComponent(void);
         FunctionData* AddNewFunctionComponent(void);
@@ -775,15 +778,15 @@ namespace Dsl
         void LoadBinaryCode(const char* buffer, int bufferSize);
         void SaveBinaryFile(const char* file) const;
     private:
-        DslFile(const DslFile&);
-        DslFile& operator=(const DslFile&);
+        DslFile(const DslFile&) = delete;
+        DslFile& operator=(const DslFile&) = delete;
     private:
         void Init(void);
         void Release(void);
     private:
         char* m_StringBuffer;
         char* m_UnusedStringPtr;
-        StatementPtr* m_DslInfos;
+        SyntaxComponentPtr* m_DslInfos;
         int m_DslInfoNum;
     public:
         void EnableDebugInfo(void) { m_IsDebugInfoEnable = TRUE; }

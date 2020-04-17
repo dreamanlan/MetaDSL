@@ -1,4 +1,4 @@
-/*****************************************************************************
+ï»¿/*****************************************************************************
 
 Dsl.cpp
 
@@ -289,7 +289,7 @@ namespace Dsl
         }
     }
 
-    void DslFile::AddStatement(StatementData* p)
+    void DslFile::AddDslInfo(ISyntaxComponent* p)
     {
         if (0 == p || 0 == m_DslInfos)
             return;
@@ -471,7 +471,7 @@ namespace Dsl
         return num;
     }
 
-    static void readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex, StatementData& data);
+    static ISyntaxComponent* readBinary(DslFile& file, const char* bytes, int size, int start, int& curCodeIndex, const char** identifiers, int idCount, int& curIdIndex);
     void DslFile::LoadBinaryFile(const char* file)
     {
         char buffer[0x80000];
@@ -550,16 +550,15 @@ namespace Dsl
                 while (curCodeIndex < bytesLen && buffer[bytesStart + curCodeIndex] != (char)BinCode_BeginStatement)
                     ++curCodeIndex;
                 if (curCodeIndex < bytesLen) {
-                    StatementData* p = AddNewStatementComponent();
-                    readBinary(*this, buffer, bufferSize, bytesStart, curCodeIndex, identifiers, idCount, curIdIndex, *p);
+                    ISyntaxComponent* p = readBinary(*this, buffer, bufferSize, bytesStart, curCodeIndex, identifiers, idCount, curIdIndex);
                     if (p->IsValid()) {
-                        AddStatement(p);
+                        AddDslInfo(p);
                     }
                 }
             }
         }
     }
-    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const StatementData& data);
+    static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const ISyntaxComponent& data);
     void DslFile::SaveBinaryFile(const char* file) const
     {
 #if FULL_VERSION
@@ -570,7 +569,7 @@ namespace Dsl
         const char* identifiers[0x10000];
         int idCount = 0;
         for (int i = 0; i < GetDslInfoNum(); ++i) {
-            StatementData* info = GetDslInfo(i);
+            ISyntaxComponent* info = GetDslInfo(i);
             writeBinary(bytes1, 0x10000, pos1, identifiers, 0x10000, idCount, *info);
         }
 
@@ -650,7 +649,7 @@ namespace Dsl
         m_UnusedStringPtr = m_StringBuffer;
         m_SyntaxComponentPool = new SyntaxComponentPtr[m_Options.GetSyntaxComponentPoolSize()];
         m_SyntaxComponentNum = 0;
-        m_DslInfos = new StatementPtr[m_Options.GetMaxProgramSize()];
+        m_DslInfos = new SyntaxComponentPtr[m_Options.GetMaxProgramSize()];
         m_DslInfoNum = 0;
         m_ErrorAndStringBuffer.Reset(m_StringBuffer, m_UnusedStringPtr, m_Options.GetStringBufferSize());
     }
@@ -761,7 +760,7 @@ namespace Dsl
             haveComments = TRUE;
         }
         if (haveComments && !newLine) {
-            //ÐÐÊ××¢ÊÍ±ØÐëÒª»»ÐÐ£¬·ñÔò¿ÉÄÜ»á°Ñ´úÂë×¢ÊÍµô
+            //è¡Œé¦–æ³¨é‡Šå¿…é¡»è¦æ¢è¡Œï¼Œå¦åˆ™å¯èƒ½ä¼šæŠŠä»£ç æ³¨é‡ŠæŽ‰
             fwrite("\n", 1, 1, fp);
         }
 #endif
@@ -1057,9 +1056,9 @@ namespace Dsl
     {
 #if FULL_VERSION
         for (int ix = 0; ix < GetDslInfoNum(); ++ix) {
-            StatementData* pStatement = GetDslInfo(ix);
-            if (pStatement) {
-                pStatement->WriteToFile(fp, indent, FALSE, TRUE);
+            ISyntaxComponent* p = GetDslInfo(ix);
+            if (p) {
+                p->WriteToFile(fp, indent, FALSE, TRUE);
             }
         }
 #endif

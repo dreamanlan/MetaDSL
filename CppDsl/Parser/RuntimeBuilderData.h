@@ -1,4 +1,4 @@
-#ifndef __RuntimeBuilderData_H__
+﻿#ifndef __RuntimeBuilderData_H__
 #define __RuntimeBuilderData_H__
 
 #include "Queue.h"

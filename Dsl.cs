@@ -816,6 +816,11 @@ namespace Dsl
     /// <summary>
     /// 语句数据，由多个函数数据连接而成。
     /// </summary>
+    /// <remarks>
+    /// 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
+    /// 1、虽然语法上这里的FunctionData可以退化为CallData与ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
+    /// 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
+    /// </remarks>
     public class StatementData : AbstractSyntaxComponent
     {
         public override bool IsValid()
@@ -989,54 +994,13 @@ namespace Dsl
         private static StatementData s_NullStatementData = new StatementData();
     }
 
-    public class DslInfo : StatementData
-    {
-        public override string ToScriptString(bool includeComment)
-        {
-            StringBuilder stream = new StringBuilder();
-            Utility.writeSyntaxComponent(stream, this, 0, false, true);
-            return stream.ToString();
-        }
-
-        public void SetLoaded(bool loaded)
-        {
-            mLoaded = loaded;
-        }
-        public bool IsLoaded()
-        {
-            return mLoaded;
-        }
-        public void SetResourceName(string name)
-        {
-            mResourceName = name;
-        }
-        public string GetResourceName()
-        {
-            return mResourceName;
-        }
-        public new void Clear()
-        {
-            base.Clear();
-            mLoaded = false;
-            mResourceName = string.Empty;
-        }
-        public void CopyFrom(DslInfo other)
-        {
-            base.CopyFrom((StatementData)other);
-            mLoaded = other.mLoaded;
-            mResourceName = other.mResourceName;
-        }
-
-        private bool mLoaded = false;
-        private string mResourceName = string.Empty;
-    };
     public class DslFile
     {
-        public List<DslInfo> DslInfos
+        public List<ISyntaxComponent> DslInfos
         {
             get { return mDslInfos; }
         }
-        public void AddDslInfo(DslInfo data)
+        public void AddDslInfo(ISyntaxComponent data)
         {
             mDslInfos.Add(data);
         }
@@ -1064,12 +1028,7 @@ namespace Dsl
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (error.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
-                    mDslInfos[i].Clear();
-                }
-            }
-            else {
-                for (int i = 0; i < mDslInfos.Count; i++) {
-                    mDslInfos[i].SetResourceName(resourceName);
+                    mDslInfos.Clear();
                 }
             }
             return !error.HasError;
@@ -1142,7 +1101,7 @@ namespace Dsl
                     identifiers.Add(string.Empty);
                 }
             }
-            List<DslInfo> infos = Utility.readBinary(binaryCode, bytesStart, bytesLen, identifiers);
+            List<ISyntaxComponent> infos = Utility.readBinary(binaryCode, bytesStart, bytesLen, identifiers);
             mDslInfos.AddRange(infos);
         }
         public void SaveBinaryFile(string file)
@@ -1150,8 +1109,8 @@ namespace Dsl
 #if FULL_VERSION
             MemoryStream stream = new MemoryStream();
             List<string> identifiers = new List<string>();
-            foreach (DslInfo info in DslInfos) {
-                Utility.writeBinary(stream, identifiers, (StatementData)info);
+            foreach (ISyntaxComponent info in DslInfos) {
+                Utility.writeBinary(stream, identifiers, info);
             }
 
             if (null == mStringComparer) {
@@ -1283,7 +1242,7 @@ namespace Dsl
 
         private byte[] mBuffer = null;
         private MyStringComparer mStringComparer = null;
-        private List<DslInfo> mDslInfos = new List<DslInfo>();
+        private List<ISyntaxComponent> mDslInfos = new List<ISyntaxComponent>();
 
         public static byte[] BinaryIdentity
         {
@@ -1848,19 +1807,17 @@ namespace Dsl
             else
                 return string.Empty;
         }
-        internal static List<DslInfo> readBinary(byte[] bytes, int start, int count, List<string> identifiers)
+        internal static List<ISyntaxComponent> readBinary(byte[] bytes, int start, int count, List<string> identifiers)
         {
-            List<DslInfo> infos = new List<DslInfo>();
+            List<ISyntaxComponent> infos = new List<ISyntaxComponent>();
             int curCodeIndex = 0;
             int curIdIndex = 0;
             while (curCodeIndex < count) {
                 while (curCodeIndex < count && bytes[start + curCodeIndex] != (byte)DslBinaryCode.BeginStatement)
                     ++curCodeIndex;
                 if (curCodeIndex < count) {
-                    DslInfo info = new DslInfo();
-                    readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, (StatementData)info);
+                    ISyntaxComponent info = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
                     if (info.IsValid()) {
-                        info.SetLoaded(true);
                         infos.Add(info);
                     }
                 }

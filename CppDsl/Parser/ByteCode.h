@@ -1,4 +1,4 @@
-#ifndef __ByteCode_H__
+﻿#ifndef __ByteCode_H__
 #define __ByteCode_H__
 
 #include "Dsl.h"

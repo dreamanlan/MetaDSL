@@ -1,4 +1,4 @@
-#include "SourceCodeScript.h"
+ï»¿#include "SourceCodeScript.h"
 #include "SlkInc.h"
 #include "SlkParse.h"
 #include "ByteCode.h"
@@ -95,7 +95,7 @@ inline void ActionForSourceCodeScript::setScriptDelimiter(const char* begin, con
 	}
 }
 //--------------------------------------------------------------------------------------
-//±êÊ¶·û
+//æ ‡è¯†ç¬¦
 inline void ActionForSourceCodeScript::pushId(void)
 {
 	char* lastToken = getLastToken();

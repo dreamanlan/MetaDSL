@@ -4,6 +4,14 @@ using System.Text;
 
 namespace Dsl.Parser
 {
+    /*
+     * 备忘：为什么采用约简的方式而不是延迟一次性构造
+     * 1、已尝试过采用一个临时的结构比如SyntaxMaterial来收集语法解析过程中的数据，到语句完成时再构造语句
+     * 2、临时的结构与最终语义数据结构上相似度很高，也需要表示递归结构并且要与现有语义数据关联，代码重复并且逻辑不够清晰。
+     * 3、约简方式已经尽量重用语法解析中构造的实例，基本不会产生额外内存占用
+     * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
+     * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
+     */
     delegate string GetLastTokenDelegation();
     delegate int GetLastLineNumberDelegation();
     delegate IList<string> GetCommentsDelegation(out bool commentOnNewLine);
@@ -24,7 +32,7 @@ namespace Dsl.Parser
             }
         };
 
-        internal DslAction(DslLog log, List<DslInfo> datas)
+        internal DslAction(DslLog log, List<ISyntaxComponent> datas)
         {
             mLog = log;
             mScriptDatas = datas;
@@ -273,24 +281,25 @@ namespace Dsl.Parser
             }
 
             if (mStatementSemanticStack.Count == 0) {
-                //顶层元素不能化简，必须是语句的样式，适应DslInfo表示
-                if (!statement.IsValid()) {
+                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
+                if (!statementSyntax.IsValid()) {
                     //_epsilon_表达式无语句语义
-                    if (mScriptDatas.Count > 0 && statement.FirstComments.Count > 0) {
-                        DslInfo last = mScriptDatas[mScriptDatas.Count - 1];
+                    if (mScriptDatas.Count > 0 && statementSyntax.FirstComments.Count > 0) {
+                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
                         if (last.LastComments.Count <= 0) {
-                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                            last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
                         }
-                        last.LastComments.AddRange(statement.FirstComments);
+                        last.LastComments.AddRange(statementSyntax.FirstComments);
                     }
                     return;
                 }
                 else {
-                    if (mScriptDatas.Count > 0 && !statement.FirstCommentOnNewLine && statement.FirstComments.Count > 0) {
-                        string cmt = statement.FirstComments[0];
-                        statement.FirstComments.RemoveAt(0);
-                        statement.FirstCommentOnNewLine = true;
-                        DslInfo last = mScriptDatas[mScriptDatas.Count - 1];
+                    if (mScriptDatas.Count > 0 && !statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
+                        string cmt = statementSyntax.FirstComments[0];
+                        statementSyntax.FirstComments.RemoveAt(0);
+                        statementSyntax.FirstCommentOnNewLine = true;
+                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
                         if (last.LastComments.Count <= 0) {
                             last.LastCommentOnNewLine = false;
                         }
@@ -298,10 +307,7 @@ namespace Dsl.Parser
                     }
                 }
                 //顶层元素结束
-                DslInfo scriptData = new DslInfo();
-                scriptData.CopyFrom(statement);
-                scriptData.SetLoaded(true);
-                mScriptDatas.Add(scriptData);
+                mScriptDatas.Add(statementSyntax);
             }
             else {
                 //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
@@ -741,7 +747,7 @@ namespace Dsl.Parser
         private GetCommentsDelegation mGetComments;
         private SetDelimiterDelegation mSetStringDelimiter;
         private SetDelimiterDelegation mSetScriptDelimiter;
-        private List<DslInfo> mScriptDatas;
+        private List<ISyntaxComponent> mScriptDatas;
         private Stack<SemanticInfo> mSemanticStack;
         private Stack<StatementData> mStatementSemanticStack;
 
