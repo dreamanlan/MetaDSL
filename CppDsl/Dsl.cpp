@@ -100,7 +100,7 @@ namespace Dsl
         }
     }
     //------------------------------------------------------------------------------------------------------
-    CallData::CallData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL),
+    CallData::CallData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL_DATA),
         m_Params(0),
         m_ParamNum(0),
         m_ParamSpace(0),
@@ -117,7 +117,7 @@ namespace Dsl
         ReleaseComments();
     }
 
-    CallData::CallData(const CallData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL)
+    CallData::CallData(const CallData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_CALL_DATA)
     {
         ISyntaxComponent::CopyFrom(other);
         CopyFrom(other);
@@ -730,7 +730,7 @@ namespace Dsl
         case ISyntaxComponent::TYPE_VALUE:
             dynamic_cast<ValueData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
             break;
-        case ISyntaxComponent::TYPE_CALL:
+        case ISyntaxComponent::TYPE_CALL_DATA:
             dynamic_cast<CallData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
             break;
         case ISyntaxComponent::TYPE_FUNCTION:
@@ -817,8 +817,8 @@ namespace Dsl
                 ISyntaxComponent& component0 = *GetParam(0);
                 WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
                 fwrite(" ", 1, 1, fp);
-                if (IsHighOrder() && NULL != m_Name.GetCall()) {
-                    CallData& call = *m_Name.GetCall();
+                if (IsHighOrder() && NULL != m_Name.GetCallData()) {
+                    CallData& call = *m_Name.GetCallData();
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
@@ -833,8 +833,8 @@ namespace Dsl
             }
             else {
                 fwrite(" ", 1, 1, fp);
-                if (IsHighOrder() && NULL != m_Name.GetCall()) {
-                    CallData& call = *m_Name.GetCall();
+                if (IsHighOrder() && NULL != m_Name.GetCallData()) {
+                    CallData& call = *m_Name.GetCallData();
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
@@ -849,8 +849,8 @@ namespace Dsl
             }
         }
         else {
-            if (IsHighOrder() && NULL != m_Name.GetCall()) {
-                CallData& call = *m_Name.GetCall();
+            if (IsHighOrder() && NULL != m_Name.GetCallData()) {
+                CallData& call = *m_Name.GetCallData();
                 call.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
             }
             else {
@@ -962,8 +962,8 @@ namespace Dsl
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
-        if (m_Call.IsValid()) {
-            m_Call.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
+        if (m_CallData.IsValid()) {
+            m_CallData.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
         }
         if (HaveStatement()) {
             fwrite("\n", 1, 1, fp);
@@ -1008,8 +1008,8 @@ namespace Dsl
         int num = GetFunctionNum();
         FunctionData* func1 = GetFunction(0);
         FunctionData* func2 = GetFunction(1);
-        if (num == 2 && NULL != func1 && NULL != func2 && func1->GetCall().GetParamClass() == CallData::PARAM_CLASS_TERNARY_OPERATOR && func2->GetCall().GetParamClass() == CallData::PARAM_CLASS_TERNARY_OPERATOR) {
-            ISyntaxComponent* pcomp0 = func1->GetCall().GetParam(0);
+        if (num == 2 && NULL != func1 && NULL != func2 && func1->GetCallData().GetParamClass() == CallData::PARAM_CLASS_TERNARY_OPERATOR && func2->GetCallData().GetParamClass() == CallData::PARAM_CLASS_TERNARY_OPERATOR) {
+            ISyntaxComponent* pcomp0 = func1->GetCallData().GetParam(0);
             ISyntaxComponent* pcomp1 = func1->GetStatement(0);
             ISyntaxComponent* pcomp2 = func2->GetStatement(0);
             if (NULL != pcomp0 && NULL != pcomp1 && NULL != pcomp2) {
@@ -1112,7 +1112,7 @@ namespace Dsl
                 CallData* p = file.AddNewCallComponent();
                 readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
                 ValueData& name = data.GetName();
-                name.SetCall(p);
+                name.SetCallData(p);
             }
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
@@ -1138,7 +1138,7 @@ namespace Dsl
         if (code == (char)BinCode_BeginFunction) {
             code = readByte(bytes, size, start + curCodeIndex);
             if (code == (char)BinCode_BeginCall) {
-                CallData& call = data.GetCall();
+                CallData& call = data.GetCallData();
                 readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, call);
             }
             code = readByte(bytes, size, start + curCodeIndex);
@@ -1239,7 +1239,7 @@ namespace Dsl
         s[pos++] = (char)((int)BinCode_ParamOrExternClassBegin + data.GetParamClass());
         if (data.IsHighOrder()) {
             const ValueData& name = data.GetName();
-            writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetCall());
+            writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetCallData());
         }
         else {
             writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, data.GetName());
@@ -1254,7 +1254,7 @@ namespace Dsl
     static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const FunctionData& data)
     {
         s[pos++] = (char)BinCode_BeginFunction;
-        writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, data.GetCall());
+        writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, data.GetCallData());
         if (data.HaveExternScript()) {
             s[pos++] = (char)BinCode_BeginExternScript;
             identifiers[idCount++] = data.GetExternScript();
@@ -1289,7 +1289,7 @@ namespace Dsl
             }
             break;
         }
-        case ISyntaxComponent::TYPE_CALL: {
+        case ISyntaxComponent::TYPE_CALL_DATA: {
             const CallData* val = dynamic_cast<const CallData*>(&data);
             if (0 != val) {
                 writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *val);

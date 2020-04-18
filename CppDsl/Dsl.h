@@ -85,7 +85,7 @@ namespace Dsl
         {
             TYPE_NULL,
             TYPE_VALUE,
-            TYPE_CALL,
+            TYPE_CALL_DATA,
             TYPE_FUNCTION,
             TYPE_STATEMENT,
         };
@@ -220,14 +220,14 @@ namespace Dsl
             TYPE_NUM,
             TYPE_STRING,
             TYPE_BOOL,
-            TYPE_CALL,
+            TYPE_CALL_DATA,
             TYPE_MAX = TYPE_BOOL
         };
 
         ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
         explicit ValueData(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
-        explicit ValueData(CallData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL), m_Call(val), m_Line(0) {}
+        explicit ValueData(CallData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL_DATA), m_CallData(val), m_Line(0) {}
         explicit ValueData(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
         ValueData(const ValueData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
@@ -248,13 +248,13 @@ namespace Dsl
         virtual int GetLine(void)const { return m_Line; }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 
-        CallData* GetCall(void)const { return m_Call; }
+        CallData* GetCallData(void)const { return m_CallData; }
 
         bool HaveId()const { return IsValid(); }
         int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
         int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
-        int IsVariableName(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
-        int IsCall(void)const { return (m_Type == TYPE_CALL ? TRUE : FALSE); }
+        int IsIdentifier(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
+        int IsCallData(void)const { return (m_Type == TYPE_CALL_DATA ? TRUE : FALSE); }
 
         void SetInvalid(void)
         {
@@ -291,12 +291,12 @@ namespace Dsl
             m_Type = TYPE_BOOL;
             m_ConstStringVal = str;
         }
-        void SetCall(CallData* func)
+        void SetCallData(CallData* func)
         {
-            m_Type = TYPE_CALL;
-            m_Call = func;
+            m_Type = TYPE_CALL_DATA;
+            m_CallData = func;
         }
-        void SetVariableName(char* name)
+        void SetIdentifier(char* name)
         {
             m_Type = TYPE_IDENTIFIER;
             m_StringVal = name;
@@ -323,7 +323,7 @@ namespace Dsl
         {
             char* m_StringVal;
             const char* m_ConstStringVal;//在脚本里与m_StringVal类型相同,用于实现自动const_cast
-            CallData* m_Call;
+            CallData* m_CallData;
         };
         int m_Line;
     public:
@@ -421,7 +421,7 @@ namespace Dsl
         int GetParamClass(void)const { return m_ParamClass; }
         int HaveId(void)const { return m_Name.HaveId(); }
         int HaveParam(void)const { return m_ParamClass != PARAM_CLASS_NOTHING; }
-        int IsHighOrder(void)const { return m_Name.IsCall(); }
+        int IsHighOrder(void)const { return m_Name.IsCallData(); }
     public:
         const ValueData& GetName(void)const { return m_Name; }
         int GetParamNum(void)const { return m_ParamNum; }
@@ -511,20 +511,20 @@ namespace Dsl
     public:
         virtual int IsValid(void)const
         {
-            if (m_Call.IsValid())
+            if (m_CallData.IsValid())
                 return TRUE;
             else if (HaveStatement() || HaveExternScript())
                 return TRUE;
             else
                 return FALSE;
         }
-        virtual int GetIdType(void)const { return m_Call.GetIdType(); }
-        virtual const char* GetId(void)const { return m_Call.GetId(); }
-        virtual int GetLine(void)const { return m_Call.GetLine(); }
+        virtual int GetIdType(void)const { return m_CallData.GetIdType(); }
+        virtual const char* GetId(void)const { return m_CallData.GetId(); }
+        virtual int GetLine(void)const { return m_CallData.GetLine(); }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
     public:
-        void SetCall(const CallData& val) { m_Call = val; }
-        CallData& GetCall(void) { return m_Call; }
+        void SetCallData(const CallData& val) { m_CallData = val; }
+        CallData& GetCallData(void) { return m_CallData; }
         void ClearStatements(void) { m_StatementNum = 0; }
         void AddStatement(ISyntaxComponent* pVal)
         {
@@ -545,12 +545,12 @@ namespace Dsl
         void SetExternScript(const char* scp) { m_ExternScript = scp; }
         void SetExtentClass(int v) { m_ExtentClass = v; }
         int GetExtentClass(void)const { return m_ExtentClass; }
-        int HaveId(void)const { return m_Call.HaveId(); }
-        int HaveParam(void)const { return m_Call.HaveParam(); }
+        int HaveId(void)const { return m_CallData.HaveId(); }
+        int HaveParam(void)const { return m_CallData.HaveParam(); }
         int HaveStatement(void)const { return m_ExtentClass == EXTENT_CLASS_STATEMENT; }
         int HaveExternScript(void)const { return m_ExtentClass == EXTENT_CLASS_EXTERN_SCRIPT; }
     public:
-        const CallData&	GetCall(void)const { return m_Call; }
+        const CallData&	GetCallData(void)const { return m_CallData; }
         int GetStatementNum(void)const { return m_StatementNum; }
         ISyntaxComponent* GetStatement(int index)const
         {
@@ -569,7 +569,7 @@ namespace Dsl
         void PrepareStatements(void);
         void ReleaseStatements(void);
     private:
-        CallData m_Call;
+        CallData m_CallData;
         ISyntaxComponent** m_Statements;
         int m_StatementNum;
         int m_StatementSpace;
