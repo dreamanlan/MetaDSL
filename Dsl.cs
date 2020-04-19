@@ -1281,8 +1281,291 @@ namespace Dsl
         private static byte[] sBinaryIdentity = null;
     };
 
-    internal sealed class Utility
+    public sealed class Utility
     {
+        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            ValueData val = data as ValueData;
+            if (null != val) {
+                writeValueData(stream, val, indent, firstLineNoIndent, isLastOfStatement);
+            }
+            else {
+                CallData call = data as CallData;
+                if (null != call) {
+                    writeCallData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
+                }
+                else {
+                    FunctionData function = data as FunctionData;
+                    if (null != function) {
+                        writeFunctionData(stream, function, indent, firstLineNoIndent, isLastOfStatement);
+                    }
+                    else {
+                        StatementData statement = data as StatementData;
+                        writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
+                    }
+                }
+            }
+#endif
+        }
+
+        public static void writeValueData(StringBuilder stream, ValueData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
+            writeText(stream, data.ToScriptString(false), firstLineNoIndent ? 0 : indent);
+            if (isLastOfStatement)
+                stream.Append(';');
+            writeLastComments(stream, data, indent, isLastOfStatement);
+#endif
+        }
+
+        public static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            string lineNo = string.Format("/* {0} */", data.GetLine());
+            //writeLine(stream, lineNo, indent);
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
+            if (data.HaveParam()) {
+                int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
+                if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
+                    int infix = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+                    int paramNum = data.GetParamNum();
+                    if (paramNum == 1) {
+                        writeText(stream, " ", 0);
+                        if (data.IsHighOrder) {
+                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                        }
+                        else if (data.HaveId()) {
+                            string op = data.GetId();
+                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                                op = "`" + op;
+                            string line = quoteString(op, data.GetIdType());
+                            writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
+                        }
+                        writeText(stream, " ", 0);
+                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
+                    }
+                    else {
+                        if (paramNum > 0) {
+                            writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
+                            writeText(stream, " ", 0);
+                        }
+                        if (data.IsHighOrder) {
+                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                        }
+                        else if (data.HaveId()) {
+                            string op = data.GetId();
+                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                                op = "`" + op;
+                            string line = quoteString(op, data.GetIdType());
+                            writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
+                        }
+                        if (paramNum > 1) {
+                            writeText(stream, " ", 0);
+                            writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
+                        }
+                    }
+                }
+                else {
+                    if (data.IsHighOrder) {
+                        writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
+                    }
+                    else if (data.HaveId()) {
+                        string line = quoteString(data.GetId(), data.GetIdType());
+                        writeText(stream, line, firstLineNoIndent ? 0 : indent);
+                    }
+                    string lbracket = string.Empty;
+                    string rbracket = string.Empty;
+                    switch (paramClass) {
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                            lbracket = "(";
+                            rbracket = ")";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_BRACKET:
+                            lbracket = "[";
+                            rbracket = "]";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD:
+                            lbracket = ".";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
+                            lbracket = ".(";
+                            rbracket = ")";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
+                            lbracket = ".[";
+                            rbracket = "]";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
+                            lbracket = ".{";
+                            rbracket = "}";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
+                            lbracket = "?.";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
+                            lbracket = "?(";
+                            rbracket = ")";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
+                            lbracket = "?[";
+                            rbracket = "]";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
+                            lbracket = "?{";
+                            rbracket = "}";
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER:
+                            lbracket = "->";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
+                            lbracket = ".*";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
+                            lbracket = "?.*";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
+                            lbracket = "->*";
+                            rbracket = string.Empty;
+                            break;
+                    }
+                    stream.Append(lbracket);
+                    int ct = data.GetParamNum();
+                    for (int i = 0; i < ct; ++i) {
+                        if (i > 0)
+                            stream.Append(",");
+                        ISyntaxComponent param = data.GetParam(i);
+                        if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
+                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
+                            stream.Append(param.ToScriptString(true));
+                        else
+                            writeSyntaxComponent(stream, param, indent, true, false);
+                    }
+                    stream.Append(rbracket);
+                }
+            }
+            else {
+                if (data.IsHighOrder) {
+                    writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
+                }
+                else if (data.HaveId()) {
+                    string line = quoteString(data.GetId(), data.GetIdType());
+                    writeText(stream, line, firstLineNoIndent ? 0 : indent);
+                }
+            }
+            if (isLastOfStatement)
+                stream.Append(';');
+            foreach (string cmt in data.Comments) {
+                writeText(stream, cmt, 1);
+            }
+            writeLastComments(stream, data, indent, isLastOfStatement);
+#endif
+        }
+
+        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
+            if (null != data.Call) {
+                writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
+            }
+            if (data.HaveStatement()) {
+                writeLine(stream, string.Empty, 0);
+                writeLine(stream, "{", indent);
+                ++indent;
+
+                int ct = data.GetStatementNum();
+                for (int i = 0; i < ct; ++i) {
+                    ISyntaxComponent tempData = data.GetStatement(i);
+                    writeSyntaxComponent(stream, tempData, indent, false, true);
+                }
+
+                --indent;
+                writeText(stream, "}", indent);
+            }
+            else if (data.HaveExternScript()) {
+                writeLine(stream, string.Empty, 0);
+                string script = data.GetExternScript();
+                if (script.IndexOf('\n') >= 0) {
+                    writeLine(stream, "{:", indent);
+                }
+                else {
+                    writeText(stream, "{:", indent);
+                }
+                stream.Append(script);
+                if (script.Length > 0 && script[script.Length - 1] == '\n') {
+                    writeText(stream, ":}", indent);
+                }
+                else {
+                    stream.Append(":}");
+                }
+            }
+            if (isLastOfStatement)
+                stream.Append(';');
+            writeLastComments(stream, data, indent, isLastOfStatement);
+#endif
+        }
+
+        public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        {
+#if FULL_VERSION
+            writeFirstComments(stream, data, indent, firstLineNoIndent);
+            FunctionData tempData = data.First;
+            CallData callData = tempData.Call;
+            if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
+                if (callData.HaveId() && callData.HaveParam() && tempData.HaveStatement()) {
+                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(true), callData.GetId(), tempData.GetStatement(0).ToScriptString(true));
+                    if (data.Functions.Count == 2) {
+                        FunctionData funcData = data.Functions[1];
+                        if (funcData.HaveId() && funcData.HaveStatement())
+                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(true));
+                    }
+                    writeText(stream, line, firstLineNoIndent ? 0 : indent);
+                }
+            }
+            else {
+                int ct = data.Functions.Count;
+                bool lastFuncNoParam = false;
+                bool lastFuncNoStatement = false;
+                for (int i = 0; i < ct; ++i) {
+                    FunctionData func = data.Functions[i];
+                    bool noIndent = false;
+                    bool funcNoParam = !func.HaveParam();
+                    bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
+                    if (i > 0) {
+                        if (lastFuncNoParam && lastFuncNoStatement) {
+                            writeText(stream, " ", 0);
+                            noIndent = true;
+                        }
+                        else if (lastFuncNoStatement && funcNoStatement) {
+                            noIndent = true;
+                        }
+                        else {
+                            writeLine(stream, string.Empty, 0);
+                            noIndent = false;
+                        }
+                    }
+                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false);
+                    lastFuncNoParam = funcNoParam;
+                    lastFuncNoStatement = funcNoStatement;
+                }
+            }
+            if (isLastOfStatement)
+                stream.Append(';');
+            writeLastComments(stream, data, indent, isLastOfStatement);
+#endif
+        }
+
         internal static bool needQuote(string str)
         {
             const string escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\'\"";
@@ -1447,307 +1730,6 @@ namespace Dsl
 #endif
         }
 
-        internal static void writeText(StringBuilder stream, string line, int indent)
-        {
-#if FULL_VERSION
-            for (int i = 0; i < indent; ++i) {
-                stream.Append('\t');
-            }
-            stream.Append(line);
-#endif
-        }
-
-        internal static void writeLine(StringBuilder stream, string line, int indent)
-        {
-#if FULL_VERSION
-            writeText(stream, line, indent);
-            stream.Append("\r\n");
-#endif
-        }
-
-        internal static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
-        {
-#if FULL_VERSION
-            ValueData val = data as ValueData;
-            if (null != val) {
-                writeValueData(stream, val, indent, firstLineNoIndent, isLastOfStatement);
-            }
-            else {
-                CallData call = data as CallData;
-                if (null != call) {
-                    writeCallData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
-                }
-                else {
-                    FunctionData function = data as FunctionData;
-                    if (null != function) {
-                        writeFunctionData(stream, function, indent, firstLineNoIndent, isLastOfStatement);
-                    }
-                    else {
-                        StatementData statement = data as StatementData;
-                        writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
-                    }
-                }
-            }
-#endif
-        }
-
-        internal static void writeValueData(StringBuilder stream, ValueData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
-        {
-#if FULL_VERSION
-            writeFirstComments(stream, data, indent, firstLineNoIndent);
-            writeText(stream, data.ToScriptString(false), firstLineNoIndent ? 0 : indent);
-            if (isLastOfStatement)
-                stream.Append(';');
-            writeLastComments(stream, data, indent, isLastOfStatement);
-#endif
-        }
-
-        internal static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
-        {
-#if FULL_VERSION
-            string lineNo = string.Format("/* {0} */", data.GetLine());
-            //writeLine(stream, lineNo, indent);
-            writeFirstComments(stream, data, indent, firstLineNoIndent);
-            if (data.HaveParam()) {
-                int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
-                if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
-                    int infix = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
-                    int paramNum = data.GetParamNum();
-                    if (paramNum == 1) {
-                        writeText(stream, " ", 0);
-                        if (data.IsHighOrder) {
-                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
-                        }
-                        else if (data.HaveId()) {
-                            string op = data.GetId();
-                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
-                                op = "`" + op;
-                            string line = quoteString(op, data.GetIdType());
-                            writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
-                        }
-                        writeText(stream, " ", 0);
-                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
-                    }
-                    else {
-                        if (paramNum > 0) {
-                            writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
-                            writeText(stream, " ", 0);
-                        }
-                        if (data.IsHighOrder) {
-                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
-                        }
-                        else if (data.HaveId()) {
-                            string op = data.GetId();
-                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
-                                op = "`" + op;
-                            string line = quoteString(op, data.GetIdType());
-                            writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
-                        }
-                        if (paramNum > 1) {
-                            writeText(stream, " ", 0);
-                            writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
-                        }
-                    }
-                }
-                else {
-                    if (data.IsHighOrder) {
-                        writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
-                    }
-                    else if (data.HaveId()) {
-                        string line = quoteString(data.GetId(), data.GetIdType());
-                        writeText(stream, line, firstLineNoIndent ? 0 : indent);
-                    }
-                    string lbracket = string.Empty;
-                    string rbracket = string.Empty;
-                    switch (paramClass) {
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
-                            lbracket = "(";
-                            rbracket = ")";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_BRACKET:
-                            lbracket = "[";
-                            rbracket = "]";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD:
-                            lbracket = ".";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
-                            lbracket = ".(";
-                            rbracket = ")";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
-                            lbracket = ".[";
-                            rbracket = "]";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
-                            lbracket = ".{";
-                            rbracket = "}";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
-                            lbracket = "?.";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
-                            lbracket = "?(";
-                            rbracket = ")";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
-                            lbracket = "?[";
-                            rbracket = "]";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
-                            lbracket = "?{";
-                            rbracket = "}";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER:
-                            lbracket = "->";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
-                            lbracket = ".*";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
-                            lbracket = "?.*";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
-                            lbracket = "->*";
-                            rbracket = string.Empty;
-                            break;
-                    }
-                    stream.Append(lbracket);
-                    int ct = data.GetParamNum();
-                    for (int i = 0; i < ct; ++i) {
-                        if (i > 0)
-                            stream.Append(",");
-                        ISyntaxComponent param = data.GetParam(i);
-                        if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
-                            stream.Append(param.ToScriptString(true));
-                        else
-                            writeSyntaxComponent(stream, param, indent, true, false);
-                    }
-                    stream.Append(rbracket);
-                }
-            }
-            else {
-                if (data.IsHighOrder) {
-                    writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
-                }
-                else if (data.HaveId()) {
-                    string line = quoteString(data.GetId(), data.GetIdType());
-                    writeText(stream, line, firstLineNoIndent ? 0 : indent);
-                }
-            }
-            if (isLastOfStatement)
-                stream.Append(';');
-            foreach (string cmt in data.Comments) {
-                writeText(stream, cmt, 1);
-            }
-            writeLastComments(stream, data, indent, isLastOfStatement);
-#endif
-        }
-
-        internal static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
-        {
-#if FULL_VERSION
-            writeFirstComments(stream, data, indent, firstLineNoIndent);
-            if (null != data.Call) {
-                writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
-            }
-            if (data.HaveStatement()) {
-                writeLine(stream, string.Empty, 0);
-                writeLine(stream, "{", indent);
-                ++indent;
-
-                int ct = data.GetStatementNum();
-                for (int i = 0; i < ct; ++i) {
-                    ISyntaxComponent tempData = data.GetStatement(i);
-                    writeSyntaxComponent(stream, tempData, indent, false, true);
-                }
-
-                --indent;
-                writeText(stream, "}", indent);
-            }
-            else if (data.HaveExternScript()) {
-                writeLine(stream, string.Empty, 0);
-                string script = data.GetExternScript();
-                if (script.IndexOf('\n') >= 0) {
-                    writeLine(stream, "{:", indent);
-                }
-                else {
-                    writeText(stream, "{:", indent);
-                }
-                stream.Append(script);
-                if (script.Length > 0 && script[script.Length - 1] == '\n') {
-                    writeText(stream, ":}", indent);
-                }
-                else {
-                    stream.Append(":}");
-                }
-            }
-            if (isLastOfStatement)
-                stream.Append(';');
-            writeLastComments(stream, data, indent, isLastOfStatement);
-#endif
-        }
-
-        internal static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
-        {
-#if FULL_VERSION
-            writeFirstComments(stream, data, indent, firstLineNoIndent);
-            FunctionData tempData = data.First;
-            CallData callData = tempData.Call;
-            if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
-                if (callData.HaveId() && callData.HaveParam() && tempData.HaveStatement()) {
-                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(true), callData.GetId(), tempData.GetStatement(0).ToScriptString(true));
-                    if (data.Functions.Count == 2) {
-                        FunctionData funcData = data.Functions[1];
-                        if (funcData.HaveId() && funcData.HaveStatement())
-                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(true));
-                    }
-                    writeText(stream, line, firstLineNoIndent ? 0 : indent);
-                }
-            }
-            else {
-                int ct = data.Functions.Count;
-                bool lastFuncNoParam = false;
-                bool lastFuncNoStatement = false;
-                for (int i = 0; i < ct; ++i) {
-                    FunctionData func = data.Functions[i];
-                    bool noIndent = false;
-                    bool funcNoParam = !func.HaveParam();
-                    bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
-                    if (i > 0) {
-                        if (lastFuncNoParam && lastFuncNoStatement) {
-                            writeText(stream, " ", 0);
-                            noIndent = true;
-                        }
-                        else if (lastFuncNoStatement && funcNoStatement) {
-                            noIndent = true;
-                        }
-                        else {
-                            writeLine(stream, string.Empty, 0);
-                            noIndent = false;
-                        }
-                    }
-                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false);
-                    lastFuncNoParam = funcNoParam;
-                    lastFuncNoStatement = funcNoStatement;
-                }
-            }
-            if (isLastOfStatement)
-                stream.Append(';');
-            writeLastComments(stream, data, indent, isLastOfStatement);
-#endif
-        }
-
         private static void writeFirstComments(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent)
         {
 #if FULL_VERSION
@@ -1799,6 +1781,24 @@ namespace Dsl
             else if (isLastOfStatement) {
                 writeLine(stream, string.Empty, 0);
             }
+#endif
+        }
+
+        private static void writeText(StringBuilder stream, string line, int indent)
+        {
+#if FULL_VERSION
+            for (int i = 0; i < indent; ++i) {
+                stream.Append('\t');
+            }
+            stream.Append(line);
+#endif
+        }
+
+        private static void writeLine(StringBuilder stream, string line, int indent)
+        {
+#if FULL_VERSION
+            writeText(stream, line, indent);
+            stream.Append("\r\n");
 #endif
         }
 

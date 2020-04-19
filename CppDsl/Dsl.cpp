@@ -694,18 +694,18 @@ namespace Dsl
     }
 
     //------------------------------------------------------------------------------------------------------------------------------------
-    void WriteIndent(FILE* fp, int indent)
+    static void WriteIndent(FILE* fp, int indent)
     {
         for (int i = 0; i < indent; ++i) {
             fwrite("\t", 1, 1, fp);
         }
     }
-    void WriteId(FILE* fp, const char* str, int indent)
+    static void WriteId(FILE* fp, const char* str, int indent)
     {
         WriteIndent(fp, indent);
         fprintf(fp, "%s", str);
     }
-    void WriteString(FILE* fp, const char* str, int indent)
+    static void WriteString(FILE* fp, const char* str, int indent)
     {
         const char* escapeChars = "\\\"";
         WriteIndent(fp, indent);
@@ -728,7 +728,7 @@ namespace Dsl
         }
         fwrite("\"", 1, 1, fp);
     }
-    void WriteComponent(FILE* fp, ISyntaxComponent& component, int indent, int firstLineNoIndent, int isLastOfStatement)
+    static void WriteComponent(FILE* fp, ISyntaxComponent& component, int indent, int firstLineNoIndent, int isLastOfStatement)
     {
         switch (component.GetSyntaxType()) {
         case ISyntaxComponent::TYPE_VALUE:
