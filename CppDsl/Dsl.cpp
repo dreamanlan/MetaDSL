@@ -549,12 +549,13 @@ namespace Dsl
             while (curCodeIndex < bytesLen) {
                 while (curCodeIndex < bufferSize) {
                     char b = buffer[bytesStart + curCodeIndex];
-                    if (b != (char)BinCode_BeginStatement && b != (char)BinCode_BeginFunction && b != (char)BinCode_BeginCall && b != (char)BinCode_BeginValue)
-                        ++curCodeIndex;
+                    if (b == (char)BinCode_BeginStatement || b == (char)BinCode_BeginFunction || b == (char)BinCode_BeginCall || b == (char)BinCode_BeginValue)
+                        break;
+                    ++curCodeIndex;
                 }
                 if (curCodeIndex < bytesLen) {
                     ISyntaxComponent* p = readBinary(*this, buffer, bufferSize, bytesStart, curCodeIndex, identifiers, idCount, curIdIndex);
-                    if (p->IsValid()) {
+                    if (0 != p && p->IsValid()) {
                         AddDslInfo(p);
                     }
                 }

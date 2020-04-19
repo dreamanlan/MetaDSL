@@ -1036,14 +1036,23 @@ namespace Dsl
         public void Save(string file)
         {
 #if FULL_VERSION
-            using (StreamWriter sw = new StreamWriter(file)) {
-                if (null != sw) {
-                    for (int i = 0; i < mDslInfos.Count; i++) {
-                        sw.Write(mDslInfos[i].ToScriptString(true));
-                    }
-                    sw.Close();
-                }
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mDslInfos.Count; i++) {
+                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, false);
             }
+            File.WriteAllText(file, sb.ToString());
+#endif
+        }
+        public string ToScriptString()
+        {
+#if FULL_VERSION
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mDslInfos.Count; i++) {
+                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, false);
+            }
+            return sb.ToString();
+#else
+            return ToString();
 #endif
         }
 
@@ -1272,9 +1281,9 @@ namespace Dsl
         private static byte[] sBinaryIdentity = null;
     };
 
-    public sealed class Utility
+    internal sealed class Utility
     {
-        public static bool needQuote(string str)
+        internal static bool needQuote(string str)
         {
             const string escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\'\"";
             if (str.Length == 0) {
@@ -1300,7 +1309,7 @@ namespace Dsl
             return false;
         }
 
-        public static string quoteString(string str, int _Type)
+        internal static string quoteString(string str, int _Type)
         {
             switch (_Type) {
                 case AbstractSyntaxComponent.STRING_TOKEN: {
@@ -1321,7 +1330,7 @@ namespace Dsl
             }
         }
 
-        public static string getCallString(CallData data, bool includeComment)
+        internal static string getCallString(CallData data, bool includeComment)
         {
 #if FULL_VERSION
             string lineNo = string.Empty;// string.Format("/* {0} */", data.GetLine());
@@ -1438,7 +1447,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeText(StringBuilder stream, string line, int indent)
+        internal static void writeText(StringBuilder stream, string line, int indent)
         {
 #if FULL_VERSION
             for (int i = 0; i < indent; ++i) {
@@ -1448,7 +1457,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeLine(StringBuilder stream, string line, int indent)
+        internal static void writeLine(StringBuilder stream, string line, int indent)
         {
 #if FULL_VERSION
             writeText(stream, line, indent);
@@ -1456,7 +1465,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        internal static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             ValueData val = data as ValueData;
@@ -1482,7 +1491,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeValueData(StringBuilder stream, ValueData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        internal static void writeValueData(StringBuilder stream, ValueData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             writeFirstComments(stream, data, indent, firstLineNoIndent);
@@ -1493,7 +1502,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        internal static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             string lineNo = string.Format("/* {0} */", data.GetLine());
@@ -1645,7 +1654,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        internal static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             writeFirstComments(stream, data, indent, firstLineNoIndent);
@@ -1689,7 +1698,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        internal static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             writeFirstComments(stream, data, indent, firstLineNoIndent);
@@ -1815,12 +1824,13 @@ namespace Dsl
             while (curCodeIndex < count) {
                 while (curCodeIndex < count) {
                     byte b = bytes[start + curCodeIndex];
-                    if (b != (byte)DslBinaryCode.BeginStatement && b != (byte)DslBinaryCode.BeginFunction && b != (byte)DslBinaryCode.BeginCall && b != (byte)DslBinaryCode.BeginValue)
-                        ++curCodeIndex;
+                    if (b == (byte)DslBinaryCode.BeginStatement || b == (byte)DslBinaryCode.BeginFunction || b == (byte)DslBinaryCode.BeginCall || b == (byte)DslBinaryCode.BeginValue)
+                        break;
+                    ++curCodeIndex;
                 }
                 if (curCodeIndex < count) {
                     ISyntaxComponent info = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
-                    if (info.IsValid()) {
+                    if (null != info && info.IsValid()) {
                         infos.Add(info);
                     }
                 }
