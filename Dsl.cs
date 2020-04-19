@@ -1158,7 +1158,7 @@ namespace Dsl
                     Write7BitEncodedInt(bdsl, bstr.Length);
                     bdsl.Write(bstr, 0, bstr.Length);
                 }
-                using(FileStream fs = new FileStream(file, FileMode.Create)) {
+                using (FileStream fs = new FileStream(file, FileMode.Create)) {
                     fs.Write(bdsl.GetBuffer(), 0, (int)bdsl.Length);
                     fs.Close();
                 }
@@ -1813,8 +1813,11 @@ namespace Dsl
             int curCodeIndex = 0;
             int curIdIndex = 0;
             while (curCodeIndex < count) {
-                while (curCodeIndex < count && bytes[start + curCodeIndex] != (byte)DslBinaryCode.BeginStatement)
-                    ++curCodeIndex;
+                while (curCodeIndex < count) {
+                    byte b = bytes[start + curCodeIndex];
+                    if (b != (byte)DslBinaryCode.BeginStatement && b != (byte)DslBinaryCode.BeginFunction && b != (byte)DslBinaryCode.BeginCall && b != (byte)DslBinaryCode.BeginValue)
+                        ++curCodeIndex;
+                }
                 if (curCodeIndex < count) {
                     ISyntaxComponent info = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
                     if (info.IsValid()) {

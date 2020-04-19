@@ -547,8 +547,11 @@ namespace Dsl
             int curCodeIndex = 0;
             int curIdIndex = 0;
             while (curCodeIndex < bytesLen) {
-                while (curCodeIndex < bytesLen && buffer[bytesStart + curCodeIndex] != (char)BinCode_BeginStatement)
-                    ++curCodeIndex;
+                while (curCodeIndex < bufferSize) {
+                    char b = buffer[bytesStart + curCodeIndex];
+                    if (b != (char)BinCode_BeginStatement && b != (char)BinCode_BeginFunction && b != (char)BinCode_BeginCall && b != (char)BinCode_BeginValue)
+                        ++curCodeIndex;
+                }
                 if (curCodeIndex < bytesLen) {
                     ISyntaxComponent* p = readBinary(*this, buffer, bufferSize, bytesStart, curCodeIndex, identifiers, idCount, curIdIndex);
                     if (p->IsValid()) {
