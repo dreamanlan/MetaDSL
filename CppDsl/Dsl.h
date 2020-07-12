@@ -221,14 +221,14 @@ namespace Dsl
             TYPE_NUM,
             TYPE_STRING,
             TYPE_BOOL,
-            TYPE_CALL_DATA,
+            TYPE_FUNCTION,
             TYPE_MAX = TYPE_BOOL
         };
 
         ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
         explicit ValueData(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
-        explicit ValueData(FunctionData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL_DATA), m_FunctionData(val), m_Line(0) {}
+        explicit ValueData(FunctionData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
         explicit ValueData(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
         ValueData(const ValueData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
@@ -251,13 +251,13 @@ namespace Dsl
         virtual int GetLine(void)const { return m_Line; }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 
-        FunctionData* GetFunctionData(void)const { return m_FunctionData; }
+        FunctionData* GetFunction(void)const { return m_FunctionVal; }
 
         bool HaveId()const { return IsValid(); }
         int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
         int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
         int IsIdentifier(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
-        int IsCallData(void)const { return (m_Type == TYPE_CALL_DATA ? TRUE : FALSE); }
+        int IsFunction(void)const { return (m_Type == TYPE_FUNCTION ? TRUE : FALSE); }
 
         void SetInvalid(void)
         {
@@ -294,10 +294,10 @@ namespace Dsl
             m_Type = TYPE_BOOL;
             m_ConstStringVal = str;
         }
-        void SetFunctionData(FunctionData* func)
+        void SetFunction(FunctionData* func)
         {
-            m_Type = TYPE_CALL_DATA;
-            m_FunctionData = func;
+            m_Type = TYPE_FUNCTION;
+            m_FunctionVal = func;
         }
         void SetIdentifier(char* name)
         {
@@ -326,7 +326,7 @@ namespace Dsl
         {
             char* m_StringVal;
             const char* m_ConstStringVal;//在脚本里与m_StringVal类型相同,用于实现自动const_cast
-            FunctionData* m_FunctionData;
+            FunctionData* m_FunctionVal;
         };
         int m_Line;
     public:
@@ -430,15 +430,24 @@ namespace Dsl
         int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
         int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
         int HaveExternScript(void)const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT ? TRUE : FALSE; }
-        int IsHighOrder(void)const { return m_Name.IsCallData(); }
+        int IsHighOrder(void)const { return m_Name.IsFunction(); }
         int HaveLowerOrderParam(void)const
         {
             if (IsHighOrder()) {
-                const FunctionData* p = m_Name.GetFunctionData();
+                const FunctionData* p = m_Name.GetFunction();
                 return p->HaveParamOrStatement();
             }
             else {
                 return FALSE;
+            }
+        }
+        FunctionData* GetLowerOrderFunction(void)const
+        {
+            if (IsHighOrder()) {
+                return m_Name.GetFunction();
+            }
+            else {
+                return 0;
             }
         }
     public:

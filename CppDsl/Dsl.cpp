@@ -768,8 +768,8 @@ namespace Dsl
                 ISyntaxComponent& component0 = *GetParam(0);
                 WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
                 fwrite(" ", 1, 1, fp);
-                if (IsHighOrder() && NULL != m_Name.GetFunctionData()) {
-                    FunctionData& call = *m_Name.GetFunctionData();
+                if (IsHighOrder() && NULL != m_Name.GetFunction()) {
+                    FunctionData& call = *m_Name.GetFunction();
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
@@ -784,8 +784,8 @@ namespace Dsl
             }
             else {
                 fwrite(" ", 1, 1, fp);
-                if (IsHighOrder() && NULL != m_Name.GetFunctionData()) {
-                    FunctionData& call = *m_Name.GetFunctionData();
+                if (IsHighOrder() && NULL != m_Name.GetFunction()) {
+                    FunctionData& call = *m_Name.GetFunction();
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
@@ -800,8 +800,8 @@ namespace Dsl
             }
         }
         else {
-            if (IsHighOrder() && NULL != m_Name.GetFunctionData()) {
-                const FunctionData& lowerOrderFunction = *m_Name.GetFunctionData();
+            if (IsHighOrder() && NULL != m_Name.GetFunction()) {
+                const FunctionData& lowerOrderFunction = *m_Name.GetFunction();
                 lowerOrderFunction.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
             }
             else {
@@ -809,7 +809,7 @@ namespace Dsl
             }
             if (HaveStatement() || HaveExternScript()) {
                 if (IsHighOrder()) {
-                    const FunctionData& lowerOrderFunction = *m_Name.GetFunctionData();
+                    const FunctionData& lowerOrderFunction = *m_Name.GetFunction();
                     lowerOrderFunction.WriteLastCommentsToFile(fp, indent, isLastOfStatement);
                 }
                 else if (HaveId()) {
@@ -927,7 +927,7 @@ namespace Dsl
         FunctionData* func1 = GetFunction(0);
         FunctionData* func2 = GetFunction(1);
         if (num == 2 && NULL != func1 && NULL != func2 && func1->GetParamClass() == FunctionData::PARAM_CLASS_TERNARY_OPERATOR && func2->GetParamClass() == FunctionData::PARAM_CLASS_TERNARY_OPERATOR) {
-            FunctionData* lowerOrderFunc = func1->GetName().GetFunctionData();
+            FunctionData* lowerOrderFunc = func1->GetName().GetFunction();
             ISyntaxComponent* pcomp0 = 0;
             if (0 != lowerOrderFunc)
                 pcomp0 = lowerOrderFunc->GetParam(0);
@@ -1033,7 +1033,7 @@ namespace Dsl
                 FunctionData* p = file.AddNewFunctionComponent();
                 readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
                 ValueData& name = data.GetName();
-                name.SetFunctionData(p);
+                name.SetFunction(p);
             }
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
@@ -1111,7 +1111,7 @@ namespace Dsl
         s[pos++] = (char)((int)BinCode_ParamOrExternClassBegin + data.GetParamClass());
         if (data.IsHighOrder()) {
             const ValueData& name = data.GetName();
-            writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetFunctionData());
+            writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetFunction());
         }
         else {
             writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, data.GetName());

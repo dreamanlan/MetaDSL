@@ -130,7 +130,7 @@ namespace Dsl
         if (0 != p) {
             //三元运算符表示成op1(cond)(true_val)op2(false_val)
             FunctionData* lowerOrderFunction= mDataFile->AddNewFunctionComponent();
-            p->GetName().SetFunctionData(lowerOrderFunction);
+            p->GetName().SetFunction(lowerOrderFunction);
             p->SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
             lowerOrderFunction->SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
 
@@ -567,7 +567,7 @@ namespace Dsl
             return;
         FunctionData* lowerOrderFunc = 0;
         if (p->IsHighOrder()) {
-            lowerOrderFunc = p->GetName().GetFunctionData();
+            lowerOrderFunc = p->GetName().GetFunction();
         }
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
@@ -593,7 +593,7 @@ namespace Dsl
             return;
         FunctionData* lowerOrderFunc = 0;
         if (p->IsHighOrder()) {
-            lowerOrderFunc = p->GetName().GetFunctionData();
+            lowerOrderFunc = p->GetName().GetFunction();
         }
         int commentOnNewLine;
         int num = mThis->getCommentNum(commentOnNewLine);
