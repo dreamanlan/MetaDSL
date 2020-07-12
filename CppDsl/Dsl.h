@@ -31,10 +31,11 @@ namespace Dsl
     {
         MAX_ERROR_INFO_CAPACITY = 256,
         MAX_RECORD_ERROR_NUM = 16,
-        MAX_FUNCTION_PARAM_NUM = 32,
 
+        INIT_FUNCTION_PARAM = 1,
         DELTA_FUNCTION_PARAM = 2,
-        DELTA_FUNCTION_STATEMENT = 8,
+        DELTA_FUNCTION_STATEMENT = 16,
+        INIT_STATEMENT_FUNCTION = 1,
         DELTA_STATEMENT_FUNCTION = 1,
         DELTA_COMMENT = 2,
     };
@@ -42,7 +43,7 @@ namespace Dsl
     enum
     {
         MAX_FUNCTION_DIMENSION_NUM = 8,
-        MAX_STATEMENT_NUM = 1024,
+        MAX_FUNCTION_PARAM_NUM = 1024,
         MAX_PROGRAM_SIZE = 16 * 1024,
         STRING_BUFFER_SIZE = 1024 * 1024,
         SYNTAXCOMPONENT_POOL_SIZE = 16 * 1024,
@@ -53,7 +54,7 @@ namespace Dsl
     public:
         DslOptions(void) :
             m_MaxFunctionDimensionNum(MAX_FUNCTION_DIMENSION_NUM),
-            m_MaxStatementNum(MAX_STATEMENT_NUM),
+            m_MaxParamNum(MAX_FUNCTION_PARAM_NUM),
             m_MaxProgramSize(MAX_PROGRAM_SIZE),
             m_StringBufferSize(STRING_BUFFER_SIZE),
             m_SyntaxComponentPoolSize(SYNTAXCOMPONENT_POOL_SIZE)
@@ -62,8 +63,8 @@ namespace Dsl
     public:
         int GetMaxFunctionDimensionNum() const { return m_MaxFunctionDimensionNum; }
         void SetMaxFunctionDimensionNum(int val) { m_MaxFunctionDimensionNum = val; }
-        int GetMaxStatementNum() const { return m_MaxStatementNum; }
-        void SetMaxStatementNum(int val) { m_MaxStatementNum = val; }
+        int GetMaxParamNum() const { return m_MaxParamNum; }
+        void SetMaxParamNum(int val) { m_MaxParamNum = val; }
         int GetMaxProgramSize() const { return m_MaxProgramSize; }
         void SetMaxProgramSize(int val) { m_MaxProgramSize = val; }
         int GetStringBufferSize() const { return m_StringBufferSize; }
@@ -72,7 +73,7 @@ namespace Dsl
         void SetSyntaxComponentPoolSize(int val) { m_SyntaxComponentPoolSize = val; }
     private:
         int	m_MaxFunctionDimensionNum;
-        int	m_MaxStatementNum;
+        int	m_MaxParamNum;
         int	m_MaxProgramSize;
         int	m_StringBufferSize;
         int m_SyntaxComponentPoolSize;
@@ -85,7 +86,6 @@ namespace Dsl
         {
             TYPE_NULL,
             TYPE_VALUE,
-            TYPE_CALL_DATA,
             TYPE_FUNCTION,
             TYPE_STATEMENT,
         };
@@ -189,10 +189,11 @@ namespace Dsl
                 }
             }
         }
-    protected:
-        void CopyFrom(const ISyntaxComponent& other);
+    public:
         void WriteFirstCommentsToFile(FILE* fp, int indent, int firstLineNoIndent) const;
         void WriteLastCommentsToFile(FILE* fp, int indent, int isLastOfStatement) const;
+    protected:
+        void CopyFrom(const ISyntaxComponent& other);
     private:
         void PrepareFirstComments(void);
         void ReleaseFirstComments(void);
@@ -210,7 +211,7 @@ namespace Dsl
         int m_LastCommentOnNewLine;
     };
 
-    class CallData;
+    class FunctionData;
     class ValueData : public ISyntaxComponent
     {
     public:
@@ -227,17 +228,19 @@ namespace Dsl
         ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
         explicit ValueData(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
-        explicit ValueData(CallData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL_DATA), m_CallData(val), m_Line(0) {}
+        explicit ValueData(FunctionData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_CALL_DATA), m_FunctionData(val), m_Line(0) {}
         explicit ValueData(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
         ValueData(const ValueData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
         {
+            ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
         }
         ValueData& operator=(const ValueData& other)
         {
             if (this == &other)
                 return *this;
+            ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
             return *this;
         }
@@ -248,7 +251,7 @@ namespace Dsl
         virtual int GetLine(void)const { return m_Line; }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 
-        CallData* GetCallData(void)const { return m_CallData; }
+        FunctionData* GetFunctionData(void)const { return m_FunctionData; }
 
         bool HaveId()const { return IsValid(); }
         int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
@@ -291,10 +294,10 @@ namespace Dsl
             m_Type = TYPE_BOOL;
             m_ConstStringVal = str;
         }
-        void SetCallData(CallData* func)
+        void SetFunctionData(FunctionData* func)
         {
             m_Type = TYPE_CALL_DATA;
-            m_CallData = func;
+            m_FunctionData = func;
         }
         void SetIdentifier(char* name)
         {
@@ -323,7 +326,7 @@ namespace Dsl
         {
             char* m_StringVal;
             const char* m_ConstStringVal;//在脚本里与m_StringVal类型相同,用于实现自动const_cast
-            CallData* m_CallData;
+            FunctionData* m_FunctionData;
         };
         int m_Line;
     public:
@@ -356,7 +359,8 @@ namespace Dsl
         }
     };
 
-    class CallData : public ISyntaxComponent
+    class DslFile;
+    class FunctionData : public ISyntaxComponent
     {
     public:
         enum
@@ -373,6 +377,8 @@ namespace Dsl
             PARAM_CLASS_QUESTION_BRACKET,
             PARAM_CLASS_QUESTION_BRACE,
             PARAM_CLASS_POINTER,
+            PARAM_CLASS_STATEMENT,
+            PARAM_CLASS_EXTERN_SCRIPT,
             PARAM_CLASS_PERIOD_STAR,
             PARAM_CLASS_QUESTION_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,
@@ -388,7 +394,7 @@ namespace Dsl
         {
             if (HaveId())
                 return TRUE;
-            else if (HaveParam())
+            else if (HaveParamOrStatement())
                 return TRUE;
             else
                 return FALSE;
@@ -403,7 +409,7 @@ namespace Dsl
         void ClearParams(void) { m_ParamNum = 0; }
         void AddParam(ISyntaxComponent*	pVal)
         {
-            if (0 == pVal || m_ParamNum < 0 || m_ParamNum >= MAX_FUNCTION_PARAM_NUM)
+            if (0 == pVal || m_ParamNum < 0 || m_ParamNum >= m_MaxParamNum)
                 return;
             PrepareParams();
             if (0 == m_Params || m_ParamNum >= m_ParamSpace)
@@ -413,27 +419,40 @@ namespace Dsl
         }
         void SetParam(int index, ISyntaxComponent* pVal)
         {
-            if (NULL == pVal || index < 0 || index >= MAX_FUNCTION_PARAM_NUM)
+            if (NULL == pVal || index < 0 || index >= m_MaxParamNum)
                 return;
             m_Params[index] = pVal;
         }
         void SetParamClass(int v) { m_ParamClass = v; }
         int GetParamClass(void)const { return m_ParamClass; }
         int HaveId(void)const { return m_Name.HaveId(); }
-        int HaveParam(void)const { return m_ParamClass != PARAM_CLASS_NOTHING; }
+        int HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
+        int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
+        int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
+        int HaveExternScript(void)const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT ? TRUE : FALSE; }
         int IsHighOrder(void)const { return m_Name.IsCallData(); }
+        int HaveLowerOrderParam(void)const
+        {
+            if (IsHighOrder()) {
+                const FunctionData* p = m_Name.GetFunctionData();
+                return p->HaveParamOrStatement();
+            }
+            else {
+                return FALSE;
+            }
+        }
     public:
         const ValueData& GetName(void)const { return m_Name; }
         int GetParamNum(void)const { return m_ParamNum; }
         ISyntaxComponent* GetParam(int index)const
         {
-            if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= MAX_FUNCTION_PARAM_NUM)
+            if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= m_MaxParamNum)
                 return 0;
             return m_Params[index];
         }
         const char* GetParamId(int index)const
         {
-            if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= MAX_FUNCTION_PARAM_NUM)
+            if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= m_MaxParamNum)
                 return 0;
             return m_Params[index]->GetId();
         }
@@ -469,12 +488,12 @@ namespace Dsl
             }
         }
     public:
-        CallData(void);
-        virtual ~CallData(void);
-        CallData(const CallData& other);
-        CallData operator=(const CallData& other);
+        FunctionData(DslFile& dataFile);
+        virtual ~FunctionData(void);
     private:
-        void CopyFrom(const CallData& other);
+        FunctionData(const FunctionData& other) = delete;
+        FunctionData operator=(const FunctionData& other) = delete;
+    private:
         void PrepareParams(void);
         void ReleaseParams(void);
         void PrepareComments(void);
@@ -484,98 +503,11 @@ namespace Dsl
         ISyntaxComponent**	m_Params;
         int m_ParamNum;
         int m_ParamSpace;
+        int m_MaxParamNum;
         int m_ParamClass;
         const char** m_Comments;
         int m_CommentNum;
         int m_CommentSpace;
-    public:
-        static CallData*& GetNullCallPtrRef(void)
-        {
-            static CallData* s_P = 0;
-            return s_P;
-        }
-    };
-
-    class DslFile;
-    class FunctionData : public ISyntaxComponent
-    {
-    public:
-        enum
-        {
-            EXTENT_CLASS_NOTHING = 0,
-            EXTENT_CLASS_STATEMENT,
-            EXTENT_CLASS_EXTERN_SCRIPT,
-            EXTENT_CLASS_MAX,
-        };
-        typedef ISyntaxComponent* SyntaxComponentPtr;
-    public:
-        virtual int IsValid(void)const
-        {
-            if (m_CallData.IsValid())
-                return TRUE;
-            else if (HaveStatement() || HaveExternScript())
-                return TRUE;
-            else
-                return FALSE;
-        }
-        virtual int GetIdType(void)const { return m_CallData.GetIdType(); }
-        virtual const char* GetId(void)const { return m_CallData.GetId(); }
-        virtual int GetLine(void)const { return m_CallData.GetLine(); }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-    public:
-        void SetCallData(const CallData& val) { m_CallData = val; }
-        CallData& GetCallData(void) { return m_CallData; }
-        void ClearStatements(void) { m_StatementNum = 0; }
-        void AddStatement(ISyntaxComponent* pVal)
-        {
-            if (0 == pVal || m_StatementNum < 0 || m_StatementNum >= m_MaxStatementNum)
-                return;
-            PrepareStatements();
-            if (0 == m_Statements || m_StatementNum >= m_StatementSpace)
-                return;
-            m_Statements[m_StatementNum] = pVal;
-            ++m_StatementNum;
-        }
-        void SetStatement(int index, ISyntaxComponent* pVal)
-        {
-            if (NULL == pVal || index < 0 || index >= m_MaxStatementNum)
-                return;
-            m_Statements[index] = pVal;
-        }
-        void SetExternScript(const char* scp) { m_ExternScript = scp; }
-        void SetExtentClass(int v) { m_ExtentClass = v; }
-        int GetExtentClass(void)const { return m_ExtentClass; }
-        int HaveId(void)const { return m_CallData.HaveId(); }
-        int HaveParam(void)const { return m_CallData.HaveParam(); }
-        int HaveStatement(void)const { return m_ExtentClass == EXTENT_CLASS_STATEMENT; }
-        int HaveExternScript(void)const { return m_ExtentClass == EXTENT_CLASS_EXTERN_SCRIPT; }
-    public:
-        const CallData&	GetCallData(void)const { return m_CallData; }
-        int GetStatementNum(void)const { return m_StatementNum; }
-        ISyntaxComponent* GetStatement(int index)const
-        {
-            if (0 == m_Statements || index < 0 || index >= m_StatementNum || index >= m_MaxStatementNum)
-                return 0;
-            return m_Statements[index];
-        }
-        const char*	GetExternScript(void)const { return m_ExternScript; }
-    public:
-        FunctionData(DslFile& dataFile);
-        virtual ~FunctionData(void);
-    private:
-        FunctionData(const FunctionData&) = delete;
-        FunctionData& operator=(const FunctionData&) = delete;
-    private:
-        void PrepareStatements(void);
-        void ReleaseStatements(void);
-    private:
-        CallData m_CallData;
-        ISyntaxComponent** m_Statements;
-        int m_StatementNum;
-        int m_StatementSpace;
-        int m_MaxStatementNum;
-        const char* m_ExternScript;
-        int m_ExtentClass;
     public:
         static FunctionData*& GetNullFunctionPtrRef(void)
         {
@@ -583,9 +515,9 @@ namespace Dsl
             return s_P;
         }
     };
-
+    
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
-     * 1、虽然语法上这里的FunctionData可以退化为CallData与ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
+     * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
      * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
      */
     class StatementData : public ISyntaxComponent
@@ -753,7 +685,6 @@ namespace Dsl
     public:
         void AddDslInfo(ISyntaxComponent* p);
         ValueData* AddNewValueComponent(void);
-        CallData* AddNewCallComponent(void);
         FunctionData* AddNewFunctionComponent(void);
         StatementData* AddNewStatementComponent(void);
     private:

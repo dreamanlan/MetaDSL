@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
 		p += 3;
 	}
 	Dsl::DslFile dataFile;
+    //dataFile.EnableDebugInfo();
 	dataFile.Parse(p);
 	FILE* fp2 = fopen("copy.txt", "wb");
 	dataFile.WriteToFile(fp2, 0);

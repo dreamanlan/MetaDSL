@@ -31,8 +31,9 @@ void CompileTest_ByteCode(void)
 	builder.endFunction();
 	builder.endStatement();
 	builder.markBracketParam();
-	builder.markHaveExternScript();
-	builder.markHaveStatement();
+	builder.markStatement();
+	builder.markExternScript();
+	builder.setExternScript();
 	builder.markParenthesisParam();
 	builder.markPeriodBraceParam();
 	builder.markPeriodBracketParam();
@@ -40,7 +41,18 @@ void CompileTest_ByteCode(void)
 	builder.markPeriodParenthesisParam();
 	builder.setMemberId();
 	builder.setCanFinish(false);
-	builder.setExternScript();
 	builder.setFunctionId();
 	builder.setMemberId();
+    builder.markPeriod();
+    builder.markOperator();
+    builder.markQuestion();
+    builder.markQuestionPeriodParam();
+    builder.markQuestionParenthesisParam();
+    builder.markQuestionBracketParam();
+    builder.markQuestionBraceParam();
+    builder.markPointer();
+    builder.markPointerParam();
+    builder.markPeriodStarParam();
+    builder.markQuestionPeriodStarParam();
+    builder.markPointerStarParam();
 }

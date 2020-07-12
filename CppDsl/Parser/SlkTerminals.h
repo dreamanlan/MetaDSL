@@ -31,9 +31,6 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ OP_TOKEN_14_, "OP_TOKEN_14" } 
 ,{ OP_TOKEN_15_, "OP_TOKEN_15" } 
 ,{ OP_TOKEN_16_, "OP_TOKEN_16" } 
-,{ LBRACE_, "{" } 
-,{ RBRACE_, "}" } 
-,{ SCRIPT_CONTENT_, "SCRIPT_CONTENT" } 
 ,{ LPAREN_, "(" } 
 ,{ RPAREN_, ")" } 
 ,{ LBRACK_, "[" } 
@@ -43,10 +40,13 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ QUESTION_PARENTHESIS_, "QUESTION_PARENTHESIS" } 
 ,{ QUESTION_BRACKET_, "QUESTION_BRACKET" } 
 ,{ QUESTION_BRACE_, "QUESTION_BRACE" } 
+,{ RBRACE_, "}" } 
 ,{ POINTER_, "POINTER" } 
 ,{ PERIOD_STAR_, "PERIOD_STAR" } 
 ,{ QUESTION_PERIOD_STAR_, "QUESTION_PERIOD_STAR" } 
 ,{ POINTER_STAR_, "POINTER_STAR" } 
+,{ LBRACE_, "{" } 
+,{ SCRIPT_CONTENT_, "SCRIPT_CONTENT" } 
 ,{ IDENTIFIER_, "IDENTIFIER" } 
 ,{ STRING_, "STRING" } 
 ,{ NUMBER_, "NUMBER" } 

@@ -24,7 +24,6 @@ public static string[] name = {
 ,"OP_TOKEN_14"
 ,"OP_TOKEN_15"
 ,"OP_TOKEN_16"
-,"SCRIPT_CONTENT"
 ,"QUESTION_PERIOD"
 ,"QUESTION_PARENTHESIS"
 ,"QUESTION_BRACKET"
@@ -33,6 +32,7 @@ public static string[] name = {
 ,"PERIOD_STAR"
 ,"QUESTION_PERIOD_STAR"
 ,"POINTER_STAR"
+,"SCRIPT_CONTENT"
 ,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
@@ -59,7 +59,6 @@ public  short[] token = {
 ,DslConstants.OP_TOKEN_14_ 
 ,DslConstants.OP_TOKEN_15_ 
 ,DslConstants.OP_TOKEN_16_ 
-,DslConstants.SCRIPT_CONTENT_ 
 ,DslConstants.QUESTION_PERIOD_ 
 ,DslConstants.QUESTION_PARENTHESIS_ 
 ,DslConstants.QUESTION_BRACKET_ 
@@ -68,6 +67,7 @@ public  short[] token = {
 ,DslConstants.PERIOD_STAR_ 
 ,DslConstants.QUESTION_PERIOD_STAR_ 
 ,DslConstants.POINTER_STAR_ 
+,DslConstants.SCRIPT_CONTENT_ 
 ,DslConstants.IDENTIFIER_ 
 ,DslConstants.STRING_ 
 ,DslConstants.NUMBER_ 

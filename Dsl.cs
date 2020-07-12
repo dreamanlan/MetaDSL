@@ -12,12 +12,8 @@ namespace Dsl
         EndStatement,
         BeginFunction,
         EndFunction,
-        BeginCall,
-        EndCall,
         BeginValue,
         EndValue,
-        BeginExternScript,
-        EndExternScript,
         ValueTypeBegin,
         ValueTypeEnd = ValueTypeBegin + ValueData.MAX_TYPE,
         ParamOrExternClassBegin
@@ -274,9 +270,9 @@ namespace Dsl
         private int m_Line = -1;
     }
     /// <summary>
-    /// 函数调用数据，可能出现在函数头、参数表与函数语句列表中。
+    /// 函数数据，可能出现在函数头、参数表中。
     /// </summary>
-    public class CallData : AbstractSyntaxComponent
+    public class FunctionData : AbstractSyntaxComponent
     {
         public enum ParamClassEnum
         {
@@ -293,6 +289,8 @@ namespace Dsl
             PARAM_CLASS_QUESTION_BRACKET,
             PARAM_CLASS_QUESTION_BRACE,
             PARAM_CLASS_POINTER,
+            PARAM_CLASS_STATEMENT,
+            PARAM_CLASS_EXTERN_SCRIPT,
             PARAM_CLASS_PERIOD_STAR,
             PARAM_CLASS_QUESTION_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,
@@ -304,14 +302,14 @@ namespace Dsl
         }
         public override bool IsValid()
         {
-            return HaveId() || HaveParam();
+            return HaveId() || HaveParamOrStatement();
         }
         public override string GetId()
         {
             if (null != m_Name)
                 return m_Name.GetId();
-            else if (null != m_Call)
-                return m_Call.GetId();
+            else if (null != m_LowerOrderFunction)
+                return m_LowerOrderFunction.GetId();
             else
                 return string.Empty;
         }
@@ -319,8 +317,8 @@ namespace Dsl
         {
             if (null != m_Name)
                 return m_Name.GetIdType();
-            else if (null != m_Call)
-                return m_Call.GetIdType();
+            else if (null != m_LowerOrderFunction)
+                return m_LowerOrderFunction.GetIdType();
             else
                 return ID_TOKEN;
         }
@@ -328,8 +326,8 @@ namespace Dsl
         {
             if (null != m_Name)
                 return m_Name.GetLine();
-            else if (null != m_Call)
-                return m_Call.GetLine();
+            else if (null != m_LowerOrderFunction)
+                return m_LowerOrderFunction.GetLine();
             else
                 return -1;
         }
@@ -338,8 +336,8 @@ namespace Dsl
             if (null == m_Comments)
                 return string.Empty;
             string cmt = string.Join(string.Empty, m_Comments.ToArray());
-            if (null != m_Call) {
-                cmt = m_Call.CalcComment() + cmt;
+            if (null != m_LowerOrderFunction && !HaveStatement() && !HaveExternScript()) {
+                cmt = m_LowerOrderFunction.CalcComment() + cmt;
             }
             return cmt;
         }
@@ -347,10 +345,10 @@ namespace Dsl
         {
 #if FULL_VERSION
             if (includeComment) {
-                return CalcFirstComment() + Utility.getCallString(this, true) + CalcComment() + CalcLastComment();
+                return CalcFirstComment() + Utility.getFunctionString(this, true) + CalcComment() + CalcLastComment();
             }
             else {
-                return Utility.getCallString(this, true);
+                return Utility.getFunctionString(this, true);
             }
 #else
       return ToString();
@@ -384,16 +382,16 @@ namespace Dsl
             get { return m_Name; }
             set {
                 m_Name = value;
-                m_Call = null;
+                m_LowerOrderFunction = null;
                 m_IsHighOrder = false;
             }
         }
-        public CallData Call
+        public FunctionData LowerOrderFunction
         {
-            get { return m_Call; }
+            get { return m_LowerOrderFunction; }
             set {
                 m_Name = null;
-                m_Call = value;
+                m_LowerOrderFunction = value;
                 m_IsHighOrder = true;
             }
         }
@@ -410,8 +408,8 @@ namespace Dsl
         {
             if (null != m_Name)
                 return m_Name.HaveId();
-            else if (null != m_Call)
-                return m_Call.HaveId();
+            else if (null != m_LowerOrderFunction)
+                return m_LowerOrderFunction.HaveId();
             else
                 return false;
         }
@@ -426,9 +424,28 @@ namespace Dsl
         {
             return m_ParamClass;
         }
-        public bool HaveParam()
+        public bool HaveParamOrStatement()
         {
             return (int)ParamClassEnum.PARAM_CLASS_NOTHING != m_ParamClass;
+        }
+        public bool HaveParam()
+        {
+            return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript();
+        }
+        public bool HaveStatement()
+        {
+            return (int)ParamClassEnum.PARAM_CLASS_STATEMENT == m_ParamClass;
+        }
+        public bool HaveExternScript()
+        {
+            return (int)ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT == m_ParamClass;
+        }
+        public bool HaveLowerOrderParam()
+        {
+            if (IsHighOrder)
+                return LowerOrderFunction.HaveParamOrStatement();
+            else
+                return false;
         }
         public int GetParamNum()
         {
@@ -465,7 +482,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Clear();
         }
-        public void AddParams(string id)
+        public void AddParam(string id)
         {
             PrepareParams();
             m_Params.Add(new ValueData(id));
@@ -473,7 +490,7 @@ namespace Dsl
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
             }
         }
-        public void AddParams(string id, int type)
+        public void AddParam(string id, int type)
         {
             PrepareParams();
             m_Params.Add(new ValueData(id, type));
@@ -481,7 +498,7 @@ namespace Dsl
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
             }
         }
-        public void AddParams(ValueData param)
+        public void AddParam(ValueData param)
         {
             PrepareParams();
             m_Params.Add(param);
@@ -489,7 +506,7 @@ namespace Dsl
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
             }
         }
-        public void AddParams(CallData param)
+        public void AddParam(FunctionData param)
         {
             PrepareParams();
             m_Params.Add(param);
@@ -497,7 +514,7 @@ namespace Dsl
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
             }
         }
-        public void AddParams(FunctionData param)
+        public void AddParam(StatementData param)
         {
             PrepareParams();
             m_Params.Add(param);
@@ -505,15 +522,7 @@ namespace Dsl
                 m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
             }
         }
-        public void AddParams(StatementData param)
-        {
-            PrepareParams();
-            m_Params.Add(param);
-            if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
-            }
-        }
-        public void AddParams(ISyntaxComponent param)
+        public void AddParam(ISyntaxComponent param)
         {
             PrepareParams();
             m_Params.Add(param);
@@ -524,18 +533,24 @@ namespace Dsl
         public void Clear()
         {
             m_Name = null;
-            m_Call = null;
+            m_LowerOrderFunction = null;
             m_IsHighOrder = false;
             m_Params = null;
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
+
+            m_Comments = null;
         }
-        public void CopyFrom(CallData other)
+        public void CopyFrom(FunctionData other)
         {
             m_IsHighOrder = other.m_IsHighOrder;
             m_Name = other.m_Name;
-            m_Call = other.m_Call;
+            m_LowerOrderFunction = other.m_LowerOrderFunction;
             m_Params = other.m_Params;
             m_ParamClass = other.m_ParamClass;
+
+            if (null != other.m_Comments) {
+                Comments.AddRange(other.m_Comments);
+            }
         }
         private void PrepareParams()
         {
@@ -546,264 +561,10 @@ namespace Dsl
 
         private bool m_IsHighOrder = false;
         private ValueData m_Name = null;
-        private CallData m_Call = null;
+        private FunctionData m_LowerOrderFunction = null;
         private List<ISyntaxComponent> m_Params = null;
         private int m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
         private List<string> m_Comments = null;
-    }
-    /// <summary>
-    /// 函数数据，由函数调用数据+语句列表构成。
-    /// </summary>
-    public class FunctionData : AbstractSyntaxComponent
-    {
-        public enum ExtentClassEnum
-        {
-            EXTENT_CLASS_MIN = 0,
-            EXTENT_CLASS_NOTHING = EXTENT_CLASS_MIN,
-            EXTENT_CLASS_STATEMENT,
-            EXTENT_CLASS_EXTERN_SCRIPT,
-            EXTENT_CLASS_MAX,
-        };
-        public override bool IsValid()
-        {
-            return HaveId() || HaveParam() || HaveStatement() || HaveExternScript();
-        }
-        public override string GetId()
-        {
-            if (null != m_Call)
-                return m_Call.GetId();
-            else
-                return string.Empty;
-        }
-        public override int GetIdType()
-        {
-            if (null != m_Call)
-                return m_Call.GetIdType();
-            else
-                return ID_TOKEN;
-        }
-        public override int GetLine()
-        {
-            if (null != m_Call)
-                return m_Call.GetLine();
-            else
-                return -1;
-        }
-        public override string ToScriptString(bool includeComment)
-        {
-#if FULL_VERSION
-            //与write方法不同，这里输出无缩进单行表示
-            string line = string.Empty;
-            if (null != m_Call)
-                line = m_Call.ToScriptString(includeComment);
-            StringBuilder stream = new StringBuilder();
-            if (includeComment) {
-                stream.Append(CalcFirstComment());
-            }
-            stream.Append(line);
-            if (HaveStatement()) {
-                stream.Append("{");
-                int ct = GetStatementNum();
-                for (int i = 0; i < ct; ++i) {
-                    ISyntaxComponent data = GetStatement(i);
-                    stream.Append(data.ToScriptString(includeComment));
-                    stream.Append(";");
-                }
-                stream.Append("}");
-            }
-            else if (HaveExternScript()) {
-                stream.Append("{:");
-                stream.Append(GetExternScript());
-                stream.Append(":}");
-            }
-            if (includeComment) {
-                stream.Append(CalcLastComment());
-            }
-            return stream.ToString();
-#else
-      return ToString();
-#endif
-        }
-
-        public CallData Call
-        {
-            get { return m_Call; }
-            set { m_Call = value; }
-        }
-        public List<ISyntaxComponent> Statements
-        {
-            get {
-                PrepareStatements();
-                return m_Statements;
-            }
-            set {
-                m_Statements = value;
-                if (null == m_Statements) {
-                    m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_NOTHING;
-                }
-                else if (m_Statements.Count > 0) {
-                    if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                        m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-                    }
-                }
-            }
-        }
-        public void SetExtentClass(int type)
-        {
-            if (type >= (int)ExtentClassEnum.EXTENT_CLASS_MIN && type < (int)ExtentClassEnum.EXTENT_CLASS_MAX) {
-                m_ExtentClass = type;
-            }
-        }
-        public int GetExtentClass()
-        {
-            return m_ExtentClass;
-        }
-        public bool HaveId()
-        {
-            if (null != m_Call)
-                return m_Call.HaveId();
-            else
-                return false;
-        }
-        public bool HaveParam()
-        {
-            if (null != m_Call)
-                return m_Call.HaveParam();
-            else
-                return false;
-        }
-        public bool HaveStatement()
-        {
-            return (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT == m_ExtentClass;
-        }
-        public bool HaveExternScript()
-        {
-            return (int)ExtentClassEnum.EXTENT_CLASS_EXTERN_SCRIPT == m_ExtentClass;
-        }
-        public void SetExternScript(string scp)
-        {
-            m_ExternScript = scp;
-        }
-        public string GetExternScript()
-        {
-            return m_ExternScript;
-        }
-        public int GetStatementNum()
-        {
-            if (null == m_Statements)
-                return 0;
-            return m_Statements.Count;
-        }
-        public void SetStatement(int index, ISyntaxComponent data)
-        {
-            if (null == m_Statements)
-                return;
-            if (index < 0 || index >= m_Statements.Count)
-                return;
-            m_Statements[index] = data;
-        }
-        public ISyntaxComponent GetStatement(int index)
-        {
-            if (null == m_Statements)
-                return NullSyntax.Instance;
-            if (index < 0 || index >= m_Statements.Count)
-                return NullSyntax.Instance;
-            return m_Statements[index];
-        }
-        public string GetStatementId(int index)
-        {
-            if (null == m_Statements)
-                return string.Empty;
-            if (index < 0 || index >= m_Statements.Count)
-                return string.Empty;
-            return m_Statements[index].GetId();
-        }
-        public void ClearStatements()
-        {
-            PrepareStatements();
-            m_Statements.Clear();
-        }
-        public void AddStatement(string id)
-        {
-            PrepareStatements();
-            m_Statements.Add(new ValueData(id));
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void AddStatement(string id, int type)
-        {
-            PrepareStatements();
-            m_Statements.Add(new ValueData(id, type));
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void AddStatement(ValueData statement)
-        {
-            PrepareStatements();
-            m_Statements.Add(statement);
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void AddStatement(CallData statement)
-        {
-            PrepareStatements();
-            m_Statements.Add(statement);
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void AddStatement(FunctionData statement)
-        {
-            PrepareStatements();
-            m_Statements.Add(statement);
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void AddStatement(StatementData statement)
-        {
-            PrepareStatements();
-            m_Statements.Add(statement);
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void AddStatement(ISyntaxComponent statement)
-        {
-            PrepareStatements();
-            m_Statements.Add(statement);
-            if ((int)ExtentClassEnum.EXTENT_CLASS_STATEMENT != m_ExtentClass) {
-                m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_STATEMENT;
-            }
-        }
-        public void Clear()
-        {
-            m_Call = null;
-            m_Statements = null;
-            m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_NOTHING;
-            m_ExternScript = null;
-        }
-        public void CopyFrom(FunctionData other)
-        {
-            m_Call = other.m_Call;
-            m_Statements = other.m_Statements;
-            m_ExtentClass = other.m_ExtentClass;
-            m_ExternScript = other.m_ExternScript;
-        }
-        private void PrepareStatements()
-        {
-            if (null == m_Statements) {
-                m_Statements = new List<ISyntaxComponent>();
-            }
-        }
-
-        private CallData m_Call = null;
-        private List<ISyntaxComponent> m_Statements = null;
-        private int m_ExtentClass = (int)ExtentClassEnum.EXTENT_CLASS_NOTHING;
-        private string m_ExternScript = null;
 
         public static FunctionData NullFunctionData
         {
@@ -814,11 +575,11 @@ namespace Dsl
         private static FunctionData s_NullFunctionData = new FunctionData();
     }
     /// <summary>
-    /// 语句数据，由多个函数数据连接而成。
+    /// 语句数据，由多个函数项连接而成。
     /// </summary>
     /// <remarks>
     /// 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
-    /// 1、虽然语法上这里的FunctionData可以退化为CallData与ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
+    /// 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
     /// 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
     /// </remarks>
     public class StatementData : AbstractSyntaxComponent
@@ -862,15 +623,18 @@ namespace Dsl
 #if FULL_VERSION
             //与write方法不同，这里输出无缩进单行表示
             FunctionData tempData = First;
-            CallData callData = null;
-            callData = tempData.Call;
-            if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
-                if (callData.HaveId() && callData.HaveParam() && tempData.HaveStatement()) {
-                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(includeComment), callData.GetId(), tempData.GetStatement(0).ToScriptString(includeComment));
+            FunctionData callData = null;
+            callData = tempData.LowerOrderFunction;
+            if (null != callData && tempData.GetParamClass() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
+                //三目表达式表示为op1(cond)(true_val)op2(false_val)
+                if (callData.HaveId() && callData.HaveParamOrStatement()) {
+                    string line = "/*[?:]*/";
                     if (Functions.Count == 2) {
                         FunctionData funcData = Functions[1];
-                        if (funcData.HaveId() && funcData.HaveStatement())
-                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(includeComment));
+                        if (funcData.HaveId() && funcData.HaveParamOrStatement()) {
+                            line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(includeComment), callData.GetId(), tempData.GetParam(0).ToScriptString(includeComment));
+                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetParam(0).ToScriptString(includeComment));
+                        }
                     }
                     if (includeComment) {
                         return CalcFirstComment() + line + CalcLastComment();
@@ -1038,7 +802,7 @@ namespace Dsl
 #if FULL_VERSION
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mDslInfos.Count; i++) {
-                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, false);
+                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, true);
             }
             File.WriteAllText(file, sb.ToString());
 #endif
@@ -1291,19 +1055,13 @@ namespace Dsl
                 writeValueData(stream, val, indent, firstLineNoIndent, isLastOfStatement);
             }
             else {
-                CallData call = data as CallData;
+                FunctionData call = data as FunctionData;
                 if (null != call) {
-                    writeCallData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
+                    writeFunctionData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
                 }
                 else {
-                    FunctionData function = data as FunctionData;
-                    if (null != function) {
-                        writeFunctionData(stream, function, indent, firstLineNoIndent, isLastOfStatement);
-                    }
-                    else {
-                        StatementData statement = data as StatementData;
-                        writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
-                    }
+                    StatementData statement = data as StatementData;
+                    writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
                 }
             }
 #endif
@@ -1320,25 +1078,25 @@ namespace Dsl
 #endif
         }
 
-        public static void writeCallData(StringBuilder stream, CallData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             string lineNo = string.Format("/* {0} */", data.GetLine());
             //writeLine(stream, lineNo, indent);
             writeFirstComments(stream, data, indent, firstLineNoIndent);
-            if (data.HaveParam()) {
-                int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
-                if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
-                    int infix = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+            if (data.HaveParamOrStatement()) {
+                int paramClass = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_UNMASK);
+                if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
+                    int infix = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
                     int paramNum = data.GetParamNum();
                     if (paramNum == 1) {
                         writeText(stream, " ", 0);
                         if (data.IsHighOrder) {
-                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                            writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false);
                         }
                         else if (data.HaveId()) {
                             string op = data.GetId();
-                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
                                 op = "`" + op;
                             string line = quoteString(op, data.GetIdType());
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
@@ -1352,11 +1110,11 @@ namespace Dsl
                             writeText(stream, " ", 0);
                         }
                         if (data.IsHighOrder) {
-                            writeCallData(stream, data.Call, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                            writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false);
                         }
                         else if (data.HaveId()) {
                             string op = data.GetId();
-                            if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
                                 op = "`" + op;
                             string line = quoteString(op, data.GetIdType());
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
@@ -1369,94 +1127,105 @@ namespace Dsl
                 }
                 else {
                     if (data.IsHighOrder) {
-                        writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
+                        writeFunctionData(stream, data.LowerOrderFunction, indent, firstLineNoIndent, false);
                     }
                     else if (data.HaveId()) {
                         string line = quoteString(data.GetId(), data.GetIdType());
                         writeText(stream, line, firstLineNoIndent ? 0 : indent);
                     }
-                    string lbracket = string.Empty;
-                    string rbracket = string.Empty;
-                    switch (paramClass) {
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
-                            lbracket = "(";
-                            rbracket = ")";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_BRACKET:
-                            lbracket = "[";
-                            rbracket = "]";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD:
-                            lbracket = ".";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
-                            lbracket = ".(";
-                            rbracket = ")";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
-                            lbracket = ".[";
-                            rbracket = "]";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
-                            lbracket = ".{";
-                            rbracket = "}";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
-                            lbracket = "?.";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
-                            lbracket = "?(";
-                            rbracket = ")";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
-                            lbracket = "?[";
-                            rbracket = "]";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
-                            lbracket = "?{";
-                            rbracket = "}";
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER:
-                            lbracket = "->";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
-                            lbracket = ".*";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
-                            lbracket = "?.*";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
-                            lbracket = "->*";
-                            rbracket = string.Empty;
-                            break;
+                    if (data.HaveStatement() || data.HaveExternScript()) {
+                        if (data.IsHighOrder) {
+                            writeLastComments(stream, data.LowerOrderFunction, indent, isLastOfStatement);
+                        }
+                        else if (data.HaveId()) {
+                            writeLastComments(stream, data.Name, indent, isLastOfStatement);
+                        }
+                        writeStatementsOrExternScript(stream, data, indent);
                     }
-                    stream.Append(lbracket);
-                    int ct = data.GetParamNum();
-                    for (int i = 0; i < ct; ++i) {
-                        if (i > 0)
-                            stream.Append(",");
-                        ISyntaxComponent param = data.GetParam(i);
-                        if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
-                            stream.Append(param.ToScriptString(true));
-                        else
-                            writeSyntaxComponent(stream, param, indent, true, false);
+                    else {
+                        string lbracket = string.Empty;
+                        string rbracket = string.Empty;
+                        switch (paramClass) {
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                                lbracket = "(";
+                                rbracket = ")";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET:
+                                lbracket = "[";
+                                rbracket = "]";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD:
+                                lbracket = ".";
+                                rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
+                                lbracket = ".(";
+                                rbracket = ")";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
+                                lbracket = ".[";
+                                rbracket = "]";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
+                                lbracket = ".{";
+                                rbracket = "}";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
+                                lbracket = "?.";
+                                rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
+                                lbracket = "?(";
+                                rbracket = ")";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
+                                lbracket = "?[";
+                                rbracket = "]";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
+                                lbracket = "?{";
+                                rbracket = "}";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
+                                lbracket = "->";
+                                rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
+                                lbracket = ".*";
+                                rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
+                                lbracket = "?.*";
+                                rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
+                                lbracket = "->*";
+                                rbracket = string.Empty;
+                                break;
+                        }
+                        stream.Append(lbracket);
+                        int ct = data.GetParamNum();
+                        for (int i = 0; i < ct; ++i) {
+                            if (i > 0)
+                                stream.Append(",");
+                            ISyntaxComponent param = data.GetParam(i);
+                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
+                                stream.Append(param.ToScriptString(true));
+                            else
+                                writeSyntaxComponent(stream, param, indent, true, false);
+                        }
+                        stream.Append(rbracket);
                     }
-                    stream.Append(rbracket);
                 }
             }
             else {
                 if (data.IsHighOrder) {
-                    writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
+                    writeFunctionData(stream, data.LowerOrderFunction, indent, firstLineNoIndent, false);
                 }
                 else if (data.HaveId()) {
                     string line = quoteString(data.GetId(), data.GetIdType());
@@ -1472,63 +1241,22 @@ namespace Dsl
 #endif
         }
 
-        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
-        {
-#if FULL_VERSION
-            writeFirstComments(stream, data, indent, firstLineNoIndent);
-            if (null != data.Call) {
-                writeCallData(stream, data.Call, indent, firstLineNoIndent, false);
-            }
-            if (data.HaveStatement()) {
-                writeLine(stream, string.Empty, 0);
-                writeLine(stream, "{", indent);
-                ++indent;
-
-                int ct = data.GetStatementNum();
-                for (int i = 0; i < ct; ++i) {
-                    ISyntaxComponent tempData = data.GetStatement(i);
-                    writeSyntaxComponent(stream, tempData, indent, false, true);
-                }
-
-                --indent;
-                writeText(stream, "}", indent);
-            }
-            else if (data.HaveExternScript()) {
-                writeLine(stream, string.Empty, 0);
-                string script = data.GetExternScript();
-                if (script.IndexOf('\n') >= 0) {
-                    writeLine(stream, "{:", indent);
-                }
-                else {
-                    writeText(stream, "{:", indent);
-                }
-                stream.Append(script);
-                if (script.Length > 0 && script[script.Length - 1] == '\n') {
-                    writeText(stream, ":}", indent);
-                }
-                else {
-                    stream.Append(":}");
-                }
-            }
-            if (isLastOfStatement)
-                stream.Append(';');
-            writeLastComments(stream, data, indent, isLastOfStatement);
-#endif
-        }
-
         public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
             writeFirstComments(stream, data, indent, firstLineNoIndent);
             FunctionData tempData = data.First;
-            CallData callData = tempData.Call;
-            if (null != callData && callData.GetParamClass() == (int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
-                if (callData.HaveId() && callData.HaveParam() && tempData.HaveStatement()) {
-                    string line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(true), callData.GetId(), tempData.GetStatement(0).ToScriptString(true));
+            FunctionData callData = tempData.LowerOrderFunction;
+            if (null != callData && tempData.GetParamClass() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
+                //三目运算符表示为op1(cond)(true_val)op2(false_val)
+                if (callData.HaveId() && callData.HaveParamOrStatement()) {
+                    string line = "/*[?:]*/";                    
                     if (data.Functions.Count == 2) {
                         FunctionData funcData = data.Functions[1];
-                        if (funcData.HaveId() && funcData.HaveStatement())
-                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetStatement(0).ToScriptString(true));
+                        if (funcData.HaveId() && funcData.HaveParamOrStatement()) {
+                            line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(true), callData.GetId(), tempData.GetParam(0).ToScriptString(true));
+                            line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetParam(0).ToScriptString(true));
+                        }
                     }
                     writeText(stream, line, firstLineNoIndent ? 0 : indent);
                 }
@@ -1540,7 +1268,7 @@ namespace Dsl
                 for (int i = 0; i < ct; ++i) {
                     FunctionData func = data.Functions[i];
                     bool noIndent = false;
-                    bool funcNoParam = !func.HaveParam();
+                    bool funcNoParam = !func.HaveLowerOrderParam();
                     bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
                     if (i > 0) {
                         if (lastFuncNoParam && lastFuncNoStatement) {
@@ -1565,7 +1293,7 @@ namespace Dsl
             writeLastComments(stream, data, indent, isLastOfStatement);
 #endif
         }
-
+        
         internal static bool needQuote(string str)
         {
             const string escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\'\"";
@@ -1613,24 +1341,24 @@ namespace Dsl
             }
         }
 
-        internal static string getCallString(CallData data, bool includeComment)
+        internal static string getFunctionString(FunctionData data, bool includeComment)
         {
 #if FULL_VERSION
             string lineNo = string.Empty;// string.Format("/* {0} */", data.GetLine());
             string line = string.Empty;
             if (data.IsHighOrder) {
-                line = getCallString(data.Call, includeComment);
+                line = getFunctionString(data.LowerOrderFunction, includeComment);
             }
             else if (data.HaveId()) {
-                int infix = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+                int infix = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
                 string op = data.GetId();
-                if ((int)CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
                     op = "`" + op;
                 line = quoteString(op, data.GetIdType());
             }
-            if (data.HaveParam()) {
-                int paramClass = (data.GetParamClass() & (int)CallData.ParamClassEnum.PARAM_CLASS_UNMASK);
-                if ((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
+            if (data.HaveParamOrStatement()) {
+                int paramClass = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_UNMASK);
+                if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
                     switch (data.GetParamNum()) {
                         case 1:
                             return string.Format("{0} {1}", line, data.GetParam(0).ToScriptString(includeComment));
@@ -1644,59 +1372,67 @@ namespace Dsl
                     string lbracket = string.Empty;
                     string rbracket = string.Empty;
                     switch (paramClass) {
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
                             lbracket = "(";
                             rbracket = ")";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_BRACKET:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET:
                             lbracket = "[";
                             rbracket = "]";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD:
                             lbracket = ".";
                             rbracket = string.Empty;
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
                             lbracket = ".(";
                             rbracket = ")";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
                             lbracket = ".[";
                             rbracket = "]";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
                             lbracket = ".{";
                             rbracket = "}";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
                             lbracket = "?.";
                             rbracket = string.Empty;
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
                             lbracket = "?(";
                             rbracket = ")";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
                             lbracket = "?[";
                             rbracket = "]";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
                             lbracket = "?{";
                             rbracket = "}";
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
                             lbracket = "->";
                             rbracket = string.Empty;
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT:
+                            lbracket = "{";
+                            rbracket = "}";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT:
+                            lbracket = "{:";
+                            rbracket = ":}";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                             lbracket = ".*";
                             rbracket = string.Empty;
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
                             lbracket = "?.*";
                             rbracket = string.Empty;
                             break;
-                        case (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
                             lbracket = "->*";
                             rbracket = string.Empty;
                             break;
@@ -1708,12 +1444,12 @@ namespace Dsl
                         if (i > 0)
                             stream.Append(",");
                         ISyntaxComponent param = data.GetParam(i);
-                        if ((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
-                             || (int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
+                        if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
+                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
+                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                             stream.Append(param.ToScriptString(includeComment));
                         else
                             stream.Append(param.ToScriptString(includeComment));
@@ -1729,6 +1465,44 @@ namespace Dsl
       return string.Empty;
 #endif
         }
+        
+        private static void writeStatementsOrExternScript(StringBuilder stream, FunctionData data, int indent)
+        {
+#if FULL_VERSION
+            if (data.HaveStatement()) {
+                writeLine(stream, string.Empty, 0);
+                writeLine(stream, "{", indent);
+                ++indent;
+
+                int ct = data.GetParamNum();
+                for (int i = 0; i < ct; ++i) {
+                    ISyntaxComponent tempData = data.GetParam(i);
+                    writeSyntaxComponent(stream, tempData, indent, false, true);
+                }
+
+                --indent;
+                writeText(stream, "}", indent);
+            }
+            else if (data.HaveExternScript()) {
+                writeLine(stream, string.Empty, 0);
+                string script = data.GetParamId(0);
+                if (script.IndexOf('\n') >= 0) {
+                    writeLine(stream, "{:", indent);
+                }
+                else {
+                    writeText(stream, "{:", indent);
+                }
+                stream.Append(script);
+                if (script.Length > 0 && script[script.Length - 1] == '\n') {
+                    writeText(stream, ":}", indent);
+                }
+                else {
+                    stream.Append(":}");
+                }
+            }
+#endif
+        }
+
 
         private static void writeFirstComments(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent)
         {
@@ -1824,7 +1598,7 @@ namespace Dsl
             while (curCodeIndex < count) {
                 while (curCodeIndex < count) {
                     byte b = bytes[start + curCodeIndex];
-                    if (b == (byte)DslBinaryCode.BeginStatement || b == (byte)DslBinaryCode.BeginFunction || b == (byte)DslBinaryCode.BeginCall || b == (byte)DslBinaryCode.BeginValue)
+                    if (b == (byte)DslBinaryCode.BeginStatement || b == (byte)DslBinaryCode.BeginFunction || b == (byte)DslBinaryCode.BeginValue)
                         break;
                     ++curCodeIndex;
                 }
@@ -1843,11 +1617,6 @@ namespace Dsl
             byte code = readByte(bytes, start + curCodeIndex);
             if (code == (byte)DslBinaryCode.BeginValue) {
                 ValueData data = new ValueData();
-                readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
-                ret = data;
-            }
-            else if (code == (byte)DslBinaryCode.BeginCall) {
-                CallData data = new CallData();
                 readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, data);
                 ret = data;
             }
@@ -1879,10 +1648,10 @@ namespace Dsl
                 }
             }
         }
-        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, CallData data)
+        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, FunctionData data)
         {
             byte code = readByte(bytes, start + curCodeIndex++);
-            if (code == (byte)DslBinaryCode.BeginCall) {
+            if (code == (byte)DslBinaryCode.BeginFunction) {
                 code = readByte(bytes, start + curCodeIndex);
                 if (code >= (byte)DslBinaryCode.ParamOrExternClassBegin) {
                     ++curCodeIndex;
@@ -1894,14 +1663,14 @@ namespace Dsl
                     readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, valueData);
                     data.Name = valueData;
                 }
-                else if (code == (byte)DslBinaryCode.BeginCall) {
-                    CallData callData = new CallData();
+                else if (code == (byte)DslBinaryCode.BeginFunction) {
+                    FunctionData callData = new FunctionData();
                     readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, callData);
-                    data.Call = callData;
+                    data.LowerOrderFunction = callData;
                 }
                 for (; ; ) {
                     code = readByte(bytes, start + curCodeIndex);
-                    if (code == (byte)DslBinaryCode.EndCall) {
+                    if (code == (byte)DslBinaryCode.EndFunction) {
                         ++curCodeIndex;
                         break;
                     }
@@ -1912,51 +1681,6 @@ namespace Dsl
                         }
                         else {
                             break;
-                        }
-                    }
-                }
-            }
-        }
-        internal static void readBinary(byte[] bytes, int start, ref int curCodeIndex, List<string> identifiers, ref int curIdIndex, FunctionData data)
-        {
-            byte code = readByte(bytes, start + curCodeIndex++);
-            if (code == (byte)DslBinaryCode.BeginFunction) {
-                code = readByte(bytes, start + curCodeIndex);
-                if (code == (byte)DslBinaryCode.BeginCall) {
-                    CallData callData = new CallData();
-                    readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, callData);
-                    data.Call = callData;
-                }
-                code = readByte(bytes, start + curCodeIndex);
-                if (code == (byte)DslBinaryCode.BeginExternScript) {
-                    ++curCodeIndex;
-                    data.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_EXTERN_SCRIPT);
-                    data.SetExternScript(readIdentifier(identifiers, curIdIndex++));
-
-                    code = readByte(bytes, start + curCodeIndex);
-                    if (code == (byte)DslBinaryCode.EndExternScript) {
-                        ++curCodeIndex;
-                    }
-                }
-                else {
-                    if (code >= (byte)DslBinaryCode.ParamOrExternClassBegin) {
-                        ++curCodeIndex;
-                        data.SetExtentClass(code - (byte)DslBinaryCode.ParamOrExternClassBegin);
-                    }
-                    for (; ; ) {
-                        code = readByte(bytes, start + curCodeIndex);
-                        if (code == (byte)DslBinaryCode.EndFunction) {
-                            ++curCodeIndex;
-                            break;
-                        }
-                        else {
-                            ISyntaxComponent syntaxData = readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex);
-                            if (null != syntaxData) {
-                                data.Statements.Add(syntaxData);
-                            }
-                            else {
-                                break;
-                            }
                         }
                     }
                 }
@@ -1992,19 +1716,13 @@ namespace Dsl
                 writeBinary(stream, identifiers, val);
             }
             else {
-                CallData call = data as CallData;
+                FunctionData call = data as FunctionData;
                 if (null != call) {
                     writeBinary(stream, identifiers, call);
                 }
                 else {
-                    FunctionData function = data as FunctionData;
-                    if (null != function) {
-                        writeBinary(stream, identifiers, function);
-                    }
-                    else {
-                        StatementData statement = data as StatementData;
-                        writeBinary(stream, identifiers, statement);
-                    }
+                    StatementData statement = data as StatementData;
+                    writeBinary(stream, identifiers, statement);
                 }
             }
         }
@@ -2017,35 +1735,18 @@ namespace Dsl
             }
             stream.WriteByte((byte)DslBinaryCode.EndValue);
         }
-        internal static void writeBinary(MemoryStream stream, List<string> identifiers, CallData data)
+        internal static void writeBinary(MemoryStream stream, List<string> identifiers, FunctionData data)
         {
-            stream.WriteByte((byte)DslBinaryCode.BeginCall);
+            stream.WriteByte((byte)DslBinaryCode.BeginFunction);
             if (null != data) {
                 stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetParamClass()));
                 if (data.IsHighOrder) {
-                    writeBinary(stream, identifiers, data.Call);
+                    writeBinary(stream, identifiers, data.LowerOrderFunction);
                 }
                 else {
                     writeBinary(stream, identifiers, data.Name);
                 }
                 foreach (ISyntaxComponent syntaxData in data.Params) {
-                    writeBinary(stream, identifiers, syntaxData);
-                }
-            }
-            stream.WriteByte((byte)DslBinaryCode.EndCall);
-        }
-        internal static void writeBinary(MemoryStream stream, List<string> identifiers, FunctionData data)
-        {
-            stream.WriteByte((byte)DslBinaryCode.BeginFunction);
-            writeBinary(stream, identifiers, data.Call);
-            if (data.HaveExternScript()) {
-                stream.WriteByte((byte)DslBinaryCode.BeginExternScript);
-                identifiers.Add(data.GetExternScript());
-                stream.WriteByte((byte)DslBinaryCode.EndExternScript);
-            }
-            else {
-                stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetExtentClass()));
-                foreach (ISyntaxComponent syntaxData in data.Statements) {
                     writeBinary(stream, identifiers, syntaxData);
                 }
             }

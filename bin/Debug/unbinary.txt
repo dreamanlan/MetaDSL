@@ -1,7 +1,9 @@
 skill(1006)
+
 {
 	attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
 	section
+
 	{
 		sendgfxmessage(0,"ForGame","FadeToSkillFor00Skill");
 		sendgfxmessage(0,"StartScript","ToggleMotionBlur","0");
@@ -39,18 +41,19 @@ skill(1006)
 		a.b();
 		a.b = c;
 		if(a == b || c == d)
+
 		{
 			print("yeah");
 		};
-		a(a,b,c)
-		d
+		a(a,b,c) d
 		{
-			e(f)g(h);
+			e(f) g(h);
 		};
 		a <- abc `<*> def <=> 123;
 		b <- abc `as int <=> 456;
 	};
 	section(5833e+2)
+
 	{
 		keeptarget();
 		animation(dazhao1);
@@ -64,6 +67,7 @@ skill(1006)
 		selfeffect(selfEffect1,533,"",3500);
 	};
 	section(7000)
+
 	{
 		keeptarget();
 		animation(dazhao2);
@@ -74,6 +78,7 @@ skill(1006)
 		selfeffect(selfEffect4,5000,"",3500);
 	};
 	section(933)
+
 	{
 		keeptarget();
 		sendgfxmessage(1,"StartScript","SetActorsLayer","Actor","DeActive","Actor","Actor");
@@ -86,6 +91,7 @@ skill(1006)
 		sendgfxmessage(467,"StartScript","CameraEnableForSkill","Ryu_Camera 2",1);
 	};
 	section(500)
+
 	{
 		keeptarget();
 		animation(Idle);
@@ -95,6 +101,7 @@ skill(1006)
 		selfeffect(selfEffect8,500,"",0,false);
 	};
 	section(1800)
+
 	{
 		keeptarget(0,1000);
 		animation(Idle);
@@ -112,52 +119,63 @@ skill(1006)
 		sendgfxmessage(0,"StartScript","SetActorsVisible",true,true,true,true);
 	};
 	onstop
+
 	{
 		sendgfxmessage(0,"ForGame","FadeToSceneForSkill");
 		enablemoveagent(true);
 	};
 	hitskill
+
 	{
 		section(1500)
+
 		{
 			animation(hit2_1);
 			damage(0);
 			selfeffect(hitEffect,1000,hit,0)
+
 			{
 				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(200);
 			selfeffect(hitEffect,1000,hit,200)
+
 			{
 				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(400);
 			selfeffect(hitEffect,1000,hit,400)
+
 			{
 				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(600);
 			selfeffect(hitEffect,1000,hit,600)
+
 			{
 				transform(vector3(0.05,0.3140004,-0.4397666));
 			};
 			damage(1100);
 			selfeffect(hitEffect1,1000,hit,1100)
+
 			{
 				transform(vector3(-0.002,1.368,-1.322111));
 			};
 		};
 	};
 	hitskill(2)
+
 	{
 		section(2000)
+
 		{
 			animation(hit2_2);
 			damage(500);
 			selfeffect(hitEffect2,2000,"",200)
+
 			{
 				transform(vector3(-0.31,1.39,1.17));
 			};
 		};
 	};
-}
+};

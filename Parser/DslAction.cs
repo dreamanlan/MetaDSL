@@ -90,18 +90,18 @@ namespace Dsl.Parser
                 case 8: beginFunction(); break;
                 case 9: endFunction(); break;
                 case 10: setFunctionId(); break;
-                case 11: markHaveStatement(); break;
-                case 12: markHaveExternScript(); break;
-                case 13: setExternScript(); break;
-                case 14: markParenthesisParam(); break;
-                case 15: buildHighOrderFunction(); break;
-                case 16: markBracketParam(); break;
-                case 17: markPeriod(); break;
-                case 18: markQuestion(); break;
-                case 19: markQuestionParenthesisParam(); break;
-                case 20: markQuestionBracketParam(); break;
-                case 21: markQuestionBraceParam(); break;
-                case 22: markPointer(); break;
+                case 11: markParenthesisParam(); break;
+                case 12: buildHighOrderFunction(); break;
+                case 13: markBracketParam(); break;
+                case 14: markPeriod(); break;
+                case 15: markQuestion(); break;
+                case 16: markQuestionParenthesisParam(); break;
+                case 17: markQuestionBracketParam(); break;
+                case 18: markQuestionBraceParam(); break;
+                case 19: markPointer(); break;
+                case 20: markStatement(); break;
+                case 21: markExternScript(); break;
+                case 22: setExternScript(); break;
                 case 23: markPeriodParam(); break;
                 case 24: setMemberId(); break;
                 case 25: markPeriodParenthesisParam(); break;
@@ -142,7 +142,7 @@ namespace Dsl.Parser
 
             StatementData _statement = newStatement();
             FunctionData first = _statement.First;
-            first.Call.Name.SetLine(getLastLineNumber());
+            first.Name.SetLine(getLastLineNumber());
 
             _statement.CopyFirstComments(argComp);
             argComp.FirstComments.Clear();
@@ -153,19 +153,19 @@ namespace Dsl.Parser
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
                 if (name.Length > 0 && name[0] == '`') {
-                    func.Call.SetParamClass((int)(CallData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | CallData.ParamClassEnum.PARAM_CLASS_OPERATOR));
+                    func.SetParamClass((int)(FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR));
 
-                    func.Call.Name.SetId(name.Substring(1));
-                    func.Call.Name.SetType(type);
+                    func.Name.SetId(name.Substring(1));
+                    func.Name.SetType(type);
                 }
                 else {
-                    func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR);
+                    func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR);
 
-                    func.Call.Name.SetId(name);
-                    func.Call.Name.SetType(type);
+                    func.Name.SetId(name);
+                    func.Name.SetType(type);
                 }
                 if (argComp.IsValid()) {
-                    func.Call.AddParams(argComp);
+                    func.AddParam(argComp);
                 }
             }
         }
@@ -179,7 +179,11 @@ namespace Dsl.Parser
 
             StatementData _statement = newStatement();
             FunctionData first = _statement.First;
-            first.Call.Name.SetLine(getLastLineNumber());
+
+            //三元运算符表示成op1(cond)(true_val)op2(false_val)
+            first.LowerOrderFunction = new FunctionData();
+            first.LowerOrderFunction.Name = new ValueData();
+            first.LowerOrderFunction.Name.SetLine(getLastLineNumber());
 
             _statement.CopyFirstComments(argComp);
             argComp.FirstComments.Clear();
@@ -189,15 +193,14 @@ namespace Dsl.Parser
             StatementData statement = getCurStatement();
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
-                func.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT);
-
-                func.Call.Name.SetId(name);
-                func.Call.Name.SetType(type);
-
+                func.LowerOrderFunction.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+                func.LowerOrderFunction.Name.SetId(name);
+                func.LowerOrderFunction.Name.SetType(type);
                 if (argComp.IsValid()) {
-                    func.Call.AddParams(argComp);
+                    func.LowerOrderFunction.AddParam(argComp);
                 }
+
+                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);                      
             }
         }
         internal void buildSecondTernaryOperator()
@@ -207,20 +210,16 @@ namespace Dsl.Parser
 
             StatementData statement = getCurStatement();
             FunctionData newFunc = new FunctionData();
-            CallData call = new CallData();
             ValueData nname = new ValueData();
-            call.Name = nname;
-            newFunc.Call = call;
+            newFunc.Name = nname;
             statement.Functions.Add(newFunc);
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
-                func.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT);
-
-                func.Call.Name.SetId(name);
-                func.Call.Name.SetType(type);
-                func.Call.Name.SetLine(getLastLineNumber());
+                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
+                func.Name.SetId(name);
+                func.Name.SetType(type);
+                func.Name.SetLine(getLastLineNumber());
             }
         }
         internal void beginStatement()
@@ -241,8 +240,8 @@ namespace Dsl.Parser
         internal void endStatement()
         {
             StatementData statement = popStatement();
-            if (statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.Call.GetParamNum() == 1 || statement.First.Call.GetParamNum() == 3) && !statement.First.Call.IsHighOrder) {
-                CallData call = statement.First.Call;
+            if (statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.LowerOrderFunction.GetParamNum() == 1 || statement.First.LowerOrderFunction.GetParamNum() == 3) && !statement.First.LowerOrderFunction.IsHighOrder) {
+                FunctionData call = statement.First.LowerOrderFunction;
                 string type = call.GetParamId(0);
                 if (call.GetParamNum() == 3) {
                     string begin = call.GetParamId(1);
@@ -314,55 +313,35 @@ namespace Dsl.Parser
                 AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
 
                 FunctionData func = getLastFunction();
-                switch (func.GetExtentClass()) {
-                    case (int)FunctionData.ExtentClassEnum.EXTENT_CLASS_NOTHING: {
-                            /*这段先暂时注掉，忘记原来为啥要允许空语句作函数参数了(现在对于明确的空串参数不会判断为无效语句了)
-                            if(func.Call.getParamClass()==(int)CallData.ParamClassEnum.PARAM_CLASS_OPERATOR && !statement.IsValid())
-                              return;//操作符就不支持空语句作参数了
-                            //函数参数，允许空语句，用于表达默认状态(副作用是a()与a[]将总是会有一个空语句参数)。
-                            */
-                            if (statementSyntax.IsValid()) {
-                                func.Call.AddParams(statementSyntax);
-                            }
-                            else if (statementSyntax.FirstComments.Count > 0) {
-                                func.Call.Comments.AddRange(statementSyntax.FirstComments);
-                            }
+                if (!statementSyntax.IsValid()) {
+                    //_epsilon_表达式无语句语义
+                    if (func.Params.Count > 0 && statementSyntax.FirstComments.Count > 0) {
+                        AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
                         }
-                        break;
-                    case (int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT: {
-                            if (!statementSyntax.IsValid()) {
-                                //_epsilon_表达式无语句语义
-                                if (func.Statements.Count > 0 && statementSyntax.FirstComments.Count > 0) {
-                                    AbstractSyntaxComponent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxComponent;
-                                    if (last.LastComments.Count <= 0) {
-                                        last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
-                                    }
-                                    last.LastComments.AddRange(statementSyntax.FirstComments);
-                                }
-                                return;
-                            }
-                            else {
-                                if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
-                                    string cmt = statementSyntax.FirstComments[0];
-                                    statementSyntax.FirstComments.RemoveAt(0);
-                                    statementSyntax.FirstCommentOnNewLine = true;
-                                    if (func.Statements.Count > 0) {
-                                        AbstractSyntaxComponent last = func.Statements[func.Statements.Count - 1] as AbstractSyntaxComponent;
-                                        if (last.LastComments.Count <= 0) {
-                                            last.LastCommentOnNewLine = false;
-                                        }
-                                        last.LastComments.Add(cmt);
-                                    }
-                                    else {
-                                        func.Call.Comments.Add(cmt);
-                                    }
-                                }
-                            }
-                            //函数扩展语句部分
-                            func.AddStatement(statementSyntax);
-                        }
-                        break;
+                        last.LastComments.AddRange(statementSyntax.FirstComments);
+                    }
+                    return;
                 }
+                else {
+                    if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
+                        string cmt = statementSyntax.FirstComments[0];
+                        statementSyntax.FirstComments.RemoveAt(0);
+                        statementSyntax.FirstCommentOnNewLine = true;
+                        if (func.Params.Count > 0) {
+                            AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
+                            if (last.LastComments.Count <= 0) {
+                                last.LastCommentOnNewLine = false;
+                            }
+                            last.LastComments.Add(cmt);
+                        }
+                        else {
+                            func.Comments.Add(cmt);
+                        }
+                    }
+                }
+                func.AddParam(statementSyntax);
             }
         }
         internal void beginFunction()
@@ -372,10 +351,8 @@ namespace Dsl.Parser
             if (func.IsValid()) {
                 //语句的多元函数的其它元函数名
                 FunctionData newFunc = new FunctionData();
-                CallData call = new CallData();
                 ValueData name = new ValueData();
-                call.Name = name;
-                newFunc.Call = call;
+                newFunc.Name = name;
 
                 statement.Functions.Add(newFunc);
             }
@@ -386,9 +363,9 @@ namespace Dsl.Parser
             string name = pop(out type);
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.Call.Name.SetId(name);
-                func.Call.Name.SetType(type);
-                func.Call.Name.SetLine(getLastLineNumber());
+                func.Name.SetId(name);
+                func.Name.SetType(type);
+                func.Name.SetLine(getLastLineNumber());
             }
         }
         internal void setMemberId()
@@ -397,9 +374,9 @@ namespace Dsl.Parser
             string name = pop(out type);
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.Call.Name.SetId(name);
-                func.Call.Name.SetType(type);
-                func.Call.Name.SetLine(getLastLineNumber());
+                func.Name.SetId(name);
+                func.Name.SetType(type);
+                func.Name.SetLine(getLastLineNumber());
             }
         }
         internal void endFunction()
@@ -409,10 +386,10 @@ namespace Dsl.Parser
         {
             //高阶函数构造（当前函数返回一个函数）
             FunctionData func = getLastFunction();
-            CallData temp = new CallData();
-            temp.Call = func.Call;
+            FunctionData temp = new FunctionData();
+            temp.CopyFrom(func);
             func.Clear();
-            func.Call = temp;
+            func.LowerOrderFunction = temp;
         }
         internal void markParenthesisParam()
         {
@@ -421,10 +398,10 @@ namespace Dsl.Parser
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                func.Comments.AddRange(cmts);
             }
 
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
         }
         internal void markBracketParam()
         {
@@ -433,10 +410,10 @@ namespace Dsl.Parser
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                func.Comments.AddRange(cmts);
             }
 
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_BRACKET);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
         }
         internal void markPeriod()
         {
@@ -445,28 +422,28 @@ namespace Dsl.Parser
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                func.Comments.AddRange(cmts);
             }
         }
         internal void markPeriodParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD);
         }
         internal void markPeriodParenthesisParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS);
         }
         internal void markPeriodBracketParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET);
         }
         internal void markPeriodBraceParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
         }
         internal void markQuestion()
         {
@@ -475,28 +452,28 @@ namespace Dsl.Parser
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                func.Comments.AddRange(cmts);
             }
         }
         internal void markQuestionPeriodParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD);
         }
         internal void markQuestionParenthesisParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS);
         }
         internal void markQuestionBracketParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET);
         }
         internal void markQuestionBraceParam()
         {
             FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
         }
         internal void markPointer()
         {
@@ -505,77 +482,83 @@ namespace Dsl.Parser
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                func.Comments.AddRange(cmts);
             }
         }
-        internal void markPointerParam()
-        {
-            FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_POINTER);
-        }
-        internal void markPeriodStarParam()
-        {
-            FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
-        }
-        internal void markQuestionPeriodStarParam()
-        {
-            FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR);
-        }
-        internal void markPointerStarParam()
-        {
-            FunctionData func = getLastFunction();
-            func.Call.SetParamClass((int)CallData.ParamClassEnum.PARAM_CLASS_POINTER_STAR);
-        }
-        internal void markHaveStatement()
+        internal void markStatement()
         {
             FunctionData func = getLastFunction();
 
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                if (func.IsHighOrder)
+                    func.LowerOrderFunction.Comments.AddRange(cmts);
+                else
+                    func.Comments.AddRange(cmts);
             }
 
-            func.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_STATEMENT);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT);
         }
-        internal void markHaveExternScript()
+        internal void markExternScript()
         {
             FunctionData func = getLastFunction();
 
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
             if (cmts.Count > 0) {
-                func.Call.Comments.AddRange(cmts);
+                if (func.IsHighOrder)
+                    func.LowerOrderFunction.Comments.AddRange(cmts);
+                else
+                    func.Comments.AddRange(cmts);
             }
 
-            func.SetExtentClass((int)FunctionData.ExtentClassEnum.EXTENT_CLASS_EXTERN_SCRIPT);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
         }
         internal void setExternScript()
         {
             FunctionData func = getLastFunction();
-            func.SetExternScript(getLastToken());
+            func.AddParam(getLastToken());
+        }
+        internal void markPointerParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER);
+        }
+        internal void markPeriodStarParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
+        }
+        internal void markQuestionPeriodStarParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR);
+        }
+        internal void markPointerStarParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR);
         }
         internal void pushId()
         {
-            push(getLastToken(), CallData.ID_TOKEN);
+            push(getLastToken(), FunctionData.ID_TOKEN);
         }
         internal void pushNum()
         {
-            push(getLastToken(), CallData.NUM_TOKEN);
+            push(getLastToken(), FunctionData.NUM_TOKEN);
         }
         internal void pushStr()
         {
-            push(getLastToken(), CallData.STRING_TOKEN);
+            push(getLastToken(), FunctionData.STRING_TOKEN);
         }
         internal void pushTrue()
         {
-            push("true", CallData.BOOL_TOKEN);
+            push("true", FunctionData.BOOL_TOKEN);
         }
         internal void pushFalse()
         {
-            push("false", CallData.BOOL_TOKEN);
+            push("false", FunctionData.BOOL_TOKEN);
         }
 
         private void push(string s, int val)
@@ -625,10 +608,8 @@ namespace Dsl.Parser
         {
             StatementData data = new StatementData();
             FunctionData func = new FunctionData();
-            CallData call = new CallData();
             ValueData name = new ValueData();
-            call.Name = name;
-            func.Call = call;
+            func.Name = name;
             data.Functions.Add(func);
             return data;
         }
@@ -645,23 +626,7 @@ namespace Dsl.Parser
         }
         private AbstractSyntaxComponent simplifyStatement(FunctionData data)
         {
-            if (!data.HaveStatement() && !data.HaveExternScript()) {
-                //没有语句部分的函数退化为函数调用（再按函数调用进一步退化）。
-                CallData call = data.Call;
-                if (null != call) {
-                    call.CopyComments(data);
-                    return simplifyStatement(call);
-                }
-                else {
-                    //error
-                    return NullSyntax.Instance;
-                }
-            }
-            return data;
-        }
-        private AbstractSyntaxComponent simplifyStatement(CallData data)
-        {
-            if (!data.HaveParam()) {
+            if (!data.HaveParamOrStatement()) {
                 //没有参数的调用退化为基本值数据
                 if (data.IsHighOrder) {
                     //这种情况应该不会出现
