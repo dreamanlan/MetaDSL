@@ -96,6 +96,57 @@ namespace Dsl
         }
     }
     //------------------------------------------------------------------------------------------------------
+    int ValueData::IsValid(void)const
+    {
+        if (m_Type == TYPE_FUNCTION) {
+            if (0 != m_FunctionVal)
+                return m_FunctionVal->IsValid();
+            else
+                return FALSE;
+        }
+        return HaveId();
+    }
+    int ValueData::GetIdType(void)const
+    {
+        if (m_Type == TYPE_FUNCTION) {
+            if (0 != m_FunctionVal)
+                return m_FunctionVal->GetIdType();
+            else
+                return TYPE_IDENTIFIER;
+        }
+        return m_Type;
+    }
+    const char* ValueData::GetId(void)const
+    {
+        if (m_Type == TYPE_FUNCTION) {
+            if (0 != m_FunctionVal)
+                return m_FunctionVal->GetId();
+            else
+                return "";
+        }
+        return m_StringVal;
+    }
+    int ValueData::GetLine(void)const
+    {
+        if (m_Type == TYPE_FUNCTION) {
+            if (0 != m_FunctionVal)
+                return m_FunctionVal->GetLine();
+            else
+                return m_Line;
+        }
+        return m_Line;
+    }
+    int ValueData::HaveId(void)const
+    {
+        if (m_Type == TYPE_FUNCTION) {
+            if (0 != m_FunctionVal)
+                return m_FunctionVal->HaveId();
+            else
+                return FALSE;
+        }
+        return 0 != m_StringVal ? TRUE : FALSE;
+    }
+    //------------------------------------------------------------------------------------------------------
     FunctionData::FunctionData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
         m_Params(0),
         m_ParamNum(0),

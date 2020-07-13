@@ -245,15 +245,15 @@ namespace Dsl
             return *this;
         }
 
-        virtual int IsValid(void)const { return (0 == m_StringVal && m_Type == TYPE_IDENTIFIER ? FALSE : TRUE); }
-        virtual int GetIdType(void)const { return m_Type; }
-        virtual const char* GetId(void)const { return m_StringVal; }
-        virtual int GetLine(void)const { return m_Line; }
+        virtual int IsValid(void)const;
+        virtual int GetIdType(void)const;
+        virtual const char* GetId(void)const;
+        virtual int GetLine(void)const;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
 
         FunctionData* GetFunction(void)const { return m_FunctionVal; }
 
-        bool HaveId()const { return IsValid(); }
+        int HaveId()const;
         int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
         int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
         int IsIdentifier(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
@@ -392,7 +392,7 @@ namespace Dsl
     public:
         virtual int IsValid(void)const
         {
-            if (HaveId())
+            if (m_Name.IsValid())
                 return TRUE;
             else if (HaveParamOrStatement())
                 return TRUE;
