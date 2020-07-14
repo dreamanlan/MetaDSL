@@ -122,7 +122,7 @@ table(NpcConfig)
 
 类似的，程序语言可以这样构成
 - 语言是由语句组成的（StatementData）。
-- 语句是由函数项组成的。函数项包括2种形式，一种是函数定义的样式(FunctionData)，一种是函数调用的样式(CallData)。
+- 语句是由函数项组成的(FunctionData)。
 - 函数项由符号组成。符号是一个原子的值(ValueData)。
 
 
