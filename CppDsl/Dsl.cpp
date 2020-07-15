@@ -329,8 +329,12 @@ namespace Dsl
         m_StringBuffer(NULL),
         m_UnusedStringPtr(NULL),
         m_SyntaxComponentPool(NULL),
-        m_DslInfos(NULL)
+        m_DslInfos(NULL),
+        m_NullSyntax(),
+        m_NullFunction(*this)
     {
+        NullSyntax::GetNullSyntaxPtrRef() = &m_NullSyntax;
+        FunctionData::GetNullFunctionPtrRef() = &m_NullFunction;
         Init();
     }
 
@@ -338,8 +342,12 @@ namespace Dsl
         m_StringBuffer(NULL),
         m_UnusedStringPtr(NULL),
         m_SyntaxComponentPool(NULL),
-        m_DslInfos(NULL)
+        m_DslInfos(NULL),
+        m_NullSyntax(),
+        m_NullFunction(*this)
     {
+        NullSyntax::GetNullSyntaxPtrRef() = &m_NullSyntax;
+        FunctionData::GetNullFunctionPtrRef() = &m_NullFunction;
         Init();
     }
 
@@ -998,7 +1006,7 @@ namespace Dsl
             for (int ix = 0; ix < num; ++ix) {
                 FunctionData& func = *GetFunction(ix);
                 int noIndent = FALSE;
-                int funcNoParam = !func.HaveLowerOrderParam();
+                int funcNoParam = !func.IsHighOrder() && !func.HaveParam();
                 int funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
                 if (ix > 0) {
                     if (lastFuncNoParam && lastFuncNoStatement) {

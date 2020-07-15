@@ -268,6 +268,14 @@ namespace Dsl
         private int m_Type = ID_TOKEN;
         private string m_Id = string.Empty;
         private int m_Line = -1;
+
+        public static ValueData NullValue
+        {
+            get {
+                return s_Instance;
+            }
+        }
+        private static ValueData s_Instance = new ValueData();
     }
     /// <summary>
     /// 函数数据，可能出现在函数头、参数表中。
@@ -379,7 +387,12 @@ namespace Dsl
         }
         public ValueData Name
         {
-            get { return m_Name; }
+            get {
+                if (null != m_Name)
+                    return m_Name;
+                else
+                    return ValueData.NullValue;
+            }
             set {
                 m_Name = value;
                 m_LowerOrderFunction = null;
@@ -388,12 +401,71 @@ namespace Dsl
         }
         public FunctionData LowerOrderFunction
         {
-            get { return m_LowerOrderFunction; }
+            get {
+                if (null != m_LowerOrderFunction)
+                    return m_LowerOrderFunction;
+                else
+                    return FunctionData.NullFunction;
+            }
             set {
                 m_Name = null;
                 m_LowerOrderFunction = value;
                 m_IsHighOrder = true;
             }
+        }
+        public FunctionData LowerOrderOrThisCall
+        {
+            get {
+                if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveParam())
+                    return m_LowerOrderFunction;
+                else if (HaveParam())
+                    return this;
+                else
+                    return FunctionData.NullFunction;
+            }
+        }
+        public FunctionData LowerOrderOrThisBody
+        {
+            get {
+                if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveStatement())
+                    return m_LowerOrderFunction;
+                else if (HaveStatement())
+                    return this;
+                else
+                    return FunctionData.NullFunction;
+            }
+        }
+        public FunctionData LowerOrderOrThisScript
+        {
+            get {
+                if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveExternScript())
+                    return m_LowerOrderFunction;
+                else if (HaveExternScript())
+                    return this;
+                else
+                    return FunctionData.NullFunction;
+            }
+        }
+        public bool HaveLowerOrderParam()
+        {
+            if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveParam())
+                return true;
+            else
+                return false;
+        }
+        public bool HaveLowerOrderStatement()
+        {
+            if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveStatement())
+                return true;
+            else
+                return false;
+        }
+        public bool HaveLowerOrderExternScript()
+        {
+            if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveExternScript())
+                return true;
+            else
+                return false;
         }
         public List<string> Comments
         {
@@ -439,13 +511,6 @@ namespace Dsl
         public bool HaveExternScript()
         {
             return (int)ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT == m_ParamClass;
-        }
-        public bool HaveLowerOrderParam()
-        {
-            if (IsHighOrder)
-                return LowerOrderFunction.HaveParamOrStatement();
-            else
-                return false;
         }
         public int GetParamNum()
         {
@@ -566,13 +631,13 @@ namespace Dsl
         private int m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
         private List<string> m_Comments = null;
 
-        public static FunctionData NullFunctionData
+        public static FunctionData NullFunction
         {
             get {
-                return s_NullFunctionData;
+                return s_Instance;
             }
         }
-        private static FunctionData s_NullFunctionData = new FunctionData();
+        private static FunctionData s_Instance = new FunctionData();
     }
     /// <summary>
     /// 语句数据，由多个函数项连接而成。
@@ -684,7 +749,7 @@ namespace Dsl
         public FunctionData GetFunction(int index)
         {
             if (index < 0 || index >= m_Functions.Count)
-                return FunctionData.NullFunctionData;
+                return FunctionData.NullFunction;
             return m_Functions[index];
         }
         public string GetFunctionId(int index)
@@ -707,7 +772,7 @@ namespace Dsl
                 if (m_Functions.Count > 0)
                     return m_Functions[0];
                 else
-                    return FunctionData.NullFunctionData;
+                    return FunctionData.NullFunction;
             }
         }
         public FunctionData Second
@@ -716,7 +781,7 @@ namespace Dsl
                 if (m_Functions.Count > 1)
                     return m_Functions[1];
                 else
-                    return FunctionData.NullFunctionData;
+                    return FunctionData.NullFunction;
             }
         }
         public FunctionData Third
@@ -725,7 +790,7 @@ namespace Dsl
                 if (m_Functions.Count > 2)
                     return m_Functions[2];
                 else
-                    return FunctionData.NullFunctionData;
+                    return FunctionData.NullFunction;
             }
         }
         public FunctionData Last
@@ -734,7 +799,7 @@ namespace Dsl
                 if (m_Functions.Count > 0)
                     return m_Functions[m_Functions.Count - 1];
                 else
-                    return FunctionData.NullFunctionData;
+                    return FunctionData.NullFunction;
             }
         }
         public void Clear()
@@ -1268,7 +1333,7 @@ namespace Dsl
                 for (int i = 0; i < ct; ++i) {
                     FunctionData func = data.Functions[i];
                     bool noIndent = false;
-                    bool funcNoParam = !func.HaveLowerOrderParam();
+                    bool funcNoParam = !func.IsHighOrder && !func.HaveParam();
                     bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
                     if (i > 0) {
                         if (lastFuncNoParam && lastFuncNoStatement) {
