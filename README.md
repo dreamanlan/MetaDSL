@@ -135,3 +135,4 @@ table(NpcConfig)
 - 一个比较完整的基于c#与unity3d的客户端与服务器架构，DSL用于实现游戏高层逻辑与各种编辑器工具：https://github.com/dreamanlan/CSharpGameFramework
 - 一个跨平台批处理脚本解释器：https://github.com/dreamanlan/BatchCommand
 - 基于roslyn的C#重写工具（在包含new的函数开头与结尾插入指定的函数调用，可用来profile内存），使用DSL作为配置语言：https://github.com/dreamanlan/CSharpHookRewriter
+- 基于roslyn的C#无用类分析工具（可用来清理废弃代码），使用DSL作为配置语言：https://github.com/dreamanlan/UnusedClass
