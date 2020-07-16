@@ -136,3 +136,4 @@ table(NpcConfig)
 - 一个跨平台批处理脚本解释器：https://github.com/dreamanlan/BatchCommand
 - 基于roslyn的C#重写工具（在包含new的函数开头与结尾插入指定的函数调用，可用来profile内存），使用DSL作为配置语言：https://github.com/dreamanlan/CSharpHookRewriter
 - 基于roslyn的C#无用类分析工具（可用来清理废弃代码），使用DSL作为配置语言：https://github.com/dreamanlan/UnusedClass
+- 一个dotnet exe/dll补丁工具，使用DSL作为脚本：https://github.com/dreamanlan/DotnetPatch
