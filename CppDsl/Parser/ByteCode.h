@@ -14,6 +14,7 @@ namespace Dsl
 		RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile)
 		{
 			MyAssert(mDataFile);
+            mData.GetNullFunctionPtrRef() = mDataFile->GetNullFunctionPtr();
 		}
 		inline void    setEnvironmentObjRef(RealTypeT& thisObj)
 		{

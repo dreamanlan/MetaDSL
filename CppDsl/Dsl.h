@@ -344,12 +344,6 @@ namespace Dsl
     private:
         NullSyntax(const NullSyntax&) = delete;
         NullSyntax& operator=(const NullSyntax&) = delete;
-    public:
-        static NullSyntax*& GetNullSyntaxPtrRef(void)
-        {
-            static NullSyntax* s_P = 0;
-            return s_P;
-        }
     };
 
     class DslFile;
@@ -431,85 +425,79 @@ namespace Dsl
                 return fptr;
             }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
-        const FunctionData* GetLowerOrderOrThisCall(void)const
+        const FunctionData* GetThisOrLowerOrderCall(void)const
         {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveParam()) {
-                return fptr;
-            }
-            else if (HaveParam()) {
+            if (HaveParam()) {
                 return this;
             }
+            else if (HaveLowerOrderParam()) {
+                return m_Name.GetFunction();
+            }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
-        FunctionData* GetLowerOrderOrThisCall(void)
+        FunctionData* GetThisOrLowerOrderCall(void)
         {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveParam()) {
-                return fptr;
-            }
-            else if (HaveParam()) {
+            if (HaveParam()) {
                 return this;
             }
+            else if (HaveLowerOrderParam()) {
+                return m_Name.GetFunction();
+            }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
-        const FunctionData* GetLowerOrderOrThisBody(void)const
+        const FunctionData* GetThisOrLowerOrderBody(void)const
         {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveStatement()) {
-                return fptr;
-            }
-            else if (HaveStatement()) {
+            if (HaveStatement()) {
                 return this;
             }
+            else if (HaveLowerOrderStatement()) {
+                return m_Name.GetFunction();
+            }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
-        FunctionData* GetLowerOrderOrThisBody(void)
+        FunctionData* GetThisOrLowerOrderBody(void)
         {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveStatement()) {
-                return fptr;
-            }
-            else if (HaveStatement()) {
+            if (HaveStatement()) {
                 return this;
             }
+            else if (HaveLowerOrderStatement()) {
+                return m_Name.GetFunction();
+            }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
-        const FunctionData* GetLowerOrderOrThisScript(void)const
+        const FunctionData* GetThisOrLowerOrderScript(void)const
         {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveExternScript()) {
-                return fptr;
-            }
-            else if (HaveExternScript()) {
+            if (HaveExternScript()) {
                 return this;
             }
+            else if (HaveLowerOrderExternScript()) {
+                return m_Name.GetFunction();
+            }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
-        FunctionData* GetLowerOrderOrThisScript(void)
+        FunctionData* GetThisOrLowerOrderScript(void)
         {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveExternScript()) {
-                return fptr;
-            }
-            else if (HaveExternScript()) {
+            if (HaveExternScript()) {
                 return this;
             }
+            else if (HaveLowerOrderExternScript()) {
+                return m_Name.GetFunction();
+            }
             else {
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtr();
             }
         }
         int HaveLowerOrderParam(void)const
@@ -542,7 +530,7 @@ namespace Dsl
         ISyntaxComponent* GetParam(int index)const
         {
             if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= m_MaxParamNum)
-                return NullSyntax::GetNullSyntaxPtrRef();
+                return GetNullSyntaxPtr();
             return m_Params[index];
         }
         const char* GetParamId(int index)const
@@ -594,6 +582,9 @@ namespace Dsl
         void PrepareComments(void);
         void ReleaseComments(void);
     private:
+        NullSyntax* GetNullSyntaxPtr(void)const;
+        FunctionData* GetNullFunctionPtr(void)const;
+    private:
         ValueData m_Name;
         ISyntaxComponent**	m_Params;
         int m_ParamNum;
@@ -603,12 +594,8 @@ namespace Dsl
         const char** m_Comments;
         int m_CommentNum;
         int m_CommentSpace;
-    public:
-        static FunctionData*& GetNullFunctionPtrRef(void)
-        {
-            static FunctionData* s_P = 0;
-            return s_P;
-        }
+    private:
+        DslFile& m_DslFile;
     };
     
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
@@ -665,7 +652,7 @@ namespace Dsl
         FunctionData*& GetLastFunctionRef(void)const
         {
             if (NULL == m_Functions || 0 == m_FunctionNum)
-                return FunctionData::GetNullFunctionPtrRef();
+                return GetNullFunctionPtrRef();
             else
                 return m_Functions[m_FunctionNum - 1];
         }
@@ -696,10 +683,14 @@ namespace Dsl
         void PrepareFunctions(void);
         void ReleaseFunctions(void);
     private:
+        FunctionData*& GetNullFunctionPtrRef(void)const;
+    private:
         FunctionData** m_Functions;
         int m_FunctionNum;
         int m_FunctionSpace;
         int m_MaxFunctionNum;
+    private:
+        DslFile& m_DslFile;
     };
 
     class ErrorAndStringBuffer
@@ -793,7 +784,7 @@ namespace Dsl
         char* GetStringBuffer(void)const { return m_StringBuffer; }
         char*& GetUnusedStringPtrRef(void) { return m_UnusedStringPtr; }
     public:
-        DslFile(void);
+        DslFile(void) :DslFile(DslOptions()) {}
         DslFile(const DslOptions& options);
         ~DslFile(void);
         void Reset(void);
@@ -837,9 +828,30 @@ namespace Dsl
         const DslOptions& GetOptions(void)const { return m_Options; }
     private:
         DslOptions m_Options;
+    public:
+        NullSyntax* GetNullSyntaxPtr(void)const
+        {
+            return m_pNullSyntax;
+        }
+        FunctionData* GetNullFunctionPtr(void)const
+        {
+            m_pNullFunction->GetName().SetInvalid();
+            m_pNullFunction->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
+            m_pNullFunction->ClearParams();
+            return m_pNullFunction;
+        }
+        FunctionData*& GetNullFunctionPtrRef(void)const
+        {
+            auto fptr = *m_ppNullFunction;
+            fptr->GetName().SetInvalid();
+            fptr->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
+            fptr->ClearParams();
+            return *m_ppNullFunction;
+        }
     private:
-        NullSyntax m_NullSyntax;
-        FunctionData m_NullFunction;
+        NullSyntax* m_pNullSyntax;
+        FunctionData* m_pNullFunction;
+        FunctionData** m_ppNullFunction;
     };
 
     class IScriptSource

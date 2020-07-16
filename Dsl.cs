@@ -413,36 +413,36 @@ namespace Dsl
                 m_IsHighOrder = true;
             }
         }
-        public FunctionData LowerOrderOrThisCall
+        public FunctionData ThisOrLowerOrderCall
         {
             get {
-                if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveParam())
-                    return m_LowerOrderFunction;
-                else if (HaveParam())
+                if (HaveParam())
                     return this;
-                else
+                else if (HaveLowerOrderParam())
+                    return m_LowerOrderFunction;
+                else 
                     return FunctionData.NullFunction;
             }
         }
-        public FunctionData LowerOrderOrThisBody
+        public FunctionData ThisOrLowerOrderBody
         {
             get {
-                if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveStatement())
-                    return m_LowerOrderFunction;
-                else if (HaveStatement())
+                if (HaveStatement())
                     return this;
-                else
+                else if (HaveLowerOrderStatement())
+                    return m_LowerOrderFunction;
+                else 
                     return FunctionData.NullFunction;
             }
         }
-        public FunctionData LowerOrderOrThisScript
+        public FunctionData ThisOrLowerOrderScript
         {
             get {
-                if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveExternScript())
-                    return m_LowerOrderFunction;
-                else if (HaveExternScript())
+                if (HaveExternScript())
                     return this;
-                else
+                else if (HaveLowerOrderExternScript())
+                    return m_LowerOrderFunction;
+                else 
                     return FunctionData.NullFunction;
             }
         }

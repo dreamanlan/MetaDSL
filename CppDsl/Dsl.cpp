@@ -148,6 +148,7 @@ namespace Dsl
     }
     //------------------------------------------------------------------------------------------------------
     FunctionData::FunctionData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
+        m_DslFile(dataFile),
         m_Params(0),
         m_ParamNum(0),
         m_ParamSpace(0),
@@ -164,6 +165,16 @@ namespace Dsl
     {
         ReleaseParams();
         ReleaseComments();
+    }
+
+    NullSyntax* FunctionData::GetNullSyntaxPtr(void)const
+    {
+        return m_DslFile.GetNullSyntaxPtr();
+    }
+
+    FunctionData* FunctionData::GetNullFunctionPtr(void)const
+    {
+        return m_DslFile.GetNullFunctionPtr();
     }
 
     void FunctionData::PrepareParams(void)
@@ -222,12 +233,18 @@ namespace Dsl
     }
     
     StatementData::StatementData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
+        m_DslFile(dataFile),
         m_Functions(0),
         m_FunctionNum(0),
         m_FunctionSpace(0)
     {
         const DslOptions& options = dataFile.GetOptions();
         m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();
+    }
+
+    FunctionData*& StatementData::GetNullFunctionPtrRef(void)const
+    {
+        return m_DslFile.GetNullFunctionPtrRef();
     }
 
     void StatementData::PrepareFunctions(void)
@@ -325,35 +342,31 @@ namespace Dsl
         return p;
     }
 
-    DslFile::DslFile(void) :m_IsDebugInfoEnable(FALSE),
-        m_StringBuffer(NULL),
-        m_UnusedStringPtr(NULL),
-        m_SyntaxComponentPool(NULL),
-        m_DslInfos(NULL),
-        m_NullSyntax(),
-        m_NullFunction(*this)
-    {
-        NullSyntax::GetNullSyntaxPtrRef() = &m_NullSyntax;
-        FunctionData::GetNullFunctionPtrRef() = &m_NullFunction;
-        Init();
-    }
-
     DslFile::DslFile(const DslOptions& options) :m_Options(options), m_IsDebugInfoEnable(FALSE),
         m_StringBuffer(NULL),
         m_UnusedStringPtr(NULL),
         m_SyntaxComponentPool(NULL),
         m_DslInfos(NULL),
-        m_NullSyntax(),
-        m_NullFunction(*this)
+        m_pNullSyntax(NULL),
+        m_pNullFunction(NULL),
+        m_ppNullFunction(NULL)
     {
-        NullSyntax::GetNullSyntaxPtrRef() = &m_NullSyntax;
-        FunctionData::GetNullFunctionPtrRef() = &m_NullFunction;
+        m_pNullSyntax = new NullSyntax();
+        m_pNullFunction = new FunctionData(*this);
+        m_ppNullFunction = new FunctionData*[1];
+        *m_ppNullFunction = m_pNullFunction;
         Init();
     }
 
     DslFile::~DslFile(void)
     {
         Release();
+        delete m_pNullSyntax;
+        m_pNullSyntax = NULL;
+        delete m_pNullFunction;
+        m_pNullFunction = NULL;
+        delete[] m_ppNullFunction;
+        m_ppNullFunction = NULL;
     }
 
     void DslFile::Reset(void)

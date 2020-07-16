@@ -1,5 +1,4 @@
 ﻿#include "RuntimeBuilderData.h"
-#include "Dsl.h"
 
 #define BYTECODE_PRINTF	nullprintf
 
@@ -89,7 +88,7 @@ Dsl::FunctionData*& RuntimeBuilderData::getLastFunctionRef(void)const
 	if (0 != statement)
 		return statement->GetLastFunctionRef();
 	else
-		return FunctionData::GetNullFunctionPtrRef();
+		return GetNullFunctionPtrRef();
 }
 //--------------------------------------------------------------------------------------
 RuntimeBuilderData::RuntimeBuilderData(void)
