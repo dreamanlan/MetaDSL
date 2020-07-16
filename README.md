@@ -132,7 +132,7 @@ table(NpcConfig)
 - 几百行代码的脚本解释器：https://github.com/dreamanlan/ScriptInterpreterByDsl
 - 基于DSL的unity3d地形生成：https://github.com/dreamanlan/TerrainGenByDsl
 - unity3d游戏课程Demo，使用DSL实现一个基于命令队列的脚本，并用于编写游戏逻辑：https://github.com/dreamanlan/GameDemo
-- 一个比较完整的基于c#与unity3d的客户端与服务器架构，DSL用于实现游戏高层逻辑与各种编辑器工具：https://github.com/dreamanlan/CSharpGameFramework
+- 一个比较完整的基于c#与unity3d的客户端与服务器架构，DSL用于实现游戏高层逻辑与各种编辑器工具以及前面提到的剧情、技能、配表的描述：https://github.com/dreamanlan/CSharpGameFramework
 - 一个跨平台批处理脚本解释器：https://github.com/dreamanlan/BatchCommand
 - 基于roslyn的C#重写工具（在包含new的函数开头与结尾插入指定的函数调用，可用来profile内存），使用DSL作为配置语言：https://github.com/dreamanlan/CSharpHookRewriter
 - 基于roslyn的C#无用类分析工具（可用来清理废弃代码），使用DSL作为配置语言：https://github.com/dreamanlan/UnusedClass
