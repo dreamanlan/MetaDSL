@@ -119,7 +119,7 @@ DSL即领域特定语言的简写，这个工程提供的是用作DSL的元语�
 本工程提供的属于外部DSL，外部DSL因为需要设计语法与编写词法、语法解析等，相比内部DSL在实现上比较麻烦，本工程尝试实现DSL元语言，就是期望简化这一块的工作，基于标准语法来定制DSL，可以与内部DSL在实现上一样简便。其实XML、json就是这种通用DSL语言的例子，本工程的DSL元语言语法借鉴自C系语言，期望在语法上提供与C系语言类似的体验，相比XML与json提供了对高阶表示更易读的支持，更接近于人类语言的核心概念。
 
 
-面向语言的开发（LOP）最早提出于1994年(http://www.gkc.org.uk/martin/papers/middle-out-t.pdf)["middle-out-t"]，强调基于语言来提供分层间的抽象，这与操作系统分层虚拟机的观点很相似，每一层抽象都定义一种语言，语言定义本质上基于数学，所以是精确的。这篇文章(https://parametri.city/blog/2018-12-23-language-oriented-software-engineering/index.html)["language oriented software engineering"]对LOP的开发过程有一个提炼：
+面向语言的开发（LOP）最早提出于1994年[middle-out-t](http://www.gkc.org.uk/martin/papers/middle-out-t.pdf)，强调基于语言来提供分层间的抽象，这与操作系统分层虚拟机的观点很相似，每一层抽象都定义一种语言，语言定义本质上基于数学，所以是精确的。这篇文章[language oriented software engineering](https://parametri.city/blog/2018-12-23-language-oriented-software-engineering/index.html)对LOP的开发过程有一个提炼：
 ```
 The language-oriented methodology proceeds in three steps:
 
