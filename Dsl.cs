@@ -1504,20 +1504,29 @@ namespace Dsl
                     }
                     StringBuilder stream = new StringBuilder();
                     stream.Append(lbracket);
-                    int ct = data.GetParamNum();
-                    for (int i = 0; i < ct; ++i) {
-                        if (i > 0)
-                            stream.Append(",");
-                        ISyntaxComponent param = data.GetParam(i);
-                        if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
-                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
-                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
-                             || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
-                            stream.Append(param.ToScriptString(includeComment));
-                        else
-                            stream.Append(param.ToScriptString(includeComment));
+                    if (paramClass == (int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT) {
+                        stream.Append(data.GetParamId(0));
+                    }
+                    else {
+                        int ct = data.GetParamNum();
+                        for (int i = 0; i < ct; ++i) {
+                            if (data.HaveParam() && i > 0) {
+                                stream.Append(",");
+                            }
+                            ISyntaxComponent param = data.GetParam(i);
+                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
+                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
+                                stream.Append(param.ToScriptString(includeComment));
+                            else
+                                stream.Append(param.ToScriptString(includeComment));
+                            if (data.HaveStatement()) {
+                                stream.Append(";");
+                            }
+                        }
                     }
                     stream.Append(rbracket);
                     return string.Format("{0}{1}{2}", lineNo, line, stream.ToString());
@@ -1567,8 +1576,7 @@ namespace Dsl
             }
 #endif
         }
-
-
+        
         private static void writeFirstComments(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent)
         {
 #if FULL_VERSION
