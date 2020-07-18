@@ -112,6 +112,17 @@ table(NpcConfig)
 
 ## 语言的语法定义见Parse/Dsl.txt文件，语法分析程序采用LL语法分析器生成工具SLK生成。
 
+## 面向语言的开发
+DSL即领域特定语言的简写，这个工程提供的是用作DSL的元语言。DSL通常按实现方式分内部DSL与外部DSL两大类，内部DSL一般使用宿主语言的部分语法构造，这样免去了写语法分析的必要，编写DSL的人需要对宿主语言本身有一定的了解，内部DSL的使用在函数式语言里比较常见，C++的模板元编程与操作符重载也常用来实现内部DSL，为java扩充的groove语言有很多对DSL的支持，比如提供命令链的语法糖：a b c d e f <=> a(b).c(d).e(f)。
+本工程提供的属于外部DSL，外部DSL因为需要设计语法与编写词法、语法解析等，相比内部DSL在实现上比较麻烦，本工程尝试实现DSL元语言，就是期望简化这一块的工作，基于标准语法来定制DSL，可以与内部DSL在实现上一样简便。其实XML、json就是这种通用DSL语言的例子，本工程的DSL元语言语法借鉴自C系语言，期望在语法上提供与C系语言类似的体验，相比XML与json提供了对高阶表示更易读的支持，更接近于人类语言的核心概念。
+面向语言的开发（LOP）最早提出于1994年(http://www.gkc.org.uk/martin/papers/middle-out-t.pdf)，强调基于语言来提供分层间的抽象，这与操作系统分层虚拟机的观点很相似，每一层抽象都定义一种语言，语言定义本质上基于数学，所以是精确的。这篇文章(https://parametri.city/blog/2018-12-23-language-oriented-software-engineering/index.html)对LOP的开发过程有一个提炼：
+```
+The language-oriented methodology proceeds in three steps:
+
+1. Design a domain specific language (DSL) for your core application logic.
+2. Write your application in the DSL.
+3. Build interpreters to execute your DSL programs, mapping your logical constructs to the actual machinery.
+```
 
 ## 泛化
 维特根斯坦的《逻辑哲学论》从人类语言与世界的类比来理解世界
