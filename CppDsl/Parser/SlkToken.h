@@ -82,7 +82,7 @@ private:
 	void endToken(void);
 	void endTokenWithEof(void);
 public:
-	SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorAndStringBuffer);
+	SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile);
 private:
 	Dsl::IScriptSource* mSource;
 	Dsl::IScriptSource::Iterator mIterator;
@@ -99,7 +99,7 @@ private:
 	int mCommentNum;
 	int mCommentOnNewLine;
 
-	Dsl::ErrorAndStringBuffer* mErrorAndStringBuffer;
+	Dsl::DslFile* mDslFile;
 
 	int mLineNumber;
 	int mLastLineNumber;

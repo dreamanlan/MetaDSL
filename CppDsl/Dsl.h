@@ -55,9 +55,7 @@ namespace Dsl
         DslOptions(void) :
             m_MaxFunctionDimensionNum(MAX_FUNCTION_DIMENSION_NUM),
             m_MaxParamNum(MAX_FUNCTION_PARAM_NUM),
-            m_MaxProgramSize(MAX_PROGRAM_SIZE),
-            m_StringBufferSize(STRING_BUFFER_SIZE),
-            m_SyntaxComponentPoolSize(SYNTAXCOMPONENT_POOL_SIZE)
+            m_MaxProgramSize(MAX_PROGRAM_SIZE)
         {
         }
     public:
@@ -67,16 +65,10 @@ namespace Dsl
         void SetMaxParamNum(int val) { m_MaxParamNum = val; }
         int GetMaxProgramSize() const { return m_MaxProgramSize; }
         void SetMaxProgramSize(int val) { m_MaxProgramSize = val; }
-        int GetStringBufferSize() const { return m_StringBufferSize; }
-        void SetStringBufferSize(int val) { m_StringBufferSize = val; }
-        int GetSyntaxComponentPoolSize(void) const { return m_SyntaxComponentPoolSize; }
-        void SetSyntaxComponentPoolSize(int val) { m_SyntaxComponentPoolSize = val; }
     private:
         int	m_MaxFunctionDimensionNum;
         int	m_MaxParamNum;
         int	m_MaxProgramSize;
-        int	m_StringBufferSize;
-        int m_SyntaxComponentPoolSize;
     };
 
     class ISyntaxComponent
@@ -346,7 +338,7 @@ namespace Dsl
         NullSyntax& operator=(const NullSyntax&) = delete;
     };
 
-    class DslFile;
+    class IDslStringAndObjectBuffer;
     class FunctionData : public ISyntaxComponent
     {
     public:
@@ -571,7 +563,7 @@ namespace Dsl
             }
         }
     public:
-        FunctionData(DslFile& dataFile);
+        FunctionData(IDslStringAndObjectBuffer& buffer);
         virtual ~FunctionData(void);
     private:
         FunctionData(const FunctionData& other) = delete;
@@ -595,7 +587,7 @@ namespace Dsl
         int m_CommentNum;
         int m_CommentSpace;
     private:
-        DslFile& m_DslFile;
+        IDslStringAndObjectBuffer& m_Buffer;
     };
     
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
@@ -671,7 +663,7 @@ namespace Dsl
             return m_Functions[index]->GetId();
         }
     public:
-        StatementData(DslFile& dataFile);
+        StatementData(IDslStringAndObjectBuffer& buffer);
         virtual ~StatementData(void)
         {
             ReleaseFunctions();
@@ -690,11 +682,145 @@ namespace Dsl
         int m_FunctionSpace;
         int m_MaxFunctionNum;
     private:
-        DslFile& m_DslFile;
+        IDslStringAndObjectBuffer& m_Buffer;
     };
 
-    class ErrorAndStringBuffer
+    //在c++实现里，DSL的内存希望尽量是预先分配的，这个接口用来实现预先分配的内存
+    class IDslStringAndObjectBuffer
     {
+    public:
+        virtual DslOptions& GetOptions(void) = 0;
+        virtual const DslOptions& GetOptions(void)const = 0;
+    public:
+        virtual char* AllocString(int len) = 0;
+        virtual char* AllocString(const char* src) = 0;
+        virtual char* GetStringBuffer(void)const = 0;
+        virtual char*& GetUnusedStringPtrRef(void) = 0;
+        virtual int GetUnusedStringLength(void)const = 0;
+    public:
+        virtual ValueData* AddNewValueComponent(void) = 0;
+        virtual FunctionData* AddNewFunctionComponent(void) = 0;
+        virtual StatementData* AddNewStatementComponent(void) = 0;
+    public:
+        virtual NullSyntax* GetNullSyntaxPtr(void) = 0;
+        virtual FunctionData* GetNullFunctionPtr(void) = 0;
+        virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
+    public:
+        virtual ~IDslStringAndObjectBuffer(void) {}
+    };
+
+    /*
+     * 实际的DSL预先分配缓冲区，这个类需要在堆上实例化（在栈上可能导致栈溢出），类本身使
+     * 用数组来分配缓冲区。
+     * 目前只有字符串与语句池是预先分配的，理想情况是所有相关类使用的内存都是预先分配的，
+     * 目前各语法组件对象（ValueData、FunctionData、StatementData）及对象内所包含的指
+     * 针列表(参数列表与语句列表)还没有实现预先分配。
+     */
+    template<int MaxStringBufferLength = STRING_BUFFER_SIZE, int SyntaxComponentPoolSize = SYNTAXCOMPONENT_POOL_SIZE>
+    class DslStringAndObjectBuffer : public IDslStringAndObjectBuffer
+    {
+        typedef ISyntaxComponent* SyntaxComponentPtr;
+    public:
+        DslOptions& GetOptions(void) { return m_Options; }
+        const DslOptions& GetOptions(void)const { return m_Options; }
+    public:
+        char* AllocString(int len);
+        char* AllocString(const char* src);
+        char* GetStringBuffer(void)const { return m_pStringBuffer; }
+        char*& GetUnusedStringPtrRef(void) { return m_pUnusedStringPtr; }
+        int GetUnusedStringLength(void)const
+        {
+            MyAssert(m_pStringBuffer);
+            MyAssert(m_ppUnusedStringRef);
+            return MaxStringBufferLength - int(m_pUnusedStringPtr - m_pStringBuffer);
+        }
+    public:
+        ValueData* AddNewValueComponent(void);
+        FunctionData* AddNewFunctionComponent(void);
+        StatementData* AddNewStatementComponent(void);
+    public:
+        NullSyntax* GetNullSyntaxPtr(void)
+        {
+            return &m_NullSyntax;
+        }
+        FunctionData* GetNullFunctionPtr(void)
+        {
+            m_NullFunction.GetName().SetInvalid();
+            m_NullFunction.SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
+            m_NullFunction.ClearParams();
+            return &m_NullFunction;
+        }
+        FunctionData*& GetNullFunctionPtrRef(void)
+        {
+            auto fptr = m_pNullFunction;
+            fptr->GetName().SetInvalid();
+            fptr->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
+            fptr->ClearParams();
+            return m_pNullFunction;
+        }
+    public:
+        DslStringAndObjectBuffer(void) :m_SyntaxComponentNum(0), m_NullSyntax(), m_NullFunction(*this)
+        {
+            m_pStringBuffer = m_StringBuffer;
+            m_pUnusedStringPtr = m_pStringBuffer;
+
+            m_pNullFunction = &m_NullFunction;
+        }
+    private:
+        void AddSyntaxComponent(ISyntaxComponent* p);
+    private:
+        DslStringAndObjectBuffer(const DslStringAndObjectBuffer&) = delete;
+        DslStringAndObjectBuffer& operator=(const DslStringAndObjectBuffer&) = delete;
+    private:
+        DslOptions m_Options;
+    private:
+        char m_StringBuffer[MaxStringBufferLength];
+        char* m_pStringBuffer;
+        char* m_pUnusedStringPtr;
+    private:
+        SyntaxComponentPtr m_SyntaxComponentPool[SyntaxComponentPoolSize];
+        int m_SyntaxComponentNum;
+    private:
+        NullSyntax m_NullSyntax;
+        FunctionData m_NullFunction;
+        FunctionData* m_pNullFunction;
+    };
+    
+    class IScriptSource;
+    class DslFile
+    {
+        typedef ISyntaxComponent* SyntaxComponentPtr;
+    public:
+        int GetDslInfoNum(void)const { return m_DslInfoNum; }
+        ISyntaxComponent* GetDslInfo(int index)const
+        {
+            if (index < 0 || index >= m_DslInfoNum)
+                return NULL;
+            return m_DslInfos[index];
+        }
+        void WriteToFile(FILE* fp, int indent) const;
+    public:
+        void AddDslInfo(ISyntaxComponent* p);
+    public:
+        DslFile(IDslStringAndObjectBuffer& buffer);
+        ~DslFile(void);
+        void Reset(void);
+        void Parse(const char* buf);
+        void Parse(IScriptSource& source);
+    public:
+        void LoadBinaryFile(const char* file);
+        void LoadBinaryCode(const char* buffer, int bufferSize);
+        void SaveBinaryFile(const char* file) const;
+    private:
+        DslFile(const DslFile&) = delete;
+        DslFile& operator=(const DslFile&) = delete;
+    private:
+        void Init(void);
+        void Release(void);
+    public:
+        void EnableDebugInfo(void) { m_IsDebugInfoEnable = TRUE; }
+        void DisableDebugInfo(void) { m_IsDebugInfoEnable = FALSE; }
+        int IsDebugInfoEnable(void)const { return m_IsDebugInfoEnable; }
     public:
         void ClearErrorInfo(void);
         void AddError(const char* error);
@@ -718,140 +844,30 @@ namespace Dsl
             }
         }
     public:
-        int GetUnusedStringLength(void)const
-        {
-            MyAssert(m_pStringBuffer);
-            MyAssert(m_ppUnusedStringRef);
-            return m_MaxStringBufferLength - int(*m_ppUnusedStringRef - m_pStringBuffer);
-        }
-        char*& GetUnusedStringPtrRef(void)
-        {
-            MyAssert(m_ppUnusedStringRef);
-            return *m_ppUnusedStringRef;
-        }
+        char* AllocString(int len) const { return m_Buffer.AllocString(len); }
+        char* AllocString(const char* src) const { return m_Buffer.AllocString(src); }
+        char* GetStringBuffer(void) const { return m_Buffer.GetStringBuffer(); }
+        char*& GetUnusedStringPtrRef(void) const { return m_Buffer.GetUnusedStringPtrRef(); }
+        int GetUnusedStringLength(void) const { return m_Buffer.GetUnusedStringLength(); }
     public:
-        ErrorAndStringBuffer(void) :m_pStringBuffer(NULL), m_ppUnusedStringRef(NULL), m_MaxStringBufferLength(0)
-        {
-            ClearErrorInfo();
-        }
-        void Reset(char* pStringBuffer, char*& pUnusedStringRef, int maxStringBufferLength)
-        {
-            ClearErrorInfo();
-            m_pStringBuffer = pStringBuffer;
-            m_ppUnusedStringRef = &pUnusedStringRef;
-            m_MaxStringBufferLength = maxStringBufferLength;
-            MyAssert(m_pStringBuffer);
-            MyAssert(m_ppUnusedStringRef);
-        }
+        ValueData* AddNewValueComponent(void) const { return m_Buffer.AddNewValueComponent(); }
+        FunctionData* AddNewFunctionComponent(void) const { return m_Buffer.AddNewFunctionComponent(); }
+        StatementData* AddNewStatementComponent(void) const { return m_Buffer.AddNewStatementComponent(); }
+    public:
+        NullSyntax* GetNullSyntaxPtr(void) const { return m_Buffer.GetNullSyntaxPtr(); }
+        FunctionData* GetNullFunctionPtr(void) { return m_Buffer.GetNullFunctionPtr(); }
+        FunctionData*& GetNullFunctionPtrRef(void) { return m_Buffer.GetNullFunctionPtrRef(); }
     private:
-        ErrorAndStringBuffer(const ErrorAndStringBuffer&);
-        ErrorAndStringBuffer& operator=(const ErrorAndStringBuffer&);
+        IDslStringAndObjectBuffer& m_Buffer;
+    private:
+        SyntaxComponentPtr* m_DslInfos;
+        int m_DslInfoNum;
+    private:
+        int m_IsDebugInfoEnable;
     private:
         int	m_HasError;
         char m_ErrorInfo[MAX_RECORD_ERROR_NUM][MAX_ERROR_INFO_CAPACITY];
         int m_ErrorNum;
-        char* m_pStringBuffer;
-        char** m_ppUnusedStringRef;
-        int m_MaxStringBufferLength;
-    };
-
-    class IScriptSource;
-    class DslFile
-    {
-        typedef ISyntaxComponent* SyntaxComponentPtr;
-    public:
-        int GetDslInfoNum(void)const { return m_DslInfoNum; }
-        ISyntaxComponent* GetDslInfo(int index)const
-        {
-            if (index < 0 || index >= m_DslInfoNum)
-                return NULL;
-            return m_DslInfos[index];
-        }
-        void WriteToFile(FILE* fp, int indent) const;
-    public:
-        void AddDslInfo(ISyntaxComponent* p);
-        ValueData* AddNewValueComponent(void);
-        FunctionData* AddNewFunctionComponent(void);
-        StatementData* AddNewStatementComponent(void);
-    private:
-        void AddSyntaxComponent(ISyntaxComponent* p);
-    private:
-        SyntaxComponentPtr* m_SyntaxComponentPool;
-        int m_SyntaxComponentNum;
-    public:
-        char* AllocString(int len);
-        char* AllocString(const char* src);
-        char* GetStringBuffer(void)const { return m_StringBuffer; }
-        char*& GetUnusedStringPtrRef(void) { return m_UnusedStringPtr; }
-    public:
-        DslFile(void) :DslFile(DslOptions()) {}
-        DslFile(const DslOptions& options);
-        ~DslFile(void);
-        void Reset(void);
-        void Parse(const char* buf);
-        void Parse(IScriptSource& source);
-    public:
-        void LoadBinaryFile(const char* file);
-        void LoadBinaryCode(const char* buffer, int bufferSize);
-        void SaveBinaryFile(const char* file) const;
-    private:
-        DslFile(const DslFile&) = delete;
-        DslFile& operator=(const DslFile&) = delete;
-    private:
-        void Init(void);
-        void Release(void);
-    private:
-        char* m_StringBuffer;
-        char* m_UnusedStringPtr;
-        SyntaxComponentPtr* m_DslInfos;
-        int m_DslInfoNum;
-    public:
-        void EnableDebugInfo(void) { m_IsDebugInfoEnable = TRUE; }
-        void DisableDebugInfo(void) { m_IsDebugInfoEnable = FALSE; }
-        int IsDebugInfoEnable(void)const { return m_IsDebugInfoEnable; }
-    private:
-        int m_IsDebugInfoEnable;
-    public:
-        void ClearErrorInfo(void) { m_ErrorAndStringBuffer.ClearErrorInfo(); }
-        void AddError(const char* error) { m_ErrorAndStringBuffer.AddError(error); }
-        int HasError(void)const { return m_ErrorAndStringBuffer.HasError(); }
-        int GetErrorNum(void) { return m_ErrorAndStringBuffer.GetErrorNum(); }
-        const char* GetErrorInfo(int index) const { return m_ErrorAndStringBuffer.GetErrorInfo(index); }
-        char* NewErrorInfo(void) { return m_ErrorAndStringBuffer.NewErrorInfo(); }
-    public:
-        ErrorAndStringBuffer& GetErrorAndStringBuffer(void) { return m_ErrorAndStringBuffer; }
-        const ErrorAndStringBuffer&	GetErrorAndStringBuffer(void)const { return m_ErrorAndStringBuffer; }
-    private:
-        ErrorAndStringBuffer m_ErrorAndStringBuffer;
-    public:
-        DslOptions& GetOptions(void) { return m_Options; }
-        const DslOptions& GetOptions(void)const { return m_Options; }
-    private:
-        DslOptions m_Options;
-    public:
-        NullSyntax* GetNullSyntaxPtr(void)const
-        {
-            return m_pNullSyntax;
-        }
-        FunctionData* GetNullFunctionPtr(void)const
-        {
-            m_pNullFunction->GetName().SetInvalid();
-            m_pNullFunction->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
-            m_pNullFunction->ClearParams();
-            return m_pNullFunction;
-        }
-        FunctionData*& GetNullFunctionPtrRef(void)const
-        {
-            auto fptr = *m_ppNullFunction;
-            fptr->GetName().SetInvalid();
-            fptr->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
-            fptr->ClearParams();
-            return *m_ppNullFunction;
-        }
-    private:
-        NullSyntax* m_pNullSyntax;
-        FunctionData* m_pNullFunction;
-        FunctionData** m_ppNullFunction;
     };
 
     class IScriptSource
@@ -975,6 +991,66 @@ namespace Dsl
         virtual int Load(void) = 0;
         virtual const char* GetBuffer(void)const = 0;
     };
+
+    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
+    inline ValueData* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddNewValueComponent(void)
+    {
+        ValueData* p = new ValueData();
+        AddSyntaxComponent(p);
+        return p;
+    }
+
+    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
+    inline FunctionData* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddNewFunctionComponent(void)
+    {
+        FunctionData* p = new FunctionData(*this);
+        AddSyntaxComponent(p);
+        return p;
+    }
+
+    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
+    inline StatementData* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddNewStatementComponent(void)
+    {
+        StatementData* p = new StatementData(*this);
+        AddSyntaxComponent(p);
+        return p;
+    }
+
+    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
+    inline void DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddSyntaxComponent(ISyntaxComponent* p)
+    {
+        if (m_SyntaxComponentNum >= SyntaxComponentPoolSize || 0 == m_SyntaxComponentPool)
+            return;
+        m_SyntaxComponentPool[m_SyntaxComponentNum] = p;
+        ++m_SyntaxComponentNum;
+    }
+
+    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
+    inline char* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AllocString(int len)
+    {
+        if (m_pUnusedStringPtr + len - m_pStringBuffer >= MaxStringBufferLength) {
+            return 0;
+        }
+        char* p = m_pUnusedStringPtr;
+        if (0 != p) {
+            m_pUnusedStringPtr[len] = 0;
+            m_pUnusedStringPtr += len + 1;
+        }
+        return p;
+    }
+
+    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
+    inline char* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AllocString(const char* src)
+    {
+        if (0 == src)
+            return 0;
+        int len = (int)strlen(src);
+        char* p = AllocString(len);
+        if (0 != p) {
+            strcpy(p, src);
+        }
+        return p;
+    }
 }
 using namespace Dsl;
 

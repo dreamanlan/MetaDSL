@@ -211,8 +211,8 @@ namespace Dsl
 	void Parse(IScriptSource& source, DslFile& file)
 	{
 		file.ClearErrorInfo();
-		SlkToken tokens(source, file.GetErrorAndStringBuffer());
-		SlkError error(tokens, file.GetErrorAndStringBuffer());
+		SlkToken tokens(source, file);
+		SlkError error(tokens, file);
 		ActionForSourceCodeScript action(tokens, file);
 		SlkParse(action, tokens, error, 0);
 	}

@@ -15,8 +15,8 @@
 
 short SlkError::mismatch(short terminal, short token)
 {
-  if (mErrorBuffer && mTokens) {
-    char* p = mErrorBuffer->NewErrorInfo();
+  if (mDslFile && mTokens) {
+    char* p = mDslFile->NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] expecting '%s' but found '%s' \n",
       mTokens->getLineNumber(),
@@ -30,8 +30,8 @@ short SlkError::mismatch(short terminal, short token)
 
 short SlkError::no_entry(short nonterminal, short token, int level)
 {
-  if (mErrorBuffer && mTokens) {
-    char* p = mErrorBuffer->NewErrorInfo();
+  if (mDslFile && mTokens) {
+    char* p = mDslFile->NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] syntax error: skipping input '%s' \n",
       mTokens->getLineNumber(),
@@ -48,8 +48,8 @@ short SlkError::no_entry(short nonterminal, short token, int level)
 
 void SlkError::input_left(void)
 {
-  if (mErrorBuffer && mTokens) {
-    char* p = mErrorBuffer->NewErrorInfo();
+  if (mDslFile && mTokens) {
+    char* p = mDslFile->NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] syntax completion, skipping left . \n",
       mTokens->getLineNumber(),
@@ -58,8 +58,8 @@ void SlkError::input_left(void)
   }
 }
 
-SlkError::SlkError(SlkToken& tokens, Dsl::ErrorAndStringBuffer& errorBuffer) :mTokens(&tokens), mErrorBuffer(&errorBuffer)
+SlkError::SlkError(SlkToken& tokens, Dsl::DslFile& dslFile) :mTokens(&tokens), mDslFile(&dslFile)
 {
   MyAssert(mTokens);
-  MyAssert(mErrorBuffer);
+  MyAssert(mDslFile);
 }

@@ -147,8 +147,8 @@ namespace Dsl
         return 0 != m_StringVal ? TRUE : FALSE;
     }
     //------------------------------------------------------------------------------------------------------
-    FunctionData::FunctionData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
-        m_DslFile(dataFile),
+    FunctionData::FunctionData(IDslStringAndObjectBuffer& buffer) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
+        m_Buffer(buffer),
         m_Params(0),
         m_ParamNum(0),
         m_ParamSpace(0),
@@ -157,7 +157,7 @@ namespace Dsl
         m_CommentNum(0),
         m_CommentSpace(0)
     {
-        const DslOptions& options = dataFile.GetOptions();
+        const DslOptions& options = buffer.GetOptions();
         m_MaxParamNum = options.GetMaxParamNum();
     }
 
@@ -169,12 +169,12 @@ namespace Dsl
 
     NullSyntax* FunctionData::GetNullSyntaxPtr(void)const
     {
-        return m_DslFile.GetNullSyntaxPtr();
+        return m_Buffer.GetNullSyntaxPtr();
     }
 
     FunctionData* FunctionData::GetNullFunctionPtr(void)const
     {
-        return m_DslFile.GetNullFunctionPtr();
+        return m_Buffer.GetNullFunctionPtr();
     }
 
     void FunctionData::PrepareParams(void)
@@ -232,19 +232,19 @@ namespace Dsl
         }
     }
     
-    StatementData::StatementData(DslFile& dataFile) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
-        m_DslFile(dataFile),
+    StatementData::StatementData(IDslStringAndObjectBuffer& buffer) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
+        m_Buffer(buffer),
         m_Functions(0),
         m_FunctionNum(0),
         m_FunctionSpace(0)
     {
-        const DslOptions& options = dataFile.GetOptions();
+        const DslOptions& options = buffer.GetOptions();
         m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();
     }
 
     FunctionData*& StatementData::GetNullFunctionPtrRef(void)const
     {
-        return m_DslFile.GetNullFunctionPtrRef();
+        return m_Buffer.GetNullFunctionPtrRef();
     }
 
     void StatementData::PrepareFunctions(void)
@@ -278,95 +278,15 @@ namespace Dsl
         }
     }
 
-    void DslFile::AddDslInfo(ISyntaxComponent* p)
+    DslFile::DslFile(IDslStringAndObjectBuffer& buffer) :m_Buffer(buffer), m_IsDebugInfoEnable(FALSE),
+        m_DslInfos(NULL)
     {
-        if (0 == p || 0 == m_DslInfos)
-            return;
-        if (m_DslInfoNum < 0 || m_DslInfoNum >= m_Options.GetMaxProgramSize())
-            return;
-        m_DslInfos[m_DslInfoNum] = p;
-        ++m_DslInfoNum;
-    }
-
-    ValueData* DslFile::AddNewValueComponent(void)
-    {
-        ValueData* p = new ValueData();
-        AddSyntaxComponent(p);
-        return p;
-    }
-
-    FunctionData* DslFile::AddNewFunctionComponent(void)
-    {
-        FunctionData* p = new FunctionData(*this);
-        AddSyntaxComponent(p);
-        return p;
-    }
-    
-    StatementData* DslFile::AddNewStatementComponent(void)
-    {
-        StatementData* p = new StatementData(*this);
-        AddSyntaxComponent(p);
-        return p;
-    }
-
-    void DslFile::AddSyntaxComponent(ISyntaxComponent* p)
-    {
-        if (m_SyntaxComponentNum >= m_Options.GetSyntaxComponentPoolSize() || 0 == m_SyntaxComponentPool)
-            return;
-        m_SyntaxComponentPool[m_SyntaxComponentNum] = p;
-        ++m_SyntaxComponentNum;
-    }
-
-    char* DslFile::AllocString(int len)
-    {
-        if (m_UnusedStringPtr + len - m_StringBuffer >= m_Options.GetStringBufferSize()) {
-            return 0;
-        }
-        char* p = m_UnusedStringPtr;
-        if (0 != p) {
-            m_UnusedStringPtr[len] = 0;
-            m_UnusedStringPtr += len + 1;
-        }
-        return p;
-    }
-
-    char* DslFile::AllocString(const char* src)
-    {
-        if (0 == src)
-            return 0;
-        int len = (int)strlen(src);
-        char* p = AllocString(len);
-        if (0 != p) {
-            strcpy(p, src);
-        }
-        return p;
-    }
-
-    DslFile::DslFile(const DslOptions& options) :m_Options(options), m_IsDebugInfoEnable(FALSE),
-        m_StringBuffer(NULL),
-        m_UnusedStringPtr(NULL),
-        m_SyntaxComponentPool(NULL),
-        m_DslInfos(NULL),
-        m_pNullSyntax(NULL),
-        m_pNullFunction(NULL),
-        m_ppNullFunction(NULL)
-    {
-        m_pNullSyntax = new NullSyntax();
-        m_pNullFunction = new FunctionData(*this);
-        m_ppNullFunction = new FunctionData*[1];
-        *m_ppNullFunction = m_pNullFunction;
         Init();
     }
 
     DslFile::~DslFile(void)
     {
         Release();
-        delete m_pNullSyntax;
-        m_pNullSyntax = NULL;
-        delete m_pNullFunction;
-        m_pNullFunction = NULL;
-        delete[] m_ppNullFunction;
-        m_ppNullFunction = NULL;
     }
 
     void DslFile::Reset(void)
@@ -383,6 +303,16 @@ namespace Dsl
     void DslFile::Parse(IScriptSource& source)
     {
         Dsl::Parse(source, *this);
+    }
+
+    void DslFile::AddDslInfo(ISyntaxComponent* p)
+    {
+        if (0 == p || 0 == m_DslInfos)
+            return;
+        if (m_DslInfoNum < 0 || m_DslInfoNum >= m_Buffer.GetOptions().GetMaxProgramSize())
+            return;
+        m_DslInfos[m_DslInfoNum] = p;
+        ++m_DslInfoNum;
     }
 
     static const char* c_BinaryIdentity = "BDSL";
@@ -635,44 +565,26 @@ namespace Dsl
 
     void DslFile::Init(void)
     {
-        m_StringBuffer = new char[m_Options.GetStringBufferSize()];
-        m_UnusedStringPtr = m_StringBuffer;
-        m_SyntaxComponentPool = new SyntaxComponentPtr[m_Options.GetSyntaxComponentPoolSize()];
-        m_SyntaxComponentNum = 0;
-        m_DslInfos = new SyntaxComponentPtr[m_Options.GetMaxProgramSize()];
+        m_DslInfos = new SyntaxComponentPtr[m_Buffer.GetOptions().GetMaxProgramSize()];
         m_DslInfoNum = 0;
-        m_ErrorAndStringBuffer.Reset(m_StringBuffer, m_UnusedStringPtr, m_Options.GetStringBufferSize());
     }
 
     void DslFile::Release(void)
     {
-        if (0 != m_StringBuffer) {
-            delete[] m_StringBuffer;
-            m_StringBuffer = 0;
-            m_UnusedStringPtr = 0;
-        }
-        if (0 != m_SyntaxComponentPool) {
-            for (int i = 0; i < m_SyntaxComponentNum; ++i) {
-                if (0 != m_SyntaxComponentPool[i])
-                    delete m_SyntaxComponentPool[i];
-            }
-            delete[] m_SyntaxComponentPool;
-            m_SyntaxComponentNum = 0;
-        }
         if (0 != m_DslInfos) {
             delete[] m_DslInfos;
             m_DslInfoNum = 0;
         }
     }
 
-    void ErrorAndStringBuffer::ClearErrorInfo(void)
+    void DslFile::ClearErrorInfo(void)
     {
         m_HasError = FALSE;
         m_ErrorNum = 0;
         memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
     }
 
-    void ErrorAndStringBuffer::AddError(const char* error)
+    void DslFile::AddError(const char* error)
     {
         char* p = NewErrorInfo();
         if (p)

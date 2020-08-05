@@ -369,7 +369,7 @@ int SlkToken::isSpecialChar(char c) const
 
 short SlkToken::get(void)
 {
-    if (NULL == mSource || NULL == mErrorAndStringBuffer) {
+    if (NULL == mSource || NULL == mDslFile) {
         return END_OF_SLK_INPUT_;
     }
 
@@ -500,7 +500,7 @@ short SlkToken::get(void)
             }
         }
         if (*mIterator == '\0') {
-            char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+            char* pInfo = mDslFile->NewErrorInfo();
             if (pInfo)
                 tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish！", line);
         }
@@ -769,7 +769,7 @@ short SlkToken::get(void)
                         continue;
                     }
                     else {
-                        char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+                        char* pInfo = mDslFile->NewErrorInfo();
                         if (pInfo)
                             tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
                         endTokenWithEof();
@@ -781,7 +781,7 @@ short SlkToken::get(void)
                 ++mIterator;
             }
             else {
-                char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+                char* pInfo = mDslFile->NewErrorInfo();
                 if (pInfo)
                     tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
             }
@@ -895,7 +895,7 @@ void SlkToken::getBlockString(const char* delimiter)
     const char* pLeft = mIterator.GetLeft();
     const char* pFind = strstr(pLeft, delimiter);
     if (!pFind) {
-        char* pInfo = mErrorAndStringBuffer->NewErrorInfo();
+        char* pInfo = mDslFile->NewErrorInfo();
         if (pInfo)
             tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:Block can't finish, delimiter: %s！", mLineNumber, delimiter);
         endToken();
@@ -931,8 +931,8 @@ void SlkToken::removeFirstAndLastEmptyLine(void)
 
 void SlkToken::newComment(void)
 {
-    if (mErrorAndStringBuffer) {
-        mCurComment = mErrorAndStringBuffer->GetUnusedStringPtrRef();
+    if (mDslFile) {
+        mCurComment = mDslFile->GetUnusedStringPtrRef();
 
         mCommentCharIndex = 0;
         if (mCurComment) {
@@ -943,7 +943,7 @@ void SlkToken::newComment(void)
 
 void SlkToken::pushCommentChar(char c)
 {
-    if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurComment)
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurComment)
         return;
     mCurComment[mCommentCharIndex] = c;
     ++mCommentCharIndex;
@@ -951,20 +951,20 @@ void SlkToken::pushCommentChar(char c)
 
 void SlkToken::endComment(void)
 {
-    if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurComment || NULL == mErrorAndStringBuffer->GetUnusedStringPtrRef())
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurComment || NULL == mDslFile->GetUnusedStringPtrRef())
         return;
     mCurComment[mCommentCharIndex] = '\0';
-    mErrorAndStringBuffer->GetUnusedStringPtrRef() += mCommentCharIndex + 1;
+    mDslFile->GetUnusedStringPtrRef() += mCommentCharIndex + 1;
 
     mComments[mCommentNum++] = mCurComment;
 }
 
 void SlkToken::newToken(void)
 {
-    if (mErrorAndStringBuffer) {
+    if (mDslFile) {
         mLastToken = mCurToken;
         mLastLineNumber = mLineNumber;
-        mCurToken = mErrorAndStringBuffer->GetUnusedStringPtrRef();
+        mCurToken = mDslFile->GetUnusedStringPtrRef();
 
         mTokenCharIndex = 0;
         if (mCurToken) {
@@ -975,7 +975,7 @@ void SlkToken::newToken(void)
 
 void SlkToken::pushTokenChar(char c)
 {
-    if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurToken)
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurToken)
         return;
     mCurToken[mTokenCharIndex] = c;
     ++mTokenCharIndex;
@@ -983,25 +983,25 @@ void SlkToken::pushTokenChar(char c)
 
 void SlkToken::endToken(void)
 {
-    if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= 1 || NULL == mCurToken || NULL == mErrorAndStringBuffer->GetUnusedStringPtrRef())
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
         return;
     mCurToken[mTokenCharIndex] = '\0';
-    mErrorAndStringBuffer->GetUnusedStringPtrRef() += mTokenCharIndex + 1;
+    mDslFile->GetUnusedStringPtrRef() += mTokenCharIndex + 1;
 }
 
 void SlkToken::endTokenWithEof(void)
 {
     static const char* s_c_Eof = "<<eof>>";
-    if (NULL == mErrorAndStringBuffer || mErrorAndStringBuffer->GetUnusedStringLength() <= (int)strlen(s_c_Eof) + 1 || NULL == mCurToken || NULL == mErrorAndStringBuffer->GetUnusedStringPtrRef())
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= (int)strlen(s_c_Eof) + 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
         return;
     strcpy(mCurToken, s_c_Eof);
-    mErrorAndStringBuffer->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
+    mDslFile->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
 }
 
-SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::ErrorAndStringBuffer& errorAndStringBuffer) :mSource(&source), mErrorAndStringBuffer(&errorAndStringBuffer)
+SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile) :mSource(&source), mDslFile(&dslFile)
 {
     MyAssert(mSource);
-    MyAssert(mErrorAndStringBuffer);
+    MyAssert(mDslFile);
 
     mIterator = mSource->GetIterator();
 
