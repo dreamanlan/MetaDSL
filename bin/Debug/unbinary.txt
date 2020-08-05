@@ -45,9 +45,10 @@ skill(1006)
 		{
 			print("yeah");
 		};
-		a(a,b,c) d
+		a(a,b,c)
+		d
 		{
-			e(f) g(h);
+			e(f)g(h);
 		};
 		a <- abc `<*> def <=> 123;
 		b <- abc `as int <=> 456;

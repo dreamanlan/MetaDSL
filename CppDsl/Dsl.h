@@ -45,8 +45,13 @@ namespace Dsl
         MAX_FUNCTION_DIMENSION_NUM = 8,
         MAX_FUNCTION_PARAM_NUM = 1024,
         MAX_PROGRAM_SIZE = 16 * 1024,
+
         STRING_BUFFER_SIZE = 1024 * 1024,
+        PTR_BUFFER_SIZE = 256 * 1024,
         SYNTAXCOMPONENT_POOL_SIZE = 16 * 1024,
+        PTR_POOL_SIZE = 1024 * 1024,
+        PTR_POOL_FREELINK_SIZE = 4096,
+        PTR_POOL_FREELINK_HEADER_SIZE = 2048,
     };
 
     class DslOptions
@@ -71,8 +76,25 @@ namespace Dsl
         int	m_MaxProgramSize;
     };
 
+    class IDslStringAndObjectBuffer;
     class ISyntaxComponent
     {
+    protected:
+        struct FirstAndLastCommentsInfo
+        {
+            const char** m_FirstComments;
+            int m_FirstCommentNum;
+            int m_FirstCommentSpace;
+            int m_FirstCommentOnNewLine;
+            const char** m_LastComments;
+            int m_LastCommentNum;
+            int m_LastCommentSpace;
+            int m_LastCommentOnNewLine;
+
+            FirstAndLastCommentsInfo(void):m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
+                m_LastComments(0), m_LastCommentNum(0), m_LastCommentSpace(0), m_LastCommentOnNewLine(0)
+            {}
+        };
     public:
         enum
         {
@@ -94,68 +116,108 @@ namespace Dsl
         int GetSyntaxType(void) const { return m_SyntaxType; }
         void AddFirstComment(const char* cmt)
         {
+            if (0 == m_pCommentsInfo)
+                return;
             PrepareFirstComments();
-            if (m_FirstCommentNum < m_FirstCommentSpace) {
-                m_FirstComments[m_FirstCommentNum++] = cmt;
+            if (m_pCommentsInfo->m_FirstCommentNum < m_pCommentsInfo->m_FirstCommentSpace) {
+                m_pCommentsInfo->m_FirstComments[m_pCommentsInfo->m_FirstCommentNum++] = cmt;
             }
         }
         void RemoveFirstComment(int index)
         {
-            if (index >= 0 && index < m_FirstCommentNum) {
-                for (int ix = index; ix < m_FirstCommentNum - 1; ++ix) {
-                    m_FirstComments[ix] = m_FirstComments[ix + 1];
+            if (0 == m_pCommentsInfo)
+                return;
+            if (index >= 0 && index < m_pCommentsInfo->m_FirstCommentNum) {
+                for (int ix = index; ix < m_pCommentsInfo->m_FirstCommentNum - 1; ++ix) {
+                    m_pCommentsInfo->m_FirstComments[ix] = m_pCommentsInfo->m_FirstComments[ix + 1];
                 }
-                --m_FirstCommentNum;
+                --m_pCommentsInfo->m_FirstCommentNum;
             }
         }
         void ClearFirstComments()
         {
-            m_FirstCommentNum = 0;
+            if (0 == m_pCommentsInfo)
+                return;
+            m_pCommentsInfo->m_FirstCommentNum = 0;
         }
-        int GetFirstCommentNum(void) const { return m_FirstCommentNum; }
+        int GetFirstCommentNum(void) const 
+        {
+            if (0 == m_pCommentsInfo)
+                return 0;
+            return m_pCommentsInfo->m_FirstCommentNum;
+        }
         const char* GetFirstComment(int index) const
         {
-            if (index >= 0 && index < m_FirstCommentNum) {
-                return m_FirstComments[index];
+            if (0 != m_pCommentsInfo && index >= 0 && index < m_pCommentsInfo->m_FirstCommentNum) {
+                return m_pCommentsInfo->m_FirstComments[index];
             }
             else {
                 return 0;
             }
         }
-        int IsFirstCommentOnNewLine(void) const { return m_FirstCommentOnNewLine; }
-        void SetFirstCommentOnNewLine(int v) { m_FirstCommentOnNewLine = v; }
+        int IsFirstCommentOnNewLine(void) const
+        {
+            if (0 == m_pCommentsInfo)
+                return 0;
+            return m_pCommentsInfo->m_FirstCommentOnNewLine;
+        }
+        void SetFirstCommentOnNewLine(int v)
+        {
+            if (0 == m_pCommentsInfo)
+                return;
+            m_pCommentsInfo->m_FirstCommentOnNewLine = v;
+        }
         void AddLastComment(const char* cmt)
         {
+            if (0 == m_pCommentsInfo)
+                return;
             PrepareLastComments();
-            if (m_LastCommentNum < m_LastCommentSpace) {
-                m_LastComments[m_LastCommentNum++] = cmt;
+            if (m_pCommentsInfo->m_LastCommentNum < m_pCommentsInfo->m_LastCommentSpace) {
+                m_pCommentsInfo->m_LastComments[m_pCommentsInfo->m_LastCommentNum++] = cmt;
             }
         }
         void RemoveLastComment(int index)
         {
-            if (index >= 0 && index < m_LastCommentNum) {
-                for (int ix = index; ix < m_LastCommentNum - 1; ++ix) {
-                    m_LastComments[ix] = m_LastComments[ix + 1];
+            if (0 != m_pCommentsInfo && index >= 0 && index < m_pCommentsInfo->m_LastCommentNum) {
+                for (int ix = index; ix < m_pCommentsInfo->m_LastCommentNum - 1; ++ix) {
+                    m_pCommentsInfo->m_LastComments[ix] = m_pCommentsInfo->m_LastComments[ix + 1];
                 }
-                --m_LastCommentNum;
+                --m_pCommentsInfo->m_LastCommentNum;
             }
         }
         void ClearLastComments()
         {
-            m_LastCommentNum = 0;
+            if (0 == m_pCommentsInfo)
+                return;
+            m_pCommentsInfo->m_LastCommentNum = 0;
         }
-        int GetLastCommentNum(void) const { return m_LastCommentNum; }
+        int GetLastCommentNum(void) const
+        {
+            if (0 == m_pCommentsInfo)
+                return 0;
+            return m_pCommentsInfo->m_LastCommentNum;
+        }
         const char* GetLastComment(int index) const
         {
-            if (index >= 0 && index < m_LastCommentNum) {
-                return m_LastComments[index];
+            if (0 != m_pCommentsInfo && index >= 0 && index < m_pCommentsInfo->m_LastCommentNum) {
+                return m_pCommentsInfo->m_LastComments[index];
             }
             else {
                 return 0;
             }
         }
-        int IsLastCommentOnNewLine(void) const { return m_LastCommentOnNewLine; }
-        void SetLastCommentOnNewLine(int v) { m_LastCommentOnNewLine = v; }
+        int IsLastCommentOnNewLine(void) const
+        {
+            if (0 == m_pCommentsInfo)
+                return 0;
+            return m_pCommentsInfo->m_LastCommentOnNewLine;
+        }
+        void SetLastCommentOnNewLine(int v)
+        {
+            if (0 == m_pCommentsInfo)
+                return;
+            m_pCommentsInfo->m_LastCommentOnNewLine = v;
+        }
         void CopyComments(const ISyntaxComponent& other)
         {
             CopyFirstComments(other);
@@ -163,9 +225,11 @@ namespace Dsl
         }
         void CopyFirstComments(const ISyntaxComponent& other)
         {
+            if (0 == m_pCommentsInfo || 0 == other.m_pCommentsInfo)
+                return;
             int fnum = other.GetFirstCommentNum();
             if (fnum > 0) {
-                m_FirstCommentOnNewLine = other.m_FirstCommentOnNewLine;
+                m_pCommentsInfo->m_FirstCommentOnNewLine = other.m_pCommentsInfo->m_FirstCommentOnNewLine;
                 for (int i = 0; i < fnum; ++i) {
                     AddFirstComment(other.GetFirstComment(i));
                 }
@@ -173,9 +237,11 @@ namespace Dsl
         }
         void CopyLastComments(const ISyntaxComponent& other)
         {
+            if (0 == m_pCommentsInfo || 0 == other.m_pCommentsInfo)
+                return;
             int lnum = other.GetLastCommentNum();
             if (lnum > 0) {
-                m_LastCommentOnNewLine = other.m_LastCommentOnNewLine;
+                m_pCommentsInfo->m_LastCommentOnNewLine = other.m_pCommentsInfo->m_LastCommentOnNewLine;
                 for (int i = 0; i < lnum; ++i) {
                     AddLastComment(other.GetLastComment(i));
                 }
@@ -191,16 +257,11 @@ namespace Dsl
         void ReleaseFirstComments(void);
         void PrepareLastComments(void);
         void ReleaseLastComments(void);
+    protected:
+        IDslStringAndObjectBuffer* m_pBuffer;
+        FirstAndLastCommentsInfo* m_pCommentsInfo;
     private:
         int m_SyntaxType;
-        const char** m_FirstComments;
-        int m_FirstCommentNum;
-        int m_FirstCommentSpace;
-        int m_FirstCommentOnNewLine;
-        const char** m_LastComments;
-        int m_LastCommentNum;
-        int m_LastCommentSpace;
-        int m_LastCommentOnNewLine;
     };
 
     class FunctionData;
@@ -321,6 +382,13 @@ namespace Dsl
             FunctionData* m_FunctionVal;
         };
         int m_Line;
+    public:
+        static inline void* operator new (size_t size, const char* address)
+        {
+            return (void*)address;
+        }
+        static inline void operator delete(void*, const char* address)
+        {}
     };
 
     class NullSyntax : public ISyntaxComponent
@@ -586,8 +654,16 @@ namespace Dsl
         const char** m_Comments;
         int m_CommentNum;
         int m_CommentSpace;
+        FirstAndLastCommentsInfo m_FirstAndLastComments;
     private:
         IDslStringAndObjectBuffer& m_Buffer;
+    public:
+        static inline void* operator new (size_t size, const char* address)
+        {
+            return (void*)address;
+        }
+        static inline void operator delete(void*, const char* address)
+        {}
     };
     
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
@@ -681,8 +757,16 @@ namespace Dsl
         int m_FunctionNum;
         int m_FunctionSpace;
         int m_MaxFunctionNum;
+        FirstAndLastCommentsInfo m_FirstAndLastComments;
     private:
         IDslStringAndObjectBuffer& m_Buffer;
+    public:
+        static inline void* operator new (size_t size, const char* address)
+        {
+            return (void*)address;
+        }
+        static inline void operator delete(void*, const char* address)
+        {}
     };
 
     //在c++实现里，DSL的内存希望尽量是预先分配的，这个接口用来实现预先分配的内存
@@ -701,6 +785,10 @@ namespace Dsl
         virtual ValueData* AddNewValueComponent(void) = 0;
         virtual FunctionData* AddNewFunctionComponent(void) = 0;
         virtual StatementData* AddNewStatementComponent(void) = 0;
+        virtual int GetUnusedObjectLength(void)const = 0;
+    public:
+        virtual void** NewPtrArray(int size) = 0;
+        virtual void DeletePtrArray(void** ptr, int size) = 0;
     public:
         virtual NullSyntax* GetNullSyntaxPtr(void) = 0;
         virtual FunctionData* GetNullFunctionPtr(void) = 0;
@@ -716,41 +804,161 @@ namespace Dsl
      * 目前各语法组件对象（ValueData、FunctionData、StatementData）及对象内所包含的指
      * 针列表(参数列表与语句列表)还没有实现预先分配。
      */
-    template<int MaxStringBufferLength = STRING_BUFFER_SIZE, int SyntaxComponentPoolSize = SYNTAXCOMPONENT_POOL_SIZE>
+    template<int MaxStringBufferSize = STRING_BUFFER_SIZE,
+        int MaxPtrBufferSize = PTR_BUFFER_SIZE,
+        int SyntaxComponentPoolSize = SYNTAXCOMPONENT_POOL_SIZE,
+        int PtrPoolSize = PTR_POOL_SIZE,
+        int PtrPoolFreeLinkSize = PTR_POOL_FREELINK_SIZE,
+        int PtrPoolFreeLinkHeaderSize = PTR_POOL_FREELINK_HEADER_SIZE>
     class DslStringAndObjectBuffer : public IDslStringAndObjectBuffer
     {
+        struct alignas(1) FreeLinkInfo
+        {
+            int m_PtrPoolIndex;
+            int m_NextFreeLink;
+        };
         typedef ISyntaxComponent* SyntaxComponentPtr;
     public:
-        DslOptions& GetOptions(void) { return m_Options; }
-        const DslOptions& GetOptions(void)const { return m_Options; }
+        virtual DslOptions& GetOptions(void) { return m_Options; }
+        virtual const DslOptions& GetOptions(void)const { return m_Options; }
     public:
-        char* AllocString(int len);
-        char* AllocString(const char* src);
-        char* GetStringBuffer(void)const { return m_pStringBuffer; }
-        char*& GetUnusedStringPtrRef(void) { return m_pUnusedStringPtr; }
-        int GetUnusedStringLength(void)const
+        virtual char* AllocString(int len)
+        {
+            if (m_pUnusedStringPtr + len - m_pStringBuffer >= MaxStringBufferSize) {
+                return 0;
+            }
+            char* p = m_pUnusedStringPtr;
+            if (0 != p) {
+                m_pUnusedStringPtr[len] = 0;
+                m_pUnusedStringPtr += len + 1;
+            }
+            return p;
+        }
+        virtual char* AllocString(const char* src)
+        {
+            if (0 == src)
+                return 0;
+            int len = (int)strlen(src);
+            char* p = AllocString(len);
+            if (0 != p) {
+                strcpy(p, src);
+            }
+            return p;
+        }
+        virtual char* GetStringBuffer(void)const { return m_pStringBuffer; }
+        virtual char*& GetUnusedStringPtrRef(void) { return m_pUnusedStringPtr; }
+        virtual int GetUnusedStringLength(void)const
         {
             MyAssert(m_pStringBuffer);
-            MyAssert(m_ppUnusedStringRef);
-            return MaxStringBufferLength - int(m_pUnusedStringPtr - m_pStringBuffer);
+            MyAssert(m_pUnusedStringRef);
+            return MaxStringBufferSize - int(m_pUnusedStringPtr - m_pStringBuffer);
         }
     public:
-        ValueData* AddNewValueComponent(void);
-        FunctionData* AddNewFunctionComponent(void);
-        StatementData* AddNewStatementComponent(void);
+        virtual ValueData* AddNewValueComponent(void)
+        {
+            size_t size = sizeof(ValueData);
+            if (GetUnusedObjectLength() < size)
+                return 0;
+            ValueData* p = new(m_pUnusedObjectPtr) ValueData();
+            m_pUnusedObjectPtr += size;
+            AddSyntaxComponent(p);
+            return p;
+        }
+        virtual FunctionData* AddNewFunctionComponent(void)
+        {
+            size_t size = sizeof(FunctionData);
+            if (GetUnusedObjectLength() < size)
+                return 0;
+            FunctionData* p = new(m_pUnusedObjectPtr) FunctionData(*this);
+            m_pUnusedObjectPtr += size;
+            AddSyntaxComponent(p);
+            return p;
+        }
+        virtual StatementData* AddNewStatementComponent(void)
+        {
+            size_t size = sizeof(StatementData);
+            if (GetUnusedObjectLength() < size)
+                return 0;
+            StatementData* p = new(m_pUnusedObjectPtr) StatementData(*this);
+            m_pUnusedObjectPtr += size;
+            AddSyntaxComponent(p);
+            return p;
+        }
+        virtual int GetUnusedObjectLength(void)const
+        {
+            MyAssert(m_pObjectBuffer);
+            MyAssert(m_pUnusedObjectRef);
+            return MaxPtrBufferSize - int(m_pUnusedObjectPtr - m_pObjectBuffer);
+        }
     public:
-        NullSyntax* GetNullSyntaxPtr(void)
+        virtual void** NewPtrArray(int size)
+        {
+            if (size<0 || size>PTR_POOL_FREELINK_HEADER_SIZE)
+                return 0;
+            int ix = m_PtrFreeLinkHeader[size];
+            if (ix >= 0) {
+                //空闲链表上有的话就用空闲链表的数据，空闲链表头指向链表后一个元素，原链表头从链表拆除后放到空闲链表块的空闲链表中
+                auto link = m_PtrFreeLink[ix];
+                m_PtrFreeLinkHeader[size] = link.m_NextFreeLink;
+                if (m_FreedFreeLinkHeader >= 0) {
+                    m_PtrFreeLink[ix].m_NextFreeLink = m_FreedFreeLinkHeader;
+                }
+                else {
+                    m_PtrFreeLink[ix].m_NextFreeLink = -1;
+                }
+                m_FreedFreeLinkHeader = ix;
+            }
+            if (m_PtrNum + size > PtrPoolSize)
+                return 0;
+            int start = m_PtrNum;
+            m_PtrNum += size;
+            return &(m_PtrPool[start]);
+        }
+        virtual void DeletePtrArray(void** ptr, int size)
+        {
+            if (size<0 || size>PTR_POOL_FREELINK_HEADER_SIZE)
+                return;
+            //分配一个新的空闲链表块来描述回收的数组，并加到空闲链表上
+            int newFreeHeader = -1;
+            FreeLinkInfo* p = 0;
+            if (m_FreedFreeLinkHeader >= 0) {
+                newFreeHeader = m_FreedFreeLinkHeader;
+                p = &(m_PtrFreeLink[m_FreedFreeLinkHeader]);
+                m_FreedFreeLinkHeader = p->m_NextFreeLink;
+            }
+            else if (m_FreeLinkNum < PtrPoolFreeLinkSize) {
+                newFreeHeader = m_FreeLinkNum;
+                p = &(m_PtrFreeLink[m_FreeLinkNum]);
+                ++m_FreeLinkNum;
+            }
+            else {
+                //这个块浪费掉了，需要调整空闲链表参数的大小
+            }
+            if (p) {
+                p->m_PtrPoolIndex = (ptr - m_PtrPool);
+                int ix = m_PtrFreeLinkHeader[size];
+                if (ix >= 0) {
+                    p->m_NextFreeLink = ix;
+                }
+                else {
+                    p->m_NextFreeLink = -1;
+                }
+                m_PtrFreeLinkHeader[size] = newFreeHeader;
+            }
+        }
+    public:
+        virtual NullSyntax* GetNullSyntaxPtr(void)
         {
             return &m_NullSyntax;
         }
-        FunctionData* GetNullFunctionPtr(void)
+        virtual FunctionData* GetNullFunctionPtr(void)
         {
             m_NullFunction.GetName().SetInvalid();
             m_NullFunction.SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
             m_NullFunction.ClearParams();
             return &m_NullFunction;
         }
-        FunctionData*& GetNullFunctionPtrRef(void)
+        virtual FunctionData*& GetNullFunctionPtrRef(void)
         {
             auto fptr = m_pNullFunction;
             fptr->GetName().SetInvalid();
@@ -764,22 +972,49 @@ namespace Dsl
             m_pStringBuffer = m_StringBuffer;
             m_pUnusedStringPtr = m_pStringBuffer;
 
+            m_pObjectBuffer = m_ObjectBuffer;
+            m_pUnusedObjectPtr = m_pObjectBuffer;
+
             m_pNullFunction = &m_NullFunction;
+
+            memset(m_PtrPool, 0, sizeof(SyntaxComponentPtr)*MaxPtrBufferSize);
+            m_PtrNum = 0;
+            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
+            m_FreeLinkNum = 0;
+            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int)*PtrPoolFreeLinkHeaderSize);
+            m_FreedFreeLinkHeader = -1;
         }
     private:
-        void AddSyntaxComponent(ISyntaxComponent* p);
+        void AddSyntaxComponent(ISyntaxComponent* p)
+        {
+            if (m_SyntaxComponentNum >= SyntaxComponentPoolSize || 0 == m_SyntaxComponentPool)
+                return;
+            m_SyntaxComponentPool[m_SyntaxComponentNum] = p;
+            ++m_SyntaxComponentNum;
+        }
     private:
         DslStringAndObjectBuffer(const DslStringAndObjectBuffer&) = delete;
         DslStringAndObjectBuffer& operator=(const DslStringAndObjectBuffer&) = delete;
     private:
         DslOptions m_Options;
     private:
-        char m_StringBuffer[MaxStringBufferLength];
+        char m_StringBuffer[MaxStringBufferSize];
         char* m_pStringBuffer;
         char* m_pUnusedStringPtr;
     private:
+        char m_ObjectBuffer[MaxPtrBufferSize];
+        char* m_pObjectBuffer;
+        char* m_pUnusedObjectPtr;
+    private:
         SyntaxComponentPtr m_SyntaxComponentPool[SyntaxComponentPoolSize];
         int m_SyntaxComponentNum;
+    private:
+        void* m_PtrPool[PtrPoolSize];
+        int m_PtrNum;
+        FreeLinkInfo m_PtrFreeLink[PtrPoolFreeLinkSize];//低32位对应m_PtrPool的索引，高32位是下一个空闲块的索引
+        int m_FreeLinkNum;        
+        int m_PtrFreeLinkHeader[PtrPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置
+        int m_FreedFreeLinkHeader;//空闲的空闲块链表的头
     private:
         NullSyntax m_NullSyntax;
         FunctionData m_NullFunction;
@@ -991,66 +1226,6 @@ namespace Dsl
         virtual int Load(void) = 0;
         virtual const char* GetBuffer(void)const = 0;
     };
-
-    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
-    inline ValueData* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddNewValueComponent(void)
-    {
-        ValueData* p = new ValueData();
-        AddSyntaxComponent(p);
-        return p;
-    }
-
-    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
-    inline FunctionData* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddNewFunctionComponent(void)
-    {
-        FunctionData* p = new FunctionData(*this);
-        AddSyntaxComponent(p);
-        return p;
-    }
-
-    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
-    inline StatementData* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddNewStatementComponent(void)
-    {
-        StatementData* p = new StatementData(*this);
-        AddSyntaxComponent(p);
-        return p;
-    }
-
-    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
-    inline void DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AddSyntaxComponent(ISyntaxComponent* p)
-    {
-        if (m_SyntaxComponentNum >= SyntaxComponentPoolSize || 0 == m_SyntaxComponentPool)
-            return;
-        m_SyntaxComponentPool[m_SyntaxComponentNum] = p;
-        ++m_SyntaxComponentNum;
-    }
-
-    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
-    inline char* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AllocString(int len)
-    {
-        if (m_pUnusedStringPtr + len - m_pStringBuffer >= MaxStringBufferLength) {
-            return 0;
-        }
-        char* p = m_pUnusedStringPtr;
-        if (0 != p) {
-            m_pUnusedStringPtr[len] = 0;
-            m_pUnusedStringPtr += len + 1;
-        }
-        return p;
-    }
-
-    template<int MaxStringBufferLength, int SyntaxComponentPoolSize>
-    inline char* DslStringAndObjectBuffer<MaxStringBufferLength, SyntaxComponentPoolSize>::AllocString(const char* src)
-    {
-        if (0 == src)
-            return 0;
-        int len = (int)strlen(src);
-        char* p = AllocString(len);
-        if (0 != p) {
-            strcpy(p, src);
-        }
-        return p;
-    }
 }
 using namespace Dsl;
 

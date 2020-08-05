@@ -56,77 +56,15 @@ namespace Dsl
         public abstract int GetLine();
         public abstract string ToScriptString(bool includeComment);
 
-        public void CopyComments(ISyntaxComponent other)
-        {
-            CopyFirstComments(other);
-            CopyLastComments(other);
-        }
-        public void CopyFirstComments(ISyntaxComponent other)
-        {
-            if (other.FirstComments.Count > 0) {
-                FirstComments.AddRange(other.FirstComments);
-                FirstCommentOnNewLine = other.FirstCommentOnNewLine;
-            }
-        }
-        public void CopyLastComments(ISyntaxComponent other)
-        {
-            if (other.LastComments.Count > 0) {
-                LastComments.AddRange(other.LastComments);
-                LastCommentOnNewLine = other.LastCommentOnNewLine;
-            }
-        }
-        public string CalcFirstComment()
-        {
-            if (null == mFirstComments) {
-                return string.Empty;
-            }
-            else {
-                return string.Join(string.Empty, mFirstComments.ToArray());
-            }
-        }
-        public string CalcLastComment()
-        {
-            if (null == mLastComments) {
-                return string.Empty;
-            }
-            else {
-                return string.Join(string.Empty, mLastComments.ToArray());
-            }
-        }
-
-        public List<string> FirstComments
-        {
-            get {
-                if (null == mFirstComments) {
-                    mFirstComments = new List<string>();
-                }
-                return mFirstComments;
-            }
-        }
-        public bool FirstCommentOnNewLine
-        {
-            get { return mFirstCommentOnNewLine; }
-            set { mFirstCommentOnNewLine = value; }
-        }
-        public List<string> LastComments
-        {
-            get {
-                if (null == mLastComments) {
-                    mLastComments = new List<string>();
-                }
-                return mLastComments;
-            }
-        }
-        public bool LastCommentOnNewLine
-        {
-            get { return mLastCommentOnNewLine; }
-            set { mLastCommentOnNewLine = value; }
-        }
-
-        private List<string> mFirstComments;
-        private bool mFirstCommentOnNewLine;
-        private List<string> mLastComments;
-        private bool mLastCommentOnNewLine;
+        public abstract void CopyComments(ISyntaxComponent other);
+        public abstract void CopyFirstComments(ISyntaxComponent other);
+        public abstract void CopyLastComments(ISyntaxComponent other);
+        public abstract string CalcFirstComment();
+        public abstract string CalcLastComment();
+        public abstract List<string> FirstComments { get; }
+        public abstract bool FirstCommentOnNewLine { get; set; }
+        public abstract List<string> LastComments { get; }
+        public abstract bool LastCommentOnNewLine { get; set; }
     }
     /// <summary>
     /// 空语法单件
@@ -154,6 +92,47 @@ namespace Dsl
             return ToString();
         }
 
+        public override void CopyComments(ISyntaxComponent other)
+        {
+        }
+        public override void CopyFirstComments(ISyntaxComponent other)
+        {
+        }
+        public override void CopyLastComments(ISyntaxComponent other)
+        {
+        }
+        public override string CalcFirstComment()
+        {
+            return string.Empty;
+        }
+        public override string CalcLastComment()
+        {
+            return string.Empty;
+        }
+
+        public override List<string> FirstComments
+        {
+            get {
+                return s_StringList;
+            }
+        }
+        public override bool FirstCommentOnNewLine
+        {
+            get { return false; }
+            set { }
+        }
+        public override List<string> LastComments
+        {
+            get {
+                return s_StringList;
+            }
+        }
+        public override bool LastCommentOnNewLine
+        {
+            get { return false; }
+            set { }
+        }
+
         public static NullSyntax Instance
         {
             get {
@@ -161,6 +140,7 @@ namespace Dsl
             }
         }
         private static NullSyntax s_Instance = new NullSyntax();
+        private static List<string> s_StringList = new List<string>();
     }
     /// <summary>
     /// 用于描述变量、常量与无参命令语句。可能会出现在函数调用参数表与函数语句列表中。
@@ -195,6 +175,47 @@ namespace Dsl
 #else
       return ToString();
 #endif
+        }
+
+        public override void CopyComments(ISyntaxComponent other)
+        {
+        }
+        public override void CopyFirstComments(ISyntaxComponent other)
+        {
+        }
+        public override void CopyLastComments(ISyntaxComponent other)
+        {
+        }
+        public override string CalcFirstComment()
+        {
+            return string.Empty;
+        }
+        public override string CalcLastComment()
+        {
+            return string.Empty;
+        }
+
+        public override List<string> FirstComments
+        {
+            get {
+                return s_StringList;
+            }
+        }
+        public override bool FirstCommentOnNewLine
+        {
+            get { return false; }
+            set { }
+        }
+        public override List<string> LastComments
+        {
+            get {
+                return s_StringList;
+            }
+        }
+        public override bool LastCommentOnNewLine
+        {
+            get { return false; }
+            set { }
         }
 
         public bool HaveId()
@@ -276,6 +297,7 @@ namespace Dsl
             }
         }
         private static ValueData s_Instance = new ValueData();
+        private static List<string> s_StringList = new List<string>();
     }
     /// <summary>
     /// 函数数据，可能出现在函数头、参数表中。
@@ -361,6 +383,83 @@ namespace Dsl
 #else
       return ToString();
 #endif
+        }
+
+        public override void CopyComments(ISyntaxComponent other)
+        {
+            CopyFirstComments(other);
+            CopyLastComments(other);
+        }
+        public override void CopyFirstComments(ISyntaxComponent other)
+        {
+            if (other.FirstComments.Count > 0) {
+                FirstComments.AddRange(other.FirstComments);
+                FirstCommentOnNewLine = other.FirstCommentOnNewLine;
+            }
+        }
+        public override void CopyLastComments(ISyntaxComponent other)
+        {
+            if (other.LastComments.Count > 0) {
+                LastComments.AddRange(other.LastComments);
+                LastCommentOnNewLine = other.LastCommentOnNewLine;
+            }
+        }
+        public override string CalcFirstComment()
+        {
+            if (null == mFirstComments) {
+                return string.Empty;
+            }
+            else {
+                return string.Join(string.Empty, mFirstComments.ToArray());
+            }
+        }
+        public override string CalcLastComment()
+        {
+            if (null == mLastComments) {
+                return string.Empty;
+            }
+            else {
+                return string.Join(string.Empty, mLastComments.ToArray());
+            }
+        }
+
+        public override List<string> FirstComments
+        {
+            get {
+                if (null == mFirstComments) {
+                    mFirstComments = new List<string>();
+                }
+                return mFirstComments;
+            }
+        }
+        public override bool FirstCommentOnNewLine
+        {
+            get { return mFirstCommentOnNewLine; }
+            set { mFirstCommentOnNewLine = value; }
+        }
+        public override List<string> LastComments
+        {
+            get {
+                if (null == mLastComments) {
+                    mLastComments = new List<string>();
+                }
+                return mLastComments;
+            }
+        }
+        public override bool LastCommentOnNewLine
+        {
+            get { return mLastCommentOnNewLine; }
+            set { mLastCommentOnNewLine = value; }
+        }
+
+        public List<string> Comments
+        {
+            get {
+                if (null == m_Comments) {
+                    m_Comments = new List<string>();
+                }
+                return m_Comments;
+            }
         }
 
         public List<ISyntaxComponent> Params
@@ -466,15 +565,6 @@ namespace Dsl
                 return true;
             else
                 return false;
-        }
-        public List<string> Comments
-        {
-            get {
-                if (null == m_Comments) {
-                    m_Comments = new List<string>();
-                }
-                return m_Comments;
-            }
         }
         public bool HaveId()
         {
@@ -629,7 +719,12 @@ namespace Dsl
         private FunctionData m_LowerOrderFunction = null;
         private List<ISyntaxComponent> m_Params = null;
         private int m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
+
         private List<string> m_Comments = null;
+        private List<string> mFirstComments;
+        private bool mFirstCommentOnNewLine;
+        private List<string> mLastComments;
+        private bool mLastCommentOnNewLine;
 
         public static FunctionData NullFunction
         {
@@ -736,6 +831,74 @@ namespace Dsl
       return ToString();
 #endif
         }
+
+        public override void CopyComments(ISyntaxComponent other)
+        {
+            CopyFirstComments(other);
+            CopyLastComments(other);
+        }
+        public override void CopyFirstComments(ISyntaxComponent other)
+        {
+            if (other.FirstComments.Count > 0) {
+                FirstComments.AddRange(other.FirstComments);
+                FirstCommentOnNewLine = other.FirstCommentOnNewLine;
+            }
+        }
+        public override void CopyLastComments(ISyntaxComponent other)
+        {
+            if (other.LastComments.Count > 0) {
+                LastComments.AddRange(other.LastComments);
+                LastCommentOnNewLine = other.LastCommentOnNewLine;
+            }
+        }
+        public override string CalcFirstComment()
+        {
+            if (null == mFirstComments) {
+                return string.Empty;
+            }
+            else {
+                return string.Join(string.Empty, mFirstComments.ToArray());
+            }
+        }
+        public override string CalcLastComment()
+        {
+            if (null == mLastComments) {
+                return string.Empty;
+            }
+            else {
+                return string.Join(string.Empty, mLastComments.ToArray());
+            }
+        }
+
+        public override List<string> FirstComments
+        {
+            get {
+                if (null == mFirstComments) {
+                    mFirstComments = new List<string>();
+                }
+                return mFirstComments;
+            }
+        }
+        public override bool FirstCommentOnNewLine
+        {
+            get { return mFirstCommentOnNewLine; }
+            set { mFirstCommentOnNewLine = value; }
+        }
+        public override List<string> LastComments
+        {
+            get {
+                if (null == mLastComments) {
+                    mLastComments = new List<string>();
+                }
+                return mLastComments;
+            }
+        }
+        public override bool LastCommentOnNewLine
+        {
+            get { return mLastCommentOnNewLine; }
+            set { mLastCommentOnNewLine = value; }
+        }
+
         public int GetFunctionNum()
         {
             return m_Functions.Count;
@@ -813,6 +976,11 @@ namespace Dsl
         }
 
         private List<FunctionData> m_Functions = new List<FunctionData>();
+
+        private List<string> mFirstComments;
+        private bool mFirstCommentOnNewLine;
+        private List<string> mLastComments;
+        private bool mLastCommentOnNewLine;
 
         public static StatementData NullStatementData
         {

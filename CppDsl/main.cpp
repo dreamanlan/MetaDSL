@@ -16,18 +16,21 @@ int main(int argc, char* argv[])
 		p += 3;
 	}
     Dsl::DslStringAndObjectBuffer<>* pDslBuffer = new Dsl::DslStringAndObjectBuffer<>();
-	Dsl::DslFile dataFile(*pDslBuffer);
-    //dataFile.EnableDebugInfo();
-	dataFile.Parse(p);
-	FILE* fp2 = fopen("copy.txt", "wb");
-	dataFile.WriteToFile(fp2, 0);
-	fclose(fp2);
-    dataFile.SaveBinaryFile("binary.txt");
-    Dsl::DslFile dataFile2(*pDslBuffer);
-    dataFile2.LoadBinaryFile("binary.txt");
-    FILE* fp3 = fopen("unbinary.txt", "wb");
-    dataFile2.WriteToFile(fp3, 0);
-    fclose(fp3);
+    {
+        Dsl::DslFile dataFile(*pDslBuffer);
+        //dataFile.EnableDebugInfo();
+        dataFile.Parse(p);
+        FILE* fp2 = fopen("copy.txt", "wb");
+        dataFile.WriteToFile(fp2, 0);
+        fclose(fp2);
+        dataFile.SaveBinaryFile("binary.txt");
+        Dsl::DslFile dataFile2(*pDslBuffer);
+        dataFile2.LoadBinaryFile("binary.txt");
+        FILE* fp3 = fopen("unbinary.txt", "wb");
+        dataFile2.WriteToFile(fp3, 0);
+        fclose(fp3);
+    }
+    //必须在DslFile都释放后再释放DslStringAndObjectBuffer
 	delete[] pbuf;
     delete pDslBuffer;
 	return 0;

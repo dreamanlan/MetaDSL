@@ -28,9 +28,7 @@ namespace Dsl
         BinCode_ValueTypeEnd = BinCode_ValueTypeBegin + ValueData::TYPE_MAX,
         BinCode_ParamOrExternClassBegin
     };
-    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType),
-        m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
-        m_LastComments(0), m_LastCommentNum(0), m_LastCommentSpace(0), m_LastCommentOnNewLine(0)
+    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType), m_pBuffer(0), m_pCommentsInfo(0)
     {
     }
     ISyntaxComponent::~ISyntaxComponent(void)
@@ -40,59 +38,79 @@ namespace Dsl
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
     {
-        m_FirstCommentNum = other.m_FirstCommentNum;
-        m_FirstCommentSpace = other.m_FirstCommentSpace;
-        m_FirstComments = new const char*[m_FirstCommentSpace];
-        memcpy(m_FirstComments, other.m_FirstComments, m_FirstCommentNum * sizeof(const char*));
-        m_LastCommentNum = other.m_LastCommentNum;
-        m_LastCommentSpace = other.m_LastCommentSpace;
-        m_LastComments = new const char*[m_LastCommentSpace];
-        memcpy(m_LastComments, other.m_LastComments, m_LastCommentNum * sizeof(const char*));
+        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
+            m_pCommentsInfo->m_FirstCommentNum = other.m_pCommentsInfo->m_FirstCommentNum;
+            m_pCommentsInfo->m_FirstCommentSpace = other.m_pCommentsInfo->m_FirstCommentSpace;
+            if (m_pCommentsInfo->m_FirstCommentSpace > 0) {
+                m_pCommentsInfo->m_FirstComments = (const char**)(m_pBuffer->NewPtrArray(m_pCommentsInfo->m_FirstCommentSpace));
+                memcpy(m_pCommentsInfo->m_FirstComments, other.m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentNum * sizeof(const char*));
+            }
+            else {
+                m_pCommentsInfo->m_FirstComments = 0;
+            }
+            m_pCommentsInfo->m_LastCommentNum = other.m_pCommentsInfo->m_LastCommentNum;
+            m_pCommentsInfo->m_LastCommentSpace = other.m_pCommentsInfo->m_LastCommentSpace;
+            if (m_pCommentsInfo->m_LastCommentSpace > 0) {
+                m_pCommentsInfo->m_LastComments = (const char**)(m_pBuffer->NewPtrArray(m_pCommentsInfo->m_LastCommentSpace));
+                memcpy(m_pCommentsInfo->m_LastComments, other.m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentNum * sizeof(const char*));
+            }
+            else {
+                m_pCommentsInfo->m_LastComments = 0;
+            }
+        }
     }
     void ISyntaxComponent::PrepareFirstComments(void)
     {
-        if (m_FirstCommentNum >= m_FirstCommentSpace) {
-            int newSpace = m_FirstCommentSpace + DELTA_COMMENT;
-            const char** pNew = new const char*[newSpace];
-            if (pNew) {
-                if (NULL != m_FirstComments) {
-                    memcpy(pNew, m_FirstComments, m_FirstCommentNum * sizeof(const char*));
-                    memset(pNew + m_FirstCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
-                    delete[] m_FirstComments;
+        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
+            if (m_pCommentsInfo->m_FirstCommentNum >= m_pCommentsInfo->m_FirstCommentSpace) {
+                int newSpace = m_pCommentsInfo->m_FirstCommentSpace + DELTA_COMMENT;
+                const char** pNew = (const char**)(m_pBuffer->NewPtrArray(newSpace));
+                if (pNew) {
+                    if (NULL != m_pCommentsInfo->m_FirstComments) {
+                        memcpy(pNew, m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentNum * sizeof(const char*));
+                        memset(pNew + m_pCommentsInfo->m_FirstCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+                        m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentSpace);
+                    }
+                    m_pCommentsInfo->m_FirstComments = pNew;
+                    m_pCommentsInfo->m_FirstCommentSpace = newSpace;
                 }
-                m_FirstComments = pNew;
-                m_FirstCommentSpace = newSpace;
             }
         }
     }
     void ISyntaxComponent::ReleaseFirstComments(void)
     {
-        if (NULL != m_FirstComments) {
-            delete[] m_FirstComments;
-            m_FirstComments = NULL;
+        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
+            if (NULL != m_pCommentsInfo->m_FirstComments) {
+                m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentSpace);
+                m_pCommentsInfo->m_FirstComments = NULL;
+            }
         }
     }
     void ISyntaxComponent::PrepareLastComments(void)
     {
-        if (m_LastCommentNum >= m_LastCommentSpace) {
-            int newSpace = m_LastCommentSpace + DELTA_COMMENT;
-            const char** pNew = new const char*[newSpace];
-            if (pNew) {
-                if (NULL != m_LastComments) {
-                    memcpy(pNew, m_LastComments, m_LastCommentNum * sizeof(const char*));
-                    memset(pNew + m_LastCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
-                    delete[] m_LastComments;
+        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
+            if (m_pCommentsInfo->m_LastCommentNum >= m_pCommentsInfo->m_LastCommentSpace) {
+                int newSpace = m_pCommentsInfo->m_LastCommentSpace + DELTA_COMMENT;
+                const char** pNew = (const char**)(m_pBuffer->NewPtrArray(newSpace));
+                if (pNew) {
+                    if (NULL != m_pCommentsInfo->m_LastComments) {
+                        memcpy(pNew, m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentNum * sizeof(const char*));
+                        memset(pNew + m_pCommentsInfo->m_LastCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+                        m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentSpace);
+                    }
+                    m_pCommentsInfo->m_LastComments = pNew;
+                    m_pCommentsInfo->m_LastCommentSpace = newSpace;
                 }
-                m_LastComments = pNew;
-                m_LastCommentSpace = newSpace;
             }
         }
     }
     void ISyntaxComponent::ReleaseLastComments(void)
     {
-        if (NULL != m_LastComments) {
-            delete[] m_LastComments;
-            m_LastComments = NULL;
+        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
+            if (NULL != m_pCommentsInfo->m_LastComments) {
+                m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentSpace);
+                m_pCommentsInfo->m_LastComments = NULL;
+            }
         }
     }
     //------------------------------------------------------------------------------------------------------
@@ -157,6 +175,9 @@ namespace Dsl
         m_CommentNum(0),
         m_CommentSpace(0)
     {
+        m_pBuffer = &buffer;
+        m_pCommentsInfo = &m_FirstAndLastComments;
+
         const DslOptions& options = buffer.GetOptions();
         m_MaxParamNum = options.GetMaxParamNum();
     }
@@ -180,7 +201,7 @@ namespace Dsl
     void FunctionData::PrepareParams(void)
     {
         if (NULL == m_Params && TRUE == HaveParamOrStatement()) {
-            m_Params = new SyntaxComponentPtr[INIT_FUNCTION_PARAM];
+            m_Params = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(INIT_FUNCTION_PARAM));
             if (m_Params) {
                 m_ParamSpace = INIT_FUNCTION_PARAM;
             }
@@ -189,11 +210,11 @@ namespace Dsl
             int delta = HaveStatement() ? DELTA_FUNCTION_STATEMENT : DELTA_FUNCTION_PARAM;
             int newSpace = m_ParamSpace + delta;
             if (newSpace <= m_MaxParamNum) {
-                SyntaxComponentPtr* pNew = new SyntaxComponentPtr[newSpace];
+                SyntaxComponentPtr* pNew = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(newSpace));
                 if (pNew) {
                     memcpy(pNew, m_Params, m_ParamNum * sizeof(SyntaxComponentPtr));
                     memset(pNew + m_ParamNum, 0, delta * sizeof(SyntaxComponentPtr));
-                    delete[] m_Params;
+                    m_Buffer.DeletePtrArray((void**)m_Params, m_ParamSpace);
                     m_Params = pNew;
                     m_ParamSpace = newSpace;
                 }
@@ -204,7 +225,7 @@ namespace Dsl
     void FunctionData::ReleaseParams(void)
     {
         if (NULL != m_Params) {
-            delete[] m_Params;
+            m_Buffer.DeletePtrArray((void**)m_Params, m_ParamSpace);
             m_Params = NULL;
         }
     }
@@ -213,11 +234,11 @@ namespace Dsl
     {
         if (m_CommentNum >= m_CommentSpace) {
             int newSpace = m_CommentSpace + DELTA_COMMENT;
-            const char** pNew = new const char*[newSpace];
+            const char** pNew = (const char**)(m_Buffer.NewPtrArray(newSpace));
             if (pNew) {
                 memcpy(pNew, m_Comments, m_CommentNum * sizeof(const char*));
                 memset(pNew + m_CommentNum, 0, DELTA_COMMENT * sizeof(const char*));
-                delete[] m_Comments;
+                m_Buffer.DeletePtrArray((void**)m_Comments, m_CommentSpace);
                 m_Comments = pNew;
                 m_CommentSpace = newSpace;
             }
@@ -227,7 +248,7 @@ namespace Dsl
     void FunctionData::ReleaseComments(void)
     {
         if (NULL != m_Comments) {
-            delete[] m_Comments;
+            m_Buffer.DeletePtrArray((void**)m_Comments, m_CommentSpace);
             m_Comments = NULL;
         }
     }
@@ -238,6 +259,9 @@ namespace Dsl
         m_FunctionNum(0),
         m_FunctionSpace(0)
     {
+        m_pBuffer = &buffer;
+        m_pCommentsInfo = &m_FirstAndLastComments;
+
         const DslOptions& options = buffer.GetOptions();
         m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();
     }
@@ -250,7 +274,7 @@ namespace Dsl
     void StatementData::PrepareFunctions(void)
     {
         if (NULL == m_Functions) {
-            m_Functions = new FunctionData*[INIT_STATEMENT_FUNCTION];
+            m_Functions = (FunctionData**)(m_Buffer.NewPtrArray(INIT_STATEMENT_FUNCTION));
             if (m_Functions) {
                 m_FunctionSpace = INIT_STATEMENT_FUNCTION;
             }
@@ -258,11 +282,11 @@ namespace Dsl
         else if (m_FunctionNum >= m_FunctionSpace) {
             int newSpace = m_FunctionSpace + DELTA_STATEMENT_FUNCTION;
             if (newSpace <= m_MaxFunctionNum) {
-                FunctionData** pNew = new FunctionData*[newSpace];
+                FunctionData** pNew = (FunctionData**)(m_Buffer.NewPtrArray(newSpace));
                 if (pNew) {
                     memcpy(pNew, m_Functions, m_FunctionNum * sizeof(FunctionData*));
                     memset(pNew + m_FunctionNum, 0, DELTA_STATEMENT_FUNCTION * sizeof(FunctionData*));
-                    delete[] m_Functions;
+                    m_Buffer.DeletePtrArray((void**)m_Functions, m_FunctionSpace);
                     m_Functions = pNew;
                     m_FunctionSpace = newSpace;
                 }
@@ -273,7 +297,7 @@ namespace Dsl
     void StatementData::ReleaseFunctions(void)
     {
         if (NULL != m_Functions) {
-            delete[] m_Functions;
+            m_Buffer.DeletePtrArray((void**)m_Functions, m_FunctionSpace);
             m_Functions = NULL;
         }
     }
@@ -282,6 +306,7 @@ namespace Dsl
         m_DslInfos(NULL)
     {
         Init();
+        ClearErrorInfo();
     }
 
     DslFile::~DslFile(void)
@@ -573,6 +598,7 @@ namespace Dsl
     {
         if (0 != m_DslInfos) {
             delete[] m_DslInfos;
+            m_DslInfos = 0;
             m_DslInfoNum = 0;
         }
     }
