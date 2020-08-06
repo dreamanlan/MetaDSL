@@ -15,6 +15,7 @@ int main(int argc, char* argv[])
 		//skip utf-8 bom
 		p += 3;
 	}
+    //Dsl::DslOptions::DontLoadComments(true);
     Dsl::DslStringAndObjectBuffer<>* pDslBuffer = new Dsl::DslStringAndObjectBuffer<>();
     {
         Dsl::DslFile dataFile(*pDslBuffer);

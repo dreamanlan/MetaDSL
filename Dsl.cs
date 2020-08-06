@@ -113,7 +113,7 @@ namespace Dsl
         public override List<string> FirstComments
         {
             get {
-                return s_StringList;
+                return EmptyStringList;
             }
         }
         public override bool FirstCommentOnNewLine
@@ -124,7 +124,7 @@ namespace Dsl
         public override List<string> LastComments
         {
             get {
-                return s_StringList;
+                return EmptyStringList;
             }
         }
         public override bool LastCommentOnNewLine
@@ -137,6 +137,13 @@ namespace Dsl
         {
             get {
                 return s_Instance;
+            }
+        }
+        public static List<string> EmptyStringList
+        {
+            get {
+                s_StringList.Clear();
+                return s_StringList;
             }
         }
         private static NullSyntax s_Instance = new NullSyntax();
@@ -198,7 +205,7 @@ namespace Dsl
         public override List<string> FirstComments
         {
             get {
-                return s_StringList;
+                return NullSyntax.EmptyStringList;
             }
         }
         public override bool FirstCommentOnNewLine
@@ -209,7 +216,7 @@ namespace Dsl
         public override List<string> LastComments
         {
             get {
-                return s_StringList;
+                return NullSyntax.EmptyStringList;
             }
         }
         public override bool LastCommentOnNewLine
@@ -293,11 +300,11 @@ namespace Dsl
         public static ValueData NullValue
         {
             get {
+                s_Instance.Clear();
                 return s_Instance;
             }
         }
         private static ValueData s_Instance = new ValueData();
-        private static List<string> s_StringList = new List<string>();
     }
     /// <summary>
     /// 函数数据，可能出现在函数头、参数表中。
@@ -363,9 +370,12 @@ namespace Dsl
         }
         public string CalcComment()
         {
-            if (null == m_Comments)
+            if (DslFile.DontLoadComments)
                 return string.Empty;
-            string cmt = string.Join(string.Empty, m_Comments.ToArray());
+            PrepareCommentsInfo();
+            if (null == m_CommentsInfo.m_Comments)
+                return string.Empty;
+            string cmt = string.Join(string.Empty, m_CommentsInfo.m_Comments.ToArray());
             if (null != m_LowerOrderFunction && !HaveStatement() && !HaveExternScript()) {
                 cmt = m_LowerOrderFunction.CalcComment() + cmt;
             }
@@ -392,6 +402,8 @@ namespace Dsl
         }
         public override void CopyFirstComments(ISyntaxComponent other)
         {
+            if (DslFile.DontLoadComments)
+                return;
             if (other.FirstComments.Count > 0) {
                 FirstComments.AddRange(other.FirstComments);
                 FirstCommentOnNewLine = other.FirstCommentOnNewLine;
@@ -399,6 +411,8 @@ namespace Dsl
         }
         public override void CopyLastComments(ISyntaxComponent other)
         {
+            if (DslFile.DontLoadComments)
+                return;
             if (other.LastComments.Count > 0) {
                 LastComments.AddRange(other.LastComments);
                 LastCommentOnNewLine = other.LastCommentOnNewLine;
@@ -406,59 +420,93 @@ namespace Dsl
         }
         public override string CalcFirstComment()
         {
-            if (null == mFirstComments) {
+            if (DslFile.DontLoadComments)
+                return string.Empty;
+            PrepareCommentsInfo();
+            if (null == m_CommentsInfo.mFirstComments) {
                 return string.Empty;
             }
             else {
-                return string.Join(string.Empty, mFirstComments.ToArray());
+                return string.Join(string.Empty, m_CommentsInfo.mFirstComments.ToArray());
             }
         }
         public override string CalcLastComment()
         {
-            if (null == mLastComments) {
+            if (DslFile.DontLoadComments)
+                return string.Empty;
+            PrepareCommentsInfo();
+            if (null == m_CommentsInfo.mLastComments) {
                 return string.Empty;
             }
             else {
-                return string.Join(string.Empty, mLastComments.ToArray());
+                return string.Join(string.Empty, m_CommentsInfo.mLastComments.ToArray());
             }
         }
 
         public override List<string> FirstComments
         {
             get {
-                if (null == mFirstComments) {
-                    mFirstComments = new List<string>();
+                if (DslFile.DontLoadComments)
+                    return NullSyntax.EmptyStringList;
+                PrepareCommentsInfo();
+                if (null == m_CommentsInfo.mFirstComments) {
+                    m_CommentsInfo.mFirstComments = new List<string>();
                 }
-                return mFirstComments;
+                return m_CommentsInfo.mFirstComments;
             }
         }
         public override bool FirstCommentOnNewLine
         {
-            get { return mFirstCommentOnNewLine; }
-            set { mFirstCommentOnNewLine = value; }
+            get {
+                if (DslFile.DontLoadComments)
+                    return false;
+                PrepareCommentsInfo();
+                return m_CommentsInfo.mFirstCommentOnNewLine;
+            }
+            set {
+                if (DslFile.DontLoadComments)
+                    return;
+                PrepareCommentsInfo();
+                m_CommentsInfo.mFirstCommentOnNewLine = value;
+            }
         }
         public override List<string> LastComments
         {
             get {
-                if (null == mLastComments) {
-                    mLastComments = new List<string>();
+                if (DslFile.DontLoadComments)
+                    return NullSyntax.EmptyStringList;
+                PrepareCommentsInfo();
+                if (null == m_CommentsInfo.mLastComments) {
+                    m_CommentsInfo.mLastComments = new List<string>();
                 }
-                return mLastComments;
+                return m_CommentsInfo.mLastComments;
             }
         }
         public override bool LastCommentOnNewLine
         {
-            get { return mLastCommentOnNewLine; }
-            set { mLastCommentOnNewLine = value; }
+            get {
+                if (DslFile.DontLoadComments)
+                    return false;
+                PrepareCommentsInfo();
+                return m_CommentsInfo.mLastCommentOnNewLine;
+            }
+            set {
+                if (DslFile.DontLoadComments)
+                    return;
+                PrepareCommentsInfo();
+                m_CommentsInfo.mLastCommentOnNewLine = value;
+            }
         }
-
         public List<string> Comments
         {
             get {
-                if (null == m_Comments) {
-                    m_Comments = new List<string>();
+                if (DslFile.DontLoadComments)
+                    return NullSyntax.EmptyStringList;
+                PrepareCommentsInfo();
+                if (null == m_CommentsInfo.m_Comments) {
+                    m_CommentsInfo.m_Comments = new List<string>();
                 }
-                return m_Comments;
+                return m_CommentsInfo.m_Comments;
             }
         }
 
@@ -693,7 +741,7 @@ namespace Dsl
             m_Params = null;
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
 
-            m_Comments = null;
+            m_CommentsInfo = null;
         }
         public void CopyFrom(FunctionData other)
         {
@@ -703,14 +751,22 @@ namespace Dsl
             m_Params = other.m_Params;
             m_ParamClass = other.m_ParamClass;
 
-            if (null != other.m_Comments) {
-                Comments.AddRange(other.m_Comments);
+            if (!DslFile.DontLoadComments && null != other.m_CommentsInfo && null != other.m_CommentsInfo.m_Comments) {
+                Comments.AddRange(other.m_CommentsInfo.m_Comments);
             }
         }
         private void PrepareParams()
         {
             if (null == m_Params) {
                 m_Params = new List<ISyntaxComponent>();
+            }
+        }
+        private void PrepareCommentsInfo()
+        {
+            if (DslFile.DontLoadComments)
+                return;
+            if (null == m_CommentsInfo) {
+                m_CommentsInfo = new CommentsInfo();
             }
         }
 
@@ -720,15 +776,20 @@ namespace Dsl
         private List<ISyntaxComponent> m_Params = null;
         private int m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NOTHING;
 
-        private List<string> m_Comments = null;
-        private List<string> mFirstComments;
-        private bool mFirstCommentOnNewLine;
-        private List<string> mLastComments;
-        private bool mLastCommentOnNewLine;
+        private class CommentsInfo
+        {
+            internal List<string> m_Comments = null;
+            internal List<string> mFirstComments = null;
+            internal bool mFirstCommentOnNewLine = false;
+            internal List<string> mLastComments = null;
+            internal bool mLastCommentOnNewLine = false;
+        }
+        private CommentsInfo m_CommentsInfo = null;
 
         public static FunctionData NullFunction
         {
             get {
+                s_Instance.Clear();
                 return s_Instance;
             }
         }
@@ -839,6 +900,8 @@ namespace Dsl
         }
         public override void CopyFirstComments(ISyntaxComponent other)
         {
+            if (DslFile.DontLoadComments)
+                return;
             if (other.FirstComments.Count > 0) {
                 FirstComments.AddRange(other.FirstComments);
                 FirstCommentOnNewLine = other.FirstCommentOnNewLine;
@@ -846,6 +909,8 @@ namespace Dsl
         }
         public override void CopyLastComments(ISyntaxComponent other)
         {
+            if (DslFile.DontLoadComments)
+                return;
             if (other.LastComments.Count > 0) {
                 LastComments.AddRange(other.LastComments);
                 LastCommentOnNewLine = other.LastCommentOnNewLine;
@@ -853,50 +918,82 @@ namespace Dsl
         }
         public override string CalcFirstComment()
         {
-            if (null == mFirstComments) {
+            if (DslFile.DontLoadComments)
+                return string.Empty;
+            PrepareCommentsInfo();
+            if (null == m_CommentsInfo.mFirstComments) {
                 return string.Empty;
             }
             else {
-                return string.Join(string.Empty, mFirstComments.ToArray());
+                return string.Join(string.Empty, m_CommentsInfo.mFirstComments.ToArray());
             }
         }
         public override string CalcLastComment()
         {
-            if (null == mLastComments) {
+            if (DslFile.DontLoadComments)
+                return string.Empty;
+            PrepareCommentsInfo();
+            if (null == m_CommentsInfo.mLastComments) {
                 return string.Empty;
             }
             else {
-                return string.Join(string.Empty, mLastComments.ToArray());
+                return string.Join(string.Empty, m_CommentsInfo.mLastComments.ToArray());
             }
         }
 
         public override List<string> FirstComments
         {
             get {
-                if (null == mFirstComments) {
-                    mFirstComments = new List<string>();
+                if (DslFile.DontLoadComments)
+                    return NullSyntax.EmptyStringList;
+                PrepareCommentsInfo();
+                if (null == m_CommentsInfo.mFirstComments) {
+                    m_CommentsInfo.mFirstComments = new List<string>();
                 }
-                return mFirstComments;
+                return m_CommentsInfo.mFirstComments;
             }
         }
         public override bool FirstCommentOnNewLine
         {
-            get { return mFirstCommentOnNewLine; }
-            set { mFirstCommentOnNewLine = value; }
+            get {
+                if (DslFile.DontLoadComments)
+                    return false;
+                PrepareCommentsInfo();
+                return m_CommentsInfo.mFirstCommentOnNewLine;
+            }
+            set {
+                if (DslFile.DontLoadComments)
+                    return;
+                PrepareCommentsInfo();
+                m_CommentsInfo.mFirstCommentOnNewLine = value;
+            }
         }
         public override List<string> LastComments
         {
             get {
-                if (null == mLastComments) {
-                    mLastComments = new List<string>();
+                if (DslFile.DontLoadComments)
+                    return NullSyntax.EmptyStringList;
+                PrepareCommentsInfo();
+                if (null == m_CommentsInfo.mLastComments) {
+                    m_CommentsInfo.mLastComments = new List<string>();
                 }
-                return mLastComments;
+                return m_CommentsInfo.mLastComments;
             }
         }
         public override bool LastCommentOnNewLine
         {
-            get { return mLastCommentOnNewLine; }
-            set { mLastCommentOnNewLine = value; }
+            get {
+                if (DslFile.DontLoadComments)
+                    return false;
+                PrepareCommentsInfo();
+                return m_CommentsInfo.mLastCommentOnNewLine;
+            }
+            set {
+                if (DslFile.DontLoadComments)
+                    return;
+                PrepareCommentsInfo();
+                m_CommentsInfo.mLastCommentOnNewLine = value;
+            }
         }
 
         public int GetFunctionNum()
@@ -968,23 +1065,38 @@ namespace Dsl
         public void Clear()
         {
             m_Functions = new List<FunctionData>();
+
+            m_CommentsInfo = null;
         }
         public void CopyFrom(StatementData other)
         {
             CopyComments(other);
             m_Functions = other.m_Functions;
         }
+        private void PrepareCommentsInfo()
+        {
+            if (DslFile.DontLoadComments)
+                return;
+            if (null == m_CommentsInfo) {
+                m_CommentsInfo = new CommentsInfo();
+            }
+        }
 
         private List<FunctionData> m_Functions = new List<FunctionData>();
 
-        private List<string> mFirstComments;
-        private bool mFirstCommentOnNewLine;
-        private List<string> mLastComments;
-        private bool mLastCommentOnNewLine;
+        private class CommentsInfo
+        {
+            internal List<string> mFirstComments = null;
+            internal bool mFirstCommentOnNewLine = false;
+            internal List<string> mLastComments = null;
+            internal bool mLastCommentOnNewLine = false;
+        }
+        private CommentsInfo m_CommentsInfo = null;
 
         public static StatementData NullStatementData
         {
             get {
+                s_NullStatementData.Clear();
                 return s_NullStatementData;
             }
         }
@@ -1259,6 +1371,15 @@ namespace Dsl
                 return sBinaryIdentity;
             }
         }
+        public static bool DontLoadComments
+        {
+            get {
+                return sDontLoadComments;
+            }
+            set {
+                sDontLoadComments = value;
+            }
+        }
         public static bool IsBinaryDsl(byte[] data, int start)
         {
             if (null == data || data.Length < c_BinaryIdentity.Length)
@@ -1276,6 +1397,7 @@ namespace Dsl
         public const string c_BinaryIdentity = "BDSL";
 
         private static byte[] sBinaryIdentity = null;
+        private static bool sDontLoadComments = false;
     };
 
     public sealed class Utility

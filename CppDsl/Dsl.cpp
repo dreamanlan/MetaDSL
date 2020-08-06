@@ -38,6 +38,8 @@ namespace Dsl
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
     {
+        if (DslOptions::DontLoadComments())
+            return;
         if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
             m_pCommentsInfo->m_FirstCommentNum = other.m_pCommentsInfo->m_FirstCommentNum;
             m_pCommentsInfo->m_FirstCommentSpace = other.m_pCommentsInfo->m_FirstCommentSpace;
@@ -61,6 +63,8 @@ namespace Dsl
     }
     void ISyntaxComponent::PrepareFirstComments(void)
     {
+        if (DslOptions::DontLoadComments())
+            return;
         if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
             if (m_pCommentsInfo->m_FirstCommentNum >= m_pCommentsInfo->m_FirstCommentSpace) {
                 int newSpace = m_pCommentsInfo->m_FirstCommentSpace + DELTA_COMMENT;
@@ -79,6 +83,8 @@ namespace Dsl
     }
     void ISyntaxComponent::ReleaseFirstComments(void)
     {
+        if (DslOptions::DontLoadComments())
+            return;
         if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
             if (NULL != m_pCommentsInfo->m_FirstComments) {
                 m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentSpace);
@@ -88,6 +94,8 @@ namespace Dsl
     }
     void ISyntaxComponent::PrepareLastComments(void)
     {
+        if (DslOptions::DontLoadComments())
+            return;
         if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
             if (m_pCommentsInfo->m_LastCommentNum >= m_pCommentsInfo->m_LastCommentSpace) {
                 int newSpace = m_pCommentsInfo->m_LastCommentSpace + DELTA_COMMENT;
@@ -106,6 +114,8 @@ namespace Dsl
     }
     void ISyntaxComponent::ReleaseLastComments(void)
     {
+        if (DslOptions::DontLoadComments())
+            return;
         if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
             if (NULL != m_pCommentsInfo->m_LastComments) {
                 m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentSpace);
@@ -170,13 +180,15 @@ namespace Dsl
         m_Params(0),
         m_ParamNum(0),
         m_ParamSpace(0),
-        m_ParamClass(PARAM_CLASS_NOTHING),
-        m_Comments(0),
-        m_CommentNum(0),
-        m_CommentSpace(0)
+        m_ParamClass(PARAM_CLASS_NOTHING)
     {
         m_pBuffer = &buffer;
-        m_pCommentsInfo = &m_FirstAndLastComments;
+        if (DslOptions::DontLoadComments()) {
+            m_pCommentsInfo = 0;
+        }
+        else {
+            m_pCommentsInfo = buffer.NewFunctionCommentsInfo();
+        }
 
         const DslOptions& options = buffer.GetOptions();
         m_MaxParamNum = options.GetMaxParamNum();
@@ -232,24 +244,34 @@ namespace Dsl
 
     void FunctionData::PrepareComments(void)
     {
-        if (m_CommentNum >= m_CommentSpace) {
-            int newSpace = m_CommentSpace + DELTA_COMMENT;
+        if (DslOptions::DontLoadComments())
+            return;
+        auto p = GetCommentsInfo();
+        if (0 == p)
+            return;
+        if (p->m_CommentNum >= p->m_CommentSpace) {
+            int newSpace = p->m_CommentSpace + DELTA_COMMENT;
             const char** pNew = (const char**)(m_Buffer.NewPtrArray(newSpace));
             if (pNew) {
-                memcpy(pNew, m_Comments, m_CommentNum * sizeof(const char*));
-                memset(pNew + m_CommentNum, 0, DELTA_COMMENT * sizeof(const char*));
-                m_Buffer.DeletePtrArray((void**)m_Comments, m_CommentSpace);
-                m_Comments = pNew;
-                m_CommentSpace = newSpace;
+                memcpy(pNew, p->m_Comments, p->m_CommentNum * sizeof(const char*));
+                memset(pNew + p->m_CommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+                m_Buffer.DeletePtrArray((void**)p->m_Comments, p->m_CommentSpace);
+                p->m_Comments = pNew;
+                p->m_CommentSpace = newSpace;
             }
         }
     }
 
     void FunctionData::ReleaseComments(void)
     {
-        if (NULL != m_Comments) {
-            m_Buffer.DeletePtrArray((void**)m_Comments, m_CommentSpace);
-            m_Comments = NULL;
+        if (DslOptions::DontLoadComments())
+            return;
+        auto p = GetCommentsInfo();
+        if (0 == p)
+            return;
+        if (NULL != p->m_Comments) {
+            m_Buffer.DeletePtrArray((void**)p->m_Comments, p->m_CommentSpace);
+            p->m_Comments = NULL;
         }
     }
     
@@ -260,7 +282,12 @@ namespace Dsl
         m_FunctionSpace(0)
     {
         m_pBuffer = &buffer;
-        m_pCommentsInfo = &m_FirstAndLastComments;
+        if (DslOptions::DontLoadComments()) {
+            m_pCommentsInfo = 0;
+        }
+        else{
+            m_pCommentsInfo = buffer.NewSyntaxComponentCommentsInfo();
+        }
 
         const DslOptions& options = buffer.GetOptions();
         m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();

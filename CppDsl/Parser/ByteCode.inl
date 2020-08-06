@@ -35,23 +35,6 @@ namespace Dsl
         }
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markOperator(void)
-    {
-        if (!preconditionCheck())return;
-        StatementData* pStatement = mData.getCurStatement();
-        if (0 == pStatement)
-            return;
-
-        int commentOnNewLine;
-        int num = mThis->getCommentNum(commentOnNewLine);
-        for (int ix = 0; ix < num; ++ix) {
-            char* cmt = mThis->getComment(ix);
-            pStatement->AddLastComment(cmt);
-            pStatement->SetLastCommentOnNewLine(commentOnNewLine);
-        }
-        mThis->resetComments();
-    }
-    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildOperator(void)
     {
         if (!preconditionCheck())return;
@@ -398,14 +381,6 @@ namespace Dsl
             return;
         FunctionData& call = *p;
 
-        int commentOnNewLine;
-        int num = mThis->getCommentNum(commentOnNewLine);
-        for (int ix = 0; ix < num; ++ix) {
-            char* cmt = mThis->getComment(ix);
-            call.AddComment(cmt);
-        }
-        mThis->resetComments();
-
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
     }
     template<class RealTypeT> inline
@@ -417,32 +392,7 @@ namespace Dsl
             return;
         FunctionData& call = *p;
 
-        int commentOnNewLine;
-        int num = mThis->getCommentNum(commentOnNewLine);
-        for (int ix = 0; ix < num; ++ix) {
-            char* cmt = mThis->getComment(ix);
-            call.AddComment(cmt);
-        }
-        mThis->resetComments();
-
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markPeriod(void)
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-
-        int commentOnNewLine;
-        int num = mThis->getCommentNum(commentOnNewLine);
-        for (int ix = 0; ix < num; ++ix) {
-            char* cmt = mThis->getComment(ix);
-            call.AddComment(cmt);
-        }
-        mThis->resetComments();
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodParam(void)
@@ -485,23 +435,6 @@ namespace Dsl
         call.SetParamClass(FunctionData::PARAM_CLASS_PERIOD_BRACE);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markQuestion(void)
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-
-        int commentOnNewLine;
-        int num = mThis->getCommentNum(commentOnNewLine);
-        for (int ix = 0; ix < num; ++ix) {
-            char* cmt = mThis->getComment(ix);
-            call.AddComment(cmt);
-        }
-        mThis->resetComments();
-    }
-    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markQuestionPeriodParam(void)
     {
         if (!preconditionCheck())return;
@@ -540,23 +473,6 @@ namespace Dsl
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_QUESTION_BRACE);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markPointer(void)
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-
-        int commentOnNewLine;
-        int num = mThis->getCommentNum(commentOnNewLine);
-        for (int ix = 0; ix < num; ++ix) {
-            char* cmt = mThis->getComment(ix);
-            call.AddComment(cmt);
-        }
-        mThis->resetComments();
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markStatement(void)

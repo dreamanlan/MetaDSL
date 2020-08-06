@@ -81,57 +81,40 @@ namespace Dsl.Parser
         {
             switch (number) {
                 case 1: endStatement(); break;
-                case 2: markOperator(); break;
-                case 3: pushId(); break;
-                case 4: buildOperator(); break;
-                case 5: buildFirstTernaryOperator(); break;
-                case 6: buildSecondTernaryOperator(); break;
-                case 7: beginStatement(); break;
-                case 8: beginFunction(); break;
-                case 9: endFunction(); break;
-                case 10: setFunctionId(); break;
-                case 11: markParenthesisParam(); break;
-                case 12: buildHighOrderFunction(); break;
-                case 13: markBracketParam(); break;
-                case 14: markPeriod(); break;
-                case 15: markQuestion(); break;
-                case 16: markQuestionParenthesisParam(); break;
-                case 17: markQuestionBracketParam(); break;
-                case 18: markQuestionBraceParam(); break;
-                case 19: markPointer(); break;
-                case 20: markStatement(); break;
-                case 21: markExternScript(); break;
-                case 22: setExternScript(); break;
-                case 23: markPeriodParam(); break;
-                case 24: setMemberId(); break;
-                case 25: markPeriodParenthesisParam(); break;
-                case 26: markPeriodBracketParam(); break;
-                case 27: markPeriodBraceParam(); break;
-                case 28: markQuestionPeriodParam(); break;
-                case 29: markPointerParam(); break;
-                case 30: markPeriodStarParam(); break;
-                case 31: markQuestionPeriodStarParam(); break;
-                case 32: markPointerStarParam(); break;
-                case 33: pushStr(); break;
-                case 34: pushNum(); break;
-                case 35: pushTrue(); break;
-                case 36: pushFalse(); break;
+                case 2: pushId(); break;
+                case 3: buildOperator(); break;
+                case 4: buildFirstTernaryOperator(); break;
+                case 5: buildSecondTernaryOperator(); break;
+                case 6: beginStatement(); break;
+                case 7: beginFunction(); break;
+                case 8: endFunction(); break;
+                case 9: setFunctionId(); break;
+                case 10: markParenthesisParam(); break;
+                case 11: buildHighOrderFunction(); break;
+                case 12: markBracketParam(); break;
+                case 13: markQuestionParenthesisParam(); break;
+                case 14: markQuestionBracketParam(); break;
+                case 15: markQuestionBraceParam(); break;
+                case 16: markStatement(); break;
+                case 17: markExternScript(); break;
+                case 18: setExternScript(); break;
+                case 19: markPeriodParam(); break;
+                case 20: setMemberId(); break;
+                case 21: markPeriodParenthesisParam(); break;
+                case 22: markPeriodBracketParam(); break;
+                case 23: markPeriodBraceParam(); break;
+                case 24: markQuestionPeriodParam(); break;
+                case 25: markPointerParam(); break;
+                case 26: markPeriodStarParam(); break;
+                case 27: markQuestionPeriodStarParam(); break;
+                case 28: markPointerStarParam(); break;
+                case 29: pushStr(); break;
+                case 30: pushNum(); break;
+                case 31: pushTrue(); break;
+                case 32: pushFalse(); break;
             }
         }
 
-        internal void markOperator()
-        {
-            StatementData statement = getCurStatement();
-
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                if (statement.LastComments.Count <= 0) {
-                    statement.LastCommentOnNewLine = commentOnNewLine;
-                }
-                statement.LastComments.AddRange(cmts);
-            }
-        }
         internal void buildOperator()
         {
             int type;
@@ -140,7 +123,7 @@ namespace Dsl.Parser
             StatementData arg = popStatement();
             ISyntaxComponent argComp = simplifyStatement(arg);
 
-            StatementData _statement = newStatement();
+            StatementData _statement = newStatementWithOneFunction();
             FunctionData first = _statement.First;
             first.Name.SetLine(getLastLineNumber());
 
@@ -177,7 +160,7 @@ namespace Dsl.Parser
             StatementData arg = popStatement();
             ISyntaxComponent argComp = simplifyStatement(arg);
 
-            StatementData _statement = newStatement();
+            StatementData _statement = newStatementWithOneFunction();
             FunctionData first = _statement.First;
 
             //三元运算符表示成op1(cond)(true_val)op2(false_val)
@@ -224,7 +207,7 @@ namespace Dsl.Parser
         }
         internal void beginStatement()
         {
-            StatementData statement = newStatement();
+            StatementData statement = newStatementWithoutFunction();
 
             bool commentOnNewLine;
             IList<string> cmts = GetComments(out commentOnNewLine);
@@ -347,15 +330,7 @@ namespace Dsl.Parser
         internal void beginFunction()
         {
             StatementData statement = getCurStatement();
-            FunctionData func = getLastFunction();
-            if (func.IsValid()) {
-                //语句的多元函数的其它元函数名
-                FunctionData newFunc = new FunctionData();
-                ValueData name = new ValueData();
-                newFunc.Name = name;
-
-                statement.Functions.Add(newFunc);
-            }
+            FunctionData func = newFunctionOfStatement(statement);
         }
         internal void setFunctionId()
         {
@@ -395,35 +370,13 @@ namespace Dsl.Parser
         {
             FunctionData func = getLastFunction();
 
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                func.Comments.AddRange(cmts);
-            }
-
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
         }
         internal void markBracketParam()
         {
             FunctionData func = getLastFunction();
 
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                func.Comments.AddRange(cmts);
-            }
-
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
-        }
-        internal void markPeriod()
-        {
-            FunctionData func = getLastFunction();
-
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                func.Comments.AddRange(cmts);
-            }
         }
         internal void markPeriodParam()
         {
@@ -445,16 +398,6 @@ namespace Dsl.Parser
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
         }
-        internal void markQuestion()
-        {
-            FunctionData func = getLastFunction();
-
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                func.Comments.AddRange(cmts);
-            }
-        }
         internal void markQuestionPeriodParam()
         {
             FunctionData func = getLastFunction();
@@ -474,16 +417,6 @@ namespace Dsl.Parser
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
-        }
-        internal void markPointer()
-        {
-            FunctionData func = getLastFunction();
-
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                func.Comments.AddRange(cmts);
-            }
         }
         internal void markStatement()
         {
@@ -577,7 +510,7 @@ namespace Dsl.Parser
         private StatementData popStatement()
         {
             if (mStatementSemanticStack.Count == 0) {
-                return newStatement();
+                return newStatementWithoutFunction();
             }
             StatementData cdata = mStatementSemanticStack.Pop();
             return cdata;
@@ -604,7 +537,7 @@ namespace Dsl.Parser
             StatementData statement = getCurStatement();
             return statement.Last;
         }
-        private StatementData newStatement()
+        private StatementData newStatementWithOneFunction()
         {
             StatementData data = new StatementData();
             FunctionData func = new FunctionData();
@@ -612,6 +545,19 @@ namespace Dsl.Parser
             func.Name = name;
             data.Functions.Add(func);
             return data;
+        }
+        private StatementData newStatementWithoutFunction()
+        {
+            StatementData data = new StatementData();
+            return data;
+        }
+        private FunctionData newFunctionOfStatement(StatementData data)
+        {
+            FunctionData func = new FunctionData();
+            ValueData name = new ValueData();
+            func.Name = name;
+            data.Functions.Add(func);
+            return func;
         }
         private AbstractSyntaxComponent simplifyStatement(StatementData data)
         {

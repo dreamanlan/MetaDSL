@@ -23,7 +23,6 @@ namespace Dsl
 		}
 	public:
         inline void    endStatement(void);
-        inline void    markOperator(void);
         inline void    pushId(void);
         inline void    buildOperator(void);
         inline void    buildFirstTernaryOperator(void);
@@ -35,12 +34,9 @@ namespace Dsl
         inline void    markParenthesisParam(void);
         inline void    buildHighOrderFunction(void);
         inline void    markBracketParam(void);
-        inline void    markPeriod(void);
-        inline void    markQuestion(void);
         inline void    markQuestionParenthesisParam(void);
         inline void    markQuestionBracketParam(void);
         inline void    markQuestionBraceParam(void);
-        inline void    markPointer(void);
         inline void    markStatement(void);
         inline void    markExternScript(void);
         inline void    setExternScript(void);

@@ -14,7 +14,7 @@ namespace Dsl
             DslLogDelegation logCallback = (string msg) => {
                 Console.WriteLine("{0}", msg);
             };
-
+            //DslFile.DontLoadComments = true;
             DslFile file = new DslFile();
             file.Load("test.txt", logCallback);
 #if FULL_VERSION

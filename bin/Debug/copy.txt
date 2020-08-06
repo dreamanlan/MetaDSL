@@ -66,7 +66,8 @@ skill(1006)
 		sendgfxmessage(30,"StartScript","SetCameraFollowTarget");	//摄像机跟随
 		sendgfxmessage(30,"StartScript","SetCameraMode_UniqueSkill_Ryu_Phase3");	//摄像机Mask设置    场景变黑
 		selfeffect(selfEffect10,2000,"",2800);	//升龙拳
-		selfeffect(selfEffect1,533,"",3500);
+		selfeffect(selfEffect1,533,"",3500);	//升龙拳
+		//selfeffect(selfEffect2,12000,"",3600);						//后跳落地散开的蓝色圆圈与树叶
 	};
 	section(7000)	//分镜2：蓄力
 
@@ -78,7 +79,11 @@ skill(1006)
 		sendgfxmessage(1,"StartScript","SetActorsLayer","Actor","DeActive","Actor","Actor");	//替换SetLayerForSkill,隐藏目标
 		selfeffect(selfEffect3,5000,"",0);	//Effects/Skill/Ryu_aoyi_skill_03 波动拳起手特效
 		selfeffect(selfEffect2,5000,"",0);	//Effects/Skill/Ryu_aoyi_skill_03 波动拳起手特效
-		selfeffect(selfEffect4,5000,"",3500);
+		selfeffect(selfEffect4,5000,"",3500);	//Effects/Skill/R_BDQ_balla 光球
+		//		selfeffect(selfEffect6,3000,"Bip001 L Hand",3800)					//手上光球
+		//	  	    {
+		//			transform(vector3(-0.063, 0.252,-0.107));
+		//	  		};
 	};
 	section(933)	//分镜3：第一/二个波
 
@@ -94,7 +99,7 @@ skill(1006)
 		selfeffect(selfEffect7,933,"",0,false);	// 第一次波
 		//切换镜头到波飞行特效（向左下飞）
 		sendgfxmessage(467,"StartScript","CameraEnableForSkill","Ryu_Camera 1",0);
-		sendgfxmessage(467,"StartScript","CameraEnableForSkill","Ryu_Camera 2",1);
+		sendgfxmessage(467,"StartScript","CameraEnableForSkill","Ryu_Camera 2",1);	// 第二次波
 	};
 	section(500)	//分镜4：第三个波
 
@@ -105,7 +110,7 @@ skill(1006)
 		//切换镜头到飞行线特效
 		sendgfxmessage(1,"StartScript","CameraEnableForSkill","Ryu_Camera 2",0);
 		sendgfxmessage(1,"StartScript","CameraEnableForSkill","Custom_Camera 3",1);
-		selfeffect(selfEffect8,500,"",0,false);
+		selfeffect(selfEffect8,500,"",0,false);	// 第三次波
 	};
 	section(1800)	//分镜5：切回普通镜头
 
@@ -130,7 +135,7 @@ skill(1006)
 		sendgfxmessage(0,"StartScript","ClearCameraFollowTarget");	//取消摄像机跟随
 		sendgfxmessage(0,"StartScript","SetCameraMode_Normal");	//取消摄像机Mask设置
 		sendgfxmessage(0,"StartScript","FinishUniqueSkillEffect");	//不再隐藏其他玩家	
-		sendgfxmessage(0,"StartScript","SetActorsVisible",true,true,true,true);
+		sendgfxmessage(0,"StartScript","SetActorsVisible",true,true,true,true);	//显示所有人
 	};
 	onstop
 

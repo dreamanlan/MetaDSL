@@ -44,14 +44,10 @@ void CompileTest_ByteCode(void)
 	builder.setCanFinish(false);
 	builder.setFunctionId();
 	builder.setMemberId();
-    builder.markPeriod();
-    builder.markOperator();
-    builder.markQuestion();
     builder.markQuestionPeriodParam();
     builder.markQuestionParenthesisParam();
     builder.markQuestionBracketParam();
     builder.markQuestionBraceParam();
-    builder.markPointer();
     builder.markPointerParam();
     builder.markPeriodStarParam();
     builder.markQuestionPeriodStarParam();
