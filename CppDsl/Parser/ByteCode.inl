@@ -229,7 +229,7 @@ namespace Dsl
             ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
             if (!statementSyntax.IsValid()) {
                 //_epsilon_表达式无语句语义
-                if (mDataFile->GetDslInfoNum() > 0 && statementSyntax.GetFirstCommentNum() > 0) {
+                if (mDataFile->GetDslInfoNum() > 0) {
                     ISyntaxComponent* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
                         last->SetLastCommentOnNewLine(statementSyntax.IsFirstCommentOnNewLine());
@@ -238,10 +238,32 @@ namespace Dsl
                     for (int ix = 0; ix < fnum; ++ix) {
                         last->AddLastComment(statementSyntax.GetFirstComment(ix));
                     }
+                    int lnum = statementSyntax.GetLastCommentNum();
+                    for (int ix = 0; ix < lnum; ++ix) {
+                        last->AddLastComment(statementSyntax.GetLastComment(ix));
+                    }
                 }
                 return;
             }
+            else if (statementSyntax.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
+                //普通值语句的注释挪到上一语句
+                if (mDataFile->GetDslInfoNum() > 0) {
+                    ISyntaxComponent* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
+                    if (last->GetLastCommentNum() <= 0) {
+                        last->SetLastCommentOnNewLine(statement->IsFirstCommentOnNewLine());
+                    }
+                    int fnum = statement->GetFirstCommentNum();
+                    for (int ix = 0; ix < fnum; ++ix) {
+                        last->AddLastComment(statement->GetFirstComment(ix));
+                    }
+                    int lnum = statement->GetLastCommentNum();
+                    for (int ix = 0; ix < lnum; ++ix) {
+                        last->AddLastComment(statement->GetLastComment(ix));
+                    }
+                }
+            }
             else {
+                //上一行语句的注释挪到上一行语句
                 if (mDataFile->GetDslInfoNum() > 0 && !statementSyntax.IsFirstCommentOnNewLine() && statementSyntax.GetFirstCommentNum() > 0) {
                     const char* cmt = statementSyntax.GetFirstComment(0);
                     statementSyntax.RemoveFirstComment(0);
@@ -263,7 +285,12 @@ namespace Dsl
 
             FunctionData* p = mData.getLastFunctionRef();
             if (0 != p) {
-                if (!statementSyntax.IsValid()) {
+                if (p->HaveParam()) {
+                    //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
+                    if (!statementSyntax.IsValid())
+                        return;
+                }
+                else if (!statementSyntax.IsValid()) {
                     //_epsilon_表达式无语句语义
                     if (p->GetParamNum() > 0 && statementSyntax.GetFirstCommentNum() > 0) {
                         ISyntaxComponent* last = p->GetParam(p->GetParamNum() - 1);
@@ -274,10 +301,42 @@ namespace Dsl
                         for (int ix = 0; ix < fnum; ++ix) {
                             last->AddLastComment(statementSyntax.GetFirstComment(ix));
                         }
+                        int lnum = statementSyntax.GetLastCommentNum();
+                        for (int ix = 0; ix < lnum; ++ix) {
+                            last->AddLastComment(statementSyntax.GetLastComment(ix));
+                        }
                     }
                     return;
                 }
+                else if (statementSyntax.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
+                    //如果语句是普通值，注释挪到上一语句
+                    if (p->GetParamNum() > 0) {
+                        ISyntaxComponent* last = p->GetParam(p->GetParamNum() - 1);
+                        if (last->GetLastCommentNum() <= 0) {
+                            last->SetLastCommentOnNewLine(statement->IsFirstCommentOnNewLine());
+                        }
+                        int fnum = statement->GetFirstCommentNum();
+                        for (int ix = 0; ix < fnum; ++ix) {
+                            last->AddLastComment(statement->GetFirstComment(ix));
+                        }
+                        int lnum = statement->GetLastCommentNum();
+                        for (int ix = 0; ix < lnum; ++ix) {
+                            last->AddLastComment(statement->GetLastComment(ix));
+                        }
+                    }
+                    else {
+                        int fnum = statement->GetFirstCommentNum();
+                        for (int ix = 0; ix < fnum; ++ix) {
+                            p->AddComment(statement->GetFirstComment(ix));
+                        }
+                        int lnum = statement->GetLastCommentNum();
+                        for (int ix = 0; ix < lnum; ++ix) {
+                            p->AddComment(statement->GetLastComment(ix));
+                        }
+                    }
+                }
                 else {
+                    //上一行语句的注释挪到上一行语句或外层函数头或外层函数
                     if (!statementSyntax.IsFirstCommentOnNewLine() && statementSyntax.GetFirstCommentNum() > 0) {
                         const char* cmt = statementSyntax.GetFirstComment(0);
                         statementSyntax.RemoveFirstComment(0);
@@ -288,6 +347,9 @@ namespace Dsl
                                 last->SetLastCommentOnNewLine(FALSE);
                             }
                             last->AddLastComment(cmt);
+                        }
+                        else if (p->IsHighOrder()) {
+                            p->GetLowerOrderFunction()->AddComment(cmt);
                         }
                         else {
                             p->AddComment(cmt);
@@ -582,6 +644,7 @@ namespace Dsl
     template<class RealTypeT> inline
         ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(FunctionData& data)const
     {
+        //注意，为了省内存ValueData上不附带注释了，相关接口无实际效果！！！
         if (!data.HaveParamOrStatement()) {
             //没有参数的调用退化为基本值数据
             if (data.IsHighOrder()) {
@@ -590,7 +653,6 @@ namespace Dsl
             }
             else {
                 ValueData& name = data.GetName();
-                name.CopyComments(data);
                 return name;
             }
         }
@@ -598,7 +660,6 @@ namespace Dsl
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = dynamic_cast<ValueData&>(temp);
-                val.CopyComments(data);
                 int size = (int)strlen(val.GetId()) + 1;
                 char* pBuf = mDataFile->AllocString(size);
                 tsnprintf(pBuf, size + 1, "-%s", val.GetId());
@@ -613,7 +674,6 @@ namespace Dsl
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = dynamic_cast<ValueData&>(temp);
-                val.CopyComments(data);
                 int size = (int)strlen(val.GetId()) + 1;
                 char* pBuf = mDataFile->AllocString(size);
                 tsnprintf(pBuf, size + 1, "+%s", val.GetId());

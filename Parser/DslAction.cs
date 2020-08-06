@@ -223,8 +223,8 @@ namespace Dsl.Parser
         internal void endStatement()
         {
             StatementData statement = popStatement();
-            if (statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.LowerOrderFunction.GetParamNum() == 1 || statement.First.LowerOrderFunction.GetParamNum() == 3) && !statement.First.LowerOrderFunction.IsHighOrder) {
-                FunctionData call = statement.First.LowerOrderFunction;
+            if (statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.GetParamNum() == 1 || statement.First.GetParamNum() == 3) && !statement.First.IsHighOrder) {
+                FunctionData call = statement.First;
                 string type = call.GetParamId(0);
                 if (call.GetParamNum() == 3) {
                     string begin = call.GetParamId(1);
@@ -265,18 +265,32 @@ namespace Dsl.Parser
             if (mStatementSemanticStack.Count == 0) {
                 //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
                 AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
+                ValueData vdSyntax = statementSyntax as ValueData;
                 if (!statementSyntax.IsValid()) {
                     //_epsilon_表达式无语句语义
-                    if (mScriptDatas.Count > 0 && statementSyntax.FirstComments.Count > 0) {
+                    if (mScriptDatas.Count > 0) {
                         ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
                         if (last.LastComments.Count <= 0) {
                             last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
                         }
                         last.LastComments.AddRange(statementSyntax.FirstComments);
+                        last.LastComments.AddRange(statementSyntax.LastComments);
                     }
                     return;
                 }
+                else if (null != vdSyntax) {
+                    //如果语句是普通值，注释挪到上一语句
+                    if (mScriptDatas.Count > 0) {
+                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statement.FirstComments);
+                        last.LastComments.AddRange(statement.LastComments);
+                    }
+                }
                 else {
+                    //上一行语句的注释挪到上一行语句
                     if (mScriptDatas.Count > 0 && !statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
                         string cmt = statementSyntax.FirstComments[0];
                         statementSyntax.FirstComments.RemoveAt(0);
@@ -294,9 +308,14 @@ namespace Dsl.Parser
             else {
                 //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
                 AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
-
+                ValueData vdSyntax = statementSyntax as ValueData;
                 FunctionData func = getLastFunction();
-                if (!statementSyntax.IsValid()) {
+                if (func.HaveParam()) {
+                    //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
+                    if (!statementSyntax.IsValid())
+                        return;
+                }
+                else if (!statement.IsValid()) {
                     //_epsilon_表达式无语句语义
                     if (func.Params.Count > 0 && statementSyntax.FirstComments.Count > 0) {
                         AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
@@ -304,10 +323,27 @@ namespace Dsl.Parser
                             last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
                         }
                         last.LastComments.AddRange(statementSyntax.FirstComments);
+                        last.LastComments.AddRange(statementSyntax.LastComments);
                     }
                     return;
                 }
+                else if (null != vdSyntax) {
+                    //如果语句是普通值，注释挪到上一语句
+                    if (func.Params.Count > 0) {
+                        AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statement.FirstComments);
+                        last.LastComments.AddRange(statement.LastComments);
+                    }
+                    else {
+                        func.Comments.AddRange(statement.FirstComments);
+                        func.Comments.AddRange(statement.LastComments);
+                    }
+                }
                 else {
+                    //上一行语句的注释挪到上一行语句或外层函数头或外层函数
                     if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
                         string cmt = statementSyntax.FirstComments[0];
                         statementSyntax.FirstComments.RemoveAt(0);
@@ -318,6 +354,9 @@ namespace Dsl.Parser
                                 last.LastCommentOnNewLine = false;
                             }
                             last.LastComments.Add(cmt);
+                        }
+                        else if (func.IsHighOrder) {
+                            func.LowerOrderFunction.Comments.Add(cmt);
                         }
                         else {
                             func.Comments.Add(cmt);
@@ -572,6 +611,7 @@ namespace Dsl.Parser
         }
         private AbstractSyntaxComponent simplifyStatement(FunctionData data)
         {
+            //注意，为了省内存ValueData上不附带注释了，相关接口无实际效果！！！
             if (!data.HaveParamOrStatement()) {
                 //没有参数的调用退化为基本值数据
                 if (data.IsHighOrder) {
@@ -579,7 +619,6 @@ namespace Dsl.Parser
                     return data;
                 }
                 else {
-                    data.Name.CopyComments(data);
                     return data.Name;
                 }
             }
@@ -588,8 +627,6 @@ namespace Dsl.Parser
                 ValueData temp = val as ValueData;
                 if (null != temp && temp.IsNumber()) {
                     ValueData ret = new ValueData("-" + temp.GetId(), ValueData.NUM_TOKEN);
-                    ret.CopyComments(temp);
-                    ret.CopyComments(data);
                     return ret;
                 }
                 else {
@@ -601,8 +638,6 @@ namespace Dsl.Parser
                 ValueData temp = val as ValueData;
                 if (null != temp && temp.IsNumber()) {
                     ValueData ret = new ValueData(temp.GetId(), ValueData.NUM_TOKEN);
-                    ret.CopyComments(temp);
-                    ret.CopyComments(data);
                     return ret;
                 }
                 else {
