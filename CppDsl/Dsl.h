@@ -144,48 +144,48 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
             PrepareFirstComments();
-            if (m_pCommentsInfo->m_FirstCommentNum < m_pCommentsInfo->m_FirstCommentSpace) {
-                m_pCommentsInfo->m_FirstComments[m_pCommentsInfo->m_FirstCommentNum++] = cmt;
+            if (GetCommentsInfo()->m_FirstCommentNum < GetCommentsInfo()->m_FirstCommentSpace) {
+                GetCommentsInfo()->m_FirstComments[GetCommentsInfo()->m_FirstCommentNum++] = cmt;
             }
         }
         void RemoveFirstComment(int index)
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
-            if (index >= 0 && index < m_pCommentsInfo->m_FirstCommentNum) {
-                for (int ix = index; ix < m_pCommentsInfo->m_FirstCommentNum - 1; ++ix) {
-                    m_pCommentsInfo->m_FirstComments[ix] = m_pCommentsInfo->m_FirstComments[ix + 1];
+            if (index >= 0 && index < GetCommentsInfo()->m_FirstCommentNum) {
+                for (int ix = index; ix < GetCommentsInfo()->m_FirstCommentNum - 1; ++ix) {
+                    GetCommentsInfo()->m_FirstComments[ix] = GetCommentsInfo()->m_FirstComments[ix + 1];
                 }
-                --m_pCommentsInfo->m_FirstCommentNum;
+                --GetCommentsInfo()->m_FirstCommentNum;
             }
         }
         void ClearFirstComments()
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
-            m_pCommentsInfo->m_FirstCommentNum = 0;
+            GetCommentsInfo()->m_FirstCommentNum = 0;
         }
         int GetFirstCommentNum(void) const 
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return 0;
-            return m_pCommentsInfo->m_FirstCommentNum;
+            return GetCommentsInfo()->m_FirstCommentNum;
         }
         const char* GetFirstComment(int index) const
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            if (0 != m_pCommentsInfo && index >= 0 && index < m_pCommentsInfo->m_FirstCommentNum) {
-                return m_pCommentsInfo->m_FirstComments[index];
+            if (0 != GetCommentsInfo() && index >= 0 && index < GetCommentsInfo()->m_FirstCommentNum) {
+                return GetCommentsInfo()->m_FirstComments[index];
             }
             else {
                 return 0;
@@ -195,62 +195,62 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return 0;
-            return m_pCommentsInfo->m_FirstCommentOnNewLine;
+            return GetCommentsInfo()->m_FirstCommentOnNewLine;
         }
         void SetFirstCommentOnNewLine(int v)
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
-            m_pCommentsInfo->m_FirstCommentOnNewLine = v;
+            GetCommentsInfo()->m_FirstCommentOnNewLine = v;
         }
         void AddLastComment(const char* cmt)
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
             PrepareLastComments();
-            if (m_pCommentsInfo->m_LastCommentNum < m_pCommentsInfo->m_LastCommentSpace) {
-                m_pCommentsInfo->m_LastComments[m_pCommentsInfo->m_LastCommentNum++] = cmt;
+            if (GetCommentsInfo()->m_LastCommentNum < GetCommentsInfo()->m_LastCommentSpace) {
+                GetCommentsInfo()->m_LastComments[GetCommentsInfo()->m_LastCommentNum++] = cmt;
             }
         }
         void RemoveLastComment(int index)
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 != m_pCommentsInfo && index >= 0 && index < m_pCommentsInfo->m_LastCommentNum) {
-                for (int ix = index; ix < m_pCommentsInfo->m_LastCommentNum - 1; ++ix) {
-                    m_pCommentsInfo->m_LastComments[ix] = m_pCommentsInfo->m_LastComments[ix + 1];
+            if (0 != GetCommentsInfo() && index >= 0 && index < GetCommentsInfo()->m_LastCommentNum) {
+                for (int ix = index; ix < GetCommentsInfo()->m_LastCommentNum - 1; ++ix) {
+                    GetCommentsInfo()->m_LastComments[ix] = GetCommentsInfo()->m_LastComments[ix + 1];
                 }
-                --m_pCommentsInfo->m_LastCommentNum;
+                --GetCommentsInfo()->m_LastCommentNum;
             }
         }
         void ClearLastComments()
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
-            m_pCommentsInfo->m_LastCommentNum = 0;
+            GetCommentsInfo()->m_LastCommentNum = 0;
         }
         int GetLastCommentNum(void) const
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return 0;
-            return m_pCommentsInfo->m_LastCommentNum;
+            return GetCommentsInfo()->m_LastCommentNum;
         }
         const char* GetLastComment(int index) const
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            if (0 != m_pCommentsInfo && index >= 0 && index < m_pCommentsInfo->m_LastCommentNum) {
-                return m_pCommentsInfo->m_LastComments[index];
+            if (0 != GetCommentsInfo() && index >= 0 && index < GetCommentsInfo()->m_LastCommentNum) {
+                return GetCommentsInfo()->m_LastComments[index];
             }
             else {
                 return 0;
@@ -260,17 +260,17 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return 0;
-            return m_pCommentsInfo->m_LastCommentOnNewLine;
+            return GetCommentsInfo()->m_LastCommentOnNewLine;
         }
         void SetLastCommentOnNewLine(int v)
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo)
+            if (0 == GetCommentsInfo())
                 return;
-            m_pCommentsInfo->m_LastCommentOnNewLine = v;
+            GetCommentsInfo()->m_LastCommentOnNewLine = v;
         }
         void CopyComments(const ISyntaxComponent& other)
         {
@@ -281,11 +281,11 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo || 0 == other.m_pCommentsInfo)
+            if (0 == GetCommentsInfo() || 0 == other.GetCommentsInfo())
                 return;
             int fnum = other.GetFirstCommentNum();
             if (fnum > 0) {
-                m_pCommentsInfo->m_FirstCommentOnNewLine = other.m_pCommentsInfo->m_FirstCommentOnNewLine;
+                GetCommentsInfo()->m_FirstCommentOnNewLine = other.GetCommentsInfo()->m_FirstCommentOnNewLine;
                 for (int i = 0; i < fnum; ++i) {
                     AddFirstComment(other.GetFirstComment(i));
                 }
@@ -295,11 +295,11 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return;
-            if (0 == m_pCommentsInfo || 0 == other.m_pCommentsInfo)
+            if (0 == GetCommentsInfo() || 0 == other.GetCommentsInfo())
                 return;
             int lnum = other.GetLastCommentNum();
             if (lnum > 0) {
-                m_pCommentsInfo->m_LastCommentOnNewLine = other.m_pCommentsInfo->m_LastCommentOnNewLine;
+                GetCommentsInfo()->m_LastCommentOnNewLine = other.GetCommentsInfo()->m_LastCommentOnNewLine;
                 for (int i = 0; i < lnum; ++i) {
                     AddLastComment(other.GetLastComment(i));
                 }
@@ -310,14 +310,14 @@ namespace Dsl
         void WriteLastCommentsToFile(FILE* fp, int indent, int isLastOfStatement) const;
     protected:
         void CopyFrom(const ISyntaxComponent& other);
+        void ReleaseFirstComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo);
+        void ReleaseLastComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo);
+    protected:
+        virtual IDslStringAndObjectBuffer* GetBuffer(void) const { return 0; }
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const { return 0; }
     private:
         void PrepareFirstComments(void);
-        void ReleaseFirstComments(void);
         void PrepareLastComments(void);
-        void ReleaseLastComments(void);
-    protected:
-        IDslStringAndObjectBuffer* m_pBuffer;
-        SyntaxComponentCommentsInfo* m_pCommentsInfo;
     private:
         int m_SyntaxType;
     };
@@ -655,7 +655,7 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return;
-            auto p = GetCommentsInfo();
+            auto p = m_pCommentsInfo;
             if (0 == p)
                 return;
             PrepareComments();
@@ -667,7 +667,7 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return;
-            auto p = GetCommentsInfo();
+            auto p = m_pCommentsInfo;
             if (0 == p)
                 return;
             if (index >= 0 && index < p->m_CommentNum) {
@@ -681,7 +681,7 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return;
-            auto p = GetCommentsInfo();
+            auto p = m_pCommentsInfo;
             if (0 == p)
                 return;
             p->m_CommentNum = 0;
@@ -690,7 +690,7 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            auto p = GetCommentsInfo();
+            auto p = m_pCommentsInfo;
             if (0 == p)
                 return 0;
             return p->m_CommentNum;
@@ -699,7 +699,7 @@ namespace Dsl
         {
             if (DslOptions::DontLoadComments())
                 return 0;
-            auto p = GetCommentsInfo();
+            auto p = m_pCommentsInfo;
             if (0 == p)
                 return 0;
             if (index >= 0 && index < p->m_CommentNum) {
@@ -712,6 +712,15 @@ namespace Dsl
     public:
         FunctionData(IDslStringAndObjectBuffer& buffer);
         virtual ~FunctionData(void);
+    protected:
+        virtual IDslStringAndObjectBuffer* GetBuffer(void) const
+        {
+            return &m_Buffer;
+        }
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const
+        {
+            return m_pCommentsInfo;
+        }
     private:
         FunctionData(const FunctionData& other) = delete;
         FunctionData operator=(const FunctionData& other) = delete;
@@ -720,12 +729,6 @@ namespace Dsl
         void ReleaseParams(void);
         void PrepareComments(void);
         void ReleaseComments(void);
-    private:
-        //使用安全的向下转型来获取注释数据
-        FunctionCommentsInfo* GetCommentsInfo(void) const
-        {
-            return static_cast<FunctionCommentsInfo*>(m_pCommentsInfo);
-        }
     private:
         NullSyntax* GetNullSyntaxPtr(void)const;
         FunctionData* GetNullFunctionPtr(void)const;
@@ -738,6 +741,7 @@ namespace Dsl
         int m_ParamClass;
     private:
         IDslStringAndObjectBuffer& m_Buffer;
+        FunctionCommentsInfo* m_pCommentsInfo;
     };
     
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
@@ -817,6 +821,17 @@ namespace Dsl
         virtual ~StatementData(void)
         {
             ReleaseFunctions();
+            ReleaseFirstComments(&m_Buffer, m_pCommentsInfo);
+            ReleaseLastComments(&m_Buffer, m_pCommentsInfo);
+        }
+    protected:
+        virtual IDslStringAndObjectBuffer* GetBuffer(void) const
+        {
+            return &m_Buffer;
+        }
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const
+        {
+            return m_pCommentsInfo;
         }
     private:
         StatementData(const StatementData&) = delete;
@@ -833,6 +848,7 @@ namespace Dsl
         int m_MaxFunctionNum;
     private:
         IDslStringAndObjectBuffer& m_Buffer;
+        SyntaxComponentCommentsInfo* m_pCommentsInfo;
     };
 
     //在c++实现里，DSL的内存希望尽量是预先分配的，这个接口用来实现预先分配的内存
@@ -879,7 +895,7 @@ namespace Dsl
         int PtrPoolSize = PTR_POOL_SIZE,
         int PtrPoolFreeLinkSize = PTR_POOL_FREELINK_SIZE,
         int PtrPoolFreeLinkHeaderSize = PTR_POOL_FREELINK_HEADER_SIZE>
-    class DslStringAndObjectBuffer : public IDslStringAndObjectBuffer
+    class DslStringAndObjectBufferT : public IDslStringAndObjectBuffer
     {
         struct alignas(1) FreeLinkInfo
         {
@@ -1062,7 +1078,7 @@ namespace Dsl
             return m_pNullFunction;
         }
     public:
-        DslStringAndObjectBuffer(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0), 
+        DslStringAndObjectBufferT(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0), 
             m_pStringBuffer(m_StringBuffer),
             m_pUnusedStringPtr(m_StringBuffer),
             m_pObjectBuffer(m_ObjectBuffer),
@@ -1087,8 +1103,8 @@ namespace Dsl
             ++m_SyntaxComponentNum;
         }
     private:
-        DslStringAndObjectBuffer(const DslStringAndObjectBuffer&) = delete;
-        DslStringAndObjectBuffer& operator=(const DslStringAndObjectBuffer&) = delete;
+        DslStringAndObjectBufferT(const DslStringAndObjectBufferT&) = delete;
+        DslStringAndObjectBufferT& operator=(const DslStringAndObjectBufferT&) = delete;
     private:
         DslOptions m_Options;
     private:

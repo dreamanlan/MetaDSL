@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 		p += 3;
 	}
     //Dsl::DslOptions::DontLoadComments(true);
-    Dsl::DslStringAndObjectBuffer<>* pDslBuffer = new Dsl::DslStringAndObjectBuffer<>();
+    Dsl::DslStringAndObjectBufferT<>* pDslBuffer = new Dsl::DslStringAndObjectBufferT<>();
     {
         Dsl::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();

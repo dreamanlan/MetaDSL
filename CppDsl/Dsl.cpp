@@ -28,36 +28,35 @@ namespace Dsl
         BinCode_ValueTypeEnd = BinCode_ValueTypeBegin + ValueData::TYPE_MAX,
         BinCode_ParamOrExternClassBegin
     };
-    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType), m_pBuffer(0), m_pCommentsInfo(0)
+    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType)
     {
     }
     ISyntaxComponent::~ISyntaxComponent(void)
     {
-        ReleaseFirstComments();
-        ReleaseLastComments();
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
     {
         if (DslOptions::DontLoadComments())
             return;
-        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
-            m_pCommentsInfo->m_FirstCommentNum = other.m_pCommentsInfo->m_FirstCommentNum;
-            m_pCommentsInfo->m_FirstCommentSpace = other.m_pCommentsInfo->m_FirstCommentSpace;
-            if (m_pCommentsInfo->m_FirstCommentSpace > 0) {
-                m_pCommentsInfo->m_FirstComments = (const char**)(m_pBuffer->NewPtrArray(m_pCommentsInfo->m_FirstCommentSpace));
-                memcpy(m_pCommentsInfo->m_FirstComments, other.m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentNum * sizeof(const char*));
+        auto pBuffer = GetBuffer();
+        if (0 != pBuffer && 0 != GetCommentsInfo() && 0 != other.GetCommentsInfo()) {
+            GetCommentsInfo()->m_FirstCommentNum = other.GetCommentsInfo()->m_FirstCommentNum;
+            GetCommentsInfo()->m_FirstCommentSpace = other.GetCommentsInfo()->m_FirstCommentSpace;
+            if (GetCommentsInfo()->m_FirstCommentSpace > 0) {
+                GetCommentsInfo()->m_FirstComments = (const char**)(pBuffer->NewPtrArray(GetCommentsInfo()->m_FirstCommentSpace));
+                memcpy(GetCommentsInfo()->m_FirstComments, other.GetCommentsInfo()->m_FirstComments, GetCommentsInfo()->m_FirstCommentNum * sizeof(const char*));
             }
             else {
-                m_pCommentsInfo->m_FirstComments = 0;
+                GetCommentsInfo()->m_FirstComments = 0;
             }
-            m_pCommentsInfo->m_LastCommentNum = other.m_pCommentsInfo->m_LastCommentNum;
-            m_pCommentsInfo->m_LastCommentSpace = other.m_pCommentsInfo->m_LastCommentSpace;
-            if (m_pCommentsInfo->m_LastCommentSpace > 0) {
-                m_pCommentsInfo->m_LastComments = (const char**)(m_pBuffer->NewPtrArray(m_pCommentsInfo->m_LastCommentSpace));
-                memcpy(m_pCommentsInfo->m_LastComments, other.m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentNum * sizeof(const char*));
+            GetCommentsInfo()->m_LastCommentNum = other.GetCommentsInfo()->m_LastCommentNum;
+            GetCommentsInfo()->m_LastCommentSpace = other.GetCommentsInfo()->m_LastCommentSpace;
+            if (GetCommentsInfo()->m_LastCommentSpace > 0) {
+                GetCommentsInfo()->m_LastComments = (const char**)(pBuffer->NewPtrArray(GetCommentsInfo()->m_LastCommentSpace));
+                memcpy(GetCommentsInfo()->m_LastComments, other.GetCommentsInfo()->m_LastComments, GetCommentsInfo()->m_LastCommentNum * sizeof(const char*));
             }
             else {
-                m_pCommentsInfo->m_LastComments = 0;
+                GetCommentsInfo()->m_LastComments = 0;
             }
         }
     }
@@ -65,30 +64,31 @@ namespace Dsl
     {
         if (DslOptions::DontLoadComments())
             return;
-        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
-            if (m_pCommentsInfo->m_FirstCommentNum >= m_pCommentsInfo->m_FirstCommentSpace) {
-                int newSpace = m_pCommentsInfo->m_FirstCommentSpace + DELTA_COMMENT;
-                const char** pNew = (const char**)(m_pBuffer->NewPtrArray(newSpace));
+        auto pBuffer = GetBuffer();
+        if (0 != pBuffer && 0 != GetCommentsInfo()) {
+            if (GetCommentsInfo()->m_FirstCommentNum >= GetCommentsInfo()->m_FirstCommentSpace) {
+                int newSpace = GetCommentsInfo()->m_FirstCommentSpace + DELTA_COMMENT;
+                const char** pNew = (const char**)(pBuffer->NewPtrArray(newSpace));
                 if (pNew) {
-                    if (NULL != m_pCommentsInfo->m_FirstComments) {
-                        memcpy(pNew, m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentNum * sizeof(const char*));
-                        memset(pNew + m_pCommentsInfo->m_FirstCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
-                        m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentSpace);
+                    if (NULL != GetCommentsInfo()->m_FirstComments) {
+                        memcpy(pNew, GetCommentsInfo()->m_FirstComments, GetCommentsInfo()->m_FirstCommentNum * sizeof(const char*));
+                        memset(pNew + GetCommentsInfo()->m_FirstCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+                        pBuffer->DeletePtrArray((void**)GetCommentsInfo()->m_FirstComments, GetCommentsInfo()->m_FirstCommentSpace);
                     }
-                    m_pCommentsInfo->m_FirstComments = pNew;
-                    m_pCommentsInfo->m_FirstCommentSpace = newSpace;
+                    GetCommentsInfo()->m_FirstComments = pNew;
+                    GetCommentsInfo()->m_FirstCommentSpace = newSpace;
                 }
             }
         }
     }
-    void ISyntaxComponent::ReleaseFirstComments(void)
+    void ISyntaxComponent::ReleaseFirstComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo)
     {
         if (DslOptions::DontLoadComments())
             return;
-        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
-            if (NULL != m_pCommentsInfo->m_FirstComments) {
-                m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_FirstComments, m_pCommentsInfo->m_FirstCommentSpace);
-                m_pCommentsInfo->m_FirstComments = NULL;
+        if (0 != pBuffer && 0 != pCommentsInfo) {
+            if (NULL != pCommentsInfo->m_FirstComments) {
+                pBuffer->DeletePtrArray((void**)pCommentsInfo->m_FirstComments, pCommentsInfo->m_FirstCommentSpace);
+                pCommentsInfo->m_FirstComments = NULL;
             }
         }
     }
@@ -96,30 +96,31 @@ namespace Dsl
     {
         if (DslOptions::DontLoadComments())
             return;
-        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
-            if (m_pCommentsInfo->m_LastCommentNum >= m_pCommentsInfo->m_LastCommentSpace) {
-                int newSpace = m_pCommentsInfo->m_LastCommentSpace + DELTA_COMMENT;
-                const char** pNew = (const char**)(m_pBuffer->NewPtrArray(newSpace));
+        auto pBuffer = GetBuffer();
+        if (0 != pBuffer && 0 != GetCommentsInfo()) {
+            if (GetCommentsInfo()->m_LastCommentNum >= GetCommentsInfo()->m_LastCommentSpace) {
+                int newSpace = GetCommentsInfo()->m_LastCommentSpace + DELTA_COMMENT;
+                const char** pNew = (const char**)(pBuffer->NewPtrArray(newSpace));
                 if (pNew) {
-                    if (NULL != m_pCommentsInfo->m_LastComments) {
-                        memcpy(pNew, m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentNum * sizeof(const char*));
-                        memset(pNew + m_pCommentsInfo->m_LastCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
-                        m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentSpace);
+                    if (NULL != GetCommentsInfo()->m_LastComments) {
+                        memcpy(pNew, GetCommentsInfo()->m_LastComments, GetCommentsInfo()->m_LastCommentNum * sizeof(const char*));
+                        memset(pNew + GetCommentsInfo()->m_LastCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
+                        pBuffer->DeletePtrArray((void**)GetCommentsInfo()->m_LastComments, GetCommentsInfo()->m_LastCommentSpace);
                     }
-                    m_pCommentsInfo->m_LastComments = pNew;
-                    m_pCommentsInfo->m_LastCommentSpace = newSpace;
+                    GetCommentsInfo()->m_LastComments = pNew;
+                    GetCommentsInfo()->m_LastCommentSpace = newSpace;
                 }
             }
         }
     }
-    void ISyntaxComponent::ReleaseLastComments(void)
+    void ISyntaxComponent::ReleaseLastComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo)
     {
         if (DslOptions::DontLoadComments())
             return;
-        if (0 != m_pBuffer && 0 != m_pCommentsInfo) {
-            if (NULL != m_pCommentsInfo->m_LastComments) {
-                m_pBuffer->DeletePtrArray((void**)m_pCommentsInfo->m_LastComments, m_pCommentsInfo->m_LastCommentSpace);
-                m_pCommentsInfo->m_LastComments = NULL;
+        if (0 != pBuffer && 0 != pCommentsInfo) {
+            if (NULL != pCommentsInfo->m_LastComments) {
+                pBuffer->DeletePtrArray((void**)pCommentsInfo->m_LastComments, pCommentsInfo->m_LastCommentSpace);
+                pCommentsInfo->m_LastComments = NULL;
             }
         }
     }
@@ -182,7 +183,6 @@ namespace Dsl
         m_ParamSpace(0),
         m_ParamClass(PARAM_CLASS_NOTHING)
     {
-        m_pBuffer = &buffer;
         if (DslOptions::DontLoadComments()) {
             m_pCommentsInfo = 0;
         }
@@ -198,6 +198,8 @@ namespace Dsl
     {
         ReleaseParams();
         ReleaseComments();
+        ReleaseFirstComments(&m_Buffer, m_pCommentsInfo);
+        ReleaseLastComments(&m_Buffer, m_pCommentsInfo);
     }
 
     NullSyntax* FunctionData::GetNullSyntaxPtr(void)const
@@ -246,7 +248,7 @@ namespace Dsl
     {
         if (DslOptions::DontLoadComments())
             return;
-        auto p = GetCommentsInfo();
+        auto p = m_pCommentsInfo;
         if (0 == p)
             return;
         if (p->m_CommentNum >= p->m_CommentSpace) {
@@ -266,7 +268,7 @@ namespace Dsl
     {
         if (DslOptions::DontLoadComments())
             return;
-        auto p = GetCommentsInfo();
+        auto p = m_pCommentsInfo;
         if (0 == p)
             return;
         if (NULL != p->m_Comments) {
@@ -281,7 +283,6 @@ namespace Dsl
         m_FunctionNum(0),
         m_FunctionSpace(0)
     {
-        m_pBuffer = &buffer;
         if (DslOptions::DontLoadComments()) {
             m_pCommentsInfo = 0;
         }

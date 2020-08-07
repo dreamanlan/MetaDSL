@@ -20,7 +20,7 @@ public:
 
 void CompileTest_ByteCode(void)
 {
-    DslStringAndObjectBuffer<> buffer;
+    DslStringAndObjectBufferT<> buffer;
 	DslFile dataFile(buffer);
 	TestRuntimeBuilder builder(dataFile);
 	builder.beginFunction();
