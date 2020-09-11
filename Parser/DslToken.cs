@@ -143,9 +143,7 @@ namespace Dsl.Parser
                     mLog.Log("[error][行 {0} ]：ExternScript can't finish！\n", line);
                 }
                 mCurToken = mTokenBuilder.ToString();
-                if (mCurToken.IndexOf('\n') >= 0) {
-                    mCurToken = removeFirstAndLastEmptyLine(mCurToken);
-                }
+                mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                 return DslConstants.SCRIPT_CONTENT_;
             }
             else if (CurChar == '?') {
@@ -514,12 +512,26 @@ namespace Dsl.Parser
             int start = 0;
             while (start < str.Length && isWhiteSpace(str[start]) && str[start] != '\n')
                 ++start;
-            if (str[start] == '\n')
+            if (str[start] == '\n') {
                 ++start;
+            }
+            else {
+                //如果开始行没有换行，就保留白空格
+                start = 0;
+            }
             int end = str.Length - 1;
             while (end > 0 && isWhiteSpace(str[end]) && str[end] != '\n')
                 --end;
-            return str.Substring(start, end - start + 1);
+            if (end > 0 && str[end] != '\n') {
+                //如果结束行没有换行，就保留白空格；否则去掉白空格，但保留换行
+                end = str.Length - 1;
+            }
+            if (start > 0 || end < str.Length - 1) {
+                return str.Substring(start, end - start + 1);
+            }
+            else {
+                return str;
+            }
         }
 
         private void getOperatorToken()

@@ -46,11 +46,6 @@ static inline int mychar2int(char c)
         return 0;
 }
 
-static inline int myhavelinefeed(const char* str)
-{
-    return strchr(str, '\n') != 0 ? 1 : 0;
-}
-
 void SlkToken::getOperatorToken(void)
 {
     switch (*mIterator) {
@@ -515,9 +510,7 @@ short SlkToken::get(void)
                 tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish！", line);
         }
         endToken();
-        if (myhavelinefeed(mCurToken)) {
-            removeFirstAndLastEmptyLine();
-        }
+        removeFirstAndLastEmptyLine();
         return SCRIPT_CONTENT_;
     }
     else if (*mIterator == '?') {
@@ -905,7 +898,6 @@ int SlkToken::isBegin(const char* delimiter, int len) const
 
 void SlkToken::getBlockString(const char* delimiter, int len)
 {
-    newToken();
     const char* pLeft = mIterator.GetLeft();
     const char* pFind = strstr(pLeft, delimiter);
     if (!pFind) {
@@ -933,11 +925,20 @@ void SlkToken::removeFirstAndLastEmptyLine(void)
     int start = 0;
     while (start < len && isWhiteSpace(mCurToken[start]) && mCurToken[start] != '\n')
         ++start;
-    if (mCurToken[start] == '\n')
+    if (mCurToken[start] == '\n') {
         ++start;
+    }
+    else {
+        //开始行没有换行，则不要去掉白空格
+        start = 0;
+    }
     int end = len - 1;
     while (end > 0 && isWhiteSpace(mCurToken[end]) && mCurToken[end] != '\n') {
-        mCurToken[end--] = 0;
+        --end;
+    }
+    if (end > 0 && mCurToken[end] == '\n') {
+        //结束行有换行，则去掉白空格，但保留换行
+        mCurToken[end + 1] = 0;
     }
     mCurToken = &(mCurToken[start]);
 }
