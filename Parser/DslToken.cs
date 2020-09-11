@@ -104,6 +104,16 @@ namespace Dsl.Parser
                 mCurToken = "<<eof>>";
                 return DslConstants.END_OF_SLK_INPUT_;
             }
+            else if (!string.IsNullOrEmpty(StringBeginDelimiter) && !string.IsNullOrEmpty(StringEndDelimiter) && IsBegin(StringBeginDelimiter)) {
+                mIterator += StringBeginDelimiter.Length;
+                mCurToken = getBlockString(StringEndDelimiter);
+                return DslConstants.STRING_;
+            }
+            else if (!string.IsNullOrEmpty(ScriptBeginDelimiter) && !string.IsNullOrEmpty(ScriptEndDelimiter) && IsBegin(ScriptBeginDelimiter)) {
+                mIterator += ScriptBeginDelimiter.Length;
+                mCurToken = getBlockString(ScriptEndDelimiter);
+                return DslConstants.SCRIPT_CONTENT_;
+            }
             else if (CurChar == '{' && NextChar == ':') {
                 ++mIterator;
                 ++mIterator;
@@ -416,14 +426,6 @@ namespace Dsl.Parser
                         return DslConstants.NUMBER_;
                     }
                     else {
-                        if (mCurToken == StringBeginDelimiter && !string.IsNullOrEmpty(StringBeginDelimiter) && !string.IsNullOrEmpty(StringEndDelimiter)) {
-                            mCurToken = getBlockString(StringEndDelimiter);
-                            return DslConstants.STRING_;
-                        }
-                        if (mCurToken == ScriptBeginDelimiter && !string.IsNullOrEmpty(ScriptBeginDelimiter) && !string.IsNullOrEmpty(ScriptEndDelimiter)) {
-                            mCurToken = getBlockString(ScriptEndDelimiter);
-                            return DslConstants.SCRIPT_CONTENT_;
-                        }
                         short ret;
                         if (mKeywords.TryGetValue(mCurToken, out ret))
                             return ret;
@@ -481,6 +483,16 @@ namespace Dsl.Parser
             mScriptEndDelimiter = end;
         }
 
+        private bool IsBegin(string delimiter)
+        {
+            bool ret = false;
+            if (!string.IsNullOrEmpty(delimiter)) {
+                int start = mIterator;
+                if (start + delimiter.Length <= mInput.Length && start == mInput.IndexOf(delimiter, start, delimiter.Length))
+                    ret = true;
+            }
+            return ret;
+        }
         private string getBlockString(string delimiter)
         {
             int start = mIterator;

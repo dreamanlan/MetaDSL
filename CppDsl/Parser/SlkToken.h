@@ -71,8 +71,8 @@ private:
     int isQuote(char c) const;
 	int isSpecialChar(char c) const;
 private:
-	int handleStringOrScriptDelimiter(void);
-	void getBlockString(const char* delimiter);
+    int isBegin(const char* delimiter, int len) const;
+	void getBlockString(const char* delimiter, int len);
 	void removeFirstAndLastEmptyLine(void);
 	void newComment(void);
 	void pushCommentChar(char c);
@@ -118,6 +118,10 @@ private:
 	char mScriptEndDelimiter[c_MaxDelimiterSize + 1];
 	char mStringBeginDelimiter[c_MaxDelimiterSize + 1];
 	char mStringEndDelimiter[c_MaxDelimiterSize + 1];
+    int mScriptBeginDelimiterLength = 0;
+    int mScriptEndDelimiterLength = 0;
+    int mStringBeginDelimiterLength = 0;
+    int mStringEndDelimiterLength = 0;
 };
 
 #endif

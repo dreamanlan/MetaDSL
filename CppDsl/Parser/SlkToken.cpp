@@ -472,7 +472,17 @@ short SlkToken::get(void)
     if (isCanFinish())
         setCanFinish(FALSE);
 
-    if (*mIterator == '{' && *(mIterator + 1) == ':') {
+    if (mStringBeginDelimiter[0] && mStringEndDelimiter[0] && isBegin(mStringBeginDelimiter, mStringBeginDelimiterLength)) {
+        mIterator = mIterator + mStringBeginDelimiterLength;
+        getBlockString(mStringEndDelimiter, mStringEndDelimiterLength);
+        return STRING_;
+    }
+    else if (mScriptBeginDelimiter[0] && mScriptEndDelimiter[0] && isBegin(mScriptBeginDelimiter, mScriptBeginDelimiterLength)) {
+        mIterator = mIterator + mScriptBeginDelimiterLength;
+        getBlockString(mScriptEndDelimiter, mScriptEndDelimiterLength);
+        return SCRIPT_CONTENT_;
+    }
+    else if (*mIterator == '{' && *(mIterator + 1) == ':') {
         ++mIterator;
         ++mIterator;
         int line = mLineNumber;
@@ -842,10 +852,7 @@ short SlkToken::get(void)
                 return NUMBER_;
             }
             else {
-                int token = handleStringOrScriptDelimiter();
-                if (token)
-                    return token;
-                else if (0 == strcmp(mCurToken, "true"))
+                if (0 == strcmp(mCurToken, "true"))
                     return TRUE_;
                 else if (0 == strcmp(mCurToken, "false"))
                     return FALSE_;
@@ -868,28 +875,35 @@ void SlkToken::setStringDelimiter(const char* begin, const char* end)
 {
     tsnprintf(mStringBeginDelimiter, c_MaxDelimiterSize, "%s", begin);
     tsnprintf(mStringEndDelimiter, c_MaxDelimiterSize, "%s", end);
+    mStringBeginDelimiterLength = (int)strlen(mStringBeginDelimiter);
+    mStringEndDelimiterLength = (int)strlen(mStringEndDelimiter);
 }
 
 void SlkToken::setScriptDelimiter(const char* begin, const char* end)
 {
     tsnprintf(mScriptBeginDelimiter, c_MaxDelimiterSize, "%s", begin);
     tsnprintf(mScriptEndDelimiter, c_MaxDelimiterSize, "%s", end);
+    mScriptBeginDelimiterLength = (int)strlen(mScriptBeginDelimiter);
+    mScriptEndDelimiterLength = (int)strlen(mScriptEndDelimiter);
 }
 
-int SlkToken::handleStringOrScriptDelimiter(void)
+int SlkToken::isBegin(const char* delimiter, int len) const
 {
-    if (strcmp(mCurToken, mStringBeginDelimiter) == 0) {
-        getBlockString(mStringEndDelimiter);
-        return STRING_;
+    int ret = FALSE;
+    if (delimiter && delimiter[0]) {
+        const char* pLeft = mIterator.GetLeft();
+        ret = TRUE;
+        for (int i = 0; i < len; ++i) {
+            if (pLeft[i] != delimiter[i]) {
+                ret = FALSE;
+                break;
+            }
+        }
     }
-    if (strcmp(mCurToken, mScriptBeginDelimiter) == 0) {
-        getBlockString(mScriptEndDelimiter);
-        return SCRIPT_CONTENT_;
-    }
-    return 0;
+    return ret;
 }
 
-void SlkToken::getBlockString(const char* delimiter)
+void SlkToken::getBlockString(const char* delimiter, int len)
 {
     newToken();
     const char* pLeft = mIterator.GetLeft();
@@ -901,7 +915,6 @@ void SlkToken::getBlockString(const char* delimiter)
         endToken();
         return;
     }
-    int len = (int)strlen(delimiter);
     const char* p = pLeft;
     while (p != pFind) {
         if (*p == '\n')
