@@ -331,9 +331,8 @@ namespace Dsl
             TYPE_IDENTIFIER = 0,
             TYPE_NUM,
             TYPE_STRING,
-            TYPE_BOOL,
             TYPE_FUNCTION,
-            TYPE_MAX = TYPE_BOOL
+            TYPE_MAX = TYPE_STRING
         };
 
         ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
@@ -393,16 +392,6 @@ namespace Dsl
         void SetString(const char* str)
         {
             m_Type = TYPE_STRING;
-            m_ConstStringVal = str;
-        }
-        void SetBool(char* str)
-        {
-            m_Type = TYPE_BOOL;
-            m_StringVal = str;
-        }
-        void SetBool(const char* str)
-        {
-            m_Type = TYPE_BOOL;
             m_ConstStringVal = str;
         }
         void SetFunction(FunctionData* func)
@@ -477,6 +466,8 @@ namespace Dsl
             PARAM_CLASS_POINTER,
             PARAM_CLASS_STATEMENT,
             PARAM_CLASS_EXTERN_SCRIPT,
+            PARAM_CLASS_PARENTHESIS_ATTR,
+            PARAM_CLASS_BRACKET_ATTR,
             PARAM_CLASS_PERIOD_STAR,
             PARAM_CLASS_QUESTION_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,

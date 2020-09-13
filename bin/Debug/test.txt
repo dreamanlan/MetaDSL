@@ -27,9 +27,11 @@ skill(kkk)
 	END_SCRIPT;
   script(ttt)
   {: abcd :};
+  (:attr:)
   script(ttt)
   {:
   :};
+  [:attr:]
   script(ttt)
   {:
   abcdef;

@@ -127,15 +127,17 @@ FUNCTION_PARAMS:
 	_action_markBracketParam \[ STATEMENTS \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	. MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	QUESTION_PERIOD MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
-	_action_markQuestionParenthesisParam QUESTION_PARENTHESIS STATEMENTS )
-	_action_markQuestionBracketParam QUESTION_BRACKET STATEMENTS \]
-	_action_markQuestionBraceParam QUESTION_BRACE STATEMENTS \}
+	_action_markQuestionParenthesisParam QUESTION_PARENTHESIS STATEMENTS ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markQuestionBracketParam QUESTION_BRACKET STATEMENTS \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markQuestionBraceParam QUESTION_BRACE STATEMENTS \} [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	POINTER MEMBER_DESC3 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	PERIOD_STAR MEMBER_DESC4 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	QUESTION_PERIOD_STAR MEMBER_DESC5 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	POINTER_STAR MEMBER_DESC6 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	_action_markStatement \{ STATEMENTS \} [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 	_action_markExternScript SCRIPT_CONTENT _action_setExternScript [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
+	_action_markBracketAttrParam BRACKET_ATTR_BEGIN STATEMENTS BRACKET_ATTR_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markParenthesisAttrParam PARENTHESIS_ATTR_BEGIN STATEMENTS PARENTHESIS_ATTR_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	
 MEMBER_DESC:
 	_action_markPeriodParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
@@ -162,8 +164,6 @@ FUNCTION_ID:
 	IDENTIFIER _action_pushId
 	STRING	_action_pushStr
 	NUMBER _action_pushNum
-	TRUE _action_pushTrue
-	FALSE _action_pushFalse
 	
 SEP:
 	,

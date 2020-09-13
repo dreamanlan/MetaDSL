@@ -20,6 +20,8 @@ void    markQuestionBraceParam ( void );
 void    markStatement ( void );
 void    markExternScript ( void );
 void    setExternScript ( void );
+void    markBracketAttrParam ( void );
+void    markParenthesisAttrParam ( void );
 void    markPeriodParam ( void );
 void    setMemberId ( void );
 void    markPeriodParenthesisParam ( void );
@@ -32,8 +34,6 @@ void    markQuestionPeriodStarParam ( void );
 void    markPointerStarParam ( void );
 void    pushStr ( void );
 void    pushNum ( void );
-void    pushTrue ( void );
-void    pushFalse ( void );
 
 public:
 void execute ( slk_size_t  number )
@@ -57,19 +57,19 @@ void execute ( slk_size_t  number )
     case 16:  markStatement();  break;
     case 17:  markExternScript();  break;
     case 18:  setExternScript();  break;
-    case 19:  markPeriodParam();  break;
-    case 20:  setMemberId();  break;
-    case 21:  markPeriodParenthesisParam();  break;
-    case 22:  markPeriodBracketParam();  break;
-    case 23:  markPeriodBraceParam();  break;
-    case 24:  markQuestionPeriodParam();  break;
-    case 25:  markPointerParam();  break;
-    case 26:  markPeriodStarParam();  break;
-    case 27:  markQuestionPeriodStarParam();  break;
-    case 28:  markPointerStarParam();  break;
-    case 29:  pushStr();  break;
-    case 30:  pushNum();  break;
-    case 31:  pushTrue();  break;
-    case 32:  pushFalse();  break;
+    case 19:  markBracketAttrParam();  break;
+    case 20:  markParenthesisAttrParam();  break;
+    case 21:  markPeriodParam();  break;
+    case 22:  setMemberId();  break;
+    case 23:  markPeriodParenthesisParam();  break;
+    case 24:  markPeriodBracketParam();  break;
+    case 25:  markPeriodBraceParam();  break;
+    case 26:  markQuestionPeriodParam();  break;
+    case 27:  markPointerParam();  break;
+    case 28:  markPeriodStarParam();  break;
+    case 29:  markQuestionPeriodStarParam();  break;
+    case 30:  markPointerStarParam();  break;
+    case 31:  pushStr();  break;
+    case 32:  pushNum();  break;
   }
 }

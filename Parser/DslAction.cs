@@ -98,20 +98,20 @@ namespace Dsl.Parser
                 case 16: markStatement(); break;
                 case 17: markExternScript(); break;
                 case 18: setExternScript(); break;
-                case 19: markPeriodParam(); break;
-                case 20: setMemberId(); break;
-                case 21: markPeriodParenthesisParam(); break;
-                case 22: markPeriodBracketParam(); break;
-                case 23: markPeriodBraceParam(); break;
-                case 24: markQuestionPeriodParam(); break;
-                case 25: markPointerParam(); break;
-                case 26: markPeriodStarParam(); break;
-                case 27: markQuestionPeriodStarParam(); break;
-                case 28: markPointerStarParam(); break;
-                case 29: pushStr(); break;
-                case 30: pushNum(); break;
-                case 31: pushTrue(); break;
-                case 32: pushFalse(); break;
+                case 19: markBracketAttrParam(); break;
+                case 20: markParenthesisAttrParam(); break;
+                case 21: markPeriodParam(); break;
+                case 22: setMemberId(); break;
+                case 23: markPeriodParenthesisParam(); break;
+                case 24: markPeriodBracketParam(); break;
+                case 25: markPeriodBraceParam(); break;
+                case 26: markQuestionPeriodParam(); break;
+                case 27: markPointerParam(); break;
+                case 28: markPeriodStarParam(); break;
+                case 29: markQuestionPeriodStarParam(); break;
+                case 30: markPointerStarParam(); break;
+                case 31: pushStr(); break;
+                case 32: pushNum(); break;
             }
         }
 
@@ -487,6 +487,16 @@ namespace Dsl.Parser
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
         }
+        internal void markBracketAttrParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR);
+        }
+        internal void markParenthesisAttrParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR);
+        }
         internal void setExternScript()
         {
             FunctionData func = getLastFunction();
@@ -523,14 +533,6 @@ namespace Dsl.Parser
         internal void pushStr()
         {
             push(getLastToken(), FunctionData.STRING_TOKEN);
-        }
-        internal void pushTrue()
-        {
-            push("true", FunctionData.BOOL_TOKEN);
-        }
-        internal void pushFalse()
-        {
-            push("false", FunctionData.BOOL_TOKEN);
         }
 
         private void push(string s, int val)

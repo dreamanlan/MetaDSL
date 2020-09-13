@@ -39,6 +39,8 @@ namespace Dsl
         inline void    markQuestionBraceParam(void);
         inline void    markStatement(void);
         inline void    markExternScript(void);
+        inline void    markBracketAttrParam(void);
+        inline void    markParenthesisAttrParam(void);
         inline void    setExternScript(void);
         inline void    markPeriodParam(void);
         inline void    setMemberId(void);
@@ -52,8 +54,6 @@ namespace Dsl
         inline void    markPointerStarParam(void);
         inline void    pushStr(void);
         inline void    pushNum(void);
-        inline void    pushTrue(void);
-        inline void    pushFalse(void);
 	private:
 		inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
 		inline ISyntaxComponent& simplifyStatement(FunctionData& data)const;

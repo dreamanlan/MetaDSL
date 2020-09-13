@@ -22,7 +22,6 @@ public:
 		ID_TOKEN = 0,
 		NUM_TOKEN,
 		STRING_TOKEN,
-		BOOL_TOKEN,
 	};
 	struct TokenInfo
 	{

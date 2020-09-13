@@ -33,11 +33,13 @@ public static string[] name = {
 ,"QUESTION_PERIOD_STAR"
 ,"POINTER_STAR"
 ,"SCRIPT_CONTENT"
+,"BRACKET_ATTR_BEGIN"
+,"BRACKET_ATTR_END"
+,"PARENTHESIS_ATTR_BEGIN"
+,"PARENTHESIS_ATTR_END"
 ,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
-,"TRUE"
-,"FALSE"
 }; 
 
 public  short[] token = {
@@ -68,12 +70,13 @@ public  short[] token = {
 ,DslConstants.QUESTION_PERIOD_STAR_ 
 ,DslConstants.POINTER_STAR_ 
 ,DslConstants.SCRIPT_CONTENT_ 
+,DslConstants.BRACKET_ATTR_BEGIN_ 
+,DslConstants.BRACKET_ATTR_END_ 
+,DslConstants.PARENTHESIS_ATTR_BEGIN_ 
+,DslConstants.PARENTHESIS_ATTR_END_ 
 ,DslConstants.IDENTIFIER_ 
 ,DslConstants.STRING_ 
 ,DslConstants.NUMBER_ 
-,DslConstants.TRUE_ 
-,DslConstants.FALSE_ 
 }; 
 
 }; 
-

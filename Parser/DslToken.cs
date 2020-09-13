@@ -15,10 +15,6 @@ namespace Dsl.Parser
             mLineNumber = 1;
             mLastLineNumber = 1;
 
-            mKeywords = new Dictionary<string, short>();
-            mKeywords["true"] = DslConstants.TRUE_;
-            mKeywords["false"] = DslConstants.FALSE_;
-
             mCurToken = string.Empty;
             mLastToken = string.Empty;
 
@@ -42,7 +38,7 @@ namespace Dsl.Parser
             //跳过注释与白空格
             for (; isSkip && CurChar != 0;) {
                 isSkip = false;
-                for (; CurChar != 0 && mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
+                for (; mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
                     if (CurChar == '\n') {
                         ++mLineNumber;
                         if (mComments.Count <= 0) {
@@ -51,8 +47,8 @@ namespace Dsl.Parser
                     }
                     isSkip = true;
                 }
-                //#引导的单行注释
-                if (CurChar != 0 && CurChar == '#') {
+                //#引导的单行注释或C++风格的单行注释
+                if (CurChar == '#' || CurChar == '/' && NextChar == '/') {
                     mCommentBuilder.Length = 0;
                     for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
                         if (CurChar != '\r')
@@ -61,41 +57,30 @@ namespace Dsl.Parser
                     isSkip = true;
                     mComments.Add(mCommentBuilder.ToString());
                 }
-                //C++风格的单行注释与多行注释
-                if (CurChar != 0 && CurChar == '/' && (NextChar == '/' || NextChar == '*')) {
+                //C++风格的多行注释
+                if (CurChar == '/' && NextChar == '*') {
                     mCommentBuilder.Length = 0;
                     mCommentBuilder.Append(CurChar);
+                    mCommentBuilder.Append(NextChar);
                     ++mIterator;
-                    if (CurChar != 0 && CurChar == '/') {
-                        mCommentBuilder.Append(CurChar);
-                        ++mIterator;
-                        for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
-                            if (CurChar != '\r')
-                                mCommentBuilder.Append(CurChar);
+                    ++mIterator;
+                    for (; CurChar != 0; ++mIterator) {
+                        if (CurChar == '\n') {
+                            mCommentBuilder.AppendLine();
+                            ++mLineNumber;
                         }
-                        isSkip = true;
-                    }
-                    else if (CurChar != 0 && CurChar == '*') {
-                        mCommentBuilder.Append(CurChar);
-                        ++mIterator;
-                        for (; CurChar != 0; ++mIterator) {
-                            if (CurChar == '\n') {
-                                mCommentBuilder.AppendLine();
-                                ++mLineNumber;
-                            }
-                            else if (CurChar == '*' && NextChar == '/') {
-                                mCommentBuilder.Append(CurChar);
-                                mCommentBuilder.Append(NextChar);
-                                ++mIterator;
-                                ++mIterator;
-                                break;
-                            }
-                            else if (CurChar != '\r') {
-                                mCommentBuilder.Append(CurChar);
-                            }
+                        else if (CurChar == '*' && NextChar == '/') {
+                            mCommentBuilder.Append(CurChar);
+                            mCommentBuilder.Append(NextChar);
+                            ++mIterator;
+                            ++mIterator;
+                            break;
                         }
-                        isSkip = true;
+                        else if (CurChar != '\r') {
+                            mCommentBuilder.Append(CurChar);
+                        }
                     }
+                    isSkip = true;
                     mComments.Add(mCommentBuilder.ToString());
                 }
             }
@@ -145,6 +130,30 @@ namespace Dsl.Parser
                 mCurToken = mTokenBuilder.ToString();
                 mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                 return DslConstants.SCRIPT_CONTENT_;
+            }
+            else if (CurChar == '[' && NextChar == ':') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "[:";
+                return DslConstants.BRACKET_ATTR_BEGIN_;
+            }
+            else if (CurChar == ':' && NextChar == ']') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = ":]";
+                return DslConstants.BRACKET_ATTR_END_;
+            }
+            else if (CurChar == '(' && NextChar == ':') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "(:";
+                return DslConstants.PARENTHESIS_ATTR_BEGIN_;
+            }
+            else if (CurChar == ':' && NextChar == ')') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = ":)";
+                return DslConstants.PARENTHESIS_ATTR_END_;
             }
             else if (CurChar == '?') {
                 if (NextChar == '.') {
@@ -424,11 +433,7 @@ namespace Dsl.Parser
                         return DslConstants.NUMBER_;
                     }
                     else {
-                        short ret;
-                        if (mKeywords.TryGetValue(mCurToken, out ret))
-                            return ret;
-                        else
-                            return DslConstants.IDENTIFIER_;
+                        return DslConstants.IDENTIFIER_;
                     }
                 }
             }
@@ -908,7 +913,6 @@ namespace Dsl.Parser
         private const string mQuotes = "'\"";
         private const string mSpecialChars = mWhiteSpaces + mDelimiters + mBeginParentheses + mEndParentheses + mOperators + mQuotes;
 
-        private Dictionary<string, short> mKeywords;
         private StringBuilder mTokenBuilder;
 
         private string mStringBeginDelimiter;

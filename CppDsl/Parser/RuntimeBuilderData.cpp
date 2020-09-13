@@ -33,15 +33,6 @@ Dsl::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
 		}
 	}
 	break;
-	case BOOL_TOKEN:
-	{
-		char* pStr = mString;
-		if (0 != pStr) {
-			ValueData val(pStr, ValueData::TYPE_BOOL);
-			return val;
-		}
-	}
-	break;
 	}
 	return ValueData();
 }

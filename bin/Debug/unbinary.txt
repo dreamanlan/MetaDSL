@@ -22,11 +22,11 @@ skill(kkk)
 	script(ttt)
 
 	{: abcd :};
+	(:attr:)
 	script(ttt)
-
 	{::};
+	[:attr:]
 	script(ttt)
-
 	{:
   abcdef;
   defg;

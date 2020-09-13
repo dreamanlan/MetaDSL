@@ -60,8 +60,7 @@ namespace Dsl
         public const int ID_TOKEN = 0;
         public const int NUM_TOKEN = 1;
         public const int STRING_TOKEN = 2;
-        public const int BOOL_TOKEN = 3;
-        public const int MAX_TYPE = 3;
+        public const int MAX_TYPE = 2;
 
         public abstract bool IsValid();
         public abstract string GetId();
@@ -294,10 +293,6 @@ namespace Dsl
         {
             return STRING_TOKEN == m_Type;
         }
-        public bool IsBoolean()
-        {
-            return BOOL_TOKEN == m_Type;
-        }
         public void Clear()
         {
             m_Type = ID_TOKEN;
@@ -319,9 +314,7 @@ namespace Dsl
         { }
         public ValueData(string val)
         {
-            if (val == "true" || val == "false")
-                m_Type = BOOL_TOKEN;
-            else if (Utility.needQuote(val))
+            if (Utility.needQuote(val))
                 m_Type = STRING_TOKEN;
             else if (val.Length > 0 && (val[0] >= '0' && val[0] <= '9' || val[0] == '.' || val[0] == '-'))
                 m_Type = NUM_TOKEN;
@@ -373,6 +366,8 @@ namespace Dsl
             PARAM_CLASS_POINTER,
             PARAM_CLASS_STATEMENT,
             PARAM_CLASS_EXTERN_SCRIPT,
+            PARAM_CLASS_PARENTHESIS_ATTR,
+            PARAM_CLASS_BRACKET_ATTR,
             PARAM_CLASS_PERIOD_STAR,
             PARAM_CLASS_QUESTION_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,
@@ -1272,7 +1267,7 @@ namespace Dsl
         public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
-            string lineNo = string.Format("/* {0} */", data.GetLine());
+            //string lineNo = string.Format("/* {0} */", data.GetLine());
             //writeLine(stream, lineNo, indent);
             writeFirstComments(stream, data, indent, firstLineNoIndent);
             if (data.HaveParamOrStatement()) {
@@ -1323,6 +1318,9 @@ namespace Dsl
                     else if (data.HaveId()) {
                         string line = quoteString(data.GetId(), data.GetIdType());
                         writeText(stream, line, firstLineNoIndent ? 0 : indent);
+                    }
+                    else {
+                        writeText(stream, string.Empty, firstLineNoIndent ? 0 : indent);
                     }
                     if (data.HaveStatement() || data.HaveExternScript()) {
                         if (data.IsHighOrder) {
@@ -1380,6 +1378,14 @@ namespace Dsl
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
                                 lbracket = "->";
                                 rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR:
+                                lbracket = "[:";
+                                rbracket = ":]";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR:
+                                lbracket = "(:";
+                                rbracket = ":)";
                                 break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                                 lbracket = ".*";
@@ -1524,7 +1530,6 @@ namespace Dsl
                         return "\"" + str + "\"";
                     }
                 case AbstractSyntaxComponent.NUM_TOKEN:
-                case AbstractSyntaxComponent.BOOL_TOKEN:
                 case AbstractSyntaxComponent.ID_TOKEN:
                     return str;
                 default:
@@ -1614,6 +1619,14 @@ namespace Dsl
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT:
                             lbracket = "{:";
                             rbracket = ":}";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR:
+                            lbracket = "[:";
+                            rbracket = ":]";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR:
+                            lbracket = "(:";
+                            rbracket = ":)";
                             break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                             lbracket = ".*";

@@ -842,8 +842,11 @@ namespace Dsl
                 const FunctionData& lowerOrderFunction = *m_Name.GetFunction();
                 lowerOrderFunction.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
             }
-            else {
+            else if(m_Name.HaveId()) {
                 m_Name.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
+            }
+            else {
+                WriteIndent(fp, firstLineNoIndent ? 0 : indent);
             }
             if (HaveStatement() || HaveExternScript()) {
                 if (IsHighOrder()) {
@@ -889,6 +892,12 @@ namespace Dsl
                     break;
                 case FunctionData::PARAM_CLASS_POINTER:
                     fwrite("->", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_BRACKET_ATTR:
+                    fwrite("[:", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_PARENTHESIS_ATTR:
+                    fwrite("(:", 2, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_PERIOD_STAR:
                     fwrite(".*", 2, 1, fp);
@@ -937,6 +946,12 @@ namespace Dsl
                     fwrite("}", 1, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_POINTER:
+                    break;
+                case FunctionData::PARAM_CLASS_BRACKET_ATTR:
+                    fwrite(":]", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_PARENTHESIS_ATTR:
+                    fwrite(":)", 2, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_PERIOD_STAR:
                     break;

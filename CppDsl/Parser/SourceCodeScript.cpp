@@ -3,7 +3,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	37
+#define MAX_ACTION_NUM	33
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < ActionForSourceCodeScript >
@@ -24,8 +24,6 @@ public:
 	inline void    pushId(void);
 	inline void    pushStr(void);
 	inline void    pushNum(void);
-	inline void    pushTrue(void);
-	inline void    pushFalse(void);
 	void    (ActionForSourceCodeScript::*Action[MAX_ACTION_NUM]) (void);
 	inline void    initialize_table(void);
 	inline void 	 execute(int  number)   { (this->*Action[number]) (); }
@@ -117,20 +115,6 @@ inline void ActionForSourceCodeScript::pushStr(void)
 		mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::STRING_TOKEN));
 	}
 }
-inline void ActionForSourceCodeScript::pushTrue(void)
-{
-	char* lastToken = getLastToken();
-	if (NULL != lastToken) {
-		mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::BOOL_TOKEN));
-	}
-}
-inline void ActionForSourceCodeScript::pushFalse(void)
-{
-	char* lastToken = getLastToken();
-	if (NULL != lastToken) {
-		mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::BOOL_TOKEN));
-	}
-}
 //--------------------------------------------------------------------------------------
 inline ActionForSourceCodeScript::ActionForSourceCodeScript(SlkToken &scanner, Dsl::DslFile& dataFile) :mScanner(&scanner), BaseType(dataFile)
 {
@@ -159,20 +143,20 @@ inline void ActionForSourceCodeScript::initialize_table(void)
     Action[16] = &ActionForSourceCodeScript::markStatement;
     Action[17] = &ActionForSourceCodeScript::markExternScript;
     Action[18] = &ActionForSourceCodeScript::setExternScript;
-	Action[19] = &ActionForSourceCodeScript::markPeriodParam;
-	Action[20] = &ActionForSourceCodeScript::setMemberId;
-	Action[21] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
-	Action[22] = &ActionForSourceCodeScript::markPeriodBracketParam;
-	Action[23] = &ActionForSourceCodeScript::markPeriodBraceParam;
-	Action[24] = &ActionForSourceCodeScript::markQuestionPeriodParam;
-	Action[25] = &ActionForSourceCodeScript::markPointerParam;
-	Action[26] = &ActionForSourceCodeScript::markPeriodStarParam;
-	Action[27] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
-	Action[28] = &ActionForSourceCodeScript::markPointerStarParam;
-	Action[29] = &ActionForSourceCodeScript::pushStr;
-	Action[30] = &ActionForSourceCodeScript::pushNum;
-	Action[31] = &ActionForSourceCodeScript::pushTrue;
-	Action[32] = &ActionForSourceCodeScript::pushFalse;
+    Action[19] = &ActionForSourceCodeScript::markBracketAttrParam;
+    Action[20] = &ActionForSourceCodeScript::markParenthesisAttrParam;
+	Action[21] = &ActionForSourceCodeScript::markPeriodParam;
+	Action[22] = &ActionForSourceCodeScript::setMemberId;
+	Action[23] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
+	Action[24] = &ActionForSourceCodeScript::markPeriodBracketParam;
+	Action[25] = &ActionForSourceCodeScript::markPeriodBraceParam;
+	Action[26] = &ActionForSourceCodeScript::markQuestionPeriodParam;
+	Action[27] = &ActionForSourceCodeScript::markPointerParam;
+	Action[28] = &ActionForSourceCodeScript::markPeriodStarParam;
+	Action[29] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
+	Action[30] = &ActionForSourceCodeScript::markPointerStarParam;
+	Action[31] = &ActionForSourceCodeScript::pushStr;
+	Action[32] = &ActionForSourceCodeScript::pushNum;
 }
 //--------------------------------------------------------------------------------------
 
