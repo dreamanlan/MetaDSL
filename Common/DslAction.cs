@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dsl.Parser
+namespace Dsl.Common
 {
     /*
      * 备忘：为什么采用约简的方式而不是延迟一次性构造
@@ -16,7 +16,13 @@ namespace Dsl.Parser
     delegate int GetLastLineNumberDelegation();
     delegate IList<string> GetCommentsDelegation(out bool commentOnNewLine);
     delegate void SetDelimiterDelegation(string begin, string end);
-    struct DslAction
+    internal enum DslActionType
+    {
+        Dsl = 0,
+        Lua,
+        Cpp,
+    }
+    internal struct DslAction
     {
         class SemanticInfo
         {
@@ -34,6 +40,7 @@ namespace Dsl.Parser
 
         internal DslAction(DslLog log, List<ISyntaxComponent> datas)
         {
+            mActionType = DslActionType.Dsl;
             mLog = log;
             mScriptDatas = datas;
 
@@ -47,6 +54,11 @@ namespace Dsl.Parser
             mSetScriptDelimiter = null;
         }
 
+        internal DslActionType Type
+        {
+            get { return mActionType; }
+            set { mActionType = value; }
+        }
         internal GetLastTokenDelegation onGetLastToken
         {
             get { return mGetLastToken; }
@@ -78,6 +90,21 @@ namespace Dsl.Parser
             //mLog.Log("{0}", DslString.GetProductionName(production_number));
         }
         internal void execute(int number)
+        {
+            switch (mActionType) {
+                case DslActionType.Dsl:
+                    executeDsl(number);
+                    break;
+                case DslActionType.Lua:
+                    executeLua(number);
+                    break;
+                case DslActionType.Cpp:
+                    executeCpp(number);
+                    break;
+            }
+        }
+
+        private void executeDsl(int number)
         {
             switch (number) {
                 case 1: endStatement(); break;
@@ -114,8 +141,42 @@ namespace Dsl.Parser
                 case 32: pushNum(); break;
             }
         }
+        private void executeLua(int number)
+        {
+            switch (number) {
+                case 1: beginStatement(); break;
+                case 2: beginFunction(); break;
+                case 3: pushId(); break;
+                case 4: setFunctionId(); break;
+                case 5: markStatement(); break;
+                case 6: endFunction(); break;
+                case 7: markParenthesisParam(); break;
+                case 8: endStatement(); break;
+                case 9: pushLuaList(); break;
+                case 10: pushAssignWith(); break;
+                case 11: pushLuaLabel(); break;
+                case 12: buildHighOrderFunction(); break;
+                case 13: pushLuaRange(); break;
+                case 14: pushLuaVar(); break;
+                case 15: markBracketAttrParam(); break;
+                case 16: markParenthesisAttrParam(); break;
+                case 17: pushDot(); break;
+                case 18: pushColon(); break;
+                case 19: pushLuaArgs(); break;
+                case 20: buildOperator(); break;
+                case 21: markBracketParam(); break;
+                case 22: markPeriodParam(); break;
+                case 23: setMemberId(); break;
+                case 24: markPointerParam(); break;
+                case 25: pushStr(); break;
+                case 26: pushNum(); break;
+            }
+        }
+        private void executeCpp(int number)
+        {
+        }
 
-        internal void buildOperator()
+        private void buildOperator()
         {
             int type;
             string name = pop(out type);
@@ -152,7 +213,7 @@ namespace Dsl.Parser
                 }
             }
         }
-        internal void buildFirstTernaryOperator()
+        private void buildFirstTernaryOperator()
         {
             int type;
             string name = pop(out type);
@@ -186,7 +247,7 @@ namespace Dsl.Parser
                 func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);                      
             }
         }
-        internal void buildSecondTernaryOperator()
+        private void buildSecondTernaryOperator()
         {
             int type;
             string name = pop(out type);
@@ -205,7 +266,7 @@ namespace Dsl.Parser
                 func.Name.SetLine(getLastLineNumber());
             }
         }
-        internal void beginStatement()
+        private void beginStatement()
         {
             StatementData statement = newStatementWithoutFunction();
 
@@ -220,10 +281,10 @@ namespace Dsl.Parser
 
             mStatementSemanticStack.Push(statement);
         }
-        internal void endStatement()
+        private void endStatement()
         {
             StatementData statement = popStatement();
-            if (statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.GetParamNum() == 1 || statement.First.GetParamNum() == 3) && !statement.First.IsHighOrder) {
+            if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.GetParamNum() == 1 || statement.First.GetParamNum() == 3) && !statement.First.IsHighOrder) {
                 FunctionData call = statement.First;
                 string type = call.GetParamId(0);
                 if (call.GetParamNum() == 3) {
@@ -366,12 +427,12 @@ namespace Dsl.Parser
                 func.AddParam(statementSyntax);
             }
         }
-        internal void beginFunction()
+        private void beginFunction()
         {
             StatementData statement = getCurStatement();
             FunctionData func = newFunctionOfStatement(statement);
         }
-        internal void setFunctionId()
+        private void setFunctionId()
         {
             int type;
             string name = pop(out type);
@@ -382,7 +443,7 @@ namespace Dsl.Parser
                 func.Name.SetLine(getLastLineNumber());
             }
         }
-        internal void setMemberId()
+        private void setMemberId()
         {
             int type;
             string name = pop(out type);
@@ -393,10 +454,10 @@ namespace Dsl.Parser
                 func.Name.SetLine(getLastLineNumber());
             }
         }
-        internal void endFunction()
+        private void endFunction()
         {
         }
-        internal void buildHighOrderFunction()
+        private void buildHighOrderFunction()
         {
             //高阶函数构造（当前函数返回一个函数）
             FunctionData func = getLastFunction();
@@ -405,59 +466,59 @@ namespace Dsl.Parser
             func.Clear();
             func.LowerOrderFunction = temp;
         }
-        internal void markParenthesisParam()
+        private void markParenthesisParam()
         {
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
         }
-        internal void markBracketParam()
+        private void markBracketParam()
         {
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
         }
-        internal void markPeriodParam()
+        private void markPeriodParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD);
         }
-        internal void markPeriodParenthesisParam()
+        private void markPeriodParenthesisParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS);
         }
-        internal void markPeriodBracketParam()
+        private void markPeriodBracketParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET);
         }
-        internal void markPeriodBraceParam()
+        private void markPeriodBraceParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
         }
-        internal void markQuestionPeriodParam()
+        private void markQuestionPeriodParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD);
         }
-        internal void markQuestionParenthesisParam()
+        private void markQuestionParenthesisParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS);
         }
-        internal void markQuestionBracketParam()
+        private void markQuestionBracketParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET);
         }
-        internal void markQuestionBraceParam()
+        private void markQuestionBraceParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
         }
-        internal void markStatement()
+        private void markStatement()
         {
             FunctionData func = getLastFunction();
 
@@ -472,7 +533,7 @@ namespace Dsl.Parser
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT);
         }
-        internal void markExternScript()
+        private void markExternScript()
         {
             FunctionData func = getLastFunction();
 
@@ -487,52 +548,89 @@ namespace Dsl.Parser
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
         }
-        internal void markBracketAttrParam()
+        private void markBracketAttrParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR);
         }
-        internal void markParenthesisAttrParam()
+        private void markParenthesisAttrParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR);
         }
-        internal void setExternScript()
+        private void setExternScript()
         {
             FunctionData func = getLastFunction();
             func.AddParam(getLastToken());
         }
-        internal void markPointerParam()
+        private void markPointerParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER);
         }
-        internal void markPeriodStarParam()
+        private void markPeriodStarParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
         }
-        internal void markQuestionPeriodStarParam()
+        private void markQuestionPeriodStarParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR);
         }
-        internal void markPointerStarParam()
+        private void markPointerStarParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR);
         }
-        internal void pushId()
+        private void pushId()
         {
             push(getLastToken(), FunctionData.ID_TOKEN);
         }
-        internal void pushNum()
+        private void pushNum()
         {
             push(getLastToken(), FunctionData.NUM_TOKEN);
         }
-        internal void pushStr()
+        private void pushStr()
         {
             push(getLastToken(), FunctionData.STRING_TOKEN);
+        }
+        private void pushDot()
+        {
+            push(".", FunctionData.STRING_TOKEN);
+        }
+        private void pushColon()
+        {
+            push(":", FunctionData.STRING_TOKEN);
+        }
+        private void pushAssignWith()
+        {
+            push("assignwith", FunctionData.ID_TOKEN);
+        }
+        //a,b,c = d,e,f => lualist(a,b,c)assignwith(d,e,f)
+        private void pushLuaList()
+        {
+            push("lualist", FunctionData.ID_TOKEN);
+        }
+        //for i = i1,i2,i3 do => for(i)luarange(i1,i2,i3){}
+        private void pushLuaRange()
+        {
+            push("luarange", FunctionData.ID_TOKEN);
+        }
+        //name <attr> => luavar(name, attr)
+        private void pushLuaVar()
+        {
+            push("luavar", FunctionData.ID_TOKEN);
+        }
+        //function name(arg) => function(name)args(arg)
+        private void pushLuaArgs()
+        {
+            push("luaargs", FunctionData.ID_TOKEN);
+        }
+        //::label:: => lualabel(label)
+        private void pushLuaLabel()
+        {
+            push("lualabel", FunctionData.ID_TOKEN);
         }
 
         private void push(string s, int val)
@@ -689,6 +787,7 @@ namespace Dsl.Parser
             }
         }
 
+        private DslActionType mActionType;
         private DslLog mLog;
         private GetLastTokenDelegation mGetLastToken;
         private GetLastLineNumberDelegation mGetLastLineNumber;

@@ -52,8 +52,6 @@ namespace Dsl
         inline void    markPeriodStarParam(void);
         inline void    markQuestionPeriodStarParam(void);
         inline void    markPointerStarParam(void);
-        inline void    pushStr(void);
-        inline void    pushNum(void);
 	private:
 		inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
 		inline ISyntaxComponent& simplifyStatement(FunctionData& data)const;

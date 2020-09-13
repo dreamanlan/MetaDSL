@@ -43,14 +43,24 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CppParser\CppConstants.cs" />
+    <Compile Include="CppParser\CppError.cs" />
+    <Compile Include="CppParser\CppParser.cs" />
+    <Compile Include="CppParser\CppString.cs" />
+    <Compile Include="CppParser\CppToken.cs" />
+    <Compile Include="LuaParser\LuaError.cs" />
+    <Compile Include="LuaParser\LuaToken.cs" />
+    <Compile Include="LuaParser\LuaConstants.cs" />
+    <Compile Include="LuaParser\LuaParser.cs" />
+    <Compile Include="LuaParser\LuaString.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Parser\DslAction.cs" />
-    <Compile Include="Parser\DslConstants.cs" />
-    <Compile Include="Parser\DslError.cs" />
-    <Compile Include="Parser\DslLog.cs" />
-    <Compile Include="Parser\DslParser.cs" />
-    <Compile Include="Parser\DslString.cs" />
-    <Compile Include="Parser\DslToken.cs" />
+    <Compile Include="Common\DslAction.cs" />
+    <Compile Include="DslParser\DslConstants.cs" />
+    <Compile Include="DslParser\DslError.cs" />
+    <Compile Include="Common\DslLog.cs" />
+    <Compile Include="DslParser\DslParser.cs" />
+    <Compile Include="DslParser\DslString.cs" />
+    <Compile Include="DslParser\DslToken.cs" />
     <Compile Include="Dsl.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,8 @@ namespace Dsl
             };
             //DslFile.DontLoadComments = true;
             DslFile file = new DslFile();
-            file.Load("test.txt", logCallback);
+            //file.Load("test.txt", logCallback);
+            file.LoadLua("test.lua", logCallback);
 #if FULL_VERSION
             file.Save("copy.txt");
             file.SaveBinaryFile("binary.txt");

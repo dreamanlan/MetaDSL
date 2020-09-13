@@ -1,40 +1,50 @@
-skill(kkk)
-
+function(a,".",b,":",c)
+luaargs(...)
 {
-	section(80)
+	lualist(print(function()
+	luaargs()
+	{
+	}));
+	lualist(print(function()
+	luaargs(...)
+	{
+	}));
+	lualist(print(function()
+	luaargs(...)
+	{
+	}));
+};
+lualist(test)assignwith(function()
+luaargs(a,b,c)
+{
+	local
 
 	{
-		ok("		yyyy yyyy yyyy
-");
-		ok("yyyy yyyy yyyy");
-		a = "yyyy yyyy yyyy";
-		attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
-		a > b ? 1 : 0;
-		a + b * c;
-		test();
-		test(123,345,678);
+		lualist(luavar(paramList))assignwith(
+		{
+		});
 	};
-	script(sss)
+	lualist(m->abc(-3,4 + 5));
+	local
 
-	{:
-		ok, this is a test, "yeah!!!";
-	:};
-	script(ttt)
-
-	{: abcd :};
-	(:attr:)
-	script(ttt)
-	{::};
-	[:attr:]
-	script(ttt)
-	{:
-  abcdef;
-  defg;
-	:};
-	a = "b";
-	a = " abcd ";
-};
-skill(ttt)
-
+	{
+		lualist(luavar(ix))assignwith(1 * -3);
+	};
+});
+lualist(LINQ.exec)assignwith(function()
+luaargs(linq)
 {
-};
+	local
+
+	{
+		lualist(luavar(paramList))assignwith(
+		{
+		});
+	};
+	local
+
+	{
+		lualist(luavar(ix))assignwith(1);
+	};
+	return(LINQ.execRecursively(linq,ix,paramList));
+});

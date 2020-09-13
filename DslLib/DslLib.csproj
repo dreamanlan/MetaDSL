@@ -37,31 +37,64 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\DslAction.cs">
+      <Link>Common\DslAction.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\DslLog.cs">
+      <Link>Common\DslLog.cs</Link>
+    </Compile>
+    <Compile Include="..\CppParser\CppConstants.cs">
+      <Link>CppParser\CppConstants.cs</Link>
+    </Compile>
+    <Compile Include="..\CppParser\CppError.cs">
+      <Link>CppParser\CppError.cs</Link>
+    </Compile>
+    <Compile Include="..\CppParser\CppParser.cs">
+      <Link>CppParser\CppParser.cs</Link>
+    </Compile>
+    <Compile Include="..\CppParser\CppString.cs">
+      <Link>CppParser\CppString.cs</Link>
+    </Compile>
+    <Compile Include="..\CppParser\CppToken.cs">
+      <Link>CppParser\CppToken.cs</Link>
+    </Compile>
     <Compile Include="..\Dsl.cs">
       <Link>Dsl.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslAction.cs">
-      <Link>Parser\DslAction.cs</Link>
+    <Compile Include="..\DslParser\DslConstants.cs">
+      <Link>DslParser\DslConstants.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslConstants.cs">
-      <Link>Parser\DslConstants.cs</Link>
+    <Compile Include="..\DslParser\DslError.cs">
+      <Link>DslParser\DslError.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslError.cs">
-      <Link>Parser\DslError.cs</Link>
+    <Compile Include="..\DslParser\DslParser.cs">
+      <Link>DslParser\DslParser.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslLog.cs">
-      <Link>Parser\DslLog.cs</Link>
+    <Compile Include="..\DslParser\DslString.cs">
+      <Link>DslParser\DslString.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslParser.cs">
-      <Link>Parser\DslParser.cs</Link>
+    <Compile Include="..\DslParser\DslToken.cs">
+      <Link>DslParser\DslToken.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslString.cs">
-      <Link>Parser\DslString.cs</Link>
+    <Compile Include="..\LuaParser\LuaConstants.cs">
+      <Link>LuaParser\LuaConstants.cs</Link>
     </Compile>
-    <Compile Include="..\Parser\DslToken.cs">
-      <Link>Parser\DslToken.cs</Link>
+    <Compile Include="..\LuaParser\LuaError.cs">
+      <Link>LuaParser\LuaError.cs</Link>
+    </Compile>
+    <Compile Include="..\LuaParser\LuaParser.cs">
+      <Link>LuaParser\LuaParser.cs</Link>
+    </Compile>
+    <Compile Include="..\LuaParser\LuaString.cs">
+      <Link>LuaParser\LuaString.cs</Link>
+    </Compile>
+    <Compile Include="..\LuaParser\LuaToken.cs">
+      <Link>LuaParser\LuaToken.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

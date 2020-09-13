@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Dsl.Parser
+namespace Dsl.Common
 {
     struct DslLog
     {

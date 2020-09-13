@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Dsl.Common;
 
-namespace Dsl.Parser
+namespace Cpp.Parser
 {
-    struct DslToken
+    struct CppToken
     {
-        internal DslToken(DslLog log, string input)
+        internal CppToken(DslLog log, string input)
         {
             mLog = log;
             mInput = input;
@@ -87,164 +88,7 @@ namespace Dsl.Parser
             mTokenBuilder.Length = 0;
             if (CurChar == 0) {//输入结束
                 mCurToken = "<<eof>>";
-                return DslConstants.END_OF_SLK_INPUT_;
-            }
-            else if (!string.IsNullOrEmpty(StringBeginDelimiter) && !string.IsNullOrEmpty(StringEndDelimiter) && IsBegin(StringBeginDelimiter)) {
-                mIterator += StringBeginDelimiter.Length;
-                mCurToken = getBlockString(StringEndDelimiter);
-                return DslConstants.STRING_;
-            }
-            else if (!string.IsNullOrEmpty(ScriptBeginDelimiter) && !string.IsNullOrEmpty(ScriptEndDelimiter) && IsBegin(ScriptBeginDelimiter)) {
-                mIterator += ScriptBeginDelimiter.Length;
-                mCurToken = getBlockString(ScriptEndDelimiter);
-                return DslConstants.SCRIPT_CONTENT_;
-            }
-            else if (CurChar == '{' && NextChar == ':') {
-                ++mIterator;
-                ++mIterator;
-                int line = mLineNumber;
-                //搜索脚本结束 :}
-                for (; CurChar != 0;) {
-                    while (CurChar != 0 && CurChar != ':') {
-                        if (CurChar == '\n')
-                            ++mLineNumber;
-
-                        mTokenBuilder.Append(CurChar);
-                        ++mIterator;
-                    }
-                    if (CurChar == 0)
-                        break;
-                    if (NextChar == '}') {
-                        ++mIterator;
-                        ++mIterator;
-                        break;
-                    }
-                    else {
-                        mTokenBuilder.Append(CurChar);
-                        ++mIterator;
-                    }
-                }
-                if (CurChar == 0) {
-                    mLog.Log("[error][行 {0} ]：ExternScript can't finish！\n", line);
-                }
-                mCurToken = mTokenBuilder.ToString();
-                mCurToken = removeFirstAndLastEmptyLine(mCurToken);
-                return DslConstants.SCRIPT_CONTENT_;
-            }
-            else if (CurChar == '[' && NextChar == ':') {
-                ++mIterator;
-                ++mIterator;
-                mCurToken = "[:";
-                return DslConstants.BRACKET_ATTR_BEGIN_;
-            }
-            else if (CurChar == ':' && NextChar == ']') {
-                ++mIterator;
-                ++mIterator;
-                mCurToken = ":]";
-                return DslConstants.BRACKET_ATTR_END_;
-            }
-            else if (CurChar == '(' && NextChar == ':') {
-                ++mIterator;
-                ++mIterator;
-                mCurToken = "(:";
-                return DslConstants.PARENTHESIS_ATTR_BEGIN_;
-            }
-            else if (CurChar == ':' && NextChar == ')') {
-                ++mIterator;
-                ++mIterator;
-                mCurToken = ":)";
-                return DslConstants.PARENTHESIS_ATTR_END_;
-            }
-            else if (CurChar == '?') {
-                if (NextChar == '.') {
-                    ++mIterator;
-                    ++mIterator;
-                    if (CurChar == '*') {
-                        ++mIterator;
-                        mCurToken = "?.*";
-                        return DslConstants.QUESTION_PERIOD_STAR_;
-                    }
-                    else {
-                        mCurToken = "?.";
-                        return DslConstants.QUESTION_PERIOD_;
-                    }
-                }
-                else if (NextChar == '(') {
-                    ++mIterator;
-                    ++mIterator;
-                    mCurToken = "?(";
-                    return DslConstants.QUESTION_PARENTHESIS_;
-                }
-                else if (NextChar == '[') {
-                    ++mIterator;
-                    ++mIterator;
-                    mCurToken = "?[";
-                    return DslConstants.QUESTION_BRACKET_;
-                }
-                else if (NextChar == '{') {
-                    ++mIterator;
-                    ++mIterator;
-                    mCurToken = "?{";
-                    return DslConstants.QUESTION_BRACE_;
-                }
-                else {
-                    getOperatorToken();
-                    return getOperatorTokenValue();
-                }
-            }
-            else if (CurChar == '-') {
-                if (NextChar == '>') {
-                    char nextChar = '\0';
-                    for (int start = mIterator + 2; start < mInput.Length; ++start) {
-                        if (mWhiteSpaces.IndexOf(mInput[start]) >= 0) {
-                            continue;
-                        }
-                        else {
-                            nextChar = mInput[start];
-                            break;
-                        }
-                    }
-                    if (nextChar == '{') {
-                        getOperatorToken();
-                        return getOperatorTokenValue();
-                    }
-                    else if (nextChar == '*') {
-                        ++mIterator;
-                        ++mIterator;
-                        ++mIterator;
-                        mCurToken = "->*";
-                        return DslConstants.POINTER_STAR_;
-                    }
-                    else {
-                        ++mIterator;
-                        ++mIterator;
-                        mCurToken = "->";
-                        return DslConstants.POINTER_;
-                    }
-                }
-                else {
-                    getOperatorToken();
-                    return getOperatorTokenValue();
-                }
-            }
-            else if (CurChar == '.' && NextChar == '*') {
-                ++mIterator;
-                ++mIterator;
-                mCurToken = ".*";
-                return DslConstants.PERIOD_STAR_;
-            }
-            else if (CurChar == '.' && NextChar == '.') {
-                ++mIterator;
-                ++mIterator;
-                if (CurChar == '.') {
-                    ++mIterator;
-                    mCurToken = "...";
-                    return DslConstants.IDENTIFIER_;
-                }
-                else {
-                    mCurToken = "..";
-                    return DslConstants.OP_TOKEN_12_;
-                }
+                return CppConstants.END_OF_SLK_INPUT_;
             }
             else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
@@ -256,47 +100,47 @@ namespace Dsl.Parser
 
                 mTokenBuilder.Append(c);
                 mCurToken = mTokenBuilder.ToString();
-                return DslConstants.DOT_;
+                return CppConstants.DOT_;
             }
             else if (CurChar == '{') {
                 ++mIterator;
                 mCurToken = "{";
-                return DslConstants.LBRACE_;
+                return CppConstants.LBRACE_;
             }
             else if (CurChar == '}') {
                 ++mIterator;
                 mCurToken = "}";
-                return DslConstants.RBRACE_;
+                return CppConstants.RBRACE_;
             }
             else if (CurChar == '[') {
                 ++mIterator;
                 mCurToken = "[";
-                return DslConstants.LBRACK_;
+                return CppConstants.LBRACK_;
             }
             else if (CurChar == ']') {
                 ++mIterator;
                 mCurToken = "]";
-                return DslConstants.RBRACK_;
+                return CppConstants.RBRACK_;
             }
             else if (CurChar == '(') {
                 ++mIterator;
                 mCurToken = "(";
-                return DslConstants.LPAREN_;
+                return CppConstants.LPAREN_;
             }
             else if (CurChar == ')') {
                 ++mIterator;
                 mCurToken = ")";
-                return DslConstants.RPAREN_;
+                return CppConstants.RPAREN_;
             }
             else if (CurChar == ',') {
                 ++mIterator;
                 mCurToken = ",";
-                return DslConstants.COMMA_;
+                return CppConstants.COMMA_;
             }
             else if (CurChar == ';') {
                 ++mIterator;
                 mCurToken = ";";
-                return DslConstants.SEMI_;
+                return CppConstants.SEMI_;
             }
             else {//关键字、标识符或常数
                 if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
@@ -384,7 +228,7 @@ namespace Dsl.Parser
                         mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                     }
                     */
-                    return DslConstants.STRING_;
+                    return CppConstants.STRING_;
                 }
                 else {
                     bool isNum = true;
@@ -430,10 +274,13 @@ namespace Dsl.Parser
                     }
                     mCurToken = mTokenBuilder.ToString();
                     if (isNum) {
-                        return DslConstants.NUMBER_;
+                        if (mCurToken.IndexOf('.') >= 0)
+                            return CppConstants.FLOAT_;
+                        else
+                            return CppConstants.INT_;
                     }
                     else {
-                        return DslConstants.IDENTIFIER_;
+                        return CppConstants.IDENTIFIER_;
                     }
                 }
             }
@@ -689,7 +536,7 @@ namespace Dsl.Parser
                     lastIsOperator = isOperator(lastToken[0]);
                 }
             }
-            short val = DslConstants.OP_TOKEN_2_;
+            short val = CppConstants.EQUAL_;
             if (curOperator.Length > 0) {
                 char c0 = curOperator[0];
                 char c1 = (char)0;
@@ -705,67 +552,10 @@ namespace Dsl.Parser
                 if (curOperator.Length > 4)
                     c4 = curOperator[4];
                 if (c0 == '=' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c0 != '=' && c0 != '!' && c0 != '>' && c0 != '<' && c1 == '=' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c1 != '\0' && c2 == '=' && c3 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c1 != '\0' && c2 != '\0' && c3 == '=' && c4 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c0 == '=' && c1 == '>' && c2 == '\0' || c0 == '<' && c1 == '-' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_1_;
-                }
-                else if ((c0 == '?' || c0 == ':') && curOperator.Length == 1) {
-                    val = DslConstants.OP_TOKEN_3_;
-                }
-                else if (c0 == '|' && c1 == '|' && c2 == '\0' || c0 == '?' && c1 == '?' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_4_;
-                }
-                else if (c0 == '&' && c1 == '&' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_5_;
-                }
-                else if (c0 == '|' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_6_;
-                }
-                else if (c0 == '^' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_7_;
-                }
-                else if (c0 == '&' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_8_;
-                }
-                else if ((c0 == '=' || c0 == '!') && c1 == '=' && c2 == '\0' || c0 == '<' && c1 == '=' && c2 == '>' && c3 == '\0') {
-                    val = DslConstants.OP_TOKEN_9_;
-                }
-                else if ((c0 == '<' || c0 == '>') && (c1 == '=' && c2 == '\0' || c1 == 0)) {
-                    val = DslConstants.OP_TOKEN_10_;
-                }
-                else if ((c0 == '<' && c1 == '<' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '>' && c3 == '\0')) {
-                    val = DslConstants.OP_TOKEN_11_;
-                }
-                else if ((c0 == '+' || c0 == '-') && c1 == '\0') {
-                    if (lastIsOperator)
-                        val = DslConstants.OP_TOKEN_14_;
-                    else
-                        val = DslConstants.OP_TOKEN_12_;
-                }
-                else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_13_;
-                }
-                else if ((c0 == '+' && c1 == '+' && c2 == '\0') || (c0 == '-' && c1 == '-' && c2 == '\0') || (c0 == '~' && c1 == '\0') || (c0 == '!' && c1 == '\0')) {
-                    val = DslConstants.OP_TOKEN_14_;
-                }
-                else if (c0 == '`') {
-                    val = DslConstants.OP_TOKEN_15_;
-                }
-                else if (c0 == '-' && c1 == '>' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_16_;
+                    val = CppConstants.EQUAL_;
                 }
                 else {
-                    val = DslConstants.OP_TOKEN_2_;
+                    val = CppConstants.EQUAL_;
                 }
             }
             return val;
