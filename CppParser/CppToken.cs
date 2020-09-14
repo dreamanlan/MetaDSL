@@ -19,22 +19,20 @@ namespace Cpp.Parser
             mCurToken = string.Empty;
             mLastToken = string.Empty;
 
-            mCommentBuilder = new StringBuilder();
-            mComments = new List<string>();
-            mCommentOnNewLine = false;
-
             mTokenBuilder = new StringBuilder();
-
-            mStringBeginDelimiter = string.Empty;
-            mStringEndDelimiter = string.Empty;
-            mScriptBeginDelimiter = string.Empty;
-            mScriptEndDelimiter = string.Empty;
+            mTokenQueue = new Queue<TokenInfo>();
         }
 
         internal short get()
         {
             mLastToken = mCurToken;
             mLastLineNumber = mLineNumber;
+            if (mTokenQueue.Count > 0) {
+                var token = mTokenQueue.Dequeue();
+                mCurToken = token.Token;
+                mLineNumber = token.LineNumber;
+                return token.TokenValue;
+            }
             bool isSkip = true;
             //跳过注释与白空格
             for (; isSkip && CurChar != 0;) {
@@ -42,47 +40,29 @@ namespace Cpp.Parser
                 for (; mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
                     if (CurChar == '\n') {
                         ++mLineNumber;
-                        if (mComments.Count <= 0) {
-                            mCommentOnNewLine = true;
-                        }
                     }
                     isSkip = true;
                 }
                 //#引导的单行注释或C++风格的单行注释
                 if (CurChar == '#' || CurChar == '/' && NextChar == '/') {
-                    mCommentBuilder.Length = 0;
-                    for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
-                        if (CurChar != '\r')
-                            mCommentBuilder.Append(CurChar);
-                    }
+                    for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
                     isSkip = true;
-                    mComments.Add(mCommentBuilder.ToString());
                 }
                 //C++风格的多行注释
                 if (CurChar == '/' && NextChar == '*') {
-                    mCommentBuilder.Length = 0;
-                    mCommentBuilder.Append(CurChar);
-                    mCommentBuilder.Append(NextChar);
                     ++mIterator;
                     ++mIterator;
                     for (; CurChar != 0; ++mIterator) {
                         if (CurChar == '\n') {
-                            mCommentBuilder.AppendLine();
                             ++mLineNumber;
                         }
                         else if (CurChar == '*' && NextChar == '/') {
-                            mCommentBuilder.Append(CurChar);
-                            mCommentBuilder.Append(NextChar);
                             ++mIterator;
                             ++mIterator;
                             break;
                         }
-                        else if (CurChar != '\r') {
-                            mCommentBuilder.Append(CurChar);
-                        }
                     }
                     isSkip = true;
-                    mComments.Add(mCommentBuilder.ToString());
                 }
             }
             mTokenBuilder.Length = 0;
@@ -92,15 +72,15 @@ namespace Cpp.Parser
             }
             else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
-                return getOperatorTokenValue();
+                return CppConstants.STRING_;
             }
             else if (CurChar == '.' && !myisdigit(NextChar, false)) {
-                char c = CurChar;
-                ++mIterator;
-
-                mTokenBuilder.Append(c);
+                while (CurChar == '.' && !myisdigit(NextChar, false)) {
+                    mTokenBuilder.Append(CurChar);
+                    ++mIterator;
+                }
                 mCurToken = mTokenBuilder.ToString();
-                return CppConstants.DOT_;
+                return CppConstants.STRING_;
             }
             else if (CurChar == '{') {
                 ++mIterator;
@@ -274,10 +254,7 @@ namespace Cpp.Parser
                     }
                     mCurToken = mTokenBuilder.ToString();
                     if (isNum) {
-                        if (mCurToken.IndexOf('.') >= 0)
-                            return CppConstants.FLOAT_;
-                        else
-                            return CppConstants.INT_;
+                        return CppConstants.NUMBER_;
                     }
                     else {
                         return CppConstants.IDENTIFIER_;
@@ -288,8 +265,19 @@ namespace Cpp.Parser
 
         internal short peek(int level) // scan next token without consuming it
         {
+            string curToken = getCurToken();
+            string lastToken = getLastToken();
+            int lineNumber = getLineNumber();
+            int lastLineNumber = getLastLineNumber();
             short token = 0;
-            mLog.Log("[info] peek_token is not called in an LL(1) grammar\n");
+            for (int i = mTokenQueue.Count; i < level; ++i) {
+                token = get();
+                mTokenQueue.Enqueue(new TokenInfo { Token = getCurToken(), TokenValue = token, LineNumber = getLineNumber() });
+            }
+            mCurToken = curToken;
+            mLastToken = lastToken;
+            mLineNumber = lineNumber;
+            mLastLineNumber = lastLineNumber;
             return token;
         }
 
@@ -309,256 +297,15 @@ namespace Cpp.Parser
         {
             return mLastLineNumber;
         }
-        internal bool IsCommentOnNewLine()
-        {
-            return mCommentOnNewLine;
-        }
-        internal IList<string> GetComments()
-        {
-            return mComments;
-        }
-        internal void ResetComments()
-        {
-            mCommentOnNewLine = false;
-            mComments.Clear();
-        }
-        internal void setStringDelimiter(string begin, string end)
-        {
-            mStringBeginDelimiter = begin;
-            mStringEndDelimiter = end;
-        }
-        internal void setScriptDelimiter(string begin, string end)
-        {
-            mScriptBeginDelimiter = begin;
-            mScriptEndDelimiter = end;
-        }
-
-        private bool IsBegin(string delimiter)
-        {
-            bool ret = false;
-            if (!string.IsNullOrEmpty(delimiter)) {
-                int start = mIterator;
-                if (start + delimiter.Length <= mInput.Length && start == mInput.IndexOf(delimiter, start, delimiter.Length))
-                    ret = true;
-            }
-            return ret;
-        }
-        private string getBlockString(string delimiter)
-        {
-            int start = mIterator;
-            int end = mInput.IndexOf(delimiter, start);
-            if (end < 0) {
-                mLog.Log("[error][行 {0} ]：block can't finish, delimiter: {1}！\n", mLineNumber, delimiter);
-                return string.Empty;
-            }
-            mIterator = end + delimiter.Length;
-            int lineStart = mInput.IndexOf('\n', start, end - start);
-            while (lineStart >= 0) {
-                ++mLineNumber;
-                lineStart = mInput.IndexOf('\n', lineStart + 1, end - lineStart - 1);
-            }
-            return removeFirstAndLastEmptyLine(mInput.Substring(start, end - start));
-        }
-        private string removeFirstAndLastEmptyLine(string str)
-        {
-            int start = 0;
-            while (start < str.Length && isWhiteSpace(str[start]) && str[start] != '\n')
-                ++start;
-            if (str[start] == '\n') {
-                ++start;
-            }
-            else {
-                //如果开始行没有换行，就保留白空格
-                start = 0;
-            }
-            int end = str.Length - 1;
-            while (end > 0 && isWhiteSpace(str[end]) && str[end] != '\n')
-                --end;
-            if (end > 0 && str[end] != '\n') {
-                //如果结束行没有换行，就保留白空格；否则去掉白空格，但保留换行
-                end = str.Length - 1;
-            }
-            if (start > 0 || end < str.Length - 1) {
-                return str.Substring(start, end - start + 1);
-            }
-            else {
-                return str;
-            }
-        }
 
         private void getOperatorToken()
         {
             int st = mIterator;
-            switch (CurChar) {
-                case '+': {
-                        ++mIterator;
-                        if (CurChar == '+' || CurChar == '=') {
-                            ++mIterator;
-                        }
-                    }
-                    break;
-                case '-': {
-                        ++mIterator;
-                        if (CurChar == '-' || CurChar == '=' || CurChar == '>') {
-                            ++mIterator;
-                        }
-                    }
-                    break;
-                case '>': {
-                        ++mIterator;
-                        if (CurChar == '=') {
-                            ++mIterator;
-                        }
-                        else if (CurChar == '>') {
-                            ++mIterator;
-                            if (CurChar == '>') {
-                                ++mIterator;
-                            }
-                            if (CurChar == '=') {
-                                ++mIterator;
-                            }
-                        }
-                    }
-                    break;
-                case '<': {
-                        ++mIterator;
-                        if (CurChar == '=') {
-                            ++mIterator;
-                            if (CurChar == '>') {
-                                ++mIterator;
-                            }
-                        }
-                        else if (CurChar == '-') {
-                            ++mIterator;
-                        }
-                        else if (CurChar == '<') {
-                            ++mIterator;
-                            if (CurChar == '=') {
-                                ++mIterator;
-                            }
-                        }
-                    }
-                    break;
-                case '&': {
-                        ++mIterator;
-                        if (CurChar == '=') {
-                            ++mIterator;
-                        }
-                        else if (CurChar == '&') {
-                            ++mIterator;
-                            if (CurChar == '=') {
-                                ++mIterator;
-                            }
-                        }
-                    }
-                    break;
-                case '|': {
-                        ++mIterator;
-                        if (CurChar == '=') {
-                            ++mIterator;
-                        }
-                        else if (CurChar == '|') {
-                            ++mIterator;
-                            if (CurChar == '=') {
-                                ++mIterator;
-                            }
-                        }
-                    }
-                    break;
-                case '=': {
-                        ++mIterator;
-                        if (CurChar == '=' || CurChar == '>') {
-                            ++mIterator;
-                        }
-                    }
-                    break;
-                case '!':
-                case '^':
-                case '*':
-                case '/':
-                case '%': {
-                        ++mIterator;
-                        if (CurChar == '=') {
-                            ++mIterator;
-                        }
-                    }
-                    break;
-                case '?': {
-                        ++mIterator;
-                        if (CurChar == '?') {
-                            ++mIterator;
-                            if (CurChar == '=') {
-                                ++mIterator;
-                            }
-                        }
-                    }
-                    break;
-                case '`': {
-                        ++mIterator;
-                        bool isOp = false;
-                        while (isOperator(CurChar)) {
-                            ++mIterator;
-                            isOp = true;
-                        }
-                        if (!isOp) {
-                            while (CurChar != '\0' && !isSpecialChar(CurChar)) {
-                                if (CurChar == '#')
-                                    break;
-                                else if (CurChar == '.') {
-                                    break;
-                                }
-                                ++mIterator;
-                            }
-                        }
-                    }
-                    break;
-                default: {
-                        ++mIterator;
-                    }
-                    break;
+            while (isOperator(CurChar)) {
+                ++mIterator;
             }
             int ed = mIterator;
             mCurToken = mInput.Substring(st, ed - st);
-        }
-        private short getOperatorTokenValue()
-        {
-            string curOperator = mCurToken;
-            string lastToken = mLastToken;
-            bool lastIsOperator = true;
-            if (null != lastToken && lastToken.Length > 0) {
-                if (isDelimiter(lastToken[0])) {
-                    lastIsOperator = true;
-                }
-                else if (isBeginParentheses(lastToken[0])) {
-                    lastIsOperator = true;
-                }
-                else {
-                    lastIsOperator = isOperator(lastToken[0]);
-                }
-            }
-            short val = CppConstants.EQUAL_;
-            if (curOperator.Length > 0) {
-                char c0 = curOperator[0];
-                char c1 = (char)0;
-                char c2 = (char)0;
-                char c3 = (char)0;
-                char c4 = (char)0;
-                if (curOperator.Length > 1)
-                    c1 = curOperator[1];
-                if (curOperator.Length > 2)
-                    c2 = curOperator[2];
-                if (curOperator.Length > 3)
-                    c3 = curOperator[3];
-                if (curOperator.Length > 4)
-                    c4 = curOperator[4];
-                if (c0 == '=' && c1 == '\0') {
-                    val = CppConstants.EQUAL_;
-                }
-                else {
-                    val = CppConstants.EQUAL_;
-                }
-            }
-            return val;
         }
         private bool isWhiteSpace(char c)
         {
@@ -628,22 +375,6 @@ namespace Cpp.Parser
                 return c;
             }
         }
-        private string StringBeginDelimiter
-        {
-            get { return mStringBeginDelimiter; }
-        }
-        private string StringEndDelimiter
-        {
-            get { return mStringEndDelimiter; }
-        }
-        private string ScriptBeginDelimiter
-        {
-            get { return mScriptBeginDelimiter; }
-        }
-        private string ScriptEndDelimiter
-        {
-            get { return mScriptEndDelimiter; }
-        }
 
         private static bool myisdigit(char c, bool isHex)
         {
@@ -682,6 +413,13 @@ namespace Cpp.Parser
                 return 0;
         }
 
+        private struct TokenInfo
+        {
+            internal string Token;
+            internal short TokenValue;
+            internal int LineNumber;
+        }
+
         private DslLog mLog;
         private string mInput;
         private int mIterator;
@@ -690,10 +428,6 @@ namespace Cpp.Parser
 
         private int mLineNumber;
         private int mLastLineNumber;
-
-        private StringBuilder mCommentBuilder;
-        private List<string> mComments;
-        private bool mCommentOnNewLine;
 
         private const string mWhiteSpaces = " \t\r\n";
         private const string mDelimiters = ",;";
@@ -704,10 +438,6 @@ namespace Cpp.Parser
         private const string mSpecialChars = mWhiteSpaces + mDelimiters + mBeginParentheses + mEndParentheses + mOperators + mQuotes;
 
         private StringBuilder mTokenBuilder;
-
-        private string mStringBeginDelimiter;
-        private string mStringEndDelimiter;
-        private string mScriptBeginDelimiter;
-        private string mScriptEndDelimiter;
+        private Queue<TokenInfo> mTokenQueue;
     }
 }

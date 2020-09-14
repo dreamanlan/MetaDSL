@@ -6,11 +6,16 @@
 public void execute  ( int  number )
 {
   switch ( number ) {
-    case 1:  FINISHPARSE();  break;
-    case 2:  SETTYPEDEFNAME();  break;
-    case 3:  SETTAGNAME();  break;
-    case 4:  SETENUMNAME();  break;
-    case 5:  NEWSCOPE();  break;
-    case 6:  RELEASESCOPE();  break;
+    case 1:  endStatement();  break;
+    case 2:  beginStatement();  break;
+    case 3:  addFunction();  break;
+    case 4:  setFunctionId();  break;
+    case 5:  markParenthesisParam();  break;
+    case 6:  buildHighOrderFunction();  break;
+    case 7:  markBracketParam();  break;
+    case 8:  markStatement();  break;
+    case 9:  pushId();  break;
+    case 10:  pushStr();  break;
+    case 11:  pushNum();  break;
   }
 }

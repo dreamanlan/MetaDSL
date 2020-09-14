@@ -87,7 +87,19 @@ namespace Dsl.Common
 
         internal void predict(short production_number)
         {
-            //mLog.Log("{0}", DslString.GetProductionName(production_number));
+            /*
+            switch (mActionType) {
+                case DslActionType.Dsl:
+                    mLog.Log("{0}", Dsl.Parser.DslString.GetProductionName(production_number));
+                    break;
+                case DslActionType.Lua:
+                    mLog.Log("{0}", Lua.Parser.LuaString.GetProductionName(production_number));
+                    break;
+                case DslActionType.Cpp:
+                    mLog.Log("{0}", Cpp.Parser.CppString.GetProductionName(production_number));
+                    break;
+            }
+            */
         }
         internal void execute(int number)
         {
@@ -113,67 +125,81 @@ namespace Dsl.Common
                 case 4: buildFirstTernaryOperator(); break;
                 case 5: buildSecondTernaryOperator(); break;
                 case 6: beginStatement(); break;
-                case 7: beginFunction(); break;
-                case 8: endFunction(); break;
-                case 9: setFunctionId(); break;
-                case 10: markParenthesisParam(); break;
-                case 11: buildHighOrderFunction(); break;
-                case 12: markBracketParam(); break;
-                case 13: markQuestionParenthesisParam(); break;
-                case 14: markQuestionBracketParam(); break;
-                case 15: markQuestionBraceParam(); break;
-                case 16: markStatement(); break;
-                case 17: markExternScript(); break;
-                case 18: setExternScript(); break;
-                case 19: markBracketAttrParam(); break;
-                case 20: markParenthesisAttrParam(); break;
-                case 21: markPeriodParam(); break;
-                case 22: setMemberId(); break;
-                case 23: markPeriodParenthesisParam(); break;
-                case 24: markPeriodBracketParam(); break;
-                case 25: markPeriodBraceParam(); break;
-                case 26: markQuestionPeriodParam(); break;
-                case 27: markPointerParam(); break;
-                case 28: markPeriodStarParam(); break;
-                case 29: markQuestionPeriodStarParam(); break;
-                case 30: markPointerStarParam(); break;
-                case 31: pushStr(); break;
-                case 32: pushNum(); break;
+                case 7: addFunction(); break;
+                case 8: setFunctionId(); break;
+                case 9: markParenthesisParam(); break;
+                case 10: buildHighOrderFunction(); break;
+                case 11: markBracketParam(); break;
+                case 12: markQuestionParenthesisParam(); break;
+                case 13: markQuestionBracketParam(); break;
+                case 14: markQuestionBraceParam(); break;
+                case 15: markStatement(); break;
+                case 16: markExternScript(); break;
+                case 17: setExternScript(); break;
+                case 18: markBracketAttrParam(); break;
+                case 19: markParenthesisAttrParam(); break;
+                case 20: markPeriodParam(); break;
+                case 21: setMemberId(); break;
+                case 22: markPeriodParenthesisParam(); break;
+                case 23: markPeriodBracketParam(); break;
+                case 24: markPeriodBraceParam(); break;
+                case 25: markQuestionPeriodParam(); break;
+                case 26: markPointerParam(); break;
+                case 27: markPeriodStarParam(); break;
+                case 28: markQuestionPeriodStarParam(); break;
+                case 29: markPointerStarParam(); break;
+                case 30: pushStr(); break;
+                case 31: pushNum(); break;
             }
         }
         private void executeLua(int number)
         {
             switch (number) {
                 case 1: beginStatement(); break;
-                case 2: beginFunction(); break;
+                case 2: addFunction(); break;
                 case 3: pushId(); break;
                 case 4: setFunctionId(); break;
                 case 5: markStatement(); break;
-                case 6: endFunction(); break;
-                case 7: markParenthesisParam(); break;
-                case 8: endStatement(); break;
-                case 9: pushLuaList(); break;
+                case 6: markParenthesisParam(); break;
+                case 7: endStatement(); break;
+                case 8: pushLuaList(); break;
+                case 9: checkLuaList(); break;
                 case 10: pushAssignWith(); break;
-                case 11: pushLuaLabel(); break;
-                case 12: buildHighOrderFunction(); break;
-                case 13: pushLuaRange(); break;
-                case 14: pushLuaVar(); break;
-                case 15: markBracketAttrParam(); break;
-                case 16: markParenthesisAttrParam(); break;
-                case 17: pushDot(); break;
-                case 18: pushColon(); break;
-                case 19: pushLuaArgs(); break;
-                case 20: buildOperator(); break;
-                case 21: markBracketParam(); break;
-                case 22: markPeriodParam(); break;
-                case 23: setMemberId(); break;
-                case 24: markPointerParam(); break;
-                case 25: pushStr(); break;
-                case 26: pushNum(); break;
+                case 11: removeLuaList(); break;
+                case 12: pushLuaLabel(); break;
+                case 13: buildHighOrderFunction(); break;
+                case 14: pushLuaRange(); break;
+                case 15: pushLuaVarAttr(); break;
+                case 16: markBracketAttrParam(); break;
+                case 17: removeLuaVarAttr(); break;
+                case 18: markParenthesisAttrParam(); break;
+                case 19: pushDot(); break;
+                case 20: pushColon(); break;
+                case 21: pushLuaArgs(); break;
+                case 22: buildOperator(); break;
+                case 23: markBracketParam(); break;
+                case 24: markPeriodParam(); break;
+                case 25: setMemberId(); break;
+                case 26: markPointerParam(); break;
+                case 27: pushStr(); break;
+                case 28: pushNum(); break;
             }
         }
         private void executeCpp(int number)
         {
+            switch (number) {
+                case 1: endStatement(); break;
+                case 2: beginStatement(); break;
+                case 3: addFunction(); break;
+                case 4: setFunctionId(); break;
+                case 5: markParenthesisParam(); break;
+                case 6: buildHighOrderFunction(); break;
+                case 7: markBracketParam(); break;
+                case 8: markStatement(); break;
+                case 9: pushId(); break;
+                case 10: pushStr(); break;
+                case 11: pushNum(); break;
+            }
         }
 
         private void buildOperator()
@@ -427,7 +453,7 @@ namespace Dsl.Common
                 func.AddParam(statementSyntax);
             }
         }
-        private void beginFunction()
+        private void addFunction()
         {
             StatementData statement = getCurStatement();
             FunctionData func = newFunctionOfStatement(statement);
@@ -453,9 +479,6 @@ namespace Dsl.Common
                 func.Name.SetType(type);
                 func.Name.SetLine(getLastLineNumber());
             }
-        }
-        private void endFunction()
-        {
         }
         private void buildHighOrderFunction()
         {
@@ -612,15 +635,87 @@ namespace Dsl.Common
         {
             push("lualist", FunctionData.ID_TOKEN);
         }
+        private void removeLuaList()
+        {
+            var statement = getCurStatement();
+            var func = statement.First;
+            var p = func.GetParam(0);
+            var st = p as Dsl.StatementData;
+            if (null != st) {
+                popStatement();
+                mStatementSemanticStack.Push(st);
+            }
+            else {
+                var f = p as Dsl.FunctionData;
+                if (null != f) {
+                    statement.Functions.Clear();
+                    statement.AddFunction(f);
+                }
+                else {
+                    var v = p as Dsl.ValueData;
+                    if (null != v) {
+                        func.Clear();
+                        func.Name = v;
+                    }
+                    else {
+                        mLog.Log("[error] unknown function call/variable syntax ! last token:{0} line {1}", getLastToken(), getLastLineNumber());
+                    }
+                }
+            }
+            endStatement();
+        }
+        private void checkLuaList()
+        {
+            var statement = getCurStatement();
+            var func = statement.First;
+            for(int i = 0; i < func.GetParamNum(); ++i) {
+                var p = func.GetParam(i);
+                var f = p as Dsl.FunctionData;
+                if (null != f &&
+                    f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD &&
+                    f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET) {
+                    mLog.Error("[error] Can only assignment to left value. {0}:{1} last token:{2} line {3}", f.GetLine(), f.ToScriptString(false), getLastToken(), getLastLineNumber());
+                }
+            }
+        }
         //for i = i1,i2,i3 do => for(i)luarange(i1,i2,i3){}
         private void pushLuaRange()
         {
             push("luarange", FunctionData.ID_TOKEN);
         }
-        //name <attr> => luavar(name, attr)
-        private void pushLuaVar()
+        //name <attr> => luavarattr(name, attr)
+        private void pushLuaVarAttr()
         {
-            push("luavar", FunctionData.ID_TOKEN);
+            push("luavarattr", FunctionData.ID_TOKEN);
+        }
+        private void removeLuaVarAttr()
+        {
+            var statement = getCurStatement();
+            var func = statement.First;
+            var p = func.GetParam(0);
+            var st = p as Dsl.StatementData;
+            if (null != st) {
+                popStatement();
+                mStatementSemanticStack.Push(st);
+            }
+            else {
+                var f = p as Dsl.FunctionData;
+                if (null != f) {
+                    statement.Functions.Clear();
+                    statement.AddFunction(f);
+                }
+                else {
+                    var v = p as Dsl.ValueData;
+                    if (null != v) {
+                        func.Clear();
+                        func.Name = v;
+                    }
+                    else {
+                        mLog.Log("[error] unknown function call/variable syntax ! last token:{0} line {1}", getLastToken(), getLastLineNumber());
+                    }
+                }
+            }
+            endStatement();
         }
         //function name(arg) => function(name)args(arg)
         private void pushLuaArgs()

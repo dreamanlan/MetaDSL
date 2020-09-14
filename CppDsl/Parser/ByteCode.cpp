@@ -23,13 +23,12 @@ void CompileTest_ByteCode(void)
     DslStringAndObjectBufferT<> buffer;
 	DslFile dataFile(buffer);
 	TestRuntimeBuilder builder(dataFile);
-	builder.beginFunction();
+	builder.addFunction();
 	builder.beginStatement();
 	builder.buildFirstTernaryOperator();
 	builder.buildHighOrderFunction();
 	builder.buildOperator();
 	builder.buildSecondTernaryOperator();
-	builder.endFunction();
 	builder.endStatement();
 	builder.markBracketParam();
 	builder.markStatement();

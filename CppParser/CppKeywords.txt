@@ -7,119 +7,20 @@ class CppKeywords {
 
 public static string[] name = {
 
- "TYPEDEF"
-,"USING"
-,"TYPEDEF_NAME"
-,"TAG_NAME"
-,"FRIEND"
-,"AUTO"
-,"REGISTER"
-,"STATIC"
-,"EXTERN"
-,"MUTABLE"
-,"INLINE"
-,"VIRTUAL"
-,"EXPLICIT"
-,"VOID"
-,"CHAR"
-,"SHORT"
-,"INT"
-,"LONG"
-,"FLOAT"
-,"DOUBLE"
-,"SIGNED"
-,"UNSIGNED"
-,"CONST"
-,"VOLATILE"
-,"PRIVATE"
-,"PROTECTED"
-,"PUBLIC"
-,"CLASS"
-,"STRUCT"
-,"UNION"
-,"IDENTIFIER"
-,"ENUM"
-,"ENUM_NAME"
-,"_EPSILON_"
-,"CASE"
-,"DEFAULT"
-,"IF"
-,"SWITCH"
-,"ELSE"
-,"WHILE"
-,"DO"
-,"FOR"
-,"GOTO"
-,"CONTINUE"
-,"BREAK"
-,"RETURN"
-,"SIZEOF"
-,"NEW"
-,"DELETE"
+ "IDENTIFIER"
 ,"STRING"
-,"INTEGER_CONSTANT"
-,"CHARACTER_CONSTANT"
-,"FLOATING_CONSTANT"
-,"ENUMERATION_CONSTANT"
+,"NUMBER"
 }; 
 
 public  short[] token = {
 
- CppConstants.TYPEDEF_ 
-,CppConstants.USING_ 
-,CppConstants.TYPEDEF_NAME_ 
-,CppConstants.TAG_NAME_ 
-,CppConstants.FRIEND_ 
-,CppConstants.AUTO_ 
-,CppConstants.REGISTER_ 
-,CppConstants.STATIC_ 
-,CppConstants.EXTERN_ 
-,CppConstants.MUTABLE_ 
-,CppConstants.INLINE_ 
-,CppConstants.VIRTUAL_ 
-,CppConstants.EXPLICIT_ 
-,CppConstants.VOID_ 
-,CppConstants.CHAR_ 
-,CppConstants.SHORT_ 
-,CppConstants.INT_ 
-,CppConstants.LONG_ 
-,CppConstants.FLOAT_ 
-,CppConstants.DOUBLE_ 
-,CppConstants.SIGNED_ 
-,CppConstants.UNSIGNED_ 
-,CppConstants.CONST_ 
-,CppConstants.VOLATILE_ 
-,CppConstants.PRIVATE_ 
-,CppConstants.PROTECTED_ 
-,CppConstants.PUBLIC_ 
-,CppConstants.CLASS_ 
-,CppConstants.STRUCT_ 
-,CppConstants.UNION_ 
-,CppConstants.IDENTIFIER_ 
-,CppConstants.ENUM_ 
-,CppConstants.ENUM_NAME_ 
-,CppConstants._EPSILON_ 
-,CppConstants.CASE_ 
-,CppConstants.DEFAULT_ 
-,CppConstants.IF_ 
-,CppConstants.SWITCH_ 
-,CppConstants.ELSE_ 
-,CppConstants.WHILE_ 
-,CppConstants.DO_ 
-,CppConstants.FOR_ 
-,CppConstants.GOTO_ 
-,CppConstants.CONTINUE_ 
-,CppConstants.BREAK_ 
-,CppConstants.RETURN_ 
-,CppConstants.SIZEOF_ 
-,CppConstants.NEW_ 
-,CppConstants.DELETE_ 
+ CppConstants.IDENTIFIER_ 
 ,CppConstants.STRING_ 
-,CppConstants.INTEGER_CONSTANT_ 
-,CppConstants.CHARACTER_CONSTANT_ 
-,CppConstants.FLOATING_CONSTANT_ 
-,CppConstants.ENUMERATION_CONSTANT_ 
+,CppConstants.NUMBER_ 
 }; 
 
 }; 
 
+
+
+}

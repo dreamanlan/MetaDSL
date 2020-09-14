@@ -28,8 +28,7 @@ namespace Dsl
         inline void    buildFirstTernaryOperator(void);
         inline void    buildSecondTernaryOperator(void);
         inline void    beginStatement(void);
-        inline void    beginFunction(void);
-        inline void    endFunction(void);
+        inline void    addFunction(void);
         inline void    setFunctionId(void);
         inline void    markParenthesisParam(void);
         inline void    buildHighOrderFunction(void);

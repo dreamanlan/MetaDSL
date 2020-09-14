@@ -113,8 +113,8 @@ FUNCTION_STATEMENT_DESC:
 	_action_beginStatement FUNCTION_CALLS
 	
 FUNCTION_CALLS:
-	{ _action_beginFunction FUNCTION_EX_CALL _action_endFunction }
-	_action_beginFunction FUNCTION_EX_CALL_SPECIAL _action_endFunction { _action_beginFunction FUNCTION_EX_CALL _action_endFunction }
+	{ _action_addFunction FUNCTION_EX_CALL }
+	_action_addFunction FUNCTION_EX_CALL_SPECIAL { _action_addFunction FUNCTION_EX_CALL }
 	
 FUNCTION_EX_CALL:
 	FUNCTION_ID _action_setFunctionId [ FUNCTION_PARAMS ]
@@ -140,25 +140,25 @@ FUNCTION_PARAMS:
 	_action_markParenthesisAttrParam PARENTHESIS_ATTR_BEGIN STATEMENTS PARENTHESIS_ATTR_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	
 MEMBER_DESC:
-	_action_markPeriodParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 	_action_markPeriodParenthesisParam ( STATEMENTS )
 	_action_markPeriodBracketParam \[ STATEMENTS \]
 	_action_markPeriodBraceParam \{ STATEMENTS \}
 	
 MEMBER_DESC2:
-	_action_markQuestionPeriodParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	_action_markQuestionPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 	
 MEMBER_DESC3:
-	_action_markPointerParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	_action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 	
 MEMBER_DESC4:
-	_action_markPeriodStarParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	_action_markPeriodStarParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 	
 MEMBER_DESC5:
-	_action_markQuestionPeriodStarParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	_action_markQuestionPeriodStarParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 	
 MEMBER_DESC6:
-	_action_markPointerStarParam _action_beginStatement _action_beginFunction FUNCTION_ID _action_setMemberId _action_endFunction _action_endStatement
+	_action_markPointerStarParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 
 FUNCTION_ID:
 	IDENTIFIER _action_pushId

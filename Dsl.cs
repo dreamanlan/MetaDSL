@@ -966,12 +966,12 @@ namespace Dsl
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
 
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
-            if (error.HasError) {
+            if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos.Clear();
                 }
             }
-            return !error.HasError;
+            return !log.HasError;
         }
         public void Save(string file)
         {
@@ -1135,12 +1135,12 @@ namespace Dsl
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
             
             Lua.Parser.LuaParser.parse(ref action, ref tokens, ref error, 0);
-            if (error.HasError) {
+            if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos.Clear();
                 }
             }
-            return !error.HasError;
+            return !log.HasError;
         }
 
         public bool LoadCpp(string file, DslLogDelegation logCallback)
@@ -1160,15 +1160,14 @@ namespace Dsl
             action.Type = Common.DslActionType.Cpp;
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
-            action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
 
             Cpp.Parser.CppParser.parse(ref action, ref tokens, ref error, 0);
-            if (error.HasError) {
+            if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos.Clear();
                 }
             }
-            return !error.HasError;
+            return !log.HasError;
         }
 
         private void WriteInt(Stream s, int val)

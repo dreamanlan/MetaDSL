@@ -15,9 +15,18 @@ namespace Dsl
                 Console.WriteLine("{0}", msg);
             };
             //DslFile.DontLoadComments = true;
+            DslFile file0 = new DslFile();
+            file0.LoadCpp("test.h", logCallback);
+#if FULL_VERSION
+            file0.Save("copy.h");
+#endif
+            DslFile file1 = new DslFile();
+            file1.LoadLua("test.lua", logCallback);
+#if FULL_VERSION
+            file1.Save("copy.lua");
+#endif
             DslFile file = new DslFile();
-            //file.Load("test.txt", logCallback);
-            file.LoadLua("test.lua", logCallback);
+            file.Load("test.txt", logCallback);
 #if FULL_VERSION
             file.Save("copy.txt");
             file.SaveBinaryFile("binary.txt");

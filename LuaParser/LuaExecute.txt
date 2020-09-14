@@ -7,30 +7,32 @@ public void execute  ( int  number )
 {
   switch ( number ) {
     case 1:  beginStatement();  break;
-    case 2:  beginFunction();  break;
+    case 2:  addFunction();  break;
     case 3:  pushId();  break;
     case 4:  setFunctionId();  break;
     case 5:  markStatement();  break;
-    case 6:  endFunction();  break;
-    case 7:  markParenthesisParam();  break;
-    case 8:  endStatement();  break;
-    case 9:  pushLuaList();  break;
+    case 6:  markParenthesisParam();  break;
+    case 7:  endStatement();  break;
+    case 8:  pushLuaList();  break;
+    case 9:  checkLuaList();  break;
     case 10:  pushAssignWith();  break;
-    case 11:  pushLuaLabel();  break;
-    case 12:  buildHighOrderFunction();  break;
-    case 13:  pushLuaRange();  break;
-    case 14:  pushLuaVar();  break;
-    case 15:  markBracketAttrParam();  break;
-    case 16:  markParenthesisAttrParam();  break;
-    case 17:  pushDot();  break;
-    case 18:  pushColon();  break;
-    case 19:  pushLuaArgs();  break;
-    case 20:  buildOperator();  break;
-    case 21:  markBracketParam();  break;
-    case 22:  markPeriodParam();  break;
-    case 23:  setMemberId();  break;
-    case 24:  markPointerParam();  break;
-    case 25:  pushStr();  break;
-    case 26:  pushNum();  break;
+    case 11:  removeLuaList();  break;
+    case 12:  pushLuaLabel();  break;
+    case 13:  buildHighOrderFunction();  break;
+    case 14:  pushLuaRange();  break;
+    case 15:  pushLuaVarAttr();  break;
+    case 16:  markBracketAttrParam();  break;
+    case 17:  removeLuaVarAttr();  break;
+    case 18:  markParenthesisAttrParam();  break;
+    case 19:  pushDot();  break;
+    case 20:  pushColon();  break;
+    case 21:  pushLuaArgs();  break;
+    case 22:  buildOperator();  break;
+    case 23:  markBracketParam();  break;
+    case 24:  markPeriodParam();  break;
+    case 25:  setMemberId();  break;
+    case 26:  markPointerParam();  break;
+    case 27:  pushStr();  break;
+    case 28:  pushNum();  break;
   }
 }

@@ -44,6 +44,7 @@ namespace Lua.Parser
                 { "nil", LuaConstants.NIL_ },
                 { "repeat", LuaConstants.REPEAT_ },
                 { "return", LuaConstants.RETURN_ },
+                { "then", LuaConstants.THEN_ },
                 { "true", LuaConstants.TRUE_ },
                 { "until", LuaConstants.UNTIL_ },
                 { "while", LuaConstants.WHILE_ },
@@ -61,6 +62,9 @@ namespace Lua.Parser
                 short v;
                 if(mNames.TryGetValue(mCurToken, out v)) {
                     return v;
+                }
+                else if(mCurToken == "<<eof>>") {
+                    return LuaConstants.END_OF_SLK_INPUT_;
                 }
                 else {
                     //走到这里应该不可能
@@ -90,6 +94,8 @@ namespace Lua.Parser
                     int ct = 0;
                     if (CurChar == '[') {
                         int oldIter = mIterator;
+                        mCommentBuilder.Append(CurChar);
+                        ++mIterator;
                         for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
                             if (CurChar != '\r')
                                 mCommentBuilder.Append(CurChar);
@@ -98,9 +104,11 @@ namespace Lua.Parser
                             }
                             else if (CurChar == '[') {
                                 ct = mIterator - oldIter;
+                                ++mIterator;
                                 break;
                             }
                             else {
+                                ++mIterator;
                                 break;
                             }
                         }
@@ -116,7 +124,7 @@ namespace Lua.Parser
                                 if (CurChar == ']') {
                                     ++mIterator;
                                     bool end = true;
-                                    for (int i = 0; i < ct; ++i, ++mIterator) {
+                                    for (int i = 0; i < ct - 1; ++i, ++mIterator) {
                                         if (CurChar == '\n') {
                                             mCommentBuilder.AppendLine();
                                         }
@@ -128,10 +136,15 @@ namespace Lua.Parser
                                             break;
                                         }
                                     }
-                                    if (end && CurChar == ']') {
-                                        mCommentBuilder.Append(CurChar);
-                                        ++mIterator;
-                                        break;
+                                    if (end){
+                                        if (CurChar == ']') {
+                                            mCommentBuilder.Append(CurChar);
+                                            ++mIterator;
+                                            break;
+                                        }
+                                        else {
+                                            --mIterator;
+                                        }
                                     }
                                 }
                             }
@@ -144,12 +157,19 @@ namespace Lua.Parser
                         }
                     }
                     isSkip = true;
-                    mComments.Add(mCommentBuilder.ToString());
+                    //lua的注释在dsl里不是合法语法，另外，解析到dsl时添加的许多语法构造在输出时
+                    //可能会与注释冲突，如果真的需要输出注释，可以考虑都转为块注释形式
+                    //mComments.Add(mCommentBuilder.ToString());
                 }
             }
             mTokenBuilder.Length = 0;
             if (CurChar == 0) {//输入结束
                 mCurToken = "<<eof>>";
+                if (mLastToken != ";") {
+                    mCachedToken = mCurToken;
+                    mCurToken = ";";
+                    return LuaConstants.SEMI_;
+                }
                 return LuaConstants.END_OF_SLK_INPUT_;
             }
             else if (CurChar == '.' && NextChar == '.') {
@@ -416,59 +436,6 @@ namespace Lua.Parser
         {
             mCommentOnNewLine = false;
             mComments.Clear();
-        }
-
-        private bool IsBegin(string delimiter)
-        {
-            bool ret = false;
-            if (!string.IsNullOrEmpty(delimiter)) {
-                int start = mIterator;
-                if (start + delimiter.Length <= mInput.Length && start == mInput.IndexOf(delimiter, start, delimiter.Length))
-                    ret = true;
-            }
-            return ret;
-        }
-        private string getBlockString(string delimiter)
-        {
-            int start = mIterator;
-            int end = mInput.IndexOf(delimiter, start);
-            if (end < 0) {
-                mLog.Log("[error][行 {0} ]：block can't finish, delimiter: {1}！\n", mLineNumber, delimiter);
-                return string.Empty;
-            }
-            mIterator = end + delimiter.Length;
-            int lineStart = mInput.IndexOf('\n', start, end - start);
-            while (lineStart >= 0) {
-                ++mLineNumber;
-                lineStart = mInput.IndexOf('\n', lineStart + 1, end - lineStart - 1);
-            }
-            return removeFirstAndLastEmptyLine(mInput.Substring(start, end - start));
-        }
-        private string removeFirstAndLastEmptyLine(string str)
-        {
-            int start = 0;
-            while (start < str.Length && isWhiteSpace(str[start]) && str[start] != '\n')
-                ++start;
-            if (str[start] == '\n') {
-                ++start;
-            }
-            else {
-                //如果开始行没有换行，就保留白空格
-                start = 0;
-            }
-            int end = str.Length - 1;
-            while (end > 0 && isWhiteSpace(str[end]) && str[end] != '\n')
-                --end;
-            if (end > 0 && str[end] != '\n') {
-                //如果结束行没有换行，就保留白空格；否则去掉白空格，但保留换行
-                end = str.Length - 1;
-            }
-            if (start > 0 || end < str.Length - 1) {
-                return str.Substring(start, end - start + 1);
-            }
-            else {
-                return str;
-            }
         }
 
         private void getOperatorToken()

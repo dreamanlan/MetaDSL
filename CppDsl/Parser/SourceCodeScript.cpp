@@ -3,7 +3,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	33
+#define MAX_ACTION_NUM	32
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < ActionForSourceCodeScript >
@@ -131,32 +131,31 @@ inline void ActionForSourceCodeScript::initialize_table(void)
 	Action[4] = &ActionForSourceCodeScript::buildFirstTernaryOperator;
 	Action[5] = &ActionForSourceCodeScript::buildSecondTernaryOperator;
 	Action[6] = &ActionForSourceCodeScript::beginStatement;
-	Action[7] = &ActionForSourceCodeScript::beginFunction;
-	Action[8] = &ActionForSourceCodeScript::endFunction;
-	Action[9] = &ActionForSourceCodeScript::setFunctionId;
-	Action[10] = &ActionForSourceCodeScript::markParenthesisParam;
-	Action[11] = &ActionForSourceCodeScript::buildHighOrderFunction;
-	Action[12] = &ActionForSourceCodeScript::markBracketParam;
-	Action[13] = &ActionForSourceCodeScript::markQuestionParenthesisParam;
-	Action[14] = &ActionForSourceCodeScript::markQuestionBracketParam;
-	Action[15] = &ActionForSourceCodeScript::markQuestionBraceParam;
-    Action[16] = &ActionForSourceCodeScript::markStatement;
-    Action[17] = &ActionForSourceCodeScript::markExternScript;
-    Action[18] = &ActionForSourceCodeScript::setExternScript;
-    Action[19] = &ActionForSourceCodeScript::markBracketAttrParam;
-    Action[20] = &ActionForSourceCodeScript::markParenthesisAttrParam;
-	Action[21] = &ActionForSourceCodeScript::markPeriodParam;
-	Action[22] = &ActionForSourceCodeScript::setMemberId;
-	Action[23] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
-	Action[24] = &ActionForSourceCodeScript::markPeriodBracketParam;
-	Action[25] = &ActionForSourceCodeScript::markPeriodBraceParam;
-	Action[26] = &ActionForSourceCodeScript::markQuestionPeriodParam;
-	Action[27] = &ActionForSourceCodeScript::markPointerParam;
-	Action[28] = &ActionForSourceCodeScript::markPeriodStarParam;
-	Action[29] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
-	Action[30] = &ActionForSourceCodeScript::markPointerStarParam;
-	Action[31] = &ActionForSourceCodeScript::pushStr;
-	Action[32] = &ActionForSourceCodeScript::pushNum;
+	Action[7] = &ActionForSourceCodeScript::addFunction;
+	Action[8] = &ActionForSourceCodeScript::setFunctionId;
+	Action[9] = &ActionForSourceCodeScript::markParenthesisParam;
+	Action[10] = &ActionForSourceCodeScript::buildHighOrderFunction;
+	Action[11] = &ActionForSourceCodeScript::markBracketParam;
+	Action[12] = &ActionForSourceCodeScript::markQuestionParenthesisParam;
+	Action[13] = &ActionForSourceCodeScript::markQuestionBracketParam;
+	Action[14] = &ActionForSourceCodeScript::markQuestionBraceParam;
+    Action[15] = &ActionForSourceCodeScript::markStatement;
+    Action[16] = &ActionForSourceCodeScript::markExternScript;
+    Action[17] = &ActionForSourceCodeScript::setExternScript;
+    Action[18] = &ActionForSourceCodeScript::markBracketAttrParam;
+    Action[19] = &ActionForSourceCodeScript::markParenthesisAttrParam;
+	Action[20] = &ActionForSourceCodeScript::markPeriodParam;
+	Action[21] = &ActionForSourceCodeScript::setMemberId;
+	Action[22] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
+	Action[23] = &ActionForSourceCodeScript::markPeriodBracketParam;
+	Action[24] = &ActionForSourceCodeScript::markPeriodBraceParam;
+	Action[25] = &ActionForSourceCodeScript::markQuestionPeriodParam;
+	Action[26] = &ActionForSourceCodeScript::markPointerParam;
+	Action[27] = &ActionForSourceCodeScript::markPeriodStarParam;
+	Action[28] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
+	Action[29] = &ActionForSourceCodeScript::markPointerStarParam;
+	Action[30] = &ActionForSourceCodeScript::pushStr;
+	Action[31] = &ActionForSourceCodeScript::pushNum;
 }
 //--------------------------------------------------------------------------------------
 
