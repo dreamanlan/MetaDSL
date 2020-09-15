@@ -138,18 +138,23 @@ namespace Dsl.Common
                 case 17: setExternScript(); break;
                 case 18: markBracketAttrParam(); break;
                 case 19: markParenthesisAttrParam(); break;
-                case 20: markPeriodParam(); break;
-                case 21: setMemberId(); break;
-                case 22: markPeriodParenthesisParam(); break;
-                case 23: markPeriodBracketParam(); break;
-                case 24: markPeriodBraceParam(); break;
-                case 25: markQuestionPeriodParam(); break;
-                case 26: markPointerParam(); break;
-                case 27: markPeriodStarParam(); break;
-                case 28: markQuestionPeriodStarParam(); break;
-                case 29: markPointerStarParam(); break;
-                case 30: pushStr(); break;
-                case 31: pushNum(); break;
+                case 20: markAngleBracketAttrParam(); break;
+                case 21: markColonColonParam(); break;
+                case 22: setMemberId(); break;
+                case 23: markColonColonParenthesisParam(); break;
+                case 24: markColonColonBracketParam(); break;
+                case 25: markColonColonBraceParam(); break;
+                case 26: markPeriodParam(); break;
+                case 27: markPeriodParenthesisParam(); break;
+                case 28: markPeriodBracketParam(); break;
+                case 29: markPeriodBraceParam(); break;
+                case 30: markQuestionPeriodParam(); break;
+                case 31: markPointerParam(); break;
+                case 32: markPeriodStarParam(); break;
+                case 33: markQuestionPeriodStarParam(); break;
+                case 34: markPointerStarParam(); break;
+                case 35: pushStr(); break;
+                case 36: pushNum(); break;
             }
         }
         private void executeLua(int number)
@@ -580,6 +585,31 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR);
+        }        
+        private void markAngleBracketAttrParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_ATTR);
+        }
+        private void markColonColonParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON);
+        }
+        private void markColonColonParenthesisParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS);
+        }
+        private void markColonColonBracketParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET);
+        }
+        private void markColonColonBraceParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE);
         }
         private void setExternScript()
         {

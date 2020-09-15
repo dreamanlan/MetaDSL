@@ -37,6 +37,8 @@ public static string[] name = {
 ,"BRACKET_ATTR_END"
 ,"PARENTHESIS_ATTR_BEGIN"
 ,"PARENTHESIS_ATTR_END"
+,"ANGLE_BRACKET_ATTR_BEGIN"
+,"ANGLE_BRACKET_ATTR_END"
 ,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
@@ -74,6 +76,8 @@ public  short[] token = {
 ,DslConstants.BRACKET_ATTR_END_ 
 ,DslConstants.PARENTHESIS_ATTR_BEGIN_ 
 ,DslConstants.PARENTHESIS_ATTR_END_ 
+,DslConstants.ANGLE_BRACKET_ATTR_BEGIN_ 
+,DslConstants.ANGLE_BRACKET_ATTR_END_ 
 ,DslConstants.IDENTIFIER_ 
 ,DslConstants.STRING_ 
 ,DslConstants.NUMBER_ 

@@ -125,6 +125,7 @@ FUNCTION_EX_CALL_SPECIAL:
 FUNCTION_PARAMS:
 	_action_markParenthesisParam ( STATEMENTS ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 	_action_markBracketParam \[ STATEMENTS \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	:: STATIC_MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	. MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	QUESTION_PERIOD MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	_action_markQuestionParenthesisParam QUESTION_PARENTHESIS STATEMENTS ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
@@ -138,6 +139,13 @@ FUNCTION_PARAMS:
 	_action_markExternScript SCRIPT_CONTENT _action_setExternScript [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 	_action_markBracketAttrParam BRACKET_ATTR_BEGIN STATEMENTS BRACKET_ATTR_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	_action_markParenthesisAttrParam PARENTHESIS_ATTR_BEGIN STATEMENTS PARENTHESIS_ATTR_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markAngleBracketAttrParam ANGLE_BRACKET_ATTR_BEGIN STATEMENTS ANGLE_BRACKET_ATTR_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+		
+STATIC_MEMBER_DESC:
+	_action_markColonColonParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	_action_markColonColonParenthesisParam ( STATEMENTS )
+	_action_markColonColonBracketParam \[ STATEMENTS \]
+	_action_markColonColonBraceParam \{ STATEMENTS \}
 	
 MEMBER_DESC:
 	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement

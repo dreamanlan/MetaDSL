@@ -368,6 +368,11 @@ namespace Dsl
             PARAM_CLASS_EXTERN_SCRIPT,
             PARAM_CLASS_PARENTHESIS_ATTR,
             PARAM_CLASS_BRACKET_ATTR,
+            PARAM_CLASS_ANGLE_BRACKET_ATTR,
+            PARAM_CLASS_COLON_COLON,
+            PARAM_CLASS_COLON_COLON_PARENTHESIS,
+            PARAM_CLASS_COLON_COLON_BRACKET,
+            PARAM_CLASS_COLON_COLON_BRACE,
             PARAM_CLASS_PERIOD_STAR,
             PARAM_CLASS_QUESTION_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,
@@ -1414,6 +1419,22 @@ namespace Dsl
                                 lbracket = ".{";
                                 rbracket = "}";
                                 break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON:
+                                lbracket = "::";
+                                rbracket = string.Empty;
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS:
+                                lbracket = "::(";
+                                rbracket = ")";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET:
+                                lbracket = "::[";
+                                rbracket = "]";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE:
+                                lbracket = "::{";
+                                rbracket = "}";
+                                break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
                                 lbracket = "?.";
                                 rbracket = string.Empty;
@@ -1441,6 +1462,10 @@ namespace Dsl
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR:
                                 lbracket = "(:";
                                 rbracket = ":)";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                                lbracket = "<:";
+                                rbracket = ":>";
                                 break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                                 lbracket = ".*";
@@ -1647,6 +1672,22 @@ namespace Dsl
                             lbracket = ".{";
                             rbracket = "}";
                             break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON:
+                            lbracket = "::";
+                            rbracket = string.Empty;
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS:
+                            lbracket = "::(";
+                            rbracket = ")";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET:
+                            lbracket = "::[";
+                            rbracket = "]";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE:
+                            lbracket = "::{";
+                            rbracket = "}";
+                            break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
                             lbracket = "?.";
                             rbracket = string.Empty;
@@ -1682,6 +1723,10 @@ namespace Dsl
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR:
                             lbracket = "(:";
                             rbracket = ":)";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                            lbracket = "<:";
+                            rbracket = ":>";
                             break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                             lbracket = ".*";

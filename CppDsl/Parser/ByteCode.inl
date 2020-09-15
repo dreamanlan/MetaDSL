@@ -604,6 +604,56 @@ namespace Dsl
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_ATTR);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markAngleBracketAttrParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_ATTR);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markColonColonParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markColonColonParenthesisParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON_PARENTHESIS);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markColonColonBracketParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON_BRACKET);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markColonColonBraceParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON_BRACE);
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPointerParam(void)
     {
         if (!preconditionCheck())return;

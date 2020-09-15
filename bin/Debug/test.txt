@@ -40,6 +40,12 @@ skill(kkk)
   @@delimiter(string,"[[","]]");
   a = "b";
   a = [[ abcd ]];
+  template<:a,b,c:>class A;
+  a::b::c;
+  a::b(abcd);
+  a::(abcd);
+  b::[abcd];
+  c::{abcd};
 };	//test test test
 skill(ttt)
 {

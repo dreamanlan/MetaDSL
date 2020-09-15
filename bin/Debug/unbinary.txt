@@ -33,6 +33,12 @@ skill(kkk)
 	:};
 	a = "b";
 	a = " abcd ";
+	template<:a,b,c:>class A;
+	a::b::c;
+	a::b(abcd);
+	a::(abcd);
+	b::[abcd];
+	c::{abcd};
 };
 skill(ttt)
 

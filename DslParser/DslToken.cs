@@ -156,6 +156,24 @@ namespace Dsl.Parser
                 mCurToken = ":)";
                 return DslConstants.PARENTHESIS_ATTR_END_;
             }
+            else if (CurChar == '<' && NextChar == ':') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "<:";
+                return DslConstants.ANGLE_BRACKET_ATTR_BEGIN_;
+            }
+            else if (CurChar == ':' && NextChar == '>') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = ":>";
+                return DslConstants.ANGLE_BRACKET_ATTR_END_;
+            }
+            else if (CurChar == ':' && NextChar == ':') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "::";
+                return DslConstants.COLON_COLON_;
+            }
             else if (CurChar == '?') {
                 if (NextChar == '.') {
                     ++mIterator;

@@ -878,6 +878,18 @@ namespace Dsl
                 case FunctionData::PARAM_CLASS_PERIOD_BRACE:
                     fwrite(".{", 2, 1, fp);
                     break;
+                case FunctionData::PARAM_CLASS_COLON_COLON:
+                    fwrite("::", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_COLON_COLON_PARENTHESIS:
+                    fwrite("::(", 3, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_COLON_COLON_BRACKET:
+                    fwrite("::[", 3, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_COLON_COLON_BRACE:
+                    fwrite("::{", 3, 1, fp);
+                    break;
                 case FunctionData::PARAM_CLASS_QUESTION_PERIOD:
                     fwrite("?.", 2, 1, fp);
                     break;
@@ -898,6 +910,9 @@ namespace Dsl
                     break;
                 case FunctionData::PARAM_CLASS_PARENTHESIS_ATTR:
                     fwrite("(:", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                    fwrite("<:", 2, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_PERIOD_STAR:
                     fwrite(".*", 2, 1, fp);
@@ -934,6 +949,17 @@ namespace Dsl
                 case FunctionData::PARAM_CLASS_PERIOD_BRACE:
                     fwrite("}", 1, 1, fp);
                     break;
+                case FunctionData::PARAM_CLASS_COLON_COLON:
+                    break;
+                case FunctionData::PARAM_CLASS_COLON_COLON_PARENTHESIS:
+                    fwrite(")", 1, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_COLON_COLON_BRACKET:
+                    fwrite("]", 1, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_COLON_COLON_BRACE:
+                    fwrite("}", 1, 1, fp);
+                    break;
                 case FunctionData::PARAM_CLASS_QUESTION_PERIOD:
                     break;
                 case FunctionData::PARAM_CLASS_QUESTION_PARENTHESIS:
@@ -952,6 +978,9 @@ namespace Dsl
                     break;
                 case FunctionData::PARAM_CLASS_PARENTHESIS_ATTR:
                     fwrite(":)", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                    fwrite(":>", 2, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_PERIOD_STAR:
                     break;

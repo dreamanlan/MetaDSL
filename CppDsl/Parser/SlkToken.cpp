@@ -534,6 +534,30 @@ short SlkToken::get(void)
         endToken();
         return PARENTHESIS_ATTR_END_;
     }
+    else if (*mIterator == '<' && *(mIterator + 1) == ':') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('<');
+        pushTokenChar(':');
+        endToken();
+        return ANGLE_BRACKET_ATTR_BEGIN_;
+    }
+    else if (*mIterator == ':' && *(mIterator + 1) == '>') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar(':');
+        pushTokenChar('>');
+        endToken();
+        return ANGLE_BRACKET_ATTR_END_;
+    }
+    else if (*mIterator == ':' && *(mIterator + 1) == ':') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar(':');
+        pushTokenChar(':');
+        endToken();
+        return COLON_COLON_;
+    }
     else if (*mIterator == '?') {
         char nextChar = *(mIterator + 1);
         if (nextChar == '.') {

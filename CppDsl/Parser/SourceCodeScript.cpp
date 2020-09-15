@@ -3,7 +3,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	32
+#define MAX_ACTION_NUM	37
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < ActionForSourceCodeScript >
@@ -144,18 +144,23 @@ inline void ActionForSourceCodeScript::initialize_table(void)
     Action[17] = &ActionForSourceCodeScript::setExternScript;
     Action[18] = &ActionForSourceCodeScript::markBracketAttrParam;
     Action[19] = &ActionForSourceCodeScript::markParenthesisAttrParam;
-	Action[20] = &ActionForSourceCodeScript::markPeriodParam;
-	Action[21] = &ActionForSourceCodeScript::setMemberId;
-	Action[22] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
-	Action[23] = &ActionForSourceCodeScript::markPeriodBracketParam;
-	Action[24] = &ActionForSourceCodeScript::markPeriodBraceParam;
-	Action[25] = &ActionForSourceCodeScript::markQuestionPeriodParam;
-	Action[26] = &ActionForSourceCodeScript::markPointerParam;
-	Action[27] = &ActionForSourceCodeScript::markPeriodStarParam;
-	Action[28] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
-	Action[29] = &ActionForSourceCodeScript::markPointerStarParam;
-	Action[30] = &ActionForSourceCodeScript::pushStr;
-	Action[31] = &ActionForSourceCodeScript::pushNum;
+    Action[20] = &ActionForSourceCodeScript::markAngleBracketAttrParam;
+    Action[21] = &ActionForSourceCodeScript::markColonColonParam;
+    Action[22] = &ActionForSourceCodeScript::setMemberId;
+    Action[23] = &ActionForSourceCodeScript::markColonColonParenthesisParam;
+    Action[24] = &ActionForSourceCodeScript::markColonColonBracketParam;
+    Action[25] = &ActionForSourceCodeScript::markColonColonBraceParam;
+	Action[26] = &ActionForSourceCodeScript::markPeriodParam;
+	Action[27] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
+	Action[28] = &ActionForSourceCodeScript::markPeriodBracketParam;
+	Action[29] = &ActionForSourceCodeScript::markPeriodBraceParam;
+	Action[30] = &ActionForSourceCodeScript::markQuestionPeriodParam;
+	Action[31] = &ActionForSourceCodeScript::markPointerParam;
+	Action[32] = &ActionForSourceCodeScript::markPeriodStarParam;
+	Action[33] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
+	Action[34] = &ActionForSourceCodeScript::markPointerStarParam;
+	Action[35] = &ActionForSourceCodeScript::pushStr;
+	Action[36] = &ActionForSourceCodeScript::pushNum;
 }
 //--------------------------------------------------------------------------------------
 
