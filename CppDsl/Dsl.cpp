@@ -905,14 +905,26 @@ namespace Dsl
                 case FunctionData::PARAM_CLASS_POINTER:
                     fwrite("->", 2, 1, fp);
                     break;
-                case FunctionData::PARAM_CLASS_BRACKET_ATTR:
+                case FunctionData::PARAM_CLASS_BRACKET_COLON:
                     fwrite("[:", 2, 1, fp);
                     break;
-                case FunctionData::PARAM_CLASS_PARENTHESIS_ATTR:
+                case FunctionData::PARAM_CLASS_PARENTHESIS_COLON:
                     fwrite("(:", 2, 1, fp);
                     break;
-                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON:
                     fwrite("<:", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_BRACE_PERCENT:
+                    fwrite("{%", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_BRACKET_PERCENT:
+                    fwrite("[%", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_PARENTHESIS_PERCENT:
+                    fwrite("(%", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                    fwrite("<%", 2, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_PERIOD_STAR:
                     fwrite(".*", 2, 1, fp);
@@ -973,14 +985,26 @@ namespace Dsl
                     break;
                 case FunctionData::PARAM_CLASS_POINTER:
                     break;
-                case FunctionData::PARAM_CLASS_BRACKET_ATTR:
+                case FunctionData::PARAM_CLASS_BRACKET_COLON:
                     fwrite(":]", 2, 1, fp);
                     break;
-                case FunctionData::PARAM_CLASS_PARENTHESIS_ATTR:
+                case FunctionData::PARAM_CLASS_PARENTHESIS_COLON:
                     fwrite(":)", 2, 1, fp);
                     break;
-                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON:
                     fwrite(":>", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_BRACE_PERCENT:
+                    fwrite("%}", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_BRACKET_PERCENT:
+                    fwrite("%]", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_PARENTHESIS_PERCENT:
+                    fwrite("%)", 2, 1, fp);
+                    break;
+                case FunctionData::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                    fwrite("%>", 2, 1, fp);
                     break;
                 case FunctionData::PARAM_CLASS_PERIOD_STAR:
                     break;

@@ -33,8 +33,13 @@ void CompileTest_ByteCode(void)
 	builder.markBracketParam();
 	builder.markStatement();
 	builder.markExternScript();
-    builder.markBracketAttrParam();
-    builder.markParenthesisAttrParam();
+    builder.markBracketColonParam();
+    builder.markParenthesisColonParam();
+    builder.markAngleBracketColonParam();
+    builder.markBracePercentParam();
+    builder.markBracketPercentParam();
+    builder.markParenthesisPercentParam();
+    builder.markAngleBracketPercentParam();
 	builder.setExternScript();
 	builder.markParenthesisParam();
 	builder.markPeriodBraceParam();

@@ -41,6 +41,10 @@ skill(kkk)
 	a::(abcd);
 	b::[abcd];
 	c::{abcd};
+	{%abcd%};
+	[%abcd%];
+	(%abcd%);
+	<%abcd%>;
 };	//test test test
 skill(ttt)
 

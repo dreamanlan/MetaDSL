@@ -136,25 +136,29 @@ namespace Dsl.Common
                 case 15: markStatement(); break;
                 case 16: markExternScript(); break;
                 case 17: setExternScript(); break;
-                case 18: markBracketAttrParam(); break;
-                case 19: markParenthesisAttrParam(); break;
-                case 20: markAngleBracketAttrParam(); break;
-                case 21: markColonColonParam(); break;
-                case 22: setMemberId(); break;
-                case 23: markColonColonParenthesisParam(); break;
-                case 24: markColonColonBracketParam(); break;
-                case 25: markColonColonBraceParam(); break;
-                case 26: markPeriodParam(); break;
-                case 27: markPeriodParenthesisParam(); break;
-                case 28: markPeriodBracketParam(); break;
-                case 29: markPeriodBraceParam(); break;
-                case 30: markQuestionPeriodParam(); break;
-                case 31: markPointerParam(); break;
-                case 32: markPeriodStarParam(); break;
-                case 33: markQuestionPeriodStarParam(); break;
-                case 34: markPointerStarParam(); break;
-                case 35: pushStr(); break;
-                case 36: pushNum(); break;
+                case 18: markBracketColonParam(); break;
+                case 19: markParenthesisColonParam(); break;
+                case 20: markAngleBracketColonParam(); break;
+                case 21: markBracePercentParam(); break;
+                case 22: markBracketPercentParam(); break;
+                case 23: markParenthesisPercentParam(); break;
+                case 24: markAngleBracketPercentParam(); break;
+                case 25: markColonColonParam(); break;
+                case 26: setMemberId(); break;
+                case 27: markColonColonParenthesisParam(); break;
+                case 28: markColonColonBracketParam(); break;
+                case 29: markColonColonBraceParam(); break;
+                case 30: markPeriodParam(); break;
+                case 31: markPeriodParenthesisParam(); break;
+                case 32: markPeriodBracketParam(); break;
+                case 33: markPeriodBraceParam(); break;
+                case 34: markQuestionPeriodParam(); break;
+                case 35: markPointerParam(); break;
+                case 36: markPeriodStarParam(); break;
+                case 37: markQuestionPeriodStarParam(); break;
+                case 38: markPointerStarParam(); break;
+                case 39: pushStr(); break;
+                case 40: pushNum(); break;
             }
         }
         private void executeLua(int number)
@@ -175,9 +179,9 @@ namespace Dsl.Common
                 case 13: buildHighOrderFunction(); break;
                 case 14: pushLuaRange(); break;
                 case 15: pushLuaVarAttr(); break;
-                case 16: markBracketAttrParam(); break;
+                case 16: markBracketColonParam(); break;
                 case 17: removeLuaVarAttr(); break;
-                case 18: markParenthesisAttrParam(); break;
+                case 18: markParenthesisColonParam(); break;
                 case 19: pushDot(); break;
                 case 20: pushColon(); break;
                 case 21: pushLuaArgs(); break;
@@ -195,15 +199,26 @@ namespace Dsl.Common
             switch (number) {
                 case 1: endStatement(); break;
                 case 2: beginStatement(); break;
-                case 3: addFunction(); break;
-                case 4: setFunctionId(); break;
-                case 5: markParenthesisParam(); break;
-                case 6: buildHighOrderFunction(); break;
-                case 7: markBracketParam(); break;
-                case 8: markStatement(); break;
-                case 9: pushId(); break;
-                case 10: pushStr(); break;
-                case 11: pushNum(); break;
+                case 3: cppOnFunctionBegin(); break;
+                case 4: addFunction(); break;
+                case 5: cppOnFunctionEnd(); break;
+                case 6: setFunctionId(); break;
+                case 7: markParenthesisParam(); break;
+                case 8: buildHighOrderFunction(); break;
+                case 9: markBracketParam(); break;
+                case 10: markStatement(); break;
+                case 11: markBracketColonParam(); break;
+                case 12: markAngleBracketColonParam(); break;
+                case 13: markAngleBracketPercentParam(); break;
+                case 14: markColonColonParam(); break;
+                case 15: setMemberId(); break;
+                case 16: markPeriodParam(); break;
+                case 17: markPointerParam(); break;
+                case 18: markPeriodStarParam(); break;
+                case 19: markPointerStarParam(); break;
+                case 20: pushId(); break;
+                case 21: pushStr(); break;
+                case 22: pushNum(); break;
             }
         }
 
@@ -576,20 +591,40 @@ namespace Dsl.Common
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
         }
-        private void markBracketAttrParam()
+        private void markBracketColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON);
         }
-        private void markParenthesisAttrParam()
+        private void markParenthesisColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
         }        
-        private void markAngleBracketAttrParam()
+        private void markAngleBracketColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_ATTR);
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON);
+        }
+        private void markBracePercentParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT);
+        }
+        private void markBracketPercentParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT);
+        }
+        private void markParenthesisPercentParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
+        }
+        private void markAngleBracketPercentParam()
+        {
+            FunctionData func = getLastFunction();
+            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT);
         }
         private void markColonColonParam()
         {
@@ -648,6 +683,11 @@ namespace Dsl.Common
         {
             push(getLastToken(), FunctionData.STRING_TOKEN);
         }
+        /// ---------------------------------------------------------------
+        /// 用于特定语法的语义行为，dsl目前提供lua精确语法与cpp类语言模糊语法的解析
+        /// cpp类语言的解析主要识别括弧结构与分隔符分隔开的语句，可用于提取类接口等
+        /// 简单应用
+        /// ---------------------------------------------------------------
         private void pushDot()
         {
             push(".", FunctionData.STRING_TOKEN);
@@ -660,7 +700,7 @@ namespace Dsl.Common
         {
             push("assignwith", FunctionData.ID_TOKEN);
         }
-        //a,b,c = d,e,f => lualist(a,b,c)assignwith(d,e,f)
+        ///a,b,c = d,e,f => lualist(a,b,c)assignwith(d,e,f)
         private void pushLuaList()
         {
             push("lualist", FunctionData.ID_TOKEN);
@@ -708,12 +748,12 @@ namespace Dsl.Common
                 }
             }
         }
-        //for i = i1,i2,i3 do => for(i)luarange(i1,i2,i3){}
+        ///for i = i1,i2,i3 do => for(i)luarange(i1,i2,i3){}
         private void pushLuaRange()
         {
             push("luarange", FunctionData.ID_TOKEN);
         }
-        //name <attr> => luavarattr(name, attr)
+        ///name <attr> => luavarattr(name, attr)
         private void pushLuaVarAttr()
         {
             push("luavarattr", FunctionData.ID_TOKEN);
@@ -747,17 +787,100 @@ namespace Dsl.Common
             }
             endStatement();
         }
-        //function name(arg) => function(name)args(arg)
+        ///function name(arg) => function(name)args(arg)
         private void pushLuaArgs()
         {
             push("luaargs", FunctionData.ID_TOKEN);
         }
-        //::label:: => lualabel(label)
+        ///::label:: => lualabel(label)
         private void pushLuaLabel()
         {
             push("lualabel", FunctionData.ID_TOKEN);
         }
+        ///在每个函数结束时（可能是单个标识符样式、函数调用样式、高阶函数调用样式）对c++语句进行断句，
+        ///这比在语法上精确定义处理起来更简单
+        private void cppOnFunctionBegin()
+        {
+            var first = getFirstFunction();
+            var last = getLastFunction();
+            var firstId = first.GetId();
+            var lastId = last.GetId();
+            if (last.HaveStatement() && firstId != "if" && firstId != "do" && firstId != "try" ||
+                (firstId == "public" || firstId == "protected" || firstId == "private") && lastId == ":") {
+                endStatement();
+                beginStatement();
+                return;
+            }
+        }
+        private void cppOnFunctionEnd()
+        {
+            var statement = getCurStatement();
+            var first = getFirstFunction();
+            var second = getSecondFunction();
+            var last = getLastFunction();
+            var firstId = first.GetId();
+            var secondId = second.GetId();
+            var lastId = last.GetId();
+            if (firstId == "if" && first.HaveStatement() && lastId != "if" && lastId != "else" ||
+                firstId == "do" && lastId != "while" ||
+                firstId == "try" && lastId != "catch" && lastId != "finally") {
+                statement.Functions.Remove(last);
+                endStatement();
+                beginStatement();
+                var newStatement = getCurStatement();
+                newStatement.Functions.Add(last);
+                return;
+            }
+            //构造函数初始化列表转换为:的参数列表
+            if (IsCppConstructor(statement, true)) {
+                markParenthesisParam();
+                beginStatement();
+                return;
+            }
+            //构造函数初始化列表结束需要将函数体与最后一个初始化变量拆分
+            if (last.HaveStatement() && mStatementSemanticStack.Count > 1) {
+                StatementData parentSt = getCurParentStatement();
+                if (IsCppConstructor(parentSt, false)) {
+                    var ps = new List<ISyntaxComponent>(last.Params);
+                    if (last.IsHighOrder) {
+                        var curStatement = getCurStatement();
+                        curStatement.Functions[curStatement.Functions.Count - 1] = last.LowerOrderFunction;
+                    }
+                    else {
+                        last.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_NOTHING);
+                        last.Params.Clear();
+                    }
+                    endStatement();
+                    buildHighOrderFunction();
+                    markStatement();
+                    last = getLastFunction();
+                    last.Params.AddRange(ps);
+                }
+            }
+        }
+        /// ---------------------------------------------------------------
+        /// 特定语言工具函数
+        /// ---------------------------------------------------------------
+        private bool IsCppConstructor(StatementData statement, bool curIsColon)
+        {
+            bool ret = false;
+            var first = statement.First;
+            var second = statement.Second;
+            var third = statement.Third;
+            var last = statement.Last;
+            var firstId = first.GetId();
+            var secondId = second.GetId();
+            var thirdId = third.GetId();
+            if (firstId == "explicit" && second.HaveId() && second.HaveParam() && thirdId == ":" && (!curIsColon || third == last) ||
+                first.HaveId() && first.HaveParam() && secondId == ":" && (!curIsColon || second == last)) {
+                ret = true;
+            }
+            return ret;
+        }
 
+        /// ---------------------------------------------------------------
+        /// 工具函数部分
+        /// ---------------------------------------------------------------
         private void push(string s, int val)
         {
             mSemanticStack.Push(new SemanticInfo(s, val));
@@ -786,6 +909,15 @@ namespace Dsl.Common
             StatementData topData = mStatementSemanticStack.Peek();
             return topData;
         }
+        private StatementData getCurParentStatement()
+        {
+            if (mStatementSemanticStack.Count <= 1)
+                return null;
+            var topData = mStatementSemanticStack.Pop();
+            var parentData = mStatementSemanticStack.Peek();
+            mStatementSemanticStack.Push(topData);
+            return parentData;
+        }
         private FunctionData getFirstFunction()
         {
             StatementData statement = getCurStatement();
@@ -795,6 +927,11 @@ namespace Dsl.Common
         {
             StatementData statement = getCurStatement();
             return statement.Second;
+        }
+        private FunctionData getThirdFunction()
+        {
+            StatementData statement = getCurStatement();
+            return statement.Third;
         }
         private FunctionData getLastFunction()
         {

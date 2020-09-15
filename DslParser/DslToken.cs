@@ -136,37 +136,85 @@ namespace Dsl.Parser
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "[:";
-                return DslConstants.BRACKET_ATTR_BEGIN_;
+                return DslConstants.BRACKET_COLON_BEGIN_;
             }
             else if (CurChar == ':' && NextChar == ']') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ":]";
-                return DslConstants.BRACKET_ATTR_END_;
+                return DslConstants.BRACKET_COLON_END_;
             }
             else if (CurChar == '(' && NextChar == ':') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "(:";
-                return DslConstants.PARENTHESIS_ATTR_BEGIN_;
+                return DslConstants.PARENTHESIS_COLON_BEGIN_;
             }
             else if (CurChar == ':' && NextChar == ')') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ":)";
-                return DslConstants.PARENTHESIS_ATTR_END_;
+                return DslConstants.PARENTHESIS_COLON_END_;
             }
             else if (CurChar == '<' && NextChar == ':') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "<:";
-                return DslConstants.ANGLE_BRACKET_ATTR_BEGIN_;
+                return DslConstants.ANGLE_BRACKET_COLON_BEGIN_;
             }
             else if (CurChar == ':' && NextChar == '>') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ":>";
-                return DslConstants.ANGLE_BRACKET_ATTR_END_;
+                return DslConstants.ANGLE_BRACKET_COLON_END_;
+            }
+            else if (CurChar == '{' && NextChar == '%') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "{%";
+                return DslConstants.BRACE_PERCENT_BEGIN_;
+            }
+            else if (CurChar == '%' && NextChar == '}') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "%}";
+                return DslConstants.BRACE_PERCENT_END_;
+            }
+            else if (CurChar == '[' && NextChar == '%') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "[%";
+                return DslConstants.BRACKET_PERCENT_BEGIN_;
+            }
+            else if (CurChar == '%' && NextChar == ']') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "%]";
+                return DslConstants.BRACKET_PERCENT_END_;
+            }
+            else if (CurChar == '(' && NextChar == '%') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "(%";
+                return DslConstants.PARENTHESIS_PERCENT_BEGIN_;
+            }
+            else if (CurChar == '%' && NextChar == ')') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "%)";
+                return DslConstants.PARENTHESIS_PERCENT_END_;
+            }
+            else if (CurChar == '<' && NextChar == '%') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "<%";
+                return DslConstants.ANGLE_BRACKET_PERCENT_BEGIN_;
+            }
+            else if (CurChar == '%' && NextChar == '>') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "%>";
+                return DslConstants.ANGLE_BRACKET_PERCENT_END_;
             }
             else if (CurChar == ':' && NextChar == ':') {
                 ++mIterator;
@@ -536,7 +584,7 @@ namespace Dsl.Parser
             int start = 0;
             while (start < str.Length && isWhiteSpace(str[start]) && str[start] != '\n')
                 ++start;
-            if (str[start] == '\n') {
+            if (start < str.Length && str[start] == '\n') {
                 ++start;
             }
             else {

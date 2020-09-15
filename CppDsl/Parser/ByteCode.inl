@@ -584,34 +584,74 @@ namespace Dsl
         p->SetParamClass(FunctionData::PARAM_CLASS_EXTERN_SCRIPT);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markBracketAttrParam(void)
+        void RuntimeBuilderT<RealTypeT>::markBracketColonParam(void)
     {
         if (!preconditionCheck())return;
         FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
         FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_ATTR);
+        call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_COLON);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisAttrParam(void)
+        void RuntimeBuilderT<RealTypeT>::markParenthesisColonParam(void)
     {
         if (!preconditionCheck())return;
         FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
         FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_ATTR);
+        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_COLON);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markAngleBracketAttrParam(void)
+        void RuntimeBuilderT<RealTypeT>::markAngleBracketColonParam(void)
     {
         if (!preconditionCheck())return;
         FunctionData* p = mData.getLastFunctionRef();
         if (0 == p)
             return;
         FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_ATTR);
+        call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markBracePercentParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_BRACE_PERCENT);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markBracketPercentParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_PERCENT);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_PERCENT);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markAngleBracketPercentParam(void)
+    {
+        if (!preconditionCheck())return;
+        FunctionData* p = mData.getLastFunctionRef();
+        if (0 == p)
+            return;
+        FunctionData& call = *p;
+        call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_PERCENT);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markColonColonParam(void)

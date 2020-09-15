@@ -8,14 +8,25 @@ public void execute  ( int  number )
   switch ( number ) {
     case 1:  endStatement();  break;
     case 2:  beginStatement();  break;
-    case 3:  addFunction();  break;
-    case 4:  setFunctionId();  break;
-    case 5:  markParenthesisParam();  break;
-    case 6:  buildHighOrderFunction();  break;
-    case 7:  markBracketParam();  break;
-    case 8:  markStatement();  break;
-    case 9:  pushId();  break;
-    case 10:  pushStr();  break;
-    case 11:  pushNum();  break;
+    case 3:  cppOnFunctionBegin();  break;
+    case 4:  addFunction();  break;
+    case 5:  cppOnFunctionEnd();  break;
+    case 6:  setFunctionId();  break;
+    case 7:  markParenthesisParam();  break;
+    case 8:  buildHighOrderFunction();  break;
+    case 9:  markBracketParam();  break;
+    case 10:  markStatement();  break;
+    case 11:  markBracketColonParam();  break;
+    case 12:  markAngleBracketColonParam();  break;
+    case 13:  markAngleBracketPercentParam();  break;
+    case 14:  markColonColonParam();  break;
+    case 15:  setMemberId();  break;
+    case 16:  markPeriodParam();  break;
+    case 17:  markPointerParam();  break;
+    case 18:  markPeriodStarParam();  break;
+    case 19:  markPointerStarParam();  break;
+    case 20:  pushId();  break;
+    case 21:  pushStr();  break;
+    case 22:  pushNum();  break;
   }
 }

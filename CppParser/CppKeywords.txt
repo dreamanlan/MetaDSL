@@ -7,14 +7,32 @@ class CppKeywords {
 
 public static string[] name = {
 
- "IDENTIFIER"
+ "POINTER"
+,"PERIOD_STAR"
+,"POINTER_STAR"
+,"BRACKET_COLON_BEGIN"
+,"BRACKET_COLON_END"
+,"ANGLE_BRACKET_COLON_BEGIN"
+,"ANGLE_BRACKET_COLON_END"
+,"ANGLE_BRACKET_PERCENT_BEGIN"
+,"ANGLE_BRACKET_PERCENT_END"
+,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
 }; 
 
 public  short[] token = {
 
- CppConstants.IDENTIFIER_ 
+ CppConstants.POINTER_ 
+,CppConstants.PERIOD_STAR_ 
+,CppConstants.POINTER_STAR_ 
+,CppConstants.BRACKET_COLON_BEGIN_ 
+,CppConstants.BRACKET_COLON_END_ 
+,CppConstants.ANGLE_BRACKET_COLON_BEGIN_ 
+,CppConstants.ANGLE_BRACKET_COLON_END_ 
+,CppConstants.ANGLE_BRACKET_PERCENT_BEGIN_ 
+,CppConstants.ANGLE_BRACKET_PERCENT_END_ 
+,CppConstants.IDENTIFIER_ 
 ,CppConstants.STRING_ 
 ,CppConstants.NUMBER_ 
 }; 

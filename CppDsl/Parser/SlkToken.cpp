@@ -508,7 +508,7 @@ short SlkToken::get(void)
         pushTokenChar('[');
         pushTokenChar(':');
         endToken();
-        return BRACKET_ATTR_BEGIN_;
+        return BRACKET_COLON_BEGIN_;
     }
     else if (*mIterator == ':' && *(mIterator + 1) == ']') {
         ++mIterator;
@@ -516,7 +516,7 @@ short SlkToken::get(void)
         pushTokenChar(':');
         pushTokenChar(']');
         endToken();
-        return BRACKET_ATTR_END_;
+        return BRACKET_COLON_END_;
     }
     else if (*mIterator == '(' && *(mIterator + 1) == ':') {
         ++mIterator;
@@ -524,7 +524,7 @@ short SlkToken::get(void)
         pushTokenChar('(');
         pushTokenChar(':');
         endToken();
-        return PARENTHESIS_ATTR_BEGIN_;
+        return PARENTHESIS_COLON_BEGIN_;
     }
     else if (*mIterator == ':' && *(mIterator + 1) == ')') {
         ++mIterator;
@@ -532,7 +532,7 @@ short SlkToken::get(void)
         pushTokenChar(':');
         pushTokenChar(')');
         endToken();
-        return PARENTHESIS_ATTR_END_;
+        return PARENTHESIS_COLON_END_;
     }
     else if (*mIterator == '<' && *(mIterator + 1) == ':') {
         ++mIterator;
@@ -540,7 +540,7 @@ short SlkToken::get(void)
         pushTokenChar('<');
         pushTokenChar(':');
         endToken();
-        return ANGLE_BRACKET_ATTR_BEGIN_;
+        return ANGLE_BRACKET_COLON_BEGIN_;
     }
     else if (*mIterator == ':' && *(mIterator + 1) == '>') {
         ++mIterator;
@@ -548,7 +548,71 @@ short SlkToken::get(void)
         pushTokenChar(':');
         pushTokenChar('>');
         endToken();
-        return ANGLE_BRACKET_ATTR_END_;
+        return ANGLE_BRACKET_COLON_END_;
+    }
+    else if (*mIterator == '{' && *(mIterator + 1) == '%') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('{');
+        pushTokenChar('%');
+        endToken();
+        return BRACE_PERCENT_BEGIN_;
+    }
+    else if (*mIterator == '%' && *(mIterator + 1) == '}') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('%');
+        pushTokenChar('}');
+        endToken();
+        return BRACE_PERCENT_END_;
+    }
+    else if (*mIterator == '[' && *(mIterator + 1) == '%') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('[');
+        pushTokenChar('%');
+        endToken();
+        return BRACKET_PERCENT_BEGIN_;
+    }
+    else if (*mIterator == '%' && *(mIterator + 1) == ']') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('%');
+        pushTokenChar(']');
+        endToken();
+        return BRACKET_PERCENT_END_;
+    }
+    else if (*mIterator == '(' && *(mIterator + 1) == '%') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('(');
+        pushTokenChar('%');
+        endToken();
+        return PARENTHESIS_PERCENT_BEGIN_;
+    }
+    else if (*mIterator == '%' && *(mIterator + 1) == ')') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('%');
+        pushTokenChar(')');
+        endToken();
+        return PARENTHESIS_PERCENT_END_;
+    }
+    else if (*mIterator == '<' && *(mIterator + 1) == '%') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('<');
+        pushTokenChar('%');
+        endToken();
+        return ANGLE_BRACKET_PERCENT_BEGIN_;
+    }
+    else if (*mIterator == '%' && *(mIterator + 1) == '>') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('%');
+        pushTokenChar('>');
+        endToken();
+        return ANGLE_BRACKET_PERCENT_END_;
     }
     else if (*mIterator == ':' && *(mIterator + 1) == ':') {
         ++mIterator;
@@ -966,7 +1030,7 @@ void SlkToken::removeFirstAndLastEmptyLine(void)
     int start = 0;
     while (start < len && isWhiteSpace(mCurToken[start]) && mCurToken[start] != '\n')
         ++start;
-    if (mCurToken[start] == '\n') {
+    if (start < len && mCurToken[start] == '\n') {
         ++start;
     }
     else {

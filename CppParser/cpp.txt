@@ -14,8 +14,8 @@ FUNCTION_STATEMENT_DESC:
 	_action_beginStatement FUNCTION_CALLS
 	
 FUNCTION_CALLS:
-	{ _action_addFunction FUNCTION_EX_CALL }
-	_action_addFunction FUNCTION_EX_CALL_SPECIAL { _action_addFunction FUNCTION_EX_CALL }
+	{ _action_cppOnFunctionBegin _action_addFunction FUNCTION_EX_CALL _action_cppOnFunctionEnd }
+	_action_cppOnFunctionBegin _action_addFunction FUNCTION_EX_CALL_SPECIAL _action_cppOnFunctionEnd { _action_cppOnFunctionBegin _action_addFunction FUNCTION_EX_CALL _action_cppOnFunctionEnd }
 	
 FUNCTION_EX_CALL:
 	FUNCTION_ID _action_setFunctionId [ FUNCTION_PARAMS ]
@@ -26,7 +26,30 @@ FUNCTION_EX_CALL_SPECIAL:
 FUNCTION_PARAMS:
 	_action_markParenthesisParam ( STATEMENTS ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 	_action_markBracketParam \[ STATEMENTS \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	:: STATIC_MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	. MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	POINTER MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	PERIOD_STAR MEMBER_DESC3 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	POINTER_STAR MEMBER_DESC4 [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
 	_action_markStatement \{ STATEMENTS \} [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
+	_action_markBracketColonParam BRACKET_COLON_BEGIN STATEMENTS BRACKET_COLON_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markAngleBracketColonParam ANGLE_BRACKET_COLON_BEGIN STATEMENTS ANGLE_BRACKET_COLON_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+	_action_markAngleBracketPercentParam ANGLE_BRACKET_PERCENT_BEGIN STATEMENTS ANGLE_BRACKET_PERCENT_END [ _action_buildHighOrderFunction FUNCTION_PARAMS ] 
+		
+STATIC_MEMBER_DESC:
+	_action_markColonColonParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	
+MEMBER_DESC:
+	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	
+MEMBER_DESC2:
+	_action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	
+MEMBER_DESC3:
+	_action_markPeriodStarParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	
+MEMBER_DESC4:
+	_action_markPointerStarParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 
 FUNCTION_ID:
 	IDENTIFIER _action_pushId

@@ -330,11 +330,6 @@ namespace Lua.Parser
                         mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
                     }
                     mCurToken = mTokenBuilder.ToString();
-                    /*普通字符串保持源码的样子，不去掉首尾空行
-                    if (mCurToken.IndexOf('\n') >= 0) {
-                        mCurToken = removeFirstAndLastEmptyLine(mCurToken);
-                    }
-                    */
                     return LuaConstants.STRING_;
                 }
                 else {

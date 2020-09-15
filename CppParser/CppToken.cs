@@ -70,6 +70,102 @@ namespace Cpp.Parser
                 mCurToken = "<<eof>>";
                 return CppConstants.END_OF_SLK_INPUT_;
             }
+            else if (CurChar == '[' && NextChar == '[') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "[[";
+                return CppConstants.BRACKET_COLON_BEGIN_;
+            }
+            else if (CurChar == ']' && NextChar == ']') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "]]";
+                return CppConstants.BRACKET_COLON_END_;
+            }
+            else if (CurChar == '<' && NextChar == ':') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "<:";
+                return CppConstants.ANGLE_BRACKET_COLON_BEGIN_;
+            }
+            else if (CurChar == ':' && NextChar == '>') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = ":>";
+                return CppConstants.ANGLE_BRACKET_COLON_END_;
+            }
+            else if (CurChar == '<' && NextChar == '%') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "<%";
+                return CppConstants.ANGLE_BRACKET_PERCENT_BEGIN_;
+            }
+            else if (CurChar == '%' && NextChar == '>') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "%>";
+                return CppConstants.ANGLE_BRACKET_PERCENT_END_;
+            }
+            else if (CurChar == ':' && NextChar == ':') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = "::";
+                return CppConstants.COLON_COLON_;
+            }
+            else if (CurChar == '-') {
+                if (NextChar == '>') {
+                    char nextChar = '\0';
+                    for (int start = mIterator + 2; start < mInput.Length; ++start) {
+                        if (mWhiteSpaces.IndexOf(mInput[start]) >= 0) {
+                            continue;
+                        }
+                        else {
+                            nextChar = mInput[start];
+                            break;
+                        }
+                    }
+                    if (nextChar == '{') {
+                        getOperatorToken();
+                        return CppConstants.STRING_;
+                    }
+                    else if (nextChar == '*') {
+                        ++mIterator;
+                        ++mIterator;
+                        ++mIterator;
+                        mCurToken = "->*";
+                        return CppConstants.POINTER_STAR_;
+                    }
+                    else {
+                        ++mIterator;
+                        ++mIterator;
+                        mCurToken = "->";
+                        return CppConstants.POINTER_;
+                    }
+                }
+                else {
+                    getOperatorToken();
+                    return CppConstants.STRING_;
+                }
+            }
+            else if (CurChar == '.' && NextChar == '*') {
+                ++mIterator;
+                ++mIterator;
+                mCurToken = ".*";
+                return CppConstants.PERIOD_STAR_;
+            }
+            else if (CurChar == '.' && NextChar == '.') {
+                ++mIterator;
+                ++mIterator;
+                if (CurChar == '.') {
+                    ++mIterator;
+                    mCurToken = "...";
+                    return CppConstants.STRING_;
+                }
+                else {
+                    mCurToken = "..";
+                    return CppConstants.STRING_;
+                }
+            }
             else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
                 return CppConstants.STRING_;
@@ -80,7 +176,7 @@ namespace Cpp.Parser
                     ++mIterator;
                 }
                 mCurToken = mTokenBuilder.ToString();
-                return CppConstants.STRING_;
+                return CppConstants.DOT_;
             }
             else if (CurChar == '{') {
                 ++mIterator;
@@ -203,11 +299,6 @@ namespace Cpp.Parser
                         mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
                     }
                     mCurToken = mTokenBuilder.ToString();
-                    /*普通字符串保持源码的样子，不去掉首尾空行
-                    if (mCurToken.IndexOf('\n') >= 0) {
-                        mCurToken = removeFirstAndLastEmptyLine(mCurToken);
-                    }
-                    */
                     return CppConstants.STRING_;
                 }
                 else {
@@ -301,8 +392,133 @@ namespace Cpp.Parser
         private void getOperatorToken()
         {
             int st = mIterator;
-            while (isOperator(CurChar)) {
-                ++mIterator;
+            switch (CurChar) {
+                case '+': {
+                        ++mIterator;
+                        if (CurChar == '+' || CurChar == '=') {
+                            ++mIterator;
+                        }
+                    }
+                    break;
+                case '-': {
+                        ++mIterator;
+                        if (CurChar == '-' || CurChar == '=' || CurChar == '>') {
+                            ++mIterator;
+                        }
+                    }
+                    break;
+                case '>': {
+                        ++mIterator;
+                        if (CurChar == '=') {
+                            ++mIterator;
+                        }
+                        else if (CurChar == '>') {
+                            ++mIterator;
+                            if (CurChar == '>') {
+                                ++mIterator;
+                            }
+                            if (CurChar == '=') {
+                                ++mIterator;
+                            }
+                        }
+                    }
+                    break;
+                case '<': {
+                        ++mIterator;
+                        if (CurChar == '=') {
+                            ++mIterator;
+                            if (CurChar == '>') {
+                                ++mIterator;
+                            }
+                        }
+                        else if (CurChar == '-') {
+                            ++mIterator;
+                        }
+                        else if (CurChar == '<') {
+                            ++mIterator;
+                            if (CurChar == '=') {
+                                ++mIterator;
+                            }
+                        }
+                    }
+                    break;
+                case '&': {
+                        ++mIterator;
+                        if (CurChar == '=') {
+                            ++mIterator;
+                        }
+                        else if (CurChar == '&') {
+                            ++mIterator;
+                            if (CurChar == '=') {
+                                ++mIterator;
+                            }
+                        }
+                    }
+                    break;
+                case '|': {
+                        ++mIterator;
+                        if (CurChar == '=') {
+                            ++mIterator;
+                        }
+                        else if (CurChar == '|') {
+                            ++mIterator;
+                            if (CurChar == '=') {
+                                ++mIterator;
+                            }
+                        }
+                    }
+                    break;
+                case '=': {
+                        ++mIterator;
+                        if (CurChar == '=' || CurChar == '>') {
+                            ++mIterator;
+                        }
+                    }
+                    break;
+                case '!':
+                case '^':
+                case '*':
+                case '/':
+                case '%': {
+                        ++mIterator;
+                        if (CurChar == '=') {
+                            ++mIterator;
+                        }
+                    }
+                    break;
+                case '?': {
+                        ++mIterator;
+                        if (CurChar == '?') {
+                            ++mIterator;
+                            if (CurChar == '=') {
+                                ++mIterator;
+                            }
+                        }
+                    }
+                    break;
+                case '`': {
+                        ++mIterator;
+                        bool isOp = false;
+                        while (isOperator(CurChar)) {
+                            ++mIterator;
+                            isOp = true;
+                        }
+                        if (!isOp) {
+                            while (CurChar != '\0' && !isSpecialChar(CurChar)) {
+                                if (CurChar == '#')
+                                    break;
+                                else if (CurChar == '.') {
+                                    break;
+                                }
+                                ++mIterator;
+                            }
+                        }
+                    }
+                    break;
+                default: {
+                        ++mIterator;
+                    }
+                    break;
             }
             int ed = mIterator;
             mCurToken = mInput.Substring(st, ed - st);

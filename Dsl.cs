@@ -366,9 +366,13 @@ namespace Dsl
             PARAM_CLASS_POINTER,
             PARAM_CLASS_STATEMENT,
             PARAM_CLASS_EXTERN_SCRIPT,
-            PARAM_CLASS_PARENTHESIS_ATTR,
-            PARAM_CLASS_BRACKET_ATTR,
-            PARAM_CLASS_ANGLE_BRACKET_ATTR,
+            PARAM_CLASS_PARENTHESIS_COLON,
+            PARAM_CLASS_BRACKET_COLON,
+            PARAM_CLASS_ANGLE_BRACKET_COLON,
+            PARAM_CLASS_PARENTHESIS_PERCENT,
+            PARAM_CLASS_BRACKET_PERCENT,
+            PARAM_CLASS_BRACE_PERCENT,
+            PARAM_CLASS_ANGLE_BRACKET_PERCENT,
             PARAM_CLASS_COLON_COLON,
             PARAM_CLASS_COLON_COLON_PARENTHESIS,
             PARAM_CLASS_COLON_COLON_BRACKET,
@@ -1455,17 +1459,33 @@ namespace Dsl
                                 lbracket = "->";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR:
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
                                 lbracket = "[:";
                                 rbracket = ":]";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR:
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
                                 lbracket = "(:";
                                 rbracket = ":)";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
                                 lbracket = "<:";
                                 rbracket = ":>";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
+                                lbracket = "{%";
+                                rbracket = "%}";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
+                                lbracket = "[%";
+                                rbracket = "%]";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                                lbracket = "(%";
+                                rbracket = "%)";
+                                break;
+                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                                lbracket = "<%";
+                                rbracket = "%>";
                                 break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                                 lbracket = ".*";
@@ -1716,17 +1736,33 @@ namespace Dsl
                             lbracket = "{:";
                             rbracket = ":}";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_ATTR:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
                             lbracket = "[:";
                             rbracket = ":]";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_ATTR:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
                             lbracket = "(:";
                             rbracket = ":)";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_ATTR:
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
                             lbracket = "<:";
                             rbracket = ":>";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
+                            lbracket = "{%";
+                            rbracket = "%}";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
+                            lbracket = "[%";
+                            rbracket = "%]";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                            lbracket = "(%";
+                            rbracket = "%)";
+                            break;
+                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                            lbracket = "<%";
+                            rbracket = "%>";
                             break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                             lbracket = ".*";

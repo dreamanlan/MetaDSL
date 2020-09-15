@@ -37,9 +37,13 @@ namespace Dsl
         inline void    markQuestionBraceParam(void);
         inline void    markStatement(void);
         inline void    markExternScript(void);
-        inline void    markBracketAttrParam(void);
-        inline void    markParenthesisAttrParam(void);
-        inline void    markAngleBracketAttrParam(void);
+        inline void    markBracketColonParam(void);
+        inline void    markParenthesisColonParam(void);
+        inline void    markAngleBracketColonParam(void);
+        inline void    markBracePercentParam(void);
+        inline void    markBracketPercentParam(void);
+        inline void    markParenthesisPercentParam(void);
+        inline void    markAngleBracketPercentParam(void);
         inline void    markColonColonParam(void);
         inline void    markColonColonParenthesisParam(void);
         inline void    markColonColonBracketParam(void);
