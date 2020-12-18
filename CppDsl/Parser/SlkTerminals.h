@@ -17,6 +17,8 @@ static Slk_terminal_t Slk_terminal [] = {
  { OP_TOKEN_0_, "OP_TOKEN_0" } 
 ,{ OP_TOKEN_1_, "OP_TOKEN_1" } 
 ,{ OP_TOKEN_2_, "OP_TOKEN_2" } 
+,{ OP_TOKEN_COLON_, "OP_TOKEN_COLON" } 
+,{ OP_TOKEN_QUESTION_, "OP_TOKEN_QUESTION" } 
 ,{ OP_TOKEN_3_, "OP_TOKEN_3" } 
 ,{ OP_TOKEN_4_, "OP_TOKEN_4" } 
 ,{ OP_TOKEN_5_, "OP_TOKEN_5" } 
@@ -30,7 +32,6 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ OP_TOKEN_13_, "OP_TOKEN_13" } 
 ,{ OP_TOKEN_14_, "OP_TOKEN_14" } 
 ,{ OP_TOKEN_15_, "OP_TOKEN_15" } 
-,{ OP_TOKEN_16_, "OP_TOKEN_16" } 
 ,{ LPAREN_, "(" } 
 ,{ RPAREN_, ")" } 
 ,{ LBRACK_, "[" } 

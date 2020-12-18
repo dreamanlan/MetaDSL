@@ -777,59 +777,62 @@ namespace Dsl.Parser
                 else if (c0 != '=' && c0 != '!' && c0 != '>' && c0 != '<' && c1 == '=' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;
                 }
-                else if (c1 != '\0' && c2 == '=' && c3 == '\0') {
+                else if (c2 == '=' && c3 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;
                 }
-                else if (c1 != '\0' && c2 != '\0' && c3 == '=' && c4 == '\0') {
+                else if (c3 == '=' && c4 == '\0') {
                     val = DslConstants.OP_TOKEN_0_;
                 }
                 else if (c0 == '=' && c1 == '>' && c2 == '\0' || c0 == '<' && c1 == '-' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_1_;
                 }
-                else if ((c0 == '?' || c0 == ':') && curOperator.Length == 1) {
-                    val = DslConstants.OP_TOKEN_3_;
+                else if (c0 == ':' && c1 == '\0') {
+                    val = DslConstants.OP_TOKEN_COLON_;
+                }
+                else if (c0 == '?' && c1 == '\0') {
+                    val = DslConstants.OP_TOKEN_QUESTION_;
                 }
                 else if (c0 == '|' && c1 == '|' && c2 == '\0' || c0 == '?' && c1 == '?' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_4_;
+                    val = DslConstants.OP_TOKEN_3_;
                 }
                 else if (c0 == '&' && c1 == '&' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_5_;
+                    val = DslConstants.OP_TOKEN_4_;
                 }
                 else if (c0 == '|' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_6_;
+                    val = DslConstants.OP_TOKEN_5_;
                 }
                 else if (c0 == '^' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_7_;
+                    val = DslConstants.OP_TOKEN_6_;
                 }
                 else if (c0 == '&' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_8_;
+                    val = DslConstants.OP_TOKEN_7_;
                 }
                 else if ((c0 == '=' || c0 == '!') && c1 == '=' && c2 == '\0' || c0 == '<' && c1 == '=' && c2 == '>' && c3 == '\0') {
-                    val = DslConstants.OP_TOKEN_9_;
+                    val = DslConstants.OP_TOKEN_8_;
                 }
                 else if ((c0 == '<' || c0 == '>') && (c1 == '=' && c2 == '\0' || c1 == 0)) {
-                    val = DslConstants.OP_TOKEN_10_;
+                    val = DslConstants.OP_TOKEN_9_;
                 }
                 else if ((c0 == '<' && c1 == '<' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '>' && c3 == '\0')) {
-                    val = DslConstants.OP_TOKEN_11_;
+                    val = DslConstants.OP_TOKEN_10_;
                 }
                 else if ((c0 == '+' || c0 == '-') && c1 == '\0') {
                     if (lastIsOperator)
-                        val = DslConstants.OP_TOKEN_14_;
+                        val = DslConstants.OP_TOKEN_13_;
                     else
-                        val = DslConstants.OP_TOKEN_12_;
+                        val = DslConstants.OP_TOKEN_11_;
                 }
                 else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_13_;
+                    val = DslConstants.OP_TOKEN_12_;
                 }
                 else if ((c0 == '+' && c1 == '+' && c2 == '\0') || (c0 == '-' && c1 == '-' && c2 == '\0') || (c0 == '~' && c1 == '\0') || (c0 == '!' && c1 == '\0')) {
-                    val = DslConstants.OP_TOKEN_14_;
+                    val = DslConstants.OP_TOKEN_13_;
                 }
                 else if (c0 == '`') {
-                    val = DslConstants.OP_TOKEN_15_;
+                    val = DslConstants.OP_TOKEN_14_;
                 }
                 else if (c0 == '-' && c1 == '>' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_16_;
+                    val = DslConstants.OP_TOKEN_15_;
                 }
                 else {
                     val = DslConstants.OP_TOKEN_2_;

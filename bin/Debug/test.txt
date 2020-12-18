@@ -25,7 +25,7 @@ skill(kkk)
 	BEGIN_SCRIPT
 		ok, this is a test, "yeah!!!";
 	END_SCRIPT;
-  script(ttt)
+  script(ttt:string, tt2:int)
   {: abcd :};
   (:attr:)
   script(ttt)

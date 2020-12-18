@@ -1504,7 +1504,7 @@ namespace Dsl
                         int ct = data.GetParamNum();
                         for (int i = 0; i < ct; ++i) {
                             if (i > 0)
-                                stream.Append(",");
+                                stream.Append(", ");
                             ISyntaxComponent param = data.GetParam(i);
                             if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass

@@ -12,14 +12,14 @@ skill(kkk)
 		a > b ? 1 : 0;
 		a + b * c;
 		test();
-		test(123,345,678);
+		test(123, 345, 678);
 	};
 	script(sss)
 
 	{:
 		ok, this is a test, "yeah!!!";
 	:};
-	script(ttt)
+	script(ttt : string, tt2 : int)
 
 	{: abcd :};
 	(:attr:)
@@ -33,7 +33,7 @@ skill(kkk)
 	:};
 	a = "b";
 	a = " abcd ";
-	template<:a,b,c:>class A;
+	template<:a, b, c:>class A;
 	a::b::c;
 	a::b(abcd);
 	a::(abcd);

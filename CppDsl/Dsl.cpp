@@ -938,7 +938,7 @@ namespace Dsl
                 }
                 for (int ix = 0; ix < GetParamNum(); ++ix) {
                     if (ix > 0) {
-                        fwrite(",", 1, 1, fp);
+                        fwrite(", ", 2, 1, fp);
                     }
                     ISyntaxComponent& component = *GetParam(ix);
                     WriteComponent(fp, component, indent, TRUE, FALSE);
