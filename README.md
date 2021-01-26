@@ -152,3 +152,4 @@ The language-oriented methodology proceeds in three steps:
 - 基于roslyn的C#重写工具（在包含new的函数开头与结尾插入指定的函数调用，可用来profile内存），使用DSL作为配置语言：https://github.com/dreamanlan/CSharpHookRewriter
 - 基于roslyn的C#无用类分析工具（可用来清理废弃代码），使用DSL作为配置语言：https://github.com/dreamanlan/UnusedClass
 - 一个dotnet exe/dll补丁工具，使用DSL作为脚本：https://github.com/dreamanlan/DotnetPatch
+- Cs2Lua，一个将unity c#翻译为lua使用slua运行时的工具，翻译的中间语言使用DSL，翻译的配置与定制翻译脚本也使用了DSL和一个基于DSL实现的通用解释器：https://github.com/dreamanlan/Cs2Lua
