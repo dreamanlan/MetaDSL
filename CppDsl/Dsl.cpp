@@ -221,7 +221,15 @@ namespace Dsl
             }
         }
         else if (HaveParamOrStatement() && m_ParamNum >= m_ParamSpace) {
-            int delta = HaveStatement() ? DELTA_FUNCTION_STATEMENT : DELTA_FUNCTION_PARAM;
+            int delta = m_ParamSpace;
+            if (HaveStatement()) {
+                if (delta > MAX_DELTA_FUNCTION_STATEMENT)
+                    delta = MAX_DELTA_FUNCTION_STATEMENT;
+            }
+            else {
+                if (delta > MAX_DELTA_FUNCTION_PARAM)
+                    delta = MAX_DELTA_FUNCTION_PARAM;
+            }
             int newSpace = m_ParamSpace + delta;
             if (newSpace <= m_MaxParamNum) {
                 SyntaxComponentPtr* pNew = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(newSpace));
@@ -308,12 +316,15 @@ namespace Dsl
             }
         }
         else if (m_FunctionNum >= m_FunctionSpace) {
-            int newSpace = m_FunctionSpace + DELTA_STATEMENT_FUNCTION;
+            int delta = m_FunctionSpace;
+            if (delta > MAX_DELTA_STATEMENT_FUNCTION)
+                delta = MAX_DELTA_STATEMENT_FUNCTION;
+            int newSpace = m_FunctionSpace + delta;
             if (newSpace <= m_MaxFunctionNum) {
                 FunctionData** pNew = (FunctionData**)(m_Buffer.NewPtrArray(newSpace));
                 if (pNew) {
                     memcpy(pNew, m_Functions, m_FunctionNum * sizeof(FunctionData*));
-                    memset(pNew + m_FunctionNum, 0, DELTA_STATEMENT_FUNCTION * sizeof(FunctionData*));
+                    memset(pNew + m_FunctionNum, 0, delta * sizeof(FunctionData*));
                     m_Buffer.DeletePtrArray((void**)m_Functions, m_FunctionSpace);
                     m_Functions = pNew;
                     m_FunctionSpace = newSpace;
@@ -360,12 +371,46 @@ namespace Dsl
 
     void DslFile::AddDslInfo(ISyntaxComponent* p)
     {
-        if (0 == p || 0 == m_DslInfos)
+        if (NULL == p || m_DslInfoNum < 0 || m_DslInfoNum >= m_MaxDslInfoNum)
             return;
-        if (m_DslInfoNum < 0 || m_DslInfoNum >= m_Buffer.GetOptions().GetMaxProgramSize())
+        PrepareDslInfos();
+        if (NULL == m_DslInfos || m_DslInfoNum >= m_DslInfoSpace)
             return;
         m_DslInfos[m_DslInfoNum] = p;
         ++m_DslInfoNum;
+    }
+
+    void DslFile::PrepareDslInfos(void)
+    {
+        if (NULL == m_DslInfos) {
+            m_DslInfos = (ISyntaxComponent**)(m_Buffer.NewPtrArray(INIT_DSL_INFO));
+            if (m_DslInfos) {
+                m_DslInfoSpace = INIT_DSL_INFO;
+            }
+        }
+        else if (m_DslInfoNum >= m_DslInfoSpace) {
+            int delta = m_DslInfoSpace;
+            if (delta > MAX_DELTA_DSL_INFO)
+                delta = MAX_DELTA_DSL_INFO;
+            int newSpace = m_DslInfoSpace + delta;
+            if (newSpace <= m_MaxDslInfoNum) {
+                ISyntaxComponent** pNew = (ISyntaxComponent**)(m_Buffer.NewPtrArray(newSpace));
+                if (pNew) {
+                    memcpy(pNew, m_DslInfos, m_DslInfoNum * sizeof(ISyntaxComponent*));
+                    memset(pNew + m_DslInfoNum, 0, delta * sizeof(ISyntaxComponent*));
+                    m_Buffer.DeletePtrArray((void**)m_DslInfos, m_DslInfoSpace);
+                    m_DslInfos = pNew;
+                    m_DslInfoSpace = newSpace;
+                }
+            }
+        }
+    }
+    void DslFile::ReleaseDslInfos(void)
+    {
+        if (NULL != m_DslInfos) {
+            m_Buffer.DeletePtrArray((void**)m_DslInfos, m_DslInfoSpace);
+            m_DslInfos = NULL;
+        }
     }
 
     static const char* c_BinaryIdentity = "BDSL";
@@ -618,17 +663,15 @@ namespace Dsl
 
     void DslFile::Init(void)
     {
-        m_DslInfos = new SyntaxComponentPtr[m_Buffer.GetOptions().GetMaxProgramSize()];
+        m_DslInfos = 0;
         m_DslInfoNum = 0;
+        m_DslInfoSpace = 0;
+        m_MaxDslInfoNum = m_Buffer.GetOptions().GetMaxDslInfoNum();
     }
 
     void DslFile::Release(void)
     {
-        if (0 != m_DslInfos) {
-            delete[] m_DslInfos;
-            m_DslInfos = 0;
-            m_DslInfoNum = 0;
-        }
+        ReleaseDslInfos();
     }
 
     void DslFile::ClearErrorInfo(void)

@@ -30,29 +30,32 @@ namespace Dsl
 
     enum
     {
-        MAX_ERROR_INFO_CAPACITY = 256,
-        MAX_RECORD_ERROR_NUM = 16,
+        MAX_ERROR_INFO_CAPACITY = 1024,
+        MAX_RECORD_ERROR_NUM = 256,
 
         INIT_FUNCTION_PARAM = 1,
-        DELTA_FUNCTION_PARAM = 2,
-        DELTA_FUNCTION_STATEMENT = 16,
+        MAX_DELTA_FUNCTION_PARAM = 8,
+        MAX_DELTA_FUNCTION_STATEMENT = 32,
         INIT_STATEMENT_FUNCTION = 1,
-        DELTA_STATEMENT_FUNCTION = 1,
+        MAX_DELTA_STATEMENT_FUNCTION = 1,
+        INIT_DSL_INFO = 1,
+        MAX_DELTA_DSL_INFO = 32,
         DELTA_COMMENT = 2,
     };
 
     enum
     {
-        MAX_FUNCTION_DIMENSION_NUM = 8,
-        MAX_FUNCTION_PARAM_NUM = 1024,
-        MAX_PROGRAM_SIZE = 16 * 1024,
+        //这三个数不能大于PTR_POOL_FREELINK_HEADER_SIZE
+        MAX_FUNCTION_DIMENSION_NUM = 16,
+        MAX_FUNCTION_PARAM_NUM = 16 * 1024,
+        MAX_DSL_INFO_NUM = 16 * 1024,
 
-        STRING_BUFFER_SIZE = 1024 * 1024,
-        OBJECT_BUFFER_SIZE = 256 * 1024,
-        SYNTAXCOMPONENT_POOL_SIZE = 16 * 1024,
-        PTR_POOL_SIZE = 1024 * 1024,
-        PTR_POOL_FREELINK_SIZE = 4096,
-        PTR_POOL_FREELINK_HEADER_SIZE = 2048,
+        STRING_BUFFER_SIZE = 4 * 1024 * 1024,
+        OBJECT_BUFFER_SIZE = 4 * 1024 * 1024,
+        SYNTAXCOMPONENT_POOL_SIZE = 512 * 1024,
+        PTR_POOL_SIZE = 512 * 1024,
+        PTR_POOL_FREELINK_SIZE = 128 * 1024,
+        PTR_POOL_FREELINK_HEADER_SIZE = 16 * 1024,
     };
 
     class DslOptions
@@ -61,7 +64,7 @@ namespace Dsl
         DslOptions(void) :
             m_MaxFunctionDimensionNum(MAX_FUNCTION_DIMENSION_NUM),
             m_MaxParamNum(MAX_FUNCTION_PARAM_NUM),
-            m_MaxProgramSize(MAX_PROGRAM_SIZE)
+            m_MaxDslInfoNum(MAX_DSL_INFO_NUM)
         {
         }
     public:
@@ -69,12 +72,12 @@ namespace Dsl
         void SetMaxFunctionDimensionNum(int val) { m_MaxFunctionDimensionNum = val; }
         int GetMaxParamNum() const { return m_MaxParamNum; }
         void SetMaxParamNum(int val) { m_MaxParamNum = val; }
-        int GetMaxProgramSize() const { return m_MaxProgramSize; }
-        void SetMaxProgramSize(int val) { m_MaxProgramSize = val; }
+        int GetMaxDslInfoNum() const { return m_MaxDslInfoNum; }
+        void SetMaxDslInfoNum(int val) { m_MaxDslInfoNum = val; }
     private:
         int	m_MaxFunctionDimensionNum;
         int	m_MaxParamNum;
-        int	m_MaxProgramSize;
+        int	m_MaxDslInfoNum;
     public:
         static bool DontLoadComments(void)
         {
@@ -885,9 +888,7 @@ namespace Dsl
     /*
      * 实际的DSL预先分配缓冲区，这个类需要在堆上实例化（在栈上可能导致栈溢出），类本身使
      * 用数组来分配缓冲区。
-     * 目前只有字符串与语句池是预先分配的，理想情况是所有相关类使用的内存都是预先分配的，
-     * 目前各语法组件对象（ValueData、FunctionData、StatementData）及对象内所包含的指
-     * 针列表(参数列表与语句列表)还没有实现预先分配。
+     * 理想情况是所有相关类使用的内存都是预先分配的。
      */
     template<int MaxStringBufferSize = STRING_BUFFER_SIZE,
         int MaxObjectBufferSize = OBJECT_BUFFER_SIZE,
@@ -1078,16 +1079,34 @@ namespace Dsl
             return m_pNullFunction;
         }
     public:
-        DslStringAndObjectBufferT(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0), 
+        DslStringAndObjectBufferT(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0),
             m_pStringBuffer(m_StringBuffer),
             m_pUnusedStringPtr(m_StringBuffer),
             m_pObjectBuffer(m_ObjectBuffer),
             m_pUnusedObjectPtr(m_ObjectBuffer),
-            m_NullSyntax(), 
+            m_NullSyntax(),
             m_NullFunction(*this),
             m_pNullFunction(&m_NullFunction)
         {
-            memset(m_PtrPool, 0, sizeof(SyntaxComponentPtr)*MaxObjectBufferSize);
+            memset(m_PtrPool, 0, sizeof(void*)*PtrPoolSize);
+            m_PtrNum = 0;
+            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
+            m_FreeLinkNum = 0;
+            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int)*PtrPoolFreeLinkHeaderSize);
+            m_FreedFreeLinkHeader = -1;
+        }
+        void Reset(void)
+        {
+            m_SyntaxComponentNum = 0;
+            m_SyntaxComponentCommentsInfoNum = 0;
+            m_FunctionCommentsInfoNum = 0;
+            m_pStringBuffer = m_StringBuffer;
+            m_pUnusedStringPtr = m_StringBuffer;
+            m_pObjectBuffer = m_ObjectBuffer;
+            m_pUnusedObjectPtr = m_ObjectBuffer;
+            m_pNullFunction = &m_NullFunction;
+
+            memset(m_PtrPool, 0, sizeof(void*)*PtrPoolSize);
             m_PtrNum = 0;
             memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
             m_FreeLinkNum = 0;
@@ -1205,10 +1224,15 @@ namespace Dsl
         FunctionData* GetNullFunctionPtr(void) { return m_Buffer.GetNullFunctionPtr(); }
         FunctionData*& GetNullFunctionPtrRef(void) { return m_Buffer.GetNullFunctionPtrRef(); }
     private:
+        void PrepareDslInfos(void);
+        void ReleaseDslInfos(void);
+    private:
         IDslStringAndObjectBuffer& m_Buffer;
     private:
         SyntaxComponentPtr* m_DslInfos;
         int m_DslInfoNum;
+        int m_DslInfoSpace;
+        int m_MaxDslInfoNum;
     private:
         int m_IsDebugInfoEnable;
     private:
