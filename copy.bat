@@ -34,6 +34,24 @@ copy /y DslLib\bin\Debug\Dsl.pdb d:\Code\Publish\Dsl.pdb
 copy /y DslLib\bin\Release\Dsl.dll d:\Code\Client\CsLibrary\ExternLibrary\Dsl.dll
 copy /y DslLib\bin\Release\Dsl.pdb d:\Code\Client\CsLibrary\ExternLibrary\Dsl.pdb
 
+copy /y DslLib\bin\Debug\Dsl.dll e:\Code\Client\Tools\cs2dsl\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.pdb e:\Code\Client\Tools\cs2dsl\Dsl.pdb
+
+copy /y DslLib\bin\Debug\Dsl.dll e:\Code\Client\Tools\Deps\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.pdb e:\Code\Client\Tools\Deps\Dsl.pdb
+
+copy /y DslLib\bin\Debug\Dsl.dll e:\Code\Client\Tools\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.pdb e:\Code\Client\Tools\Dsl.pdb
+
+copy /y DslLib\bin\Debug\Dsl.dll e:\Code\Product\Tools\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.pdb e:\Code\Product\Tools\Dsl.pdb
+
+copy /y DslLib\bin\Debug\Dsl.dll e:\Code\Publish\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.pdb e:\Code\Publish\Dsl.pdb
+
+copy /y DslLib\bin\Release\Dsl.dll e:\Code\Client\CsLibrary\ExternLibrary\Dsl.dll
+copy /y DslLib\bin\Release\Dsl.pdb e:\Code\Client\CsLibrary\ExternLibrary\Dsl.pdb
+
 copy /y DslLib\bin\Debug\Dsl.dll ..\BatchCommand\deps\Dsl.dll
 copy /y DslLib\bin\Debug\Dsl.pdb ..\BatchCommand\deps\Dsl.pdb
 

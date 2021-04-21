@@ -1025,7 +1025,7 @@ namespace Dsl
             int bytesStart = pos;
             int bytes2Start = bytesStart + bytesLen;
             int keyStart = bytes2Start + bytes2Len;
-            List<string> keys = new List<string>();
+            List<string> keys = new List<string>(keyCount);
             pos = keyStart;
             for (int i = 0; i < keyCount; ++i) {
                 int byteCount;
@@ -1040,7 +1040,7 @@ namespace Dsl
                     break;
                 }
             }
-            List<string> identifiers = new List<string>();
+            List<string> identifiers = new List<string>(bytes2Len);
             for (int i = bytes2Start; i < bytes2Start + bytes2Len && i < binaryCode.Length; ++i) {
                 int ix;
                 byte first = binaryCode[i];
