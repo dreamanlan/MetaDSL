@@ -1005,12 +1005,12 @@ namespace Dsl
 #endif
         }
 
-        public void LoadBinaryFile(string file)
+        public void LoadBinaryFile(string file, List<string> reuseKeyBuffer, List<string> reuseIdBuffer)
         {
             var code = File.ReadAllBytes(file);
-            LoadBinaryCode(code);
+            LoadBinaryCode(code, reuseKeyBuffer, reuseIdBuffer);
         }
-        public void LoadBinaryCode(byte[] binaryCode)
+        public void LoadBinaryCode(byte[] binaryCode, List<string> reuseKeyBuffer, List<string> reuseIdBuffer)
         {
             mDslInfos.Clear();
             if (null == binaryCode)
@@ -1025,7 +1025,10 @@ namespace Dsl
             int bytesStart = pos;
             int bytes2Start = bytesStart + bytesLen;
             int keyStart = bytes2Start + bytes2Len;
-            List<string> keys = new List<string>(keyCount);
+            if (reuseKeyBuffer.Capacity < keyCount)
+                reuseKeyBuffer.Capacity = keyCount;
+            reuseKeyBuffer.Clear();
+            List<string> keys = reuseKeyBuffer;
             pos = keyStart;
             for (int i = 0; i < keyCount; ++i) {
                 int byteCount;
@@ -1040,7 +1043,10 @@ namespace Dsl
                     break;
                 }
             }
-            List<string> identifiers = new List<string>(bytes2Len);
+            if (reuseIdBuffer.Capacity < bytes2Len)
+                reuseIdBuffer.Capacity = bytes2Len;
+            reuseIdBuffer.Clear();
+            List<string> identifiers = reuseIdBuffer;
             for (int i = bytes2Start; i < bytes2Start + bytes2Len && i < binaryCode.Length; ++i) {
                 int ix;
                 byte first = binaryCode[i];

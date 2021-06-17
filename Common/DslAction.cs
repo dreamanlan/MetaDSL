@@ -181,17 +181,18 @@ namespace Dsl.Common
                 case 15: pushLuaVarAttr(); break;
                 case 16: markBracketColonParam(); break;
                 case 17: removeLuaVarAttr(); break;
-                case 18: markParenthesisColonParam(); break;
+                case 18: markAngleBracketColonParam(); break;
                 case 19: pushDot(); break;
                 case 20: pushColon(); break;
                 case 21: pushLuaArgs(); break;
                 case 22: buildOperator(); break;
                 case 23: markBracketParam(); break;
-                case 24: markPeriodParam(); break;
-                case 25: setMemberId(); break;
-                case 26: markPointerParam(); break;
-                case 27: pushStr(); break;
-                case 28: pushNum(); break;
+                case 24: markParenthesisColonParam(); break;
+                case 25: markPeriodParam(); break;
+                case 26: setMemberId(); break;
+                case 27: markPointerParam(); break;
+                case 28: pushStr(); break;
+                case 29: pushNum(); break;
             }
         }
         private void executeCpp(int number)

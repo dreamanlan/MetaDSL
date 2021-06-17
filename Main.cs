@@ -15,6 +15,8 @@ namespace Dsl
                 Console.WriteLine("{0}", msg);
             };
             //DslFile.DontLoadComments = true;
+            List<string> keyBuffer = new List<string>();
+            List<string> idBuffer = new List<string>();
             DslFile file0 = new DslFile();
             file0.LoadCpp("test.h", logCallback);
 #if FULL_VERSION
@@ -33,13 +35,13 @@ namespace Dsl
 #endif
             file.DslInfos.Clear();
             var code = File.ReadAllBytes("binary.txt");
-            file.LoadBinaryCode(code);
+            file.LoadBinaryCode(code, keyBuffer, idBuffer);
 #if FULL_VERSION
             file.Save("unbinary.txt");
 #endif
             long t1 = GetLocalMilliseconds();
             for (int i = 0; i < 1000; ++i) {
-                file.LoadBinaryCode(code);
+                file.LoadBinaryCode(code, keyBuffer, idBuffer);
             }
             long t2 = GetLocalMilliseconds();
             Console.WriteLine("time:{0}", t2 - t1);

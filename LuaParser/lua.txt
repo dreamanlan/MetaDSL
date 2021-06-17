@@ -196,8 +196,12 @@ OP_12 :
 ===========================*/
     
 FUNCTION_CALL :
+    VALUE_JUST_AS_FUNCTION
     FUNCTION_CALL_WITH_NAME
     FUNCTION_CALL_WITHOUT_NAME
+    
+VALUE_JUST_AS_FUNCTION:
+    _action_addFunction FUNCTION_ID_NOT_NAME _action_setFunctionId
 
 FUNCTION_CALL_WITH_NAME :
     _action_addFunction FUNCTION_ID _action_setFunctionId [ FUNCTION_PARAMS ]
@@ -214,6 +218,7 @@ FUNCTION_PARAMS :
     _action_markBracketParam \[ EXP \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     . MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     : MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
+    _action_markParenthesisColonParam STRING [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     
 MEMBER_DESC:
 	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
@@ -254,8 +259,7 @@ FIELD_SEP :
     ;
     
 FUNCTION_ID :
-    NAME _action_pushId
-    FUNCTION_ID_NOT_NAME
+    NAME _action_pushId    
     
 FUNCTION_ID_NOT_NAME :
     STRING _action_pushStr
