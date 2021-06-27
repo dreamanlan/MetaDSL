@@ -1,6 +1,6 @@
 # DSL
 DSL是一种类似XML/JSON的脚本语言，对比XML/JSON，它不仅可以用来描述数据，还能用来描述逻辑，同时在形式上更容易手写与阅读。DSL比XML/JSON更接近程序语言的构造，基于DSL的描述可以方便的构建解释器，从而可以很容易建造一个领域特定语言（DSL）。这是为什么直接取名叫DSL的原因，意思是它是一个元语言，可以很方便的用来构造DSL。
-PPT文档:[《MetaDSL及在Unity游戏开发中的应用》]( https://github.com/dreamanlan/MetaDSL/raw/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.pptx "MetaDSL及在Unity游戏开发中的应用")
+PPT文档:[《MetaDSL及在Unity游戏开发中的应用》]( https://github.com/dreamanlan/MetaDSL/raw/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.zip "MetaDSL及在Unity游戏开发中的应用")
 
 ## 例1：用来描述一个技能（一个2段的技能，第一段80毫秒，第二段100毫秒，在第二段50毫秒时触发伤害逻辑100011）（另外需要在逻辑上基于解析器将技能描述转换成技能实例）
 ```
