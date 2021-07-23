@@ -44,7 +44,7 @@ skill(kkk)
 	(%abcd%);
 	<%abcd%>;
 };
-skill(ttt)
+skill(ttt : string, tt2 : int)
 
 {
 };

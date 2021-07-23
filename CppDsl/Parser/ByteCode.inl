@@ -29,7 +29,7 @@ namespace Dsl
                 }
 
                 ValueData* pVal = mDataFile->AddNewValueComponent();
-                pVal->SetIdentifier(pStr);
+                pVal->SetString(pStr);
                 p->AddParam(pVal);
             }
         }

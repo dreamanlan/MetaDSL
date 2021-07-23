@@ -715,6 +715,7 @@ namespace Dsl
     public:
         FunctionData(IDslStringAndObjectBuffer& buffer);
         virtual ~FunctionData(void);
+        void InitParamsCapacity(int c);
     protected:
         virtual IDslStringAndObjectBuffer* GetBuffer(void) const
         {
@@ -827,6 +828,7 @@ namespace Dsl
             ReleaseFirstComments(&m_Buffer, m_pCommentsInfo);
             ReleaseLastComments(&m_Buffer, m_pCommentsInfo);
         }
+        void InitFunctionsCapacity(int c);
     protected:
         virtual IDslStringAndObjectBuffer* GetBuffer(void) const
         {

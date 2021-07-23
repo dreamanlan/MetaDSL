@@ -650,7 +650,7 @@ namespace Dsl.Common
         private void setExternScript()
         {
             FunctionData func = getLastFunction();
-            func.AddParam(getLastToken());
+            func.AddParam(getLastToken(), ValueData.STRING_TOKEN);
         }
         private void markPointerParam()
         {

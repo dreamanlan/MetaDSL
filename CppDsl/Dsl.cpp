@@ -176,6 +176,29 @@ namespace Dsl
         return 0 != m_StringVal ? TRUE : FALSE;
     }
     //------------------------------------------------------------------------------------------------------
+    static inline int CalcCapacity(int need, int init, int max_delta)
+    {
+        if (need <= 0) {
+            return 0;
+        }
+        else if (need < max_delta) {
+            int v = max_delta;
+            int v_div_2 = v / 2;
+            while (need <= v_div_2) {
+                v = v_div_2;
+                v_div_2 /= 2;
+            }
+            need = v;
+        }
+        else {
+            int mod = need % max_delta;
+            if (mod != 0) {
+                need += max_delta - mod;
+            }
+        }
+        return need;
+    }
+    //------------------------------------------------------------------------------------------------------
     FunctionData::FunctionData(IDslStringAndObjectBuffer& buffer) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
         m_Buffer(buffer),
         m_Params(0),
@@ -210,6 +233,24 @@ namespace Dsl
     FunctionData* FunctionData::GetNullFunctionPtr(void)const
     {
         return m_Buffer.GetNullFunctionPtr();
+    }
+
+    void FunctionData::InitParamsCapacity(int c)
+    {
+        if (NULL == m_Params && TRUE == HaveParamOrStatement()) {
+            if (HaveStatement()) {
+                c = CalcCapacity(c, INIT_FUNCTION_PARAM, MAX_DELTA_FUNCTION_STATEMENT);
+            }
+            else {
+                c = CalcCapacity(c, INIT_FUNCTION_PARAM, MAX_DELTA_FUNCTION_PARAM);
+            }
+            if (c > 0) {
+                m_Params = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(c));
+                if (m_Params) {
+                    m_ParamSpace = c;
+                }
+            }
+        }
     }
 
     void FunctionData::PrepareParams(void)
@@ -284,7 +325,7 @@ namespace Dsl
             p->m_Comments = NULL;
         }
     }
-    
+
     StatementData::StatementData(IDslStringAndObjectBuffer& buffer) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
         m_Buffer(buffer),
         m_Functions(0),
@@ -294,7 +335,7 @@ namespace Dsl
         if (DslOptions::DontLoadComments()) {
             m_pCommentsInfo = 0;
         }
-        else{
+        else {
             m_pCommentsInfo = buffer.NewSyntaxComponentCommentsInfo();
         }
 
@@ -305,6 +346,17 @@ namespace Dsl
     FunctionData*& StatementData::GetNullFunctionPtrRef(void)const
     {
         return m_Buffer.GetNullFunctionPtrRef();
+    }
+
+    void StatementData::InitFunctionsCapacity(int c)
+    {
+        if (NULL == m_Functions) {
+            c = CalcCapacity(c, INIT_STATEMENT_FUNCTION, MAX_DELTA_STATEMENT_FUNCTION);
+            m_Functions = (FunctionData**)(m_Buffer.NewPtrArray(c));
+            if (m_Functions) {
+                m_FunctionSpace = c;
+            }
+        }
     }
 
     void StatementData::PrepareFunctions(void)
@@ -414,7 +466,7 @@ namespace Dsl
     }
 
     static const char* c_BinaryIdentity = "BDSL";
-    static int StringCompare(const void* a, const void* b)
+    static int stringCompare(const void* a, const void* b)
     {
         const char* stra = *static_cast<const char*const*>(a);
         const char* strb = *static_cast<const char*const*>(b);
@@ -434,7 +486,7 @@ namespace Dsl
         else
             return strcmp(stra, strb);
     }
-    static void WriteInt(char* s, int& pos, int val)
+    static void writeInt(char* s, int& pos, int val)
     {
         unsigned int v = val;
         s[pos++] = (char)(v & 0xff);
@@ -442,7 +494,7 @@ namespace Dsl
         s[pos++] = (char)((v & 0xff0000) >> 16);
         s[pos++] = (char)((v & 0xff000000) >> 24);
     }
-    static void Write7BitEncodedInt(char* s, int& pos, int val)
+    static void write7BitEncodedInt(char* s, int& pos, int val)
     {
         unsigned int num;
         for (num = (unsigned int)val; num >= 128; num >>= 7) {
@@ -450,7 +502,7 @@ namespace Dsl
         }
         s[pos++] = (char)num;
     }
-    static int ReadInt(const char* bytes, int size, int pos)
+    static int readInt(const char* bytes, int size, int pos)
     {
         if (0 != bytes && pos >= 0 && pos + 3 < size) {
             unsigned char b1 = bytes[pos];
@@ -463,7 +515,7 @@ namespace Dsl
             return -1;
         }
     }
-    static int Read7BitEncodedInt(const char* bytes, int size, int pos, int& byteCount)
+    static int read7BitEncodedInt(const char* bytes, int size, int pos, int& byteCount)
     {
         int num = -1;
         byteCount = 0;
@@ -503,11 +555,11 @@ namespace Dsl
     {
         if (bufferSize > 0) {
             int pos = strlen(c_BinaryIdentity);
-            int bytesLen = ReadInt(buffer, bufferSize, pos);
+            int bytesLen = readInt(buffer, bufferSize, pos);
             pos += 4;
-            int bytes2Len = ReadInt(buffer, bufferSize, pos);
+            int bytes2Len = readInt(buffer, bufferSize, pos);
             pos += 4;
-            int keyCount = ReadInt(buffer, bufferSize, pos);
+            int keyCount = readInt(buffer, bufferSize, pos);
             pos += 4;
             int bytesStart = pos;
             int bytes2Start = bytesStart + bytesLen;
@@ -519,7 +571,7 @@ namespace Dsl
             pos = keyStart;
             for (int i = 0; i < keyCount; ++i) {
                 int byteCount;
-                int len = Read7BitEncodedInt(buffer, bufferSize, pos, byteCount);
+                int len = read7BitEncodedInt(buffer, bufferSize, pos, byteCount);
                 if (len >= 0) {
                     pos += byteCount;
                     if (len > 0) {
@@ -597,7 +649,7 @@ namespace Dsl
                 identifiers[i] = "";
         }
         memcpy(keys, identifiers, 0x10000 * sizeof(const char*));
-        qsort(keys, idCount, sizeof(const char*), StringCompare);
+        qsort(keys, idCount, sizeof(const char*), stringCompare);
         int k = 0;
         for (int i = 1; i < idCount; ++i) {
             const char* lastId = keys[k];
@@ -616,7 +668,7 @@ namespace Dsl
         }
         for (int i = 0; i < idCount; ++i) {
             const char* key = identifiers[i];
-            const char** pp = (const char**)bsearch(&key, keys, ct, sizeof(const char*), StringCompare);
+            const char** pp = (const char**)bsearch(&key, keys, ct, sizeof(const char*), stringCompare);
             int ix = pp - keys;
             if (ix < 0x80) {
                 bytes2[pos2++] = (char)ix;
@@ -632,15 +684,15 @@ namespace Dsl
 
             char intbuf[sizeof(int)];
             int pos = 0;
-            WriteInt(intbuf, pos, pos1);
+            writeInt(intbuf, pos, pos1);
             fwrite(intbuf, 1, pos, fp);
 
             pos = 0;
-            WriteInt(intbuf, pos, pos2);
+            writeInt(intbuf, pos, pos2);
             fwrite(intbuf, 1, pos, fp);
 
             pos = 0;
-            WriteInt(intbuf, pos, ct);
+            writeInt(intbuf, pos, ct);
             fwrite(intbuf, 1, pos, fp);
 
             fwrite(bytes1, 1, pos1, fp);
@@ -651,7 +703,7 @@ namespace Dsl
                 if (0 != id)
                     len = strlen(id);
                 pos = 0;
-                Write7BitEncodedInt(intbuf, pos, len);
+                write7BitEncodedInt(intbuf, pos, len);
                 fwrite(intbuf, 1, pos, fp);
                 if (len > 0)
                     fwrite((void*)id, 1, len, fp);
@@ -885,7 +937,7 @@ namespace Dsl
                 const FunctionData& lowerOrderFunction = *m_Name.GetFunction();
                 lowerOrderFunction.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
             }
-            else if(m_Name.HaveId()) {
+            else if (m_Name.HaveId()) {
                 m_Name.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
             }
             else {
@@ -1172,6 +1224,12 @@ namespace Dsl
             if (code >= (char)BinCode_ParamOrExternClassBegin) {
                 ++curCodeIndex;
                 data.SetParamClass(code - (char)BinCode_ParamOrExternClassBegin);
+                if (data.HaveParamOrStatement()) {
+                    int byteCount = 0;
+                    int v = read7BitEncodedInt(bytes, size, start + curCodeIndex, byteCount);
+                    curCodeIndex += byteCount;
+                    data.InitParamsCapacity(v);
+                }
             }
             code = readByte(bytes, size, start + curCodeIndex);
             if (code == (char)BinCode_BeginValue) {
@@ -1206,6 +1264,10 @@ namespace Dsl
     {
         char code = readByte(bytes, size, start + curCodeIndex++);
         if (code == (char)BinCode_BeginStatement) {
+            int byteCount = 0;
+            int v = read7BitEncodedInt(bytes, size, start + curCodeIndex, byteCount);
+            curCodeIndex += byteCount;
+            data.InitFunctionsCapacity(v);
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
                 if (code == (char)BinCode_BeginFunction) {
@@ -1258,6 +1320,9 @@ namespace Dsl
     {
         s[pos++] = (char)BinCode_BeginFunction;
         s[pos++] = (char)((int)BinCode_ParamOrExternClassBegin + data.GetParamClass());
+        if (data.HaveParamOrStatement()) {
+            write7BitEncodedInt(s, pos, data.GetParamNum());
+        }
         if (data.IsHighOrder()) {
             const ValueData& name = data.GetName();
             writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetFunction());
@@ -1275,6 +1340,7 @@ namespace Dsl
     static void writeBinary(char* s, int capacity, int& pos, const char** identifiers, int idCapacity, int& idCount, const StatementData& data)
     {
         s[pos++] = (char)BinCode_BeginStatement;
+        write7BitEncodedInt(s, pos, data.GetFunctionNum());
         for (int i = 0; i < data.GetFunctionNum(); ++i) {
             const FunctionData* funcData = data.GetFunction(i);
             writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *funcData);

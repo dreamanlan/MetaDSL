@@ -1016,11 +1016,11 @@ namespace Dsl
             if (null == binaryCode)
                 return;
             int pos = c_BinaryIdentity.Length;
-            int bytesLen = ReadInt(binaryCode, pos);
+            int bytesLen = Utility.readInt(binaryCode, pos);
             pos += 4;
-            int bytes2Len = ReadInt(binaryCode, pos);
+            int bytes2Len = Utility.readInt(binaryCode, pos);
             pos += 4;
-            int keyCount = ReadInt(binaryCode, pos);
+            int keyCount = Utility.readInt(binaryCode, pos);
             pos += 4;
             int bytesStart = pos;
             int bytes2Start = bytesStart + bytesLen;
@@ -1032,7 +1032,7 @@ namespace Dsl
             pos = keyStart;
             for (int i = 0; i < keyCount; ++i) {
                 int byteCount;
-                int len = Read7BitEncodedInt(binaryCode, pos, out byteCount);
+                int len = Utility.read7BitEncodedInt(binaryCode, pos, out byteCount);
                 if (len >= 0) {
                     pos += byteCount;
                     var key = Encoding.UTF8.GetString(binaryCode, pos, len);
@@ -1112,14 +1112,14 @@ namespace Dsl
             }
             using (MemoryStream bdsl = new MemoryStream()) {
                 bdsl.Write(BinaryIdentity, 0, c_BinaryIdentity.Length);
-                WriteInt(bdsl, bytes.Length);
-                WriteInt(bdsl, bytes2.Length);
-                WriteInt(bdsl, keys.Count);
+                Utility.writeInt(bdsl, bytes.Length);
+                Utility.writeInt(bdsl, bytes2.Length);
+                Utility.writeInt(bdsl, keys.Count);
                 bdsl.Write(bytes, 0, bytes.Length);
                 bdsl.Write(bytes2, 0, bytes2.Length);
                 foreach (var str in keys) {
                     var bstr = Encoding.UTF8.GetBytes(str);
-                    Write7BitEncodedInt(bdsl, bstr.Length);
+                    Utility.write7BitEncodedInt(bdsl, bstr.Length);
                     bdsl.Write(bstr, 0, bstr.Length);
                 }
                 using (FileStream fs = new FileStream(file, FileMode.Create)) {
@@ -1185,57 +1185,6 @@ namespace Dsl
             return !log.HasError;
         }
 
-        private void WriteInt(Stream s, int val)
-        {
-            if (null == mBuffer) {
-                mBuffer = new byte[4];
-            }
-            mBuffer[0] = (byte)val;
-            mBuffer[1] = (byte)(val >> 8);
-            mBuffer[2] = (byte)(val >> 16);
-            mBuffer[3] = (byte)(val >> 24);
-            s.Write(mBuffer, 0, 4);
-        }
-        private void Write7BitEncodedInt(Stream s, int val)
-        {
-            uint num;
-            for (num = (uint)val; num >= 128; num >>= 7) {
-                s.WriteByte((byte)(num | 0x80));
-            }
-            s.WriteByte((byte)num);
-        }
-        private int ReadInt(byte[] bytes, int pos)
-        {
-            if (null != bytes && pos >= 0 && pos + 3 < bytes.Length) {
-                return bytes[pos] | (bytes[pos + 1] << 8) | (bytes[pos + 2] << 16) | (bytes[pos + 3] << 24);
-            }
-            else {
-                return -1;
-            }
-        }
-        private int Read7BitEncodedInt(byte[] bytes, int pos, out int byteCount)
-        {
-            int num = -1;
-            byteCount = 0;
-            if (null != bytes && pos < bytes.Length) {
-                int bitCount = 0;
-                byte b;
-                num = 0;
-                do {
-                    if (bitCount == 35) {
-                        num = -1;
-                        break;
-                    }
-                    b = bytes[pos++];
-                    num |= (b & 0x7F) << bitCount;
-                    bitCount += 7;
-                }
-                while (pos < bytes.Length && (b & 0x80) != 0);
-                byteCount = bitCount / 7;
-            }
-            return num;
-        }
-
         private class MyStringComparer : IComparer<string>
         {
             public int Compare(string x, string y)
@@ -1259,7 +1208,6 @@ namespace Dsl
             }
         }
 
-        private byte[] mBuffer = null;
         private MyStringComparer mStringComparer = null;
         private List<ISyntaxComponent> mDslInfos = new List<ISyntaxComponent>();
 
@@ -1303,6 +1251,57 @@ namespace Dsl
 
     public sealed class Utility
     {
+        internal static int readInt(byte[] bytes, int pos)
+        {
+            if (null != bytes && pos >= 0 && pos + 3 < bytes.Length) {
+                return bytes[pos] | (bytes[pos + 1] << 8) | (bytes[pos + 2] << 16) | (bytes[pos + 3] << 24);
+            }
+            else {
+                return -1;
+            }
+        }
+        internal static int read7BitEncodedInt(byte[] bytes, int pos, out int byteCount)
+        {
+            int num = -1;
+            byteCount = 0;
+            if (null != bytes && pos < bytes.Length) {
+                int bitCount = 0;
+                byte b;
+                num = 0;
+                do {
+                    if (bitCount == 35) {
+                        num = -1;
+                        break;
+                    }
+                    b = bytes[pos++];
+                    num |= (b & 0x7F) << bitCount;
+                    bitCount += 7;
+                }
+                while (pos < bytes.Length && (b & 0x80) != 0);
+                byteCount = bitCount / 7;
+            }
+            return num;
+        }
+        internal static void writeInt(Stream s, int val)
+        {
+            byte b1 = (byte)val;
+            byte b2 = (byte)(val >> 8);
+            byte b3 = (byte)(val >> 16);
+            byte b4 = (byte)(val >> 24);
+            s.WriteByte(b1);
+            s.WriteByte(b2);
+            s.WriteByte(b3);
+            s.WriteByte(b4);
+        }
+        internal static void write7BitEncodedInt(Stream s, int val)
+        {
+            uint num;
+            for (num = (uint)val; num >= 128; num >>= 7) {
+                s.WriteByte((byte)(num | 0x80));
+            }
+            s.WriteByte((byte)num);
+        }
+
         public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
         {
 #if FULL_VERSION
@@ -2010,6 +2009,12 @@ namespace Dsl
                 if (code >= (byte)DslBinaryCode.ParamOrExternClassBegin) {
                     ++curCodeIndex;
                     data.SetParamClass(code - (byte)DslBinaryCode.ParamOrExternClassBegin);
+                    if (data.HaveParamOrStatement()) {
+                        int byteCount;
+                        int v = read7BitEncodedInt(bytes, start + curCodeIndex, out byteCount);
+                        curCodeIndex += byteCount;
+                        data.Params.Capacity = v;
+                    }
                 }
                 code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.BeginValue) {
@@ -2044,6 +2049,10 @@ namespace Dsl
         {
             byte code = readByte(bytes, start + curCodeIndex++);
             if (code == (byte)DslBinaryCode.BeginStatement) {
+                int byteCount;
+                int v = read7BitEncodedInt(bytes, start + curCodeIndex, out byteCount);
+                curCodeIndex += byteCount;
+                data.Functions.Capacity = v;
                 for (; ; ) {
                     code = readByte(bytes, start + curCodeIndex);
                     if (code == (byte)DslBinaryCode.BeginFunction) {
@@ -2094,6 +2103,9 @@ namespace Dsl
             stream.WriteByte((byte)DslBinaryCode.BeginFunction);
             if (null != data) {
                 stream.WriteByte((byte)((int)DslBinaryCode.ParamOrExternClassBegin + data.GetParamClass()));
+                if (data.HaveParamOrStatement()) {
+                    write7BitEncodedInt(stream, data.GetParamNum());
+                }
                 if (data.IsHighOrder) {
                     writeBinary(stream, identifiers, data.LowerOrderFunction);
                 }
@@ -2109,6 +2121,7 @@ namespace Dsl
         internal static void writeBinary(MemoryStream stream, List<string> identifiers, StatementData data)
         {
             stream.WriteByte((byte)DslBinaryCode.BeginStatement);
+            write7BitEncodedInt(stream, data.GetFunctionNum());
             foreach (FunctionData funcData in data.Functions) {
                 writeBinary(stream, identifiers, funcData);
             }
