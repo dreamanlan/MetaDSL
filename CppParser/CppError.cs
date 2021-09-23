@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dsl.Common;
 
-namespace Dsl.CppParser
+namespace Dsl.Parser
 {
     struct CppError
     {
