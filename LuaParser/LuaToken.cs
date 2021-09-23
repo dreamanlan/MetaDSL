@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dsl.Common;
 
-namespace Lua.Parser
+namespace Dsl.LuaParser
 {
     struct LuaToken
     {

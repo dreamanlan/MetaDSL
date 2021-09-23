@@ -1141,15 +1141,15 @@ namespace Dsl
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
-            Lua.Parser.LuaToken tokens = new Lua.Parser.LuaToken(log, content);
-            Lua.Parser.LuaError error = new Lua.Parser.LuaError(log);
+            Dsl.LuaParser.LuaToken tokens = new Dsl.LuaParser.LuaToken(log, content);
+            Dsl.LuaParser.LuaError error = new Dsl.LuaParser.LuaError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
             action.Type = Common.DslActionType.Lua;
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
             
-            Lua.Parser.LuaParser.parse(ref action, ref tokens, ref error, 0);
+            Dsl.LuaParser.LuaParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos.Clear();
@@ -1169,14 +1169,14 @@ namespace Dsl
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
-            Cpp.Parser.CppToken tokens = new Cpp.Parser.CppToken(log, content);
-            Cpp.Parser.CppError error = new Cpp.Parser.CppError(log);
+            Dsl.CppParser.CppToken tokens = new Dsl.CppParser.CppToken(log, content);
+            Dsl.CppParser.CppError error = new Dsl.CppParser.CppError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
             action.Type = Common.DslActionType.Cpp;
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
 
-            Cpp.Parser.CppParser.parse(ref action, ref tokens, ref error, 0);
+            Dsl.CppParser.CppParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos.Clear();

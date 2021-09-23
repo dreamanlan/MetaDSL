@@ -93,10 +93,10 @@ namespace Dsl.Common
                     mLog.Log("{0}", Dsl.Parser.DslString.GetProductionName(production_number));
                     break;
                 case DslActionType.Lua:
-                    mLog.Log("{0}", Lua.Parser.LuaString.GetProductionName(production_number));
+                    mLog.Log("{0}", Dsl.LuaParser.LuaString.GetProductionName(production_number));
                     break;
                 case DslActionType.Cpp:
-                    mLog.Log("{0}", Cpp.Parser.CppString.GetProductionName(production_number));
+                    mLog.Log("{0}", Dsl.CppParser.CppString.GetProductionName(production_number));
                     break;
             }
             */
