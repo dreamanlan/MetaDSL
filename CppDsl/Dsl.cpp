@@ -199,7 +199,7 @@ namespace Dsl
         return need;
     }
     //------------------------------------------------------------------------------------------------------
-    FunctionData::FunctionData(IDslStringAndObjectBuffer& buffer) :ISyntaxComponent(ISyntaxComponent::TYPE_FUNCTION),
+    FunctionData::FunctionData(IDslStringAndObjectBuffer& buffer) :ValueOrFunctionData(ISyntaxComponent::TYPE_FUNCTION),
         m_Buffer(buffer),
         m_Params(0),
         m_ParamNum(0),

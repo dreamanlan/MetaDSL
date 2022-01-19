@@ -188,6 +188,25 @@ namespace Dsl
             return null;
         }
     }
+    public abstract class ValueOrFunctionData : AbstractSyntaxComponent
+    {
+        public bool IsValue
+        {
+            get { return this is ValueData; }
+        }
+        public bool IsFunction
+        {
+            get { return this is FunctionData; }
+        }
+        public ValueData AsValue
+        {
+            get { return this as ValueData; }
+        }
+        public FunctionData AsFunction
+        {
+            get { return this as FunctionData; }
+        }
+    }
     /// <summary>
     /// 空语法单件
     /// </summary>
@@ -233,7 +252,7 @@ namespace Dsl
     /// <summary>
     /// 用于描述变量、常量与无参命令语句。可能会出现在函数调用参数表与函数语句列表中。
     /// </summary>
-    public class ValueData : AbstractSyntaxComponent
+    public class ValueData : ValueOrFunctionData
     {
         public override bool IsValid()
         {
@@ -347,7 +366,7 @@ namespace Dsl
     /// <summary>
     /// 函数数据，可能出现在函数头、参数表中。
     /// </summary>
-    public class FunctionData : AbstractSyntaxComponent
+    public class FunctionData : ValueOrFunctionData
     {
         public enum ParamClassEnum
         {
@@ -755,51 +774,53 @@ namespace Dsl
         public override bool IsValid()
         {
             bool ret = true;
-            if (m_Functions.Count <= 0) {
+            if (m_ValueOrFunctions.Count <= 0) {
                 ret = false;
             }
             else {
-                for (int i = 0; i < m_Functions.Count; ++i) {
-                    ret = ret && m_Functions[i].IsValid();
+                for (int i = 0; i < m_ValueOrFunctions.Count; ++i) {
+                    ret = ret && m_ValueOrFunctions[i].IsValid();
                 }
             }
             return ret;
         }
         public override string GetId()
         {
-            if (m_Functions.Count <= 0)
+            if (m_ValueOrFunctions.Count <= 0)
                 return string.Empty;
             else
-                return m_Functions[0].GetId();
+                return m_ValueOrFunctions[0].GetId();
         }
         public override int GetIdType()
         {
-            if (m_Functions.Count <= 0)
+            if (m_ValueOrFunctions.Count <= 0)
                 return ID_TOKEN;
             else
-                return m_Functions[0].GetIdType();
+                return m_ValueOrFunctions[0].GetIdType();
         }
         public override int GetLine()
         {
-            if (m_Functions.Count <= 0)
+            if (m_ValueOrFunctions.Count <= 0)
                 return -1;
             else
-                return m_Functions[0].GetLine();
+                return m_ValueOrFunctions[0].GetLine();
         }
         public override string ToScriptString(bool includeComment)
         {
 #if FULL_VERSION
             //与write方法不同，这里输出无缩进单行表示
-            FunctionData tempData = First;
+            FunctionData tempData = First.AsFunction;
             FunctionData callData = null;
-            callData = tempData.LowerOrderFunction;
+            if (null != tempData) {
+                callData = tempData.LowerOrderFunction;
+            }
             if (null != callData && tempData.GetParamClass() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
                 //三目表达式表示为op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
                     string line = "/*[?:]*/";
                     if (Functions.Count == 2) {
-                        FunctionData funcData = Functions[1];
-                        if (funcData.HaveId() && funcData.HaveParamOrStatement()) {
+                        FunctionData funcData = Functions[1].AsFunction;
+                        if (null != funcData && funcData.HaveId() && funcData.HaveParamOrStatement()) {
                             line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(includeComment), callData.GetId(), tempData.GetParam(0).ToScriptString(includeComment));
                             line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetParam(0).ToScriptString(includeComment));
                         }
@@ -827,7 +848,7 @@ namespace Dsl
                 }
                 int ct = Functions.Count;
                 for (int i = 0; i < ct; ++i) {
-                    FunctionData funcData = Functions[i];
+                    ValueOrFunctionData funcData = Functions[i];
                     stream.Append(funcData.ToScriptString(includeComment));
                 }
                 if (includeComment) {
@@ -842,79 +863,79 @@ namespace Dsl
 
         public int GetFunctionNum()
         {
-            return m_Functions.Count;
+            return m_ValueOrFunctions.Count;
         }
-        public void SetFunction(int index, FunctionData funcData)
+        public void SetFunction(int index, ValueOrFunctionData funcData)
         {
-            if (index < 0 || index >= m_Functions.Count)
+            if (index < 0 || index >= m_ValueOrFunctions.Count)
                 return;
-            m_Functions[index] = funcData;
+            m_ValueOrFunctions[index] = funcData;
         }
-        public FunctionData GetFunction(int index)
+        public ValueOrFunctionData GetFunction(int index)
         {
-            if (index < 0 || index >= m_Functions.Count)
+            if (index < 0 || index >= m_ValueOrFunctions.Count)
                 return FunctionData.NullFunction;
-            return m_Functions[index];
+            return m_ValueOrFunctions[index];
         }
         public string GetFunctionId(int index)
         {
-            if (index < 0 || index >= m_Functions.Count)
+            if (index < 0 || index >= m_ValueOrFunctions.Count)
                 return string.Empty;
-            return m_Functions[index].GetId();
+            return m_ValueOrFunctions[index].GetId();
         }
-        public void AddFunction(FunctionData funcData)
+        public void AddFunction(ValueOrFunctionData funcData)
         {
-            m_Functions.Add(funcData);
+            m_ValueOrFunctions.Add(funcData);
         }
-        public List<FunctionData> Functions
+        public List<ValueOrFunctionData> Functions
         {
-            get { return m_Functions; }
+            get { return m_ValueOrFunctions; }
         }
-        public FunctionData First
+        public ValueOrFunctionData First
         {
             get {
-                if (m_Functions.Count > 0)
-                    return m_Functions[0];
+                if (m_ValueOrFunctions.Count > 0)
+                    return m_ValueOrFunctions[0];
+                else
+                    return ValueData.NullValue;
+            }
+        }
+        public ValueOrFunctionData Second
+        {
+            get {
+                if (m_ValueOrFunctions.Count > 1)
+                    return m_ValueOrFunctions[1];
                 else
                     return FunctionData.NullFunction;
             }
         }
-        public FunctionData Second
+        public ValueOrFunctionData Third
         {
             get {
-                if (m_Functions.Count > 1)
-                    return m_Functions[1];
+                if (m_ValueOrFunctions.Count > 2)
+                    return m_ValueOrFunctions[2];
                 else
                     return FunctionData.NullFunction;
             }
         }
-        public FunctionData Third
+        public ValueOrFunctionData Last
         {
             get {
-                if (m_Functions.Count > 2)
-                    return m_Functions[2];
-                else
-                    return FunctionData.NullFunction;
-            }
-        }
-        public FunctionData Last
-        {
-            get {
-                if (m_Functions.Count > 0)
-                    return m_Functions[m_Functions.Count - 1];
+                if (m_ValueOrFunctions.Count > 0)
+                    return m_ValueOrFunctions[m_ValueOrFunctions.Count - 1];
                 else
                     return FunctionData.NullFunction;
             }
         }
         public void Clear()
         {
-            m_Functions = new List<FunctionData>();
+            m_ValueOrFunctions = new List<ValueOrFunctionData>();
 
             m_CommentsInfo = null;
         }
         public void CopyFrom(StatementData other)
         {
-            m_Functions = other.m_Functions;
+            m_ValueOrFunctions = other.m_ValueOrFunctions;
 
             if (!DslFile.DontLoadComments) {
                 CopyComments(other);
@@ -930,7 +951,7 @@ namespace Dsl
             return m_CommentsInfo;
         }
 
-        private List<FunctionData> m_Functions = new List<FunctionData>();
+        private List<ValueOrFunctionData> m_ValueOrFunctions = new List<ValueOrFunctionData>();
         private SyntaxComponentCommentsInfo m_CommentsInfo = null;
 
         public static StatementData NullStatementData
@@ -1547,15 +1568,18 @@ namespace Dsl
         {
 #if FULL_VERSION
             writeFirstComments(stream, data, indent, firstLineNoIndent);
-            FunctionData tempData = data.First;
-            FunctionData callData = tempData.LowerOrderFunction;
+            FunctionData tempData = data.First.AsFunction;
+            FunctionData callData = null;
+            if (null != tempData) {
+                callData = tempData.LowerOrderFunction;
+            }
             if (null != callData && tempData.GetParamClass() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
                 //三目运算符表示为op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
                     string line = "/*[?:]*/";                    
                     if (data.Functions.Count == 2) {
-                        FunctionData funcData = data.Functions[1];
-                        if (funcData.HaveId() && funcData.HaveParamOrStatement()) {
+                        FunctionData funcData = data.Functions[1].AsFunction;
+                        if (null != funcData && funcData.HaveId() && funcData.HaveParamOrStatement()) {
                             line = string.Format("{0} {1} {2}", callData.GetParam(0).ToScriptString(true), callData.GetId(), tempData.GetParam(0).ToScriptString(true));
                             line = string.Format("{0} {1} {2}", line, funcData.GetId(), funcData.GetParam(0).ToScriptString(true));
                         }
@@ -1568,26 +1592,49 @@ namespace Dsl
                 bool lastFuncNoParam = false;
                 bool lastFuncNoStatement = false;
                 for (int i = 0; i < ct; ++i) {
-                    FunctionData func = data.Functions[i];
-                    bool noIndent = false;
-                    bool funcNoParam = !func.IsHighOrder && !func.HaveParam();
-                    bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
-                    if (i > 0) {
-                        if (lastFuncNoParam && lastFuncNoStatement) {
-                            writeText(stream, " ", 0);
-                            noIndent = true;
+                    var dof = data.Functions[i];
+                    ValueData val = dof.AsValue;
+                    if (null != val) {
+                        bool noIndent = false;
+                        if (i > 0) {
+                            if (lastFuncNoParam && lastFuncNoStatement) {
+                                writeText(stream, " ", 0);
+                                noIndent = true;
+                            }
+                            else if (lastFuncNoStatement) {
+                                noIndent = true;
+                            }
+                            else {
+                                writeLine(stream, string.Empty, 0);
+                                noIndent = false;
+                            }
                         }
-                        else if (lastFuncNoStatement && funcNoStatement) {
-                            noIndent = true;
-                        }
-                        else {
-                            writeLine(stream, string.Empty, 0);
-                            noIndent = false;
-                        }
+                        writeValueData(stream, val, indent, firstLineNoIndent && i == 0 || noIndent, false);
+                        lastFuncNoParam = true;
+                        lastFuncNoStatement = true;
                     }
-                    writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false);
-                    lastFuncNoParam = funcNoParam;
-                    lastFuncNoStatement = funcNoStatement;
+                    else {
+                        FunctionData func = dof.AsFunction;
+                        bool funcNoParam = !func.IsHighOrder && !func.HaveParam();
+                        bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
+                        bool noIndent = false;
+                        if (i > 0) {
+                            if (lastFuncNoParam && lastFuncNoStatement) {
+                                writeText(stream, " ", 0);
+                                noIndent = true;
+                            }
+                            else if (lastFuncNoStatement && funcNoStatement) {
+                                noIndent = true;
+                            }
+                            else {
+                                writeLine(stream, string.Empty, 0);
+                                noIndent = false;
+                            }
+                        }
+                        writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false);
+                        lastFuncNoParam = funcNoParam;
+                        lastFuncNoStatement = funcNoStatement;
+                    }
                 }
             }
             if (isLastOfStatement)

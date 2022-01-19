@@ -232,8 +232,11 @@ namespace Dsl.Common
             ISyntaxComponent argComp = simplifyStatement(arg);
 
             StatementData _statement = newStatementWithOneFunction();
-            FunctionData first = _statement.First;
-            first.Name.SetLine(getLastLineNumber());
+            var first = _statement.First;
+            if (first.IsValue)
+                first.AsValue.SetLine(getLastLineNumber());
+            else
+                first.AsFunction.Name.SetLine(getLastLineNumber());
 
             _statement.CopyFirstComments(argComp);
             argComp.FirstComments.Clear();
@@ -269,13 +272,13 @@ namespace Dsl.Common
             ISyntaxComponent argComp = simplifyStatement(arg);
 
             StatementData _statement = newStatementWithOneFunction();
-            FunctionData first = _statement.First;
-
-            //三元运算符表示成op1(cond)(true_val)op2(false_val)
-            first.LowerOrderFunction = new FunctionData();
-            first.LowerOrderFunction.Name = new ValueData();
-            first.LowerOrderFunction.Name.SetLine(getLastLineNumber());
-
+            FunctionData first = _statement.First.AsFunction;
+            if (null != first) {
+                //三元运算符表示成op1(cond)(true_val)op2(false_val)
+                first.LowerOrderFunction = new FunctionData();
+                first.LowerOrderFunction.Name = new ValueData();
+                first.LowerOrderFunction.Name.SetLine(getLastLineNumber());
+            }
             _statement.CopyFirstComments(argComp);
             argComp.FirstComments.Clear();
 
@@ -331,8 +334,8 @@ namespace Dsl.Common
         private void endStatement()
         {
             StatementData statement = popStatement();
-            if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.GetId() == "@@delimiter" && statement.Functions.Count == 1 && (statement.First.GetParamNum() == 1 || statement.First.GetParamNum() == 3) && !statement.First.IsHighOrder) {
-                FunctionData call = statement.First;
+            FunctionData call = statement.First.AsFunction;
+            if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.Functions.Count == 1 && null != call && call.GetId() == "@@delimiter" && (call.GetParamNum() == 1 || call.GetParamNum() == 3) && !call.IsHighOrder) {
                 string type = call.GetParamId(0);
                 if (call.GetParamNum() == 3) {
                     string begin = call.GetParamId(1);
@@ -709,27 +712,29 @@ namespace Dsl.Common
         private void removeLuaList()
         {
             var statement = getCurStatement();
-            var func = statement.First;
-            var p = func.GetParam(0);
-            var st = p as Dsl.StatementData;
-            if (null != st) {
-                popStatement();
-                mStatementSemanticStack.Push(st);
-            }
-            else {
-                var f = p as Dsl.FunctionData;
-                if (null != f) {
-                    statement.Functions.Clear();
-                    statement.AddFunction(f);
+            var func = statement.First.AsFunction;
+            if (null != func) {
+                var p = func.GetParam(0);
+                var st = p as Dsl.StatementData;
+                if (null != st) {
+                    popStatement();
+                    mStatementSemanticStack.Push(st);
                 }
                 else {
-                    var v = p as Dsl.ValueData;
-                    if (null != v) {
-                        func.Clear();
-                        func.Name = v;
+                    var f = p as Dsl.FunctionData;
+                    if (null != f) {
+                        statement.Functions.Clear();
+                        statement.AddFunction(f);
                     }
                     else {
-                        mLog.Log("[error] unknown function call/variable syntax ! last token:{0} line {1}", getLastToken(), getLastLineNumber());
+                        var v = p as Dsl.ValueData;
+                        if (null != v) {
+                            func.Clear();
+                            func.Name = v;
+                        }
+                        else {
+                            mLog.Log("[error] unknown function call/variable syntax ! last token:{0} line {1}", getLastToken(), getLastLineNumber());
+                        }
                     }
                 }
             }
@@ -738,14 +743,16 @@ namespace Dsl.Common
         private void checkLuaList()
         {
             var statement = getCurStatement();
-            var func = statement.First;
-            for(int i = 0; i < func.GetParamNum(); ++i) {
-                var p = func.GetParam(i);
-                var f = p as Dsl.FunctionData;
-                if (null != f &&
-                    f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD &&
-                    f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET) {
-                    mLog.Error("[error] Can only assignment to left value. {0}:{1} last token:{2} line {3}", f.GetLine(), f.ToScriptString(false), getLastToken(), getLastLineNumber());
+            var func = statement.First.AsFunction;
+            if (null != func) {
+                for (int i = 0; i < func.GetParamNum(); ++i) {
+                    var p = func.GetParam(i);
+                    var f = p as Dsl.FunctionData;
+                    if (null != f &&
+                        f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD &&
+                        f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET) {
+                        mLog.Error("[error] Can only assignment to left value. {0}:{1} last token:{2} line {3}", f.GetLine(), f.ToScriptString(false), getLastToken(), getLastLineNumber());
+                    }
                 }
             }
         }
@@ -762,27 +769,29 @@ namespace Dsl.Common
         private void removeLuaVarAttr()
         {
             var statement = getCurStatement();
-            var func = statement.First;
-            var p = func.GetParam(0);
-            var st = p as Dsl.StatementData;
-            if (null != st) {
-                popStatement();
-                mStatementSemanticStack.Push(st);
-            }
-            else {
-                var f = p as Dsl.FunctionData;
-                if (null != f) {
-                    statement.Functions.Clear();
-                    statement.AddFunction(f);
+            var func = statement.First.AsFunction;
+            if (null != func) {
+                var p = func.GetParam(0);
+                var st = p as Dsl.StatementData;
+                if (null != st) {
+                    popStatement();
+                    mStatementSemanticStack.Push(st);
                 }
                 else {
-                    var v = p as Dsl.ValueData;
-                    if (null != v) {
-                        func.Clear();
-                        func.Name = v;
+                    var f = p as Dsl.FunctionData;
+                    if (null != f) {
+                        statement.Functions.Clear();
+                        statement.AddFunction(f);
                     }
                     else {
-                        mLog.Log("[error] unknown function call/variable syntax ! last token:{0} line {1}", getLastToken(), getLastLineNumber());
+                        var v = p as Dsl.ValueData;
+                        if (null != v) {
+                            func.Clear();
+                            func.Name = v;
+                        }
+                        else {
+                            mLog.Log("[error] unknown function call/variable syntax ! last token:{0} line {1}", getLastToken(), getLastLineNumber());
+                        }
                     }
                 }
             }
@@ -817,12 +826,13 @@ namespace Dsl.Common
         {
             var statement = getCurStatement();
             var first = getFirstFunction();
+            var firstFunc = first.AsFunction;
             var second = getSecondFunction();
             var last = getLastFunction();
             var firstId = first.GetId();
             var secondId = second.GetId();
             var lastId = last.GetId();
-            if (firstId == "if" && first.HaveStatement() && lastId != "if" && lastId != "else" ||
+            if (firstId == "if" && null != firstFunc && firstFunc.HaveStatement() && lastId != "if" && lastId != "else" ||
                 firstId == "do" && lastId != "while" ||
                 firstId == "try" && lastId != "catch" && lastId != "finally") {
                 statement.Functions.Remove(last);
@@ -866,14 +876,16 @@ namespace Dsl.Common
         {
             bool ret = false;
             var first = statement.First;
+            var firstFunc = first.AsFunction;
             var second = statement.Second;
+            var secondFunc = second.AsFunction;
             var third = statement.Third;
             var last = statement.Last;
             var firstId = first.GetId();
             var secondId = second.GetId();
             var thirdId = third.GetId();
-            if (firstId == "explicit" && second.HaveId() && second.HaveParam() && thirdId == ":" && (!curIsColon || third == last) ||
-                first.HaveId() && first.HaveParam() && secondId == ":" && (!curIsColon || second == last)) {
+            if (firstId == "explicit" && null != secondFunc && secondFunc.HaveId() && secondFunc.HaveParam() && thirdId == ":" && (!curIsColon || third == last) ||
+                null != firstFunc && firstFunc.HaveId() && firstFunc.HaveParam() && secondId == ":" && (!curIsColon || second == last)) {
                 ret = true;
             }
             return ret;
@@ -919,17 +931,17 @@ namespace Dsl.Common
             mStatementSemanticStack.Push(topData);
             return parentData;
         }
-        private FunctionData getFirstFunction()
+        private ValueOrFunctionData getFirstFunction()
         {
             StatementData statement = getCurStatement();
             return statement.First;
         }
-        private FunctionData getSecondFunction()
+        private ValueOrFunctionData getSecondFunction()
         {
             StatementData statement = getCurStatement();
             return statement.Second;
         }
-        private FunctionData getThirdFunction()
+        private ValueOrFunctionData getThirdFunction()
         {
             StatementData statement = getCurStatement();
             return statement.Third;
@@ -937,7 +949,7 @@ namespace Dsl.Common
         private FunctionData getLastFunction()
         {
             StatementData statement = getCurStatement();
-            return statement.Last;
+            return statement.Last.AsFunction;
         }
         private StatementData newStatementWithOneFunction()
         {
@@ -966,13 +978,25 @@ namespace Dsl.Common
             //对语句进行化简（语法分析过程中为了方便，全部按完整StatementData来构造，这里化简为原来的类型：ValueData/CallData/FunctionData等，主要涉及参数与语句部分）
             if (data.Functions.Count == 1) {
                 //只有一个函数的语句退化为函数（再按函数进一步退化）。
-                FunctionData func = data.Functions[0];
-                func.CopyComments(data);
-                return simplifyStatement(func);
+                var f = data.Functions[0];
+                f.CopyComments(data);
+                if (f.IsValue)
+                    return f;
+                else
+                    return simplifyStatement(f.AsFunction);
+            }
+            else {
+                for(int i = 0; i < data.Functions.Count; ++i) {
+                    var f = data.Functions[i];
+                    var func = f.AsFunction;
+                    if (null != func) {
+                        data.Functions[i] = simplifyStatement(func);
+                    }
+                }
             }
             return data;
         }
-        private AbstractSyntaxComponent simplifyStatement(FunctionData data)
+        private ValueOrFunctionData simplifyStatement(FunctionData data)
         {
             //注意，为了省内存ValueData上不附带注释了，相关接口无实际效果！！！
             if (!data.HaveParamOrStatement()) {

@@ -326,7 +326,52 @@ namespace Dsl
     };
 
     class FunctionData;
-    class ValueData : public ISyntaxComponent
+    class ValueData;
+    class ValueOrFunctionData : public ISyntaxComponent
+    {
+    public:
+        ValueOrFunctionData(int syntaxType) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE)
+        {}
+    public:
+        int IsValue(void)const
+        {
+            return GetSyntaxType() == ISyntaxComponent::TYPE_VALUE ? TRUE : FALSE;
+        }
+        int IsFunction(void)const
+        {
+            return GetSyntaxType() == ISyntaxComponent::TYPE_FUNCTION ? TRUE : FALSE;
+        }
+        const ValueData* AsValue(void)const
+        {
+            if (IsValue())
+                return reinterpret_cast<const ValueData*>(this);
+            else
+                return nullptr;
+        }
+        ValueData* AsValue(void)
+        {
+            if (IsValue())
+                return reinterpret_cast<ValueData*>(this);
+            else
+                return nullptr;
+        }
+        const FunctionData* AsFunction(void)const
+        {
+            if (IsFunction())
+                return reinterpret_cast<const FunctionData*>(this);
+            else
+                return nullptr;
+        }
+        FunctionData* AsFunction(void)
+        {
+            if (IsFunction())
+                return reinterpret_cast<FunctionData*>(this);
+            else
+                return nullptr;
+        }
+    };
+
+    class ValueData : public ValueOrFunctionData
     {
     public:
         enum
@@ -338,13 +383,13 @@ namespace Dsl
             TYPE_MAX = TYPE_STRING
         };
 
-        ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
-        explicit ValueData(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
-        explicit ValueData(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
-        explicit ValueData(FunctionData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
-        explicit ValueData(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
-        explicit ValueData(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
-        ValueData(const ValueData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
+        ValueData(void) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
+        explicit ValueData(char* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
+        explicit ValueData(const char* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
+        explicit ValueData(FunctionData* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
+        explicit ValueData(char* val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
+        explicit ValueData(const char* val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
+        ValueData(const ValueData& other) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
         {
             ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
@@ -450,7 +495,7 @@ namespace Dsl
     };
 
     class IDslStringAndObjectBuffer;
-    class FunctionData : public ISyntaxComponent
+    class FunctionData : public ValueOrFunctionData
     {
     public:
         enum
