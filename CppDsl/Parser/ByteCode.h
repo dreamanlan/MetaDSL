@@ -7,21 +7,21 @@
 
 namespace Dsl
 {
-	template<typename RealTypeT>
-	class RuntimeBuilderT
-	{
-	public:
-		RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile)
-		{
-			MyAssert(mDataFile);
+    template<typename RealTypeT>
+    class RuntimeBuilderT
+    {
+    public:
+        RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile)
+        {
+            MyAssert(mDataFile);
             mData.GetNullFunctionPtrRef() = mDataFile->GetNullFunctionPtr();
-		}
-		inline void    setEnvironmentObjRef(RealTypeT& thisObj)
-		{
-			mThis = &thisObj;
-			MyAssert(mThis);
-		}
-	public:
+        }
+        inline void    setEnvironmentObjRef(RealTypeT& thisObj)
+        {
+            mThis = &thisObj;
+            MyAssert(mThis);
+        }
+    public:
         inline void    endStatement(void);
         inline void    buildOperator(void);
         inline void    buildFirstTernaryOperator(void);
@@ -59,18 +59,18 @@ namespace Dsl
         inline void    markPeriodStarParam(void);
         inline void    markQuestionPeriodStarParam(void);
         inline void    markPointerStarParam(void);
-	private:
-		inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
-		inline ISyntaxComponent& simplifyStatement(FunctionData& data)const;
-		inline bool	preconditionCheck(void)const
-		{
-			return NULL != mThis && NULL != mDataFile;
-		}
-	protected:
-		RuntimeBuilderData		        mData;
-		DslFile*		                mDataFile;
-		RealTypeT*						mThis;
-	};
+    private:
+        inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
+        inline ValueOrFunctionData& simplifyStatement(FunctionData& data)const;
+        inline bool	preconditionCheck(void)const
+        {
+            return NULL != mThis && NULL != mDataFile;
+        }
+    protected:
+        RuntimeBuilderData		        mData;
+        DslFile* mDataFile;
+        RealTypeT* mThis;
+    };
 }
 
 #include "ByteCode.inl"

@@ -2115,7 +2115,12 @@ namespace Dsl
                 data.Functions.Capacity = v;
                 for (; ; ) {
                     code = readByte(bytes, start + curCodeIndex);
-                    if (code == (byte)DslBinaryCode.BeginFunction) {
+                    if (code == (byte)DslBinaryCode.BeginValue) {
+                        ValueData valData = new ValueData();
+                        readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, valData);
+                        data.Functions.Add(valData);
+                    }
+                    else if (code == (byte)DslBinaryCode.BeginFunction) {
                         FunctionData funcData = new FunctionData();
                         readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, funcData);
                         data.Functions.Add(funcData);

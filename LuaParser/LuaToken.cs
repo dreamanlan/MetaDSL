@@ -381,7 +381,7 @@ namespace Dsl.Parser
                     else {
                         short v;
                         if (mNames.TryGetValue(mCurToken, out v)) {
-                            if (mLastToken != ";" && (v == LuaConstants.END_ || v == LuaConstants.ELSEIF_ || v == LuaConstants.ELSE_ || v == LuaConstants.UNTIL_)) {
+                            if (mLastToken != ";" && (v == LuaConstants.END_ || v == LuaConstants.ELSEIF_ || v == LuaConstants.ELSE_ || v == LuaConstants.UNTIL_ || v == LuaConstants.RETURN_)) {
                                 mCachedToken = mCurToken;
                                 mCurToken = ";";
                                 return LuaConstants.SEMI_;

@@ -20,7 +20,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::setExternScript(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 != p) {
             char* pStr = mThis->getLastToken();
             if (0 != pStr) {
@@ -112,7 +112,7 @@ namespace Dsl
         FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
             //三元运算符表示成op1(cond)(true_val)op2(false_val)
-            FunctionData* lowerOrderFunction= mDataFile->AddNewFunctionComponent();
+            FunctionData* lowerOrderFunction = mDataFile->AddNewFunctionComponent();
             p->GetName().SetFunction(lowerOrderFunction);
             p->SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
             lowerOrderFunction->SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
@@ -182,9 +182,11 @@ namespace Dsl
         StatementData* statement = mData.popStatement();
         if (0 == statement)
             return;
-        const char* id = statement->GetId();
-        if (0 != id && strcmp(id, "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && (statement->GetLastFunctionRef()->GetParamNum() == 1 || statement->GetLastFunctionRef()->GetParamNum() == 3) && !statement->GetLastFunctionRef()->IsHighOrder()) {
-            const FunctionData& call = *statement->GetLastFunctionRef();
+        auto* f = statement->GetLastFunctionRef();
+        const char* id = f->GetId();
+        auto* func = f->AsFunction();
+        if (0 != id && strcmp(id, "@@delimiter") == 0 && statement->GetFunctionNum() == 1 && nullptr != func && (func->GetParamNum() == 1 || func->GetParamNum() == 3) && !func->IsHighOrder()) {
+            const FunctionData& call = *func;
             const char* type = call.GetParamId(0);
             if (call.GetParamNum() == 3) {
                 const char* begin = call.GetParamId(1);
@@ -283,7 +285,7 @@ namespace Dsl
             //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
             ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
 
-            FunctionData* p = mData.getLastFunctionRef();
+            FunctionData* p = mData.getLastFunction();
             if (0 != p) {
                 if (p->HaveParam()) {
                     //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
@@ -384,7 +386,7 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("id:%s\n", tokenInfo.mString);
         }
 
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 != p && !p->IsValid()) {
             ValueData val = tokenInfo.ToValue();
             if (TRUE == val.IsValid()) {
@@ -404,7 +406,7 @@ namespace Dsl
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("member:%s\n", tokenInfo.mString);
         }
 
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 != p && !p->IsValid()) {
             ValueData val = tokenInfo.ToValue();
             if (TRUE == val.IsValid()) {
@@ -418,7 +420,7 @@ namespace Dsl
     {
         if (!preconditionCheck())return;
         //高阶函数构造（当前函数返回一个函数）
-        FunctionData*& p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData* newP = mDataFile->AddNewFunctionComponent();
@@ -426,14 +428,14 @@ namespace Dsl
             ValueData val(p);
             val.SetLine(p->GetLine());
             newP->SetName(val);
-            p = newP;
+            mData.setLastFunction(newP);
         }
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -444,7 +446,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markBracketParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -455,7 +457,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPeriodParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -465,7 +467,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPeriodParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -475,7 +477,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPeriodBracketParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -485,7 +487,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPeriodBraceParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -495,7 +497,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markQuestionPeriodParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -505,7 +507,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markQuestionParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -515,7 +517,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markQuestionBracketParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -525,7 +527,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markQuestionBraceParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -535,7 +537,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markStatement(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData* lowerOrderFunc = 0;
@@ -561,7 +563,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markExternScript(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData* lowerOrderFunc = 0;
@@ -587,7 +589,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markBracketColonParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -597,7 +599,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markParenthesisColonParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -607,7 +609,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markAngleBracketColonParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -617,7 +619,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markBracePercentParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -627,7 +629,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markBracketPercentParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -637,7 +639,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -647,7 +649,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markAngleBracketPercentParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -657,7 +659,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markColonColonParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -667,7 +669,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markColonColonParenthesisParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -677,7 +679,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markColonColonBracketParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -687,7 +689,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markColonColonBraceParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -697,7 +699,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPointerParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -707,7 +709,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPeriodStarParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -717,7 +719,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markQuestionPeriodStarParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -727,7 +729,7 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::markPointerStarParam(void)
     {
         if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunctionRef();
+        FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
@@ -740,14 +742,29 @@ namespace Dsl
         //对语句进行化简（语法分析过程中为了方便，全部按完整StatementData来构造，这里化简为原来的类型：ValueData/FunctionData/FunctionData等，主要涉及参数与语句部分）
         if (num == 1) {
             //只有一个函数的语句退化为函数（再按函数进一步退化）。
-            FunctionData& func = *data.GetFunction(0);
-            func.CopyComments(data);
-            return simplifyStatement(func);
+            auto* f = data.GetFunction(0);
+            f->CopyComments(data);
+            if (f->IsFunction()) {
+                FunctionData& func = *f->AsFunction();
+                return simplifyStatement(func);
+            }
+            else {
+                return *f->AsValue();
+            }
+        }
+        else {
+            for (int i = 0; i < num; ++i) {
+                auto* f = data.GetFunction(i);
+                if (f->IsFunction()) {
+                    FunctionData& func = *f->AsFunction();
+                    data.GetFunctionRef(i) = &simplifyStatement(func);
+                }
+            }
         }
         return data;
     }
     template<class RealTypeT> inline
-        ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(FunctionData& data)const
+        ValueOrFunctionData& RuntimeBuilderT<RealTypeT>::simplifyStatement(FunctionData& data)const
     {
         //注意，为了省内存ValueData上不附带注释了，相关接口无实际效果！！！
         if (!data.HaveParamOrStatement()) {

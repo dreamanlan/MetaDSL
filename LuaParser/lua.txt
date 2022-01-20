@@ -60,7 +60,7 @@ NAME_AND_ATTRIB :
     _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesisParam NAME_FOR_ARG ATTRIB
 
 ATTRIB :
-    [ < _action_beginStatement _action_addFunction _action_markBracketAttrParam NAME_FOR_ARG _action_endStatement > _action_endStatement ] _action_removeLuaVarAttr
+    [ < _action_beginStatement _action_addFunction _action_markBracketColonParam NAME_FOR_ARG _action_endStatement > _action_endStatement ] _action_removeLuaVarAttr
 
 RETURN_STAT :
     RETSTAT _action_endStatement
@@ -69,7 +69,7 @@ RETSTAT :
     _action_beginStatement _action_addFunction RETURN _action_pushId _action_setFunctionId _action_markParenthesisParam [ EXPLIST ] [ ; ]
 
 LABEL :
-    TWO_COLON _action_markParenthesisAttrParam NAME_FOR_ARG TWO_COLON
+    TWO_COLON _action_markAngleBracketColonParam NAME_FOR_ARG TWO_COLON
 
 FUNCNAME :
     NAME_FOR_ARG { DOT_FOR_FUNCNAME NAME_FOR_ARG } [ COLON_FOR_FUNCNAME NAME_FOR_ARG ]
@@ -218,13 +218,16 @@ FUNCTION_PARAMS :
     _action_markBracketParam \[ EXP \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     . MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     : MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
-    _action_markParenthesisColonParam STRING [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
+    _action_markParenthesisColonParam STRING_PARAM [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     
 MEMBER_DESC:
 	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
 	
 MEMBER_DESC2:
 	_action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	
+STRING_PARAM:
+	_action_beginStatement _action_addFunction STRING _action_pushStr _action_setFunctionId _action_endStatement
 
 FIELD_LIST :
     FIELD [ FIELD_LIST_TAIL ]

@@ -1,7 +1,5 @@
 .vs
 obj
-Debug
-Release
 DslLib/obj
 CppDsl/Debug
 CppDsl/Release

@@ -141,7 +141,6 @@ namespace Dsl
         virtual int GetIdType(void) const = 0;
         virtual int GetLine(void) const = 0;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const = 0;
-        virtual int HaveId(void) const = 0;
     public:
         int GetSyntaxType(void) const { return m_SyntaxType; }
         void AddFirstComment(const char* cmt)
@@ -176,7 +175,7 @@ namespace Dsl
                 return;
             GetCommentsInfo()->m_FirstCommentNum = 0;
         }
-        int GetFirstCommentNum(void) const
+        int GetFirstCommentNum(void) const 
         {
             if (DslOptions::DontLoadComments())
                 return 0;
@@ -327,52 +326,7 @@ namespace Dsl
     };
 
     class FunctionData;
-    class ValueData;
-    class ValueOrFunctionData : public ISyntaxComponent
-    {
-    public:
-        ValueOrFunctionData(int syntaxType) :ISyntaxComponent(syntaxType)
-        {}
-    public:
-        int IsValue(void)const
-        {
-            return GetSyntaxType() == ISyntaxComponent::TYPE_VALUE ? TRUE : FALSE;
-        }
-        int IsFunction(void)const
-        {
-            return GetSyntaxType() == ISyntaxComponent::TYPE_FUNCTION ? TRUE : FALSE;
-        }
-        const ValueData* AsValue(void)const
-        {
-            if (IsValue())
-                return reinterpret_cast<const ValueData*>(this);
-            else
-                return nullptr;
-        }
-        ValueData* AsValue(void)
-        {
-            if (IsValue())
-                return reinterpret_cast<ValueData*>(this);
-            else
-                return nullptr;
-        }
-        const FunctionData* AsFunction(void)const
-        {
-            if (IsFunction())
-                return reinterpret_cast<const FunctionData*>(this);
-            else
-                return nullptr;
-        }
-        FunctionData* AsFunction(void)
-        {
-            if (IsFunction())
-                return reinterpret_cast<FunctionData*>(this);
-            else
-                return nullptr;
-        }
-    };
-
-    class ValueData : public ValueOrFunctionData
+    class ValueData : public ISyntaxComponent
     {
     public:
         enum
@@ -384,13 +338,13 @@ namespace Dsl
             TYPE_MAX = TYPE_STRING
         };
 
-        ValueData(void) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
-        explicit ValueData(char* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
-        explicit ValueData(const char* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
-        explicit ValueData(FunctionData* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
-        explicit ValueData(char* val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
-        explicit ValueData(const char* val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
-        ValueData(const ValueData& other) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
+        ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
+        explicit ValueData(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
+        explicit ValueData(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
+        explicit ValueData(FunctionData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
+        explicit ValueData(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
+        explicit ValueData(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
+        ValueData(const ValueData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
         {
             ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
@@ -409,10 +363,10 @@ namespace Dsl
         virtual const char* GetId(void)const;
         virtual int GetLine(void)const;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-        virtual int HaveId()const;
 
         FunctionData* GetFunction(void)const { return m_FunctionVal; }
 
+        int HaveId()const;
         int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
         int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
         int IsIdentifier(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
@@ -490,14 +444,13 @@ namespace Dsl
         virtual int GetIdType(void) const { return ValueData::TYPE_IDENTIFIER; }
         virtual int GetLine(void) const { return 0; }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const {}
-        virtual int HaveId()const { return FALSE; }
     private:
         NullSyntax(const NullSyntax&) = delete;
         NullSyntax& operator=(const NullSyntax&) = delete;
     };
 
     class IDslStringAndObjectBuffer;
-    class FunctionData : public ValueOrFunctionData
+    class FunctionData : public ISyntaxComponent
     {
     public:
         enum
@@ -551,12 +504,11 @@ namespace Dsl
         virtual const char* GetId(void)const { return m_Name.GetId(); }
         virtual int GetLine(void)const { return m_Name.GetLine(); }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-        virtual int HaveId(void)const { return m_Name.HaveId(); }
     public:
         void SetName(const ValueData& val) { m_Name = val; }
         ValueData& GetName(void) { return m_Name; }
         void ClearParams(void) { m_ParamNum = 0; }
-        void AddParam(ISyntaxComponent* pVal)
+        void AddParam(ISyntaxComponent*	pVal)
         {
             if (0 == pVal || m_ParamNum < 0 || m_ParamNum >= m_MaxParamNum)
                 return;
@@ -574,6 +526,7 @@ namespace Dsl
         }
         void SetParamClass(int v) { m_ParamClass = v; }
         int GetParamClass(void)const { return m_ParamClass; }
+        int HaveId(void)const { return m_Name.HaveId(); }
         int HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
         int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
         int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
@@ -785,7 +738,7 @@ namespace Dsl
         FunctionData* GetNullFunctionPtr(void)const;
     private:
         ValueData m_Name;
-        ISyntaxComponent** m_Params;
+        ISyntaxComponent**	m_Params;
         int m_ParamNum;
         int m_ParamSpace;
         int m_MaxParamNum;
@@ -794,7 +747,7 @@ namespace Dsl
         IDslStringAndObjectBuffer& m_Buffer;
         FunctionCommentsInfo* m_pCommentsInfo;
     };
-
+    
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
      * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
      * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
@@ -804,7 +757,7 @@ namespace Dsl
     public:
         virtual int IsValid(void)const
         {
-            if (NULL != m_ValueOrFunctions && m_ValueOrFunctionNum > 0 && m_ValueOrFunctions[0]->IsValid())
+            if (NULL != m_Functions && m_FunctionNum > 0 && m_Functions[0]->IsValid())
                 return TRUE;
             else
                 return FALSE;
@@ -813,7 +766,7 @@ namespace Dsl
         {
             int type = ValueData::TYPE_IDENTIFIER;
             if (IsValid()) {
-                type = m_ValueOrFunctions[0]->GetIdType();
+                type = m_Functions[0]->GetIdType();
             }
             return type;
         }
@@ -821,7 +774,7 @@ namespace Dsl
         {
             const char* str = "";
             if (IsValid()) {
-                str = m_ValueOrFunctions[0]->GetId();
+                str = m_Functions[0]->GetId();
             }
             return str;
         }
@@ -829,56 +782,43 @@ namespace Dsl
         {
             int line = 0;
             if (IsValid()) {
-                line = m_ValueOrFunctions[0]->GetLine();
+                line = m_Functions[0]->GetLine();
             }
             return line;
         }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-        virtual int HaveId(void) const
-        {
-            if (NULL == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
-                return FALSE;
-            else
-                return m_ValueOrFunctions[m_ValueOrFunctionNum - 1]->HaveId();
-        }
     public:
-        void ClearFunctions(void) { m_ValueOrFunctionNum = 0; }
-        void AddFunction(ValueOrFunctionData* pVal)
+        void ClearFunctions(void) { m_FunctionNum = 0; }
+        void AddFunction(FunctionData* pVal)
         {
-            if (NULL == pVal || m_ValueOrFunctionNum < 0 || m_ValueOrFunctionNum >= m_MaxValueOrFunctionNum)
+            if (NULL == pVal || m_FunctionNum < 0 || m_FunctionNum >= m_MaxFunctionNum)
                 return;
             PrepareFunctions();
-            if (NULL == m_ValueOrFunctions || m_ValueOrFunctionNum >= m_ValueOrFunctionSpace)
+            if (NULL == m_Functions || m_FunctionNum >= m_FunctionSpace)
                 return;
-            m_ValueOrFunctions[m_ValueOrFunctionNum] = pVal;
-            ++m_ValueOrFunctionNum;
+            m_Functions[m_FunctionNum] = pVal;
+            ++m_FunctionNum;
         }
-        ValueOrFunctionData*& GetLastFunctionRef(void)const
+        FunctionData*& GetLastFunctionRef(void)const
         {
-            if (NULL == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
-                return GetNullValueOrFunctionPtrRef();
+            if (NULL == m_Functions || 0 == m_FunctionNum)
+                return GetNullFunctionPtrRef();
             else
-                return m_ValueOrFunctions[m_ValueOrFunctionNum - 1];
-        }
-        ValueOrFunctionData*& GetFunctionRef(int index)const
-        {
-            if (NULL == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
-                return GetNullValueOrFunctionPtrRef();
-            return m_ValueOrFunctions[index];
+                return m_Functions[m_FunctionNum - 1];
         }
     public:
-        int GetFunctionNum(void)const { return m_ValueOrFunctionNum; }
-        ValueOrFunctionData* GetFunction(int index)const
+        int GetFunctionNum(void)const { return m_FunctionNum; }
+        FunctionData* GetFunction(int index)const
         {
-            if (NULL == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
+            if (NULL == m_Functions || index < 0 || index >= m_FunctionNum || index >= m_MaxFunctionNum)
                 return 0;
-            return m_ValueOrFunctions[index];
+            return m_Functions[index];
         }
         const char* GetFunctionId(int index)const
         {
-            if (0 == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
+            if (0 == m_Functions || index < 0 || index >= m_FunctionNum || index >= m_MaxFunctionNum)
                 return 0;
-            return m_ValueOrFunctions[index]->GetId();
+            return m_Functions[index]->GetId();
         }
     public:
         StatementData(IDslStringAndObjectBuffer& buffer);
@@ -905,12 +845,12 @@ namespace Dsl
         void PrepareFunctions(void);
         void ReleaseFunctions(void);
     private:
-        ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void)const;
+        FunctionData*& GetNullFunctionPtrRef(void)const;
     private:
-        ValueOrFunctionData** m_ValueOrFunctions;
-        int m_ValueOrFunctionNum;
-        int m_ValueOrFunctionSpace;
-        int m_MaxValueOrFunctionNum;
+        FunctionData** m_Functions;
+        int m_FunctionNum;
+        int m_FunctionSpace;
+        int m_MaxFunctionNum;
     private:
         IDslStringAndObjectBuffer& m_Buffer;
         SyntaxComponentCommentsInfo* m_pCommentsInfo;
@@ -943,7 +883,6 @@ namespace Dsl
         virtual NullSyntax* GetNullSyntaxPtr(void) = 0;
         virtual FunctionData* GetNullFunctionPtr(void) = 0;
         virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
-        virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void) = 0;
     public:
         virtual ~IDslStringAndObjectBuffer(void) {}
     };
@@ -959,7 +898,7 @@ namespace Dsl
         int PtrPoolSize = PTR_POOL_SIZE,
         int PtrPoolFreeLinkSize = PTR_POOL_FREELINK_SIZE,
         int PtrPoolFreeLinkHeaderSize = PTR_POOL_FREELINK_HEADER_SIZE>
-        class DslStringAndObjectBufferT : public IDslStringAndObjectBuffer
+    class DslStringAndObjectBufferT : public IDslStringAndObjectBuffer
     {
         struct alignas(1) FreeLinkInfo
         {
@@ -1141,14 +1080,6 @@ namespace Dsl
             fptr->ClearParams();
             return m_pNullFunction;
         }
-        virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void)
-        {
-            auto fptr = m_pNullFunction;
-            fptr->GetName().SetInvalid();
-            fptr->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
-            fptr->ClearParams();
-            return m_pNullValueOrFunction;
-        }
     public:
         DslStringAndObjectBufferT(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0),
             m_pStringBuffer(m_StringBuffer),
@@ -1157,14 +1088,13 @@ namespace Dsl
             m_pUnusedObjectPtr(m_ObjectBuffer),
             m_NullSyntax(),
             m_NullFunction(*this),
-            m_pNullFunction(&m_NullFunction),
-            m_pNullValueOrFunction(&m_NullFunction)
+            m_pNullFunction(&m_NullFunction)
         {
-            memset(m_PtrPool, 0, sizeof(void*) * PtrPoolSize);
+            memset(m_PtrPool, 0, sizeof(void*)*PtrPoolSize);
             m_PtrNum = 0;
-            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo) * PtrPoolFreeLinkSize);
+            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
             m_FreeLinkNum = 0;
-            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int) * PtrPoolFreeLinkHeaderSize);
+            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int)*PtrPoolFreeLinkHeaderSize);
             m_FreedFreeLinkHeader = -1;
         }
         void Reset(void)
@@ -1178,11 +1108,11 @@ namespace Dsl
             m_pUnusedObjectPtr = m_ObjectBuffer;
             m_pNullFunction = &m_NullFunction;
 
-            memset(m_PtrPool, 0, sizeof(void*) * PtrPoolSize);
+            memset(m_PtrPool, 0, sizeof(void*)*PtrPoolSize);
             m_PtrNum = 0;
-            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo) * PtrPoolFreeLinkSize);
+            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
             m_FreeLinkNum = 0;
-            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int) * PtrPoolFreeLinkHeaderSize);
+            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int)*PtrPoolFreeLinkHeaderSize);
             m_FreedFreeLinkHeader = -1;
         }
     private:
@@ -1215,16 +1145,15 @@ namespace Dsl
         void* m_PtrPool[PtrPoolSize];
         int m_PtrNum;
         FreeLinkInfo m_PtrFreeLink[PtrPoolFreeLinkSize];//低32位对应m_PtrPool的索引，高32位是下一个空闲块的索引
-        int m_FreeLinkNum;
+        int m_FreeLinkNum;        
         int m_PtrFreeLinkHeader[PtrPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置
         int m_FreedFreeLinkHeader;//空闲的空闲块链表的头
     private:
         NullSyntax m_NullSyntax;
         FunctionData m_NullFunction;
         FunctionData* m_pNullFunction;
-        ValueOrFunctionData* m_pNullValueOrFunction;
     };
-
+    
     class IScriptSource;
     class DslFile
     {
@@ -1265,7 +1194,7 @@ namespace Dsl
         void AddError(const char* error);
         int HasError(void)const { return m_HasError; }
         int GetErrorNum(void)const { return m_ErrorNum; }
-        const char* GetErrorInfo(int index) const
+        const char*	GetErrorInfo(int index) const
         {
             if (index < 0 || index >= m_ErrorNum || index >= MAX_RECORD_ERROR_NUM)
                 return "";

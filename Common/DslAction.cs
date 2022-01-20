@@ -85,21 +85,21 @@ namespace Dsl.Common
             set { mSetScriptDelimiter = value; }
         }
 
-        internal void predict(short production_number)
+        internal void predict(short production_number, short token, string lastTok, int lastLineNo, string curTok, int lineNo)
         {
-            /*
+            /*//
             switch (mActionType) {
                 case DslActionType.Dsl:
-                    mLog.Log("{0}", Dsl.Parser.DslString.GetProductionName(production_number));
+                    mLog.Log("{0} [token symbol:{1} last token:{2} line:{3} cur token:{4} line:{5}]", Dsl.Parser.DslString.GetProductionName(production_number), Dsl.Parser.DslString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
                     break;
                 case DslActionType.Lua:
-                    mLog.Log("{0}", Dsl.Parser.LuaString.GetProductionName(production_number));
+                    mLog.Log("{0} [token symbol:{1} last token:{2} line:{3} cur token:{4} line:{5}]", Dsl.Parser.LuaString.GetProductionName(production_number), Dsl.Parser.LuaString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
                     break;
                 case DslActionType.Cpp:
-                    mLog.Log("{0}", Dsl.Parser.CppString.GetProductionName(production_number));
+                    mLog.Log("{0} [token symbol:{1} last token:{2} line:{3} cur token:{4} line:{5}]", Dsl.Parser.CppString.GetProductionName(production_number), Dsl.Parser.CppString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
                     break;
             }
-            */
+            //*/
         }
         internal void execute(int number)
         {

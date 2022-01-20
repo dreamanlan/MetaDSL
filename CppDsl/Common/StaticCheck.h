@@ -2,16 +2,16 @@
 #define STATICCHECK_H
 
 //编译期断言判断的模板类
-template<bool> 
-	class CompileSuccess
+template<bool>
+class CompileSuccess
 {
 };
 //编译期断言判断成功的偏特化
-template<> 
-	class CompileSuccess<true>
+template<>
+class CompileSuccess<true>
 {
 public:
-	CompileSuccess(...){}; //可以接受任何参数的构造函数
+    CompileSuccess(...) {}; //可以接受任何参数的构造函数
 };
 
 //完成类型中转的工具函数的声明，只是声明，没有函数实体，不会占用内存

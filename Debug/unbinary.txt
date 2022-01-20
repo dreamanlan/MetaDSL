@@ -1,0 +1,50 @@
+skill(kkk)
+
+{
+	section(80)
+
+	{
+		ok("		yyyy yyyy yyyy
+");
+		ok("yyyy yyyy yyyy");
+		a = "yyyy yyyy yyyy";
+		attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
+		a > b ? 1 : 0;
+		a + b * c;
+		test();
+		test(123, 345, 678);
+	};
+	script(sss)
+
+	{:
+		ok, this is a test, "yeah!!!";
+	:};
+	script(ttt : string, tt2 : int)
+
+	{: abcd :};
+	(:attr:)
+	script(ttt)
+	{::};
+	[:attr:]
+	script(ttt)
+	{:
+  abcdef;
+  defg;
+	:};
+	a = "b";
+	a = " abcd ";
+	template<:a, b, c:>class A;
+	a::b::c;
+	a::b(abcd);
+	a::(abcd);
+	b::[abcd];
+	c::{abcd};
+	{%abcd%};
+	[%abcd%];
+	(%abcd%);
+	<%abcd%>;
+};
+skill(ttt : string, tt2 : int)
+
+{
+};

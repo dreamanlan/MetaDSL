@@ -5,8 +5,8 @@
 
 namespace Dsl
 {
-  void Parse(const char* buf, DslFile& file);
-  void Parse(IScriptSource& source, DslFile& file);
+    void Parse(const char* buf, DslFile& file);
+    void Parse(IScriptSource& source, DslFile& file);
 }
 
 using namespace Dsl;

@@ -328,9 +328,9 @@ namespace Dsl
 
     StatementData::StatementData(IDslStringAndObjectBuffer& buffer) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
         m_Buffer(buffer),
-        m_Functions(0),
-        m_FunctionNum(0),
-        m_FunctionSpace(0)
+        m_ValueOrFunctions(0),
+        m_ValueOrFunctionNum(0),
+        m_ValueOrFunctionSpace(0)
     {
         if (DslOptions::DontLoadComments()) {
             m_pCommentsInfo = 0;
@@ -340,46 +340,46 @@ namespace Dsl
         }
 
         const DslOptions& options = buffer.GetOptions();
-        m_MaxFunctionNum = options.GetMaxFunctionDimensionNum();
+        m_MaxValueOrFunctionNum = options.GetMaxFunctionDimensionNum();
     }
 
-    FunctionData*& StatementData::GetNullFunctionPtrRef(void)const
+    ValueOrFunctionData*& StatementData::GetNullValueOrFunctionPtrRef(void)const
     {
-        return m_Buffer.GetNullFunctionPtrRef();
+        return m_Buffer.GetNullValueOrFunctionPtrRef();
     }
 
     void StatementData::InitFunctionsCapacity(int c)
     {
-        if (NULL == m_Functions) {
+        if (NULL == m_ValueOrFunctions) {
             c = CalcCapacity(c, INIT_STATEMENT_FUNCTION, MAX_DELTA_STATEMENT_FUNCTION);
-            m_Functions = (FunctionData**)(m_Buffer.NewPtrArray(c));
-            if (m_Functions) {
-                m_FunctionSpace = c;
+            m_ValueOrFunctions = (ValueOrFunctionData**)(m_Buffer.NewPtrArray(c));
+            if (m_ValueOrFunctions) {
+                m_ValueOrFunctionSpace = c;
             }
         }
     }
 
     void StatementData::PrepareFunctions(void)
     {
-        if (NULL == m_Functions) {
-            m_Functions = (FunctionData**)(m_Buffer.NewPtrArray(INIT_STATEMENT_FUNCTION));
-            if (m_Functions) {
-                m_FunctionSpace = INIT_STATEMENT_FUNCTION;
+        if (NULL == m_ValueOrFunctions) {
+            m_ValueOrFunctions = (ValueOrFunctionData**)(m_Buffer.NewPtrArray(INIT_STATEMENT_FUNCTION));
+            if (m_ValueOrFunctions) {
+                m_ValueOrFunctionSpace = INIT_STATEMENT_FUNCTION;
             }
         }
-        else if (m_FunctionNum >= m_FunctionSpace) {
-            int delta = m_FunctionSpace;
+        else if (m_ValueOrFunctionNum >= m_ValueOrFunctionSpace) {
+            int delta = m_ValueOrFunctionSpace;
             if (delta > MAX_DELTA_STATEMENT_FUNCTION)
                 delta = MAX_DELTA_STATEMENT_FUNCTION;
-            int newSpace = m_FunctionSpace + delta;
-            if (newSpace <= m_MaxFunctionNum) {
-                FunctionData** pNew = (FunctionData**)(m_Buffer.NewPtrArray(newSpace));
+            int newSpace = m_ValueOrFunctionSpace + delta;
+            if (newSpace <= m_MaxValueOrFunctionNum) {
+                ValueOrFunctionData** pNew = (ValueOrFunctionData**)(m_Buffer.NewPtrArray(newSpace));
                 if (pNew) {
-                    memcpy(pNew, m_Functions, m_FunctionNum * sizeof(FunctionData*));
-                    memset(pNew + m_FunctionNum, 0, delta * sizeof(FunctionData*));
-                    m_Buffer.DeletePtrArray((void**)m_Functions, m_FunctionSpace);
-                    m_Functions = pNew;
-                    m_FunctionSpace = newSpace;
+                    memcpy(pNew, m_ValueOrFunctions, m_ValueOrFunctionNum * sizeof(ValueOrFunctionData*));
+                    memset(pNew + m_ValueOrFunctionNum, 0, delta * sizeof(ValueOrFunctionData*));
+                    m_Buffer.DeletePtrArray((void**)m_ValueOrFunctions, m_ValueOrFunctionSpace);
+                    m_ValueOrFunctions = pNew;
+                    m_ValueOrFunctionSpace = newSpace;
                 }
             }
         }
@@ -387,9 +387,9 @@ namespace Dsl
 
     void StatementData::ReleaseFunctions(void)
     {
-        if (NULL != m_Functions) {
-            m_Buffer.DeletePtrArray((void**)m_Functions, m_FunctionSpace);
-            m_Functions = NULL;
+        if (NULL != m_ValueOrFunctions) {
+            m_Buffer.DeletePtrArray((void**)m_ValueOrFunctions, m_ValueOrFunctionSpace);
+            m_ValueOrFunctions = NULL;
         }
     }
 
@@ -468,8 +468,8 @@ namespace Dsl
     static const char* c_BinaryIdentity = "BDSL";
     static int stringCompare(const void* a, const void* b)
     {
-        const char* stra = *static_cast<const char*const*>(a);
-        const char* strb = *static_cast<const char*const*>(b);
+        const char* stra = *static_cast<const char* const*>(a);
+        const char* strb = *static_cast<const char* const*>(b);
         if (0 == stra && 0 == strb)
             return 0;
         else if (0 == stra)
@@ -531,7 +531,8 @@ namespace Dsl
                 b = bytes[pos++];
                 num |= (b & 0x7F) << bitCount;
                 bitCount += 7;
-            } while (pos < size && (b & 0x80) != 0);
+            }
+            while (pos < size && (b & 0x80) != 0);
             byteCount = bitCount / 7;
         }
         return num;
@@ -1125,8 +1126,14 @@ namespace Dsl
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
         int num = GetFunctionNum();
-        FunctionData* func1 = GetFunction(0);
-        FunctionData* func2 = GetFunction(1);
+        FunctionData* func1 = nullptr;
+        auto* f0 = GetFunction(0);
+        if (nullptr != f0 && f0->IsFunction())
+            func1 = f0->AsFunction();
+        FunctionData* func2 = nullptr;
+        auto* f1 = GetFunction(1);
+        if (nullptr != f1 && f1->IsFunction())
+            func2 = f1->AsFunction();
         if (num == 2 && NULL != func1 && NULL != func2 && func1->GetParamClass() == FunctionData::PARAM_CLASS_TERNARY_OPERATOR && func2->GetParamClass() == FunctionData::PARAM_CLASS_TERNARY_OPERATOR) {
             FunctionData* lowerOrderFunc = func1->GetName().GetFunction();
             ISyntaxComponent* pcomp0 = 0;
@@ -1146,26 +1153,49 @@ namespace Dsl
             int lastFuncNoParam = FALSE;
             int lastFuncNoStatement = FALSE;
             for (int ix = 0; ix < num; ++ix) {
-                FunctionData& func = *GetFunction(ix);
-                int noIndent = FALSE;
-                int funcNoParam = !func.IsHighOrder() && !func.HaveParam();
-                int funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
-                if (ix > 0) {
-                    if (lastFuncNoParam && lastFuncNoStatement) {
-                        fwrite(" ", 1, 1, fp);
-                        noIndent = TRUE;
+                auto* f = GetFunction(ix);
+                if (f->IsValue()) {
+                    ValueData& val = *f->AsValue();
+                    int noIndent = FALSE;
+                    if (ix > 0) {
+                        if (lastFuncNoParam && lastFuncNoStatement) {
+                            fwrite(" ", 1, 1, fp);
+                            noIndent = TRUE;
+                        }
+                        else if (lastFuncNoStatement) {
+                            noIndent = TRUE;
+                        }
+                        else {
+                            fwrite("\n", 1, 1, fp);
+                            noIndent = FALSE;
+                        }
                     }
-                    else if (lastFuncNoStatement && funcNoStatement) {
-                        noIndent = TRUE;
-                    }
-                    else {
-                        fwrite("\n", 1, 1, fp);
-                        noIndent = FALSE;
-                    }
+                    WriteComponent(fp, val, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE);
+                    lastFuncNoParam = TRUE;
+                    lastFuncNoStatement = TRUE;
                 }
-                WriteComponent(fp, func, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE);
-                lastFuncNoParam = funcNoParam;
-                lastFuncNoStatement = funcNoStatement;
+                else {
+                    FunctionData& func = *f->AsFunction();
+                    int noIndent = FALSE;
+                    int funcNoParam = !func.IsHighOrder() && !func.HaveParam();
+                    int funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
+                    if (ix > 0) {
+                        if (lastFuncNoParam && lastFuncNoStatement) {
+                            fwrite(" ", 1, 1, fp);
+                            noIndent = TRUE;
+                        }
+                        else if (lastFuncNoStatement && funcNoStatement) {
+                            noIndent = TRUE;
+                        }
+                        else {
+                            fwrite("\n", 1, 1, fp);
+                            noIndent = FALSE;
+                        }
+                    }
+                    WriteComponent(fp, func, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE);
+                    lastFuncNoParam = funcNoParam;
+                    lastFuncNoStatement = funcNoStatement;
+                }
             }
         }
         if (isLastOfStatement) {
@@ -1270,7 +1300,12 @@ namespace Dsl
             data.InitFunctionsCapacity(v);
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
-                if (code == (char)BinCode_BeginFunction) {
+                if (code == (char)BinCode_BeginValue) {
+                    ValueData* p = file.AddNewValueComponent();
+                    readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
+                    data.AddFunction(p);
+                }
+                else if (code == (char)BinCode_BeginFunction) {
                     FunctionData* p = file.AddNewFunctionComponent();
                     readBinary(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
                     data.AddFunction(p);
@@ -1342,8 +1377,15 @@ namespace Dsl
         s[pos++] = (char)BinCode_BeginStatement;
         write7BitEncodedInt(s, pos, data.GetFunctionNum());
         for (int i = 0; i < data.GetFunctionNum(); ++i) {
-            const FunctionData* funcData = data.GetFunction(i);
-            writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *funcData);
+            auto* f = data.GetFunction(i);
+            if (f->IsValue()) {
+                auto* valData = f->AsValue();
+                writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *valData);
+            }
+            else {
+                auto* funcData = f->AsFunction();
+                writeBinary(s, capacity, pos, identifiers, idCapacity, idCount, *funcData);
+            }
         }
         s[pos++] = (char)BinCode_EndStatement;
     }

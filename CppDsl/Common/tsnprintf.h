@@ -28,11 +28,11 @@ inline INT snprintf_(CHAR* buf, size_t size, CHAR const* msg,ParserRepeatArg2_##
 
 inline int snprintf_(char* buf, size_t size, char const* msg)
 {
-	if(NULL==buf || NULL==msg || size<1) return 0;
-	StringParser fmt(buf,(int)size,msg);
-	fmt.Format();
-	buf[size-1]='\0';
-	return fmt.GetLength();
+    if (NULL == buf || NULL == msg || size < 1) return 0;
+    StringParser fmt(buf, (int)size, msg);
+    fmt.Format();
+    buf[size - 1] = '\0';
+    return fmt.GetLength();
 }
 
 DEF_SNPRINTF(1)
@@ -77,6 +77,6 @@ DEF_SNPRINTF(34)
 
 #define t_strncpy StringFormatUtility::MyStrNCpy
 
-inline void nullprintf(const char*,...){}
+inline void nullprintf(const char*, ...) {}
 
 #endif //__TSNPRINTF_H__

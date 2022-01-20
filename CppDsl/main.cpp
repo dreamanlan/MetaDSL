@@ -5,16 +5,16 @@
 
 int main(int argc, char* argv[])
 {
-	char* pbuf = new char[1024 * 1024 + 1];
-	FILE* fp = fopen("test.txt", "rb");
-	size_t size = fread(pbuf, 1, 1024 * 1024, fp);
-	pbuf[size] = 0;
-	fclose(fp);
-	char* p = pbuf;
-	if (size >= 3 && pbuf[0] == (char)0xef && pbuf[1] == (char)0xbb && pbuf[2] == (char)0xbf) {
-		//skip utf-8 bom
-		p += 3;
-	}
+    char* pbuf = new char[1024 * 1024 + 1];
+    FILE* fp = fopen("test.txt", "rb");
+    size_t size = fread(pbuf, 1, 1024 * 1024, fp);
+    pbuf[size] = 0;
+    fclose(fp);
+    char* p = pbuf;
+    if (size >= 3 && pbuf[0] == (char)0xef && pbuf[1] == (char)0xbb && pbuf[2] == (char)0xbf) {
+        //skip utf-8 bom
+        p += 3;
+    }
     //Dsl::DslOptions::DontLoadComments(true);
     Dsl::DslStringAndObjectBufferT<>* pDslBuffer = new Dsl::DslStringAndObjectBufferT<>();
     {
@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
         fclose(fp3);
     }
     //必须在DslFile都释放后再释放DslStringAndObjectBuffer
-	delete[] pbuf;
+    delete[] pbuf;
     delete pDslBuffer;
-	return 0;
+    return 0;
 }
 

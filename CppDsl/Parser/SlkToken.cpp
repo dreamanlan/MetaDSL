@@ -210,7 +210,7 @@ void SlkToken::getOperatorToken(void)
             }
         }
     }
-        break;
+            break;
     default:
     {
         pushTokenChar(*mIterator);

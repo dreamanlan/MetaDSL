@@ -332,7 +332,7 @@ static slk_size_t Conflict_row[] = {0
 #define no_entry(self,a,b,c)    self.no_entry(a,b,c)
 #define input_left(self)        self.input_left()
 #define message(self,a)         self.message(a)
-#define predict(self,a)         self.predict(a)
+#define predict(self,a,b,c,d,e,f)         self.predict(a,b,c,d,e,f)
 #define reduce(self,a)          self.reduce(a)
 #define state(self,a)           self.state(a)
 #define execute(self,a)         self.execute(a)
@@ -425,15 +425,17 @@ void SlkParse ( SlkAction  &action,
              production = &Production [ Production_row [entry] ];
              production_length = *production - 1;
              if ( *++production == symbol ) {
-                 predict ( action, entry );
+                 predict ( action, entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber() );
                  production += production_length;
                  for (;  production_length-- > 0;  --production ) {
                      SLK_PUSH ( *production, stack, top );
                  }
              } else {
+                 predict(action, entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
                  new_token = no_entry ( error, symbol, token, level-1 );
              }
          } else {
+             predict(action, entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
              new_token = no_entry ( error, symbol, token, level-1 );
          }
      } else if ( symbol > 0 ) {

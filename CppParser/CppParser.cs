@@ -227,7 +227,7 @@ get_predicted_entry ( CppToken   tokens,
                         production_length = Production[index] - 1;
                         lhs = Production[++index];
                         if (lhs == symbol) {
-                            action.predict(entry);
+                            action.predict(entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
                             index += production_length;
                             for (; production_length-- > 0; --index) {
                                 if (top > 0) {
@@ -235,9 +235,11 @@ get_predicted_entry ( CppToken   tokens,
                                 } else { error.message("CppParse: stack overflow\n", ref tokens); return; }
                             }
                         } else {
+                            action.predict(entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
                             new_token = error.no_entry(symbol, token, level - 1, ref tokens);
                         }
-                    } else {                                       // no table entry
+                    } else { // no table entry
+                        action.predict(entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
                         new_token = error.no_entry(symbol, token, level - 1, ref tokens);
                     }
                 } else if (symbol > 0) {
