@@ -141,6 +141,7 @@ namespace Dsl
         virtual int GetIdType(void) const = 0;
         virtual int GetLine(void) const = 0;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const = 0;
+        virtual int HaveId(void) const = 0;
     public:
         int GetSyntaxType(void) const { return m_SyntaxType; }
         void AddFirstComment(const char* cmt)
@@ -408,10 +409,10 @@ namespace Dsl
         virtual const char* GetId(void)const;
         virtual int GetLine(void)const;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
+        virtual int HaveId()const;
 
         FunctionData* GetFunction(void)const { return m_FunctionVal; }
 
-        int HaveId()const;
         int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
         int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
         int IsIdentifier(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
@@ -489,6 +490,7 @@ namespace Dsl
         virtual int GetIdType(void) const { return ValueData::TYPE_IDENTIFIER; }
         virtual int GetLine(void) const { return 0; }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const {}
+        virtual int HaveId()const { return FALSE; }
     private:
         NullSyntax(const NullSyntax&) = delete;
         NullSyntax& operator=(const NullSyntax&) = delete;
@@ -549,6 +551,7 @@ namespace Dsl
         virtual const char* GetId(void)const { return m_Name.GetId(); }
         virtual int GetLine(void)const { return m_Name.GetLine(); }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
+        virtual int HaveId(void)const { return m_Name.HaveId(); }
     public:
         void SetName(const ValueData& val) { m_Name = val; }
         ValueData& GetName(void) { return m_Name; }
@@ -571,7 +574,6 @@ namespace Dsl
         }
         void SetParamClass(int v) { m_ParamClass = v; }
         int GetParamClass(void)const { return m_ParamClass; }
-        int HaveId(void)const { return m_Name.HaveId(); }
         int HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
         int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
         int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
@@ -832,6 +834,13 @@ namespace Dsl
             return line;
         }
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
+        virtual int HaveId(void) const
+        {
+            if (NULL == m_Functions || 0 == m_FunctionNum)
+                return FALSE;
+            else
+                return m_Functions[m_FunctionNum - 1]->HaveId();
+        }
     public:
         void ClearFunctions(void) { m_FunctionNum = 0; }
         void AddFunction(FunctionData* pVal)

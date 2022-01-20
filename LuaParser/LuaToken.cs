@@ -509,6 +509,9 @@ namespace Dsl.Parser
                 else if (isBeginParentheses(lastToken[0])) {
                     lastIsOperator = true;
                 }
+                else if (mNames.ContainsKey(lastToken)) {
+                    lastIsOperator = true;
+                }
                 else {
                     lastIsOperator = isOperator(lastToken[0]);
                 }

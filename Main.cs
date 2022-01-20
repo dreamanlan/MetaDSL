@@ -18,12 +18,12 @@ namespace Dsl
             List<string> keyBuffer = new List<string>();
             List<string> idBuffer = new List<string>();
             DslFile file0 = new DslFile();
-            file0.LoadCpp("test.h", logCallback);
+            file0.LoadCpp("test.h.txt", logCallback);
 #if FULL_VERSION
             file0.Save("copy.h");
 #endif
             DslFile file1 = new DslFile();
-            file1.LoadLua("test.lua", logCallback);
+            file1.LoadLua("test.lua.txt", logCallback);
 #if FULL_VERSION
             file1.Save("copy.lua");
 #endif

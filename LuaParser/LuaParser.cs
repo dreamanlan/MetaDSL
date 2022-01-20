@@ -332,6 +332,9 @@ get_predicted_entry ( LuaToken   tokens,
                         ++level;
                     }
                     if (entry != 0) {
+                        error.message("[symbol]:" + LuaString.GetSymbolName(symbol), ref tokens);
+                        error.message("[production]:" + LuaString.GetProductionName(entry), ref tokens);
+
                         index = Production_row[entry];
                         production_length = Production[index] - 1;
                         lhs = Production[++index];

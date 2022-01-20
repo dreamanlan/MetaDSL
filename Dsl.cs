@@ -43,6 +43,7 @@ namespace Dsl
         int GetIdType();
         int GetLine();
         string ToScriptString(bool includeComment);
+        bool HaveId();
 
         string CalcFirstComment();
         string CalcLastComment();
@@ -67,6 +68,7 @@ namespace Dsl
         public abstract int GetIdType();
         public abstract int GetLine();
         public abstract string ToScriptString(bool includeComment);
+        public abstract bool HaveId();
 
         public string CalcFirstComment()
         {
@@ -232,6 +234,10 @@ namespace Dsl
         {
             return ToString();
         }
+        public override bool HaveId()
+        {
+            return false;
+        }
 
         public static NullSyntax Instance
         {
@@ -283,11 +289,11 @@ namespace Dsl
       return ToString();
 #endif
         }
-
-        public bool HaveId()
+        public override bool HaveId()
         {
             return !string.IsNullOrEmpty(m_Id) || m_Type == STRING_TOKEN;
         }
+
         public void SetId(string id)
         {
             m_Id = id;
@@ -449,6 +455,15 @@ namespace Dsl
       return ToString();
 #endif
         }
+        public override bool HaveId()
+        {
+            if (null != m_Name)
+                return m_Name.HaveId();
+            else if (null != m_LowerOrderFunction)
+                return m_LowerOrderFunction.HaveId();
+            else
+                return false;
+        }
 
         public string CalcComment()
         {
@@ -577,15 +592,6 @@ namespace Dsl
         {
             if (null != m_LowerOrderFunction && m_LowerOrderFunction.HaveExternScript())
                 return true;
-            else
-                return false;
-        }
-        public bool HaveId()
-        {
-            if (null != m_Name)
-                return m_Name.HaveId();
-            else if (null != m_LowerOrderFunction)
-                return m_LowerOrderFunction.HaveId();
             else
                 return false;
         }
@@ -859,6 +865,13 @@ namespace Dsl
 #else
       return ToString();
 #endif
+        }
+        public override bool HaveId()
+        {
+            if (m_ValueOrFunctions.Count > 0)
+                return m_ValueOrFunctions[0].HaveId();
+            else
+                return false;
         }
 
         public int GetFunctionNum()
@@ -2169,8 +2182,15 @@ namespace Dsl
         {
             stream.WriteByte((byte)DslBinaryCode.BeginStatement);
             write7BitEncodedInt(stream, data.GetFunctionNum());
-            foreach (FunctionData funcData in data.Functions) {
-                writeBinary(stream, identifiers, funcData);
+            foreach (var f in data.Functions) {
+                var val = f.AsValue;
+                if (null != val) {
+                    writeBinary(stream, identifiers, val);
+                }
+                else {
+                    var func = f.AsFunction;
+                    writeBinary(stream, identifiers, func);
+                }
             }
             stream.WriteByte((byte)DslBinaryCode.EndStatement);
         }
