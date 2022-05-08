@@ -174,10 +174,12 @@ static l891 l894 = {
 
 主要修改：
 0、工程编译选项里加上预处理宏_CRT_SECURE_NO_WARNINGS
-1、C#与java共用的代码模板，装LL分析算法部分拆分出C#版本（模板代码里使用PARSE_STACK_SIZE符号来表示栈大小），并按MetaDSL的需求修改，注意这个代码模板有2处引用，一处是结构赋值，一处是替换xxx为指定名称前缀的代码，2处都要对应修改
+1、C#与java共用的代码模板，装LL分析算法部分拆分出C#版本（模板代码里使用PARSE_STACK_SIZE符号来表示栈大小），并按MetaDSL的需求修改，注意这个代码模板有2处引用，一处是结构赋值，一处是替换xxx为指定名称前缀的代码，
+2处都要对应修改。
 2、在定义ACTION_SYMBOL符号的后面添加PARSE_STACK_SIZE符号常量的定义，值使用-Ps参数传入的值，有一个全局变量l55记录了此值，默认是512
-3、xxxConstants.cs的namespace声明，需要从namespace xxx;改为namspace xxx {，此处为C#与java共用，java的package xxx;是对的，需要根据参数进行位运算判断是否java/c#来修改
+3、xxxConstants.cs的namespace声明，需要从namespace xxx;改为namspace xxx {，此处为C#与java共用，java的package xxx;是对的，需要根据参数进行位运算判断是否java/c#来修改。
 4、pg.c里面的main改为cmain，然后在cpp的main里调用cmain，声明为extern "C" int cmain(int, char* []);
 5、工程里的SDL检查关掉或者将报错的未初化指针赋初值NULL
 6、编译警告看情况是否修改，主要是size_t与int/uint转换或比较的报警，有一处char*转long的报警可以考虑改为指针判空。
-7、c++的LL分析算法的predict与error函数原型修改为与c#一致，这个用宏实现，对应的宏也要修改。
+7、c++的LL分析算法的predict与error函数原型修改为与c#一致，这个用宏实现，对应的宏也要修改。另外,SLK_PUSH宏的else添加stack overflow提示信息，还有分析程序symbol为0也添加提示信息（与c#一致）。
+注意：SLK_PUSH宏也用在c语言代码生成里，会导致c语言版本报错（我们不用先不管了）。

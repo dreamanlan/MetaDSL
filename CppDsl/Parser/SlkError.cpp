@@ -58,6 +58,19 @@ void SlkError::input_left(SlkToken& tokens)
   }
 }
 
+void SlkError::message(const char* msg, SlkToken& tokens)
+{
+    if (mDslFile) {
+        char* p = mDslFile->NewErrorInfo();
+        if (p)
+            tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] %s . \n",
+                tokens.getLineNumber(),
+                tokens.getLastToken(),
+                tokens.getCurToken(),
+                msg);
+    }
+}
+
 SlkError::SlkError(Dsl::DslFile& dslFile) :mDslFile(&dslFile)
 {
   MyAssert(mDslFile);

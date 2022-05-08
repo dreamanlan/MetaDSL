@@ -323,7 +323,7 @@ static slk_size_t Conflict_row[] = {0
 #define END_ACTION 192
 #define TOTAL_CONFLICTS 0
 #define PARSE_STACK_SIZE 65535
-#define SLK_PUSH(symbol,stack,top) if ( top > stack ) *--top = symbol
+#define SLK_PUSH(symbol,stack,top) if ( top > stack ) { *--top = symbol; } else { message( error, "stack overflow\n", tokens ); }
 #define SLK_POP(top)   (*top ? *top++ : 0)
 
 #define peek(self,a)                   self.peek(a)
@@ -443,6 +443,8 @@ void SlkParse ( SlkAction  &action,
          } else {
              new_token = mismatch ( error, symbol, token, tokens );
          }
+     } else {
+         message(error, "\n parser error: symbol value 0\n", tokens);
      }
      if ( token != new_token ) {
          if ( new_token ) {

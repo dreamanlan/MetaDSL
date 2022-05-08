@@ -10877,7 +10877,7 @@ static char l807[] =
 "#include \"xxxError.h\"\n"
 "#include \"xxxAction.h\"\n";
 static char l808[] =
-"#define SLK_PUSH(symbol,stack,top) if ( top > stack ) *--top = symbol\n"
+"#define SLK_PUSH(symbol,stack,top) if ( top > stack ) { *--top = symbol; } else { message( error, \"stack overflow\\n\", tokens ); }\n"
 "#define SLK_POP(top)   (*top ? *top++ : 0)\n";
 static char l809[] =
 "#define NOT_A_SYMBOL       0\n"
@@ -10945,7 +10945,7 @@ static char l820[] =
 "}\n";
 static char l821[] =
 "static slk_size_t\n"
-"get_predicted_entry ( xxxTokenyyytokens, \n"
+"get_predicted_entry ( xxxToken yyytokens, \n"
 "                      slk_size_t production_number,\n"
 "                      slk_size_t token,\n"
 "                      int        scan_level,\n"
@@ -11104,6 +11104,8 @@ static char l824[] =
 "         } else {\n"
 "             new_token = mismatch ( error, symbol, token, tokens );\n"
 "         }\n"
+"     } else {\n"
+"         message(error, \"\\n parser error: symbol value 0\\n\", tokens);\n"
 "     }\n"
 "     if ( token != new_token ) {\n"
 "         if ( new_token ) {\n"
@@ -11120,7 +11122,7 @@ static char l824[] =
 " }\n"
 "}\n";
 static char l825[] =
-"void xxxParse ( xxxActionyyyaction, \n"
+"void xxxParse ( xxxAction yyyaction, \n"
 "                xxxToken yyytokens, \n"
 "                xxxError yyyerror, \n"
 "                slk_size_t  start_symbol ) ";
