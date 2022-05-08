@@ -17,6 +17,7 @@ namespace Dsl.Parser
             //mLog.Error("[error] expecting {0} but found {1}, last token {2} line {3}, cur token {4} line {5}", CppString.GetSymbolName(terminal), CppString.GetSymbolName(token), cppToken.getLastToken(), cppToken.getLastLineNumber(), cppToken.getCurToken(), cppToken.getLineNumber());
             //return token;
             //让词法伪造一个匹配的输入符号，保证解析正常进行
+            cppToken.fake(terminal);
             return terminal;
         }
 

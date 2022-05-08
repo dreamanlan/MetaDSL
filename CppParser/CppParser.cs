@@ -118,7 +118,7 @@ public static short GetTerminalIndex ( short   token ){
 
 public static short
 get_production ( short     conflict_number,
-                 CppToken  tokens )
+                 ref CppToken  tokens )
 {
     short   entry = 0;
     int     index, level;
@@ -138,7 +138,7 @@ get_production ( short     conflict_number,
 }
 
 private static short
-get_predicted_entry ( CppToken   tokens,
+get_predicted_entry ( ref CppToken   tokens,
                       short      production_number,
                       short      token,
                       int        scan_level,
@@ -178,7 +178,7 @@ parse (ref DslAction   action,
          level = 1;
          production_number = get_conditional_production ( symbol );
          if ( production_number != 0 ) {
-             entry = get_predicted_entry ( tokens,
+             entry = get_predicted_entry ( ref tokens,
                                            production_number, token,
                                            level, 1 );
          }
