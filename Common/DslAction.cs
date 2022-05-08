@@ -208,18 +208,9 @@ namespace Dsl.Common
                 case 8: buildHighOrderFunction(); break;
                 case 9: markBracketParam(); break;
                 case 10: markStatement(); break;
-                case 11: markBracketColonParam(); break;
-                case 12: markAngleBracketColonParam(); break;
-                case 13: markAngleBracketPercentParam(); break;
-                case 14: markColonColonParam(); break;
-                case 15: setMemberId(); break;
-                case 16: markPeriodParam(); break;
-                case 17: markPointerParam(); break;
-                case 18: markPeriodStarParam(); break;
-                case 19: markPointerStarParam(); break;
-                case 20: pushId(); break;
-                case 21: pushStr(); break;
-                case 22: pushNum(); break;
+                case 11: pushId(); break;
+                case 12: pushStr(); break;
+                case 13: pushNum(); break;
             }
         }
 
@@ -815,7 +806,7 @@ namespace Dsl.Common
             var last = getLastFunction();
             var firstId = first.GetId();
             var lastId = last.GetId();
-            if (last.HaveStatement() && firstId != "if" && firstId != "do" && firstId != "try" ||
+            if (last.HaveStatement() && !firstId.StartsWith("@@") && firstId != "if" && firstId != "do" && firstId != "try" ||
                 (firstId == "public" || firstId == "protected" || firstId == "private") && lastId == ":") {
                 endStatement();
                 beginStatement();

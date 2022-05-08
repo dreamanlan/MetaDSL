@@ -606,6 +606,37 @@ namespace Dsl
         {
             return m_ParamClass;
         }
+        public int GetParamClassUnmasked()
+        {
+            int paramClass = (m_ParamClass & (int)ParamClassEnum.PARAM_CLASS_UNMASK);
+            return paramClass;
+        }
+        public bool HaveParamClassInfixFlag()
+        {
+            int infix = (m_ParamClass & (int)ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+            return infix == (int)ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK;
+        }
+        public bool IsOperatorParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_OPERATOR;
+        }
+        public bool IsTernaryOperatorParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR;
+        }
+        public bool IsMemberParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON ||
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD ||
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR ||
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER ||
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR ||
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD ||
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR;
+        }
         public bool HaveParamOrStatement()
         {
             return (int)ParamClassEnum.PARAM_CLASS_NOTHING != m_ParamClass;
@@ -820,7 +851,7 @@ namespace Dsl
             if (null != tempData) {
                 callData = tempData.LowerOrderFunction;
             }
-            if (null != callData && tempData.GetParamClass() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
+            if (null != callData && tempData.IsTernaryOperatorParamClass()) {
                 //三目表达式表示为op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
                     string line = "/*[?:]*/";
@@ -1374,9 +1405,7 @@ namespace Dsl
             //writeLine(stream, lineNo, indent);
             writeFirstComments(stream, data, indent, firstLineNoIndent);
             if (data.HaveParamOrStatement()) {
-                int paramClass = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_UNMASK);
-                if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
-                    int infix = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+                if (data.IsOperatorParamClass()) {
                     int paramNum = data.GetParamNum();
                     if (paramNum == 1) {
                         writeText(stream, " ", 0);
@@ -1385,7 +1414,7 @@ namespace Dsl
                         }
                         else if (data.HaveId()) {
                             string op = data.GetId();
-                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                            if (data.HaveParamClassInfixFlag())
                                 op = "`" + op;
                             string line = quoteString(op, data.GetIdType());
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
@@ -1403,7 +1432,7 @@ namespace Dsl
                         }
                         else if (data.HaveId()) {
                             string op = data.GetId();
-                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                            if (data.HaveParamClassInfixFlag())
                                 op = "`" + op;
                             string line = quoteString(op, data.GetIdType());
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
@@ -1427,16 +1456,17 @@ namespace Dsl
                     }
                     if (data.HaveStatement() || data.HaveExternScript()) {
                         if (data.IsHighOrder) {
-                            writeLastComments(stream, data.LowerOrderFunction, indent, isLastOfStatement);
+                            writeLastComments(stream, data.LowerOrderFunction, indent, false);
                         }
                         else if (data.HaveId()) {
-                            writeLastComments(stream, data.Name, indent, isLastOfStatement);
+                            writeLastComments(stream, data.Name, indent, false);
                         }
                         writeStatementsOrExternScript(stream, data, indent);
                     }
                     else {
                         string lbracket = string.Empty;
                         string rbracket = string.Empty;
+                        int paramClass = data.GetParamClassUnmasked();
                         switch (paramClass) {
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
                                 lbracket = "(";
@@ -1586,7 +1616,7 @@ namespace Dsl
             if (null != tempData) {
                 callData = tempData.LowerOrderFunction;
             }
-            if (null != callData && tempData.GetParamClass() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR) {
+            if (null != callData && tempData.IsTernaryOperatorParamClass()) {
                 //三目运算符表示为op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
                     string line = "/*[?:]*/";                    
@@ -1628,7 +1658,7 @@ namespace Dsl
                     }
                     else {
                         FunctionData func = dof.AsFunction;
-                        bool funcNoParam = !func.IsHighOrder && !func.HaveParam();
+                        bool funcNoParam = !func.IsHighOrder && (!func.HaveParam() || func.IsMemberParamClass());
                         bool funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
                         bool noIndent = false;
                         if (i > 0) {
@@ -1711,15 +1741,13 @@ namespace Dsl
                 line = getFunctionString(data.LowerOrderFunction, includeComment);
             }
             else if (data.HaveId()) {
-                int infix = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
                 string op = data.GetId();
-                if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK == infix)
+                if (data.HaveParamClassInfixFlag())
                     op = "`" + op;
                 line = quoteString(op, data.GetIdType());
             }
             if (data.HaveParamOrStatement()) {
-                int paramClass = (data.GetParamClass() & (int)FunctionData.ParamClassEnum.PARAM_CLASS_UNMASK);
-                if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR == paramClass) {
+                if (data.IsOperatorParamClass()) {
                     switch (data.GetParamNum()) {
                         case 1:
                             return string.Format("{0} {1}", line, data.GetParam(0).ToScriptString(includeComment));
@@ -1732,6 +1760,7 @@ namespace Dsl
                 else {
                     string lbracket = string.Empty;
                     string rbracket = string.Empty;
+                    int paramClass = data.GetParamClassUnmasked();
                     switch (paramClass) {
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
                             lbracket = "(";

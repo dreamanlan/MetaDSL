@@ -46,46 +46,64 @@ static inline int mychar2int(char c)
         return 0;
 }
 
+char SlkToken::curChar(void)const
+{
+    return peekChar(0);
+}
+
+char SlkToken::nextChar(void)const
+{
+    return peekChar(1);
+}
+
+char SlkToken::peekChar(int ix)const
+{
+    char c = 0;
+    if (ix >= 0)
+        c = *(mIterator + ix);
+    return c;
+}
+
 void SlkToken::getOperatorToken(void)
 {
-    switch (*mIterator) {
+    switch (curChar()) {
     case '+':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '+' || *mIterator == '=') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '+' || curChar() == '=') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
     }
     break;
     case '-':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '-' || *mIterator == '=' || *mIterator == '>') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '-' || curChar() == '=' || curChar() == '>') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
     }
     break;
     case '>':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '=') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '=') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
-        else if (*mIterator == '>') {
-            pushTokenChar(*mIterator);
+        else if (curChar() == '>') {
+            pushTokenChar(curChar());
             ++mIterator;
-            if (*mIterator == '>') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '>') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
-            if (*mIterator == '=') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '=') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
@@ -93,25 +111,25 @@ void SlkToken::getOperatorToken(void)
     break;
     case '<':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '=') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '=') {
+            pushTokenChar(curChar());
             ++mIterator;
-            if (*mIterator == '>') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '>') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
-        else if (*mIterator == '-') {
-            pushTokenChar(*mIterator);
+        else if (curChar() == '-') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
-        else if (*mIterator == '<') {
-            pushTokenChar(*mIterator);
+        else if (curChar() == '<') {
+            pushTokenChar(curChar());
             ++mIterator;
-            if (*mIterator == '=') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '=') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
@@ -119,17 +137,17 @@ void SlkToken::getOperatorToken(void)
     break;
     case '&':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '=') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '=') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
-        else if (*mIterator == '&') {
-            pushTokenChar(*mIterator);
+        else if (curChar() == '&') {
+            pushTokenChar(curChar());
             ++mIterator;
-            if (*mIterator == '=') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '=') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
@@ -137,17 +155,17 @@ void SlkToken::getOperatorToken(void)
     break;
     case '|':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '=') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '=') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
-        else if (*mIterator == '|') {
-            pushTokenChar(*mIterator);
+        else if (curChar() == '|') {
+            pushTokenChar(curChar());
             ++mIterator;
-            if (*mIterator == '=') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '=') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
@@ -155,10 +173,10 @@ void SlkToken::getOperatorToken(void)
     break;
     case '=':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '=' || *mIterator == '>') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '=' || curChar() == '>') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
     }
@@ -169,43 +187,43 @@ void SlkToken::getOperatorToken(void)
     case '/':
     case '%':
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '=') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '=') {
+            pushTokenChar(curChar());
             ++mIterator;
         }
     }
     break;
     case '?':
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
-        if (*mIterator == '?') {
-            pushTokenChar(*mIterator);
+        if (curChar() == '?') {
+            pushTokenChar(curChar());
             ++mIterator;
-            if (*mIterator == '=') {
-                pushTokenChar(*mIterator);
+            if (curChar() == '=') {
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
         break;
     case '`': {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
         bool isOp = false;
-        while (isOperator(*mIterator)) {
-            pushTokenChar(*mIterator);
+        while (isOperator(curChar())) {
+            pushTokenChar(curChar());
             ++mIterator;
             isOp = true;
         }
         if (!isOp) {
-            while (*mIterator != '\0' && !isSpecialChar(*mIterator)) {
-                if (*mIterator == '#')
+            while (curChar() != '\0' && !isSpecialChar(curChar())) {
+                if (curChar() == '#')
                     break;
-                else if (*mIterator == '.') {
+                else if (curChar() == '.') {
                     break;
                 }
-                pushTokenChar(*mIterator);
+                pushTokenChar(curChar());
                 ++mIterator;
             }
         }
@@ -213,7 +231,7 @@ void SlkToken::getOperatorToken(void)
             break;
     default:
     {
-        pushTokenChar(*mIterator);
+        pushTokenChar(curChar());
         ++mIterator;
     }
     break;
@@ -371,8 +389,17 @@ short SlkToken::get(void)
         return END_OF_SLK_INPUT_;
     }
 
+    mLastToken = mCurToken;
+    mLastLineNumber = mLineNumber;
+    if (mTokenQueue.Size() > 0) {
+        auto token = mTokenQueue.PopFront();
+        mCurToken = token.Token;
+        mLineNumber = token.LineNumber;
+        return token.TokenValue;
+    }
+
     for (;;) {
-        if (*mIterator == '\0') {
+        if (curChar() == '\0') {
             if (isCanFinish()) {
                 newToken();
                 endTokenWithEof();
@@ -389,10 +416,10 @@ short SlkToken::get(void)
 
         int isSkip = TRUE;
         //跳过注释与白空格
-        for (; isSkip && *mIterator != '\0';) {
+        for (; isSkip && curChar() != '\0';) {
             isSkip = FALSE;
-            for (; isWhiteSpace(*mIterator); ++mIterator) {
-                if (*mIterator == '\n') {
+            for (; isWhiteSpace(curChar()); ++mIterator) {
+                if (curChar() == '\n') {
                     ++mLineNumber;
                     if (mCommentNum <= 0) {
                         mCommentOnNewLine = TRUE;
@@ -401,37 +428,37 @@ short SlkToken::get(void)
                 isSkip = TRUE;
             }
             //#引导的单行注释与C++风格的单行注释
-            if (*mIterator == '#' || *mIterator == '/' && *(mIterator + 1) == '/') {
+            if (curChar() == '#' || curChar() == '/' && nextChar() == '/') {
                 newComment();
-                for (; *mIterator != '\0' && *mIterator != '\n'; ++mIterator) {
-                    if (*mIterator != '\r')
-                        pushCommentChar(*mIterator);
+                for (; curChar() != '\0' && curChar() != '\n'; ++mIterator) {
+                    if (curChar() != '\r')
+                        pushCommentChar(curChar());
                 }
                 endComment();
                 isSkip = TRUE;
             }
             //C++风格的单行注释与多行注释
-            if (*mIterator == '/' && *(mIterator + 1) == '*') {
+            if (curChar() == '/' && nextChar() == '*') {
                 newComment();
-                pushCommentChar(*mIterator);
+                pushCommentChar(curChar());
                 ++mIterator;
-                pushCommentChar(*mIterator);
+                pushCommentChar(curChar());
                 ++mIterator;
                 for (;;) {
-                    if (*mIterator != '\0') {
-                        if (*mIterator == '\n') {
-                            pushCommentChar(*mIterator);
+                    if (curChar() != '\0') {
+                        if (curChar() == '\n') {
+                            pushCommentChar(curChar());
                             ++mLineNumber;
                         }
-                        else if (*mIterator == '*' && *(mIterator + 1) == '/') {
-                            pushCommentChar(*mIterator);
+                        else if (curChar() == '*' && nextChar() == '/') {
+                            pushCommentChar(curChar());
                             ++mIterator;
-                            pushCommentChar(*mIterator);
+                            pushCommentChar(curChar());
                             ++mIterator;
                             break;
                         }
-                        else if (*mIterator != '\r') {
-                            pushCommentChar(*mIterator);
+                        else if (curChar() != '\r') {
+                            pushCommentChar(curChar());
                         }
                     }
                     else {
@@ -451,7 +478,7 @@ short SlkToken::get(void)
                 endComment();
             }
         }
-        if (*mIterator != '\0')
+        if (curChar() != '\0')
             break;
     }
 
@@ -469,20 +496,20 @@ short SlkToken::get(void)
         getBlockString(mScriptEndDelimiter, mScriptEndDelimiterLength);
         return SCRIPT_CONTENT_;
     }
-    else if (*mIterator == '{' && *(mIterator + 1) == ':') {
+    else if (curChar() == '{' && nextChar() == ':') {
         ++mIterator;
         ++mIterator;
         int line = mLineNumber;
         //搜索脚本结束 :}
-        for (; *mIterator != '\0';) {
-            while (*mIterator != '\0' && *mIterator != ':') {
-                if (*mIterator == '\n')++mLineNumber;
+        for (; curChar() != '\0';) {
+            while (curChar() != '\0' && curChar() != ':') {
+                if (curChar() == '\n')++mLineNumber;
 
-                pushTokenChar(*mIterator);
+                pushTokenChar(curChar());
 
                 ++mIterator;
             }
-            if (*mIterator == '\0')
+            if (curChar() == '\0')
                 break;
             IScriptSource::Iterator next = mIterator + 1;
             if (*next == '}') {
@@ -491,12 +518,12 @@ short SlkToken::get(void)
                 break;
             }
             else {
-                pushTokenChar(*mIterator);
+                pushTokenChar(curChar());
 
                 ++mIterator;
             }
         }
-        if (*mIterator == '\0') {
+        if (curChar() == '\0') {
             char* pInfo = mDslFile->NewErrorInfo();
             if (pInfo)
                 tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish！", line);
@@ -505,7 +532,7 @@ short SlkToken::get(void)
         removeFirstAndLastEmptyLine();
         return SCRIPT_CONTENT_;
     }
-    else if (*mIterator == '[' && *(mIterator + 1) == ':') {
+    else if (curChar() == '[' && nextChar() == ':') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('[');
@@ -513,7 +540,7 @@ short SlkToken::get(void)
         endToken();
         return BRACKET_COLON_BEGIN_;
     }
-    else if (*mIterator == ':' && *(mIterator + 1) == ']') {
+    else if (curChar() == ':' && nextChar() == ']') {
         ++mIterator;
         ++mIterator;
         pushTokenChar(':');
@@ -521,7 +548,7 @@ short SlkToken::get(void)
         endToken();
         return BRACKET_COLON_END_;
     }
-    else if (*mIterator == '(' && *(mIterator + 1) == ':') {
+    else if (curChar() == '(' && nextChar() == ':') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('(');
@@ -529,7 +556,7 @@ short SlkToken::get(void)
         endToken();
         return PARENTHESIS_COLON_BEGIN_;
     }
-    else if (*mIterator == ':' && *(mIterator + 1) == ')') {
+    else if (curChar() == ':' && nextChar() == ')') {
         ++mIterator;
         ++mIterator;
         pushTokenChar(':');
@@ -537,15 +564,41 @@ short SlkToken::get(void)
         endToken();
         return PARENTHESIS_COLON_END_;
     }
-    else if (*mIterator == '<' && *(mIterator + 1) == ':') {
+    else if (curChar() == '<' && nextChar() == ':') {
         ++mIterator;
         ++mIterator;
+        if (curChar() == ':') {
+            if (nextChar() == '>') {
+                pushTokenChar('<');
+                pushTokenChar(':');
+                endToken();
+                return ANGLE_BRACKET_COLON_BEGIN_;
+            }
+            else {
+                ++mIterator;
+                endToken();
+                char* curToken = mCurToken;
+                newToken();
+                pushTokenChar(':');
+                pushTokenChar(':');
+                endToken();
+                mTokenQueue.PushBack(TokenInfo(mCurToken, COLON_COLON_, mLineNumber));
+                mCurToken = curToken;
+                return OP_TOKEN_9_;
+            }
+        }
+        else {
+            pushTokenChar('<');
+            pushTokenChar(':');
+            endToken();
+            return ANGLE_BRACKET_COLON_BEGIN_;
+        }
         pushTokenChar('<');
         pushTokenChar(':');
         endToken();
         return ANGLE_BRACKET_COLON_BEGIN_;
     }
-    else if (*mIterator == ':' && *(mIterator + 1) == '>') {
+    else if (curChar() == ':' && nextChar() == '>') {
         ++mIterator;
         ++mIterator;
         pushTokenChar(':');
@@ -553,7 +606,7 @@ short SlkToken::get(void)
         endToken();
         return ANGLE_BRACKET_COLON_END_;
     }
-    else if (*mIterator == '{' && *(mIterator + 1) == '%') {
+    else if (curChar() == '{' && nextChar() == '%') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('{');
@@ -561,7 +614,7 @@ short SlkToken::get(void)
         endToken();
         return BRACE_PERCENT_BEGIN_;
     }
-    else if (*mIterator == '%' && *(mIterator + 1) == '}') {
+    else if (curChar() == '%' && nextChar() == '}') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('%');
@@ -569,7 +622,7 @@ short SlkToken::get(void)
         endToken();
         return BRACE_PERCENT_END_;
     }
-    else if (*mIterator == '[' && *(mIterator + 1) == '%') {
+    else if (curChar() == '[' && nextChar() == '%') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('[');
@@ -577,7 +630,7 @@ short SlkToken::get(void)
         endToken();
         return BRACKET_PERCENT_BEGIN_;
     }
-    else if (*mIterator == '%' && *(mIterator + 1) == ']') {
+    else if (curChar() == '%' && nextChar() == ']') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('%');
@@ -585,7 +638,7 @@ short SlkToken::get(void)
         endToken();
         return BRACKET_PERCENT_END_;
     }
-    else if (*mIterator == '(' && *(mIterator + 1) == '%') {
+    else if (curChar() == '(' && nextChar() == '%') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('(');
@@ -593,7 +646,7 @@ short SlkToken::get(void)
         endToken();
         return PARENTHESIS_PERCENT_BEGIN_;
     }
-    else if (*mIterator == '%' && *(mIterator + 1) == ')') {
+    else if (curChar() == '%' && nextChar() == ')') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('%');
@@ -601,7 +654,7 @@ short SlkToken::get(void)
         endToken();
         return PARENTHESIS_PERCENT_END_;
     }
-    else if (*mIterator == '<' && *(mIterator + 1) == '%') {
+    else if (curChar() == '<' && nextChar() == '%') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('<');
@@ -609,7 +662,7 @@ short SlkToken::get(void)
         endToken();
         return ANGLE_BRACKET_PERCENT_BEGIN_;
     }
-    else if (*mIterator == '%' && *(mIterator + 1) == '>') {
+    else if (curChar() == '%' && nextChar() == '>') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('%');
@@ -617,7 +670,7 @@ short SlkToken::get(void)
         endToken();
         return ANGLE_BRACKET_PERCENT_END_;
     }
-    else if (*mIterator == ':' && *(mIterator + 1) == ':') {
+    else if (curChar() == ':' && nextChar() == ':') {
         ++mIterator;
         ++mIterator;
         pushTokenChar(':');
@@ -625,12 +678,12 @@ short SlkToken::get(void)
         endToken();
         return COLON_COLON_;
     }
-    else if (*mIterator == '?') {
-        char nextChar = *(mIterator + 1);
-        if (nextChar == '.') {
+    else if (curChar() == '?') {
+        char nc = nextChar();
+        if (nc == '.') {
             ++mIterator;
             ++mIterator;
-            if (*mIterator == '*') {
+            if (curChar() == '*') {
                 ++mIterator;
                 pushTokenChar('?');
                 pushTokenChar('.');
@@ -645,7 +698,7 @@ short SlkToken::get(void)
                 return QUESTION_PERIOD_;
             }
         }
-        else if (nextChar == '(') {
+        else if (nc == '(') {
             ++mIterator;
             ++mIterator;
             pushTokenChar('?');
@@ -653,7 +706,7 @@ short SlkToken::get(void)
             endToken();
             return QUESTION_PARENTHESIS_;
         }
-        else if (nextChar == '[') {
+        else if (nc == '[') {
             ++mIterator;
             ++mIterator;
             pushTokenChar('?');
@@ -661,7 +714,7 @@ short SlkToken::get(void)
             endToken();
             return QUESTION_BRACKET_;
         }
-        else if (nextChar == '{') {
+        else if (nc == '{') {
             ++mIterator;
             ++mIterator;
             pushTokenChar('?');
@@ -674,10 +727,10 @@ short SlkToken::get(void)
             return getOperatorTokenValue();
         }
     }
-    else if (*mIterator == '-') {
-        char nextChar = *(mIterator + 1);
-        if (nextChar == '>') {
-            nextChar = '\0';
+    else if (curChar() == '-') {
+        char nc = nextChar();
+        if (nc == '>') {
+            nc = '\0';
             for (int start = 2; ; ++start) {
                 char c = *(mIterator + start);
                 if (c == '\0') {
@@ -687,15 +740,15 @@ short SlkToken::get(void)
                     continue;
                 }
                 else {
-                    nextChar = c;
+                    nc = c;
                     break;
                 }
             }
-            if (nextChar == '{') {
+            if (nc == '{') {
                 getOperatorToken();
                 return getOperatorTokenValue();
             }
-            else if (nextChar == '*') {
+            else if (nc == '*') {
                 ++mIterator;
                 ++mIterator;
                 ++mIterator;
@@ -719,7 +772,7 @@ short SlkToken::get(void)
             return getOperatorTokenValue();
         }
     }
-    else if (*mIterator == '.' && *(mIterator + 1) == '*') {
+    else if (curChar() == '.' && nextChar() == '*') {
         ++mIterator;
         ++mIterator;
         pushTokenChar('.');
@@ -727,13 +780,13 @@ short SlkToken::get(void)
         endToken();
         return PERIOD_STAR_;
     }
-    else if (*mIterator == '.' && *(mIterator + 1) == '.') {
-        char c = *mIterator;
+    else if (curChar() == '.' && nextChar() == '.') {
+        char c = curChar();
         ++mIterator;
         ++mIterator;
         pushTokenChar(c);
         pushTokenChar(c);
-        if (*mIterator == '.') {
+        if (curChar() == '.') {
             ++mIterator;
             pushTokenChar(c);
             endToken();
@@ -744,103 +797,140 @@ short SlkToken::get(void)
             return OP_TOKEN_12_;
         }
     }
-    else if (isOperator(*mIterator)) {//操作符
+    else if (isOperator(curChar())) {//操作符
         getOperatorToken();
         return getOperatorTokenValue();
     }
-    else if (*mIterator == '.' && 0 == myisdigit(*(mIterator + 1), FALSE)) {
-        char c = *mIterator;
+    else if (curChar() == '.' && 0 == myisdigit(nextChar(), FALSE)) {
+        char c = curChar();
         ++mIterator;
 
         pushTokenChar(c);
         endToken();
         return DOT_;
     }
-    else if (*mIterator == '(') {
+    else if (curChar() == '(') {
         ++mIterator;
         pushTokenChar('(');
         endToken();
         return LPAREN_;
     }
-    else if (*mIterator == ')') {
+    else if (curChar() == ')') {
         ++mIterator;
         pushTokenChar(')');
         endToken();
         return RPAREN_;
     }
-    else if (*mIterator == '[') {
+    else if (curChar() == '[') {
         ++mIterator;
         pushTokenChar('[');
         endToken();
         return LBRACK_;
     }
-    else if (*mIterator == ']') {
+    else if (curChar() == ']') {
         ++mIterator;
         pushTokenChar(']');
         endToken();
         return RBRACK_;
     }
-    else if (*mIterator == '{') {
+    else if (curChar() == '{') {
         ++mIterator;
         pushTokenChar('{');
         endToken();
         return LBRACE_;
     }
-    else if (*mIterator == '}') {
+    else if (curChar() == '}') {
         ++mIterator;
         pushTokenChar('}');
         endToken();
         return RBRACE_;
     }
-    else if (*mIterator == ',') {
+    else if (curChar() == ',') {
         ++mIterator;
         pushTokenChar(',');
         endToken();
         return COMMA_;
     }
-    else if (*mIterator == ';') {
+    else if (curChar() == ';') {
         ++mIterator;
         pushTokenChar(';');
         endToken();
         return SEMI_;
     }
     else {//关键字、标识符或常数
-        if (*mIterator == '"' || *mIterator == '\'') {//引号括起来的名称或关键字
+        if (curChar() == '"' || curChar() == '\'') {//引号括起来的名称或关键字
             int line = mLineNumber;
-            char c = *mIterator;
-            for (++mIterator; *mIterator != '\0' && *mIterator != c;) {
-                if (*mIterator == '\n')++mLineNumber;
-                if (*mIterator == '\\') {
+            char c = curChar();
+            for (++mIterator; curChar() != '\0' && curChar() != c;) {
+                if (curChar() == '\n')++mLineNumber;
+                if (curChar() == '\\') {
                     ++mIterator;
-                    if (*mIterator == 'n') {
+                    if (curChar() == 'n') {
                         pushTokenChar('\n');
                     }
-                    else if (*mIterator == 'r') {
+                    else if (curChar() == 'r') {
                         pushTokenChar('\r');
                     }
-                    else if (*mIterator == 't') {
+                    else if (curChar() == 't') {
                         pushTokenChar('\t');
                     }
-                    else if (*mIterator == 'v') {
+                    else if (curChar() == 'v') {
                         pushTokenChar('\v');
                     }
-                    else if (*mIterator == 'a') {
+                    else if (curChar() == 'a') {
                         pushTokenChar('\a');
                     }
-                    else if (*mIterator == 'b') {
+                    else if (curChar() == 'b') {
                         pushTokenChar('\b');
                     }
-                    else if (*mIterator == 'f') {
+                    else if (curChar() == 'f') {
                         pushTokenChar('\f');
                     }
-                    else if (*mIterator == 'x' && myisdigit(*(mIterator + 1), true)) {
+                    else if (curChar() == 'u' && myisdigit(nextChar(), true) && myisdigit(peekChar(2), true) && myisdigit(peekChar(3), true)) {
+                        ++mIterator;
+                        //4位16进制数
+                        char h1 = curChar();
+                        ++mIterator;
+                        char h2 = curChar();
+                        ++mIterator;
+                        char h3 = curChar();
+                        ++mIterator;
+                        char h4 = curChar();
+                        pushTokenChar((char)((mychar2int(h2) << 4) + mychar2int(h1)));
+                        pushTokenChar((char)((mychar2int(h4) << 4) + mychar2int(h3)));
+                    }
+                    else if (curChar() == 'U' && myisdigit(nextChar(), true) && myisdigit(peekChar(2), true) && myisdigit(peekChar(3), true)
+                        && myisdigit(peekChar(4), true) && myisdigit(peekChar(5), true) && myisdigit(peekChar(6), true) && myisdigit(peekChar(7), true)) {
+                        ++mIterator;
+                        //8位16进制数
+                        char h1 = curChar();
+                        ++mIterator;
+                        char h2 = curChar();
+                        ++mIterator;
+                        char h3 = curChar();
+                        ++mIterator;
+                        char h4 = curChar();
+                        ++mIterator;
+                        char h5 = curChar();
+                        ++mIterator;
+                        char h6 = curChar();
+                        ++mIterator;
+                        char h7 = curChar();
+                        ++mIterator;
+                        char h8 = curChar();
+                        pushTokenChar((char)((mychar2int(h2) << 4) + mychar2int(h1)));
+                        pushTokenChar((char)((mychar2int(h4) << 4) + mychar2int(h3)));
+                        pushTokenChar((char)((mychar2int(h6) << 4) + mychar2int(h5)));
+                        pushTokenChar((char)((mychar2int(h8) << 4) + mychar2int(h7)));
+                    }
+                    else if (curChar() == 'x' && myisdigit(nextChar(), true)) {
                         ++mIterator;
                         //1~2位16进制数
-                        char h1 = *mIterator;
-                        if (myisdigit(*(mIterator + 1), true)) {
+                        char h1 = curChar();
+                        if (myisdigit(nextChar(), true)) {
                             ++mIterator;
-                            char h2 = *mIterator;
-                            char nc = (char)(mychar2int(h1) * 16 + mychar2int(h2));
+                            char h2 = curChar();
+                            char nc = (char)((mychar2int(h1) << 4) + mychar2int(h2));
                             pushTokenChar(nc);
                         }
                         else {
@@ -848,20 +938,20 @@ short SlkToken::get(void)
                             pushTokenChar(nc);
                         }
                     }
-                    else if (myisdigit(*mIterator, false)) {
+                    else if (myisdigit(curChar(), false)) {
                         //1~3位8进制数
-                        char o1 = *mIterator;
-                        if (myisdigit(*(mIterator + 1), false)) {
+                        char o1 = curChar();
+                        if (myisdigit(nextChar(), false)) {
                             ++mIterator;
-                            char o2 = *mIterator;
-                            if (myisdigit(*(mIterator + 1), false)) {
+                            char o2 = curChar();
+                            if (myisdigit(nextChar(), false)) {
                                 ++mIterator;
-                                char o3 = *mIterator;
-                                char nc = (char)(mychar2int(o1) * 64 + mychar2int(o2) * 8 + mychar2int(o3));
+                                char o3 = curChar();
+                                char nc = (char)((mychar2int(o1) << 6) + (mychar2int(o2) << 3) + mychar2int(o3));
                                 pushTokenChar(nc);
                             }
                             else {
-                                char nc = (char)(mychar2int(o1) * 8 + mychar2int(o2));
+                                char nc = (char)((mychar2int(o1) << 3) + mychar2int(o2));
                                 pushTokenChar(nc);
                             }
                         }
@@ -871,15 +961,15 @@ short SlkToken::get(void)
                         }
                     }
                     else {
-                        pushTokenChar(*mIterator);
+                        pushTokenChar(curChar());
                     }
                 }
                 else {
-                    pushTokenChar(*mIterator);
+                    pushTokenChar(curChar());
                 }
                 ++mIterator;
 
-                if (*mIterator == '\0') {
+                if (curChar() == '\0') {
                     if (mIterator.Load()) {
                         continue;
                     }
@@ -892,7 +982,7 @@ short SlkToken::get(void)
                     }
                 }
             }
-            if (*mIterator != '\0') {
+            if (curChar() != '\0') {
                 ++mIterator;
             }
             else {
@@ -914,17 +1004,17 @@ short SlkToken::get(void)
             int includeEPart = FALSE;
             int includeAddSub = FALSE;
             int dotCt = 0;
-            if (*mIterator == '0' && *(mIterator + 1) == 'x') {
+            if (curChar() == '0' && nextChar() == 'x') {
                 isHex = TRUE;
-                pushTokenChar(*mIterator);
+                pushTokenChar(curChar());
                 ++mIterator;
-                pushTokenChar(*mIterator);
+                pushTokenChar(curChar());
                 ++mIterator;
             }
-            for (; isNum && myisdigit(*mIterator, isHex, includeEPart, includeAddSub) || !isSpecialChar(*mIterator); ++mIterator) {
-                if (*mIterator == '#')
+            for (; isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub) || !isSpecialChar(curChar()); ++mIterator) {
+                if (curChar() == '#')
                     break;
-                else if (*mIterator == '.') {
+                else if (curChar() == '.') {
                     if (!isNum || isHex) {
                         break;
                     }
@@ -938,13 +1028,13 @@ short SlkToken::get(void)
                     if (dotCt > 1)
                         break;
                 }
-                else if (FALSE == myisdigit(*mIterator, isHex, includeEPart, includeAddSub)) {
+                else if (FALSE == myisdigit(curChar(), isHex, includeEPart, includeAddSub)) {
                     isNum = FALSE;
                 }
 
-                pushTokenChar(*mIterator);
+                pushTokenChar(curChar());
                 includeEPart = TRUE;
-                if (includeEPart && (*mIterator == 'e' || *mIterator == 'E')) {
+                if (includeEPart && (curChar() == 'e' || curChar() == 'E')) {
                     includeEPart = FALSE;
                     includeAddSub = TRUE;
                 }
@@ -952,11 +1042,25 @@ short SlkToken::get(void)
                     includeAddSub = FALSE;
                 }
             }
-            endToken();
             if (isNum) {
+                endToken();
                 return NUMBER_;
             }
             else {
+                tempEndToken();
+                if (0 == strcmp(mCurToken, "operator")) {
+                    newToken();
+                    while (isWhiteSpace(curChar())) {
+                        ++mIterator;
+                    }
+                    while (isOperator(curChar())) {
+                        pushTokenChar(curChar());
+                        ++mIterator;
+                    }
+                    endToken();
+                    return STRING_;
+                }
+                endToken();
                 return IDENTIFIER_;
             }
         }
@@ -1084,8 +1188,6 @@ void SlkToken::endComment(void)
 void SlkToken::newToken(void)
 {
     if (mDslFile) {
-        mLastToken = mCurToken;
-        mLastLineNumber = mLineNumber;
         mCurToken = mDslFile->GetUnusedStringPtrRef();
 
         mTokenCharIndex = 0;
@@ -1097,15 +1199,22 @@ void SlkToken::newToken(void)
 
 void SlkToken::pushTokenChar(char c)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurToken)
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || NULL == mCurToken)
         return;
     mCurToken[mTokenCharIndex] = c;
     ++mTokenCharIndex;
 }
 
+void SlkToken::tempEndToken(void)
+{
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
+        return;
+    mCurToken[mTokenCharIndex] = '\0';
+}
+
 void SlkToken::endToken(void)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
+    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
         return;
     mCurToken[mTokenCharIndex] = '\0';
     mDslFile->GetUnusedStringPtrRef() += mTokenCharIndex + 1;
@@ -1120,7 +1229,7 @@ void SlkToken::endTokenWithEof(void)
     mDslFile->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
 }
 
-SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile) :mSource(&source), mDslFile(&dslFile)
+SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile) :mSource(&source), mDslFile(&dslFile), mTokenQueue()
 {
     MyAssert(mSource);
     MyAssert(mDslFile);

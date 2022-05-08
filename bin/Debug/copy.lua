@@ -423,7 +423,6 @@ jit.off();
 jit.flush();
 printJitStatus();
 if( not package.loading)
-
 {
 	lualist(package.loading)assignwith(
 	{
@@ -475,11 +474,9 @@ lualist(Cs2LuaLibrary)assignwith(
 	luaargs(obj)
 	{
 		if(obj)
-
 		{
 			local(lualist(meta)assignwith(getmetatable(obj)));
 			if(meta and rawget(meta, "__cs2lua_defined"))
-
 			{
 				return(true);
 			};
@@ -621,7 +618,6 @@ luaargs(handled, err, func)
 {
 	local(lualist(retval)assignwith(nil));
 	if( not handled and func)
-
 	{
 		lualist(retval)assignwith(func(
 		{
@@ -659,7 +655,6 @@ luaargs(arr)
 	else
 	{
 		if(type(arr) == "userdata")
-
 		{
 			local(lualist(tb)assignwith(
 			{
@@ -699,7 +694,6 @@ luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, .
 	local(index);
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(meta)
-
 	{
 		local(lualist(_class)assignwith(rawget(meta, "__class")));
 		if(_class == System.Collections.Generic.List_T)
@@ -716,7 +710,6 @@ luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, .
 		{
 			lualist(index)assignwith(__unwrap_if_string(arg1));
 			if(nil == index)
-
 			{
 				UnityEngine.Debug.LogError__Object("[cs2lua] table index is nil");
 				return(nil);
@@ -734,7 +727,6 @@ luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, .
 			{
 				local(lualist(c)assignwith(LuaSystemString.GetChar(obj, index)));
 				if( not c)
-
 				{
 					error("index out of range");
 				};
@@ -760,14 +752,12 @@ luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, .
 	lualist(index)assignwith(__unwrap_if_string(arg1));
 	lualist(val)assignwith(arg2);
 	if(nil == index)
-
 	{
 		UnityEngine.Debug.LogError__Object("[cs2lua] table index is nil");
 		return();
 	};
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(meta)
-
 	{
 		local(lualist(_class)assignwith(rawget(meta, "__class")));
 		local(lualist(typename)assignwith(rawget(meta, "__typename")));
@@ -798,7 +788,6 @@ function(addtofuncinfostructlist)
 luaargs(funcInfo, class, obj)
 {
 	if( not funcInfo or  not class or  not obj)
-
 	{
 		return();
 	};
@@ -846,7 +835,6 @@ luaargs(funcInfo, rettype, class, method, ...)
 	local(lualist(marg1)assignwith(arg1 and getmetatable(arg1)));
 	local(lualist(marg2)assignwith(arg2 and getmetatable(arg2)));
 	if(rettype == System.Boolean and class == System.Type)
-
 	{
 		if(method == "op_Equality")
 		{
@@ -893,7 +881,6 @@ luaargs(funcInfo, rettype, class, method, ...)
 	{
 		local(lualist(t)assignwith(nil));
 		if(marg1)
-
 		{
 			lualist(t)assignwith(rawget(marg1, "__typename"));
 		};
@@ -971,12 +958,10 @@ luaargs(funcInfo, rettype, class, method, ...)
 			local(lualist(t1)assignwith(nil));
 			local(lualist(t2)assignwith(nil));
 			if(marg1)
-
 			{
 				lualist(t1)assignwith(rawget(marg1, "__typename"));
 			};
 			if(marg2)
-
 			{
 				lualist(t2)assignwith(rawget(marg2, "__typename"));
 			};
@@ -1068,12 +1053,10 @@ luaargs(funcInfo, rettype, class, method, ...)
 			local(lualist(t1)assignwith(nil));
 			local(lualist(t2)assignwith(nil));
 			if(marg1)
-
 			{
 				lualist(t1)assignwith(rawget(marg1, "__typename"));
 			};
 			if(marg2)
-
 			{
 				lualist(t2)assignwith(rawget(marg2, "__typename"));
 			};
@@ -1168,7 +1151,6 @@ luaargs(rettype, class, method, ...)
 {
 	local(lualist(arg1, arg2)assignwith(...));
 	if(rettype == System.Boolean and class == System.Type)
-
 	{
 		if(method == "op_Equality")
 		{
@@ -1257,7 +1239,6 @@ luaargs(...)
 {
 	local(lualist(arg1, arg2)assignwith(...));
 	if(arg1 or arg2)
-
 	{
 		if(type(arg1) == "table")
 		{
@@ -1275,7 +1256,6 @@ luaargs(obj, isEnum, class, method, ...)
 	local(lualist(arg1, arg2)assignwith(...));
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(isEnum and obj and (method == "ToString" or 1 == string.find(method, "ToString__")))
-
 	{
 		return(class.Value2String[obj]);
 	};
@@ -1296,7 +1276,6 @@ luaargs(obj, isEnum, class, method, ...)
 			{
 				local(lualist(csstr)assignwith(obj));
 				if(type(obj) == "string")
-
 				{
 					lualist(csstr)assignwith(forwardtocsstr(obj));
 				};
@@ -1368,7 +1347,6 @@ luaargs(obj, isEnum, class, method, ...)
 		{
 			local(lualist(result1, result2)assignwith(_get_first_untable_from_pack_args(...)));
 			if(type(result1) == "number")
-
 			{
 				lualist(result1)assignwith(Utility.CharToString(result1));
 			};
@@ -1378,7 +1356,6 @@ luaargs(obj, isEnum, class, method, ...)
 		{
 			local(lualist(result)assignwith(_get_first_untable_from_pack_args(...)));
 			if(type(result) == "number")
-
 			{
 				lualist(result)assignwith(Utility.CharToString(result));
 			};
@@ -1408,10 +1385,8 @@ luaargs(obj, isEnum, class, property)
 		else
 		{
 			if(type(obj) == "number")
-
 			{
 				if(property == "Length")
-
 				{
 					return(string.len(tostring(obj)));
 				};
@@ -1474,12 +1449,10 @@ luaargs(firstArray, secondArray, method, ...)
 		{
 			local(lualist(arr, val, start, count)assignwith(...));
 			if( not start)
-
 			{
 				lualist(start)assignwith(0);
 			};
 			if( not count)
-
 			{
 				lualist(count)assignwith(arr.Length);
 			};
@@ -1487,7 +1460,6 @@ luaargs(firstArray, secondArray, method, ...)
 			luarange(start + 1, start + count)
 			{
 				if(arr[i] == val)
-
 				{
 					return(i - 1);
 				};
@@ -1647,7 +1619,6 @@ luaargs(tag, newFunc)
 		in(ipairs(pool.m_Data))
 		{
 			if(rawequal(v, data))
-
 			{
 				lualist(exists)assignwith(true);
 				lualog("pool.Recycle {0}:{1} duplicate !", tag, __get_obj_string(data));
@@ -1656,7 +1627,6 @@ luaargs(tag, newFunc)
 			};
 		};
 		if( not exists)
-
 		{
 			table.insert(pool.m_Data, data);
 		};
@@ -1875,7 +1845,6 @@ function(getexterninstancestructmember)
 luaargs(symKind, obj, class, member)
 {
 	if(class == System.Nullable_T)
-
 	{
 		if(member == "Value")
 		{
@@ -1925,7 +1894,6 @@ luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 	local(index);
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(meta)
-
 	{
 		local(lualist(_class)assignwith(rawget(meta, "__class")));
 		if(_class == System.Collections.Generic.List_T)
@@ -1942,7 +1910,6 @@ luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 		{
 			lualist(index)assignwith(__unwrap_if_string(arg1));
 			if(nil == index)
-
 			{
 				UnityEngine.Debug.LogError__Object("[cs2lua] table index is nil");
 				return(nil);
@@ -1960,7 +1927,6 @@ luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 			{
 				local(lualist(c)assignwith(LuaSystemString.GetChar(obj, index)));
 				if( not c)
-
 				{
 					error("index out of range");
 				};
@@ -1977,7 +1943,6 @@ function(getstaticindexerstruct)
 luaargs(isExtern, elementType, callerClass, class, name, argCount, ...)
 {
 	if(isExtern and callerClass ~= class)
-
 	{
 		translationlog("need add handler for getstaticindexerstruct {0}[{1}] {2}.{3}", getclasstypename(callerClass), getclasstypename(elementType), getclasstypename(class), name);
 	};
@@ -1987,7 +1952,6 @@ function(getinstanceindexerstruct)
 luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 {
 	if(isExtern and callerClass ~= class)
-
 	{
 		translationlog("need add handler for getinstanceindexerstruct {0}[{1}] {2}.{3}", getclasstypename(callerClass), getclasstypename(elementType), getclasstypename(class), name);
 	};
@@ -2006,14 +1970,12 @@ luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 	lualist(index)assignwith(__unwrap_if_string(arg1));
 	lualist(val)assignwith(arg2);
 	if(nil == index)
-
 	{
 		UnityEngine.Debug.LogError__Object("[cs2lua] table index is nil");
 		return();
 	};
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(meta)
-
 	{
 		local(lualist(_class)assignwith(rawget(meta, "__class")));
 		local(lualist(typename)assignwith(rawget(meta, "__typename")));
@@ -2113,7 +2075,6 @@ function(arraygetstruct)
 luaargs(isExtern, arrSymKind, elementType, arr, argCount, ...)
 {
 	if(isExtern)
-
 	{
 		translationlog("need add handler for arraygetstruct {0}[]", getclasstypename(elementType));
 	};
@@ -2137,7 +2098,6 @@ luaargs(tb, val)
 	in(ipairs(tb))
 	{
 		if(rawequal(v, val))
-
 		{
 			table.remove(tb, i);
 			return(true);
@@ -2149,7 +2109,6 @@ function(recycleandkeepcheck)
 luaargs(fieldType, oldVal, newVal)
 {
 	if(rawequal(oldVal, newVal))
-
 	{
 		lualog("[recycleandkeepstructvalue] oldVal==newVal");
 		printStack();
@@ -2195,12 +2154,10 @@ luaargs(funcInfo)
 {
 	local(lualist(last)assignwith(table.remove(g_FuncInfoStack)));
 	while(last and last ~= funcInfo)
-
 	{
 		lualist(last)assignwith(table.remove(g_FuncInfoStack));
 	};
 	if(funcInfo)
-
 	{
 		for(i, v)
 		in(ipairs(funcInfo.iter_list))
@@ -2323,11 +2280,9 @@ function(luatoobject)
 luaargs(symKind, isStatic, symName, arg1, ...)
 {
 	if(arg1 and symKind == SymbolKind.Field)
-
 	{
 		local(lualist(meta)assignwith(getmetatable(arg1)));
 		if(meta and rawget(meta, "__cs2lua_defined"))
-
 		{
 			local(lualist(o)assignwith(Cs2LuaCustomData.__new_object()));
 			lualist(o.CustomData)assignwith(arg1);
@@ -2340,11 +2295,9 @@ function(objecttolua)
 luaargs(arg1, ...)
 {
 	if(arg1)
-
 	{
 		local(lualist(meta)assignwith(getmetatable(arg1)));
 		if(meta and rawget(meta, "__cs2lua_fullname") == "Cs2LuaCustomData")
-
 		{
 			lualist(arg1)assignwith(arg1.CustomData);
 		};
@@ -2362,7 +2315,6 @@ lualist(__mt_delegation)assignwith(
 		in(pairs(t))
 		{
 			if(v)
-
 			{
 				lualist(ret)assignwith(v(...));
 			};
@@ -2413,7 +2365,6 @@ luaargs(key, handler)
 {
 	local(lualist(old)assignwith(rawget(__cs2lua_delegations, key)));
 	if(old ~= handler)
-
 	{
 		rawset(__cs2lua_delegations, key, handler);
 	};
@@ -2424,7 +2375,6 @@ luaargs()
 {
 	print("dumpdelegationtable");
 	if(next(__cs2lua_delegations) == nil)
-
 	{
 		print("dumpdelegationtable empty");
 		return();
@@ -2465,7 +2415,6 @@ function(delegationcomparewithnil)
 luaargs(isstatic, t, k, symKind, beequal)
 {
 	if( not t)
-
 	{
 		if(beequal)
 		{
@@ -2477,7 +2426,6 @@ luaargs(isstatic, t, k, symKind, beequal)
 		};
 	};
 	if(type(t) == "function")
-
 	{
 		if(beequal)
 		{
@@ -2490,7 +2438,6 @@ luaargs(isstatic, t, k, symKind, beequal)
 	};
 	local(lualist(v)assignwith(t));
 	if(k)
-
 	{
 		if(symKind == SymbolKind.Property)
 		{
@@ -2502,7 +2449,6 @@ luaargs(isstatic, t, k, symKind, beequal)
 		};
 	};
 	if(type(v) == "function")
-
 	{
 		if(beequal)
 		{
@@ -2532,7 +2478,6 @@ luaargs(isstatic, t, k, symKind, handler)
 {
 	local(lualist(v)assignwith(t));
 	if(k)
-
 	{
 		if(symKind == SymbolKind.Property)
 		{
@@ -2564,7 +2509,6 @@ luaargs(isstatic, t, k, symKind, handler)
 {
 	local(lualist(v)assignwith(t));
 	if(k)
-
 	{
 		if(symKind == SymbolKind.Property)
 		{
@@ -2590,7 +2534,6 @@ luaargs(isstatic, t, k, symKind, handler)
 {
 	local(lualist(v)assignwith(t));
 	if(k)
-
 	{
 		if(symKind == SymbolKind.Property)
 		{
@@ -2607,7 +2550,6 @@ luaargs(isstatic, t, k, symKind, handler)
 	in(pairs(v))
 	{
 		if(h == handler)
-
 		{
 			lualist(find)assignwith(true);
 			break;
@@ -2615,7 +2557,6 @@ luaargs(isstatic, t, k, symKind, handler)
 		lualist(pos)assignwith(pos + 1);
 	};
 	if(find)
-
 	{
 		table.remove(v, pos);
 	};
@@ -2626,7 +2567,6 @@ luaargs(isstatic, t, k, symKind, beequal)
 {
 	local(lualist(v)assignwith(t));
 	if(k)
-
 	{
 		return(true);
 	};
@@ -2713,7 +2653,6 @@ luaargs(tb)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta and meta.__cs2lua_data)
-
 	{
 		return(meta.__cs2lua_data);
 	};
@@ -2724,7 +2663,6 @@ luaargs(tb, count)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		lualist(meta.__count)assignwith(count);
 	};
@@ -2735,7 +2673,6 @@ luaargs(tb)
 	local(lualist(count)assignwith(0));
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		if(meta.__count)
 		{
@@ -2754,7 +2691,6 @@ luaargs(tb)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		if(nil ~= meta.__count)
 		{
@@ -2771,7 +2707,6 @@ luaargs(tb)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		if(meta.__count and meta.__count > 0)
 		{
@@ -2788,7 +2723,6 @@ luaargs(tb)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		lualist(meta.__count)assignwith(0);
 		lualist(meta.__cs2lua_data)assignwith(
@@ -2801,7 +2735,6 @@ luaargs(tb, count)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		lualist(meta.__count)assignwith(count);
 	};
@@ -2812,7 +2745,6 @@ luaargs(tb)
 	local(lualist(count)assignwith(0));
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		if(meta.__count)
 		{
@@ -2831,7 +2763,6 @@ luaargs(tb)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		if(nil ~= meta.__count)
 		{
@@ -2848,7 +2779,6 @@ luaargs(tb)
 {
 	local(lualist(meta)assignwith(getmetatable(tb)));
 	if(meta)
-
 	{
 		if(meta.__count and meta.__count > 0)
 		{
@@ -2904,7 +2834,6 @@ lualist(__mt_index_of_array_table)assignwith(
 			local(lualist(v)assignwith(rawget(obj, i)));
 			lualist(p)assignwith(__unwrap_if_string(p));
 			if(isequal(v, p))
-
 			{
 				lualist(pos)assignwith(i);
 				lualist(ret)assignwith(v);
@@ -2912,7 +2841,6 @@ lualist(__mt_index_of_array_table)assignwith(
 			};
 		};
 		if(ret)
-
 		{
 			if(pos == ct)
 			{
@@ -2949,13 +2877,11 @@ lualist(__mt_index_of_array_table)assignwith(
 				rawset(obj, j - 1, vj);
 			};
 			if(ix + 1 <= ct)
-
 			{
 				rawset(obj, ct, nil);
 			};
 		};
 		if(ix + 1 <= ct)
-
 		{
 			__dec_array_count(obj);
 		};
@@ -2971,7 +2897,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		luarange(1, ct)
 		{
 			if(pred(rawget(obj, i)))
-
 			{
 				table.insert(deletes, i);
 			};
@@ -3009,7 +2934,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		local(lualist(ct)assignwith(0));
 		local(lualist(enumer)assignwith(coll->GetEnumerator()));
 		while(enumer->MoveNext())
-
 		{
 			table.insert(obj, ix + 1 + ct, enumer.Current);
 			__inc_array_count(obj);
@@ -3037,7 +2961,6 @@ lualist(__mt_index_of_array_table)assignwith(
 				};
 			};
 			if(ix + 1 <= curCount)
-
 			{
 				__dec_array_count(obj);
 			};
@@ -3048,12 +2971,10 @@ lualist(__mt_index_of_array_table)assignwith(
 	{
 		local(lualist(ct)assignwith(__get_array_count(obj)));
 		if(count == nil)
-
 		{
 			lualist(count)assignwith(ct);
 		};
 		if(start == nil)
-
 		{
 			lualist(start)assignwith(0);
 		};
@@ -3063,7 +2984,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		{
 			local(lualist(v)assignwith(rawget(obj, i)));
 			if(rawequal(v, p))
-
 			{
 				return(i - 1);
 			};
@@ -3075,12 +2995,10 @@ lualist(__mt_index_of_array_table)assignwith(
 	{
 		local(lualist(ct)assignwith(__get_array_count(obj)));
 		if(count == nil)
-
 		{
 			lualist(count)assignwith(ct);
 		};
 		if(start == nil)
-
 		{
 			lualist(start)assignwith(0);
 		};
@@ -3089,7 +3007,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		{
 			local(lualist(v)assignwith(rawget(obj, k)));
 			if(rawequal(v, p))
-
 			{
 				return(k - 1);
 			};
@@ -3119,7 +3036,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		{
 			local(lualist(v)assignwith(rawget(obj, i)));
 			if(pred(v))
-
 			{
 				return(i - 1);
 			};
@@ -3135,7 +3051,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		{
 			local(lualist(v)assignwith(rawget(obj, i)));
 			if(predicate(v))
-
 			{
 				return(v);
 			};
@@ -3153,7 +3068,6 @@ lualist(__mt_index_of_array_table)assignwith(
 			local(lualist(v)assignwith(rawget(obj, i)));
 			lualist(p)assignwith(__unwrap_if_string(p));
 			if(rawequal(v, p))
-
 			{
 				lualist(ret)assignwith(true);
 				break;
@@ -3247,7 +3161,6 @@ lualist(__mt_index_of_array_table)assignwith(
 		{
 			local(lualist(v)assignwith(rawget(obj, i)));
 			if((isequal(v, nil)))
-
 			{
 				for(j)
 				luarange(i + 1, ct, 1)
@@ -3338,7 +3251,6 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 		local(lualist(v)assignwith(rawget(data, up)));
 		local(lualist(ret)assignwith(nil));
 		if(v)
-
 		{
 			lualist(ret)assignwith(v.Value);
 			rawset(data, up, nil);
@@ -3352,7 +3264,6 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 		lualist(up)assignwith(__unwrap_if_string(p));
 		local(lualist(data)assignwith(__get_table_data(obj)));
 		if(rawget(data, up))
-
 		{
 			return(true);
 		};
@@ -3367,7 +3278,6 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 		in(pairs(data))
 		{
 			if(rawequal(v.Value, p))
-
 			{
 				lualist(ret)assignwith(true);
 				break;
@@ -3389,21 +3299,17 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 		{
 			lualist(v)assignwith(rawget(data, tostring(up)));
 			if(v)
-
 			{
 				return(true, v.Value);
 			};
 		};
 		local(lualist(meta)assignwith(getmetatable(obj)));
 		if(meta.__cs2lua_typeargs and meta.__cs2lua_typekinds)
-
 		{
 			if(meta.__cs2lua_typekinds[2] == TypeKind.Struct)
-
 			{
 				local(lualist(vt)assignwith(meta.__cs2lua_typeargs[2]));
 				if(vt == System.Int32 or vt == System.UInt32 or vt == System.Int64 or vt == System.UInt64 or vt == System.Char or vt == System.Byte or vt == System.Int16 or vt == System.UInt16)
-
 				{
 					return(false, 0);
 				};
@@ -3445,7 +3351,6 @@ luaargs(t, k)
 	{
 		local(lualist(meta)assignwith(getmetatable(t)));
 		if( not meta.cachedKeyCollection)
-
 		{
 			lualist(meta.cachedKeyCollection)assignwith(NewKeyCollection(t));
 		};
@@ -3455,7 +3360,6 @@ luaargs(t, k)
 	{
 		local(lualist(meta)assignwith(getmetatable(t)));
 		if( not meta.cachedValueCollection)
-
 		{
 			lualist(meta.cachedValueCollection)assignwith(NewValueCollection(t));
 		};
@@ -3474,7 +3378,6 @@ luaargs(t, k)
 			local(lualist(data)assignwith(__get_table_data(t)));
 			local(lualist(v)assignwith(rawget(data, uk)));
 			if(v)
-
 			{
 				return(v.Value);
 			};
@@ -3540,7 +3443,6 @@ lualist(__mt_index_of_hashset_table)assignwith(
 		local(lualist(data)assignwith(__get_table_data(obj)));
 		local(lualist(ret)assignwith(rawget(data, up)));
 		if(ret)
-
 		{
 			rawset(data, up, nil);
 		};
@@ -3553,7 +3455,6 @@ lualist(__mt_index_of_hashset_table)assignwith(
 		lualist(up)assignwith(__unwrap_if_string(p));
 		local(lualist(data)assignwith(__get_table_data(obj)));
 		if(rawget(data, up))
-
 		{
 			return(true);
 		};
@@ -3967,7 +3868,6 @@ luaargs(funcInfo, exp)
 			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1)));
 			iterInfo[2]->Reset();
 			if(funcInfo)
-
 			{
 				table.insert(funcInfo.iter_list, iterInfo);
 			};
@@ -3983,7 +3883,6 @@ luaargs(funcInfo, exp)
 				{
 					local(lualist(v)assignwith(enumer.Current));
 					if(v == nil)
-
 					{
 						lualist(v)assignwith(__cs2lua_nil);
 					};
@@ -4001,7 +3900,6 @@ luaargs(funcInfo, exp)
 				exp;
 			}));
 			if(funcInfo)
-
 			{
 				table.insert(funcInfo.iter_list, iterInfo);
 			};
@@ -4015,7 +3913,6 @@ luaargs(funcInfo, exp)
 			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1)));
 			iterInfo[2]();
 			if(funcInfo)
-
 			{
 				table.insert(funcInfo.iter_list, iterInfo);
 			};
@@ -4033,7 +3930,6 @@ luaargs(funcInfo, exp)
 					lualist(curIx)assignwith(curIx + 1);
 					local(lualist(v)assignwith(arr[curIx]));
 					if(v == nil)
-
 					{
 						lualist(v)assignwith(__cs2lua_nil);
 					};
@@ -4056,7 +3952,6 @@ luaargs(funcInfo, exp)
 				exp;
 			}));
 			if(funcInfo)
-
 			{
 				table.insert(funcInfo.iter_list, iterInfo);
 			};
@@ -4070,7 +3965,6 @@ luaargs(funcInfo, exp)
 			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1)));
 			iterInfo[1](true);
 			if(funcInfo)
-
 			{
 				table.insert(funcInfo.iter_list, iterInfo);
 			};
@@ -4085,7 +3979,6 @@ luaargs(funcInfo, exp)
 				exp;
 			}));
 			if(funcInfo)
-
 			{
 				table.insert(funcInfo.iter_list, iterInfo);
 			};
@@ -4102,22 +3995,18 @@ function(recycleiterator)
 luaargs(funcInfo, iterInfo)
 {
 	if(funcInfo)
-
 	{
 		luatableremove(funcInfo.iter_list, iterInfo);
 	};
 	local(lualist(exp)assignwith(iterInfo[3]));
 	if(exp)
-
 	{
 		local(lualist(meta)assignwith(getmetatable(exp)));
 		if(meta)
-
 		{
 			if(meta.cachedIters)
 			{
 				if( not meta.cachedIters[exp])
-
 				{
 					lualist(meta.cachedIters[exp])assignwith(
 					{
@@ -4142,7 +4031,6 @@ function(wraparray)
 luaargs(arr, size, classObj, typeKind)
 {
 	if( not size)
-
 	{
 		lualist(size)assignwith( # arr);
 	};
@@ -4251,7 +4139,6 @@ function(newdictionary)
 luaargs(t, typeargs, typekinds, ctor, ctorRetCt, dict, ...)
 {
 	if(dict)
-
 	{
 		local(lualist(obj)assignwith(
 		{
@@ -4275,7 +4162,6 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, dict, ...)
 		};
 		local(lualist(arg1)assignwith(...));
 		if(arg1 and (type(arg1) == "table" or type(arg1) == "userdata"))
-
 		{
 			local(lualist(iter)assignwith(newiterator(arg1)));
 			for(v)
@@ -4291,7 +4177,6 @@ function(newlist)
 luaargs(t, typeargs, typekinds, ctor, ctorRetCt, list, ...)
 {
 	if(list)
-
 	{
 		local(lualist(obj)assignwith(setmetatable(list, 
 		{
@@ -4302,14 +4187,12 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, list, ...)
 		})));
 		local(lualist(arg1)assignwith(...));
 		if(arg1 and (type(arg1) == "table" or type(arg1) == "userdata"))
-
 		{
 			local(lualist(meta)assignwith(getmetatable(arg1)));
 			if(meta and  not rawget(meta, "__cs2lua_defined"))
 			{
 				local(lualist(typename)assignwith(rawget(meta, "__typename")));
 				if(typename == "LuaArray")
-
 				{
 					local(lualist(ct)assignwith(arg1.Length));
 					for(i)
@@ -4358,14 +4241,12 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, coll, ...)
 		};
 		local(lualist(arg1)assignwith(...));
 		if(arg1 and (type(arg1) == "table" or type(arg1) == "userdata"))
-
 		{
 			local(lualist(meta)assignwith(getmetatable(arg1)));
 			if(meta and  not rawget(meta, "__cs2lua_defined"))
 			{
 				local(lualist(typename)assignwith(rawget(meta, "__typename")));
 				if(typename == "LuaArray")
-
 				{
 					local(lualist(ct)assignwith(arg1.Length));
 					for(i)
@@ -4396,7 +4277,6 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, dict, ...)
 		if(obj)
 		{
 			if(dict ~= nil)
-
 			{
 				for(k, v)
 				in(pairs(dict))
@@ -4425,7 +4305,6 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, list, ...)
 		if(obj)
 		{
 			if(list ~= nil)
-
 			{
 				for(i, v)
 				in(ipairs(list))
@@ -4458,7 +4337,6 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, coll, ...)
 		if(obj)
 		{
 			if(coll ~= nil)
-
 			{
 				for(i, v)
 				in(ipairs(coll))
@@ -4647,7 +4525,6 @@ luaargs(linq, ix, paramList)
 	}));
 	local(lualist(itemNum)assignwith( # linq));
 	while(ix <= itemNum)
-
 	{
 		local(lualist(v)assignwith(linq[ix]));
 		local(lualist(key)assignwith(v[1]));
@@ -4669,7 +4546,6 @@ luaargs(linq, ix, paramList)
 			in(ipairs(temp))
 			{
 				if(v[2](unpack(val)))
-
 				{
 					table.insert(interRs, val);
 				};
@@ -4713,7 +4589,6 @@ luaargs(linq, ix, paramList, coll, interRs, finalRs)
 		local(lualist(newIx)assignwith(ix));
 		local(lualist(itemNum)assignwith( # linq));
 		while(newIx <= itemNum)
-
 		{
 			local(lualist(v)assignwith(linq[newIx]));
 			local(lualist(key)assignwith(v[1]));
@@ -4724,7 +4599,6 @@ luaargs(linq, ix, paramList, coll, interRs, finalRs)
 			elseif(key == "where")
 			{
 				if( not v[2](unpack(newParamList)))
-
 				{
 					lualist(isMatch)assignwith(false);
 					break;
@@ -4748,7 +4622,6 @@ luaargs(linq, ix, paramList, coll, interRs, finalRs)
 			lualist(newIx)assignwith(newIx + 1);
 		};
 		if(isMatch)
-
 		{
 			table.insert(interRs, newParamList);
 		};
@@ -4764,7 +4637,6 @@ luaargs(l1, l2, list)
 		local(lualist(v2)assignwith(v[1](unpack(l2))));
 		local(lualist(asc)assignwith(v[2]));
 		if(v1 ~= v2)
-
 		{
 			if(asc)
 			{
@@ -4783,7 +4655,6 @@ luaargs(linq, ix)
 {
 	local(lualist(itemNum)assignwith( # linq));
 	while(ix <= itemNum)
-
 	{
 		local(lualist(v)assignwith(linq[ix]));
 		local(lualist(key)assignwith(v[1]));
@@ -4810,7 +4681,6 @@ luaargs(class)
 {
 	local(lualist(ret)assignwith(true));
 	if(rawget(class, "__cs2lua_predefined") and  not rawget(class, "__cs2lua_defined"))
-
 	{
 		lualist(ret)assignwith(class.__cs2lua_defined);
 	};
@@ -4975,7 +4845,6 @@ luaargs(obj)
 {
 	local(lualist(ty)assignwith(type(obj)));
 	if(ty == "string" or ty == "number")
-
 	{
 		return(nil);
 	};
@@ -5053,7 +4922,6 @@ luaargs(obj, t, tk)
 			lualist(v)assignwith( - (( - v) % 0x100000000));
 		};
 		if(t == System.Int32 and v > 0x7fffffff)
-
 		{
 			lualist(v)assignwith(v - 0xffffffff - 1);
 		};
@@ -5072,7 +4940,6 @@ luaargs(obj, t, tk)
 			lualist(v)assignwith( - (( - v) % 0x10000));
 		};
 		if(t == System.Int16 and v > 0x7fff)
-
 		{
 			lualist(v)assignwith(v - 0xffff - 1);
 		};
@@ -5091,7 +4958,6 @@ luaargs(obj, t, tk)
 			lualist(v)assignwith( - (( - v) % 0x100));
 		};
 		if(t == System.SByte and v > 0x7f)
-
 		{
 			lualist(v)assignwith(v - 0xff - 1);
 		};
@@ -5168,7 +5034,6 @@ function(typeis)
 luaargs(obj, t, tk)
 {
 	if(obj == nil)
-
 	{
 		return(false);
 	};
@@ -5176,27 +5041,22 @@ luaargs(obj, t, tk)
 	local(lualist(tn1)assignwith(getobjfullname(obj)));
 	local(lualist(tn2)assignwith(getclassfullname(t)));
 	if(meta)
-
 	{
 		if(meta.__class == System.Collections.Generic.List_T and t == System.Array)
-
 		{
 			return(true);
 		};
 		if(type(obj) == "userdata")
 		{
 			if(tn1 and tn1 == tn2)
-
 			{
 				return(true);
 			};
 			local(lualist(parent)assignwith(rawget(meta, "__parent")));
 			while(parent ~= nil)
-
 			{
 				lualist(tn1)assignwith(rawget(parent, "__fullname"));
 				if(tn1 and tn1 == tn2)
-
 				{
 					return(true);
 				};
@@ -5206,19 +5066,16 @@ luaargs(obj, t, tk)
 		else
 		{
 			if(rawget(meta, "__class") == t)
-
 			{
 				return(true);
 			};
 			local(lualist(intfs)assignwith(rawget(meta, "__interfaces")));
 			if(intfs)
-
 			{
 				for(i, v)
 				in(ipairs(intfs))
 				{
 					if(v == tn2)
-
 					{
 						return(true);
 					};
@@ -5227,22 +5084,18 @@ luaargs(obj, t, tk)
 			local(lualist(baseClass)assignwith(rawget(meta, "__cs2lua_parent")));
 			local(lualist(lastCheckedClass)assignwith(meta));
 			while(baseClass ~= nil)
-
 			{
 				if(baseClass == t)
-
 				{
 					return(true);
 				};
 				lualist(intfs)assignwith(rawget(meta, "__interfaces"));
 				if(intfs)
-
 				{
 					for(i, v)
 					in(ipairs(intfs))
 					{
 						if(v == tn2)
-
 						{
 							return(true);
 						};
@@ -5259,19 +5112,15 @@ luaargs(obj, t, tk)
 				};
 			};
 			if( not rawget(lastCheckedClass, "__cs2lua_defined"))
-
 			{
 				local(lualist(meta3)assignwith(getmetatable(lastCheckedClass)));
 				if(meta3)
-
 				{
 					lualist(parent)assignwith(rawget(meta3, "__parent"));
 					while(parent ~= nil)
-
 					{
 						lualist(tn1)assignwith(rawget(parent, "__fullname"));
 						if(tn1 and tn1 == tn2)
-
 						{
 							return(true);
 						};
@@ -5282,7 +5131,6 @@ luaargs(obj, t, tk)
 		};
 	};
 	if(tk == TypeKind.Delegate and type(obj) == "function")
-
 	{
 		return(true);
 	};
@@ -5344,7 +5192,6 @@ luaargs(k, obj)
 		{
 			local(lualist(f)assignwith(fun[1]));
 			if(f)
-
 			{
 				return(true);
 			};
@@ -5370,7 +5217,6 @@ luaargs(k, obj)
 		{
 			local(lualist(f)assignwith(fun[1]));
 			if(f)
-
 			{
 				return(f());
 			};
@@ -5429,7 +5275,6 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 	rawset(class, "Name", typeName);
 	rawset(class, "__get_obj_methods", __get_obj_methods);
 	if( not obj_methods)
-
 	{
 		lualist(obj_methods)assignwith(
 		{
@@ -5443,13 +5288,11 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		});
 		local(lualist(curClass)assignwith(class));
 		while(nil ~= curClass)
-
 		{
 			if(warmup(curClass))
 			{
 				local(lualist(ofs)assignwith(rawget(curClass, "__obj_fields")));
 				if(ofs)
-
 				{
 					for(k, v)
 					in(pairs(ofs))
@@ -5465,7 +5308,6 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 			lualist(curClass)assignwith(rawget(curClass, "__cs2lua_parent"));
 		};
 		if(rawget(base_class, "__get_obj_methods"))
-
 		{
 			rawset(obj_methods, "__index", base_class.__get_obj_methods());
 			setmetatable(obj_methods, obj_methods);
@@ -5485,13 +5327,11 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		{
 			local(lualist(curClass)assignwith(class));
 			while(nil ~= curClass)
-
 			{
 				if(warmup(curClass))
 				{
 					local(lualist(init_obj_fields)assignwith(rawget(curClass, "__init_obj_fields")));
 					if(init_obj_fields)
-
 					{
 						init_obj_fields(obj);
 					};
@@ -5507,7 +5347,6 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		{
 			local(lualist(init_obj_fields)assignwith(rawget(class, "__init_obj_fields")));
 			if(init_obj_fields)
-
 			{
 				init_obj_fields(obj);
 			};
@@ -5526,30 +5365,25 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		__index = obj_methods;
 	}));
 	if(is_inherit_csharp)
-
 	{
 		rawset(obj_meta, "__index", function()
 		luaargs(t, k)
 		{
 			if(obj_fields)
-
 			{
 				local(lualist(ret)assignwith(obj_fields[k]));
 				if(nil ~= ret)
-
 				{
 					return(nil);
 				};
 			};
 			local(lualist(f)assignwith(obj_methods[k]));
 			if(f)
-
 			{
 				return(f);
 			};
 			local(lualist(baseObj)assignwith(rawget(t, "__base")));
 			if(baseObj and __find_extern_class_or_obj_key(k, baseObj))
-
 			{
 				return(__find_extern_obj_member(k, baseObj));
 			};
@@ -5561,11 +5395,9 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		luaargs(t, k, v)
 		{
 			if(obj_fields)
-
 			{
 				local(lualist(ret)assignwith(obj_fields[k]));
 				if(nil ~= ret)
-
 				{
 					rawset(t, k, v);
 					return();
@@ -5573,7 +5405,6 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 			};
 			local(lualist(baseObj)assignwith(rawget(t, "__base")));
 			if(baseObj and __find_extern_class_or_obj_key(k, baseObj))
-
 			{
 				lualist(baseObj[k])assignwith(v);
 				return();
@@ -5581,18 +5412,15 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		});
 	};
 	if(base_class)
-
 	{
 		rawset(class, "__index", base_class);
 		rawset(class, "__newindex", function()
 		luaargs(t, k, v)
 		{
 			if(class_fields)
-
 			{
 				local(lualist(ret)assignwith(class_fields[k]));
 				if(nil ~= ret)
-
 				{
 					rawset(t, k, v);
 					return();
@@ -5610,7 +5438,6 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 	});
 	setmetatable(class, class);
 	if(rawget(class, "cctor"))
-
 	{
 		class.cctor();
 	};
@@ -5675,7 +5502,6 @@ luaargs(key, val)
 {
 	local(lualist(old)assignwith(rawget(_G, key)));
 	if(old ~= val)
-
 	{
 		rawset(_G, key, val);
 	};
@@ -5686,13 +5512,11 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 {
 	local(lualist(obj)assignwith(class()));
 	if(ctor)
-
 	{
 		class[ctor](obj, ...);
 	};
 	translationlog("need add handler for newstruct {0}", getclasstypename(class));
 	if(obj and initializer)
-
 	{
 		initializer(obj);
 	};
@@ -5718,7 +5542,6 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 	translationlog("need add handler for newexternstruct {0}", getclasstypename(class));
 	lualist(obj)assignwith(class[ctor](...));
 	if(obj and initializer)
-
 	{
 		initializer(obj);
 	};
@@ -5729,12 +5552,10 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 {
 	local(lualist(obj)assignwith(class()));
 	if(ctor)
-
 	{
 		class[ctor](obj, ...);
 	};
 	if(obj and initializer)
-
 	{
 		initializer(obj);
 	};
@@ -5759,7 +5580,6 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 	};
 	lualist(obj)assignwith(class[ctor](...));
 	if(obj and initializer)
-
 	{
 		initializer(obj);
 	};
@@ -5774,7 +5594,6 @@ luaargs(t)
 	{
 		lualist(obj)assignwith(t());
 		if(t.ctor)
-
 		{
 			t.ctor(obj);
 		};

@@ -574,6 +574,37 @@ namespace Dsl
         }
         void SetParamClass(int v) { m_ParamClass = v; }
         int GetParamClass(void)const { return m_ParamClass; }
+        int GetParamClassUnmasked(void)const
+        {
+            int paramClass = (m_ParamClass & (int)PARAM_CLASS_UNMASK);
+            return paramClass;
+        }
+        int HaveParamClassInfixFlag(void)const
+        {
+            int infix = (m_ParamClass & (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK);
+            return infix == (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK ? TRUE : FALSE;
+        }
+        int IsOperatorParamClass(void)const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_OPERATOR ? TRUE : FALSE;
+        }
+        int IsTernaryOperatorParamClass(void)const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_TERNARY_OPERATOR ? TRUE : FALSE;
+        }
+        int IsMemberParamClass(void)const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return (paramClass == (int)PARAM_CLASS_COLON_COLON ||
+                paramClass == (int)PARAM_CLASS_PERIOD ||
+                paramClass == (int)PARAM_CLASS_PERIOD_STAR ||
+                paramClass == (int)PARAM_CLASS_POINTER ||
+                paramClass == (int)PARAM_CLASS_POINTER_STAR ||
+                paramClass == (int)PARAM_CLASS_QUESTION_PERIOD ||
+                paramClass == (int)PARAM_CLASS_QUESTION_PERIOD_STAR) ? TRUE : FALSE;
+        }
         int HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
         int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
         int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
@@ -961,7 +992,7 @@ namespace Dsl
         int PtrPoolFreeLinkHeaderSize = PTR_POOL_FREELINK_HEADER_SIZE>
         class DslStringAndObjectBufferT : public IDslStringAndObjectBuffer
     {
-        struct alignas(1) FreeLinkInfo
+        struct alignas(4) FreeLinkInfo
         {
             int m_PtrPoolIndex;
             int m_NextFreeLink;
@@ -1006,7 +1037,7 @@ namespace Dsl
         virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo(void)
         {
             size_t size = sizeof(SyntaxComponentCommentsInfo);
-            if (GetUnusedObjectLength() < size)
+            if (GetUnusedObjectLength() < static_cast<int>(size))
                 return 0;
             void* pMemory = m_pUnusedObjectPtr;
             m_pUnusedObjectPtr += size;
@@ -1017,7 +1048,7 @@ namespace Dsl
         virtual FunctionCommentsInfo* NewFunctionCommentsInfo(void)
         {
             size_t size = sizeof(FunctionCommentsInfo);
-            if (GetUnusedObjectLength() < size)
+            if (GetUnusedObjectLength() < static_cast<int>(size))
                 return 0;
             void* pMemory = m_pUnusedObjectPtr;
             m_pUnusedObjectPtr += size;
@@ -1029,7 +1060,7 @@ namespace Dsl
         virtual ValueData* AddNewValueComponent(void)
         {
             size_t size = sizeof(ValueData);
-            if (GetUnusedObjectLength() < size)
+            if (GetUnusedObjectLength() < static_cast<int>(size))
                 return 0;
             void* pMemory = m_pUnusedObjectPtr;
             m_pUnusedObjectPtr += size;
@@ -1040,7 +1071,7 @@ namespace Dsl
         virtual FunctionData* AddNewFunctionComponent(void)
         {
             size_t size = sizeof(FunctionData);
-            if (GetUnusedObjectLength() < size)
+            if (GetUnusedObjectLength() < static_cast<int>(size))
                 return 0;
             void* pMemory = m_pUnusedObjectPtr;
             m_pUnusedObjectPtr += size;
@@ -1051,7 +1082,7 @@ namespace Dsl
         virtual StatementData* AddNewStatementComponent(void)
         {
             size_t size = sizeof(StatementData);
-            if (GetUnusedObjectLength() < size)
+            if (GetUnusedObjectLength() < static_cast<int>(size))
                 return 0;
             void* pMemory = m_pUnusedObjectPtr;
             m_pUnusedObjectPtr += size;

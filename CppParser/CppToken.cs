@@ -43,12 +43,12 @@ namespace Dsl.Parser
                     }
                     isSkip = true;
                 }
-                //#引导的单行注释或C++风格的单行注释
-                if (CurChar == '#' || CurChar == '/' && NextChar == '/') {
+                //单行注释
+                if (CurChar == '/' && NextChar == '/') {
                     for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
                     isSkip = true;
                 }
-                //C++风格的多行注释
+                //多行注释
                 if (CurChar == '/' && NextChar == '*') {
                     ++mIterator;
                     ++mIterator;
@@ -70,47 +70,131 @@ namespace Dsl.Parser
                 mCurToken = "<<eof>>";
                 return CppConstants.END_OF_SLK_INPUT_;
             }
-            else if (CurChar == '[' && NextChar == '[') {
+            else if (CurChar == '#' && NextChar == '#') {
                 ++mIterator;
                 ++mIterator;
-                mCurToken = "[[";
-                return CppConstants.BRACKET_COLON_BEGIN_;
+                mCurToken = "##";
+                return CppConstants.STRING_;
             }
-            else if (CurChar == ']' && NextChar == ']') {
+            else if (CurChar == '#') {
+                //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
                 ++mIterator;
-                ++mIterator;
-                mCurToken = "]]";
-                return CppConstants.BRACKET_COLON_END_;
+                mTokenBuilder.Append('@');
+                mTokenBuilder.Append('@');
+                for (; isWhiteSpace(CurChar); ++mIterator) ;
+                for (; char.IsLetter(CurChar); ++mIterator) {
+                    mTokenBuilder.Append(CurChar);
+                }
+                if (mTokenBuilder.Length == 2) {
+                    mCurToken = "#";
+                    return CppConstants.STRING_;
+                }
+                mCurToken = mTokenBuilder.ToString();
+                mTokenBuilder.Length = 0;
+                for (; CurChar != '\n' && isWhiteSpace(CurChar); ++mIterator) ;
+                string arg = string.Empty;
+                if (CurChar != '\n') {
+                    char lc = '\0';
+                    for (; CurChar != 0; ++mIterator) {
+                        //单行注释
+                        if (CurChar == '/' && NextChar == '/') {
+                            for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
+                        }
+                        //多行注释
+                        if (CurChar == '/' && NextChar == '*') {
+                            ++mIterator;
+                            ++mIterator;
+                            for (; CurChar != 0; ++mIterator) {
+                                if (CurChar == '\n') {
+                                    ++mLineNumber;
+                                }
+                                else if (CurChar == '*' && NextChar == '/') {
+                                    ++mIterator;
+                                    ++mIterator;
+                                    break;
+                                }
+                            }
+                        }
+                        char cc = CurChar;
+                        if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
+                            arg = mTokenBuilder.ToString().Trim();
+                            break;
+                        }
+                        if (CurChar == '"') {
+                            //字符串
+                            mTokenBuilder.Append(CurChar);
+                            ++mIterator;
+                            while (CurChar != 0 && CurChar != '"') {
+                                mTokenBuilder.Append(CurChar);
+                                ++mIterator;
+                                if (CurChar == '\\' && NextChar != 0) {
+                                    mTokenBuilder.Append(CurChar);
+                                    ++mIterator;
+                                }
+                            }
+                            mTokenBuilder.Append(CurChar);
+                        }
+                        else if (CurChar == '\\' && (NextChar == '\r' || NextChar == '\n')) {
+                            //续行符不输出
+                        }
+                        else {
+                            if (CurChar == '\n')
+                                ++mLineNumber;
+                            mTokenBuilder.Append(CurChar);
+                        }
+                        lc = CurChar;
+                    }
+                }
+                //有的预处理能出现在任何地方，这里不能解析为嵌套结构，全部按函数解析，希望语法上能通过
+                mTokenQueue.Enqueue(new TokenInfo { Token = "(", TokenValue = CppConstants.LPAREN_, LineNumber = mLineNumber });
+                if (!string.IsNullOrEmpty(arg))
+                    mTokenQueue.Enqueue(new TokenInfo { Token = myUnQuoteString(arg), TokenValue = CppConstants.STRING_, LineNumber = mLineNumber });
+                mTokenQueue.Enqueue(new TokenInfo { Token = ")", TokenValue = CppConstants.RPAREN_, LineNumber = mLineNumber });
+                return CppConstants.IDENTIFIER_;
             }
             else if (CurChar == '<' && NextChar == ':') {
                 ++mIterator;
                 ++mIterator;
-                mCurToken = "<:";
-                return CppConstants.ANGLE_BRACKET_COLON_BEGIN_;
+                if (CurChar == ':') {
+                    if (NextChar == '>') {
+                        mCurToken = "[";
+                        return CppConstants.LBRACK_;
+                    }
+                    else {
+                        ++mIterator;
+                        mTokenQueue.Enqueue(new TokenInfo { Token = "::", TokenValue = CppConstants.STRING_, LineNumber = mLineNumber });
+                        mCurToken = "<";
+                        return CppConstants.STRING_;
+                    }
+                }
+                else {
+                    mCurToken = "[";
+                    return CppConstants.LBRACK_;
+                }
             }
             else if (CurChar == ':' && NextChar == '>') {
                 ++mIterator;
                 ++mIterator;
-                mCurToken = ":>";
-                return CppConstants.ANGLE_BRACKET_COLON_END_;
+                mCurToken = "]";
+                return CppConstants.RBRACK_;
             }
             else if (CurChar == '<' && NextChar == '%') {
                 ++mIterator;
                 ++mIterator;
-                mCurToken = "<%";
-                return CppConstants.ANGLE_BRACKET_PERCENT_BEGIN_;
+                mCurToken = "{";
+                return CppConstants.LBRACE_;
             }
             else if (CurChar == '%' && NextChar == '>') {
                 ++mIterator;
                 ++mIterator;
-                mCurToken = "%>";
-                return CppConstants.ANGLE_BRACKET_PERCENT_END_;
+                mCurToken = "}";
+                return CppConstants.RBRACE_;
             }
             else if (CurChar == ':' && NextChar == ':') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "::";
-                return CppConstants.COLON_COLON_;
+                return CppConstants.STRING_;
             }
             else if (CurChar == '-') {
                 if (NextChar == '>') {
@@ -133,13 +217,13 @@ namespace Dsl.Parser
                         ++mIterator;
                         ++mIterator;
                         mCurToken = "->*";
-                        return CppConstants.POINTER_STAR_;
+                        return CppConstants.STRING_;
                     }
                     else {
                         ++mIterator;
                         ++mIterator;
                         mCurToken = "->";
-                        return CppConstants.POINTER_;
+                        return CppConstants.STRING_;
                     }
                 }
                 else {
@@ -151,7 +235,7 @@ namespace Dsl.Parser
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ".*";
-                return CppConstants.PERIOD_STAR_;
+                return CppConstants.STRING_;
             }
             else if (CurChar == '.' && NextChar == '.') {
                 ++mIterator;
@@ -176,7 +260,7 @@ namespace Dsl.Parser
                     ++mIterator;
                 }
                 mCurToken = mTokenBuilder.ToString();
-                return CppConstants.DOT_;
+                return CppConstants.STRING_;
             }
             else if (CurChar == '{') {
                 ++mIterator;
@@ -219,7 +303,7 @@ namespace Dsl.Parser
                 return CppConstants.SEMI_;
             }
             else {//关键字、标识符或常数
-                if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
+                if (CurChar == '"') {//引号括起来的名称或关键字
                     int line = mLineNumber;
                     char c = CurChar;
                     for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
@@ -247,6 +331,40 @@ namespace Dsl.Parser
                             else if (CurChar == 'f') {
                                 mTokenBuilder.Append('\f');
                             }
+                            else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
+                                ++mIterator;
+                                //4位16进制数
+                                char h1 = CurChar;
+                                ++mIterator;
+                                char h2 = CurChar;
+                                ++mIterator;
+                                char h3 = CurChar;
+                                ++mIterator;
+                                char h4 = CurChar;
+                                mTokenBuilder.Append((char)((mychar2int(h4) << 12) + (mychar2int(h3) << 8) + (mychar2int(h2) << 4) + mychar2int(h1)));
+                            }
+                            else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
+                                && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
+                                ++mIterator;
+                                //8位16进制数
+                                char h1 = CurChar;
+                                ++mIterator;
+                                char h2 = CurChar;
+                                ++mIterator;
+                                char h3 = CurChar;
+                                ++mIterator;
+                                char h4 = CurChar;
+                                ++mIterator;
+                                char h5 = CurChar;
+                                ++mIterator;
+                                char h6 = CurChar;
+                                ++mIterator;
+                                char h7 = CurChar;
+                                ++mIterator;
+                                char h8 = CurChar;
+                                mTokenBuilder.Append((char)((mychar2int(h4) << 12) + (mychar2int(h3) << 8) + (mychar2int(h2) << 4) + mychar2int(h1)));
+                                mTokenBuilder.Append((char)((mychar2int(h8) << 12) + (mychar2int(h7) << 8) + (mychar2int(h6) << 4) + mychar2int(h5)));
+                            }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
                                 //1~2位16进制数
@@ -254,7 +372,7 @@ namespace Dsl.Parser
                                 if (myisdigit(NextChar, true)) {
                                     ++mIterator;
                                     char h2 = CurChar;
-                                    char nc = (char)(mychar2int(h1) * 16 + mychar2int(h2));
+                                    char nc = (char)((mychar2int(h1) << 4) + mychar2int(h2));
                                     mTokenBuilder.Append(nc);
                                 }
                                 else {
@@ -271,11 +389,11 @@ namespace Dsl.Parser
                                     if (myisdigit(NextChar, false)) {
                                         ++mIterator;
                                         char o3 = CurChar;
-                                        char nc = (char)(mychar2int(o1) * 64 + mychar2int(o2) * 8 + mychar2int(o3));
+                                        char nc = (char)((mychar2int(o1) << 6) + (mychar2int(o2) * 3) + mychar2int(o3));
                                         mTokenBuilder.Append(nc);
                                     }
                                     else {
-                                        char nc = (char)(mychar2int(o1) * 8 + mychar2int(o2));
+                                        char nc = (char)((mychar2int(o1) << 3) + mychar2int(o2));
                                         mTokenBuilder.Append(nc);
                                     }
                                 }
@@ -301,6 +419,123 @@ namespace Dsl.Parser
                     mCurToken = mTokenBuilder.ToString();
                     return CppConstants.STRING_;
                 }
+                else if (CurChar == '\'') {
+                    int line = mLineNumber;
+                    char c = CurChar;
+                    ++mIterator;
+                    if (CurChar != 0 && CurChar != c) {
+                        if (CurChar == '\\') {
+                            ++mIterator;
+                            if (CurChar == 'n') {
+                                mTokenBuilder.Append('\n');
+                            }
+                            else if (CurChar == 'r') {
+                                mTokenBuilder.Append('\r');
+                            }
+                            else if (CurChar == 't') {
+                                mTokenBuilder.Append('\t');
+                            }
+                            else if (CurChar == 'v') {
+                                mTokenBuilder.Append('\v');
+                            }
+                            else if (CurChar == 'a') {
+                                mTokenBuilder.Append('\a');
+                            }
+                            else if (CurChar == 'b') {
+                                mTokenBuilder.Append('\b');
+                            }
+                            else if (CurChar == 'f') {
+                                mTokenBuilder.Append('\f');
+                            }
+                            else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
+                                ++mIterator;
+                                //4位16进制数
+                                char h1 = CurChar;
+                                ++mIterator;
+                                char h2 = CurChar;
+                                ++mIterator;
+                                char h3 = CurChar;
+                                ++mIterator;
+                                char h4 = CurChar;
+                                mTokenBuilder.Append((char)((mychar2int(h4) << 12) + (mychar2int(h3) << 8) + (mychar2int(h2) << 4) + mychar2int(h1)));
+                            }
+                            else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
+                                && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
+                                ++mIterator;
+                                //8位16进制数
+                                char h1 = CurChar;
+                                ++mIterator;
+                                char h2 = CurChar;
+                                ++mIterator;
+                                char h3 = CurChar;
+                                ++mIterator;
+                                char h4 = CurChar;
+                                ++mIterator;
+                                char h5 = CurChar;
+                                ++mIterator;
+                                char h6 = CurChar;
+                                ++mIterator;
+                                char h7 = CurChar;
+                                ++mIterator;
+                                char h8 = CurChar;
+                                mTokenBuilder.Append((char)((mychar2int(h4) << 12) + (mychar2int(h3) << 8) + (mychar2int(h2) << 4) + mychar2int(h1)));
+                                mTokenBuilder.Append((char)((mychar2int(h8) << 12) + (mychar2int(h7) << 8) + (mychar2int(h6) << 4) + mychar2int(h5)));
+                            }
+                            else if (CurChar == 'x' && myisdigit(NextChar, true)) {
+                                ++mIterator;
+                                //1~2位16进制数
+                                char h1 = CurChar;
+                                if (myisdigit(NextChar, true)) {
+                                    ++mIterator;
+                                    char h2 = CurChar;
+                                    char nc = (char)((mychar2int(h1) << 4) + mychar2int(h2));
+                                    mTokenBuilder.Append(nc);
+                                }
+                                else {
+                                    char nc = (char)mychar2int(h1);
+                                    mTokenBuilder.Append(nc);
+                                }
+                            }
+                            else if (myisdigit(CurChar, false)) {
+                                //1~3位8进制数
+                                char o1 = CurChar;
+                                if (myisdigit(NextChar, false)) {
+                                    ++mIterator;
+                                    char o2 = CurChar;
+                                    if (myisdigit(NextChar, false)) {
+                                        ++mIterator;
+                                        char o3 = CurChar;
+                                        char nc = (char)((mychar2int(o1) << 6) + (mychar2int(o2) * 3) + mychar2int(o3));
+                                        mTokenBuilder.Append(nc);
+                                    }
+                                    else {
+                                        char nc = (char)((mychar2int(o1) << 3) + mychar2int(o2));
+                                        mTokenBuilder.Append(nc);
+                                    }
+                                }
+                                else {
+                                    char nc = (char)mychar2int(o1);
+                                    mTokenBuilder.Append(nc);
+                                }
+                            }
+                            else {
+                                mTokenBuilder.Append(CurChar);
+                            }
+                        }
+                        else {
+                            mTokenBuilder.Append(CurChar);
+                        }
+                        ++mIterator;
+                    }
+                    if (CurChar == '\'') {
+                        ++mIterator;
+                    }
+                    else {
+                        mLog.Log("[error][行 {0} ]：字符无法结束！\n", line);
+                    }
+                    mCurToken = mTokenBuilder.ToString();
+                    return CppConstants.STRING_;
+                }
                 else {
                     bool isNum = true;
                     bool isHex = false;
@@ -314,7 +549,7 @@ namespace Dsl.Parser
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator) {
+                    for (; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || CurChar=='\'' || !isSpecialChar(CurChar); ++mIterator) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '.') {
@@ -322,13 +557,24 @@ namespace Dsl.Parser
                                 break;
                             }
                             else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                if (mTokenBuilder.Length == 0 && NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
                                     break;
                                 }
                             }
                             ++dotCt;
                             if (dotCt > 1)
                                 break;
+                        }
+                        else if (CurChar == '\'') {
+                            if (!isNum) {
+                                break;
+                            }
+                            else {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                    break;
+                                }
+                                ++mIterator;
+                            }
                         }
                         else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
                             isNum = false;
@@ -348,6 +594,18 @@ namespace Dsl.Parser
                         return CppConstants.NUMBER_;
                     }
                     else {
+                        if (mCurToken == "operator") {
+                            mTokenBuilder.Length = 0;
+                            while (isWhiteSpace(CurChar)) {
+                                ++mIterator;
+                            }
+                            while (isOperator(CurChar)) {
+                                mTokenBuilder.Append(CurChar);
+                                ++mIterator;
+                            }
+                            mCurToken = mCurToken + mTokenBuilder.ToString();
+                            return CppConstants.STRING_;
+                        }
                         return CppConstants.IDENTIFIER_;
                     }
                 }
@@ -356,6 +614,15 @@ namespace Dsl.Parser
 
         internal short peek(int level) // scan next token without consuming it
         {
+            if (mTokenQueue.Count >= level) {
+                int i = 0;
+                foreach (var tk in mTokenQueue) {
+                    ++i;
+                    if (i == level) {
+                        return tk.TokenValue;
+                    }
+                }
+            }
             string curToken = getCurToken();
             string lastToken = getLastToken();
             int lineNumber = getLineNumber();
@@ -576,20 +843,21 @@ namespace Dsl.Parser
         private char CurChar
         {
             get {
-                char c = (char)0;
-                if (mIterator < mInput.Length)
-                    c = mInput[mIterator];
-                return c;
+                return PeekChar(0);
             }
         }
         private char NextChar
         {
             get {
-                char c = (char)0;
-                if (mIterator + 1 < mInput.Length)
-                    c = mInput[mIterator + 1];
-                return c;
+                return PeekChar(1);
             }
+        }
+        private char PeekChar(int ix)
+        {
+            char c = (char)0;
+            if (ix >= 0 && mIterator + ix < mInput.Length)
+                c = mInput[mIterator + ix];
+            return c;
         }
 
         private static bool myisdigit(char c, bool isHex)
@@ -627,6 +895,15 @@ namespace Dsl.Parser
                 return 10 + c - 'A';
             else
                 return 0;
+        }
+        private static string myUnQuoteString(string str)
+        {
+            if (str.Length >= 2 && str[0] == '"' && str[str.Length - 1] == '"') {
+                return str.Substring(1, str.Length - 2);
+            }
+            else {
+                return str;
+            }
         }
 
         private struct TokenInfo

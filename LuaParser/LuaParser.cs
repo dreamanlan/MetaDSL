@@ -288,7 +288,7 @@ get_predicted_entry ( LuaToken   tokens,
                 ref LuaError error,
                 short start_symbol)
         {
-            short rhs, lhs;
+            short lhs;
             short production_number, entry, symbol, token, new_token;
             int production_length, top, index, level;
 

@@ -1,8 +1,6 @@
 skill(kkk)
-
 {
 	section(80)	//fdafds	#fdafdsa
-
 	{
 		//fdfdasfdsa;
 		ok("		yyyy yyyy yyyy
@@ -17,12 +15,10 @@ skill(kkk)
 		test(123, 345, 678);	//fdasfdas
 	};	//fdafdas
 	script(sss)
-
 	{:
 		ok, this is a test, "yeah!!!";
 	:};
 	script(ttt : string, tt2 : int)
-
 	{: abcd :};
 	(:attr:)
 	script(ttt)
@@ -47,6 +43,5 @@ skill(kkk)
 	<%abcd%>;
 };	//test test test
 skill(ttt : string, tt2 : int)
-
 {
 };

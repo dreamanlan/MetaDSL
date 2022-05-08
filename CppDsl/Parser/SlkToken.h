@@ -8,6 +8,7 @@
 #define _SLK_SLKTOKEN_H
 
 #include "Dsl.h"
+#include "Queue.h"
 
 class SlkToken
 {
@@ -57,6 +58,9 @@ public:
     void setStringDelimiter(const char* begin, const char* end);
     void setScriptDelimiter(const char* begin, const char* end);
 private:
+    char curChar(void)const;
+    char nextChar(void)const;
+    char peekChar(int ix)const;
     void getOperatorToken(void);
     short getOperatorTokenValue(void)const;
     int isCanFinish(void)const
@@ -79,11 +83,22 @@ private:
     void endComment(void);
     void newToken(void);
     void pushTokenChar(char c);
+    void tempEndToken(void);
     void endToken(void);
     void endTokenWithEof(void);
 public:
     SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile);
 private:
+    struct TokenInfo
+    {
+        char* Token;
+        short TokenValue;
+        int LineNumber;
+
+        inline TokenInfo(void) {}
+        inline TokenInfo(char* token, short tokenValue, int lineNumber) :Token(token), TokenValue(tokenValue), LineNumber(lineNumber) {}
+    };
+
     Dsl::IScriptSource* mSource;
     Dsl::IScriptSource::Iterator mIterator;
 
@@ -100,6 +115,7 @@ private:
     int mCommentOnNewLine;
 
     Dsl::DslFile* mDslFile;
+    DequeT<TokenInfo, 16> mTokenQueue;
 
     int mLineNumber;
     int mLastLineNumber;

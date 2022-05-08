@@ -895,9 +895,7 @@ namespace Dsl
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
-        int paramClass = GetParamClass() & FunctionData::PARAM_CLASS_UNMASK;
-        if (paramClass == FunctionData::PARAM_CLASS_OPERATOR) {
-            int infix = GetParamClass() & FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK;
+        if (IsOperatorParamClass()) {
             if (GetParamNum() == 2) {
                 ISyntaxComponent& component0 = *GetParam(0);
                 WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
@@ -907,7 +905,7 @@ namespace Dsl
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
-                    if (infix == FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
+                    if (HaveParamClassInfixFlag()) {
                         fwrite("`", 1, 1, fp);
                     }
                     m_Name.WriteToFile(fp, indent, TRUE, FALSE);
@@ -923,7 +921,7 @@ namespace Dsl
                     call.WriteToFile(fp, indent, TRUE, FALSE);
                 }
                 else {
-                    if (infix == FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK) {
+                    if (HaveParamClassInfixFlag()) {
                         fwrite("`", 1, 1, fp);
                     }
                     m_Name.WriteToFile(fp, indent, TRUE, FALSE);
@@ -947,14 +945,15 @@ namespace Dsl
             if (HaveStatement() || HaveExternScript()) {
                 if (IsHighOrder()) {
                     const FunctionData& lowerOrderFunction = *m_Name.GetFunction();
-                    lowerOrderFunction.WriteLastCommentsToFile(fp, indent, isLastOfStatement);
+                    lowerOrderFunction.WriteLastCommentsToFile(fp, indent, FALSE);
                 }
                 else if (HaveId()) {
-                    GetName().WriteLastCommentsToFile(fp, indent, isLastOfStatement);
+                    GetName().WriteLastCommentsToFile(fp, indent, FALSE);
                 }
                 WriteStatementsOrExternScript(fp, *this, indent);
             }
             else if (HaveParam()) {
+                int paramClass = GetParamClassUnmasked();
                 switch (paramClass) {
                 case FunctionData::PARAM_CLASS_PARENTHESIS:
                     fwrite("(", 1, 1, fp);
@@ -1134,7 +1133,7 @@ namespace Dsl
         auto* f1 = GetFunction(1);
         if (nullptr != f1 && f1->IsFunction())
             func2 = f1->AsFunction();
-        if (num == 2 && NULL != func1 && NULL != func2 && func1->GetParamClass() == FunctionData::PARAM_CLASS_TERNARY_OPERATOR && func2->GetParamClass() == FunctionData::PARAM_CLASS_TERNARY_OPERATOR) {
+        if (num == 2 && NULL != func1 && NULL != func2 && func1->IsTernaryOperatorParamClass() && func2->IsTernaryOperatorParamClass()) {
             FunctionData* lowerOrderFunc = func1->GetName().GetFunction();
             ISyntaxComponent* pcomp0 = 0;
             if (0 != lowerOrderFunc)
@@ -1177,7 +1176,7 @@ namespace Dsl
                 else {
                     FunctionData& func = *f->AsFunction();
                     int noIndent = FALSE;
-                    int funcNoParam = !func.IsHighOrder() && !func.HaveParam();
+                    int funcNoParam = !func.IsHighOrder() && (!func.HaveParam() || func.IsMemberParamClass());
                     int funcNoStatement = !func.HaveStatement() && !func.HaveExternScript();
                     if (ix > 0) {
                         if (lastFuncNoParam && lastFuncNoStatement) {

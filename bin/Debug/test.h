@@ -1,1370 +1,1767 @@
-﻿/*****************************************************************************
+//-*****************************************************************************
+//
+// Copyright (c) 2009-2012,
+//  Sony Pictures Imageworks Inc. and
+//  Industrial Light & Magic, a division of Lucasfilm Entertainment Company Ltd.
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+// *       Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+// *       Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+// *       Neither the name of Sony Pictures Imageworks, nor
+// Industrial Light & Magic, nor the names of their contributors may be used
+// to endorse or promote products derived from this software without specific
+// prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//-*****************************************************************************
 
-calc.h
+#include <Alembic/AbcCoreAbstract/All.h>
+#include <Alembic/AbcCoreHDF5/All.h>
+#include <Alembic/Util/All.h>
 
-******************************************************************************/
+#include <Alembic/AbcCoreAbstract/Tests/Assert.h>
 
-#ifndef _CALC_H
-#define _CALC_H
+#include <iostream>
+#include <vector>
 
-#include "BaseType.h"
-#include <new>
+#include <hdf5.h>
 
-namespace Dsl
+//-*****************************************************************************
+namespace A5 = Alembic::AbcCoreHDF5;
+
+namespace ABCA = Alembic::AbcCoreAbstract;
+
+using namespace Alembic::Util;
+
+//-*****************************************************************************
+void testDuplicateArray()
 {
-    template<typename DestT>
-    struct ReinterpretCast
+    std::string archiveName = "repeatArray.abc";
+
+    size_t numVals = 35;
+
     {
-        template<typename SrcT>
-        static DestT From(const SrcT& v)
+        A5::WriteArchive w;
+        ABCA::ArchiveWriterPtr a = w(archiveName, ABCA::MetaData());
+        ABCA::ObjectWriterPtr archive = a->getTop();
+
+        ABCA::CompoundPropertyWriterPtr parent = archive->getProperties();
+
+        ABCA::ArrayPropertyWriterPtr awp =
+            parent->createArrayProperty("a",  ABCA::MetaData(),
+                                        ABCA::DataType(Alembic::Util::kInt16POD, 1), 0);
+
+        ABCA::ArrayPropertyWriterPtr bwp =
+            parent->createArrayProperty("b", ABCA::MetaData(),
+                                        ABCA::DataType(Alembic::Util::kInt16POD, 1), 0);
+
+        ABCA::ArrayPropertyWriterPtr cwp =
+            parent->createArrayProperty("c", ABCA::MetaData(),
+                                        ABCA::DataType(Alembic::Util::kInt8POD, 1), 0);
+
+        Alembic::Util::Dimensions dims(numVals);
+        ABCA::DataType i16d(Alembic::Util::kInt16POD, 1);
+        std::vector <Alembic::Util::int16_t> vali(numVals, 0);
+        vali[0] = 7;
+        vali[1] = 7;
+        vali[2] = 7;
+
+        awp->setSample(ABCA::ArraySample(&(vali.front()), i16d, dims));
+
+        vali[0] = 8;
+        vali[1] = 16;
+        vali[2] = 32;
+        awp->setSample(ABCA::ArraySample(&(vali.front()), i16d, dims));
+
+        vali[0] = 7;
+        vali[1] = 7;
+        vali[2] = 7;
+        awp->setSample(ABCA::ArraySample(&(vali.front()), i16d, dims));
+
+        // lets write b and make sure it shares
+        vali[0] = 8;
+        vali[1] = 16;
+        vali[2] = 32;
+        bwp->setSample(ABCA::ArraySample(&(vali.front()), i16d, dims));
+
+        vali[0] = 7;
+        vali[1] = 7;
+        vali[2] = 7;
+        bwp->setSample(ABCA::ArraySample(&(vali.front()), i16d, dims));
+
+        vali[0] = 8;
+        vali[1] = 16;
+        vali[2] = 32;
+        bwp->setSample(ABCA::ArraySample(&(vali.front()), i16d, dims));
+
+        // c shouldn't share because it's pod type and extent is different
+        std::vector <Alembic::Util::int8_t> vals(numVals*2);
+        ABCA::DataType i8d(Alembic::Util::kInt8POD, 1);
+
+        vals[0] = 8;
+        vals[1] = 0;
+        vals[2] = 16;
+        vals[3] = 0;
+        vals[4] = 32;
+        vals[5] = 0;
+        dims = Alembic::Util::Dimensions(numVals*2);
+        cwp->setSample(ABCA::ArraySample(&(vals.front()), i8d, dims));
+
+
+        vals[0] = 7;
+        vals[1] = 0;
+        vals[2] = 7;
+        vals[3] = 0;
+        vals[4] = 7;
+        vals[5] = 0;
+        cwp->setSample(ABCA::ArraySample(&(vals.front()), i8d, dims));
+        cwp->setSample(ABCA::ArraySample(&(vals.front()), i8d, dims));
+    }
+
+    {
+        A5::ReadArchive r;
+        ABCA::ArchiveReaderPtr a = r( archiveName );
+        ABCA::ObjectReaderPtr archive = a->getTop();
+        ABCA::CompoundPropertyReaderPtr parent = archive->getProperties();
+
+        TESTING_ASSERT(parent->getNumProperties() == 3);
+        for (size_t i = 0; i < parent->getNumProperties(); ++i)
         {
-            union
+            ABCA::BasePropertyReaderPtr bp = parent->getProperty( i );
+            TESTING_ASSERT(bp->isArray());
+            ABCA::ArrayPropertyReaderPtr ap = bp->asArrayPtr();
+            TESTING_ASSERT(ap->getNumSamples() == 3);
+
+
+            if (ap->getName() == "a")
             {
-                SrcT m_Src;
-                DestT m_Dest;
-            } tmp;
-            tmp.m_Src = v;
-            return tmp.m_Dest;
-        }
-    };
+                Dimensions dims0;
+                Dimensions dims1;
+                Dimensions dims2;
+                ap->getDimensions(0, dims0);
+                ap->getDimensions(1, dims1);
+                ap->getDimensions(2, dims2);
 
-    enum
-    {
-        MAX_ERROR_INFO_CAPACITY = 1024,
-        MAX_RECORD_ERROR_NUM = 256,
+                TESTING_ASSERT(dims0.numPoints() == numVals);
+                TESTING_ASSERT(dims1.numPoints() == numVals);
+                TESTING_ASSERT(dims2.numPoints() == numVals);
 
-        INIT_FUNCTION_PARAM = 1,
-        MAX_DELTA_FUNCTION_PARAM = 8,
-        MAX_DELTA_FUNCTION_STATEMENT = 32,
-        INIT_STATEMENT_FUNCTION = 1,
-        MAX_DELTA_STATEMENT_FUNCTION = 1,
-        INIT_DSL_INFO = 1,
-        MAX_DELTA_DSL_INFO = 32,
-        DELTA_COMMENT = 2,
-    };
+                ABCA::ArraySamplePtr samp0;
+                ABCA::ArraySamplePtr samp1;
+                ABCA::ArraySamplePtr samp2;
+                ap->getSample(0, samp0);
+                ap->getSample(1, samp1);
+                ap->getSample(2, samp2);
 
-    enum
-    {
-        //这三个数不能大于PTR_POOL_FREELINK_HEADER_SIZE
-        MAX_FUNCTION_DIMENSION_NUM = 16,
-        MAX_FUNCTION_PARAM_NUM = 16 * 1024,
-        MAX_DSL_INFO_NUM = 16 * 1024,
+                TESTING_ASSERT(samp0->getDimensions().numPoints() == numVals);
+                TESTING_ASSERT(samp1->getDimensions().numPoints() == numVals);
+                TESTING_ASSERT(samp2->getDimensions().numPoints() == numVals);
 
-        STRING_BUFFER_SIZE = 4 * 1024 * 1024,
-        OBJECT_BUFFER_SIZE = 4 * 1024 * 1024,
-        SYNTAXCOMPONENT_POOL_SIZE = 512 * 1024,
-        PTR_POOL_SIZE = 512 * 1024,
-        PTR_POOL_FREELINK_SIZE = 128 * 1024,
-        PTR_POOL_FREELINK_HEADER_SIZE = 16 * 1024,
-    };
-
-    class DslOptions
-    {
-    public:
-        DslOptions(void) :
-            m_MaxFunctionDimensionNum(MAX_FUNCTION_DIMENSION_NUM),
-            m_MaxParamNum(MAX_FUNCTION_PARAM_NUM),
-            m_MaxDslInfoNum(MAX_DSL_INFO_NUM)
-        {
-        }
-    public:
-        int GetMaxFunctionDimensionNum() const { return m_MaxFunctionDimensionNum; }
-        void SetMaxFunctionDimensionNum(int val) { m_MaxFunctionDimensionNum = val; }
-        int GetMaxParamNum() const { return m_MaxParamNum; }
-        void SetMaxParamNum(int val) { m_MaxParamNum = val; }
-        int GetMaxDslInfoNum() const { return m_MaxDslInfoNum; }
-        void SetMaxDslInfoNum(int val) { m_MaxDslInfoNum = val; }
-    private:
-        int	m_MaxFunctionDimensionNum;
-        int	m_MaxParamNum;
-        int	m_MaxDslInfoNum;
-    public:
-        static bool DontLoadComments(void)
-        {
-            return DontLoadCommentsRef();
-        }
-        static void DontLoadComments(bool val)
-        {
-            DontLoadCommentsRef() = val;
-        }
-    private:
-        static bool& DontLoadCommentsRef(void)
-        {
-            static bool s_DontLoadComments = false;
-            return s_DontLoadComments;
-        }
-    };
-
-    //这2个结构作纯数据使用，不需要虚析构了
-    struct SyntaxComponentCommentsInfo
-    {
-        const char** m_FirstComments;
-        int m_FirstCommentNum;
-        int m_FirstCommentSpace;
-        int m_FirstCommentOnNewLine;
-        const char** m_LastComments;
-        int m_LastCommentNum;
-        int m_LastCommentSpace;
-        int m_LastCommentOnNewLine;
-
-        SyntaxComponentCommentsInfo(void) :m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
-            m_LastComments(0), m_LastCommentNum(0), m_LastCommentSpace(0), m_LastCommentOnNewLine(0)
-        {}
-    };
-    struct FunctionCommentsInfo : public SyntaxComponentCommentsInfo
-    {
-        const char** m_Comments;
-        int m_CommentNum;
-        int m_CommentSpace;
-
-        FunctionCommentsInfo(void) :SyntaxComponentCommentsInfo(), m_Comments(0), m_CommentNum(0), m_CommentSpace(0)
-        {}
-    };
-
-    class IDslStringAndObjectBuffer;
-    class ISyntaxComponent
-    {
-    public:
-        enum
-        {
-            TYPE_NULL,
-            TYPE_VALUE,
-            TYPE_FUNCTION,
-            TYPE_STATEMENT,
-        };
-    public:
-        ISyntaxComponent(int syntaxType);
-        virtual ~ISyntaxComponent(void);
-    public:
-        virtual int IsValid(void) const = 0;
-        virtual const char* GetId(void) const = 0;
-        virtual int GetIdType(void) const = 0;
-        virtual int GetLine(void) const = 0;
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const = 0;
-    public:
-        int GetSyntaxType(void) const { return m_SyntaxType; }
-        void AddFirstComment(const char* cmt)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            PrepareFirstComments();
-            if (GetCommentsInfo()->m_FirstCommentNum < GetCommentsInfo()->m_FirstCommentSpace) {
-                GetCommentsInfo()->m_FirstComments[GetCommentsInfo()->m_FirstCommentNum++] = cmt;
-            }
-        }
-        void RemoveFirstComment(int index)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            if (index >= 0 && index < GetCommentsInfo()->m_FirstCommentNum) {
-                for (int ix = index; ix < GetCommentsInfo()->m_FirstCommentNum - 1; ++ix) {
-                    GetCommentsInfo()->m_FirstComments[ix] = GetCommentsInfo()->m_FirstComments[ix + 1];
+                Alembic::Util::int16_t * data = (Alembic::Util::int16_t *)(samp0->getData());
+                TESTING_ASSERT(data[0] == 7);
+                TESTING_ASSERT(data[1] == 7);
+                TESTING_ASSERT(data[2] == 7);
+                for (size_t j = 3; j < numVals; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
                 }
-                --GetCommentsInfo()->m_FirstCommentNum;
-            }
-        }
-        void ClearFirstComments()
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            GetCommentsInfo()->m_FirstCommentNum = 0;
-        }
-        int GetFirstCommentNum(void) const 
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            if (0 == GetCommentsInfo())
-                return 0;
-            return GetCommentsInfo()->m_FirstCommentNum;
-        }
-        const char* GetFirstComment(int index) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            if (0 != GetCommentsInfo() && index >= 0 && index < GetCommentsInfo()->m_FirstCommentNum) {
-                return GetCommentsInfo()->m_FirstComments[index];
-            }
-            else {
-                return 0;
-            }
-        }
-        int IsFirstCommentOnNewLine(void) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            if (0 == GetCommentsInfo())
-                return 0;
-            return GetCommentsInfo()->m_FirstCommentOnNewLine;
-        }
-        void SetFirstCommentOnNewLine(int v)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            GetCommentsInfo()->m_FirstCommentOnNewLine = v;
-        }
-        void AddLastComment(const char* cmt)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            PrepareLastComments();
-            if (GetCommentsInfo()->m_LastCommentNum < GetCommentsInfo()->m_LastCommentSpace) {
-                GetCommentsInfo()->m_LastComments[GetCommentsInfo()->m_LastCommentNum++] = cmt;
-            }
-        }
-        void RemoveLastComment(int index)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 != GetCommentsInfo() && index >= 0 && index < GetCommentsInfo()->m_LastCommentNum) {
-                for (int ix = index; ix < GetCommentsInfo()->m_LastCommentNum - 1; ++ix) {
-                    GetCommentsInfo()->m_LastComments[ix] = GetCommentsInfo()->m_LastComments[ix + 1];
+
+                data = (Alembic::Util::int16_t *)(samp1->getData());
+                TESTING_ASSERT(data[0] == 8);
+                TESTING_ASSERT(data[1] == 16);
+                TESTING_ASSERT(data[2] == 32);
+                for (size_t j = 3; j < numVals; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
                 }
-                --GetCommentsInfo()->m_LastCommentNum;
+
+                data = (Alembic::Util::int16_t *)(samp2->getData());
+                TESTING_ASSERT(data[0] == 7);
+                TESTING_ASSERT(data[1] == 7);
+                TESTING_ASSERT(data[2] == 7);
+                for (size_t j = 3; j < numVals; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
+                }
             }
-        }
-        void ClearLastComments()
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            GetCommentsInfo()->m_LastCommentNum = 0;
-        }
-        int GetLastCommentNum(void) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            if (0 == GetCommentsInfo())
-                return 0;
-            return GetCommentsInfo()->m_LastCommentNum;
-        }
-        const char* GetLastComment(int index) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            if (0 != GetCommentsInfo() && index >= 0 && index < GetCommentsInfo()->m_LastCommentNum) {
-                return GetCommentsInfo()->m_LastComments[index];
+            else if (ap->getName() == "b")
+            {
+                ABCA::ArraySamplePtr samp0;
+                ABCA::ArraySamplePtr samp1;
+                ABCA::ArraySamplePtr samp2;
+                ap->getSample(0, samp0);
+                ap->getSample(1, samp1);
+                ap->getSample(2, samp2);
+
+                TESTING_ASSERT(samp0->getDimensions().numPoints() == numVals);
+                TESTING_ASSERT(samp1->getDimensions().numPoints() == numVals);
+                TESTING_ASSERT(samp2->getDimensions().numPoints() == numVals);
+
+                Dimensions dims0;
+                Dimensions dims1;
+                Dimensions dims2;
+                ap->getDimensions(0, dims0);
+                ap->getDimensions(1, dims1);
+                ap->getDimensions(2, dims2);
+
+                TESTING_ASSERT(dims0.numPoints() == numVals);
+                TESTING_ASSERT(dims1.numPoints() == numVals);
+                TESTING_ASSERT(dims2.numPoints() == numVals);
+
+                Alembic::Util::int16_t * data = (Alembic::Util::int16_t *)(samp0->getData());
+                TESTING_ASSERT(data[0] == 8);
+                TESTING_ASSERT(data[1] == 16);
+                TESTING_ASSERT(data[2] == 32);
+                for (size_t j = 3; j < numVals; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
+                }
+
+                data = (Alembic::Util::int16_t *)(samp1->getData());
+                TESTING_ASSERT(data[0] == 7);
+                TESTING_ASSERT(data[1] == 7);
+                TESTING_ASSERT(data[2] == 7);
+                for (size_t j = 3; j < numVals; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
+                }
+
+                data = (Alembic::Util::int16_t *)(samp2->getData());
+                TESTING_ASSERT(data[0] == 8);
+                TESTING_ASSERT(data[1] == 16);
+                TESTING_ASSERT(data[2] == 32);
+                for (size_t j = 3; j < numVals; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
+                }
             }
-            else {
-                return 0;
-            }
-        }
-        int IsLastCommentOnNewLine(void) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            if (0 == GetCommentsInfo())
-                return 0;
-            return GetCommentsInfo()->m_LastCommentOnNewLine;
-        }
-        void SetLastCommentOnNewLine(int v)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo())
-                return;
-            GetCommentsInfo()->m_LastCommentOnNewLine = v;
-        }
-        void CopyComments(const ISyntaxComponent& other)
-        {
-            CopyFirstComments(other);
-            CopyLastComments(other);
-        }
-        void CopyFirstComments(const ISyntaxComponent& other)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo() || 0 == other.GetCommentsInfo())
-                return;
-            int fnum = other.GetFirstCommentNum();
-            if (fnum > 0) {
-                GetCommentsInfo()->m_FirstCommentOnNewLine = other.GetCommentsInfo()->m_FirstCommentOnNewLine;
-                for (int i = 0; i < fnum; ++i) {
-                    AddFirstComment(other.GetFirstComment(i));
+            else if (ap->getName() == "c")
+            {
+                ABCA::ArraySamplePtr samp0;
+                ABCA::ArraySamplePtr samp1;
+                ABCA::ArraySamplePtr samp2;
+                ap->getSample(0, samp0);
+                ap->getSample(1, samp1);
+                ap->getSample(2, samp2);
+
+                TESTING_ASSERT(samp0->getDimensions().numPoints() == numVals*2);
+                TESTING_ASSERT(samp1->getDimensions().numPoints() == numVals*2);
+                TESTING_ASSERT(samp2->getDimensions().numPoints() == numVals*2);
+
+                Dimensions dims0;
+                Dimensions dims1;
+                Dimensions dims2;
+                ap->getDimensions(0, dims0);
+                ap->getDimensions(1, dims1);
+                ap->getDimensions(2, dims2);
+
+                TESTING_ASSERT(dims0.numPoints() == numVals*2);
+                TESTING_ASSERT(dims1.numPoints() == numVals*2);
+                TESTING_ASSERT(dims2.numPoints() == numVals*2);
+
+                Alembic::Util::int8_t * data = (Alembic::Util::int8_t *)(samp0->getData());
+                TESTING_ASSERT(data[0] == 8);
+                TESTING_ASSERT(data[1] == 0);
+                TESTING_ASSERT(data[2] == 16);
+                TESTING_ASSERT(data[3] == 0);
+                TESTING_ASSERT(data[4] == 32);
+                TESTING_ASSERT(data[5] == 0);
+                for (size_t j = 6; j < numVals*2; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
+                }
+
+                data = (Alembic::Util::int8_t *)(samp1->getData());
+                TESTING_ASSERT(data[0] == 7);
+                TESTING_ASSERT(data[1] == 0);
+                TESTING_ASSERT(data[2] == 7);
+                TESTING_ASSERT(data[3] == 0);
+                TESTING_ASSERT(data[4] == 7);
+                TESTING_ASSERT(data[5] == 0);
+                for (size_t j = 6; j < numVals*2; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
+                }
+
+                data = (Alembic::Util::int8_t *)(samp2->getData());
+                TESTING_ASSERT(data[0] == 7);
+                TESTING_ASSERT(data[1] == 0);
+                TESTING_ASSERT(data[2] == 7);
+                TESTING_ASSERT(data[3] == 0);
+                TESTING_ASSERT(data[4] == 7);
+                TESTING_ASSERT(data[5] == 0);
+                for (size_t j = 6; j < numVals*2; ++j)
+                {
+                    TESTING_ASSERT(data[j] == 0);
                 }
             }
         }
-        void CopyLastComments(const ISyntaxComponent& other)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            if (0 == GetCommentsInfo() || 0 == other.GetCommentsInfo())
-                return;
-            int lnum = other.GetLastCommentNum();
-            if (lnum > 0) {
-                GetCommentsInfo()->m_LastCommentOnNewLine = other.GetCommentsInfo()->m_LastCommentOnNewLine;
-                for (int i = 0; i < lnum; ++i) {
-                    AddLastComment(other.GetLastComment(i));
-                }
-            }
-        }
-    public:
-        void WriteFirstCommentsToFile(FILE* fp, int indent, int firstLineNoIndent) const;
-        void WriteLastCommentsToFile(FILE* fp, int indent, int isLastOfStatement) const;
-    protected:
-        void CopyFrom(const ISyntaxComponent& other);
-        void ReleaseFirstComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo);
-        void ReleaseLastComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo);
-    protected:
-        virtual IDslStringAndObjectBuffer* GetBuffer(void) const { return 0; }
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const { return 0; }
-    private:
-        void PrepareFirstComments(void);
-        void PrepareLastComments(void);
-    private:
-        int m_SyntaxType;
-    };
-
-    class FunctionData;
-    class ValueData : public ISyntaxComponent
-    {
-    public:
-        enum
-        {
-            TYPE_IDENTIFIER = 0,
-            TYPE_NUM,
-            TYPE_STRING,
-            TYPE_FUNCTION,
-            TYPE_MAX = TYPE_STRING
-        };
-
-        ValueData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
-        explicit ValueData(char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_StringVal(val), m_Line(0) {}
-        explicit ValueData(const char* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
-        explicit ValueData(FunctionData* val) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
-        explicit ValueData(char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_Line(0) {}
-        explicit ValueData(const char* val, int type) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_ConstStringVal(val), m_Line(0) {}
-        ValueData(const ValueData& other) :ISyntaxComponent(ISyntaxComponent::TYPE_VALUE), m_Type(TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
-        {
-            ISyntaxComponent::CopyFrom(other);
-            CopyFrom(other);
-        }
-        ValueData& operator=(const ValueData& other)
-        {
-            if (this == &other)
-                return *this;
-            ISyntaxComponent::CopyFrom(other);
-            CopyFrom(other);
-            return *this;
-        }
-
-        virtual int IsValid(void)const;
-        virtual int GetIdType(void)const;
-        virtual const char* GetId(void)const;
-        virtual int GetLine(void)const;
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-
-        FunctionData* GetFunction(void)const { return m_FunctionVal; }
-
-        int HaveId()const;
-        int IsNum(void)const { return (m_Type == TYPE_NUM ? TRUE : FALSE); }
-        int IsString(void)const { return (m_Type == TYPE_STRING ? TRUE : FALSE); }
-        int IsIdentifier(void)const { return (m_Type == TYPE_IDENTIFIER ? TRUE : FALSE); }
-        int IsFunction(void)const { return (m_Type == TYPE_FUNCTION ? TRUE : FALSE); }
-
-        void SetInvalid(void)
-        {
-            m_Type = TYPE_IDENTIFIER;
-            m_StringVal = 0;
-        }
-        void SetNumber(char* str)
-        {
-            m_Type = TYPE_NUM;
-            m_StringVal = str;
-        }
-        void SetNumber(const char* str)
-        {
-            m_Type = TYPE_NUM;
-            m_ConstStringVal = str;
-        }
-        void SetString(char* str)
-        {
-            m_Type = TYPE_STRING;
-            m_StringVal = str;
-        }
-        void SetString(const char* str)
-        {
-            m_Type = TYPE_STRING;
-            m_ConstStringVal = str;
-        }
-        void SetFunction(FunctionData* func)
-        {
-            m_Type = TYPE_FUNCTION;
-            m_FunctionVal = func;
-        }
-        void SetIdentifier(char* name)
-        {
-            m_Type = TYPE_IDENTIFIER;
-            m_StringVal = name;
-        }
-        void SetLine(int line)
-        {
-            m_Line = line;
-        }
-        void SetTypeAndId(int type, const char* id)
-        {
-            m_Type = type;
-            m_ConstStringVal = id;
-        }
-    private:
-        void CopyFrom(const ValueData& other)
-        {
-            m_Type = other.m_Type;
-            m_StringVal = other.m_StringVal;
-            m_Line = other.m_Line;
-        }
-    private:
-        int m_Type;
-        union
-        {
-            char* m_StringVal;
-            const char* m_ConstStringVal;//在脚本里与m_StringVal类型相同,用于实现自动const_cast
-            FunctionData* m_FunctionVal;
-        };
-        int m_Line;
-    };
-
-    class NullSyntax : public ISyntaxComponent
-    {
-    public:
-        NullSyntax(void) : ISyntaxComponent(ISyntaxComponent::TYPE_NULL) {}
-    public:
-        virtual int IsValid(void) const { return FALSE; }
-        virtual const char* GetId(void) const { return ""; }
-        virtual int GetIdType(void) const { return ValueData::TYPE_IDENTIFIER; }
-        virtual int GetLine(void) const { return 0; }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const {}
-    private:
-        NullSyntax(const NullSyntax&) = delete;
-        NullSyntax& operator=(const NullSyntax&) = delete;
-    };
-
-    class IDslStringAndObjectBuffer;
-    class FunctionData : public ISyntaxComponent
-    {
-    public:
-        enum
-        {
-            PARAM_CLASS_NOTHING = 0,
-            PARAM_CLASS_PARENTHESIS,
-            PARAM_CLASS_BRACKET,
-            PARAM_CLASS_PERIOD,
-            PARAM_CLASS_PERIOD_PARENTHESIS,
-            PARAM_CLASS_PERIOD_BRACKET,
-            PARAM_CLASS_PERIOD_BRACE,
-            PARAM_CLASS_QUESTION_PERIOD,
-            PARAM_CLASS_QUESTION_PARENTHESIS,
-            PARAM_CLASS_QUESTION_BRACKET,
-            PARAM_CLASS_QUESTION_BRACE,
-            PARAM_CLASS_POINTER,
-            PARAM_CLASS_STATEMENT,
-            PARAM_CLASS_EXTERN_SCRIPT,
-            PARAM_CLASS_PARENTHESIS_COLON,
-            PARAM_CLASS_BRACKET_COLON,
-            PARAM_CLASS_ANGLE_BRACKET_COLON,
-            PARAM_CLASS_PARENTHESIS_PERCENT,
-            PARAM_CLASS_BRACKET_PERCENT,
-            PARAM_CLASS_BRACE_PERCENT,
-            PARAM_CLASS_ANGLE_BRACKET_PERCENT,
-            PARAM_CLASS_COLON_COLON,
-            PARAM_CLASS_COLON_COLON_PARENTHESIS,
-            PARAM_CLASS_COLON_COLON_BRACKET,
-            PARAM_CLASS_COLON_COLON_BRACE,
-            PARAM_CLASS_PERIOD_STAR,
-            PARAM_CLASS_QUESTION_PERIOD_STAR,
-            PARAM_CLASS_POINTER_STAR,
-            PARAM_CLASS_OPERATOR,
-            PARAM_CLASS_TERNARY_OPERATOR,
-            PARAM_CLASS_MAX,
-            PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x20,
-            PARAM_CLASS_UNMASK = 0x1F,
-        };
-        typedef ISyntaxComponent* SyntaxComponentPtr;
-    public:
-        virtual int IsValid(void)const
-        {
-            if (m_Name.IsValid())
-                return TRUE;
-            else if (HaveParamOrStatement())
-                return TRUE;
-            else
-                return FALSE;
-        }
-        virtual int GetIdType(void)const { return m_Name.GetIdType(); }
-        virtual const char* GetId(void)const { return m_Name.GetId(); }
-        virtual int GetLine(void)const { return m_Name.GetLine(); }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-    public:
-        void SetName(const ValueData& val) { m_Name = val; }
-        ValueData& GetName(void) { return m_Name; }
-        void ClearParams(void) { m_ParamNum = 0; }
-        void AddParam(ISyntaxComponent*	pVal)
-        {
-            if (0 == pVal || m_ParamNum < 0 || m_ParamNum >= m_MaxParamNum)
-                return;
-            PrepareParams();
-            if (0 == m_Params || m_ParamNum >= m_ParamSpace)
-                return;
-            m_Params[m_ParamNum] = pVal;
-            ++m_ParamNum;
-        }
-        void SetParam(int index, ISyntaxComponent* pVal)
-        {
-            if (NULL == pVal || index < 0 || index >= m_MaxParamNum)
-                return;
-            m_Params[index] = pVal;
-        }
-        void SetParamClass(int v) { m_ParamClass = v; }
-        int GetParamClass(void)const { return m_ParamClass; }
-        int HaveId(void)const { return m_Name.HaveId(); }
-        int HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
-        int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
-        int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
-        int HaveExternScript(void)const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT ? TRUE : FALSE; }
-        int IsHighOrder(void)const { return m_Name.IsFunction(); }
-        FunctionData* GetLowerOrderFunction(void)const
-        {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr) {
-                return fptr;
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        const FunctionData* GetThisOrLowerOrderCall(void)const
-        {
-            if (HaveParam()) {
-                return this;
-            }
-            else if (HaveLowerOrderParam()) {
-                return m_Name.GetFunction();
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        FunctionData* GetThisOrLowerOrderCall(void)
-        {
-            if (HaveParam()) {
-                return this;
-            }
-            else if (HaveLowerOrderParam()) {
-                return m_Name.GetFunction();
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        const FunctionData* GetThisOrLowerOrderBody(void)const
-        {
-            if (HaveStatement()) {
-                return this;
-            }
-            else if (HaveLowerOrderStatement()) {
-                return m_Name.GetFunction();
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        FunctionData* GetThisOrLowerOrderBody(void)
-        {
-            if (HaveStatement()) {
-                return this;
-            }
-            else if (HaveLowerOrderStatement()) {
-                return m_Name.GetFunction();
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        const FunctionData* GetThisOrLowerOrderScript(void)const
-        {
-            if (HaveExternScript()) {
-                return this;
-            }
-            else if (HaveLowerOrderExternScript()) {
-                return m_Name.GetFunction();
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        FunctionData* GetThisOrLowerOrderScript(void)
-        {
-            if (HaveExternScript()) {
-                return this;
-            }
-            else if (HaveLowerOrderExternScript()) {
-                return m_Name.GetFunction();
-            }
-            else {
-                return GetNullFunctionPtr();
-            }
-        }
-        int HaveLowerOrderParam(void)const
-        {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveParam())
-                return TRUE;
-            else
-                return FALSE;
-        }
-        int HaveLowerOrderStatement(void)const
-        {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveStatement())
-                return TRUE;
-            else
-                return FALSE;
-        }
-        int HaveLowerOrderExternScript(void)const
-        {
-            auto fptr = m_Name.GetFunction();
-            if (IsHighOrder() && fptr && fptr->HaveExternScript())
-                return TRUE;
-            else
-                return FALSE;
-        }
-    public:
-        const ValueData& GetName(void)const { return m_Name; }
-        int GetParamNum(void)const { return m_ParamNum; }
-        ISyntaxComponent* GetParam(int index)const
-        {
-            if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= m_MaxParamNum)
-                return GetNullSyntaxPtr();
-            return m_Params[index];
-        }
-        const char* GetParamId(int index)const
-        {
-            if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= m_MaxParamNum)
-                return "";
-            return m_Params[index]->GetId();
-        }
-    public:
-        void AddComment(const char* cmt)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            auto p = m_pCommentsInfo;
-            if (0 == p)
-                return;
-            PrepareComments();
-            if (p->m_CommentNum < p->m_CommentSpace) {
-                p->m_Comments[p->m_CommentNum++] = cmt;
-            }
-        }
-        void RemoveComment(int index)
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            auto p = m_pCommentsInfo;
-            if (0 == p)
-                return;
-            if (index >= 0 && index < p->m_CommentNum) {
-                for (int ix = index; ix < p->m_CommentNum - 1; ++ix) {
-                    p->m_Comments[ix] = p->m_Comments[ix + 1];
-                }
-                --p->m_CommentNum;
-            }
-        }
-        void ClearComments()
-        {
-            if (DslOptions::DontLoadComments())
-                return;
-            auto p = m_pCommentsInfo;
-            if (0 == p)
-                return;
-            p->m_CommentNum = 0;
-        }
-        int GetCommentNum(void) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            auto p = m_pCommentsInfo;
-            if (0 == p)
-                return 0;
-            return p->m_CommentNum;
-        }
-        const char* GetComment(int index) const
-        {
-            if (DslOptions::DontLoadComments())
-                return 0;
-            auto p = m_pCommentsInfo;
-            if (0 == p)
-                return 0;
-            if (index >= 0 && index < p->m_CommentNum) {
-                return p->m_Comments[index];
-            }
-            else {
-                return 0;
-            }
-        }
-    public:
-        FunctionData(IDslStringAndObjectBuffer& buffer);
-        virtual ~FunctionData(void);
-        void InitParamsCapacity(int c);
-    protected:
-        virtual IDslStringAndObjectBuffer* GetBuffer(void) const
-        {
-            return &m_Buffer;
-        }
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const
-        {
-            return m_pCommentsInfo;
-        }
-    private:
-        FunctionData(const FunctionData& other) = delete;
-        FunctionData operator=(const FunctionData& other) = delete;
-    private:
-        void PrepareParams(void);
-        void ReleaseParams(void);
-        void PrepareComments(void);
-        void ReleaseComments(void);
-    private:
-        NullSyntax* GetNullSyntaxPtr(void)const;
-        FunctionData* GetNullFunctionPtr(void)const;
-    private:
-        ValueData m_Name;
-        ISyntaxComponent**	m_Params;
-        int m_ParamNum;
-        int m_ParamSpace;
-        int m_MaxParamNum;
-        int m_ParamClass;
-    private:
-        IDslStringAndObjectBuffer& m_Buffer;
-        FunctionCommentsInfo* m_pCommentsInfo;
-    };
-    
-    /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
-     * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
-     * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
-     */
-    class StatementData : public ISyntaxComponent
-    {
-    public:
-        virtual int IsValid(void)const
-        {
-            if (NULL != m_Functions && m_FunctionNum > 0 && m_Functions[0]->IsValid())
-                return TRUE;
-            else
-                return FALSE;
-        }
-        virtual int GetIdType(void)const
-        {
-            int type = ValueData::TYPE_IDENTIFIER;
-            if (IsValid()) {
-                type = m_Functions[0]->GetIdType();
-            }
-            return type;
-        }
-        virtual const char* GetId(void)const
-        {
-            const char* str = "";
-            if (IsValid()) {
-                str = m_Functions[0]->GetId();
-            }
-            return str;
-        }
-        virtual int GetLine(void)const
-        {
-            int line = 0;
-            if (IsValid()) {
-                line = m_Functions[0]->GetLine();
-            }
-            return line;
-        }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
-    public:
-        void ClearFunctions(void) { m_FunctionNum = 0; }
-        void AddFunction(FunctionData* pVal)
-        {
-            if (NULL == pVal || m_FunctionNum < 0 || m_FunctionNum >= m_MaxFunctionNum)
-                return;
-            PrepareFunctions();
-            if (NULL == m_Functions || m_FunctionNum >= m_FunctionSpace)
-                return;
-            m_Functions[m_FunctionNum] = pVal;
-            ++m_FunctionNum;
-        }
-        FunctionData*& GetLastFunctionRef(void)const
-        {
-            if (NULL == m_Functions || 0 == m_FunctionNum)
-                return GetNullFunctionPtrRef();
-            else
-                return m_Functions[m_FunctionNum - 1];
-        }
-    public:
-        int GetFunctionNum(void)const { return m_FunctionNum; }
-        FunctionData* GetFunction(int index)const
-        {
-            if (NULL == m_Functions || index < 0 || index >= m_FunctionNum || index >= m_MaxFunctionNum)
-                return 0;
-            return m_Functions[index];
-        }
-        const char* GetFunctionId(int index)const
-        {
-            if (0 == m_Functions || index < 0 || index >= m_FunctionNum || index >= m_MaxFunctionNum)
-                return 0;
-            return m_Functions[index]->GetId();
-        }
-    public:
-        StatementData(IDslStringAndObjectBuffer& buffer);
-        virtual ~StatementData(void)
-        {
-            ReleaseFunctions();
-            ReleaseFirstComments(&m_Buffer, m_pCommentsInfo);
-            ReleaseLastComments(&m_Buffer, m_pCommentsInfo);
-        }
-        void InitFunctionsCapacity(int c);
-    protected:
-        virtual IDslStringAndObjectBuffer* GetBuffer(void) const
-        {
-            return &m_Buffer;
-        }
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const
-        {
-            return m_pCommentsInfo;
-        }
-    private:
-        StatementData(const StatementData&) = delete;
-        StatementData& operator=(const StatementData&) = delete;
-    private:
-        void PrepareFunctions(void);
-        void ReleaseFunctions(void);
-    private:
-        FunctionData*& GetNullFunctionPtrRef(void)const;
-    private:
-        FunctionData** m_Functions;
-        int m_FunctionNum;
-        int m_FunctionSpace;
-        int m_MaxFunctionNum;
-    private:
-        IDslStringAndObjectBuffer& m_Buffer;
-        SyntaxComponentCommentsInfo* m_pCommentsInfo;
-    };
-
-    //在c++实现里，DSL的内存希望尽量是预先分配的，这个接口用来实现预先分配的内存
-    class IDslStringAndObjectBuffer
-    {
-    public:
-        virtual DslOptions& GetOptions(void) = 0;
-        virtual const DslOptions& GetOptions(void)const = 0;
-    public:
-        virtual char* AllocString(int len) = 0;
-        virtual char* AllocString(const char* src) = 0;
-        virtual char* GetStringBuffer(void)const = 0;
-        virtual char*& GetUnusedStringPtrRef(void) = 0;
-        virtual int GetUnusedStringLength(void)const = 0;
-    public:
-        virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo(void) = 0;
-        virtual FunctionCommentsInfo* NewFunctionCommentsInfo(void) = 0;
-    public:
-        virtual ValueData* AddNewValueComponent(void) = 0;
-        virtual FunctionData* AddNewFunctionComponent(void) = 0;
-        virtual StatementData* AddNewStatementComponent(void) = 0;
-        virtual int GetUnusedObjectLength(void)const = 0;
-    public:
-        virtual void** NewPtrArray(int size) = 0;
-        virtual void DeletePtrArray(void** ptr, int size) = 0;
-    public:
-        virtual NullSyntax* GetNullSyntaxPtr(void) = 0;
-        virtual FunctionData* GetNullFunctionPtr(void) = 0;
-        virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
-    public:
-        virtual ~IDslStringAndObjectBuffer(void) {}
-    };
-
-    /*
-     * 实际的DSL预先分配缓冲区，这个类需要在堆上实例化（在栈上可能导致栈溢出），类本身使
-     * 用数组来分配缓冲区。
-     * 理想情况是所有相关类使用的内存都是预先分配的。
-     */
-    template<int MaxStringBufferSize = STRING_BUFFER_SIZE,
-        int MaxObjectBufferSize = OBJECT_BUFFER_SIZE,
-        int SyntaxComponentPoolSize = SYNTAXCOMPONENT_POOL_SIZE,
-        int PtrPoolSize = PTR_POOL_SIZE,
-        int PtrPoolFreeLinkSize = PTR_POOL_FREELINK_SIZE,
-        int PtrPoolFreeLinkHeaderSize = PTR_POOL_FREELINK_HEADER_SIZE>
-    class DslStringAndObjectBufferT : public IDslStringAndObjectBuffer
-    {
-        struct alignas(1) FreeLinkInfo
-        {
-            int m_PtrPoolIndex;
-            int m_NextFreeLink;
-        };
-        typedef ISyntaxComponent* SyntaxComponentPtr;
-    public:
-        virtual DslOptions& GetOptions(void) { return m_Options; }
-        virtual const DslOptions& GetOptions(void)const { return m_Options; }
-    public:
-        virtual char* AllocString(int len)
-        {
-            if (m_pUnusedStringPtr + len - m_pStringBuffer >= MaxStringBufferSize) {
-                return 0;
-            }
-            char* p = m_pUnusedStringPtr;
-            if (0 != p) {
-                m_pUnusedStringPtr[len] = 0;
-                m_pUnusedStringPtr += len + 1;
-            }
-            return p;
-        }
-        virtual char* AllocString(const char* src)
-        {
-            if (0 == src)
-                return 0;
-            int len = (int)strlen(src);
-            char* p = AllocString(len);
-            if (0 != p) {
-                strcpy(p, src);
-            }
-            return p;
-        }
-        virtual char* GetStringBuffer(void)const { return m_pStringBuffer; }
-        virtual char*& GetUnusedStringPtrRef(void) { return m_pUnusedStringPtr; }
-        virtual int GetUnusedStringLength(void)const
-        {
-            MyAssert(m_pStringBuffer);
-            MyAssert(m_pUnusedStringRef);
-            return MaxStringBufferSize - int(m_pUnusedStringPtr - m_pStringBuffer);
-        }
-    public:
-        virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo(void)
-        {
-            size_t size = sizeof(SyntaxComponentCommentsInfo);
-            if (GetUnusedObjectLength() < size)
-                return 0;
-            void* pMemory = m_pUnusedObjectPtr;
-            m_pUnusedObjectPtr += size;
-            SyntaxComponentCommentsInfo* p = new(pMemory) SyntaxComponentCommentsInfo();
-            ++m_SyntaxComponentCommentsInfoNum;
-            return p;
-        }
-        virtual FunctionCommentsInfo* NewFunctionCommentsInfo(void)
-        {
-            size_t size = sizeof(FunctionCommentsInfo);
-            if (GetUnusedObjectLength() < size)
-                return 0;
-            void* pMemory = m_pUnusedObjectPtr;
-            m_pUnusedObjectPtr += size;
-            FunctionCommentsInfo* p = new(pMemory) FunctionCommentsInfo();
-            ++m_FunctionCommentsInfoNum;
-            return p;
-        }
-    public:
-        virtual ValueData* AddNewValueComponent(void)
-        {
-            size_t size = sizeof(ValueData);
-            if (GetUnusedObjectLength() < size)
-                return 0;
-            void* pMemory = m_pUnusedObjectPtr;
-            m_pUnusedObjectPtr += size;
-            ValueData* p = new(pMemory) ValueData();
-            AddSyntaxComponent(p);
-            return p;
-        }
-        virtual FunctionData* AddNewFunctionComponent(void)
-        {
-            size_t size = sizeof(FunctionData);
-            if (GetUnusedObjectLength() < size)
-                return 0;
-            void* pMemory = m_pUnusedObjectPtr;
-            m_pUnusedObjectPtr += size;
-            FunctionData* p = new(pMemory) FunctionData(*this);
-            AddSyntaxComponent(p);
-            return p;
-        }
-        virtual StatementData* AddNewStatementComponent(void)
-        {
-            size_t size = sizeof(StatementData);
-            if (GetUnusedObjectLength() < size)
-                return 0;
-            void* pMemory = m_pUnusedObjectPtr;
-            m_pUnusedObjectPtr += size;
-            StatementData* p = new(pMemory) StatementData(*this);
-            AddSyntaxComponent(p);
-            return p;
-        }
-        virtual int GetUnusedObjectLength(void)const
-        {
-            MyAssert(m_pObjectBuffer);
-            MyAssert(m_pUnusedObjectRef);
-            return MaxObjectBufferSize - int(m_pUnusedObjectPtr - m_pObjectBuffer);
-        }
-    public:
-        virtual void** NewPtrArray(int size)
-        {
-            if (size<0 || size>PTR_POOL_FREELINK_HEADER_SIZE)
-                return 0;
-            int ix = m_PtrFreeLinkHeader[size];
-            if (ix >= 0) {
-                //空闲链表上有的话就用空闲链表的数据，空闲链表头指向链表后一个元素，原链表头从链表拆除后放到空闲链表块的空闲链表中
-                auto link = m_PtrFreeLink[ix];
-                m_PtrFreeLinkHeader[size] = link.m_NextFreeLink;
-                if (m_FreedFreeLinkHeader >= 0) {
-                    m_PtrFreeLink[ix].m_NextFreeLink = m_FreedFreeLinkHeader;
-                }
-                else {
-                    m_PtrFreeLink[ix].m_NextFreeLink = -1;
-                }
-                m_FreedFreeLinkHeader = ix;
-            }
-            if (m_PtrNum + size > PtrPoolSize)
-                return 0;
-            int start = m_PtrNum;
-            m_PtrNum += size;
-            return &(m_PtrPool[start]);
-        }
-        virtual void DeletePtrArray(void** ptr, int size)
-        {
-            if (size<0 || size>PTR_POOL_FREELINK_HEADER_SIZE)
-                return;
-            //分配一个新的空闲链表块来描述回收的数组，并加到空闲链表上
-            int newFreeHeader = -1;
-            FreeLinkInfo* p = 0;
-            if (m_FreedFreeLinkHeader >= 0) {
-                newFreeHeader = m_FreedFreeLinkHeader;
-                p = &(m_PtrFreeLink[m_FreedFreeLinkHeader]);
-                m_FreedFreeLinkHeader = p->m_NextFreeLink;
-            }
-            else if (m_FreeLinkNum < PtrPoolFreeLinkSize) {
-                newFreeHeader = m_FreeLinkNum;
-                p = &(m_PtrFreeLink[m_FreeLinkNum]);
-                ++m_FreeLinkNum;
-            }
-            else {
-                //这个块浪费掉了，需要调整空闲链表参数的大小
-            }
-            if (p) {
-                p->m_PtrPoolIndex = (ptr - m_PtrPool);
-                int ix = m_PtrFreeLinkHeader[size];
-                if (ix >= 0) {
-                    p->m_NextFreeLink = ix;
-                }
-                else {
-                    p->m_NextFreeLink = -1;
-                }
-                m_PtrFreeLinkHeader[size] = newFreeHeader;
-            }
-        }
-    public:
-        virtual NullSyntax* GetNullSyntaxPtr(void)
-        {
-            return &m_NullSyntax;
-        }
-        virtual FunctionData* GetNullFunctionPtr(void)
-        {
-            m_NullFunction.GetName().SetInvalid();
-            m_NullFunction.SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
-            m_NullFunction.ClearParams();
-            return &m_NullFunction;
-        }
-        virtual FunctionData*& GetNullFunctionPtrRef(void)
-        {
-            auto fptr = m_pNullFunction;
-            fptr->GetName().SetInvalid();
-            fptr->SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
-            fptr->ClearParams();
-            return m_pNullFunction;
-        }
-    public:
-        DslStringAndObjectBufferT(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0),
-            m_pStringBuffer(m_StringBuffer),
-            m_pUnusedStringPtr(m_StringBuffer),
-            m_pObjectBuffer(m_ObjectBuffer),
-            m_pUnusedObjectPtr(m_ObjectBuffer),
-            m_NullSyntax(),
-            m_NullFunction(*this),
-            m_pNullFunction(&m_NullFunction)
-        {
-            memset(m_PtrPool, 0, sizeof(void*)*PtrPoolSize);
-            m_PtrNum = 0;
-            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
-            m_FreeLinkNum = 0;
-            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int)*PtrPoolFreeLinkHeaderSize);
-            m_FreedFreeLinkHeader = -1;
-        }
-        void Reset(void)
-        {
-            m_SyntaxComponentNum = 0;
-            m_SyntaxComponentCommentsInfoNum = 0;
-            m_FunctionCommentsInfoNum = 0;
-            m_pStringBuffer = m_StringBuffer;
-            m_pUnusedStringPtr = m_StringBuffer;
-            m_pObjectBuffer = m_ObjectBuffer;
-            m_pUnusedObjectPtr = m_ObjectBuffer;
-            m_pNullFunction = &m_NullFunction;
-
-            memset(m_PtrPool, 0, sizeof(void*)*PtrPoolSize);
-            m_PtrNum = 0;
-            memset(m_PtrFreeLink, 0xff, sizeof(FreeLinkInfo)*PtrPoolFreeLinkSize);
-            m_FreeLinkNum = 0;
-            memset(m_PtrFreeLinkHeader, 0xff, sizeof(unsigned int)*PtrPoolFreeLinkHeaderSize);
-            m_FreedFreeLinkHeader = -1;
-        }
-    private:
-        void AddSyntaxComponent(ISyntaxComponent* p)
-        {
-            if (m_SyntaxComponentNum >= SyntaxComponentPoolSize || 0 == m_SyntaxComponentPool)
-                return;
-            m_SyntaxComponentPool[m_SyntaxComponentNum] = p;
-            ++m_SyntaxComponentNum;
-        }
-    private:
-        DslStringAndObjectBufferT(const DslStringAndObjectBufferT&) = delete;
-        DslStringAndObjectBufferT& operator=(const DslStringAndObjectBufferT&) = delete;
-    private:
-        DslOptions m_Options;
-    private:
-        char m_StringBuffer[MaxStringBufferSize];
-        char* m_pStringBuffer;
-        char* m_pUnusedStringPtr;
-    private:
-        char m_ObjectBuffer[MaxObjectBufferSize];
-        char* m_pObjectBuffer;
-        char* m_pUnusedObjectPtr;
-    private:
-        SyntaxComponentPtr m_SyntaxComponentPool[SyntaxComponentPoolSize];
-        int m_SyntaxComponentNum;
-        int m_SyntaxComponentCommentsInfoNum;
-        int m_FunctionCommentsInfoNum;
-    private:
-        void* m_PtrPool[PtrPoolSize];
-        int m_PtrNum;
-        FreeLinkInfo m_PtrFreeLink[PtrPoolFreeLinkSize];//低32位对应m_PtrPool的索引，高32位是下一个空闲块的索引
-        int m_FreeLinkNum;        
-        int m_PtrFreeLinkHeader[PtrPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置
-        int m_FreedFreeLinkHeader;//空闲的空闲块链表的头
-    private:
-        NullSyntax m_NullSyntax;
-        FunctionData m_NullFunction;
-        FunctionData* m_pNullFunction;
-    };
-    
-    class IScriptSource;
-    class DslFile
-    {
-        typedef ISyntaxComponent* SyntaxComponentPtr;
-    public:
-        int GetDslInfoNum(void)const { return m_DslInfoNum; }
-        ISyntaxComponent* GetDslInfo(int index)const
-        {
-            if (index < 0 || index >= m_DslInfoNum)
-                return NULL;
-            return m_DslInfos[index];
-        }
-        void WriteToFile(FILE* fp, int indent) const;
-    public:
-        void AddDslInfo(ISyntaxComponent* p);
-    public:
-        DslFile(IDslStringAndObjectBuffer& buffer);
-        ~DslFile(void);
-        void Reset(void);
-        void Parse(const char* buf);
-        void Parse(IScriptSource& source);
-    public:
-        void LoadBinaryFile(const char* file);
-        void LoadBinaryCode(const char* buffer, int bufferSize);
-        void SaveBinaryFile(const char* file) const;
-    private:
-        DslFile(const DslFile&) = delete;
-        DslFile& operator=(const DslFile&) = delete;
-    private:
-        void Init(void);
-        void Release(void);
-    public:
-        void EnableDebugInfo(void) { m_IsDebugInfoEnable = TRUE; }
-        void DisableDebugInfo(void) { m_IsDebugInfoEnable = FALSE; }
-        int IsDebugInfoEnable(void)const { return m_IsDebugInfoEnable; }
-    public:
-        void ClearErrorInfo(void);
-        void AddError(const char* error);
-        int HasError(void)const { return m_HasError; }
-        int GetErrorNum(void)const { return m_ErrorNum; }
-        const char*	GetErrorInfo(int index) const
-        {
-            if (index < 0 || index >= m_ErrorNum || index >= MAX_RECORD_ERROR_NUM)
-                return "";
-            return m_ErrorInfo[index];
-        }
-        char* NewErrorInfo(void)
-        {
-            m_HasError = TRUE;
-            if (m_ErrorNum < MAX_RECORD_ERROR_NUM) {
-                ++m_ErrorNum;
-                return m_ErrorInfo[m_ErrorNum - 1];
-            }
-            else {
-                return 0;
-            }
-        }
-    public:
-        char* AllocString(int len) const { return m_Buffer.AllocString(len); }
-        char* AllocString(const char* src) const { return m_Buffer.AllocString(src); }
-        char* GetStringBuffer(void) const { return m_Buffer.GetStringBuffer(); }
-        char*& GetUnusedStringPtrRef(void) const { return m_Buffer.GetUnusedStringPtrRef(); }
-        int GetUnusedStringLength(void) const { return m_Buffer.GetUnusedStringLength(); }
-    public:
-        ValueData* AddNewValueComponent(void) const { return m_Buffer.AddNewValueComponent(); }
-        FunctionData* AddNewFunctionComponent(void) const { return m_Buffer.AddNewFunctionComponent(); }
-        StatementData* AddNewStatementComponent(void) const { return m_Buffer.AddNewStatementComponent(); }
-    public:
-        NullSyntax* GetNullSyntaxPtr(void) const { return m_Buffer.GetNullSyntaxPtr(); }
-        FunctionData* GetNullFunctionPtr(void) { return m_Buffer.GetNullFunctionPtr(); }
-        FunctionData*& GetNullFunctionPtrRef(void) { return m_Buffer.GetNullFunctionPtrRef(); }
-    private:
-        void PrepareDslInfos(void);
-        void ReleaseDslInfos(void);
-    private:
-        IDslStringAndObjectBuffer& m_Buffer;
-    private:
-        SyntaxComponentPtr* m_DslInfos;
-        int m_DslInfoNum;
-        int m_DslInfoSpace;
-        int m_MaxDslInfoNum;
-    private:
-        int m_IsDebugInfoEnable;
-    private:
-        int	m_HasError;
-        char m_ErrorInfo[MAX_RECORD_ERROR_NUM][MAX_ERROR_INFO_CAPACITY];
-        int m_ErrorNum;
-    };
-
-    class IScriptSource
-    {
-    public:
-        virtual ~IScriptSource(void) {}
-    public:
-        class Iterator
-        {
-        public:
-            const char& operator * (void) const
-            {
-                return Peek(0);
-            }
-            Iterator& operator ++ (void)
-            {
-                Advance();
-                return *this;
-            }
-            const Iterator operator ++ (int)
-            {
-                Iterator it = *this;
-                ++(*this);
-                return it;
-            }
-            const Iterator operator + (int val) const
-            {
-                Iterator it = *this;
-                for (int ix = 0; ix < val; ++ix)
-                    it.Advance();
-                return it;
-            }
-            int Load(void)
-            {
-                if (NULL != m_pSource) {
-                    int r = m_pSource->Load();
-                    if (r) {
-                        *this = m_pSource->GetIterator();
-                    }
-                    return r;
-                }
-                else {
-                    return FALSE;
-                }
-            }
-            const char* GetBuffer(void)const
-            {
-                return m_pSource->GetBuffer();
-            }
-            const char* GetLeft(void)const
-            {
-                return m_Iterator;
-            }
-        public:
-            int operator ==(const Iterator& other) const
-            {
-                return m_pSource == other.m_pSource && m_Iterator == other.m_Iterator && m_EndIterator == other.m_EndIterator;
-            }
-            int operator !=(const Iterator& other) const
-            {
-                return !(operator ==(other));
-            }
-        public:
-            Iterator(void) :m_pSource(NULL), m_Iterator(""), m_EndIterator(m_Iterator)
-            {
-            }
-            explicit Iterator(IScriptSource& source) :m_pSource(&source)
-            {
-                const char* p = m_pSource->GetBuffer();
-                if (0 == p) {
-                    m_Iterator = "";
-                    m_EndIterator = m_Iterator;
-                }
-                else {
-                    m_Iterator = p;
-                    m_EndIterator = m_Iterator + strlen(p);
-                }
-            }
-            Iterator(const Iterator& other)
-            {
-                CopyFrom(other);
-            }
-            Iterator& operator=(const Iterator& other)
-            {
-                if (this == &other)
-                    return *this;
-                CopyFrom(other);
-                return *this;
-            }
-        private:
-            const char& Peek(int index)const
-            {
-                if (m_Iterator + index < m_EndIterator)
-                    return *(m_Iterator + index);
-                else
-                    return *m_EndIterator;
-            }
-            void Advance(void)
-            {
-                if (m_Iterator < m_EndIterator)
-                    ++m_Iterator;
-            }
-            void CopyFrom(const Iterator& other)
-            {
-                m_pSource = other.m_pSource;
-                m_Iterator = other.m_Iterator;
-                m_EndIterator = other.m_EndIterator;
-            }
-        private:
-            IScriptSource* m_pSource;
-            const char* m_Iterator;
-            const char* m_EndIterator;
-        };
-        friend class Iterator;
-    public:
-        Iterator GetIterator(void)
-        {
-            return Iterator(*this);
-        }
-    protected:
-        virtual int Load(void) = 0;
-        virtual const char* GetBuffer(void)const = 0;
-    };
+    }
 }
-using namespace Dsl;
 
-#endif
+//-*****************************************************************************
+void testReadWriteArrays()
+{
+
+    std::string archiveName = "arrayProperties.abc";
+
+    {
+        A5::WriteArchive w;
+        ABCA::ArchiveWriterPtr a = w(archiveName, ABCA::MetaData());
+        ABCA::ObjectWriterPtr archive = a->getTop();
+
+        ABCA::CompoundPropertyWriterPtr props = archive->getProperties();
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kUint8POD, 1);
+            TESTING_ASSERT_THROW(props->createArrayProperty("/slashy",
+                ABCA::MetaData(), dtype, 0 ), Alembic::Util::Exception);
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kBooleanPOD, 1);
+            ABCA::ArrayPropertyWriterPtr boolWrtPtr =
+                props->createArrayProperty("bool", ABCA::MetaData(), dtype, 0 );
+
+
+            std::vector < Alembic::Util::bool_t > vals(3);
+            vals[0] = false;
+            vals[1] = true;
+            vals[2] = false;
+            Alembic::Util::Dimensions dims(vals.size());
+            boolWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kUint8POD, 1);
+            ABCA::ArrayPropertyWriterPtr uint8WrtPtr =
+                props->createArrayProperty("uint8", ABCA::MetaData(), dtype, 0);
+
+            std::vector< Alembic::Util::uint8_t > vals(4);
+            vals[0] = 200;
+            vals[1] = 45;
+            vals[2] = 37;
+            vals[3] = 192;
+
+            TESTING_ASSERT(uint8WrtPtr->getNumSamples() == 0);
+            Alembic::Util::Dimensions dims(vals.size());
+            uint8WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+            TESTING_ASSERT(uint8WrtPtr->getNumSamples() == 1);
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kUint8POD, 1);
+            ABCA::ArrayPropertyWriterPtr uint8WrtPtr =
+                props->createArrayProperty("uint8_newDims",
+                                           ABCA::MetaData(), dtype, 0);
+
+            std::vector< Alembic::Util::uint8_t > vals(4);
+            vals[0] = 200;
+            vals[1] = 45;
+            vals[2] = 37;
+            vals[3] = 192;
+
+            TESTING_ASSERT(uint8WrtPtr->getNumSamples() == 0);
+            Alembic::Util::Dimensions dims;
+            dims.setRank(2);
+            dims[0] = 2;
+            dims[1] = 2;
+            uint8WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+            TESTING_ASSERT(uint8WrtPtr->getNumSamples() == 1);
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kInt8POD, 1);
+            ABCA::ArrayPropertyWriterPtr charWrtPtr =
+                props->createArrayProperty("int8",  ABCA::MetaData(), dtype, 0 );
+
+            std::vector < Alembic::Util::int8_t > vals(2);
+            vals[0] = -20;
+            vals[1] = 45;
+
+            Alembic::Util::Dimensions dims(vals.size());
+            charWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kUint16POD, 1);
+            ABCA::ArrayPropertyWriterPtr uint16WrtPtr =
+                props->createArrayProperty("uint16", ABCA::MetaData(),
+                                           ABCA::DataType(Alembic::Util::kUint16POD, 1), 0 );
+
+            std::vector < Alembic::Util::uint16_t > vals(3);
+            vals[0] = 60000;
+            vals[1] = 2;
+            vals[2] = 3987;
+
+            Alembic::Util::Dimensions dims(vals.size());
+            uint16WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kInt16POD, 1);
+            ABCA::ArrayPropertyWriterPtr int16WrtPtr =
+                props->createArrayProperty("int16", ABCA::MetaData(),
+                                           dtype, 0);
+            std::vector < Alembic::Util::int16_t > vals(2);
+            vals[0] = -20000;
+            vals[1] = 77;
+            Alembic::Util::Dimensions dims(vals.size());
+            int16WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kUint32POD, 1);
+            ABCA::ArrayPropertyWriterPtr uint32WrtPtr =
+                props->createArrayProperty("uint32",  ABCA::MetaData(), dtype,
+                                           0);
+
+            std::vector < Alembic::Util::uint32_t > vals(1);
+            vals[0] = 1000000;
+
+            Alembic::Util::Dimensions dims(vals.size());
+            uint32WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kInt32POD, 1);
+            ABCA::ArrayPropertyWriterPtr int32WrtPtr =
+                props->createArrayProperty("int32", ABCA::MetaData(), dtype, 0);
+            std::vector < Alembic::Util::int32_t > vals(4);
+            vals[0] = -1000000;
+            vals[1] = 42;
+            vals[2] = -20000;
+            vals[3] = 123456;
+
+            Alembic::Util::Dimensions dims(vals.size());
+            int32WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kUint64POD, 1);
+            ABCA::ArrayPropertyWriterPtr ui64WrtPtr =
+                props->createArrayProperty("uint64", ABCA::MetaData(), dtype, 0);
+            std::vector < Alembic::Util::uint64_t > vals(3);
+            vals[0] = 5000000000LL;
+            vals[1] = 1234567891011LL;
+            vals[2] = 12;
+
+            Alembic::Util::Dimensions dims(vals.size());
+            ui64WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kInt64POD, 1);
+            ABCA::ArrayPropertyWriterPtr i64WrtPtr =
+                props->createArrayProperty("int64", ABCA::MetaData(), dtype, 0);
+
+            std::vector < Alembic::Util::int64_t > vals(2);
+            vals[0] = -5000000000LL;
+            vals[1] = 9876543210LL;
+            Alembic::Util::Dimensions dims(vals.size());
+            i64WrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kFloat16POD, 1);
+            ABCA::ArrayPropertyWriterPtr halfWrtPtr =
+                props->createArrayProperty("float16",
+                                           ABCA::MetaData(), dtype, 0);
+
+            std::vector < Alembic::Util::float16_t > vals(2);
+            vals[0] = 16.0;
+            vals[1] = -3.0;
+
+            Alembic::Util::Dimensions dims(vals.size());
+            halfWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kFloat32POD, 2);
+            ABCA::ArrayPropertyWriterPtr floatWrtPtr =
+                props->createArrayProperty("float32", ABCA::MetaData(), dtype,
+                                           0);
+            std::vector < Alembic::Util::float32_t > vals(4);
+            vals[0] = 128.0;
+            vals[1] = -13.25;
+            vals[2] = 35.5;
+            vals[3] = 128.125;
+            Alembic::Util::Dimensions dims(vals.size()/2);
+            floatWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kFloat32POD, 1);
+            ABCA::ArrayPropertyWriterPtr floatWrtPtr =
+                props->createArrayProperty("float32_ext1",
+                                           ABCA::MetaData(), dtype, 0);
+            std::vector < Alembic::Util::float32_t > vals(4);
+            vals[0] = 128.0;
+            vals[1] = -13.25;
+            vals[2] = 35.5;
+            vals[3] = 128.125;
+            Alembic::Util::Dimensions dims(vals.size());
+            floatWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kFloat64POD, 1);
+            ABCA::ArrayPropertyWriterPtr doubleWrtPtr =
+                props->createArrayProperty("float64",  ABCA::MetaData(),
+                                           dtype, 0);
+
+            std::vector < Alembic::Util::float64_t > vals(30);
+            for (size_t i = 0; i < vals.size(); ++i)
+                vals[i] = i * 100.0;
+            TESTING_ASSERT(doubleWrtPtr->getNumSamples() == 0);
+            Alembic::Util::Dimensions dims(vals.size());
+            doubleWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+            TESTING_ASSERT(doubleWrtPtr->getNumSamples() == 1);
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kFloat64POD, 3);
+            ABCA::ArrayPropertyWriterPtr doubleWrtPtr =
+                props->createArrayProperty("float64_ext3",
+                                           ABCA::MetaData(), dtype, 0);
+
+            std::vector < Alembic::Util::float64_t > vals(30);
+            for (size_t i = 0; i < vals.size(); ++i)
+                vals[i] = i * 100.0;
+            TESTING_ASSERT(doubleWrtPtr->getNumSamples() == 0);
+            Alembic::Util::Dimensions dims(vals.size() / 3);
+            doubleWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+            TESTING_ASSERT(doubleWrtPtr->getNumSamples() == 1);
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kStringPOD, 1);
+            ABCA::ArrayPropertyWriterPtr strWrtPtr =
+                props->createArrayProperty("str",
+                                           ABCA::MetaData(), dtype, 0);
+
+            std::vector < Alembic::Util::string > vals(4);
+            vals[0] = "Now it's time";
+            vals[1] = "";
+            vals[2] = "for";
+            vals[3] = "cake!";
+            Alembic::Util::Dimensions dims(vals.size());
+            strWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+        {
+            ABCA::DataType dtype(Alembic::Util::kWstringPOD, 1);
+            ABCA::ArrayPropertyWriterPtr wstrWrtPtr =
+                props->createArrayProperty("wstr", ABCA::MetaData(), dtype, 0);
+
+            std::vector < Alembic::Util::wstring > vals(4);
+            vals[0] = L"We do what we must ";
+            vals[1] = L"because we can.";
+            vals[2] = L"";
+            vals[3] = L"\uf8e4 \uf8e2 \uf8d3";
+            Alembic::Util::Dimensions dims(vals.size());
+            wstrWrtPtr->setSample(
+                ABCA::ArraySample(&(vals.front()), dtype, dims));
+        }
+
+    }
+
+    // now we read what we've written
+    {
+        A5::ReadArchive r;
+        ABCA::ArchiveReaderPtr a = r( archiveName );
+        ABCA::ObjectReaderPtr archive = a->getTop();
+        ABCA::CompoundPropertyReaderPtr parent = archive->getProperties();
+
+        TESTING_ASSERT(parent->getNumProperties() == 17);
+
+        ABCA::ArraySampleKey key;
+        for ( size_t i = 0; i < parent->getNumProperties(); ++i )
+        {
+            ABCA::BasePropertyReaderPtr bp = parent->getProperty( i );
+
+            // they are all supposed to be arrays
+            TESTING_ASSERT( bp->isArray() );
+
+            ABCA::ArrayPropertyReaderPtr ap = bp->asArrayPtr();
+            TESTING_ASSERT( ap->getNumSamples() == 1 );
+            TESTING_ASSERT( ap->isConstant() );
+            TESTING_ASSERT( ap->getParent() == parent);
+
+            if (ap->getName() != "float64_ext3" && ap->getName() != "float32")
+                TESTING_ASSERT( ap->getDataType().getExtent() == 1);
+
+            switch (ap->getDataType().getPod())
+            {
+                case Alembic::Util::kBooleanPOD:
+                {
+                    TESTING_ASSERT(ap->getName() == "bool");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 3);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.numPoints() == 3);
+                    TESTING_ASSERT(dims0.rank() == 1);
+
+                    Alembic::Util::bool_t * data =
+                        (Alembic::Util::bool_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == false);
+                    TESTING_ASSERT(data[1] == true);
+                    TESTING_ASSERT(data[2] == false);
+
+                    // read as something else
+                    Alembic::Util::int32_t data2[3];
+                    ap->getAs(0, data2, Alembic::Util::kInt32POD);
+                    TESTING_ASSERT(data2[0] == 0);
+                    TESTING_ASSERT(data2[1] == 1);
+                    TESTING_ASSERT(data2[2] == 0);
+
+                    // read it as it is
+                    Alembic::Util::bool_t data3[3];
+                    ap->getAs(0, data3, Alembic::Util::kBooleanPOD);
+                    TESTING_ASSERT(data3[0] == false);
+                    TESTING_ASSERT(data3[1] == true);
+                    TESTING_ASSERT(data3[2] == false);
+
+                    TESTING_ASSERT(ap->getKey(0, key));
+                    TESTING_ASSERT(key.numBytes == 3);
+                    TESTING_ASSERT(key.origPOD == Alembic::Util::kBooleanPOD);
+                    TESTING_ASSERT(key.readPOD == Alembic::Util::kBooleanPOD);
+                    TESTING_ASSERT(key.digest.str() ==
+                        "bbde8ffe4b7e061c7e03081c2bf184c4");
+                }
+                break;
+
+                case Alembic::Util::kUint8POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "uint8" ||
+                        ap->getName() == "uint8_newDims");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+
+                    Alembic::Util::uint8_t * data =
+                        (Alembic::Util::uint8_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == 200);
+                    TESTING_ASSERT(data[1] == 45);
+                    TESTING_ASSERT(data[2] == 37);
+                    TESTING_ASSERT(data[3] == 192);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 4);
+
+                    // read as something else
+                    Alembic::Util::int32_t data2[4];
+                    ap->getAs(0, data2, kInt32POD);
+                    TESTING_ASSERT(data2[0] == 200);
+                    TESTING_ASSERT(data2[1] == 45);
+                    TESTING_ASSERT(data2[2] == 37);
+                    TESTING_ASSERT(data2[3] == 192);
+
+                    // read it as it is
+                    Alembic::Util::uint8_t data3[4];
+                    ap->getAs(0, data3, kUint8POD);
+                    TESTING_ASSERT(data3[0] == 200);
+                    TESTING_ASSERT(data3[1] == 45);
+                    TESTING_ASSERT(data3[2] == 37);
+                    TESTING_ASSERT(data3[3] == 192);
+
+                    TESTING_ASSERT(ap->getKey(0, key));
+                    TESTING_ASSERT(key.numBytes == 4);
+                    TESTING_ASSERT(key.origPOD == Alembic::Util::kUint8POD);
+                    TESTING_ASSERT(key.readPOD == Alembic::Util::kUint8POD);
+                    TESTING_ASSERT(key.digest.str() ==
+                        "2972c92c7f534e37ee116ae01c707741");
+
+                    if (ap->getName() == "uint8")
+                    {
+                        Dimensions dims0;
+                        ap->getDimensions(0, dims0);
+                        TESTING_ASSERT(dims0.rank() == 1);
+                        TESTING_ASSERT(dims0[0] == 4);
+                    }
+                    else if (ap->getName() == "uint8_newDims")
+                    {
+                        Dimensions dims0;
+                        ap->getDimensions(0, dims0);
+                        TESTING_ASSERT(dims0.rank() == 2);
+                        TESTING_ASSERT(dims0[0] == 2);
+                        TESTING_ASSERT(dims0[1] == 2);
+                    }
+                }
+                break;
+
+                case Alembic::Util::kInt8POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "int8");
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 2);
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Alembic::Util::int8_t * data =
+                        (Alembic::Util::int8_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == -20);
+                    TESTING_ASSERT(data[1] == 45);
+
+                    // read as something else
+                    Alembic::Util::int32_t data2[2];
+                    ap->getAs(0, data2, kInt32POD);
+                    TESTING_ASSERT(data2[0] == -20);
+                    TESTING_ASSERT(data2[1] == 45);
+
+                    // read it as it is
+                    Alembic::Util::int8_t data3[2];
+                    ap->getAs(0, data3, kInt8POD);
+                    TESTING_ASSERT(data3[0] == -20);
+                    TESTING_ASSERT(data3[1] == 45);
+                }
+                break;
+
+                case Alembic::Util::kUint16POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "uint16");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 3);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 3);
+                    Alembic::Util::uint16_t * data =
+                        (Alembic::Util::uint16_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == 60000);
+                    TESTING_ASSERT(data[1] == 2);
+                    TESTING_ASSERT(data[2] == 3987);
+
+                    // read as something else
+                    Alembic::Util::int32_t data2[3];
+                    ap->getAs(0, data2, kInt32POD);
+                    TESTING_ASSERT(data2[0] == 60000);
+                    TESTING_ASSERT(data2[1] == 2);
+                    TESTING_ASSERT(data2[2] == 3987);
+
+                    // read it as it is
+                    Alembic::Util::uint16_t data3[3];
+                    ap->getAs(0, data3, kUint16POD);
+                    TESTING_ASSERT(data3[0] == 60000);
+                    TESTING_ASSERT(data3[1] == 2);
+                    TESTING_ASSERT(data2[2] == 3987);
+                }
+                break;
+
+                case Alembic::Util::kInt16POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "int16");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 2);
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Alembic::Util::int16_t * data =
+                        (Alembic::Util::int16_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == -20000);
+                    TESTING_ASSERT(data[1] == 77);
+
+                    // read as something else
+                    Alembic::Util::int32_t data2[2];
+                    ap->getAs(0, data2, kInt32POD);
+                    TESTING_ASSERT(data2[0] == -20000);
+                    TESTING_ASSERT(data2[1] == 77);
+
+                    // read it as it is
+                    Alembic::Util::int16_t data3[2];
+                    ap->getAs(0, data3, kInt16POD);
+                    TESTING_ASSERT(data3[0] == -20000);
+                    TESTING_ASSERT(data3[1] == 77);
+                }
+                break;
+
+                case Alembic::Util::kUint32POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "uint32");
+                    TESTING_ASSERT(ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 1);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 1);
+                    Alembic::Util::uint32_t * data =
+                        (Alembic::Util::uint32_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == 1000000);
+
+                    // read as something else
+                    Alembic::Util::int16_t data2;
+                    ap->getAs(0, &data2, kInt16POD);
+                    TESTING_ASSERT(data2 == 32767); // maxed out
+
+                    // read it as it is
+                    Alembic::Util::int32_t data3;
+                    ap->getAs(0, &data3, kUint32POD);
+                    TESTING_ASSERT(data3 == 1000000);
+                }
+                break;
+
+                case Alembic::Util::kInt32POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "int32");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 4);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 4);
+                    Alembic::Util::int32_t * data =
+                        (Alembic::Util::int32_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == -1000000);
+                    TESTING_ASSERT(data[1] == 42);
+                    TESTING_ASSERT(data[2] == -20000);
+                    TESTING_ASSERT(data[3] == 123456);
+
+                    // read as something else
+                    Alembic::Util::int16_t data2[4];
+                    ap->getAs(0, data2, kInt16POD);
+                    TESTING_ASSERT(data2[0] == -32768); // maxed out negative
+                    TESTING_ASSERT(data2[1] == 42);
+                    TESTING_ASSERT(data2[2] == -20000);
+                    TESTING_ASSERT(data2[3] == 32767);  // maxed out positive
+
+                    // read it as it is
+                    Alembic::Util::int32_t data3[4];
+                    ap->getAs(0, data3, kInt32POD);
+                    TESTING_ASSERT(data3[0] == -1000000);
+                    TESTING_ASSERT(data3[1] == 42);
+                    TESTING_ASSERT(data3[2] == -20000);
+                    TESTING_ASSERT(data3[3] == 123456);
+
+                    // can't read as strings, and it shouldn't touch the buffer
+                    TESTING_ASSERT_THROW(ap->getAs(0, data3, kStringPOD),
+                        Alembic::Util::Exception);
+
+                    TESTING_ASSERT_THROW(ap->getAs(0, data3, kWstringPOD),
+                        Alembic::Util::Exception);
+                    TESTING_ASSERT(data3[0] == -1000000);
+                    TESTING_ASSERT(data3[1] == 42);
+                    TESTING_ASSERT(data3[2] == -20000);
+                    TESTING_ASSERT(data3[3] == 123456);
+                }
+                break;
+
+                case Alembic::Util::kUint64POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "uint64");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 3);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 3);
+                    Alembic::Util::uint64_t * data =
+                        (Alembic::Util::uint64_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == 5000000000LL);
+                    TESTING_ASSERT(data[1] == 1234567891011LL);
+                    TESTING_ASSERT(data[2] == 12);
+
+                    // read as something else
+                    Alembic::Util::int16_t data2[3];
+                    ap->getAs(0, data2, kInt16POD);
+                    TESTING_ASSERT(data2[0] == 32767); // maxed out positive
+                    TESTING_ASSERT(data2[1] == 32767); // maxed out positive
+                    TESTING_ASSERT(data2[2] == 12);
+
+                    // read it as it is
+                    Alembic::Util::uint64_t data3[3];
+                    ap->getAs(0, data3, kUint64POD);
+                    TESTING_ASSERT(data3[0] == 5000000000LL);
+                    TESTING_ASSERT(data3[1] == 1234567891011LL);
+                    TESTING_ASSERT(data3[2] == 12);
+                }
+                break;
+
+                case Alembic::Util::kInt64POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "int64");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 2);
+                    Alembic::Util::int64_t * data =
+                        (Alembic::Util::int64_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == -5000000000LL);
+                    TESTING_ASSERT(data[1] == 9876543210LL);
+
+                    // read as something else
+                    Alembic::Util::int16_t data2[2];
+                    ap->getAs(0, data2, kInt16POD);
+                    TESTING_ASSERT(data2[0] == -32768); // maxed out negative
+                    TESTING_ASSERT(data2[1] == 32767); // maxed out positive
+
+                    // read it as it is
+                    Alembic::Util::int64_t data3[2];
+                    ap->getAs(0, data3, kInt64POD);
+                    TESTING_ASSERT(data3[0] == -5000000000LL);
+                    TESTING_ASSERT(data3[1] == 9876543210LL);
+                }
+                break;
+
+                case Alembic::Util::kFloat16POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "float16");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 2);
+                    Alembic::Util::float16_t * data =
+                        (Alembic::Util::float16_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == 16.0);
+                    TESTING_ASSERT(data[1] == -3.0);
+
+                    // can't currently read it as another data type
+                    Alembic::Util::float32_t data2[2];
+                    TESTING_ASSERT_THROW(ap->getAs(0, data2, kFloat32POD),
+                                         Alembic::Util::Exception);
+                    // read it as it is
+                    Alembic::Util::float16_t data3[2];
+                    ap->getAs(0, data3, kFloat16POD);
+                    TESTING_ASSERT(data3[0] == 16.0);
+                    TESTING_ASSERT(data3[1] == -3.0);
+
+                }
+                break;
+
+                case Alembic::Util::kFloat32POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "float32" ||
+                        ap->getName() == "float32_ext1");
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    ABCA::ArraySampleKey key;
+
+                    if (ap->getName() == "float32_ext1")
+                    {
+                        Dimensions dims0;
+                        ap->getDimensions(0, dims0);
+                        TESTING_ASSERT(dims0.rank() == 1);
+                        TESTING_ASSERT(dims0.numPoints() == 4);
+                        ap->getKey(0, key);
+                        TESTING_ASSERT(key.numBytes == 16);
+                    }
+
+                    if (ap->getName() == "float32")
+                    {
+                        TESTING_ASSERT( ap->getDataType().getExtent() == 2);
+                        Dimensions dims0;
+                        ap->getDimensions(0, dims0);
+                        TESTING_ASSERT(dims0.rank() == 1);
+                        TESTING_ASSERT(dims0.numPoints() == 2);
+                        ap->getKey(0, key);
+                        TESTING_ASSERT(key.numBytes == 16);
+                    }
+
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Alembic::Util::float32_t * data =
+                        (Alembic::Util::float32_t *)(val->getData());
+                    TESTING_ASSERT(data[0] == 128.0);
+                    TESTING_ASSERT(data[1] == -13.25);
+                    TESTING_ASSERT(data[2] == 35.5);
+                    TESTING_ASSERT(data[3] == 128.125);
+
+                    // read as something else
+                    Alembic::Util::float64_t data2[4];
+                    ap->getAs(0, data2, kFloat64POD);
+                    TESTING_ASSERT(data2[0] == 128.0);
+                    TESTING_ASSERT(data2[1] == -13.25);
+                    TESTING_ASSERT(data2[2] == 35.5);
+                    TESTING_ASSERT(data2[3] == 128.125);
+
+                    // read it as it is
+                    Alembic::Util::float32_t data3[4];
+                    ap->getAs(0, data3, kFloat32POD);
+                    TESTING_ASSERT(data3[0] == 128.0);
+                    TESTING_ASSERT(data3[1] == -13.25);
+                    TESTING_ASSERT(data3[2] == 35.5);
+                    TESTING_ASSERT(data3[3] == 128.125);
+
+                    // read it as an int32_t
+                    Alembic::Util::int32_t data4[4];
+                    ap->getAs(0, data4, kInt32POD);
+                    TESTING_ASSERT(data4[0] == 128);
+                    TESTING_ASSERT(data4[1] == -13);
+                    TESTING_ASSERT(data4[2] == 35);
+                    TESTING_ASSERT(data4[3] == 128);
+
+                    // can't read as strings, and it shouldn't touch the buffer
+                    TESTING_ASSERT_THROW(ap->getAs(0, data4, kStringPOD),
+                        Alembic::Util::Exception);
+
+                    TESTING_ASSERT_THROW(ap->getAs(0, data4, kWstringPOD),
+                        Alembic::Util::Exception);
+                    TESTING_ASSERT(data4[0] == 128);
+                    TESTING_ASSERT(data4[1] == -13);
+                    TESTING_ASSERT(data4[2] == 35);
+                    TESTING_ASSERT(data4[3] == 128);
+                }
+                break;
+
+                case Alembic::Util::kFloat64POD:
+                {
+                    TESTING_ASSERT(ap->getName() == "float64" ||
+                        ap->getName() == "float64_ext3");
+                    TESTING_ASSERT(!ap->isScalarLike());
+
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    ABCA::ArraySampleKey key;
+
+                    if (ap->getName() == "float64")
+                    {
+                        Dimensions dims0;
+                        ap->getDimensions(0, dims0);
+                        TESTING_ASSERT(dims0.rank() == 1);
+                        TESTING_ASSERT(dims0.numPoints() == 30);
+                        ap->getKey(0, key);
+                        TESTING_ASSERT(key.numBytes == 240);
+                    }
+
+                    if (ap->getName() == "float64_ext3")
+                    {
+                        Dimensions dims0;
+                        ap->getDimensions(0, dims0);
+                        TESTING_ASSERT(dims0.rank() == 1);
+                        TESTING_ASSERT(dims0.numPoints() == 10);
+                        TESTING_ASSERT( ap->getDataType().getExtent() == 3);
+                        ap->getKey(0, key);
+                        TESTING_ASSERT(key.numBytes == 240);
+                    }
+
+                    Alembic::Util::float64_t * data =
+                        (Alembic::Util::float64_t *)(val->getData());
+
+                    Alembic::Util::float32_t data2[30];
+                    ap->getAs(0, data2, kFloat32POD);
+
+                    Alembic::Util::float64_t data3[30];
+                    ap->getAs(0, data3, kFloat64POD);
+
+                    Alembic::Util::uint32_t data4[30];
+                    ap->getAs(0, data4, kUint32POD);
+
+                    for (size_t i = 0; i < val->size(); ++i)
+                    {
+                        TESTING_ASSERT(data[i] == i* 100);
+                        TESTING_ASSERT(data2[i] == i* 100);
+                        TESTING_ASSERT(data3[i] == i* 100);
+                        TESTING_ASSERT(data4[i] == i* 100);
+                    }
+                }
+                break;
+
+                case Alembic::Util::kStringPOD:
+                {
+                    TESTING_ASSERT(ap->getName() == "str");
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 4);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 4);
+                    Alembic::Util::string * data =
+                        (Alembic::Util::string *)(val->getData());
+                    TESTING_ASSERT(data[0] == "Now it's time");
+                    TESTING_ASSERT(data[1] == "");
+                    TESTING_ASSERT(data[2] == "for");
+                    TESTING_ASSERT(data[3] == "cake!");
+
+                    Alembic::Util::string data2[4];
+                    ap->getAs(0, data2, kStringPOD);
+                    TESTING_ASSERT(data2[0] == "Now it's time");
+                    TESTING_ASSERT(data2[1] == "");
+                    TESTING_ASSERT(data2[2] == "for");
+                    TESTING_ASSERT(data2[3] == "cake!");
+
+                    // can't read strings as anything else
+                    Alembic::Util::int32_t data3[4];
+                    TESTING_ASSERT_THROW(ap->getAs(0, data3, kInt32POD),
+                        Alembic::Util::Exception);
+                }
+                break;
+
+                case Alembic::Util::kWstringPOD:
+                {
+                    TESTING_ASSERT(ap->getName() == "wstr");
+                    ABCA::ArraySamplePtr val;
+                    ap->getSample(0, val);
+                    TESTING_ASSERT(!ap->isScalarLike());
+                    TESTING_ASSERT(val->getDimensions().numPoints() == 4);
+                    TESTING_ASSERT(val->getDimensions().rank() == 1);
+                    Dimensions dims0;
+                    ap->getDimensions(0, dims0);
+                    TESTING_ASSERT(dims0.rank() == 1);
+                    TESTING_ASSERT(dims0.numPoints() == 4);
+                    Alembic::Util::wstring * data =
+                        (Alembic::Util::wstring *)(val->getData());
+                    TESTING_ASSERT(data[0] == L"We do what we must ");
+                    TESTING_ASSERT(data[1] == L"because we can.");
+                    TESTING_ASSERT(data[2] == L"");
+                    TESTING_ASSERT(data[3] ==  L"\uf8e4 \uf8e2 \uf8d3");
+
+                    Alembic::Util::wstring data2[4];
+                    ap->getAs(0, data2, kWstringPOD);
+                    TESTING_ASSERT(data[0] == L"We do what we must ");
+                    TESTING_ASSERT(data[1] == L"because we can.");
+                    TESTING_ASSERT(data[2] == L"");
+                    TESTING_ASSERT(data[3] ==  L"\uf8e4 \uf8e2 \uf8d3");
+
+                    // can't read strings as anything else
+                    Alembic::Util::int32_t data3[4];
+                    TESTING_ASSERT_THROW(ap->getAs(0, data3, kInt32POD),
+                        Alembic::Util::Exception);
+                }
+                break;
+
+                default:
+                    TESTING_ASSERT(false);
+                break;
+            }
+        }
+    }  // end of reading
+}
+
+//-*****************************************************************************
+void testEmptyArray()
+{
+    std::string archiveName = "emptyArray.abc";
+    {
+        A5::WriteArchive w;
+        ABCA::ArchiveWriterPtr a = w(archiveName, ABCA::MetaData());
+        ABCA::ObjectWriterPtr archive = a->getTop();
+
+        ABCA::CompoundPropertyWriterPtr parent = archive->getProperties();
+
+        ABCA::ArrayPropertyWriterPtr awp =
+            parent->createArrayProperty("emptyInt32", ABCA::MetaData(),
+                                        ABCA::DataType(Alembic::Util::kInt32POD, 1), 0);
+        TESTING_ASSERT(awp->getNumSamples() == 0);
+    }
+
+    {
+        A5::ReadArchive r;
+        ABCA::ArchiveReaderPtr a = r( archiveName );
+        ABCA::ObjectReaderPtr archive = a->getTop();
+        ABCA::CompoundPropertyReaderPtr parent = archive->getProperties();
+
+        TESTING_ASSERT(parent->getNumProperties() == 1);
+
+        ABCA::BasePropertyReaderPtr bp = parent->getProperty( 0 );
+        TESTING_ASSERT(bp->isArray());
+        TESTING_ASSERT(bp->asScalarPtr() == NULL);
+        TESTING_ASSERT(bp->getParent() == parent);
+        ABCA::ArrayPropertyReaderPtr ap = bp->asArrayPtr();
+        TESTING_ASSERT(ap->getNumSamples() == 0);
+        TESTING_ASSERT(ap->getNumSamples() == 0);
+        TESTING_ASSERT(ap->isConstant());
+        ABCA::ArraySamplePtr as;
+
+        TESTING_ASSERT_THROW(ap->getSample(0, as), Alembic::Util::Exception);
+    }
+
+    {
+        A5::WriteArchive w;
+        ABCA::ArchiveWriterPtr a = w(archiveName, ABCA::MetaData());
+        ABCA::ObjectWriterPtr archive = a->getTop();
+
+        ABCA::CompoundPropertyWriterPtr parent = archive->getProperties();
+
+        // no extent should throw
+        TESTING_ASSERT_THROW(parent->createArrayProperty("emptyInt32",
+                                                         ABCA::MetaData(), ABCA::DataType(Alembic::Util::kInt32POD, 0), 0),
+                             Alembic::Util::Exception);
+
+        // 2 parts of the enum that shouldn't be written out
+        TESTING_ASSERT_THROW(parent->createArrayProperty("emptyInt32",
+                                                         ABCA::MetaData(), ABCA::DataType(Alembic::Util::kUnknownPOD, 1), 0),
+                             Alembic::Util::Exception);
+
+        TESTING_ASSERT_THROW(parent->createArrayProperty("emptyInt32",
+                                                         ABCA::MetaData(),
+                                                         ABCA::DataType(Alembic::Util::kNumPlainOldDataTypes, 1), 0),
+                             Alembic::Util::Exception);
+
+        // illegal time sampling index
+        TESTING_ASSERT_THROW(parent->createArrayProperty("emptyInt32",
+                                                         ABCA::MetaData(),
+                                                         ABCA::DataType(Alembic::Util::kInt32POD, 1), 45),
+                             Alembic::Util::Exception);
+
+        // lets do it again for the Scalars
+
+        // no extent should throw
+        TESTING_ASSERT_THROW(parent->createScalarProperty("emptyInt32",
+                                                          ABCA::MetaData(), ABCA::DataType(Alembic::Util::kInt32POD, 0), 0),
+                             Alembic::Util::Exception);
+
+        // 2 parts of the enum that shouldn't be written out
+        TESTING_ASSERT_THROW(parent->createScalarProperty("emptyInt32",
+                                                          ABCA::MetaData(),
+                                                          ABCA::DataType(Alembic::Util::kUnknownPOD, 1), 0),
+                             Alembic::Util::Exception);
+
+        TESTING_ASSERT_THROW(parent->createScalarProperty("emptyInt32",
+                                                          ABCA::MetaData(),
+                                                          ABCA::DataType(Alembic::Util::kNumPlainOldDataTypes, 1), 0),
+                             Alembic::Util::Exception);
+
+        // illegal time sampling index
+        TESTING_ASSERT_THROW(parent->createScalarProperty("emptyInt32",
+                                                          ABCA::MetaData(),
+                                                          ABCA::DataType(Alembic::Util::kInt32POD, 1), 42),
+                             Alembic::Util::Exception);
+
+        parent->createArrayProperty("veryEmptyInt32",
+                                    ABCA::MetaData(), ABCA::DataType(Alembic::Util::kInt32POD, 1), 0);
+
+        // this should throw because the name isn't unique
+        TESTING_ASSERT_THROW(parent->createScalarProperty("veryEmptyInt32",
+                                                          ABCA::MetaData(), ABCA::DataType(Alembic::Util::kInt32POD, 1), 0),
+                             Alembic::Util::Exception);
+
+        ABCA::ArrayPropertyWriterPtr ap = parent->createArrayProperty(
+            "emptyInt64", ABCA::MetaData(),
+            ABCA::DataType(Alembic::Util::kInt64POD, 1), 0);
+
+        // In order to write a zero-length array, you still have to specify
+        // non-rank-0 dimensions.
+        ABCA::Dimensions zeroLengthDims;
+        zeroLengthDims.setRank( 1 );
+        zeroLengthDims[0] = 0;
+        ABCA::ArraySample samp(NULL, ABCA::DataType(Alembic::Util::kInt64POD, 1),
+                              zeroLengthDims );
+        ap->setSample( samp );
+    }
+
+    {
+        A5::ReadArchive r;
+        ABCA::ArchiveReaderPtr a = r( archiveName );
+        ABCA::ObjectReaderPtr archive = a->getTop();
+        ABCA::CompoundPropertyReaderPtr parent = archive->getProperties();
+
+        TESTING_ASSERT(parent->getNumProperties() == 2);
+
+        for (size_t i = 0; i < parent->getNumProperties(); ++i)
+        {
+            ABCA::BasePropertyReaderPtr bp = parent->getProperty( i );
+            TESTING_ASSERT(bp->isArray());
+            TESTING_ASSERT(bp->asScalarPtr() == NULL);
+            TESTING_ASSERT(bp->getParent() == parent);
+            ABCA::ArrayPropertyReaderPtr ap = bp->asArrayPtr();
+            if (ap->getName() == "veryEmptyInt32")
+            {
+                TESTING_ASSERT(ap->getNumSamples() == 0);
+
+                // no samples?  it's scalar like
+                TESTING_ASSERT(ap->isScalarLike());
+            }
+            else if (ap->getName() == "emptyInt64")
+            {
+                ABCA::ArraySampleKey key;
+
+                TESTING_ASSERT(ap->getNumSamples() == 1);
+                ABCA::ArraySamplePtr samp;
+                ap->getSample(0, samp);
+                Dimensions dims0;
+                TESTING_ASSERT(dims0.numPoints() == 0);
+                TESTING_ASSERT(samp->getDimensions().numPoints() == 0);
+                TESTING_ASSERT(!ap->isScalarLike());
+                TESTING_ASSERT(ap->getKey(0, key));
+                TESTING_ASSERT(key.numBytes == 0);
+                TESTING_ASSERT(key.origPOD == Alembic::Util::kInt64POD);
+                TESTING_ASSERT(key.readPOD == Alembic::Util::kInt64POD);
+                TESTING_ASSERT(key.digest.str() ==
+                               "00000000000000000000000000000000");
+            }
+        }
+    }
+}
+
+//-*****************************************************************************
+void testExtentArrayStrings()
+{
+    std::string archiveName = "extentStrArray.abc";
+    {
+        A5::WriteArchive w;
+        ABCA::ArchiveWriterPtr a = w(archiveName, ABCA::MetaData());
+        ABCA::ObjectWriterPtr archive = a->getTop();
+
+        ABCA::CompoundPropertyWriterPtr parent = archive->getProperties();
+
+        ABCA::DataType dtype(Alembic::Util::kStringPOD, 2);
+
+        ABCA::ArrayPropertyWriterPtr awp =
+            parent->createArrayProperty("str", ABCA::MetaData(), dtype, 0);
+
+        std::vector < Alembic::Util::string > vals(6);
+        vals[0] = "Peanut";
+        vals[1] = "butter";
+        vals[2] = "jelly";
+        vals[3] = "time";
+        vals[4] = "nom nom";
+        vals[5] = "";
+
+        std::vector < Alembic::Util::string > vals2(4);
+        vals2[0] = "";
+        vals2[1] = "Is the cake really a lie?";
+        vals2[2] = "";
+        vals2[3] = "I certainly hope not.";
+
+        std::vector < Alembic::Util::string > vals3(4);
+        vals3[0] = "Is the cake really a lie?";
+        vals3[1] = "";
+        vals3[2] = "";
+        vals3[3] = "I certainly hope not.";
+
+        std::vector < Alembic::Util::string > vals4(6);
+        vals4[0] = "a";
+        vals4[1] = "b";
+        vals4[2] = "c";
+        vals4[3] = "d";
+        vals4[4] = "e";
+        vals4[5] = "f";
+
+        awp->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                             Alembic::Util::Dimensions(3)));
+
+        awp->setSample(
+            ABCA::ArraySample(&(vals2.front()), dtype,
+                             Alembic::Util::Dimensions(2)));
+
+        std::vector < Alembic::Util::string > badVals(1);
+        badVals[0] = "This better fail.";
+        TESTING_ASSERT_THROW(awp->setSample(
+                                 ABCA::ArraySample(&(badVals.front()),
+                                                  ABCA::DataType(Alembic::Util::kStringPOD, 1),
+                                                  Alembic::Util::Dimensions(1))), Alembic::Util::Exception);
+
+        awp->setSample(
+            ABCA::ArraySample(&(vals3.front()), dtype,
+                             Alembic::Util::Dimensions(2)));
+
+        awp->setSample(
+            ABCA::ArraySample(&(vals2.front()), dtype,
+                             Alembic::Util::Dimensions(2)));
+
+        awp->setSample(
+            ABCA::ArraySample(&(vals4.front()), dtype,
+                             Alembic::Util::Dimensions(3)));
+
+        std::vector < Alembic::Util::float32_t > vals5(3);
+        vals5[0] = 1.0;
+        vals5[1] = 2.0;
+        vals5[2] = 3.0;
+
+        // this should fail since we are trying to write float data to
+        // a string array property
+        TESTING_ASSERT_THROW(awp->setSample(
+                                 ABCA::ArraySample(&(vals5.front()),
+                                                  ABCA::DataType(Alembic::Util::kFloat32POD, 1),
+                                                  Alembic::Util::Dimensions(3))), Alembic::Util::Exception);
+    }
+
+    {
+        A5::ReadArchive r;
+        ABCA::ArchiveReaderPtr a = r( archiveName );
+        ABCA::ObjectReaderPtr archive = a->getTop();
+        ABCA::CompoundPropertyReaderPtr parent = archive->getProperties();
+        TESTING_ASSERT(parent->getNumProperties() == 1);
+
+        ABCA::BasePropertyReaderPtr bp = parent->getProperty( 0 );
+        TESTING_ASSERT(bp->isArray());
+        ABCA::ArrayPropertyReaderPtr ap = bp->asArrayPtr();
+        TESTING_ASSERT(ap->getNumSamples() == 5);
+
+        ABCA::ArraySamplePtr val;
+
+        ap->getSample(0, val);
+        TESTING_ASSERT(val->getDimensions().numPoints() == 3);
+        TESTING_ASSERT(val->getDimensions().rank() == 1);
+
+        Dimensions dims0;
+        ap->getDimensions(0, dims0);
+        TESTING_ASSERT(dims0.numPoints() == 3);
+        TESTING_ASSERT(dims0.rank() == 1);
+
+        Alembic::Util::string * data = (Alembic::Util::string *)(val->getData());
+
+        TESTING_ASSERT(data[0] == "Peanut");
+        TESTING_ASSERT(data[1] == "butter");
+        TESTING_ASSERT(data[2] == "jelly");
+        TESTING_ASSERT(data[3] == "time");
+        TESTING_ASSERT(data[4] == "nom nom");
+        TESTING_ASSERT(data[5] == "");
+
+        ABCA::ArraySampleKey key;
+        TESTING_ASSERT(ap->getKey(0, key));
+
+        // includes NULL seperator
+        TESTING_ASSERT(key.numBytes == 34);
+        TESTING_ASSERT(key.origPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.readPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.digest.str() ==
+                       "88d5ea1d772131992c9be9a192938df7");
+
+        ap->getSample(1, val);
+        TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+        TESTING_ASSERT(val->getDimensions().rank() == 1);
+
+        ap->getDimensions(1, dims0);
+        TESTING_ASSERT(dims0.numPoints() == 2);
+        TESTING_ASSERT(dims0.rank() == 1);
+
+        data = (Alembic::Util::string *)(val->getData());
+        TESTING_ASSERT(data[0] == "");
+        TESTING_ASSERT(data[1] == "Is the cake really a lie?");
+        TESTING_ASSERT(data[2] == "");
+        TESTING_ASSERT(data[3] == "I certainly hope not.");
+        TESTING_ASSERT(ap->getKey(1, key));
+        TESTING_ASSERT(key.numBytes == 50);
+        TESTING_ASSERT(key.origPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.readPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.digest.str() ==
+                       "126ebab40166a642d3c8cc4c5929074d");
+
+        ap->getSample(2, val);
+        TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+        TESTING_ASSERT(val->getDimensions().rank() == 1);
+        ap->getDimensions(2, dims0);
+        TESTING_ASSERT(dims0.numPoints() == 2);
+        TESTING_ASSERT(dims0.rank() == 1);
+        data = (Alembic::Util::string *)(val->getData());
+        TESTING_ASSERT(data[0] == "Is the cake really a lie?");
+        TESTING_ASSERT(data[1] == "");
+        TESTING_ASSERT(data[2] == "");
+        TESTING_ASSERT(data[3] == "I certainly hope not.");
+        TESTING_ASSERT(ap->getKey(2, key));
+        TESTING_ASSERT(key.numBytes == 50);
+        TESTING_ASSERT(key.origPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.readPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.digest.str() ==
+                       "a197a3747b0666dfacdc17634f5cabff");
+
+        ap->getSample(3, val);
+        ap->getDimensions(3, dims0);
+        TESTING_ASSERT(dims0.numPoints() == 2);
+        TESTING_ASSERT(dims0.rank() == 1);
+        TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+        TESTING_ASSERT(val->getDimensions().rank() == 1);
+        data = (Alembic::Util::string *)(val->getData());
+        TESTING_ASSERT(data[0] == "");
+        TESTING_ASSERT(data[1] == "Is the cake really a lie?");
+        TESTING_ASSERT(data[2] == "");
+        TESTING_ASSERT(data[3] == "I certainly hope not.");
+        TESTING_ASSERT(ap->getKey(3, key));
+        TESTING_ASSERT(key.numBytes == 50);
+        TESTING_ASSERT(key.origPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.readPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.digest.str() ==
+                       "126ebab40166a642d3c8cc4c5929074d");
+
+        ap->getSample(4, val);
+        ap->getDimensions(4, dims0);
+        TESTING_ASSERT(dims0.numPoints() == 3);
+        TESTING_ASSERT(dims0.rank() == 1);
+        TESTING_ASSERT(val->getDimensions().numPoints() == 3);
+        TESTING_ASSERT(val->getDimensions().rank() == 1);
+        data = (Alembic::Util::string *)(val->getData());
+        TESTING_ASSERT(data[0] == "a");
+        TESTING_ASSERT(data[1] == "b");
+        TESTING_ASSERT(data[2] == "c");
+        TESTING_ASSERT(data[3] == "d");
+        TESTING_ASSERT(data[4] == "e");
+        TESTING_ASSERT(data[5] == "f");
+        TESTING_ASSERT(ap->getKey(4, key));
+        TESTING_ASSERT(key.numBytes == 12);
+        TESTING_ASSERT(key.origPOD == Alembic::Util::kStringPOD);
+        TESTING_ASSERT(key.readPOD == Alembic::Util::kStringPOD);
+    }
+}
+
+//-*****************************************************************************
+void testArrayStringsRepeats()
+{
+    std::string archiveName = "strArrayRepeats.abc";
+    std::vector < Alembic::Util::string > vals(6);
+    vals[0] = "if you want";
+    vals[1] = "a revolution";
+    vals[2] = "the only";
+    vals[3] = "solution";
+    vals[4] = "...";
+    vals[5] = "evolve";
+
+    std::vector < Alembic::Util::string > vals2(4);
+    vals2[0] = "bom bom";
+    vals2[1] = "bom";
+    vals2[2] = "bom bom";
+    vals2[3] = "bom";
+
+    std::vector < Alembic::Util::string > valsEmpty(4);
+
+    ABCA::DataType dtype(Alembic::Util::kStringPOD);
+
+    {
+        A5::WriteArchive w;
+        ABCA::ArchiveWriterPtr a = w(archiveName, ABCA::MetaData());
+        ABCA::ObjectWriterPtr archive = a->getTop();
+
+        ABCA::CompoundPropertyWriterPtr parent = archive->getProperties();
+
+        ABCA::ArrayPropertyWriterPtr awp =
+            parent->createArrayProperty("str", ABCA::MetaData(), dtype, 0);
+
+        // 0
+        awp->setSample(ABCA::ArraySample(&(valsEmpty.front()), dtype,
+            Alembic::Util::Dimensions(valsEmpty.size())));
+
+        // 1
+        awp->setSample(ABCA::ArraySample(&(valsEmpty.front()), dtype,
+            Alembic::Util::Dimensions(valsEmpty.size())));
+
+        // 2
+        awp->setSample(ABCA::ArraySample(&(valsEmpty.front()), dtype,
+            Alembic::Util::Dimensions(valsEmpty.size())));
+
+        // 3
+        awp->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                        Alembic::Util::Dimensions(vals.size())));
+
+        // 4
+        awp->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                        Alembic::Util::Dimensions(vals.size())));
+
+        // 5
+        awp->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                        Alembic::Util::Dimensions(vals.size())));
+
+        // 6
+        awp->setSample(
+            ABCA::ArraySample(&(vals2.front()), dtype,
+                        Alembic::Util::Dimensions(vals2.size())));
+
+        // 7
+        awp->setSample(
+            ABCA::ArraySample(&(vals2.front()), dtype,
+                        Alembic::Util::Dimensions(vals2.size())));
+
+        // 8
+        awp->setSample(ABCA::ArraySample(&(valsEmpty.front()), dtype,
+            Alembic::Util::Dimensions(valsEmpty.size())));
+
+        // 9
+        awp->setSample(ABCA::ArraySample(&(valsEmpty.front()), dtype,
+            Alembic::Util::Dimensions(valsEmpty.size())));
+
+        dtype.setExtent(2);
+        ABCA::ArrayPropertyWriterPtr awp2 =
+            parent->createArrayProperty("str2", ABCA::MetaData(), dtype, 0);
+
+        // 0
+        awp2->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                        Alembic::Util::Dimensions(vals.size() / 2)));
+
+        // 1
+        awp2->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                        Alembic::Util::Dimensions(vals.size() / 2)));
+
+        // 2
+        awp2->setSample(
+            ABCA::ArraySample(&(vals.front()), dtype,
+                        Alembic::Util::Dimensions(vals.size() / 2)));
+
+        // 3
+        awp2->setSample(
+            ABCA::ArraySample(NULL, dtype, Alembic::Util::Dimensions(0)));
+
+        // 4
+        awp2->setSample(
+            ABCA::ArraySample(&(vals2.front()), dtype,
+                        Alembic::Util::Dimensions(vals2.size() / 2)));
+
+        // 5
+        awp2->setSample(
+            ABCA::ArraySample(&(vals2.front()), dtype,
+                        Alembic::Util::Dimensions(vals2.size() / 2)));
+
+    }
+
+    {
+        A5::ReadArchive r;
+        ABCA::ArchiveReaderPtr a = r( archiveName,
+                                     ABCA::ReadArraySampleCachePtr() );
+        ABCA::ObjectReaderPtr archive = a->getTop();
+        ABCA::CompoundPropertyReaderPtr parent = archive->getProperties();
+        TESTING_ASSERT(parent->getNumProperties() == 2);
+
+        ABCA::ArrayPropertyReaderPtr ap = parent->getArrayProperty("str");
+        TESTING_ASSERT(ap->getNumSamples() == 10);
+
+        ABCA::ArrayPropertyReaderPtr ap2 = parent->getArrayProperty("str2");
+        TESTING_ASSERT(ap2->getNumSamples() == 6);
+
+        ABCA::ArraySamplePtr val;
+        for (int i = 0; i < 10; ++i)
+        {
+            ap->getSample(i, val);
+            Alembic::Util::string * data =
+                (Alembic::Util::string *)(val->getData());
+            if (i < 3 || i > 7)
+            {
+                TESTING_ASSERT(val->getDimensions().numPoints() == 4);
+                TESTING_ASSERT(val->getDimensions().rank() == 1);
+                TESTING_ASSERT(data[0] == "");
+                TESTING_ASSERT(data[1] == "");
+                TESTING_ASSERT(data[2] == "");
+                TESTING_ASSERT(data[3] == "");
+            }
+
+            if (i == 3 || i == 4  || i == 5)
+            {
+                TESTING_ASSERT(val->getDimensions().numPoints() == 6);
+                TESTING_ASSERT(val->getDimensions().rank() == 1);
+                for (unsigned int j = 0; j < vals.size(); ++j)
+                {
+                    TESTING_ASSERT(data[j] == vals[j]);
+                }
+            }
+
+            if (i == 6 || i == 7)
+            {
+                TESTING_ASSERT(val->getDimensions().numPoints() == 4);
+                TESTING_ASSERT(val->getDimensions().rank() == 1);
+                for (unsigned int j = 0; j < vals2.size(); ++j)
+                {
+                    TESTING_ASSERT(data[j] == vals2[j]);
+                }
+            }
+        }
+
+        for (int i = 0; i < 6; ++i)
+        {
+            ap2->getSample(i, val);
+            Alembic::Util::string * data =
+                (Alembic::Util::string *)(val->getData());
+
+            if (i < 3)
+            {
+                TESTING_ASSERT(val->getDimensions().numPoints() == 3);
+                TESTING_ASSERT(val->getDimensions().rank() == 1);
+                for (unsigned int j = 0; j < vals.size(); ++j)
+                {
+                    TESTING_ASSERT(data[j] == vals[j]);
+                }
+            }
+
+            if (i == 3)
+            {
+                TESTING_ASSERT(val->getDimensions().numPoints() == 0);
+                TESTING_ASSERT(val->getDimensions().rank() == 1);
+            }
+
+            if (i > 3)
+            {
+                TESTING_ASSERT(val->getDimensions().numPoints() == 2);
+                TESTING_ASSERT(val->getDimensions().rank() == 1);
+                for (unsigned int j = 0; j < vals2.size(); ++j)
+                {
+                    TESTING_ASSERT(data[j] == vals2[j]);
+                }
+            }
+        }
+    }
+}
+
+int main ( int argc, char *argv[] )
+{
+    testEmptyArray();
+    testDuplicateArray();
+    testReadWriteArrays();
+    testExtentArrayStrings();
+    testArrayStringsRepeats();
+    return 0;
+}
