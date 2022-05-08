@@ -13,53 +13,52 @@
 
 #define GET_SYMBOL_NAME        SlkGetSymbolName
 
-short SlkError::mismatch(short terminal, short token)
+short SlkError::mismatch(short terminal, short token, SlkToken& tokens)
 {
-  if (mDslFile && mTokens) {
+  if (mDslFile) {
     char* p = mDslFile->NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] expecting '%s' but found '%s' \n",
-      mTokens->getLineNumber(),
-      mTokens->getLastToken(),
-      mTokens->getCurToken(),
+      tokens.getLineNumber(),
+      tokens.getLastToken(),
+      tokens.getCurToken(),
       GET_SYMBOL_NAME(terminal),
       GET_SYMBOL_NAME(token));
   }
   return token;
 }
 
-short SlkError::no_entry(short nonterminal, short token, int level)
+short SlkError::no_entry(short entry, short nonterminal, short token, int level, SlkToken& tokens)
 {
-  if (mDslFile && mTokens) {
+  if (mDslFile) {
     char* p = mDslFile->NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] syntax error: skipping input '%s' \n",
-      mTokens->getLineNumber(),
-      mTokens->getLastToken(),
-      mTokens->getCurToken(),
+      tokens.getLineNumber(),
+      tokens.getLastToken(),
+      tokens.getCurToken(),
       GET_SYMBOL_NAME(token));
 
-    token = mTokens->get();// advance the input
+    token = tokens.get();// advance the input
     return token;
   } else {
     return 0;
   }
 }
 
-void SlkError::input_left(void)
+void SlkError::input_left(SlkToken& tokens)
 {
-  if (mDslFile && mTokens) {
+  if (mDslFile) {
     char* p = mDslFile->NewErrorInfo();
     if (p)
       tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "[line:%d last:%s cur:%s] syntax completion, skipping left . \n",
-      mTokens->getLineNumber(),
-      mTokens->getLastToken(),
-      mTokens->getCurToken());
+      tokens.getLineNumber(),
+      tokens.getLastToken(),
+      tokens.getCurToken());
   }
 }
 
-SlkError::SlkError(SlkToken& tokens, Dsl::DslFile& dslFile) :mTokens(&tokens), mDslFile(&dslFile)
+SlkError::SlkError(Dsl::DslFile& dslFile) :mDslFile(&dslFile)
 {
-  MyAssert(mTokens);
   MyAssert(mDslFile);
 }

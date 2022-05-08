@@ -338,7 +338,7 @@ get_predicted_entry ( LuaToken   tokens,
                         lhs = Production[++index];
 
                         if (lhs == symbol) {
-                            action.predict(entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
+                            action.predict(entry, symbol, token, level - 1, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
                             index += production_length;
                             for (; production_length-- > 0; --index) {
                                 if (top > 0) {
@@ -348,13 +348,11 @@ get_predicted_entry ( LuaToken   tokens,
                             }
                         }
                         else {
-                            action.predict(entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
-                            new_token = error.no_entry(symbol, token, level - 1, ref tokens);
+                            new_token = error.no_entry(entry, symbol, token, level - 1, ref tokens);
                         }
                     }
                     else {
-                        action.predict(entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
-                        new_token = error.no_entry(symbol, token, level - 1, ref tokens);
+                        new_token = error.no_entry(entry, symbol, token, level - 1, ref tokens);
                     }
                 }
                 else if (symbol > 0) {

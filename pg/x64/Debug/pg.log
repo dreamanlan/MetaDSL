@@ -27,9 +27,9 @@ D:\GitHub\MetaDSL\pg\pg.c(8579,18): warning C4267: “=”: 从“size_t”转�
 D:\GitHub\MetaDSL\pg\pg.c(8609,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(9524,53): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(9558,49): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(14311,31): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(14443,27): warning C4018: “<”: 有符号/无符号不匹配
-D:\GitHub\MetaDSL\pg\pg.c(14481,24): warning C4018: “>”: 有符号/无符号不匹配
-D:\GitHub\MetaDSL\pg\pg.c(14560,41): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(14309,31): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(14441,27): warning C4018: “<”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(14479,24): warning C4018: “>”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(14558,41): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据
   main.cpp
   pg.vcxproj -> D:\GitHub\MetaDSL\x64\Debug\pg.exe

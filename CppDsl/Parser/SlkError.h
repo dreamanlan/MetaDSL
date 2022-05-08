@@ -15,12 +15,11 @@ class SlkToken;
 class SlkError
 {
 public:
-  SlkError(SlkToken& tokens, Dsl::DslFile& dslFile);
-  short mismatch(short symbol, short token);
-  short no_entry(short nonterminal, short token, int level);
-  void input_left(void);
+  SlkError(Dsl::DslFile& dslFile);
+  short mismatch(short symbol, short token, SlkToken& tokens);
+  short no_entry(short entry, short nonterminal, short token, int level, SlkToken& tokens);
+  void input_left(SlkToken& tokens);
 private:
-  SlkToken* mTokens;
   Dsl::DslFile* mDslFile;
 };
 

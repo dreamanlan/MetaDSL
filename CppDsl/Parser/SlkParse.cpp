@@ -326,16 +326,16 @@ static slk_size_t Conflict_row[] = {0
 #define SLK_PUSH(symbol,stack,top) if ( top > stack ) *--top = symbol
 #define SLK_POP(top)   (*top ? *top++ : 0)
 
-#define peek(self,a)            self.peek(a)
-#define get(self)               self.get()
-#define mismatch(self,a,b)      self.mismatch(a,b)
-#define no_entry(self,a,b,c)    self.no_entry(a,b,c)
-#define input_left(self)        self.input_left()
-#define message(self,a)         self.message(a)
-#define predict(self,a,b,c,d,e,f)         self.predict(a,b,c,d,e,f)
-#define reduce(self,a)          self.reduce(a)
-#define state(self,a)           self.state(a)
-#define execute(self,a)         self.execute(a)
+#define peek(self,a)                   self.peek(a)
+#define get(self)                      self.get()
+#define mismatch(self,a,b,c)           self.mismatch(a,b,c)
+#define no_entry(self,a,b,c,d,e)       self.no_entry(a,b,c,d,e)
+#define input_left(self,a)             self.input_left(a)
+#define message(self,a,b)              self.message(a,b)
+#define predict(self,a,b,c,d,e,f,g,h)  self.predict(a,b,c,d,e,f,g,h)
+#define reduce(self,a)                 self.reduce(a)
+#define state(self,a)                  self.state(a)
+#define execute(self,a)                self.execute(a)
 
 #define NOT_A_SYMBOL       0
 #define NONTERMINAL_SYMBOL 1
@@ -425,25 +425,23 @@ void SlkParse ( SlkAction  &action,
              production = &Production [ Production_row [entry] ];
              production_length = *production - 1;
              if ( *++production == symbol ) {
-                 predict ( action, entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber() );
+                 predict ( action, entry, symbol, token, level - 1, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber() );
                  production += production_length;
                  for (;  production_length-- > 0;  --production ) {
                      SLK_PUSH ( *production, stack, top );
                  }
              } else {
-                 predict(action, entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
-                 new_token = no_entry ( error, symbol, token, level-1 );
+                 new_token = no_entry ( error, entry, symbol, token, level - 1, tokens );
              }
          } else {
-             predict(action, entry, token, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
-             new_token = no_entry ( error, symbol, token, level-1 );
+             new_token = no_entry ( error, entry, symbol, token, level - 1, tokens );
          }
      } else if ( symbol > 0 ) {
          if ( symbol == token ) {
              token = get(tokens);
              new_token = token;
          } else {
-             new_token = mismatch ( error, symbol, token );
+             new_token = mismatch ( error, symbol, token, tokens );
          }
      }
      if ( token != new_token ) {
@@ -457,7 +455,7 @@ void SlkParse ( SlkAction  &action,
      symbol = SLK_POP ( top );
  }
  if ( token != END_OF_SLK_INPUT_ ) {
-     input_left ( error );
+     input_left ( error, tokens );
  }
 }
 

@@ -180,3 +180,4 @@ static l891 l894 = {
 4、pg.c里面的main改为cmain，然后在cpp的main里调用cmain，声明为extern "C" int cmain(int, char* []);
 5、工程里的SDL检查关掉或者将报错的未初化指针赋初值NULL
 6、编译警告看情况是否修改，主要是size_t与int/uint转换或比较的报警，有一处char*转long的报警可以考虑改为指针判空。
+7、c++的LL分析算法的predict与error函数原型修改为与c#一致，这个用宏实现，对应的宏也要修改。

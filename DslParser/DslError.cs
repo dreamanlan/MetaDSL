@@ -18,7 +18,7 @@ namespace Dsl.Parser
             return token;
         }
 
-        internal short no_entry(short nonterminal, short token, int level, ref DslToken dslToken)
+        internal short no_entry(short entry, short nonterminal, short token, int level, ref DslToken dslToken)
         {
             mLog.Error("[error] syntax error: skipping input {0}, last token {1} line {2}, cur token {3} line {4}", DslString.GetSymbolName(token), dslToken.getLastToken(), dslToken.getLastLineNumber(), dslToken.getCurToken(), dslToken.getLineNumber());
             token = dslToken.get(); // advance the input

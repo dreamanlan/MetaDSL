@@ -85,7 +85,7 @@ namespace Dsl.Common
             set { mSetScriptDelimiter = value; }
         }
 
-        internal void predict(short production_number, short token, string lastTok, int lastLineNo, string curTok, int lineNo)
+        internal void predict(short entry, short production_number, short token, int level, string lastTok, int lastLineNo, string curTok, int lineNo)
         {
             /*//
             switch (mActionType) {

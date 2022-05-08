@@ -200,7 +200,7 @@ namespace Dsl
     {
         file.ClearErrorInfo();
         SlkToken tokens(source, file);
-        SlkError error(tokens, file);
+        SlkError error(file);
         ActionForSourceCodeScript action(tokens, file);
         SlkParse(action, tokens, error, 0);
     }
