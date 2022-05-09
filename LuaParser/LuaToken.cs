@@ -278,6 +278,40 @@ namespace Dsl.Parser
                             else if (CurChar == 'f') {
                                 mTokenBuilder.Append('\f');
                             }
+                            else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
+                                ++mIterator;
+                                //4位16进制数
+                                char h1 = CurChar;
+                                ++mIterator;
+                                char h2 = CurChar;
+                                ++mIterator;
+                                char h3 = CurChar;
+                                ++mIterator;
+                                char h4 = CurChar;
+                                mTokenBuilder.Append((char)((mychar2int(h1) << 12) + (mychar2int(h2) << 8) + (mychar2int(h3) << 4) + mychar2int(h4)));
+                            }
+                            else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
+                                && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
+                                ++mIterator;
+                                //8位16进制数
+                                char h1 = CurChar;
+                                ++mIterator;
+                                char h2 = CurChar;
+                                ++mIterator;
+                                char h3 = CurChar;
+                                ++mIterator;
+                                char h4 = CurChar;
+                                ++mIterator;
+                                char h5 = CurChar;
+                                ++mIterator;
+                                char h6 = CurChar;
+                                ++mIterator;
+                                char h7 = CurChar;
+                                ++mIterator;
+                                char h8 = CurChar;
+                                mTokenBuilder.Append((char)((mychar2int(h5) << 12) + (mychar2int(h6) << 8) + (mychar2int(h7) << 4) + mychar2int(h8)));
+                                mTokenBuilder.Append((char)((mychar2int(h1) << 12) + (mychar2int(h2) << 8) + (mychar2int(h3) << 4) + mychar2int(h4)));
+                            }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
                                 //1~2位16进制数
@@ -647,20 +681,21 @@ namespace Dsl.Parser
         private char CurChar
         {
             get {
-                char c = (char)0;
-                if (mIterator < mInput.Length)
-                    c = mInput[mIterator];
-                return c;
+                return PeekChar(0);
             }
         }
         private char NextChar
         {
             get {
-                char c = (char)0;
-                if (mIterator + 1 < mInput.Length)
-                    c = mInput[mIterator + 1];
-                return c;
+                return PeekChar(1);
             }
+        }
+        private char PeekChar(int ix)
+        {
+            char c = (char)0;
+            if (ix >= 0 && mIterator + ix < mInput.Length)
+                c = mInput[mIterator + ix];
+            return c;
         }
 
         private static bool myisdigit(char c, bool isHex)

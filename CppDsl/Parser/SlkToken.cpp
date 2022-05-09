@@ -896,8 +896,8 @@ short SlkToken::get(void)
                         char h3 = curChar();
                         ++mIterator;
                         char h4 = curChar();
-                        pushTokenChar((char)((mychar2int(h2) << 4) + mychar2int(h1)));
-                        pushTokenChar((char)((mychar2int(h4) << 4) + mychar2int(h3)));
+                        pushTokenChar((char)((mychar2int(h3) << 4) + mychar2int(h4)));
+                        pushTokenChar((char)((mychar2int(h1) << 4) + mychar2int(h2)));
                     }
                     else if (curChar() == 'U' && myisdigit(nextChar(), true) && myisdigit(peekChar(2), true) && myisdigit(peekChar(3), true)
                         && myisdigit(peekChar(4), true) && myisdigit(peekChar(5), true) && myisdigit(peekChar(6), true) && myisdigit(peekChar(7), true)) {
@@ -918,10 +918,10 @@ short SlkToken::get(void)
                         char h7 = curChar();
                         ++mIterator;
                         char h8 = curChar();
-                        pushTokenChar((char)((mychar2int(h2) << 4) + mychar2int(h1)));
-                        pushTokenChar((char)((mychar2int(h4) << 4) + mychar2int(h3)));
-                        pushTokenChar((char)((mychar2int(h6) << 4) + mychar2int(h5)));
-                        pushTokenChar((char)((mychar2int(h8) << 4) + mychar2int(h7)));
+                        pushTokenChar((char)((mychar2int(h7) << 4) + mychar2int(h8)));
+                        pushTokenChar((char)((mychar2int(h5) << 4) + mychar2int(h6)));
+                        pushTokenChar((char)((mychar2int(h3) << 4) + mychar2int(h4)));
+                        pushTokenChar((char)((mychar2int(h1) << 4) + mychar2int(h2)));
                     }
                     else if (curChar() == 'x' && myisdigit(nextChar(), true)) {
                         ++mIterator;

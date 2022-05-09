@@ -880,7 +880,7 @@ namespace Dsl.Common
             var secondId = second.GetId();
             var thirdId = third.GetId();
             if (firstId == "explicit" && null != secondFunc && secondFunc.HaveId() && secondFunc.HaveParam() && thirdId == ":" && (!curIsColon || third == last) ||
-                null != firstFunc && firstFunc.HaveId() && firstFunc.HaveParam() && secondId == ":" && (!curIsColon || second == last)) {
+                null != firstFunc && firstFunc.HaveId() && firstFunc.HaveParam() && secondId == ":" && firstId != "case" && (!curIsColon || second == last)) {
                 ret = true;
             }
             return ret;

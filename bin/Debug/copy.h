@@ -13,4 +13,6 @@
 	y "=" offsetof(index_t, num);
 	return 0;
 };
-abc(()abcd);
+abc(()abcd)
+{
+};

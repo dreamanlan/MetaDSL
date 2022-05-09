@@ -425,7 +425,7 @@ namespace Dsl.Parser
                                 char h3 = CurChar;
                                 ++mIterator;
                                 char h4 = CurChar;
-                                mTokenBuilder.Append((char)((mychar2int(h4) << 12) + (mychar2int(h3) << 8) + (mychar2int(h2) << 4) + mychar2int(h1)));
+                                mTokenBuilder.Append((char)((mychar2int(h1) << 12) + (mychar2int(h2) << 8) + (mychar2int(h3) << 4) + mychar2int(h4)));
                             }
                             else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
                                 && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
@@ -446,8 +446,8 @@ namespace Dsl.Parser
                                 char h7 = CurChar;
                                 ++mIterator;
                                 char h8 = CurChar;
-                                mTokenBuilder.Append((char)((mychar2int(h4) << 12) + (mychar2int(h3) << 8) + (mychar2int(h2) << 4) + mychar2int(h1)));
-                                mTokenBuilder.Append((char)((mychar2int(h8) << 12) + (mychar2int(h7) << 8) + (mychar2int(h6) << 4) + mychar2int(h5)));
+                                mTokenBuilder.Append((char)((mychar2int(h5) << 12) + (mychar2int(h6) << 8) + (mychar2int(h7) << 4) + mychar2int(h8)));
+                                mTokenBuilder.Append((char)((mychar2int(h1) << 12) + (mychar2int(h2) << 8) + (mychar2int(h3) << 4) + mychar2int(h4)));
                             }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
