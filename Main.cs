@@ -14,6 +14,8 @@ namespace Dsl
             DslLogDelegation logCallback = (string msg) => {
                 Console.WriteLine("{0}", msg);
             };
+            //string txt = Utility.CheckCppParseTable();
+            //File.WriteAllText("CppParseTableCheck.txt", txt);
             //DslFile.DontLoadComments = true;
             List<string> keyBuffer = new List<string>();
             List<string> idBuffer = new List<string>();

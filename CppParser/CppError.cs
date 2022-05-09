@@ -21,9 +21,10 @@ namespace Dsl.Parser
             return terminal;
         }
 
-        internal short no_entry(int entry, short nonterminal, short token, int level, ref CppToken cppToken)
+        internal short no_entry(short productionNumber, short nonterminal, short token, int level, ref CppToken cppToken)
         {
-            mLog.Error("[error] syntax error: skipping input {0}, last token {1} line {2}, cur token {3} line {4}", CppString.GetSymbolName(token), cppToken.getLastToken(), cppToken.getLastLineNumber(), cppToken.getCurToken(), cppToken.getLineNumber());
+            //注：对cpp.txt文法，这类错误好像只在程序开头出现 ) ] } 三个字符的时候
+            mLog.Error("[error] syntax error: skipping input {0}, last token {1} line {2}, cur token {3} line {4} [production: {5} nonterminal: {6} ]", CppString.GetSymbolName(token), cppToken.getLastToken(), cppToken.getLastLineNumber(), cppToken.getCurToken(), cppToken.getLineNumber(), CppString.GetProductionName(productionNumber), CppString.GetSymbolName(nonterminal));
             token = cppToken.get(); // advance the input
             return token;
         }

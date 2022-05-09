@@ -172,6 +172,15 @@ static l891 l894 = {
 在pg.c里搜索ACTION_SYMBOL可以看到输出这个符号定义的地方，可以在它之后添加一个常量PARSE_STACK_SIZE来记录命令行传入的栈大小，然后在分析代码模板里使用此常量。
 
 
+c#的LL分析算法添加一个internal的静态Accept，原型如下(IVisitor在Dsl.Common里定义，所以分析算法也引入了这个名字空间)
+internal static 
+void Accept(IVisitor visitor)
+{
+    visitor.Visit(Production, Production_row, Parse, Parse_row);
+}
+
+
+
 主要修改：
 0、工程编译选项里加上预处理宏_CRT_SECURE_NO_WARNINGS
 1、C#与java共用的代码模板，装LL分析算法部分拆分出C#版本（模板代码里使用PARSE_STACK_SIZE符号来表示栈大小），并按MetaDSL的需求修改，注意这个代码模板有2处引用，一处是结构赋值，一处是替换xxx为指定名称前缀的代码，
@@ -183,3 +192,5 @@ static l891 l894 = {
 6、编译警告看情况是否修改，主要是size_t与int/uint转换或比较的报警，有一处char*转long的报警可以考虑改为指针判空。
 7、c++的LL分析算法的predict与error函数原型修改为与c#一致，这个用宏实现，对应的宏也要修改。另外,SLK_PUSH宏的else添加stack overflow提示信息，还有分析程序symbol为0也添加提示信息（与c#一致）。
 注意：SLK_PUSH宏也用在c语言代码生成里，会导致c语言版本报错（我们不用先不管了）。
+8、c#的LL分析算法添加一个internal的静态Accept(IVisitor visitor)方法，用来供外部检查分析表数据。同时在分析算法文件头引入Dsl.Common名字空间并将xxxAction固定为DslAction。
+9、对应的LR分析算法也拆分了c#版本并按LL算法的外部接口进行相应调整。一共拆分5段代码，l1850~l1854，同时也都需要对xxx前缀替换添加相应处理。

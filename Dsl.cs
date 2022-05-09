@@ -1316,6 +1316,12 @@ namespace Dsl
 
     public sealed class Utility
     {
+        public static string CheckCppParseTable()
+        {
+            var checker = new CppParseTableChecker();
+            Dsl.Parser.CppParser.Accept(checker);
+            return checker.GetResults();
+        }
         internal static int readInt(byte[] bytes, int pos)
         {
             if (null != bytes && pos >= 0 && pos + 3 < bytes.Length) {
@@ -2229,5 +2235,41 @@ namespace Dsl
             stream.WriteByte((byte)DslBinaryCode.EndStatement);
         }
 #endif
+    }
+
+    internal class CppParseTableChecker : Dsl.Common.IVisitor
+    {
+        public void Visit(short[] production, int[] production_row, short[] parse, int[] parse_row, short start_symbol, short start_action)
+        {
+            for (short sym = start_symbol; sym < start_action; ++sym) {
+                for (short tok = 1; tok < start_symbol; ++tok) {
+                    short entry, lhs;
+                    int index;
+                    index = parse_row[sym - (start_symbol - 1)];
+                    index += tok;
+                    entry = parse[index];
+                    if (entry <= 0) {
+                        m_StringBuilder.AppendFormat("Error for symbol {0} token {1}", Dsl.Parser.CppString.GetSymbolName(sym), Dsl.Parser.CppString.GetSymbolName(tok));
+                    }
+                    else {
+                        index = production_row[entry];
+                        lhs = production[index + 1];
+                        if (lhs != sym) {
+                            m_StringBuilder.AppendFormat("Error for symbol {0} token {1} lhs {2} production {3}", Dsl.Parser.CppString.GetSymbolName(sym), Dsl.Parser.CppString.GetSymbolName(tok), Dsl.Parser.CppString.GetSymbolName(lhs), Dsl.Parser.CppString.GetProductionName(entry));
+                        }
+                        else {
+                            m_StringBuilder.AppendFormat("Success for symbol {0} token {1} production {2}", Dsl.Parser.CppString.GetSymbolName(sym), Dsl.Parser.CppString.GetSymbolName(tok), Dsl.Parser.CppString.GetProductionName(entry));
+                        }
+                    }
+                    m_StringBuilder.AppendLine();
+                }
+            }
+        }
+        public string GetResults()
+        {
+            return m_StringBuilder.ToString();
+        }
+
+        private StringBuilder m_StringBuilder = new StringBuilder();
     }
 }

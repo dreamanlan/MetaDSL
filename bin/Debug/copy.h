@@ -1,38 +1,16 @@
-@@ifndef("PRORES_DECODER_H")@@define("PRORES_DECODER_H")@@ifdef("__cplusplus")extern "C"
+[[]]int main()
 {
-	@@endif()@@ifndef("PR_PIXEL_FORMAT_DEFINED")typedef enum
+	struct index_st
 	{
-		kPRFormat_2vuy "=" "2vuy";
-		kPRFormat_v210 "=" "v210";
-		kPRFormat_v216 "=" "v216";
-		kPRFormat_y416 "=" "y416";
-		kPRFormat_r4fl "=" "r4fl";
-		kPRFormat_R10k "=" "R10k";
-		kPRFormat_r210 "=" "r210";
-		kPRFormat_b64a "=" "b64a";
-	}
-	PRPixelFormat;
-	@@define("PR_PIXEL_FORMAT_DEFINED")@@endif()typedef enum
-	{
-		kPRFullSize;
-		kPRHalfSize;
-		kPRQuarterSize;
-	}
-	PRDownscaleMode;
-	typedef struct PRDecoder "*" PRDecoderRef;
-	struct PRPixelBuffer
-	{
-		unsigned char "*" baseAddr;
-		int rowBytes;
-		PRPixelFormat format;
-		int width;
-		int height;
+		unsigned char type;
+		unsigned char num;
+		unsigned int len;
 	};
-	typedef struct PRPixelBuffer PRPixelBuffer;
-	int PRBytesPerRowNeededInPixelBuffer(int frameWidth, PRPixelFormat pixelFormat, PRDownscaleMode downscaleMode);
-	PRDecoderRef PROpenDecoder(int numThreads, void("*" threadStartupCallback)());
-	int PRDecodeFrame(PRDecoderRef decoder, const void "*" compressedFrame, int compressedFrameSize, PRPixelBuffer "*" destinationBuffer, PRDownscaleMode downscaleMode, bool ignoreAlpha);
-	void PRCloseDecoder(PRDecoderRef decoder);
-	@@ifdef("__cplusplus");
-}
-@@endif()@@endif();
+	typedef struct index_st index_t;
+	int x;
+	y;
+	x "=" offsetof(struct index_st, len);
+	y "=" offsetof(index_t, num);
+	return 0;
+};
+abc(()abcd);

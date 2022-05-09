@@ -18,9 +18,9 @@ namespace Dsl.Parser
             return token;
         }
 
-        internal short no_entry(short entry, short nonterminal, short token, int level, ref LuaToken luaToken)
+        internal short no_entry(short productionNumber, short nonterminal, short token, int level, ref LuaToken luaToken)
         {
-            mLog.Error("[error] syntax error: skipping input {0}, last token {1} line {2}, cur token {3} line {4}", LuaString.GetSymbolName(token), luaToken.getLastToken(), luaToken.getLastLineNumber(), luaToken.getCurToken(), luaToken.getLineNumber());
+            mLog.Error("[error] syntax error: skipping input {0}, last token {1} line {2}, cur token {3} line {4} [production: {5} nonterminal: {6} ]", CppString.GetSymbolName(token), luaToken.getLastToken(), luaToken.getLastLineNumber(), luaToken.getCurToken(), luaToken.getLineNumber(), CppString.GetProductionName(productionNumber), CppString.GetSymbolName(nonterminal));
             token = luaToken.get(); // advance the input
             return token;
         }

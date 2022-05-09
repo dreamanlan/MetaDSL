@@ -85,21 +85,25 @@ namespace Dsl.Common
             set { mSetScriptDelimiter = value; }
         }
 
-        internal void predict(short entry, short production_number, short token, int level, string lastTok, int lastLineNo, string curTok, int lineNo)
+        internal void predict(short productionNumber, short nonterminal, short token, int level, string lastTok, int lastLineNo, string curTok, int lineNo)
         {
-            /*//
             switch (mActionType) {
                 case DslActionType.Dsl:
-                    mLog.Log("{0} [token symbol:{1} last token:{2} line:{3} cur token:{4} line:{5}]", Dsl.Parser.DslString.GetProductionName(production_number), Dsl.Parser.DslString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
+                    //mLog.Log("{0} [production: {1} nonterminal: {2} token symbol: {3} last token: {4} line: {5} cur token: {6} line: {7} ]", Dsl.Parser.DslString.GetProductionName(productionNumber), productionNumber, nonterminal, Dsl.Parser.DslString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
                     break;
                 case DslActionType.Lua:
-                    mLog.Log("{0} [token symbol:{1} last token:{2} line:{3} cur token:{4} line:{5}]", Dsl.Parser.LuaString.GetProductionName(production_number), Dsl.Parser.LuaString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
+                    //mLog.Log("{0} [production: {1} nonterminal: {2} token symbol: {3} last token: {4} line: {5} cur token: {6} line: {7} ]", Dsl.Parser.LuaString.GetProductionName(productionNumber), productionNumber, nonterminal, Dsl.Parser.LuaString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
                     break;
                 case DslActionType.Cpp:
-                    mLog.Log("{0} [token symbol:{1} last token:{2} line:{3} cur token:{4} line:{5}]", Dsl.Parser.CppString.GetProductionName(production_number), Dsl.Parser.CppString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
+                    //mLog.Log("{0} [production: {1} nonterminal: {2} token symbol: {3} last token: {4} line: {5} cur token: {6} line: {7} ]", Dsl.Parser.CppString.GetProductionName(productionNumber), productionNumber, nonterminal, Dsl.Parser.CppString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
+                    
+                    //var list = Dsl.Parser.CppParser.GetProductionArray(productionNumber);
+                    //mLog.Log("\tproduction length:{0}|{1}=>", list[0], list[1]);
+                    //for (int i = 2; i <= list[0] && i < list.Length; ++i) {
+                    //    mLog.Log("\t\t{0}", list[i]);
+                    //}
                     break;
             }
-            //*/
         }
         internal void execute(int number)
         {
@@ -1077,5 +1081,9 @@ namespace Dsl.Common
         private Stack<StatementData> mStatementSemanticStack;
 
         private static List<string> s_EmptyList = new List<string>();
+    }
+    internal interface IVisitor
+    {
+        void Visit(short[] production, int[] production_row, short[] parse, int[] parse_row, short start_symbol, short start_action);
     }
 }
