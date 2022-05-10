@@ -423,12 +423,13 @@ namespace Dsl
 
     void DslFile::ParseGpp(const char* buf)
     {
-        Dsl::ParseGpp(buf, *this, 0, 0);
+        int len = 0;
+        Dsl::ParseGpp(buf, *this, 0, 0, 0, len);
     }
 
-    void DslFile::ParseGpp(const char* buf, const char* beginDelim, const char* endDelim)
+    void DslFile::ParseGpp(const char* buf, const char* beginDelim, const char* endDelim, char* gppBuf, int& len)
     {
-        Dsl::ParseGpp(buf, *this, beginDelim, endDelim);
+        Dsl::ParseGpp(buf, *this, beginDelim, endDelim, gppBuf, len);
     }
 
     void DslFile::AddDslInfo(ISyntaxComponent* p)

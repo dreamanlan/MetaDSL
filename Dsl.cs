@@ -1272,22 +1272,24 @@ namespace Dsl
 
         public bool LoadGpp(string file, DslLogDelegation logCallback)
         {
-            return LoadGpp(file, logCallback, string.Empty, string.Empty);
+            string dummy;
+            return LoadGpp(file, logCallback, string.Empty, string.Empty, out dummy);
         }
-        public bool LoadGpp(string file, DslLogDelegation logCallback, string beginDelim, string endDelim)
+        public bool LoadGpp(string file, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
         {
             string content = File.ReadAllText(file);
             //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
-            return LoadGppFromString(content, file, logCallback, beginDelim, endDelim);
+            return LoadGppFromString(content, file, logCallback, beginDelim, endDelim, out transformedContent);
         }
         public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback)
         {
-            return LoadGppFromString(content, resourceName, logCallback, string.Empty, string.Empty);
+            string dummy;
+            return LoadGppFromString(content, resourceName, logCallback, string.Empty, string.Empty, out dummy);
         }
-        public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback, string beginDelim, string endDelim)
+        public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
         {
-            string newContent = TransformPreprocess(content, beginDelim, endDelim);
-            return LoadFromString(newContent, resourceName, logCallback);
+            transformedContent = TransformPreprocess(content, beginDelim, endDelim);
+            return LoadFromString(transformedContent, resourceName, logCallback);
         }
 
         public void SetStringDelimiter(string begin, string end)

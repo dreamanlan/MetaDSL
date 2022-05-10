@@ -1293,7 +1293,7 @@ namespace Dsl
         void Parse(IScriptSource& source);
     public:
         void ParseGpp(const char* buf);
-        void ParseGpp(const char* buf, const char* beginDelim, const char* endDelim);
+        void ParseGpp(const char* buf, const char* beginDelim, const char* endDelim, char* gppBuf, int& len);
     public:
         void LoadBinaryFile(const char* file);
         void LoadBinaryCode(const char* buffer, int bufferSize);

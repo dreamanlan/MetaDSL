@@ -45,7 +45,9 @@ int main(int argc, char* argv[])
         fclose(fp4);
 
         Dsl::DslFile dataFile3(*pDslBuffer);
-        dataFile3.ParseGpp(p2, "={:=", "=:}=");
+        int len = 1024 * 1024;
+        dataFile3.ParseGpp(p2, "={:=", "=:}=", pbuf, len);
+        delete[] pbuf;
         delete[] pbuf2;
         FILE* fp5 = fopen("test_gpp.h", "wb");
         dataFile3.WriteToFile(fp5, 0);

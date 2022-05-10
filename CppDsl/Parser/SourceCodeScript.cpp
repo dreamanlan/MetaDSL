@@ -211,10 +211,14 @@ namespace Dsl
         }
     }
     std::string TransformPreprocess(const char* input, int len, const char* beginDelim, const char* endDelim);
-    void ParseGpp(const char* buf, DslFile& file, const char* beginDelim, const char* endDelim)
+    void ParseGpp(const char* buf, DslFile& file, const char* beginDelim, const char* endDelim, char* gppBuf, int& len)
     {
         std::string str = TransformPreprocess(buf, static_cast<int>(strlen(buf)), beginDelim, endDelim);
         Parse(str.c_str(), file);
+        if (gppBuf && len > 0) {
+            tsnprintf(gppBuf, len, "%s", str.c_str());
+            len = static_cast<int>(str.length());
+        }
     }
     static inline void ltrim(std::string& s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
