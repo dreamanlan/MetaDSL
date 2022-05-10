@@ -267,7 +267,7 @@ namespace Dsl
     static inline bool SkipWhiteSpaces(const char* input, int len, int& ix)
     {
         bool isSkip = false;
-        for (; ix < len && isWhiteSpace(input[ix]); ++ix) {
+        for (; ix < len && input[ix] != '\n' && isWhiteSpace(input[ix]); ++ix) {
             isSkip = true;
         }
         return isSkip;
@@ -463,8 +463,11 @@ namespace Dsl
                 }
                 else {
                     //函数
-                    ss << "@@";
-                    ss << key;
+                    ss << "@@"; 
+                    if (key.empty())
+                        ss << "ignore";
+                    else
+                        ss << key;
                     ss << '(';
                     if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
                         ss << key;

@@ -1465,7 +1465,10 @@ namespace Dsl
                             else {
                                 //函数
                                 sb.Append("@@");
-                                sb.Append(key);
+                                if (string.IsNullOrEmpty(key))
+                                    sb.Append("ignore");
+                                else
+                                    sb.Append(key);
                                 sb.Append('(');
                                 if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
                                     sb.Append(arg);
@@ -1523,7 +1526,7 @@ namespace Dsl
         private static bool SkipWhiteSpaces(string input, ref int ix)
         {
             bool isSkip = false;
-            for (; ix < input.Length && char.IsWhiteSpace(input[ix]); ++ix) {
+            for (; ix < input.Length && input[ix] != '\n' && char.IsWhiteSpace(input[ix]); ++ix) {
                 isSkip = true;
             }
             return isSkip;
