@@ -1,3 +1,4 @@
+@@delimiter(script, "{:", ":}");
 skill(kkk)
 {
 	section(80)

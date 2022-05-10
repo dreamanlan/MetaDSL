@@ -20,6 +20,10 @@ namespace Dsl
             List<string> keyBuffer = new List<string>();
             List<string> idBuffer = new List<string>();
             DslFile file0 = new DslFile();
+            file0.LoadGpp("test.h", logCallback, "={:=", "=:}=");
+#if FULL_VERSION
+            file0.Save("test_gpp.h");
+#endif
             file0.LoadCpp("test.h", logCallback);
 #if FULL_VERSION
             file0.Save("copy.h");

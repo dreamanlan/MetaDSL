@@ -1,3 +1,6 @@
+@@delimiter(script, "={:=", "=:}=");
+@@code
+={:=
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -39,10 +42,23 @@
 //
 //M*/
 
-#ifndef OPENCV_OPTIM_HPP
-#define OPENCV_OPTIM_HPP
+=:}=;
+@@ifndef(OPENCV_OPTIM_HPP)
+{
+	@@code
+	={:=
 
-#include "opencv2/core.hpp"
+	=:}=;
+	@@define(OPENCV_OPTIM_HPP);
+	@@code
+	={:=
+
+
+	=:}=;
+	@@include("\"opencv2/core.hpp\"");
+	@@code
+	={:=
+
 
 namespace cv
 {
@@ -299,4 +315,5 @@ CV_EXPORTS_W int solveLP(const Mat& Func, const Mat& Constr, Mat& z);
 
 }// cv
 
-#endif
+	=:}=;
+};

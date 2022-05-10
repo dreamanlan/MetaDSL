@@ -280,10 +280,10 @@ namespace Dsl
         {
 #if FULL_VERSION
             if (includeComment) {
-                return CalcFirstComment() + Utility.quoteString(m_Id, m_Type) + CalcLastComment();
+                return CalcFirstComment() + Utility.quoteStringWithStrDefDelim(m_Id, m_Type) + CalcLastComment();
             }
             else {
-                return Utility.quoteString(m_Id, m_Type);
+                return Utility.quoteStringWithStrDefDelim(m_Id, m_Type);
             }
 #else
       return ToString();
@@ -446,10 +446,10 @@ namespace Dsl
         {
 #if FULL_VERSION
             if (includeComment) {
-                return CalcFirstComment() + Utility.getFunctionString(this, true) + CalcComment() + CalcLastComment();
+                return CalcFirstComment() + Utility.getFunctionStringWithStrDefDelim(this, true) + CalcComment() + CalcLastComment();
             }
             else {
-                return Utility.getFunctionString(this, true);
+                return Utility.getFunctionStringWithStrDefDelim(this, true);
             }
 #else
       return ToString();
@@ -1045,14 +1045,34 @@ namespace Dsl
                     mDslInfos.Clear();
                 }
             }
+            if (!string.IsNullOrEmpty(tokens.StringBeginDelimiter)) {
+                mStringBeginDelimiter = tokens.StringBeginDelimiter;
+            }
+            if (!string.IsNullOrEmpty(tokens.StringEndDelimiter)) {
+                mStringEndDelimiter = tokens.StringEndDelimiter;
+            }
+            if (!string.IsNullOrEmpty(tokens.ScriptBeginDelimiter)) {
+                mScriptBeginDelimiter = tokens.ScriptBeginDelimiter;
+            }
+            if (!string.IsNullOrEmpty(tokens.ScriptEndDelimiter)) {
+                mScriptEndDelimiter = tokens.ScriptEndDelimiter;
+            }
             return !log.HasError;
         }
         public void Save(string file)
         {
 #if FULL_VERSION
             StringBuilder sb = new StringBuilder();
+            if(mStringBeginDelimiter!="\"" || mStringEndDelimiter != "\"") {
+                sb.AppendFormat("@@delimiter(string, \"{0}\", \"{1}\");", mStringBeginDelimiter, mStringEndDelimiter);
+                sb.AppendLine();
+            }
+            if (mScriptBeginDelimiter != "\"" || mScriptEndDelimiter != "\"") {
+                sb.AppendFormat("@@delimiter(script, \"{0}\", \"{1}\");", mScriptBeginDelimiter, mScriptEndDelimiter);
+                sb.AppendLine();
+            }
             for (int i = 0; i < mDslInfos.Count; i++) {
-                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, true);
+                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, true, new DelimiterInfo(mStringBeginDelimiter, mStringEndDelimiter, mScriptBeginDelimiter, mScriptEndDelimiter));
             }
             File.WriteAllText(file, sb.ToString());
 #endif
@@ -1062,7 +1082,7 @@ namespace Dsl
 #if FULL_VERSION
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mDslInfos.Count; i++) {
-                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, false);
+                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, false, new DelimiterInfo(mStringBeginDelimiter, mStringEndDelimiter, mScriptBeginDelimiter, mScriptEndDelimiter));
             }
             return sb.ToString();
 #else
@@ -1250,6 +1270,309 @@ namespace Dsl
             return !log.HasError;
         }
 
+        public bool LoadGpp(string file, DslLogDelegation logCallback)
+        {
+            return LoadGpp(file, logCallback, string.Empty, string.Empty);
+        }
+        public bool LoadGpp(string file, DslLogDelegation logCallback, string beginDelim, string endDelim)
+        {
+            string content = File.ReadAllText(file);
+            //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
+            return LoadGppFromString(content, file, logCallback, beginDelim, endDelim);
+        }
+        public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback)
+        {
+            return LoadGppFromString(content, resourceName, logCallback, string.Empty, string.Empty);
+        }
+        public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback, string beginDelim, string endDelim)
+        {
+            string newContent = TransformPreprocess(content, beginDelim, endDelim);
+            return LoadFromString(newContent, resourceName, logCallback);
+        }
+
+        public void SetStringDelimiter(string begin, string end)
+        {
+            mStringBeginDelimiter = begin;
+            mStringEndDelimiter = end;
+        }
+        public void SetScriptDelimiter(string begin, string end)
+        {
+            mScriptBeginDelimiter = begin;
+            mScriptEndDelimiter = end;
+        }
+        public string StringBeginDelimiter
+        {
+            get { return mStringBeginDelimiter; }
+        }
+        public string StringEndDelimiter
+        {
+            get { return mStringEndDelimiter; }
+        }
+        public string ScriptBeginDelimiter
+        {
+            get { return mScriptBeginDelimiter; }
+        }
+        public string ScriptEndDelimiter
+        {
+            get { return mScriptEndDelimiter; }
+        }
+
+        private static string TransformPreprocess(string input, string beginDelim, string endDelim)
+        {
+            var sb = new StringBuilder();
+            if(!string.IsNullOrEmpty(beginDelim) && !string.IsNullOrEmpty(endDelim)) {
+                sb.AppendFormat("@@delimiter(script, \"{0}\", \"{1}\");", beginDelim, endDelim);
+                sb.AppendLine();
+            }
+            else {
+                beginDelim = "{:";
+                endDelim = ":}";
+            }
+            var tokenBuilder = new StringBuilder();
+            bool codeBlockNeedClose = false;
+            for (int i = 0; i < input.Length; ++i) {
+                char ch = input[i];
+                switch (ch) {
+                    case '/': {
+                            TryEmitStartCodeBlock(sb, beginDelim, ref codeBlockNeedClose);
+                            sb.Append(ch);
+                            char c = input[i + 1];
+                            if (c == '/') {
+                                sb.Append(c);
+                                for (int j = i + 2; j < input.Length; ++j) {
+                                    c = input[j];
+                                    sb.Append(c);
+                                    if (c == '\n') {
+                                        i = j;
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (c == '*') {
+                                sb.Append(c);
+                                char lc = '\0';
+                                for (int j = i + 2; j < input.Length; ++j) {
+                                    c = input[j];
+                                    sb.Append(c);
+                                    if (lc == '*' && c == '/') {
+                                        i = j;
+                                        break;
+                                    }
+                                    lc = c;
+                                }
+                            }
+                        }
+                        break;
+                    case '\'':
+                    case '"': {
+                            TryEmitStartCodeBlock(sb, beginDelim, ref codeBlockNeedClose);
+                            sb.Append(ch);
+                            for (int j = i + 1; j < input.Length; ++j) {
+                                char c = input[j];
+                                sb.Append(c);
+                                if (c == '\\') {
+                                    ++j;
+                                    c = input[j];
+                                    sb.Append(c);
+                                }
+                                else if (c == ch) {
+                                    i = j;
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case '#': {
+                            //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
+                            int j = i + 1;
+                            tokenBuilder.Length = 0;
+                            bool isSkip = true;
+                            for (; isSkip && j < input.Length;) {
+                                bool s1 = SkipWhiteSpaces(input, ref j);
+                                bool s2 = SkipComments(input, ref j);
+                                isSkip = s1 || s2;
+                            }
+                            for (; j < input.Length && char.IsLetter(input[j]); ++j) {
+                                tokenBuilder.Append(input[j]);
+                            }
+                            string key = tokenBuilder.ToString();
+                            tokenBuilder.Length = 0;
+                            string arg = string.Empty;
+                            for (; j < input.Length && input[j] != '\n' && char.IsWhiteSpace(input[j]); ++j) ;
+                            if (input[j] != '\n') {
+                                char lc = '\0';
+                                for (; j < input.Length; ++j) {
+                                    SkipComments(input, ref j);
+                                    char cc = input[j];
+                                    if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
+                                        arg = tokenBuilder.ToString().Trim();
+                                        break;
+                                    }
+                                    if (cc == '"') {
+                                        //字符串
+                                        tokenBuilder.Append(cc);
+                                        ++j;
+                                        while (j + 1 < input.Length && input[j] != '"') {
+                                            tokenBuilder.Append(input[j]);
+                                            ++j;
+                                            if (input[j] == '\\') {
+                                                tokenBuilder.Append(input[j]);
+                                                ++j;
+                                            }
+                                        }
+                                        tokenBuilder.Append(input[j]);
+                                    }
+                                    else if (cc == '\\' && (input[j + 1] == '\r' || input[j + 1] == '\n')) {
+                                        //续行符不输出
+                                    }
+                                    else {
+                                        tokenBuilder.Append(cc);
+                                    }
+                                    lc = input[j];
+                                }
+                            }
+                            TryEmitCloseCodeBlock(sb, endDelim, ref codeBlockNeedClose);
+                            if (key.Length >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n')) {
+                                //语句块
+                                if (key[0] == 'i' && key[1] == 'f') {
+                                    sb.Append("@@");
+                                    sb.Append(key);
+                                    sb.Append('(');
+                                    sb.Append(arg);
+                                    sb.Append(')');
+                                    sb.AppendLine();
+                                    sb.Append("{");
+                                    sb.AppendLine();
+                                }
+                                else if (key[0] == 'e' && key[1] == 'l') {
+                                    sb.Append("}");
+                                    sb.AppendLine();
+                                    sb.Append("@@");
+                                    sb.Append(key);
+                                    sb.Append('(');
+                                    sb.Append(arg);
+                                    sb.Append(')');
+                                    sb.AppendLine();
+                                    sb.Append("{");
+                                    sb.AppendLine();
+                                }
+                                else {
+                                    sb.Append("}");
+                                    sb.Append(';');
+                                    sb.AppendLine();
+                                }
+                            }
+                            else {
+                                //函数
+                                sb.Append("@@");
+                                sb.Append(key);
+                                sb.Append('(');
+                                if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
+                                    sb.Append(arg);
+                                }
+                                else {
+                                    sb.Append('"');
+                                    sb.Append(arg.Replace("\"", "\\\""));
+                                    sb.Append('"');
+                                }
+                                sb.Append(')');
+                                sb.Append(';');
+                                sb.AppendLine();
+                            }
+                            i = j;
+                        }
+                        break;
+                    case ' ':
+                    case '\t':
+                    case '\r':
+                    case '\n':
+                        TryEmitStartCodeBlock(sb, beginDelim, ref codeBlockNeedClose);
+                        sb.Append(ch);
+                        break;
+                    default:
+                        TryEmitStartCodeBlock(sb, beginDelim, ref codeBlockNeedClose);
+                        sb.Append(ch);
+                        break;
+                }
+            }
+            if (!char.IsWhiteSpace(sb[sb.Length - 1])) {
+                sb.AppendLine();
+            }
+            TryEmitCloseCodeBlock(sb, endDelim, ref codeBlockNeedClose);
+            return sb.ToString();
+        }
+        private static void TryEmitStartCodeBlock(StringBuilder sb, string delim, ref bool codeBlockNeedClose)
+        {
+            if (!codeBlockNeedClose) {
+                sb.Append("@@code");
+                sb.AppendLine();
+                sb.Append(delim);
+                sb.AppendLine();
+                codeBlockNeedClose = true;
+            }
+        }
+        private static void TryEmitCloseCodeBlock(StringBuilder sb, string delim, ref bool codeBlockNeedClose)
+        {
+            if (codeBlockNeedClose) {
+                sb.Append(delim);
+                sb.Append(';');
+                sb.AppendLine();
+                codeBlockNeedClose = false;
+            }
+        }
+        private static bool SkipWhiteSpaces(string input, ref int ix)
+        {
+            bool isSkip = false;
+            for (; ix < input.Length && char.IsWhiteSpace(input[ix]); ++ix) {
+                isSkip = true;
+            }
+            return isSkip;
+        }
+        private static bool SkipComments(string input, ref int ix)
+        {
+            bool isSkip = false;
+            //单行注释
+            if (ix + 1 < input.Length && input[ix] == '/' && input[ix + 1] == '/') {
+                for (; ix < input.Length && input[ix] != '\n'; ++ix) ;
+                isSkip = true;
+            }
+            //多行注释
+            if (ix + 1 < input.Length && input[ix] == '/' && input[ix + 1] == '*') {
+                ++ix;
+                ++ix;
+                for (; ix + 1 < input.Length; ++ix) {
+                    if (input[ix] == '*' && input[ix + 1] == '/') {
+                        ++ix;
+                        ++ix;
+                        break;
+                    }
+                }
+                isSkip = true;
+            }
+            return isSkip;
+        }
+        private static bool IsSimpleDefine(string str)
+        {
+            for (int i = 0; i < str.Length; ++i) {
+                char c = str[i];
+                switch (c) {
+                    case '\r':
+                    case '\n':
+                    case ',':
+                    case ';':
+                    case '(':
+                    case ')':
+                    case '[':
+                    case ']':
+                    case '{':
+                    case '}':
+                    case '#':
+                        return false;
+                }
+            }
+            return true;
+        }
+
         private class MyStringComparer : IComparer<string>
         {
             public int Compare(string x, string y)
@@ -1275,6 +1598,10 @@ namespace Dsl
 
         private MyStringComparer mStringComparer = null;
         private List<ISyntaxComponent> mDslInfos = new List<ISyntaxComponent>();
+        private string mStringBeginDelimiter = "\"";
+        private string mStringEndDelimiter = "\"";
+        private string mScriptBeginDelimiter = "{:";
+        private string mScriptEndDelimiter = ":}";
 
         public static byte[] BinaryIdentity
         {
@@ -1314,6 +1641,22 @@ namespace Dsl
         private static bool sDontLoadComments = false;
     };
 
+    public sealed class DelimiterInfo
+    {
+        public string StringBeginDelimiter = "\"";
+        public string StringEndDelimiter = "\"";
+        public string ScriptBeginDelimiter = "{:";
+        public string ScriptEndDelimiter = ":}";
+
+        public DelimiterInfo() { }
+        public DelimiterInfo(string strBeginDelim, string strEndDelim, string scpBeginDelim, string scpEndDelim)
+        {
+            StringBeginDelimiter = strBeginDelim;
+            StringEndDelimiter = strEndDelim;
+            ScriptBeginDelimiter = scpBeginDelim;
+            ScriptEndDelimiter = scpEndDelim;
+        }
+    }
     public sealed class Utility
     {
         public static string CheckCppParseTable()
@@ -1373,7 +1716,7 @@ namespace Dsl
             s.WriteByte((byte)num);
         }
 
-        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        public static void writeSyntaxComponent(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent, bool isLastOfStatement, DelimiterInfo delim)
         {
 #if FULL_VERSION
             ValueData val = data as ValueData;
@@ -1383,11 +1726,11 @@ namespace Dsl
             else {
                 FunctionData call = data as FunctionData;
                 if (null != call) {
-                    writeFunctionData(stream, call, indent, firstLineNoIndent, isLastOfStatement);
+                    writeFunctionData(stream, call, indent, firstLineNoIndent, isLastOfStatement, delim);
                 }
                 else {
                     StatementData statement = data as StatementData;
-                    writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement);
+                    writeStatementData(stream, statement, indent, firstLineNoIndent, isLastOfStatement, delim);
                 }
             }
 #endif
@@ -1404,7 +1747,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        public static void writeFunctionData(StringBuilder stream, FunctionData data, int indent, bool firstLineNoIndent, bool isLastOfStatement, DelimiterInfo delim)
         {
 #if FULL_VERSION
             //string lineNo = string.Format("/* {0} */", data.GetLine());
@@ -1416,45 +1759,45 @@ namespace Dsl
                     if (paramNum == 1) {
                         writeText(stream, " ", 0);
                         if (data.IsHighOrder) {
-                            writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                            writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false, delim);
                         }
                         else if (data.HaveId()) {
                             string op = data.GetId();
                             if (data.HaveParamClassInfixFlag())
                                 op = "`" + op;
-                            string line = quoteString(op, data.GetIdType());
+                            string line = quoteString(op, data.GetIdType(), delim.StringBeginDelimiter, delim.StringEndDelimiter);
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
                         }
                         writeText(stream, " ", 0);
-                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
+                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false, delim);
                     }
                     else {
                         if (paramNum > 0) {
-                            writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false);
+                            writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false, delim);
                             writeText(stream, " ", 0);
                         }
                         if (data.IsHighOrder) {
-                            writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false);
+                            writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false, delim);
                         }
                         else if (data.HaveId()) {
                             string op = data.GetId();
                             if (data.HaveParamClassInfixFlag())
                                 op = "`" + op;
-                            string line = quoteString(op, data.GetIdType());
+                            string line = quoteString(op, data.GetIdType(), delim.StringBeginDelimiter, delim.StringEndDelimiter);
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
                         }
                         if (paramNum > 1) {
                             writeText(stream, " ", 0);
-                            writeSyntaxComponent(stream, data.GetParam(1), indent, true, false);
+                            writeSyntaxComponent(stream, data.GetParam(1), indent, true, false, delim);
                         }
                     }
                 }
                 else {
                     if (data.IsHighOrder) {
-                        writeFunctionData(stream, data.LowerOrderFunction, indent, firstLineNoIndent, false);
+                        writeFunctionData(stream, data.LowerOrderFunction, indent, firstLineNoIndent, false, delim);
                     }
                     else if (data.HaveId()) {
-                        string line = quoteString(data.GetId(), data.GetIdType());
+                        string line = quoteString(data.GetId(), data.GetIdType(), delim.StringBeginDelimiter, delim.StringEndDelimiter);
                         writeText(stream, line, firstLineNoIndent ? 0 : indent);
                     }
                     else {
@@ -1467,7 +1810,7 @@ namespace Dsl
                         else if (data.HaveId()) {
                             writeLastComments(stream, data.Name, indent, false);
                         }
-                        writeStatementsOrExternScript(stream, data, indent);
+                        writeStatementsOrExternScript(stream, data, indent, delim);
                     }
                     else {
                         string lbracket = string.Empty;
@@ -1589,7 +1932,7 @@ namespace Dsl
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                                 stream.Append(param.ToScriptString(true));
                             else
-                                writeSyntaxComponent(stream, param, indent, true, false);
+                                writeSyntaxComponent(stream, param, indent, true, false, delim);
                         }
                         stream.Append(rbracket);
                     }
@@ -1597,10 +1940,10 @@ namespace Dsl
             }
             else {
                 if (data.IsHighOrder) {
-                    writeFunctionData(stream, data.LowerOrderFunction, indent, firstLineNoIndent, false);
+                    writeFunctionData(stream, data.LowerOrderFunction, indent, firstLineNoIndent, false, delim);
                 }
                 else if (data.HaveId()) {
-                    string line = quoteString(data.GetId(), data.GetIdType());
+                    string line = quoteString(data.GetId(), data.GetIdType(), delim.StringBeginDelimiter, delim.StringEndDelimiter);
                     writeText(stream, line, firstLineNoIndent ? 0 : indent);
                 }
             }
@@ -1613,7 +1956,7 @@ namespace Dsl
 #endif
         }
 
-        public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement)
+        public static void writeStatementData(StringBuilder stream, StatementData data, int indent, bool firstLineNoIndent, bool isLastOfStatement, DelimiterInfo delim)
         {
 #if FULL_VERSION
             writeFirstComments(stream, data, indent, firstLineNoIndent);
@@ -1680,7 +2023,7 @@ namespace Dsl
                                 noIndent = false;
                             }
                         }
-                        writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false);
+                        writeFunctionData(stream, func, indent, firstLineNoIndent && i == 0 || noIndent, false, delim);
                         lastFuncNoParam = funcNoParam;
                         lastFuncNoStatement = funcNoStatement;
                     }
@@ -1718,7 +2061,11 @@ namespace Dsl
             return false;
         }
 
-        internal static string quoteString(string str, int _Type)
+        internal static string quoteStringWithStrDefDelim(string str, int _Type)
+        {
+            return quoteString(str, _Type, "\"", "\"");
+        }
+        internal static string quoteString(string str, int _Type, string strBeginDelim, string strEndDelim)
         {
             switch (_Type) {
                 case AbstractSyntaxComponent.STRING_TOKEN: {
@@ -1728,7 +2075,7 @@ namespace Dsl
                             str = str.Replace("\"", "\\\"");
                         if (str.Contains("\0"))
                             str = str.Replace("\0", "\\0");
-                        return "\"" + str + "\"";
+                        return strBeginDelim + str + strEndDelim;
                     }
                 case AbstractSyntaxComponent.NUM_TOKEN:
                 case AbstractSyntaxComponent.ID_TOKEN:
@@ -1738,19 +2085,23 @@ namespace Dsl
             }
         }
 
-        internal static string getFunctionString(FunctionData data, bool includeComment)
+        internal static string getFunctionStringWithStrDefDelim(FunctionData data, bool includeComment)
+        {
+            return getFunctionString(data, includeComment, "\"", "\"");
+        }
+        internal static string getFunctionString(FunctionData data, bool includeComment, string strBeginDelim, string strEndDelim)
         {
 #if FULL_VERSION
             string lineNo = string.Empty;// string.Format("/* {0} */", data.GetLine());
             string line = string.Empty;
             if (data.IsHighOrder) {
-                line = getFunctionString(data.LowerOrderFunction, includeComment);
+                line = getFunctionString(data.LowerOrderFunction, includeComment, strBeginDelim, strEndDelim);
             }
             else if (data.HaveId()) {
                 string op = data.GetId();
                 if (data.HaveParamClassInfixFlag())
                     op = "`" + op;
-                line = quoteString(op, data.GetIdType());
+                line = quoteString(op, data.GetIdType(), strBeginDelim, strEndDelim);
             }
             if (data.HaveParamOrStatement()) {
                 if (data.IsOperatorParamClass()) {
@@ -1915,7 +2266,7 @@ namespace Dsl
 #endif
         }
         
-        private static void writeStatementsOrExternScript(StringBuilder stream, FunctionData data, int indent)
+        private static void writeStatementsOrExternScript(StringBuilder stream, FunctionData data, int indent, DelimiterInfo delim)
         {
 #if FULL_VERSION
             if (data.HaveStatement()) {
@@ -1926,7 +2277,7 @@ namespace Dsl
                 int ct = data.GetParamNum();
                 for (int i = 0; i < ct; ++i) {
                     ISyntaxComponent tempData = data.GetParam(i);
-                    writeSyntaxComponent(stream, tempData, indent, false, true);
+                    writeSyntaxComponent(stream, tempData, indent, false, true, delim);
                 }
 
                 --indent;
@@ -1936,17 +2287,17 @@ namespace Dsl
                 writeLine(stream, string.Empty, 0);
                 string script = data.GetParamId(0);
                 if (script.IndexOf('\n') >= 0) {
-                    writeLine(stream, "{:", indent);
+                    writeLine(stream, delim.ScriptBeginDelimiter, indent);
                 }
                 else {
-                    writeText(stream, "{:", indent);
+                    writeText(stream, delim.ScriptBeginDelimiter, indent);
                 }
                 stream.Append(script);
                 if (script.Length > 0 && script[script.Length - 1] == '\n') {
-                    writeText(stream, ":}", indent);
+                    writeText(stream, delim.ScriptEndDelimiter, indent);
                 }
                 else {
-                    stream.Append(":}");
+                    stream.Append(delim.ScriptEndDelimiter);
                 }
             }
 #endif

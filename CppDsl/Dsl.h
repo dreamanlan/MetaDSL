@@ -94,6 +94,20 @@ namespace Dsl
             return s_DontLoadComments;
         }
     };
+    struct DelimiterInfo
+    {
+        const char* ScriptBeginDelimiter;
+        const char* ScriptEndDelimiter;
+        const char* StringBeginDelimiter;
+        const char* StringEndDelimiter;
+
+        DelimiterInfo(void)
+            :StringBeginDelimiter("\""), StringEndDelimiter("\""), ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}")
+        {}
+        DelimiterInfo(const char* strBeginDelim, const char* strEndDelim, const char* scpBeginDelim, const char* scpEndDelim)
+            :StringBeginDelimiter(strBeginDelim), StringEndDelimiter(strEndDelim), ScriptBeginDelimiter(scpBeginDelim), ScriptEndDelimiter(scpEndDelim)
+        {}
+    };
 
     //这2个结构作纯数据使用，不需要虚析构了
     struct SyntaxComponentCommentsInfo
@@ -140,7 +154,7 @@ namespace Dsl
         virtual const char* GetId(void) const = 0;
         virtual int GetIdType(void) const = 0;
         virtual int GetLine(void) const = 0;
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const = 0;
+        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const = 0;
         virtual int HaveId(void) const = 0;
     public:
         int GetSyntaxType(void) const { return m_SyntaxType; }
@@ -408,7 +422,7 @@ namespace Dsl
         virtual int GetIdType(void)const;
         virtual const char* GetId(void)const;
         virtual int GetLine(void)const;
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
+        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const;
         virtual int HaveId()const;
 
         FunctionData* GetFunction(void)const { return m_FunctionVal; }
@@ -489,7 +503,7 @@ namespace Dsl
         virtual const char* GetId(void) const { return ""; }
         virtual int GetIdType(void) const { return ValueData::TYPE_IDENTIFIER; }
         virtual int GetLine(void) const { return 0; }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const {}
+        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const {}
         virtual int HaveId()const { return FALSE; }
     private:
         NullSyntax(const NullSyntax&) = delete;
@@ -550,7 +564,7 @@ namespace Dsl
         virtual int GetIdType(void)const { return m_Name.GetIdType(); }
         virtual const char* GetId(void)const { return m_Name.GetId(); }
         virtual int GetLine(void)const { return m_Name.GetLine(); }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
+        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const;
         virtual int HaveId(void)const { return m_Name.HaveId(); }
     public:
         void SetName(const ValueData& val) { m_Name = val; }
@@ -864,7 +878,7 @@ namespace Dsl
             }
             return line;
         }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement) const;
+        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const;
         virtual int HaveId(void) const
         {
             if (NULL == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
@@ -1278,9 +1292,15 @@ namespace Dsl
         void Parse(const char* buf);
         void Parse(IScriptSource& source);
     public:
+        void ParseGpp(const char* buf);
+        void ParseGpp(const char* buf, const char* beginDelim, const char* endDelim);
+    public:
         void LoadBinaryFile(const char* file);
         void LoadBinaryCode(const char* buffer, int bufferSize);
         void SaveBinaryFile(const char* file) const;
+    public:
+        void SetStringDelimiter(const char* begin, const char* end);
+        void SetScriptDelimiter(const char* begin, const char* end);
     private:
         DslFile(const DslFile&) = delete;
         DslFile& operator=(const DslFile&) = delete;
@@ -1337,6 +1357,11 @@ namespace Dsl
         int m_DslInfoNum;
         int m_DslInfoSpace;
         int m_MaxDslInfoNum;
+    private:
+        const char* m_ScriptBeginDelimiter;
+        const char* m_ScriptEndDelimiter;
+        const char* m_StringBeginDelimiter;
+        const char* m_StringEndDelimiter;
     private:
         int m_IsDebugInfoEnable;
     private:

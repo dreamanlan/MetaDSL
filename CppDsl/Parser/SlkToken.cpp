@@ -1078,18 +1078,30 @@ short SlkToken::peek(int level)
 
 void SlkToken::setStringDelimiter(const char* begin, const char* end)
 {
-    tsnprintf(mStringBeginDelimiter, c_MaxDelimiterSize, "%s", begin);
-    tsnprintf(mStringEndDelimiter, c_MaxDelimiterSize, "%s", end);
-    mStringBeginDelimiterLength = (int)strlen(mStringBeginDelimiter);
-    mStringEndDelimiterLength = (int)strlen(mStringEndDelimiter);
+    mStringBeginDelimiter = begin;
+    mStringEndDelimiter = end;
+    if (mStringBeginDelimiter)
+        mStringBeginDelimiterLength = static_cast<int>(strlen(mStringBeginDelimiter));
+    else
+        mStringBeginDelimiterLength = 0;
+    if (mStringEndDelimiter)
+        mStringEndDelimiterLength = static_cast<int>(strlen(mStringEndDelimiter));
+    else
+        mStringEndDelimiterLength = 0;
 }
 
 void SlkToken::setScriptDelimiter(const char* begin, const char* end)
 {
-    tsnprintf(mScriptBeginDelimiter, c_MaxDelimiterSize, "%s", begin);
-    tsnprintf(mScriptEndDelimiter, c_MaxDelimiterSize, "%s", end);
-    mScriptBeginDelimiterLength = (int)strlen(mScriptBeginDelimiter);
-    mScriptEndDelimiterLength = (int)strlen(mScriptEndDelimiter);
+    mScriptBeginDelimiter = begin;
+    mScriptEndDelimiter = end;
+    if (mScriptBeginDelimiter)
+        mScriptBeginDelimiterLength = static_cast<int>(strlen(mScriptBeginDelimiter));
+    else
+        mScriptBeginDelimiterLength = 0;
+    if (mScriptEndDelimiter)
+        mScriptEndDelimiterLength = static_cast<int>(strlen(mScriptEndDelimiter));
+    else
+        mScriptEndDelimiterLength = 0;
 }
 
 int SlkToken::isBegin(const char* delimiter, int len) const

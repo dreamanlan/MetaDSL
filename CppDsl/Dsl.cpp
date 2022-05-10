@@ -394,7 +394,7 @@ namespace Dsl
     }
 
     DslFile::DslFile(IDslStringAndObjectBuffer& buffer) :m_Buffer(buffer), m_IsDebugInfoEnable(FALSE),
-        m_DslInfos(NULL)
+        m_DslInfos(NULL), m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
     {
         Init();
         ClearErrorInfo();
@@ -419,6 +419,16 @@ namespace Dsl
     void DslFile::Parse(IScriptSource& source)
     {
         Dsl::Parse(source, *this);
+    }
+
+    void DslFile::ParseGpp(const char* buf)
+    {
+        Dsl::ParseGpp(buf, *this, 0, 0);
+    }
+
+    void DslFile::ParseGpp(const char* buf, const char* beginDelim, const char* endDelim)
+    {
+        Dsl::ParseGpp(buf, *this, beginDelim, endDelim);
     }
 
     void DslFile::AddDslInfo(ISyntaxComponent* p)
@@ -714,6 +724,18 @@ namespace Dsl
 #endif
     }
 
+    void DslFile::SetStringDelimiter(const char* begin, const char* end)
+    {
+        m_StringBeginDelimiter = begin;
+        m_StringEndDelimiter = end;
+    }
+
+    void DslFile::SetScriptDelimiter(const char* begin, const char* end)
+    {
+        m_ScriptBeginDelimiter = begin;
+        m_ScriptEndDelimiter = end;
+    }
+
     void DslFile::Init(void)
     {
         m_DslInfos = 0;
@@ -753,11 +775,11 @@ namespace Dsl
         WriteIndent(fp, indent);
         fprintf(fp, "%s", str);
     }
-    static void WriteString(FILE* fp, const char* str, int indent)
+    static void WriteString(FILE* fp, const char* str, int indent, const char* beginDelim, const char* endDelim)
     {
         const char* escapeChars = "\\\"";
         WriteIndent(fp, indent);
-        fwrite("\"", 1, 1, fp);
+        fwrite(beginDelim, strlen(beginDelim), 1, fp);
         const char* p = str;
         int len = strlen(p);
         while (*p) {
@@ -774,23 +796,23 @@ namespace Dsl
                 break;
             }
         }
-        fwrite("\"", 1, 1, fp);
+        fwrite(endDelim, strlen(endDelim), 1, fp);
     }
-    static void WriteComponent(FILE* fp, const ISyntaxComponent& component, int indent, int firstLineNoIndent, int isLastOfStatement)
+    static void WriteComponent(FILE* fp, const ISyntaxComponent& component, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim)
     {
         switch (component.GetSyntaxType()) {
         case ISyntaxComponent::TYPE_VALUE:
-            dynamic_cast<const ValueData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<const ValueData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement, delim);
             break;
         case ISyntaxComponent::TYPE_FUNCTION:
-            dynamic_cast<const FunctionData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<const FunctionData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement, delim);
             break;
         case ISyntaxComponent::TYPE_STATEMENT:
-            dynamic_cast<const StatementData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement);
+            dynamic_cast<const StatementData&>(component).WriteToFile(fp, indent, firstLineNoIndent, isLastOfStatement, delim);
             break;
         }
     }
-    static void WriteStatementsOrExternScript(FILE* fp, const FunctionData& thisData, int indent)
+    static void WriteStatementsOrExternScript(FILE* fp, const FunctionData& thisData, int indent, const DelimiterInfo& delim)
     {
 #if FULL_VERSION
         if (thisData.HaveStatement()) {
@@ -799,7 +821,7 @@ namespace Dsl
             fwrite("{\n", 2, 1, fp);
             for (int ix = 0; ix < thisData.GetParamNum(); ++ix) {
                 ISyntaxComponent& component = *thisData.GetParam(ix);
-                WriteComponent(fp, component, indent + 1, FALSE, TRUE);
+                WriteComponent(fp, component, indent + 1, FALSE, TRUE, delim);
             }
             WriteIndent(fp, indent);
             fwrite("}", 1, 1, fp);
@@ -810,18 +832,19 @@ namespace Dsl
             const char* externScript = thisData.GetParamId(0);
             size_t len = strlen(externScript);
             if (strchr(externScript, '\n')) {
-                fwrite("{:\n", 3, 1, fp);
+                fwrite(delim.ScriptBeginDelimiter, strlen(delim.ScriptBeginDelimiter), 1, fp);
+                fwrite("\n", 1, 1, fp);
             }
             else {
-                fwrite("{:", 2, 1, fp);
+                fwrite(delim.ScriptBeginDelimiter, strlen(delim.ScriptBeginDelimiter), 1, fp);
             }
             fwrite(externScript, len, 1, fp);
             if (len > 0 && externScript[len - 1] == '\n') {
                 WriteIndent(fp, indent);
-                fwrite(":}", 2, 1, fp);
+                fwrite(delim.ScriptEndDelimiter, strlen(delim.ScriptEndDelimiter), 1, fp);
             }
             else {
-                fwrite(":}", 2, 1, fp);
+                fwrite(delim.ScriptEndDelimiter, strlen(delim.ScriptEndDelimiter), 1, fp);
             }
         }
 #endif
@@ -875,12 +898,12 @@ namespace Dsl
         }
 #endif
     }
-    void ValueData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void ValueData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
         if (IsString()) {
-            WriteString(fp, m_ConstStringVal, firstLineNoIndent ? 0 : indent);
+            WriteString(fp, m_ConstStringVal, firstLineNoIndent ? 0 : indent, delim.StringBeginDelimiter, delim.StringEndDelimiter);
         }
         else if (IsValid()) {
             WriteId(fp, m_ConstStringVal, firstLineNoIndent ? 0 : indent);
@@ -891,53 +914,53 @@ namespace Dsl
         WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
     }
-    void FunctionData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void FunctionData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
         if (IsOperatorParamClass()) {
             if (GetParamNum() == 2) {
                 ISyntaxComponent& component0 = *GetParam(0);
-                WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
+                WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE, delim);
                 fwrite(" ", 1, 1, fp);
                 if (IsHighOrder() && NULL != m_Name.GetFunction()) {
                     FunctionData& call = *m_Name.GetFunction();
-                    call.WriteToFile(fp, indent, TRUE, FALSE);
+                    call.WriteToFile(fp, indent, TRUE, FALSE, delim);
                 }
                 else {
                     if (HaveParamClassInfixFlag()) {
                         fwrite("`", 1, 1, fp);
                     }
-                    m_Name.WriteToFile(fp, indent, TRUE, FALSE);
+                    m_Name.WriteToFile(fp, indent, TRUE, FALSE, delim);
                 }
                 fwrite(" ", 1, 1, fp);
                 ISyntaxComponent& component1 = *GetParam(1);
-                WriteComponent(fp, component1, indent, TRUE, FALSE);
+                WriteComponent(fp, component1, indent, TRUE, FALSE, delim);
             }
             else {
                 fwrite(" ", 1, 1, fp);
                 if (IsHighOrder() && NULL != m_Name.GetFunction()) {
                     FunctionData& call = *m_Name.GetFunction();
-                    call.WriteToFile(fp, indent, TRUE, FALSE);
+                    call.WriteToFile(fp, indent, TRUE, FALSE, delim);
                 }
                 else {
                     if (HaveParamClassInfixFlag()) {
                         fwrite("`", 1, 1, fp);
                     }
-                    m_Name.WriteToFile(fp, indent, TRUE, FALSE);
+                    m_Name.WriteToFile(fp, indent, TRUE, FALSE, delim);
                 }
                 fwrite(" ", 1, 1, fp);
                 ISyntaxComponent& component0 = *GetParam(0);
-                WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE);
+                WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE, delim);
             }
         }
         else {
             if (IsHighOrder() && NULL != m_Name.GetFunction()) {
                 const FunctionData& lowerOrderFunction = *m_Name.GetFunction();
-                lowerOrderFunction.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
+                lowerOrderFunction.WriteToFile(fp, indent, firstLineNoIndent, FALSE, delim);
             }
             else if (m_Name.HaveId()) {
-                m_Name.WriteToFile(fp, indent, firstLineNoIndent, FALSE);
+                m_Name.WriteToFile(fp, indent, firstLineNoIndent, FALSE, delim);
             }
             else {
                 WriteIndent(fp, firstLineNoIndent ? 0 : indent);
@@ -950,7 +973,7 @@ namespace Dsl
                 else if (HaveId()) {
                     GetName().WriteLastCommentsToFile(fp, indent, FALSE);
                 }
-                WriteStatementsOrExternScript(fp, *this, indent);
+                WriteStatementsOrExternScript(fp, *this, indent, delim);
             }
             else if (HaveParam()) {
                 int paramClass = GetParamClassUnmasked();
@@ -1036,7 +1059,7 @@ namespace Dsl
                         fwrite(", ", 2, 1, fp);
                     }
                     ISyntaxComponent& component = *GetParam(ix);
-                    WriteComponent(fp, component, indent, TRUE, FALSE);
+                    WriteComponent(fp, component, indent, TRUE, FALSE, delim);
                 }
                 switch (paramClass) {
                 case FunctionData::PARAM_CLASS_PARENTHESIS:
@@ -1120,7 +1143,7 @@ namespace Dsl
         WriteLastCommentsToFile(fp, indent, isLastOfStatement);
 #endif
     }
-    void StatementData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement)const
+    void StatementData::WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim)const
     {
 #if FULL_VERSION
         WriteFirstCommentsToFile(fp, indent, firstLineNoIndent);
@@ -1141,11 +1164,11 @@ namespace Dsl
             ISyntaxComponent* pcomp1 = func1->GetParam(0);
             ISyntaxComponent* pcomp2 = func2->GetParam(0);
             if (NULL != pcomp0 && NULL != pcomp1 && NULL != pcomp2) {
-                WriteComponent(fp, *pcomp0, indent, firstLineNoIndent, FALSE);
+                WriteComponent(fp, *pcomp0, indent, firstLineNoIndent, FALSE, delim);
                 fwrite(" ? ", 3, 1, fp);
-                WriteComponent(fp, *pcomp1, indent, TRUE, FALSE);
+                WriteComponent(fp, *pcomp1, indent, TRUE, FALSE, delim);
                 fwrite(" : ", 3, 1, fp);
-                WriteComponent(fp, *pcomp2, indent, TRUE, FALSE);
+                WriteComponent(fp, *pcomp2, indent, TRUE, FALSE, delim);
             }
         }
         else {
@@ -1169,7 +1192,7 @@ namespace Dsl
                             noIndent = FALSE;
                         }
                     }
-                    WriteComponent(fp, val, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE);
+                    WriteComponent(fp, val, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE, delim);
                     lastFuncNoParam = TRUE;
                     lastFuncNoStatement = TRUE;
                 }
@@ -1191,7 +1214,7 @@ namespace Dsl
                             noIndent = FALSE;
                         }
                     }
-                    WriteComponent(fp, func, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE);
+                    WriteComponent(fp, func, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE, delim);
                     lastFuncNoParam = funcNoParam;
                     lastFuncNoStatement = funcNoStatement;
                 }
@@ -1206,10 +1229,19 @@ namespace Dsl
     void DslFile::WriteToFile(FILE* fp, int indent)const
     {
 #if FULL_VERSION
+        char buf[1025];
+        if (0 != strcmp(m_StringBeginDelimiter, "\"") || 0 != strcmp(m_StringEndDelimiter, "\"")) {
+            tsnprintf(buf, 1024, "@@delimiter(string, \"%s\", \"%s\");\n", m_StringBeginDelimiter, m_StringEndDelimiter);
+            fwrite(buf, 1, strlen(buf), fp);
+        }
+        if (0 != strcmp(m_ScriptBeginDelimiter, "\"") || 0 != strcmp(m_ScriptEndDelimiter, "\"")) {
+            tsnprintf(buf, 1024, "@@delimiter(script, \"%s\", \"%s\");\n", m_ScriptBeginDelimiter, m_ScriptEndDelimiter);
+            fwrite(buf, 1, strlen(buf), fp);
+        }
         for (int ix = 0; ix < GetDslInfoNum(); ++ix) {
             ISyntaxComponent* p = GetDslInfo(ix);
             if (p) {
-                p->WriteToFile(fp, indent, TRUE, TRUE);
+                p->WriteToFile(fp, indent, TRUE, TRUE, DelimiterInfo(m_StringBeginDelimiter, m_StringEndDelimiter, m_ScriptBeginDelimiter, m_ScriptEndDelimiter));
             }
         }
 #endif

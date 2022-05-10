@@ -62,6 +62,7 @@ namespace Dsl.Parser
                         if (CurChar != '\r')
                             mCommentBuilder.Append(CurChar);
                     }
+                    //++mLineNumber;
                     isSkip = true;
                     mComments.Add(mCommentBuilder.ToString());
                 }
@@ -619,6 +620,22 @@ namespace Dsl.Parser
             mScriptBeginDelimiter = begin;
             mScriptEndDelimiter = end;
         }
+        internal string StringBeginDelimiter
+        {
+            get { return mStringBeginDelimiter; }
+        }
+        internal string StringEndDelimiter
+        {
+            get { return mStringEndDelimiter; }
+        }
+        internal string ScriptBeginDelimiter
+        {
+            get { return mScriptBeginDelimiter; }
+        }
+        internal string ScriptEndDelimiter
+        {
+            get { return mScriptEndDelimiter; }
+        }
 
         private bool IsBegin(string delimiter)
         {
@@ -975,22 +992,6 @@ namespace Dsl.Parser
             if (ix >= 0 && mIterator + ix < mInput.Length)
                 c = mInput[mIterator + ix];
             return c;
-        }
-        private string StringBeginDelimiter
-        {
-            get { return mStringBeginDelimiter; }
-        }
-        private string StringEndDelimiter
-        {
-            get { return mStringEndDelimiter; }
-        }
-        private string ScriptBeginDelimiter
-        {
-            get { return mScriptBeginDelimiter; }
-        }
-        private string ScriptEndDelimiter
-        {
-            get { return mScriptEndDelimiter; }
         }
 
         private static bool myisdigit(char c, bool isHex)

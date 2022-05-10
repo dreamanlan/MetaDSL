@@ -57,6 +57,10 @@ public:
     }
     void setStringDelimiter(const char* begin, const char* end);
     void setScriptDelimiter(const char* begin, const char* end);
+    const char* getStringBeginDelimiter(void)const { return mStringBeginDelimiter; }
+    const char* getStringEndDelimiter(void)const { return mStringEndDelimiter; }
+    const char* getScriptBeginDelimiter(void)const { return mScriptBeginDelimiter; }
+    const char* getScriptEndDelimiter(void)const { return mScriptEndDelimiter; }
 private:
     char curChar(void)const;
     char nextChar(void)const;
@@ -129,15 +133,14 @@ private:
     const char* mQuotes;
     const char* mSpecialChars;
 
-    static const int c_MaxDelimiterSize = 1024;
-    char mScriptBeginDelimiter[c_MaxDelimiterSize + 1];
-    char mScriptEndDelimiter[c_MaxDelimiterSize + 1];
-    char mStringBeginDelimiter[c_MaxDelimiterSize + 1];
-    char mStringEndDelimiter[c_MaxDelimiterSize + 1];
-    int mScriptBeginDelimiterLength = 0;
-    int mScriptEndDelimiterLength = 0;
-    int mStringBeginDelimiterLength = 0;
-    int mStringEndDelimiterLength = 0;
+    const char* mScriptBeginDelimiter;
+    const char* mScriptEndDelimiter;
+    const char* mStringBeginDelimiter;
+    const char* mStringEndDelimiter;
+    int mStringBeginDelimiterLength;
+    int mStringEndDelimiterLength;
+    int mScriptBeginDelimiterLength;
+    int mScriptEndDelimiterLength;
 };
 
 #endif

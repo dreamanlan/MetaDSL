@@ -37,40 +37,20 @@ namespace Dsl.Parser
             bool isSkip = true;
             //跳过注释与白空格
             for (; isSkip && CurChar != 0;) {
-                isSkip = false;
-                for (; mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
-                    if (CurChar == '\n') {
-                        ++mLineNumber;
-                    }
-                    isSkip = true;
-                }
-                //单行注释
-                if (CurChar == '/' && NextChar == '/') {
-                    for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
-                    isSkip = true;
-                }
-                //多行注释
-                if (CurChar == '/' && NextChar == '*') {
-                    ++mIterator;
-                    ++mIterator;
-                    for (; CurChar != 0; ++mIterator) {
-                        if (CurChar == '\n') {
-                            ++mLineNumber;
-                        }
-                        else if (CurChar == '*' && NextChar == '/') {
-                            ++mIterator;
-                            ++mIterator;
-                            break;
-                        }
-                    }
-                    isSkip = true;
-                }
+                bool s1 = SkipWhiteSpaces();
+                bool s2 = SkipComments();
+                isSkip = s1 || s2;
                 //预处理先忽略掉
                 if (CurChar == '#') {
                     //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
                     ++mIterator;
                     mTokenBuilder.Length = 0;
-                    for (; isWhiteSpace(CurChar); ++mIterator) ;
+                    bool isSkip2 = true;
+                    for (; isSkip2 && CurChar!=0;) {
+                        bool ps1 = SkipWhiteSpaces();
+                        bool ps2 = SkipComments();
+                        isSkip2 = ps1 || ps2;
+                    }
                     for (; char.IsLetter(CurChar); ++mIterator) {
                         mTokenBuilder.Append(CurChar);
                     }
@@ -80,33 +60,15 @@ namespace Dsl.Parser
                     if (CurChar != '\n') {
                         char lc = '\0';
                         for (; CurChar != 0; ++mIterator) {
-                            //单行注释
-                            if (CurChar == '/' && NextChar == '/') {
-                                for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
-                            }
-                            //多行注释
-                            if (CurChar == '/' && NextChar == '*') {
-                                ++mIterator;
-                                ++mIterator;
-                                for (; CurChar != 0; ++mIterator) {
-                                    if (CurChar == '\n') {
-                                        ++mLineNumber;
-                                    }
-                                    else if (CurChar == '*' && NextChar == '/') {
-                                        ++mIterator;
-                                        ++mIterator;
-                                        break;
-                                    }
-                                }
-                            }
+                            SkipComments();
                             char cc = CurChar;
                             if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
                                 arg = mTokenBuilder.ToString().Trim();
                                 break;
                             }
-                            if (CurChar == '"') {
+                            if (cc == '"') {
                                 //字符串
-                                mTokenBuilder.Append(CurChar);
+                                mTokenBuilder.Append(cc);
                                 ++mIterator;
                                 while (CurChar != 0 && CurChar != '"') {
                                     mTokenBuilder.Append(CurChar);
@@ -118,13 +80,13 @@ namespace Dsl.Parser
                                 }
                                 mTokenBuilder.Append(CurChar);
                             }
-                            else if (CurChar == '\\' && (NextChar == '\r' || NextChar == '\n')) {
+                            else if (cc == '\\' && (NextChar == '\r' || NextChar == '\n')) {
                                 //续行符不输出
                             }
                             else {
-                                if (CurChar == '\n')
+                                if (cc == '\n')
                                     ++mLineNumber;
-                                mTokenBuilder.Append(CurChar);
+                                mTokenBuilder.Append(cc);
                             }
                             lc = CurChar;
                         }
@@ -137,88 +99,6 @@ namespace Dsl.Parser
                 mCurToken = "<<eof>>";
                 return CppConstants.END_OF_SLK_INPUT_;
             }
-            //else if (CurChar == '#' && NextChar == '#') {
-            //    ++mIterator;
-            //    ++mIterator;
-            //    mCurToken = "##";
-            //    return CppConstants.STRING_;
-            //}
-            //else if (CurChar == '#') {
-            //    //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
-            //    ++mIterator;
-            //    mTokenBuilder.Append('@');
-            //    mTokenBuilder.Append('@');
-            //    for (; isWhiteSpace(CurChar); ++mIterator) ;
-            //    for (; char.IsLetter(CurChar); ++mIterator) {
-            //        mTokenBuilder.Append(CurChar);
-            //    }
-            //    if (mTokenBuilder.Length == 2) {
-            //        mCurToken = "#";
-            //        return CppConstants.STRING_;
-            //    }
-            //    mCurToken = mTokenBuilder.ToString();
-            //    mTokenBuilder.Length = 0;
-            //    for (; CurChar != '\n' && isWhiteSpace(CurChar); ++mIterator) ;
-            //    string arg = string.Empty;
-            //    if (CurChar != '\n') {
-            //        char lc = '\0';
-            //        for (; CurChar != 0; ++mIterator) {
-            //            //单行注释
-            //            if (CurChar == '/' && NextChar == '/') {
-            //                for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
-            //            }
-            //            //多行注释
-            //            if (CurChar == '/' && NextChar == '*') {
-            //                ++mIterator;
-            //                ++mIterator;
-            //                for (; CurChar != 0; ++mIterator) {
-            //                    if (CurChar == '\n') {
-            //                        ++mLineNumber;
-            //                    }
-            //                    else if (CurChar == '*' && NextChar == '/') {
-            //                        ++mIterator;
-            //                        ++mIterator;
-            //                        break;
-            //                    }
-            //                }
-            //            }
-            //            char cc = CurChar;
-            //            if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
-            //                arg = mTokenBuilder.ToString().Trim();
-            //                break;
-            //            }
-            //            if (CurChar == '"') {
-            //                //字符串
-            //                mTokenBuilder.Append(CurChar);
-            //                ++mIterator;
-            //                while (CurChar != 0 && CurChar != '"') {
-            //                    mTokenBuilder.Append(CurChar);
-            //                    ++mIterator;
-            //                    if (CurChar == '\\' && NextChar != 0) {
-            //                        mTokenBuilder.Append(CurChar);
-            //                        ++mIterator;
-            //                    }
-            //                }
-            //                mTokenBuilder.Append(CurChar);
-            //            }
-            //            else if (CurChar == '\\' && (NextChar == '\r' || NextChar == '\n')) {
-            //                //续行符不输出
-            //            }
-            //            else {
-            //                if (CurChar == '\n')
-            //                    ++mLineNumber;
-            //                mTokenBuilder.Append(CurChar);
-            //            }
-            //            lc = CurChar;
-            //        }
-            //    }
-            //    //有的预处理能出现在任何地方，这里不能解析为嵌套结构，全部按函数解析，希望语法上能通过
-            //    mTokenQueue.Enqueue(new TokenInfo { Token = "(", TokenValue = CppConstants.LPAREN_, LineNumber = mLineNumber });
-            //    if (!string.IsNullOrEmpty(arg))
-            //        mTokenQueue.Enqueue(new TokenInfo { Token = myUnQuoteString(arg), TokenValue = CppConstants.STRING_, LineNumber = mLineNumber });
-            //    mTokenQueue.Enqueue(new TokenInfo { Token = ")", TokenValue = CppConstants.RPAREN_, LineNumber = mLineNumber });
-            //    return CppConstants.IDENTIFIER_;
-            //}
             else if (CurChar == '<' && NextChar == ':') {
                 ++mIterator;
                 ++mIterator;
@@ -689,6 +569,45 @@ namespace Dsl.Parser
         internal int getLastLineNumber()
         {
             return mLastLineNumber;
+        }
+
+        private bool SkipWhiteSpaces()
+        {
+            bool isSkip = false;
+            for (; mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
+                if (CurChar == '\n') {
+                    ++mLineNumber;
+                }
+                isSkip = true;
+            }
+            return isSkip;
+        }
+        private bool SkipComments()
+        {
+            bool isSkip = false;
+            //单行注释
+            if (CurChar == '/' && NextChar == '/') {
+                for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
+                //++mLineNumber;
+                isSkip = true;
+            }
+            //多行注释
+            if (CurChar == '/' && NextChar == '*') {
+                ++mIterator;
+                ++mIterator;
+                for (; CurChar != 0; ++mIterator) {
+                    if (CurChar == '\n') {
+                        ++mLineNumber;
+                    }
+                    else if (CurChar == '*' && NextChar == '/') {
+                        ++mIterator;
+                        ++mIterator;
+                        break;
+                    }
+                }
+                isSkip = true;
+            }
+            return isSkip;
         }
 
         private void getOperatorToken()

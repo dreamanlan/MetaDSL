@@ -7,6 +7,7 @@ namespace Dsl
 {
     void Parse(const char* buf, DslFile& file);
     void Parse(IScriptSource& source, DslFile& file);
+    void ParseGpp(const char* buf, DslFile& file, const char* beginDelim, const char* endDelim);
 }
 
 using namespace Dsl;
