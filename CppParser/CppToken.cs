@@ -57,10 +57,12 @@ namespace Dsl.Parser
                     mTokenBuilder.Length = 0;
                     for (; CurChar != '\n' && isWhiteSpace(CurChar); ++mIterator) ;
                     string arg = string.Empty;
-                    if (CurChar != '\n') {
+                    if (CurChar != 0 && CurChar != '\n') {
                         char lc = '\0';
                         for (; CurChar != 0; ++mIterator) {
                             SkipComments();
+                            if (CurChar == 0)
+                                break;
                             char cc = CurChar;
                             if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
                                 arg = mTokenBuilder.ToString().Trim();

@@ -1275,6 +1275,11 @@ namespace Dsl
             string dummy;
             return LoadGpp(file, logCallback, string.Empty, string.Empty, out dummy);
         }
+        public bool LoadGpp(string file, DslLogDelegation logCallback, string beginDelim, string endDelim)
+        {
+            string dummy;
+            return LoadGpp(file, logCallback, beginDelim, endDelim, out dummy);
+        }
         public bool LoadGpp(string file, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
         {
             string content = File.ReadAllText(file);
@@ -1401,10 +1406,12 @@ namespace Dsl
                             tokenBuilder.Length = 0;
                             string arg = string.Empty;
                             for (; j < input.Length && input[j] != '\n' && char.IsWhiteSpace(input[j]); ++j) ;
-                            if (input[j] != '\n') {
+                            if (j < input.Length && input[j] != '\n') {
                                 char lc = '\0';
                                 for (; j < input.Length; ++j) {
                                     SkipComments(input, ref j);
+                                    if (j >= input.Length)
+                                        break;
                                     char cc = input[j];
                                     if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
                                         arg = tokenBuilder.ToString().Trim();

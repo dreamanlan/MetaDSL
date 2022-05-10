@@ -23,6 +23,7 @@ namespace Dsl
             string gppSrc;
             file0.LoadGpp("test.h", logCallback, "={:=", "=:}=", out gppSrc);
 #if FULL_VERSION
+            File.WriteAllText("test_gpp_src.h", gppSrc);
             file0.Save("test_gpp.h");
 #endif
             file0.LoadCpp("test.h", logCallback);

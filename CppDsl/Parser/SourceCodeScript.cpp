@@ -403,10 +403,12 @@ namespace Dsl
                 tokenBuilder.str(std::string());
                 std::string arg;
                 for (; j < len && input[j] != '\n' && isWhiteSpace(input[j]); ++j);
-                if (input[j] != '\n') {
+                if (j < len && input[j] != '\n') {
                     char lc = '\0';
                     for (; j < len; ++j) {
                         SkipComments(input, len, j);
+                        if (j >= len)
+                            break;
                         char cc = input[j];
                         if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
                             arg = tokenBuilder.str();
