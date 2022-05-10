@@ -1470,6 +1470,7 @@ namespace Dsl
                                 else
                                     sb.Append(key);
                                 sb.Append('(');
+                                sb.Append(' ');
                                 if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
                                     sb.Append(arg);
                                 }
@@ -1478,6 +1479,7 @@ namespace Dsl
                                     sb.Append(arg.Replace("\"", "\\\""));
                                     sb.Append('"');
                                 }
+                                sb.Append(' ');
                                 sb.Append(')');
                                 sb.Append(';');
                                 sb.AppendLine();
@@ -1569,6 +1571,8 @@ namespace Dsl
                     case ']':
                     case '{':
                     case '}':
+                    case '?':
+                    case ':':
                     case '#':
                         return false;
                 }

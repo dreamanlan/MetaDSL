@@ -310,6 +310,8 @@ namespace Dsl
             case ']':
             case '{':
             case '}':
+            case '?':
+            case ':':
             case '#':
                 return false;
             }
@@ -469,6 +471,7 @@ namespace Dsl
                     else
                         ss << key;
                     ss << '(';
+                    ss << ' ';
                     if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
                         ss << key;
                     }
@@ -479,6 +482,7 @@ namespace Dsl
                         ss << '"';
                     }
                     ss << arg;
+                    ss << ' ';
                     ss << ')';
                     ss << ';';
                     ss << std::endl;
