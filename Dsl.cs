@@ -1343,29 +1343,31 @@ namespace Dsl
                     case '/': {
                             TryEmitStartCodeBlock(sb, beginDelim, ref codeBlockNeedClose);
                             sb.Append(ch);
-                            char c = input[i + 1];
-                            if (c == '/') {
-                                sb.Append(c);
-                                for (int j = i + 2; j < input.Length; ++j) {
-                                    c = input[j];
+                            if (i + 1 < input.Length) {
+                                char c = input[i + 1];
+                                if (c == '/') {
                                     sb.Append(c);
-                                    if (c == '\n') {
-                                        i = j;
-                                        break;
+                                    for (int j = i + 2; j < input.Length; ++j) {
+                                        c = input[j];
+                                        sb.Append(c);
+                                        if (c == '\n') {
+                                            i = j;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            else if (c == '*') {
-                                sb.Append(c);
-                                char lc = '\0';
-                                for (int j = i + 2; j < input.Length; ++j) {
-                                    c = input[j];
+                                else if (c == '*') {
                                     sb.Append(c);
-                                    if (lc == '*' && c == '/') {
-                                        i = j;
-                                        break;
+                                    char lc = '\0';
+                                    for (int j = i + 2; j < input.Length; ++j) {
+                                        c = input[j];
+                                        sb.Append(c);
+                                        if (lc == '*' && c == '/') {
+                                            i = j;
+                                            break;
+                                        }
+                                        lc = c;
                                     }
-                                    lc = c;
                                 }
                             }
                         }
@@ -1379,8 +1381,14 @@ namespace Dsl
                                 sb.Append(c);
                                 if (c == '\\') {
                                     ++j;
-                                    c = input[j];
-                                    sb.Append(c);
+                                    if (j < input.Length) {
+                                        c = input[j];
+                                        sb.Append(c);
+                                    }
+                                    else {
+                                        i = j - 1;
+                                        break;
+                                    }
                                 }
                                 else if (c == ch) {
                                     i = j;

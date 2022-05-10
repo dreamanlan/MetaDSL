@@ -340,29 +340,31 @@ namespace Dsl
             case '/': {
                 TryEmitStartCodeBlock(ss, beginDelim, codeBlockNeedClose);
                 ss << ch;
-                char c = input[i + 1];
-                if (c == '/') {
-                    ss << c;
-                    for (int j = i + 2; j < len; ++j) {
-                        c = input[j];
+                if (i + 1 < len) {
+                    char c = input[i + 1];
+                    if (c == '/') {
                         ss << c;
-                        if (c == '\n') {
-                            i = j;
-                            break;
+                        for (int j = i + 2; j < len; ++j) {
+                            c = input[j];
+                            ss << c;
+                            if (c == '\n') {
+                                i = j;
+                                break;
+                            }
                         }
                     }
-                }
-                else if (c == '*') {
-                    ss << c;
-                    char lc = '\0';
-                    for (int j = i + 2; j < len; ++j) {
-                        c = input[j];
+                    else if (c == '*') {
                         ss << c;
-                        if (lc == '*' && c == '/') {
-                            i = j;
-                            break;
+                        char lc = '\0';
+                        for (int j = i + 2; j < len; ++j) {
+                            c = input[j];
+                            ss << c;
+                            if (lc == '*' && c == '/') {
+                                i = j;
+                                break;
+                            }
+                            lc = c;
                         }
-                        lc = c;
                     }
                 }
             }
@@ -376,8 +378,14 @@ namespace Dsl
                     ss << c;
                     if (c == '\\') {
                         ++j;
-                        c = input[j];
-                        ss << c;
+                        if (j < len) {
+                            c = input[j];
+                            ss << c;
+                        }
+                        else {
+                            i = j - 1;
+                            break;
+                        }
                     }
                     else if (c == ch) {
                         i = j;
