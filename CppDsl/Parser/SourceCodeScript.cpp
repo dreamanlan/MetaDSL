@@ -303,22 +303,8 @@ namespace Dsl
     {
         for (int i = 0; i < str.length(); ++i) {
             char c = str[i];
-            switch (c) {
-            case '\r':
-            case '\n':
-            case ',':
-            case ';':
-            case '(':
-            case ')':
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case '?':
-            case ':':
-            case '#':
+            if (!::isalnum(c) && c != '_' && c != ' ' && c != '\t')
                 return false;
-            }
         }
         return true;
     }

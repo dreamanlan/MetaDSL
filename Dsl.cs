@@ -1577,22 +1577,8 @@ namespace Dsl
         {
             for (int i = 0; i < str.Length; ++i) {
                 char c = str[i];
-                switch (c) {
-                    case '\r':
-                    case '\n':
-                    case ',':
-                    case ';':
-                    case '(':
-                    case ')':
-                    case '[':
-                    case ']':
-                    case '{':
-                    case '}':
-                    case '?':
-                    case ':':
-                    case '#':
-                        return false;
-                }
+                if (!char.IsLetterOrDigit(c) && c != '_' && c != ' ' && c != '\t')
+                    return false;
             }
             return true;
         }
