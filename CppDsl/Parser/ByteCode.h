@@ -11,7 +11,7 @@ namespace Dsl
     class RuntimeBuilderT
     {
     public:
-        RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile)
+        RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile), mApi()
         {
             MyAssert(mDataFile);
             mData.GetNullFunctionPtrRef() = mDataFile->GetNullFunctionPtr();
@@ -59,6 +59,9 @@ namespace Dsl
         inline void    markPeriodStarParam(void);
         inline void    markQuestionPeriodStarParam(void);
         inline void    markPointerStarParam(void);
+    public:
+        RuntimeBuilderData& getRuntimeBuilderData(void) { return mData; }
+        const RuntimeBuilderData& getRuntimeBuilderData(void)const { return mData; }
     private:
         inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
         inline ValueOrFunctionData& simplifyStatement(FunctionData& data)const;
@@ -68,6 +71,7 @@ namespace Dsl
         }
     protected:
         RuntimeBuilderData		        mData;
+        DslActionApi mApi;
         DslFile* mDataFile;
         RealTypeT* mThis;
     };

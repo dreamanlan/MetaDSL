@@ -30,9 +30,18 @@ namespace Dsl.Parser
             mStringEndDelimiter = string.Empty;
             mScriptBeginDelimiter = string.Empty;
             mScriptEndDelimiter = string.Empty;
+            mOnGetToken = null;
         }
 
         internal short get()
+        {
+            short tok = getImpl();
+            if (null != mOnGetToken) {
+                mOnGetToken(ref mCurToken, ref tok, ref mLineNumber);
+            }
+            return tok;
+        }
+        private short getImpl()
         {
             mLastToken = mCurToken;
             mLastLineNumber = mLineNumber;
@@ -556,18 +565,6 @@ namespace Dsl.Parser
                         return DslConstants.NUMBER_;
                     }
                     else {
-                        if (mCurToken == "operator") {
-                            mTokenBuilder.Length = 0;
-                            while (isWhiteSpace(CurChar)) {
-                                ++mIterator;
-                            }
-                            while (isOperator(CurChar)) {
-                                mTokenBuilder.Append(CurChar);
-                                ++mIterator;
-                            }
-                            mCurToken = mCurToken + mTokenBuilder.ToString();
-                            return DslConstants.STRING_;
-                        }
                         return DslConstants.IDENTIFIER_;
                     }
                 }
@@ -579,6 +576,11 @@ namespace Dsl.Parser
             short token = 0;
             mLog.Log("[info] peek_token is not called in an LL(1) grammar\n");
             return token;
+        }
+        internal bool enqueueToken(string tok, short val, int line)
+        {
+            mTokenQueue.Enqueue(new TokenInfo { Token = tok, TokenValue = val, LineNumber = line });
+            return true;
         }
 
         internal string getCurToken()
@@ -635,6 +637,11 @@ namespace Dsl.Parser
         internal string ScriptEndDelimiter
         {
             get { return mScriptEndDelimiter; }
+        }
+        internal GetTokenDelegation OnGetToken
+        {
+            get { return mOnGetToken; }
+            set { mOnGetToken = value; }
         }
 
         private bool IsBegin(string delimiter)
@@ -1066,5 +1073,6 @@ namespace Dsl.Parser
         private string mStringEndDelimiter;
         private string mScriptBeginDelimiter;
         private string mScriptEndDelimiter;
+        private GetTokenDelegation mOnGetToken;
     }
 }

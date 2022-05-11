@@ -46,7 +46,7 @@ fdef");
 
 
 	=:}=;
-	@@define(XXX1 > 2 ? 1 : 0);
+	@@define("XXX 1 > 2 ? 1 : 0");
 	@@code
 	={:=
 

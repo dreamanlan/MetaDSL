@@ -385,6 +385,15 @@ int SlkToken::isSpecialChar(char c) const
 
 short SlkToken::get(void)
 {
+    short tok = getImpl();
+    if (!mDslFile->OnGetToken.isNull()) {
+        mDslFile->OnGetToken(mOnEnqueueToken, mCurToken, tok, mLineNumber);
+    }
+    return tok;
+}
+
+short SlkToken::getImpl(void)
+{
     if (NULL == mSource || NULL == mDslFile) {
         return END_OF_SLK_INPUT_;
     }
@@ -1047,24 +1056,17 @@ short SlkToken::get(void)
                 return NUMBER_;
             }
             else {
-                tempEndToken();
-                if (0 == strcmp(mCurToken, "operator")) {
-                    newToken();
-                    while (isWhiteSpace(curChar())) {
-                        ++mIterator;
-                    }
-                    while (isOperator(curChar())) {
-                        pushTokenChar(curChar());
-                        ++mIterator;
-                    }
-                    endToken();
-                    return STRING_;
-                }
                 endToken();
                 return IDENTIFIER_;
             }
         }
     }
+}
+
+bool SlkToken::enqueueToken(char* tok, short val, int line)
+{
+    mTokenQueue.PushBack(TokenInfo(tok, val, line));
+    return true;
 }
 
 short SlkToken::peek(int level)
@@ -1272,4 +1274,6 @@ SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile) :mSource(&
     setCanFinish(FALSE);
     setStringDelimiter("", "");
     setScriptDelimiter("", "");
+
+    mOnEnqueueToken.attach(this, &SlkToken::enqueueToken);
 }

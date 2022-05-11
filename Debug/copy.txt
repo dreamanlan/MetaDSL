@@ -22,10 +22,10 @@ skill(kkk)
 	END_SCRIPT;
 	script(ttt : string, tt2 : int)
 	BEGIN_SCRIPT abcd END_SCRIPT;
-	(:attr:)
+	(:attr:);
 	script(ttt)
 	BEGIN_SCRIPTEND_SCRIPT;
-	[:attr:]
+	[:attr:];
 	script(ttt)
 	BEGIN_SCRIPT
   abcdef;
@@ -33,7 +33,9 @@ skill(kkk)
 	END_SCRIPT;
 	a = [[b]];
 	a = [[ abcd ]];
-	template<:a, b, c:>class A;
+	template<:a, b, c:>;
+	class;
+	A;
 	a::b::c;
 	a::b(abcd);
 	a::(abcd);
@@ -46,4 +48,12 @@ skill(kkk)
 };	//test test test
 skill(ttt : string, tt2 : int)
 {
+	if(a)
+	{
+		abc;
+	};
+	else
+	{
+		def;
+	};
 };

@@ -1031,6 +1031,9 @@ namespace Dsl
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
             Parser.DslToken tokens = new Parser.DslToken(log, content);
+            tokens.OnGetToken = mOnGetToken;
+            mOnEnqueueToken = (string tok, short val, int line) => { return tokens.enqueueToken(tok, val, line); };
+
             Parser.DslError error = new Parser.DslError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
             action.onGetLastToken = () => { return tokens.getLastToken(); };
@@ -1038,6 +1041,11 @@ namespace Dsl
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
             action.onSetStringDelimiter = (string begin, string end) => { tokens.setStringDelimiter(begin, end); };
             action.onSetScriptDelimiter = (string begin, string end) => { tokens.setScriptDelimiter(begin, end); };
+            action.onBeforeAddFunction = mOnBeforeAddFunction;
+            action.onAddFunction = mOnAddFunction;
+            action.onBeforeEndStatement = mOnBeforeEndStatement;
+            action.onEndStatement = mOnEndStatement;
+
 
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
@@ -1297,6 +1305,11 @@ namespace Dsl
             return LoadFromString(transformedContent, resourceName, logCallback);
         }
 
+        public void EnqueueToken(string tok, short val, int line)
+        {
+            if (null != mOnEnqueueToken)
+                mOnEnqueueToken(tok, val, line);
+        }
         public void SetStringDelimiter(string begin, string end)
         {
             mStringBeginDelimiter = begin;
@@ -1322,6 +1335,31 @@ namespace Dsl
         public string ScriptEndDelimiter
         {
             get { return mScriptEndDelimiter; }
+        }
+        public Dsl.Common.GetTokenDelegation onGetToken
+        {
+            get { return mOnGetToken; }
+            set { mOnGetToken = value; }
+        }
+        public Dsl.Common.BeforeAddFunctionDelegation onBeforeAddFunction
+        {
+            get { return mOnBeforeAddFunction; }
+            set { mOnBeforeAddFunction = value; }
+        }
+        public Dsl.Common.AddFunctionDelegation onAddFunction
+        {
+            get { return mOnAddFunction; }
+            set { mOnAddFunction = value; }
+        }
+        public Dsl.Common.BeforeEndStatementDelegation onBeforeEndStatement
+        {
+            get { return mOnBeforeEndStatement; }
+            set { mOnBeforeEndStatement = value; }
+        }
+        public Dsl.Common.EndStatementDelegation onEndStatement
+        {
+            get { return mOnEndStatement; }
+            set { mOnEndStatement = value; }
         }
 
         private static string TransformPreprocess(string input, string beginDelim, string endDelim)
@@ -1353,6 +1391,9 @@ namespace Dsl
                                         if (c == '\n') {
                                             i = j;
                                             break;
+                                        }
+                                        else if (j == input.Length - 1) {
+                                            i = j;
                                         }
                                     }
                                 }
@@ -1415,6 +1456,7 @@ namespace Dsl
                             string arg = string.Empty;
                             for (; j < input.Length && input[j] != '\n' && char.IsWhiteSpace(input[j]); ++j) ;
                             if (j < input.Length && input[j] != '\n') {
+                                bool isExpression = key == "define" || key.Length >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n');
                                 char lc = '\0';
                                 for (; j < input.Length; ++j) {
                                     SkipComments(input, ref j);
@@ -1425,14 +1467,15 @@ namespace Dsl
                                         arg = tokenBuilder.ToString().Trim();
                                         break;
                                     }
-                                    if (cc == '"') {
+                                    if (isExpression && (cc == '"' || cc == '\'')) {
                                         //字符串
                                         tokenBuilder.Append(cc);
                                         ++j;
-                                        while (j + 1 < input.Length && input[j] != '"') {
-                                            tokenBuilder.Append(input[j]);
+                                        while (j + 1 < input.Length && input[j] != cc) {
+                                            char c = input[j];
+                                            tokenBuilder.Append(c);
                                             ++j;
-                                            if (input[j] == '\\') {
+                                            if (c == '\\') {
                                                 tokenBuilder.Append(input[j]);
                                                 ++j;
                                             }
@@ -1487,16 +1530,13 @@ namespace Dsl
                                 else
                                     sb.Append(key);
                                 sb.Append('(');
-                                sb.Append(' ');
-                                if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
+                                if (key == "define" && IsSimpleDefine(arg) || key == "undef") {
                                     sb.Append(arg);
                                 }
                                 else {
-                                    sb.Append('"');
-                                    sb.Append(arg.Replace("\"", "\\\""));
-                                    sb.Append('"');
+                                    string quoteArg = Utility.quoteStringWithStrDefDelim(arg, Dsl.FunctionData.STRING_TOKEN);
+                                    sb.Append(quoteArg);
                                 }
-                                sb.Append(' ');
                                 sb.Append(')');
                                 sb.Append(';');
                                 sb.AppendLine();
@@ -1612,6 +1652,12 @@ namespace Dsl
         private string mStringEndDelimiter = "\"";
         private string mScriptBeginDelimiter = "{:";
         private string mScriptEndDelimiter = ":}";
+        private Dsl.Common.EnqueueTokenDelegation mOnEnqueueToken;
+        private Dsl.Common.GetTokenDelegation mOnGetToken;
+        private Dsl.Common.BeforeAddFunctionDelegation mOnBeforeAddFunction;
+        private Dsl.Common.AddFunctionDelegation mOnAddFunction;
+        private Dsl.Common.BeforeEndStatementDelegation mOnBeforeEndStatement;
+        private Dsl.Common.EndStatementDelegation mOnEndStatement;
 
         public static byte[] BinaryIdentity
         {
@@ -2079,13 +2125,7 @@ namespace Dsl
         {
             switch (_Type) {
                 case AbstractSyntaxComponent.STRING_TOKEN: {
-                        if (str.Contains("\\"))
-                            str = str.Replace("\\", "\\\\");
-                        if (str.Contains("\""))
-                            str = str.Replace("\"", "\\\"");
-                        if (str.Contains("\0"))
-                            str = str.Replace("\0", "\\0");
-                        return strBeginDelim + str + strEndDelim;
+                        return quoteString(str, strBeginDelim, strEndDelim);
                     }
                 case AbstractSyntaxComponent.NUM_TOKEN:
                 case AbstractSyntaxComponent.ID_TOKEN:
@@ -2093,6 +2133,33 @@ namespace Dsl
                 default:
                     return str;
             }
+        }
+        private static string quoteString(string str, string strBeginDelim, string strEndDelim)
+        {
+            var sb = new StringBuilder();
+            sb.Append(strBeginDelim);
+            for (int i = 0; i < str.Length; i++) {
+                char c = str[i];
+                switch (c) {
+                    case '\\':
+                        sb.Append("\\\\");
+                        break;
+                    case '"':
+                        sb.Append("\\\"");
+                        break;
+                    case '\'':
+                        sb.Append("\\\'");
+                        break;
+                    case '\0':
+                        sb.Append("\\\0");
+                        break;
+                    default:
+                        sb.Append(c);
+                        break;
+                }
+            }
+            sb.Append(strEndDelim);
+            return sb.ToString();
         }
 
         internal static string getFunctionStringWithStrDefDelim(FunctionData data, bool includeComment)

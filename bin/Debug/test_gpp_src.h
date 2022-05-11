@@ -5,6 +5,14 @@
 int
 main ()
 {
+    //fdafdsa
+
+    /*fdafa
+    fdafads
+    fdasfa
+    */
+
+   //-----12345-----
 
   struct index_st
   {
@@ -15,15 +23,35 @@ main ()
 =:}=;
 @@if(1)
 {
-	@@code
-	={:=
+@@code
+={:=
+
   typedef struct index_st index_t;
   int x,y;
   x = offsetof(struct index_st, len);
   y = offsetof(index_t, num)
 
   ;
-	=:}=;
+=:}=;
+@@define("ABC abc
+fdef");
+@@code
+={:=
+
+
+=:}=;
+@@define("DEF abc(abc)");
+@@code
+={:=
+
+
+=:}=;
+@@define("XXX 1 > 2 ? 1 : 0");
+@@code
+={:=
+
+
+=:}=;
 };
 @@code
 ={:=
@@ -31,7 +59,7 @@ main ()
 };
 
 =:}=;
-@@define(definexxx 1);
+@@define(xxx 1);
 @@code
 ={:=
 

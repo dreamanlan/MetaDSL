@@ -8,8 +8,10 @@ calc.h
 #define _CALC_H
 
 #include "BaseType.h"
+#include "Delegation.h"
 #include <new>
 
+class ActionForSourceCodeScript;
 namespace Dsl
 {
     template<typename DestT>
@@ -1270,10 +1272,67 @@ namespace Dsl
         ValueOrFunctionData* m_pNullValueOrFunction;
     };
 
+    class DslActionApi
+    {
+    public:
+        void endStatement(void)const;
+        void buildOperator(void)const;
+        void buildFirstTernaryOperator(void)const;
+        void buildSecondTernaryOperator(void)const;
+        void beginStatement(void)const;
+        void addFunction(void)const;
+        void setFunctionId(void)const;
+        void markParenthesisParam(void)const;
+        void buildHighOrderFunction(void)const;
+        void markBracketParam(void)const;
+        void markQuestionParenthesisParam(void)const;
+        void markQuestionBracketParam(void)const;
+        void markQuestionBraceParam(void)const;
+        void markStatement(void)const;
+        void markExternScript(void)const;
+        void markBracketColonParam(void)const;
+        void markParenthesisColonParam(void)const;
+        void markAngleBracketColonParam(void)const;
+        void markBracePercentParam(void)const;
+        void markBracketPercentParam(void)const;
+        void markParenthesisPercentParam(void)const;
+        void markAngleBracketPercentParam(void)const;
+        void markColonColonParam(void)const;
+        void markColonColonParenthesisParam(void)const;
+        void markColonColonBracketParam(void)const;
+        void markColonColonBraceParam(void)const;
+        void setExternScript(void)const;
+        void markPeriodParam(void)const;
+        void setMemberId(void)const;
+        void markPeriodParenthesisParam(void)const;
+        void markPeriodBracketParam(void)const;
+        void markPeriodBraceParam(void)const;
+        void markQuestionPeriodParam(void)const;
+        void markPointerParam(void)const;
+        void markPeriodStarParam(void)const;
+        void markQuestionPeriodStarParam(void)const;
+        void markPointerStarParam(void)const;
+    public:
+        void push(char* token, int type)const;
+        StatementData* getCurStatement(void)const;
+        FunctionData* getLastFunction(void)const;
+        void setLastFunction(FunctionData* p)const;
+    public:
+        inline DslActionApi(void) :m_Impl(0) {}
+        inline void SetImpl(ActionForSourceCodeScript* p) { m_Impl = p; }
+    private:
+        ActionForSourceCodeScript* m_Impl;
+    };
+    typedef Delegation3<bool, char*, short, int> EnqueueTokenDelegation;
     class IScriptSource;
     class DslFile
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
+        typedef Delegation4<bool, const EnqueueTokenDelegation&, char*&, short&, int&> GetTokenDelegation;
+        typedef Delegation2<bool, const DslActionApi&, StatementData*> BeforeAddFunctionDelegation;
+        typedef Delegation3<bool, const DslActionApi&, StatementData*, FunctionData*> AddFunctionDelegation;
+        typedef Delegation1<bool, const DslActionApi&> BeforeEndStatementDelegation;
+        typedef Delegation2<bool, const DslActionApi&, StatementData*&> EndStatementDelegation;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const
@@ -1302,6 +1361,12 @@ namespace Dsl
     public:
         void SetStringDelimiter(const char* begin, const char* end);
         void SetScriptDelimiter(const char* begin, const char* end);
+    public:
+        GetTokenDelegation OnGetToken;
+        BeforeAddFunctionDelegation OnBeforeAddFunction;
+        AddFunctionDelegation OnAddFunction;
+        BeforeEndStatementDelegation OnBeforeEndStatement;
+        EndStatementDelegation OnEndStatement;
     private:
         DslFile(const DslFile&) = delete;
         DslFile& operator=(const DslFile&) = delete;

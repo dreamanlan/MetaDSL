@@ -119,6 +119,7 @@ inline void ActionForSourceCodeScript::pushStr(void)
 //--------------------------------------------------------------------------------------
 inline ActionForSourceCodeScript::ActionForSourceCodeScript(SlkToken& scanner, Dsl::DslFile& dataFile) :mScanner(&scanner), BaseType(dataFile)
 {
+    mApi.SetImpl(this);
     initialize_table();
     setEnvironmentObjRef(*this);
 }
@@ -189,6 +190,253 @@ namespace Dsl
         const char* m_Source;
     };
     //------------------------------------------------------------------------------------------------------
+    void DslActionApi::endStatement(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->endStatement();
+    }
+    void DslActionApi::buildOperator(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->buildOperator();
+    }
+    void DslActionApi::buildFirstTernaryOperator(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->buildFirstTernaryOperator();
+    }
+    void DslActionApi::buildSecondTernaryOperator(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->buildSecondTernaryOperator();
+    }
+    void DslActionApi::beginStatement(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->beginStatement();
+    }
+    void DslActionApi::addFunction(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->addFunction();
+    }
+    void DslActionApi::setFunctionId(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->setFunctionId();
+    }
+    void DslActionApi::markParenthesisParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markParenthesisParam();
+    }
+    void DslActionApi::buildHighOrderFunction(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->buildHighOrderFunction();
+    }
+    void DslActionApi::markBracketParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracketParam();
+    }
+    void DslActionApi::markQuestionParenthesisParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markQuestionParenthesisParam();
+    }
+    void DslActionApi::markQuestionBracketParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markQuestionBracketParam();
+    }
+    void DslActionApi::markQuestionBraceParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markQuestionBraceParam();
+    }
+    void DslActionApi::markStatement(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markStatement();
+    }
+    void DslActionApi::markExternScript(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markExternScript();
+    }
+    void DslActionApi::markBracketColonParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracketColonParam();
+    }
+    void DslActionApi::markParenthesisColonParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markParenthesisColonParam();
+    }
+    void DslActionApi::markAngleBracketColonParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markAngleBracketColonParam();
+    }
+    void DslActionApi::markBracePercentParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracePercentParam();
+    }
+    void DslActionApi::markBracketPercentParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracketPercentParam();
+    }
+    void DslActionApi::markParenthesisPercentParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markParenthesisPercentParam();
+    }
+    void DslActionApi::markAngleBracketPercentParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markAngleBracketPercentParam();
+    }
+    void DslActionApi::markColonColonParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markColonColonParam();
+    }
+    void DslActionApi::markColonColonParenthesisParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markColonColonParenthesisParam();
+    }
+    void DslActionApi::markColonColonBracketParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markColonColonBracketParam();
+    }
+    void DslActionApi::markColonColonBraceParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markColonColonBraceParam();
+    }
+    void DslActionApi::setExternScript(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->setExternScript();
+    }
+    void DslActionApi::markPeriodParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPeriodParam();
+    }
+    void DslActionApi::setMemberId(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->setMemberId();
+    }
+    void DslActionApi::markPeriodParenthesisParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPeriodParenthesisParam();
+    }
+    void DslActionApi::markPeriodBracketParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPeriodBracketParam();
+    }
+    void DslActionApi::markPeriodBraceParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPeriodBraceParam();
+    }
+    void DslActionApi::markQuestionPeriodParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markQuestionPeriodParam();
+    }
+    void DslActionApi::markPointerParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPointerParam();
+    }
+    void DslActionApi::markPeriodStarParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPeriodStarParam();
+    }
+    void DslActionApi::markQuestionPeriodStarParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markQuestionPeriodStarParam();
+    }
+    void DslActionApi::markPointerStarParam(void)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markPointerStarParam();
+    }
+    void DslActionApi::push(char* token, int type)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->getRuntimeBuilderData().push(RuntimeBuilderData::TokenInfo(token, type));
+    }
+    StatementData* DslActionApi::getCurStatement(void)const
+    {
+        if (!m_Impl)
+            return 0;
+        m_Impl->getRuntimeBuilderData().getCurStatement();
+    }
+    FunctionData* DslActionApi::getLastFunction(void)const
+    {
+        if (!m_Impl)
+            return 0;
+        m_Impl->getRuntimeBuilderData().getLastFunction();
+    }
+    void DslActionApi::setLastFunction(FunctionData* p)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->getRuntimeBuilderData().setLastFunction(p);
+    }
+    //------------------------------------------------------------------------------------------------------
     void Parse(const char* buf, DslFile& file)
     {
         if (0 == buf)
@@ -248,6 +496,33 @@ namespace Dsl
             return false;
         else
             return 0 != strchr(" \t\r\n", c);
+    }
+    static inline std::string quoteString(const std::string& str, const char* beginDelim, const char* endDelim)
+    {
+        std::stringstream ss;
+        ss << beginDelim;
+        for (int i = 0; i < str.length(); ++i) {
+            char c = str[i];
+            switch (c) {
+            case '\\':
+                ss << "\\\\";
+                break;
+            case '"':
+                ss << "\\\"";
+                break;
+            case '\'':
+                ss << "\\'";
+                break;
+            case '\0':
+                ss << "\\\0";
+                break;
+            default:
+                ss << c;
+                break;
+            }
+        }
+        ss << endDelim;
+        return ss.str();
     }
     static inline void TryEmitStartCodeBlock(std::stringstream& ss, const char* delim, bool& codeBlockNeedClose)
     {
@@ -337,6 +612,9 @@ namespace Dsl
                                 i = j;
                                 break;
                             }
+                            else if (j == len - 1) {
+                                i = j;
+                            }
                         }
                     }
                     else if (c == '*') {
@@ -398,6 +676,7 @@ namespace Dsl
                 std::string arg;
                 for (; j < len && input[j] != '\n' && isWhiteSpace(input[j]); ++j);
                 if (j < len && input[j] != '\n') {
+                    bool isExpression = key == "define" || key.length() >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n');
                     char lc = '\0';
                     for (; j < len; ++j) {
                         SkipComments(input, len, j);
@@ -409,14 +688,15 @@ namespace Dsl
                             trim(arg);
                             break;
                         }
-                        if (cc == '"') {
+                        if (isExpression && (cc == '"' || cc == '\'')) {
                             //字符串
                             tokenBuilder << cc;
                             ++j;
-                            while (j + 1 < len && input[j] != '"') {
-                                tokenBuilder << input[j];
+                            while (j + 1 < len && input[j] != cc) {
+                                char c = input[j];
+                                tokenBuilder << c;
                                 ++j;
-                                if (input[j] == '\\') {
+                                if (c == '\\') {
                                     tokenBuilder << input[j];
                                     ++j;
                                 }
@@ -471,18 +751,14 @@ namespace Dsl
                     else
                         ss << key;
                     ss << '(';
-                    ss << ' ';
-                    if (key == "define" && IsSimpleDefine(arg) || key == "undef" || key == "pragma") {
+                    if (key == "define" && IsSimpleDefine(arg) || key == "undef") {
                         ss << key;
                     }
                     else {
-                        ss << '"';
-                        replace_all(arg, "\"", "\\\"");
+                        std::string quoteArg = quoteString(arg, "\"", "\"");
                         ss << arg;
-                        ss << '"';
                     }
                     ss << arg;
-                    ss << ' ';
                     ss << ')';
                     ss << ';';
                     ss << std::endl;

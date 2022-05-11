@@ -53,4 +53,5 @@ skill(kkk)
 };	//test test test
 skill(ttt:string, tt2:int)
 {
+	if(a){abc;}else{def;};
 };

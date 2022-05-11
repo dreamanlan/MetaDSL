@@ -19,10 +19,10 @@ skill(kkk)
 	:};
 	script(ttt : string, tt2 : int)
 	{: abcd :};
-	(:attr:)
+	(:attr:);
 	script(ttt)
 	{::};
-	[:attr:]
+	[:attr:];
 	script(ttt)
 	{:
   abcdef;
@@ -30,7 +30,9 @@ skill(kkk)
 	:};
 	a = "b";
 	a = " abcd ";
-	template<:a, b, c:>class A;
+	template<:a, b, c:>;
+	class;
+	A;
 	a::b::c;
 	a::b(abcd);
 	a::(abcd);
@@ -43,4 +45,12 @@ skill(kkk)
 };
 skill(ttt : string, tt2 : int)
 {
+	if(a)
+	{
+		abc;
+	};
+	else
+	{
+		def;
+	};
 };

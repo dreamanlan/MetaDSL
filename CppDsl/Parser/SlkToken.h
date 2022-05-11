@@ -62,6 +62,8 @@ public:
     const char* getScriptBeginDelimiter(void)const { return mScriptBeginDelimiter; }
     const char* getScriptEndDelimiter(void)const { return mScriptEndDelimiter; }
 private:
+    short getImpl(void);
+    bool enqueueToken(char* tok, short val, int line);
     char curChar(void)const;
     char nextChar(void)const;
     char peekChar(int ix)const;
@@ -141,6 +143,8 @@ private:
     int mStringEndDelimiterLength;
     int mScriptBeginDelimiterLength;
     int mScriptEndDelimiterLength;
+
+    Dsl::EnqueueTokenDelegation mOnEnqueueToken;
 };
 
 #endif

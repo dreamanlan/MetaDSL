@@ -676,7 +676,7 @@ luaargs(callerClass, method, ...)
 	local(lualist(obj)assignwith(...));
 	if(calllerClass == System.Linq.Enumerable)
 	{
-		error("can't call linq extension method !");
+		error("can\'t call linq extension method !");
 	}
 	else
 	{
@@ -2657,7 +2657,7 @@ luaargs(tb)
 	{
 		return(meta.__cs2lua_data);
 	};
-	error("can't find metatable or __cs2lua_data !");
+	error("can\'t find metatable or __cs2lua_data !");
 };
 function(__set_table_count)
 luaargs(tb, count)

@@ -32,8 +32,28 @@ int main(int argc, char* argv[])
     {
         Dsl::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();
+        dataFile.OnBeforeAddFunction.attach([](auto& api, auto* sd) {
+            if (sd->GetFunctionNum() > 0 && 0 != strcmp(sd->GetFunctionId(0), "if")) {
+                //在BeforeAddFunction回调里结束当前语句并开始一个新语句，效果上相当于给前一个函数加上分号
+                //api.endStatement();
+                //api.beginStatement();
+            }
+            return true;
+            });
+        dataFile.OnAddFunction.attach([](auto& api, auto* sd, auto* func) {
+            //在AddFunction里一般不要修改程序结构，但可以修改添加函数的信息
+            return true;
+            });
+        dataFile.OnBeforeEndStatement.attach([](auto& api) {
+            //在BeforeEndStatement里可以修改程序结构，要符合dsl的语法语义流程
+            return true;
+            });
+        dataFile.OnEndStatement.attach([](auto& api, auto*& sd) {
+            //在EndStatement里一般不要修改程序结构，但可以修改或整体替换当前语句，在回调后会化简语句并添加到上一层语法构造中
+            return true;
+            });
         dataFile.Parse(p);
-        delete[] pbuf;
+
         FILE* fp3 = fopen("copy.txt", "wb");
         dataFile.WriteToFile(fp3, 0);
         fclose(fp3);

@@ -12,17 +12,24 @@ namespace Dsl.Common
      * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
      * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
      */
-    delegate string GetLastTokenDelegation();
-    delegate int GetLastLineNumberDelegation();
-    delegate IList<string> GetCommentsDelegation(out bool commentOnNewLine);
-    delegate void SetDelimiterDelegation(string begin, string end);
+    public delegate bool EnqueueTokenDelegation(string tok, short val, int line);
+    public delegate bool GetTokenDelegation(ref string tok, ref short val, ref int line);
+    public delegate bool BeforeAddFunctionDelegation(ref DslAction dslAction, StatementData statement);
+    public delegate bool AddFunctionDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
+    public delegate bool BeforeEndStatementDelegation(ref DslAction dslAction);
+    public delegate bool EndStatementDelegation(ref DslAction dslAction, ref StatementData statement);
+
+    internal delegate string GetLastTokenDelegation();
+    internal delegate int GetLastLineNumberDelegation();
+    internal delegate IList<string> GetCommentsDelegation(out bool commentOnNewLine);
+    internal delegate void SetDelimiterDelegation(string begin, string end);
     internal enum DslActionType
     {
         Dsl = 0,
         Lua,
         Cpp,
     }
-    internal struct DslAction
+    public struct DslAction
     {
         class SemanticInfo
         {
@@ -52,6 +59,10 @@ namespace Dsl.Common
             mGetComments = null;
             mSetStringDelimiter = null;
             mSetScriptDelimiter = null;
+            mOnBeforeAddFunction = null;
+            mOnAddFunction = null;
+            mOnBeforeEndStatement = null;
+            mOnEndStatement = null;
         }
 
         internal DslActionType Type
@@ -83,6 +94,26 @@ namespace Dsl.Common
         {
             get { return mSetScriptDelimiter; }
             set { mSetScriptDelimiter = value; }
+        }
+        internal BeforeAddFunctionDelegation onBeforeAddFunction
+        {
+            get { return mOnBeforeAddFunction; }
+            set { mOnBeforeAddFunction = value; }
+        }
+        internal AddFunctionDelegation onAddFunction
+        {
+            get { return mOnAddFunction; }
+            set { mOnAddFunction = value; }
+        }
+        internal BeforeEndStatementDelegation onBeforeEndStatement
+        {
+            get { return mOnBeforeEndStatement; }
+            set { mOnBeforeEndStatement = value; }
+        }
+        internal EndStatementDelegation onEndStatement
+        {
+            get { return mOnEndStatement; }
+            set { mOnEndStatement = value; }
         }
 
         internal void predict(short productionNumber, short nonterminal, short token, int level, string lastTok, int lastLineNo, string curTok, int lineNo)
@@ -218,7 +249,7 @@ namespace Dsl.Common
             }
         }
 
-        private void buildOperator()
+        public void buildOperator()
         {
             int type;
             string name = pop(out type);
@@ -258,7 +289,7 @@ namespace Dsl.Common
                 }
             }
         }
-        private void buildFirstTernaryOperator()
+        public void buildFirstTernaryOperator()
         {
             int type;
             string name = pop(out type);
@@ -292,7 +323,7 @@ namespace Dsl.Common
                 func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);                      
             }
         }
-        private void buildSecondTernaryOperator()
+        public void buildSecondTernaryOperator()
         {
             int type;
             string name = pop(out type);
@@ -311,7 +342,7 @@ namespace Dsl.Common
                 func.Name.SetLine(getLastLineNumber());
             }
         }
-        private void beginStatement()
+        public void beginStatement()
         {
             StatementData statement = newStatementWithoutFunction();
 
@@ -326,9 +357,15 @@ namespace Dsl.Common
 
             mStatementSemanticStack.Push(statement);
         }
-        private void endStatement()
+        public void endStatement()
         {
+            if (null != mOnBeforeEndStatement) {
+                mOnBeforeEndStatement(ref this);
+            }
             StatementData statement = popStatement();
+            if (null != mOnEndStatement) {
+                mOnEndStatement(ref this, ref statement);
+            }
             FunctionData call = statement.First.AsFunction;
             if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.Functions.Count == 1 && null != call && call.GetId() == "@@delimiter" && (call.GetParamNum() == 1 || call.GetParamNum() == 3) && !call.IsHighOrder) {
                 string type = call.GetParamId(0);
@@ -472,12 +509,19 @@ namespace Dsl.Common
                 func.AddParam(statementSyntax);
             }
         }
-        private void addFunction()
+        public void addFunction()
         {
             StatementData statement = getCurStatement();
+            if (null != mOnBeforeAddFunction) {
+                mOnBeforeAddFunction(ref this, statement);
+            }
+            statement = getCurStatement();
             FunctionData func = newFunctionOfStatement(statement);
+            if (null != mOnAddFunction) {
+                mOnAddFunction(ref this, statement, func);
+            }
         }
-        private void setFunctionId()
+        public void setFunctionId()
         {
             int type;
             string name = pop(out type);
@@ -488,7 +532,7 @@ namespace Dsl.Common
                 func.Name.SetLine(getLastLineNumber());
             }
         }
-        private void setMemberId()
+        public void setMemberId()
         {
             int type;
             string name = pop(out type);
@@ -499,7 +543,7 @@ namespace Dsl.Common
                 func.Name.SetLine(getLastLineNumber());
             }
         }
-        private void buildHighOrderFunction()
+        public void buildHighOrderFunction()
         {
             //高阶函数构造（当前函数返回一个函数）
             FunctionData func = getLastFunction();
@@ -508,59 +552,59 @@ namespace Dsl.Common
             func.Clear();
             func.LowerOrderFunction = temp;
         }
-        private void markParenthesisParam()
+        public void markParenthesisParam()
         {
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
         }
-        private void markBracketParam()
+        public void markBracketParam()
         {
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
         }
-        private void markPeriodParam()
+        public void markPeriodParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD);
         }
-        private void markPeriodParenthesisParam()
+        public void markPeriodParenthesisParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS);
         }
-        private void markPeriodBracketParam()
+        public void markPeriodBracketParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET);
         }
-        private void markPeriodBraceParam()
+        public void markPeriodBraceParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
         }
-        private void markQuestionPeriodParam()
+        public void markQuestionPeriodParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD);
         }
-        private void markQuestionParenthesisParam()
+        public void markQuestionParenthesisParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS);
         }
-        private void markQuestionBracketParam()
+        public void markQuestionBracketParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET);
         }
-        private void markQuestionBraceParam()
+        public void markQuestionBraceParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
         }
-        private void markStatement()
+        public void markStatement()
         {
             FunctionData func = getLastFunction();
 
@@ -575,7 +619,7 @@ namespace Dsl.Common
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT);
         }
-        private void markExternScript()
+        public void markExternScript()
         {
             FunctionData func = getLastFunction();
 
@@ -590,82 +634,82 @@ namespace Dsl.Common
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
         }
-        private void markBracketColonParam()
+        public void markBracketColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON);
         }
-        private void markParenthesisColonParam()
+        public void markParenthesisColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
         }        
-        private void markAngleBracketColonParam()
+        public void markAngleBracketColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON);
         }
-        private void markBracePercentParam()
+        public void markBracePercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT);
         }
-        private void markBracketPercentParam()
+        public void markBracketPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT);
         }
-        private void markParenthesisPercentParam()
+        public void markParenthesisPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
         }
-        private void markAngleBracketPercentParam()
+        public void markAngleBracketPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT);
         }
-        private void markColonColonParam()
+        public void markColonColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON);
         }
-        private void markColonColonParenthesisParam()
+        public void markColonColonParenthesisParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS);
         }
-        private void markColonColonBracketParam()
+        public void markColonColonBracketParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET);
         }
-        private void markColonColonBraceParam()
+        public void markColonColonBraceParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE);
         }
-        private void setExternScript()
+        public void setExternScript()
         {
             FunctionData func = getLastFunction();
             func.AddParam(getLastToken(), ValueData.STRING_TOKEN);
         }
-        private void markPointerParam()
+        public void markPointerParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER);
         }
-        private void markPeriodStarParam()
+        public void markPeriodStarParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
         }
-        private void markQuestionPeriodStarParam()
+        public void markQuestionPeriodStarParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR);
         }
-        private void markPointerStarParam()
+        public void markPointerStarParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR);
@@ -889,7 +933,7 @@ namespace Dsl.Common
         /// ---------------------------------------------------------------
         /// 工具函数部分
         /// ---------------------------------------------------------------
-        private void push(string s, int val)
+        public void push(string s, int val)
         {
             mSemanticStack.Push(new SemanticInfo(s, val));
         }
@@ -910,14 +954,14 @@ namespace Dsl.Common
             StatementData cdata = mStatementSemanticStack.Pop();
             return cdata;
         }
-        private StatementData getCurStatement()
+        public StatementData getCurStatement()
         {
             if (mStatementSemanticStack.Count == 0)
                 return null;
             StatementData topData = mStatementSemanticStack.Peek();
             return topData;
         }
-        private StatementData getCurParentStatement()
+        public StatementData getCurParentStatement()
         {
             if (mStatementSemanticStack.Count <= 1)
                 return null;
@@ -926,27 +970,27 @@ namespace Dsl.Common
             mStatementSemanticStack.Push(topData);
             return parentData;
         }
-        private ValueOrFunctionData getFirstFunction()
+        public ValueOrFunctionData getFirstFunction()
         {
             StatementData statement = getCurStatement();
             return statement.First;
         }
-        private ValueOrFunctionData getSecondFunction()
+        public ValueOrFunctionData getSecondFunction()
         {
             StatementData statement = getCurStatement();
             return statement.Second;
         }
-        private ValueOrFunctionData getThirdFunction()
+        public ValueOrFunctionData getThirdFunction()
         {
             StatementData statement = getCurStatement();
             return statement.Third;
         }
-        private FunctionData getLastFunction()
+        public FunctionData getLastFunction()
         {
             StatementData statement = getCurStatement();
             return statement.Last.AsFunction;
         }
-        private StatementData newStatementWithOneFunction()
+        public StatementData newStatementWithOneFunction()
         {
             StatementData data = new StatementData();
             FunctionData func = new FunctionData();
@@ -955,12 +999,12 @@ namespace Dsl.Common
             data.Functions.Add(func);
             return data;
         }
-        private StatementData newStatementWithoutFunction()
+        public StatementData newStatementWithoutFunction()
         {
             StatementData data = new StatementData();
             return data;
         }
-        private FunctionData newFunctionOfStatement(StatementData data)
+        public FunctionData newFunctionOfStatement(StatementData data)
         {
             FunctionData func = new FunctionData();
             ValueData name = new ValueData();
@@ -1076,6 +1120,10 @@ namespace Dsl.Common
         private GetCommentsDelegation mGetComments;
         private SetDelimiterDelegation mSetStringDelimiter;
         private SetDelimiterDelegation mSetScriptDelimiter;
+        private BeforeAddFunctionDelegation mOnBeforeAddFunction;
+        private AddFunctionDelegation mOnAddFunction;
+        private BeforeEndStatementDelegation mOnBeforeEndStatement;
+        private EndStatementDelegation mOnEndStatement;
         private List<ISyntaxComponent> mScriptDatas;
         private Stack<SemanticInfo> mSemanticStack;
         private Stack<StatementData> mStatementSemanticStack;

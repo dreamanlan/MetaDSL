@@ -179,7 +179,11 @@ namespace Dsl
         void RuntimeBuilderT<RealTypeT>::endStatement(void)
     {
         if (!preconditionCheck())return;
+        if (!mDataFile->OnBeforeEndStatement.isNull())
+            mDataFile->OnBeforeEndStatement(mApi);
         StatementData* statement = mData.popStatement();
+        if (!mDataFile->OnEndStatement.isNull())
+            mDataFile->OnEndStatement(mApi, statement);
         if (0 == statement)
             return;
         auto* f = statement->GetLastFunctionRef();
@@ -369,9 +373,16 @@ namespace Dsl
         if (!preconditionCheck())return;
         StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
-            FunctionData* newFunc = mDataFile->AddNewFunctionComponent();
-            if (0 != newFunc) {
-                statement->AddFunction(newFunc);
+            if (!mDataFile->OnBeforeAddFunction.isNull())
+                mDataFile->OnBeforeAddFunction(mApi, statement);
+            statement = mData.getCurStatement();
+            if (0 != statement) {
+                FunctionData* newFunc = mDataFile->AddNewFunctionComponent();
+                if (0 != newFunc) {
+                    statement->AddFunction(newFunc);
+                    if (!mDataFile->OnAddFunction.isNull())
+                        mDataFile->OnAddFunction(mApi, statement, newFunc);
+                }
             }
         }
     }

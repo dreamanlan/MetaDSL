@@ -784,7 +784,7 @@ namespace Dsl
     }
     static void WriteString(FILE* fp, const char* str, int indent, const char* beginDelim, const char* endDelim)
     {
-        const char* escapeChars = "\\\"";
+        const char* escapeChars = "\\\"'";
         WriteIndent(fp, indent);
         fwrite(beginDelim, strlen(beginDelim), 1, fp);
         const char* p = str;

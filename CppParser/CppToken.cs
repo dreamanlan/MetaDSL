@@ -68,14 +68,15 @@ namespace Dsl.Parser
                                 arg = mTokenBuilder.ToString().Trim();
                                 break;
                             }
-                            if (cc == '"') {
+                            if (cc == '"' || cc == '\'') {
                                 //字符串
                                 mTokenBuilder.Append(cc);
                                 ++mIterator;
-                                while (CurChar != 0 && CurChar != '"') {
-                                    mTokenBuilder.Append(CurChar);
+                                while (CurChar != 0 && CurChar != cc) {
+                                    char c = CurChar;
+                                    mTokenBuilder.Append(c);
                                     ++mIterator;
-                                    if (CurChar == '\\' && NextChar != 0) {
+                                    if (c == '\\' && CurChar != 0) {
                                         mTokenBuilder.Append(CurChar);
                                         ++mIterator;
                                     }
@@ -477,18 +478,6 @@ namespace Dsl.Parser
                         return CppConstants.NUMBER_;
                     }
                     else {
-                        if (mCurToken == "operator") {
-                            mTokenBuilder.Length = 0;
-                            while (isWhiteSpace(CurChar)) {
-                                ++mIterator;
-                            }
-                            while (isOperator(CurChar)) {
-                                mTokenBuilder.Append(CurChar);
-                                ++mIterator;
-                            }
-                            mCurToken = mCurToken + mTokenBuilder.ToString();
-                            return CppConstants.STRING_;
-                        }
                         return CppConstants.IDENTIFIER_;
                     }
                 }
