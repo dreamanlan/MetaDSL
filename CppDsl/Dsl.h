@@ -1434,6 +1434,8 @@ namespace Dsl
         int	m_HasError;
         char m_ErrorInfo[MAX_RECORD_ERROR_NUM][MAX_ERROR_INFO_CAPACITY];
         int m_ErrorNum;
+    public:
+        static bool Mac2Unix(char* buf, int len);
     };
 
     class IScriptSource

@@ -1027,6 +1027,8 @@ namespace Dsl
         }
         public bool LoadFromString(string content, string resourceName, DslLogDelegation logCallback)
         {
+            content = Mac2Unix(content);
+
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
@@ -1231,6 +1233,8 @@ namespace Dsl
         }
         public bool LoadLuaFromString(string content, string resourceName, DslLogDelegation logCallback)
         {
+            content = Mac2Unix(content);
+
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
@@ -1259,6 +1263,8 @@ namespace Dsl
         }
         public bool LoadCppFromString(string content, string resourceName, DslLogDelegation logCallback)
         {
+            content = Mac2Unix(content);
+
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
@@ -1301,6 +1307,7 @@ namespace Dsl
         }
         public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
         {
+            content = Mac2Unix(content);
             transformedContent = TransformPreprocess(content, beginDelim, endDelim);
             return LoadFromString(transformedContent, resourceName, logCallback);
         }
@@ -1689,6 +1696,51 @@ namespace Dsl
                 }
             }
             return r;
+        }
+
+        public static string Mac2Unix(string txt)
+        {
+            int ix = txt.IndexOf('\r');
+            if (ix >= 0 && ix + 1 < txt.Length && txt[ix + 1] != '\n') {
+                return txt.Replace('\r', '\n');
+            }
+            return txt;
+        }
+        public static string Text2Dos(string txt)
+        {
+            int ix = txt.IndexOf('\n');
+            if (ix > 0) {
+                if (txt[ix - 1] != '\r')
+                    return txt.Replace("\n", "\r\n");
+            }
+            else {
+                ix = txt.IndexOf('\r');
+                if (ix >= 0)
+                    return txt.Replace("\r", "\r\n");
+            }
+            return txt;
+        }
+        public static string Text2Unix(string txt)
+        {
+            int ix = txt.IndexOf('\r');
+            if (ix >= 0) {
+                if (ix + 1 < txt.Length && txt[ix + 1] == '\n')
+                    return txt.Replace("\r\n", "\n");
+                else
+                    return txt.Replace('\r', '\n');
+            }
+            return txt;
+        }
+        public static string Text2Mac(string txt)
+        {
+            int ix = txt.IndexOf('\n');
+            if (ix > 0) {
+                if (txt[ix - 1] != '\r')
+                    return txt.Replace('\n', '\r');
+                else
+                    return txt.Replace("\r\n", "\r");
+            }
+            return txt;
         }
 
         public const string c_BinaryIdentity = "BDSL";

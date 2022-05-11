@@ -10,12 +10,14 @@ int main(int argc, char* argv[])
     FILE* fp = fopen("test.txt", "rb");
     size_t size = fread(pbuf, 1, 1024 * 1024, fp);
     pbuf[size] = 0;
+    DslFile::Mac2Unix(pbuf, static_cast<int>(size));
     fclose(fp);
     char* p = pbuf;
     
     FILE* fp2 = fopen("test.h", "rb");
     size_t size2 = fread(pbuf2, 1, 1024 * 1024, fp2);
     pbuf2[size2] = 0;
+    DslFile::Mac2Unix(pbuf2, static_cast<int>(size2));
     fclose(fp2);
     char* p2 = pbuf2;
 

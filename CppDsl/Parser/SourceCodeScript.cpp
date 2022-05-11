@@ -437,6 +437,19 @@ namespace Dsl
         m_Impl->getRuntimeBuilderData().setLastFunction(p);
     }
     //------------------------------------------------------------------------------------------------------
+    bool Mac2Unix(char* buf, int len)
+    {
+        bool r = false;
+        char* p = strchr(buf, '\r');
+        if (p && *(p + 1) != '\n') {
+            for (int ix = 0; ix < len; ++ix) {
+                if (buf[ix] == '\r')
+                    buf[ix] = '\n';
+            }
+            r = true;
+        }
+        return r;
+    }
     void Parse(const char* buf, DslFile& file)
     {
         if (0 == buf)

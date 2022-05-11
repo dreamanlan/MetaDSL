@@ -393,6 +393,11 @@ namespace Dsl
         }
     }
 
+    bool DslFile::Mac2Unix(char* buf, int len)
+    {
+        return Dsl::Mac2Unix(buf, len);
+    }
+
     DslFile::DslFile(IDslStringAndObjectBuffer& buffer) :m_Buffer(buffer), m_IsDebugInfoEnable(FALSE),
         m_DslInfos(NULL), m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
     {

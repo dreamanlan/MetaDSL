@@ -5,6 +5,7 @@
 
 namespace Dsl
 {
+    bool Mac2Unix(char* buf, int len);
     void Parse(const char* buf, DslFile& file);
     void Parse(IScriptSource& source, DslFile& file);
     void ParseGpp(const char* buf, DslFile& file, const char* beginDelim, const char* endDelim, char* gppBuf, int& len);
