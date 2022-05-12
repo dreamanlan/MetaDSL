@@ -61,18 +61,15 @@ public:
     const char* getStringEndDelimiter(void)const { return mStringEndDelimiter; }
     const char* getScriptBeginDelimiter(void)const { return mScriptBeginDelimiter; }
     const char* getScriptEndDelimiter(void)const { return mScriptEndDelimiter; }
-private:
-    short getImpl(void);
+public:
+    void setCurToken(char* tok) { mCurToken = tok; }
+    void setLastToken(char* tok) { mLastToken = tok; }
     bool enqueueToken(char* tok, short val, int line);
     char curChar(void)const;
     char nextChar(void)const;
     char peekChar(int ix)const;
     void getOperatorToken(void);
     short getOperatorTokenValue(void)const;
-    int isCanFinish(void)const
-    {
-        return mCanFinish;
-    }
     int isWhiteSpace(char c) const;
     int isDelimiter(char c) const;
     int isBeginParentheses(char c) const;
@@ -81,6 +78,11 @@ private:
     int isQuote(char c) const;
     int isSpecialChar(char c) const;
 private:
+    short getImpl(void);
+    int isCanFinish(void)const
+    {
+        return mCanFinish;
+    }
     int isBegin(const char* delimiter, int len) const;
     void getBlockString(const char* delimiter, int len);
     void removeFirstAndLastEmptyLine(void);

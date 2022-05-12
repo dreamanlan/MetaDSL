@@ -1032,9 +1032,8 @@ namespace Dsl
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
-            Parser.DslToken tokens = new Parser.DslToken(log, content);
+            Common.DslToken tokens = new Common.DslToken(log, content);
             tokens.OnGetToken = mOnGetToken;
-            mOnEnqueueToken = (string tok, short val, int line) => { return tokens.enqueueToken(tok, val, line); };
 
             Parser.DslError error = new Parser.DslError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
@@ -1312,11 +1311,6 @@ namespace Dsl
             return LoadFromString(transformedContent, resourceName, logCallback);
         }
 
-        public void EnqueueToken(string tok, short val, int line)
-        {
-            if (null != mOnEnqueueToken)
-                mOnEnqueueToken(tok, val, line);
-        }
         public void SetStringDelimiter(string begin, string end)
         {
             mStringBeginDelimiter = begin;
@@ -1471,6 +1465,8 @@ namespace Dsl
                                         break;
                                     char cc = input[j];
                                     if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
+                                        if (cc == '\r')
+                                            ++j;
                                         arg = tokenBuilder.ToString().Trim();
                                         break;
                                     }
@@ -1525,7 +1521,12 @@ namespace Dsl
                                 }
                                 else {
                                     sb.Append("}");
-                                    sb.Append(';');
+                                    sb.AppendLine();
+                                    sb.Append("@@");
+                                    sb.Append(key);
+                                    sb.Append('(');
+                                    sb.Append(arg);
+                                    sb.Append(')');
                                     sb.AppendLine();
                                 }
                             }
@@ -1659,7 +1660,7 @@ namespace Dsl
         private string mStringEndDelimiter = "\"";
         private string mScriptBeginDelimiter = "{:";
         private string mScriptEndDelimiter = ":}";
-        private Dsl.Common.EnqueueTokenDelegation mOnEnqueueToken;
+
         private Dsl.Common.GetTokenDelegation mOnGetToken;
         private Dsl.Common.BeforeAddFunctionDelegation mOnBeforeAddFunction;
         private Dsl.Common.AddFunctionDelegation mOnAddFunction;

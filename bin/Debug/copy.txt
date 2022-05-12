@@ -43,7 +43,55 @@ skill(kkk)
 	[%abcd%];
 	(%abcd%);
 	<%abcd%>;
+	a -> 
+	{
+	};
+	a -> [];
+	a -> ();
+	a->*b;
+	a->func();
+	a?.*p();
+	a?.b;
+	a.b;
+	a.*p();
 };	//test test test
 skill(ttt : string, tt2 : int)
 {
+};
+namespace(GamePlay);
+import(Brace.Base.Io);
+interace(ICurly)
+{
+	Exec(str : string)int;
+};
+class(Player)extends(Character)
+implements(ICurly)
+{
+	public
+	{
+		Entry(str : string)
+		int
+		{
+			print(str);
+			return <- (0);
+		};
+		Exec(str : string)
+		int
+		{
+			return <- (atoi(str));
+		};
+	};
+	private
+	{
+		m_Abc : int;
+	};
+};
+externsion(ifndef)
+extends(Statement)
+{
+};
+main()
+int
+{
+	return <- a * b + 4;
 };

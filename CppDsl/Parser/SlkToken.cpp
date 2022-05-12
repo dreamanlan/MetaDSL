@@ -33,7 +33,6 @@ static inline int myisdigit(char c, int isHex)
 {
     return myisdigit(c, isHex, FALSE, FALSE);
 }
-
 static inline int mychar2int(char c)
 {
     if (c >= '0' && c <= '9')
@@ -44,6 +43,19 @@ static inline int mychar2int(char c)
         return 10 + c - 'A';
     else
         return 0;
+}
+
+int DslTokenApi::myisdigit(char c, int isHex, int includeEPart, int includeAddSub)
+{
+    return ::myisdigit(c, isHex, includeEPart, includeAddSub);
+}
+int DslTokenApi::myisdigit(char c, int isHex)
+{
+    return ::myisdigit(c, isHex);
+}
+int DslTokenApi::mychar2int(char c)
+{
+    return ::mychar2int(c);
 }
 
 char SlkToken::curChar(void)const
@@ -387,7 +399,7 @@ short SlkToken::get(void)
 {
     short tok = getImpl();
     if (!mDslFile->OnGetToken.isNull()) {
-        mDslFile->OnGetToken(mOnEnqueueToken, mCurToken, tok, mLineNumber);
+        mDslFile->OnGetToken(DslTokenApi(this), mCurToken, tok, mLineNumber);
     }
     return tok;
 }
@@ -753,11 +765,7 @@ short SlkToken::getImpl(void)
                     break;
                 }
             }
-            if (nc == '{') {
-                getOperatorToken();
-                return getOperatorTokenValue();
-            }
-            else if (nc == '*') {
+            if (nc == '*') {
                 ++mIterator;
                 ++mIterator;
                 ++mIterator;
@@ -766,6 +774,10 @@ short SlkToken::getImpl(void)
                 pushTokenChar('*');
                 endToken();
                 return POINTER_STAR_;
+            }
+            else if (!::isalpha(nc) && nc != '_') {
+                getOperatorToken();
+                return getOperatorTokenValue();
             }
             else {
                 ++mIterator;

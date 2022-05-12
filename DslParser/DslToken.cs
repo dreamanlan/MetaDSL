@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using Dsl.Common;
+using Dsl.Parser;
 
-namespace Dsl.Parser
+namespace Dsl.Common
 {
-    struct DslToken
+    public struct DslToken
     {
         internal DslToken(DslLog log, string input)
         {
@@ -37,7 +38,7 @@ namespace Dsl.Parser
         {
             short tok = getImpl();
             if (null != mOnGetToken) {
-                mOnGetToken(ref mCurToken, ref tok, ref mLineNumber);
+                mOnGetToken(ref this, ref mCurToken, ref tok, ref mLineNumber);
             }
             return tok;
         }
@@ -302,16 +303,16 @@ namespace Dsl.Parser
                             break;
                         }
                     }
-                    if (nextChar == '{') {
-                        getOperatorToken();
-                        return getOperatorTokenValue();
-                    }
-                    else if (nextChar == '*') {
+                    if (nextChar == '*') {
                         ++mIterator;
                         ++mIterator;
                         ++mIterator;
                         mCurToken = "->*";
                         return DslConstants.POINTER_STAR_;
+                    }
+                    else if (!char.IsLetter(nextChar) && nextChar != '_') {
+                        getOperatorToken();
+                        return getOperatorTokenValue();
                     }
                     else {
                         ++mIterator;
@@ -570,32 +571,40 @@ namespace Dsl.Parser
                 }
             }
         }
-
         internal short peek(int level) // scan next token without consuming it
         {
             short token = 0;
             mLog.Log("[info] peek_token is not called in an LL(1) grammar\n");
             return token;
         }
-        internal bool enqueueToken(string tok, short val, int line)
+
+        public void setCurToken(string tok)
+        {
+            mCurToken = tok;
+        }
+        public void setLastToken(string tok)
+        {
+            mLastToken = tok;
+        }
+        public bool enqueueToken(string tok, short val, int line)
         {
             mTokenQueue.Enqueue(new TokenInfo { Token = tok, TokenValue = val, LineNumber = line });
             return true;
         }
 
-        internal string getCurToken()
+        public string getCurToken()
         {
             return mCurToken;
         }
-        internal string getLastToken()
+        public string getLastToken()
         {
             return mLastToken;
         }
-        internal int getLineNumber()
+        public int getLineNumber()
         {
             return mLineNumber;
         }
-        internal int getLastLineNumber()
+        public int getLastLineNumber()
         {
             return mLastLineNumber;
         }
@@ -697,7 +706,7 @@ namespace Dsl.Parser
             }
         }
 
-        private void getOperatorToken()
+        public void getOperatorToken()
         {
             int st = mIterator;
             switch (CurChar) {
@@ -831,7 +840,7 @@ namespace Dsl.Parser
             int ed = mIterator;
             mCurToken = mInput.Substring(st, ed - st);
         }
-        private short getOperatorTokenValue()
+        public short getOperatorTokenValue()
         {
             string curOperator = mCurToken;
             string lastToken = mLastToken;
@@ -931,49 +940,49 @@ namespace Dsl.Parser
             }
             return val;
         }
-        private bool isWhiteSpace(char c)
+        public bool isWhiteSpace(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mWhiteSpaces.IndexOf(c) >= 0;
         }
-        private bool isDelimiter(char c)
+        public bool isDelimiter(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mDelimiters.IndexOf(c) >= 0;
         }
-        private bool isBeginParentheses(char c)
+        public bool isBeginParentheses(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mBeginParentheses.IndexOf(c) >= 0;
         }
-        private bool isEndParentheses(char c)
+        public bool isEndParentheses(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mEndParentheses.IndexOf(c) >= 0;
         }
-        private bool isOperator(char c)
+        public bool isOperator(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mOperators.IndexOf(c) >= 0;
         }
-        private bool isQuote(char c)
+        public bool isQuote(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mQuotes.IndexOf(c) >= 0;
         }
-        private bool isSpecialChar(char c)
+        public bool isSpecialChar(char c)
         {
             if (0 == c)
                 return true;
@@ -981,19 +990,19 @@ namespace Dsl.Parser
                 return mSpecialChars.IndexOf(c) >= 0;
         }
 
-        private char CurChar
+        public char CurChar
         {
             get {
                 return PeekChar(0);
             }
         }
-        private char NextChar
+        public char NextChar
         {
             get {
                 return PeekChar(1);
             }
         }
-        private char PeekChar(int ix)
+        public char PeekChar(int ix)
         {
             char c = (char)0;
             if (ix >= 0 && mIterator + ix < mInput.Length)
@@ -1001,11 +1010,11 @@ namespace Dsl.Parser
             return c;
         }
 
-        private static bool myisdigit(char c, bool isHex)
+        public static bool myisdigit(char c, bool isHex)
         {
             return myisdigit(c, isHex, false, false);
         }
-        private static bool myisdigit(char c, bool isHex, bool includeEPart, bool includeAddSub)
+        public static bool myisdigit(char c, bool isHex, bool includeEPart, bool includeAddSub)
         {
             bool ret = false;
             if (isHex) {
@@ -1026,7 +1035,7 @@ namespace Dsl.Parser
             }
             return ret;
         }
-        private static int mychar2int(char c)
+        public static int mychar2int(char c)
         {
             if (c >= '0' && c <= '9')
                 return c - '0';

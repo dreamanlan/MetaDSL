@@ -190,6 +190,121 @@ namespace Dsl
         const char* m_Source;
     };
     //------------------------------------------------------------------------------------------------------
+    char* DslTokenApi::getCurToken(void) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->getCurToken();
+    }
+    char* DslTokenApi::getLastToken(void) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->getLastToken();
+    }
+    int DslTokenApi::getLineNumber(void) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->getLineNumber();
+    }
+    int DslTokenApi::getLastLineNumber(void) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->getLastLineNumber();
+    }
+    void DslTokenApi::setCurToken(char* tok)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->setCurToken(tok);
+    }
+    void DslTokenApi::setLastToken(char* tok)const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->setLastToken(tok);
+    }
+    bool DslTokenApi::enqueueToken(char* tok, short val, int line)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->enqueueToken(tok, val, line);
+    }
+    char DslTokenApi::curChar(void)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->curChar();
+    }
+    char DslTokenApi::nextChar(void)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->nextChar();
+    }
+    char DslTokenApi::peekChar(int ix)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->peekChar(ix);
+    }
+    void DslTokenApi::getOperatorToken(void)
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->getOperatorToken();
+    }
+    short DslTokenApi::getOperatorTokenValue(void)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->getOperatorTokenValue();
+    }
+    int DslTokenApi::isWhiteSpace(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isWhiteSpace(c);
+    }
+    int DslTokenApi::isDelimiter(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isDelimiter(c);
+    }
+    int DslTokenApi::isBeginParentheses(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isBeginParentheses(c);
+    }
+    int DslTokenApi::isEndParentheses(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isEndParentheses(c);
+    }
+    int DslTokenApi::isOperator(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isOperator(c);
+    }
+    int DslTokenApi::isQuote(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isQuote(c);
+    }
+    int DslTokenApi::isSpecialChar(char c) const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isSpecialChar(c);
+    }
+    //------------------------------------------------------------------------------------------------------
     void DslActionApi::endStatement(void)const
     {
         if (!m_Impl)
@@ -697,6 +812,8 @@ namespace Dsl
                             break;
                         char cc = input[j];
                         if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
+                            if (cc == '\r')
+                                ++j;
                             arg = tokenBuilder.str();
                             trim(arg);
                             break;
@@ -752,7 +869,12 @@ namespace Dsl
                     }
                     else {
                         ss << "}";
-                        ss << ';';
+                        ss << std::endl;
+                        ss << "@@";
+                        ss << key;
+                        ss << '(';
+                        ss << arg;
+                        ss << ')';
                         ss << std::endl;
                     }
                 }

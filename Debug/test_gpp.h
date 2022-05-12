@@ -17,6 +17,7 @@ main ()
 {
 	@@code
 	={:=
+
   typedef struct index_st index_t;
   int x,y;
   x = offsetof(struct index_st, len);

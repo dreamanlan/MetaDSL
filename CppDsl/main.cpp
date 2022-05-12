@@ -34,8 +34,21 @@ int main(int argc, char* argv[])
     {
         Dsl::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();
+        dataFile.OnGetToken.attach([](const DslTokenApi& api, char*& tok, short& val, int& line) { 
+            if (0 == strcmp(tok, "return")) {
+                char* oldCurTok = api.getCurToken();
+                char* oldLastTok = api.getLastToken();
+                api.setCurToken("<-");
+                api.setLastToken(oldCurTok);
+                api.enqueueToken(api.getCurToken(), api.getOperatorTokenValue(), line);
+                api.setCurToken(oldCurTok);
+                api.setLastToken(oldLastTok);
+            }
+            return true; 
+            });
         dataFile.OnBeforeAddFunction.attach([](auto& api, auto* sd) {
-            if (sd->GetFunctionNum() > 0 && 0 != strcmp(sd->GetFunctionId(0), "if")) {
+            const char* pId = sd->GetFunctionId(0);
+            if (sd->GetFunctionNum() > 0 && pId && 0 != strcmp(pId, "if")) {
                 //在BeforeAddFunction回调里结束当前语句并开始一个新语句，效果上相当于给前一个函数加上分号
                 //api.endStatement();
                 //api.beginStatement();

@@ -12,8 +12,7 @@ namespace Dsl.Common
      * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
      * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
      */
-    public delegate bool EnqueueTokenDelegation(string tok, short val, int line);
-    public delegate bool GetTokenDelegation(ref string tok, ref short val, ref int line);
+    public delegate bool GetTokenDelegation(ref DslToken dslToken, ref string tok, ref short val, ref int line);
     public delegate bool BeforeAddFunctionDelegation(ref DslAction dslAction, StatementData statement);
     public delegate bool AddFunctionDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
     public delegate bool BeforeEndStatementDelegation(ref DslAction dslAction);

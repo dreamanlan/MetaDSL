@@ -179,15 +179,15 @@ namespace Dsl.Parser
                             break;
                         }
                     }
-                    if (nextChar == '{') {
-                        getOperatorToken();
-                        return CppConstants.STRING_;
-                    }
-                    else if (nextChar == '*') {
+                    if (nextChar == '*') {
                         ++mIterator;
                         ++mIterator;
                         ++mIterator;
                         mCurToken = "->*";
+                        return CppConstants.STRING_;
+                    }
+                    else if (!char.IsLetter(nextChar) && nextChar != '_') {
+                        getOperatorToken();
                         return CppConstants.STRING_;
                     }
                     else {

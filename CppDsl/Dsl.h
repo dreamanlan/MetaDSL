@@ -11,6 +11,7 @@ calc.h
 #include "Delegation.h"
 #include <new>
 
+class SlkToken;
 class ActionForSourceCodeScript;
 namespace Dsl
 {
@@ -1272,6 +1273,37 @@ namespace Dsl
         ValueOrFunctionData* m_pNullValueOrFunction;
     };
 
+    class DslTokenApi
+    {
+    public:
+        char* getCurToken(void) const;
+        char* getLastToken(void) const;
+        int getLineNumber(void) const;
+        int getLastLineNumber(void) const;
+        void setCurToken(char* tok)const;
+        void setLastToken(char* tok)const;
+        bool enqueueToken(char* tok, short val, int line)const;
+        char curChar(void)const;
+        char nextChar(void)const;
+        char peekChar(int ix)const;
+        void getOperatorToken(void);
+        short getOperatorTokenValue(void)const;
+        int isWhiteSpace(char c) const;
+        int isDelimiter(char c) const;
+        int isBeginParentheses(char c) const;
+        int isEndParentheses(char c) const;
+        int isOperator(char c) const;
+        int isQuote(char c) const;
+        int isSpecialChar(char c) const;
+    public:
+        inline DslTokenApi(SlkToken* p) :m_Impl(p) {}
+    private:
+        SlkToken* m_Impl;
+    public:
+        static int myisdigit(char c, int isHex, int includeEPart, int includeAddSub);
+        static int myisdigit(char c, int isHex);
+        static int mychar2int(char c);
+    };
     class DslActionApi
     {
     public:
@@ -1328,7 +1360,7 @@ namespace Dsl
     class DslFile
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
-        typedef Delegation4<bool, const EnqueueTokenDelegation&, char*&, short&, int&> GetTokenDelegation;
+        typedef Delegation4<bool, const DslTokenApi&, char*&, short&, int&> GetTokenDelegation;
         typedef Delegation2<bool, const DslActionApi&, StatementData*> BeforeAddFunctionDelegation;
         typedef Delegation3<bool, const DslActionApi&, StatementData*, FunctionData*> AddFunctionDelegation;
         typedef Delegation1<bool, const DslActionApi&> BeforeEndStatementDelegation;

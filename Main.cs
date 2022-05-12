@@ -36,6 +36,19 @@ namespace Dsl
             file1.Save("copy.lua");
 #endif
             DslFile file = new DslFile();
+            //return语句修改为return <-句式，保证return在语义数据的浅层，方便后续处理
+            file.onGetToken = (ref Dsl.Common.DslToken dslToken, ref string tok, ref short val, ref int line) => {
+                if (tok == "return") {
+                    string oldCurToken = dslToken.getCurToken();
+                    string oldLastToken = dslToken.getLastToken();
+                    dslToken.setCurToken("<-");
+                    dslToken.setLastToken(oldCurToken);
+                    dslToken.enqueueToken(dslToken.getCurToken(), dslToken.getOperatorTokenValue(), line);
+                    dslToken.setCurToken(oldCurToken);
+                    dslToken.setLastToken(oldLastToken);
+                }
+                return true;
+            };
             file.Load("test.txt", logCallback);
 #if FULL_VERSION
             file.Save("copy.txt");
