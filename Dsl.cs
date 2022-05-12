@@ -1076,7 +1076,7 @@ namespace Dsl
                 sb.AppendFormat("@@delimiter(string, \"{0}\", \"{1}\");", mStringBeginDelimiter, mStringEndDelimiter);
                 sb.AppendLine();
             }
-            if (mScriptBeginDelimiter != "\"" || mScriptEndDelimiter != "\"") {
+            if (mScriptBeginDelimiter != "{:" || mScriptEndDelimiter != ":}") {
                 sb.AppendFormat("@@delimiter(script, \"{0}\", \"{1}\");", mScriptBeginDelimiter, mScriptEndDelimiter);
                 sb.AppendLine();
             }

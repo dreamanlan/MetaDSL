@@ -1246,7 +1246,7 @@ namespace Dsl
             tsnprintf(buf, 1024, "@@delimiter(string, \"%s\", \"%s\");\n", m_StringBeginDelimiter, m_StringEndDelimiter);
             fwrite(buf, 1, strlen(buf), fp);
         }
-        if (0 != strcmp(m_ScriptBeginDelimiter, "\"") || 0 != strcmp(m_ScriptEndDelimiter, "\"")) {
+        if (0 != strcmp(m_ScriptBeginDelimiter, "{:") || 0 != strcmp(m_ScriptEndDelimiter, ":}")) {
             tsnprintf(buf, 1024, "@@delimiter(script, \"%s\", \"%s\");\n", m_ScriptBeginDelimiter, m_ScriptEndDelimiter);
             fwrite(buf, 1, strlen(buf), fp);
         }

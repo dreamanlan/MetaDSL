@@ -25,7 +25,6 @@ main ()
 {
 @@code
 ={:=
-
   typedef struct index_st index_t;
   int x,y;
   x = offsetof(struct index_st, len);
@@ -38,21 +37,19 @@ fdef");
 @@code
 ={:=
 
-
 =:}=;
 @@define("DEF abc(abc)");
 @@code
 ={:=
-
 
 =:}=;
 @@define("XXX 1 > 2 ? 1 : 0");
 @@code
 ={:=
 
-
 =:}=;
-};
+}
+@@endif()
 @@code
 ={:=
   return 0;
@@ -62,7 +59,6 @@ fdef");
 @@define(xxx 1);
 @@code
 ={:=
-
 
 abc(()abcd);
 =:}=;

@@ -1,4 +1,3 @@
-@@delimiter(script, "{:", ":}");
 collectgarbage("setpause", 50);
 collectgarbage("setstepmul", 200);
 function(dummycall)
