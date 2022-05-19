@@ -6,6 +6,8 @@ SlkToken.cpp
 #include "SlkParse.h"
 #include "tsnprintf.h"
 
+using namespace DslParser;
+
 //mIterator,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
 
 static inline int myisdigit(char c, int isHex, int includeEPart, int includeAddSub)
@@ -1255,7 +1257,7 @@ void SlkToken::endTokenWithEof(void)
     mDslFile->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
 }
 
-SlkToken::SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile) :mSource(&source), mDslFile(&dslFile), mTokenQueue()
+SlkToken::SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile) :mSource(&source), mDslFile(&dslFile), mTokenQueue()
 {
     MyAssert(mSource);
     MyAssert(mDslFile);

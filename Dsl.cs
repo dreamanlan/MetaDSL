@@ -2570,6 +2570,10 @@ namespace Dsl
                     ++curCodeIndex;
                     data.SetType(code - (byte)DslBinaryCode.ValueTypeBegin);
                     data.SetId(readIdentifier(identifiers, curIdIndex++));
+                    int byteCount;
+                    int v = read7BitEncodedInt(bytes, start + curCodeIndex, out byteCount);
+                    data.SetLine(v);
+                    curCodeIndex += byteCount;
                 }
                 code = readByte(bytes, start + curCodeIndex);
                 if (code == (byte)DslBinaryCode.EndValue) {
@@ -2676,6 +2680,7 @@ namespace Dsl
             if (null != data) {
                 stream.WriteByte((byte)((int)DslBinaryCode.ValueTypeBegin + data.GetIdType()));
                 identifiers.Add(data.GetId());
+                write7BitEncodedInt(stream, data.GetLine());
             }
             stream.WriteByte((byte)DslBinaryCode.EndValue);
         }

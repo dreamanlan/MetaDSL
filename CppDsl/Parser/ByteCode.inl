@@ -6,7 +6,7 @@
 
 #define PRINT_FUNCTION_SCRIPT_DEBUG_INFO printf
 
-namespace Dsl
+namespace DslParser
 {
     /*
      * 备忘：为什么采用约简的方式而不是延迟一次性构造
@@ -66,7 +66,7 @@ namespace Dsl
                 call.SetParamClass(FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData::PARAM_CLASS_OPERATOR);
 
                 ValueData v = call.GetName();
-                ValueData op(tokenInfo.mString + 1, ValueData::TYPE_IDENTIFIER);
+                ValueData op(tokenInfo.mString + 1, ValueData::VALUE_TYPE_IDENTIFIER);
                 op.SetLine(mThis->getLastLineNumber());
                 call.SetName(op);
             }
@@ -74,7 +74,7 @@ namespace Dsl
                 call.SetParamClass(FunctionData::PARAM_CLASS_OPERATOR);
 
                 ValueData v = call.GetName();
-                ValueData op(tokenInfo.mString, ValueData::TYPE_IDENTIFIER);
+                ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
                 op.SetLine(mThis->getLastLineNumber());
                 call.SetName(op);
             }
@@ -117,7 +117,7 @@ namespace Dsl
             p->SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
             lowerOrderFunction->SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
 
-            ValueData op(tokenInfo.mString, ValueData::TYPE_IDENTIFIER);
+            ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
             op.SetLine(mThis->getLastLineNumber());
             lowerOrderFunction->SetName(op);
             if (argComp.IsValid()) {
@@ -145,7 +145,7 @@ namespace Dsl
                 FunctionData& call = *p;
                 call.SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
 
-                ValueData op(tokenInfo.mString, ValueData::TYPE_IDENTIFIER);
+                ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
                 op.SetLine(mThis->getLastLineNumber());
                 call.SetName(op);
 
@@ -792,7 +792,7 @@ namespace Dsl
         else if (NULL != data.GetId() && data.GetId()[0] == '-' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
-                ValueData& val = dynamic_cast<ValueData&>(temp);
+                ValueData& val = static_cast<ValueData&>(temp);
                 int size = (int)strlen(val.GetId()) + 1;
                 char* pBuf = mDataFile->AllocString(size);
                 tsnprintf(pBuf, size + 1, "-%s", val.GetId());
@@ -806,7 +806,7 @@ namespace Dsl
         else if (NULL != data.GetId() && data.GetId()[0] == '+' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
-                ValueData& val = dynamic_cast<ValueData&>(temp);
+                ValueData& val = static_cast<ValueData&>(temp);
                 int size = (int)strlen(val.GetId()) + 1;
                 char* pBuf = mDataFile->AllocString(size);
                 tsnprintf(pBuf, size + 1, "+%s", val.GetId());

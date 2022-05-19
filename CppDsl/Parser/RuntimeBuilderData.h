@@ -2,18 +2,18 @@
 #define __RuntimeBuilderData_H__
 
 #include "Queue.h"
-#include "Dsl.h"
+#include "DslParser.h"
 
 #define STACKSIZE			255
 
-namespace Dsl
+namespace DslParser
 {
     class FunctionData;
     class StatementData;
     class DslFile;
     class ValueData;
 }
-class RuntimeBuilderData
+class RuntimeBuilderData final
 {
 public:
     enum
@@ -39,29 +39,29 @@ public:
             else
                 return FALSE;
         }
-        Dsl::ValueData ToValue(void)const;
+        DslParser::ValueData ToValue(void)const;
     };
 private:
     typedef DequeT<TokenInfo, STACKSIZE> TokenStack;
-    typedef DequeT<Dsl::StatementData*, STACKSIZE> SemanticStack;
+    typedef DequeT<DslParser::StatementData*, STACKSIZE> SemanticStack;
 public:
     RuntimeBuilderData(void);
 public:
     void push(const TokenInfo& info);
     TokenInfo pop(void);
     int isSemanticStackEmpty(void)const;
-    void pushStatement(Dsl::StatementData* p);
-    Dsl::StatementData* popStatement(void);
-    Dsl::StatementData* getCurStatement(void)const;
-    Dsl::FunctionData* getLastFunction(void)const;
-    void setLastFunction(Dsl::FunctionData* p)const;
+    void pushStatement(DslParser::StatementData* p);
+    DslParser::StatementData* popStatement(void);
+    DslParser::StatementData* getCurStatement(void)const;
+    DslParser::FunctionData* getLastFunction(void)const;
+    void setLastFunction(DslParser::FunctionData* p)const;
 private:
     TokenStack		mTokenStack;
     SemanticStack	mSemanticStack;
 public:
-    static FunctionData*& GetNullFunctionPtrRef()
+    static DslParser::FunctionData*& GetNullFunctionPtrRef()
     {
-        static FunctionData* s_Ptr = 0;
+        static DslParser::FunctionData* s_Ptr = 0;
         return s_Ptr;
     }
 };

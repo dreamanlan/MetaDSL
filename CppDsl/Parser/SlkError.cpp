@@ -4,10 +4,12 @@
 
     ******************************************************************************/
 
-#include "Dsl.h"
+#include "DslParser.h"
 #include "SlkInc.h"
 #include "SlkParse.h"
 #include "tsnprintf.h"
+
+using namespace DslParser;
 
 //mScanner,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
 
@@ -71,7 +73,7 @@ void SlkError::message(const char* msg, SlkToken& tokens)
     }
 }
 
-SlkError::SlkError(Dsl::DslFile& dslFile) :mDslFile(&dslFile)
+SlkError::SlkError(DslParser::DslFile& dslFile) :mDslFile(&dslFile)
 {
   MyAssert(mDslFile);
 }

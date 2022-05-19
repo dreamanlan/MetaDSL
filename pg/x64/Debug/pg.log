@@ -1,13 +1,13 @@
 ﻿  pg.c
-D:\GitHub\MetaDSL\pg\pg.c(965,46): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(2142,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(2143,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(2181,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(2182,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(965,40): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(2142,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(2143,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(2181,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(2182,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(3401,20): warning C4018: “>”: 有符号/无符号不匹配
 D:\GitHub\MetaDSL\pg\pg.c(3411,33): warning C4018: “>”: 有符号/无符号不匹配
 D:\GitHub\MetaDSL\pg\pg.c(3607,17): warning C4244: “=”: 从“__int64”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(3945,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(3945,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(4163,24): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(4298,27): warning C4018: “<”: 有符号/无符号不匹配
 D:\GitHub\MetaDSL\pg\pg.c(4303,23): warning C4018: “<=”: 有符号/无符号不匹配
@@ -23,8 +23,8 @@ D:\GitHub\MetaDSL\pg\pg.c(6532,17): warning C4244: “=”: 从“__int64”转�
 D:\GitHub\MetaDSL\pg\pg.c(7727,23): warning C4018: “>=”: 有符号/无符号不匹配
 D:\GitHub\MetaDSL\pg\pg.c(7781,27): warning C4018: “>=”: 有符号/无符号不匹配
 D:\GitHub\MetaDSL\pg\pg.c(7811,23): warning C4018: “>=”: 有符号/无符号不匹配
-D:\GitHub\MetaDSL\pg\pg.c(8582,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
-D:\GitHub\MetaDSL\pg\pg.c(8612,18): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(8582,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
+D:\GitHub\MetaDSL\pg\pg.c(8612,12): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(9527,53): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(9561,49): warning C4267: “=”: 从“size_t”转换到“l3”，可能丢失数据
 D:\GitHub\MetaDSL\pg\pg.c(14581,31): warning C4244: “=”: 从“__int64”转换到“int”，可能丢失数据

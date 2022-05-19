@@ -1,11 +1,11 @@
 ﻿#ifndef __ByteCode_H__
 #define __ByteCode_H__
 
-#include "Dsl.h"
+#include "DslParser.h"
 #include "RuntimeBuilderData.h"
 #include "tsnprintf.h"
 
-namespace Dsl
+namespace DslParser
 {
     template<typename RealTypeT>
     class RuntimeBuilderT

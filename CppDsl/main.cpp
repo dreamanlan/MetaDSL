@@ -10,14 +10,14 @@ int main(int argc, char* argv[])
     FILE* fp = fopen("test.txt", "rb");
     size_t size = fread(pbuf, 1, 1024 * 1024, fp);
     pbuf[size] = 0;
-    DslFile::Mac2Unix(pbuf, static_cast<int>(size));
+    DslParser::DslFile::Mac2Unix(pbuf, static_cast<int>(size));
     fclose(fp);
     char* p = pbuf;
     
     FILE* fp2 = fopen("test.h", "rb");
     size_t size2 = fread(pbuf2, 1, 1024 * 1024, fp2);
     pbuf2[size2] = 0;
-    DslFile::Mac2Unix(pbuf2, static_cast<int>(size2));
+    DslParser::DslFile::Mac2Unix(pbuf2, static_cast<int>(size2));
     fclose(fp2);
     char* p2 = pbuf2;
 
@@ -29,12 +29,12 @@ int main(int argc, char* argv[])
         //skip utf-8 bom
         p2 += 3;
     }
-    //Dsl::DslOptions::DontLoadComments(true);
-    Dsl::DslStringAndObjectBufferT<>* pDslBuffer = new Dsl::DslStringAndObjectBufferT<>();
+    //DslParser::DslOptions::DontLoadComments(true);
+    DslParser::DslStringAndObjectBufferT<>* pDslBuffer = new DslParser::DslStringAndObjectBufferT<>();
     {
-        Dsl::DslFile dataFile(*pDslBuffer);
+        DslParser::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();
-        dataFile.OnGetToken.attach([](const DslTokenApi& api, char*& tok, short& val, int& line) { 
+        dataFile.OnGetToken.attach([](const DslParser::DslTokenApi& api, char*& tok, short& val, int& line) {
             if (0 == strcmp(tok, "return")) {
                 char* oldCurTok = api.getCurToken();
                 char* oldLastTok = api.getLastToken();
@@ -73,13 +73,26 @@ int main(int argc, char* argv[])
         dataFile.WriteToFile(fp3, 0);
         fclose(fp3);
         dataFile.SaveBinaryFile("binary.txt");
-        Dsl::DslFile dataFile2(*pDslBuffer);
+        DslParser::DslFile dataFile2(*pDslBuffer);
         dataFile2.LoadBinaryFile("binary.txt");
         FILE* fp4 = fopen("unbinary.txt", "wb");
         dataFile2.WriteToFile(fp4, 0);
         fclose(fp4);
 
-        Dsl::DslFile dataFile3(*pDslBuffer);
+        DslData::DslFile file;
+        Dsl::Transform(dataFile, file);
+        FILE* dfp = fopen("copy2.txt", "wb");
+        file.WriteToFile(dfp, 0);
+        fclose(dfp);
+
+        file.SaveBinaryFile("binary2.txt");
+        file.Reset();
+        file.LoadBinaryFile("binary2.txt");
+        dfp = fopen("unbinary2.txt", "wb");
+        file.WriteToFile(dfp, 0);
+        fclose(dfp);
+
+        DslParser::DslFile dataFile3(*pDslBuffer);
         int len = 1024 * 1024;
         dataFile3.ParseGpp(p2, "={:=", "=:}=", pbuf, len);
         delete[] pbuf;

@@ -1,5 +1,7 @@
 ﻿#include "ByteCode.h"
-#include "Dsl.h"
+#include "DslParser.h"
+
+using namespace DslParser;
 
 class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 {

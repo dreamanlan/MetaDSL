@@ -7,7 +7,7 @@
 #ifndef _SLK_SLKTOKEN_H
 #define _SLK_SLKTOKEN_H
 
-#include "Dsl.h"
+#include "DslParser.h"
 #include "Queue.h"
 
 class SlkToken
@@ -95,7 +95,7 @@ private:
     void endToken(void);
     void endTokenWithEof(void);
 public:
-    SlkToken(Dsl::IScriptSource& source, Dsl::DslFile& dslFile);
+    SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile);
 private:
     struct TokenInfo
     {
@@ -107,8 +107,8 @@ private:
         inline TokenInfo(char* token, short tokenValue, int lineNumber) :Token(token), TokenValue(tokenValue), LineNumber(lineNumber) {}
     };
 
-    Dsl::IScriptSource* mSource;
-    Dsl::IScriptSource::Iterator mIterator;
+    DslParser::IScriptSource* mSource;
+    DslParser::IScriptSource::Iterator mIterator;
 
     char* mCurToken;
     char* mLastToken;
@@ -122,7 +122,7 @@ private:
     int mCommentNum;
     int mCommentOnNewLine;
 
-    Dsl::DslFile* mDslFile;
+    DslParser::DslFile* mDslFile;
     DequeT<TokenInfo, 16> mTokenQueue;
 
     int mLineNumber;
@@ -146,7 +146,7 @@ private:
     int mScriptBeginDelimiterLength;
     int mScriptEndDelimiterLength;
 
-    Dsl::EnqueueTokenDelegation mOnEnqueueToken;
+    DslParser::EnqueueTokenDelegation mOnEnqueueToken;
 };
 
 #endif

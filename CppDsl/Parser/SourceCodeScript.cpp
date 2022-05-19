@@ -20,7 +20,7 @@ public:
     inline void setStringDelimiter(const char* begin, const char* end);
     inline void setScriptDelimiter(const char* begin, const char* end);
 public:
-    ActionForSourceCodeScript(SlkToken& scanner, Dsl::DslFile& dataFile);
+    ActionForSourceCodeScript(SlkToken& scanner, DslParser::DslFile& dataFile);
 public:
     inline void    pushId(void);
     inline void    pushStr(void);
@@ -117,7 +117,7 @@ inline void ActionForSourceCodeScript::pushStr(void)
     }
 }
 //--------------------------------------------------------------------------------------
-inline ActionForSourceCodeScript::ActionForSourceCodeScript(SlkToken& scanner, Dsl::DslFile& dataFile) :mScanner(&scanner), BaseType(dataFile)
+inline ActionForSourceCodeScript::ActionForSourceCodeScript(SlkToken& scanner, DslParser::DslFile& dataFile) :mScanner(&scanner), BaseType(dataFile)
 {
     mApi.SetImpl(this);
     initialize_table();
@@ -170,7 +170,7 @@ inline void ActionForSourceCodeScript::initialize_table(void)
 }
 //--------------------------------------------------------------------------------------
 
-namespace Dsl
+namespace DslParser
 {
     class CachedScriptSource : public IScriptSource
     {
@@ -537,13 +537,13 @@ namespace Dsl
     {
         if (!m_Impl)
             return 0;
-        m_Impl->getRuntimeBuilderData().getCurStatement();
+        return m_Impl->getRuntimeBuilderData().getCurStatement();
     }
     FunctionData* DslActionApi::getLastFunction(void)const
     {
         if (!m_Impl)
             return 0;
-        m_Impl->getRuntimeBuilderData().getLastFunction();
+        return m_Impl->getRuntimeBuilderData().getLastFunction();
     }
     void DslActionApi::setLastFunction(FunctionData* p)const
     {
@@ -629,7 +629,7 @@ namespace Dsl
     {
         std::stringstream ss;
         ss << beginDelim;
-        for (int i = 0; i < str.length(); ++i) {
+        for (int i = 0; i < static_cast<int>(str.length()); ++i) {
             char c = str[i];
             switch (c) {
             case '\\':
@@ -704,7 +704,7 @@ namespace Dsl
     }
     static bool IsSimpleDefine(const std::string& str)
     {
-        for (int i = 0; i < str.length(); ++i) {
+        for (int i = 0; i < static_cast<int>(str.length()); ++i) {
             char c = str[i];
             if (!::isalnum(c) && c != '_' && c != ' ' && c != '\t')
                 return false;

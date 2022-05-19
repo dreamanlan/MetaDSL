@@ -62,8 +62,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <StackReserveSize>2048000</StackReserveSize>
-      <StackCommitSize>2048000</StackCommitSize>
+      <StackReserveSize>20480000</StackReserveSize>
+      <StackCommitSize>20480000</StackCommitSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -86,6 +86,9 @@
   <ItemGroup>
     <ClCompile Include="Common\StringFormat.cpp" />
     <ClCompile Include="Dsl.cpp" />
+    <ClCompile Include="DslParser.cpp" />
+    <ClCompile Include="DslData.cpp" />
+    <ClCompile Include="DslUtility.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Parser\ByteCode.cpp" />
     <ClCompile Include="Parser\RuntimeBuilderData.cpp" />
@@ -104,6 +107,10 @@
     <ClInclude Include="Common\Delegation.h" />
     <ClInclude Include="Common\BaseType.h" />
     <ClInclude Include="Dsl.h" />
+    <ClInclude Include="DslCommon.h" />
+    <ClInclude Include="DslParser.h" />
+    <ClInclude Include="DslData.h" />
+    <ClInclude Include="DslUtility.h" />
     <ClInclude Include="Parser\ByteCode.h" />
     <ClInclude Include="Parser\RuntimeBuilderData.h" />
     <ClInclude Include="Parser\SlkAction.h" />

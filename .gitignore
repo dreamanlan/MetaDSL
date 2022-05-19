@@ -3,6 +3,12 @@ obj
 DslLib/obj
 CppDsl/Debug
 CppDsl/Release
+CppDsl/build/build64
+CppDsl/build/build32
+CppDsl/build/build_ios
+CppDsl/build/build_osx
+CppDsl/build/build.Android*
+CppDsl/build/build_*
 *.sdf
 *.suo
 *.user

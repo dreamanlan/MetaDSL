@@ -17,7 +17,6 @@ main ()
 {
 	@@code
 	={:=
-
   typedef struct index_st index_t;
   int x,y;
   x = offsetof(struct index_st, len);
@@ -25,7 +24,8 @@ main ()
 
   ;
 	=:}=;
-};
+}
+@@endif()
 @@code
 ={:=
   return 0;
@@ -35,7 +35,6 @@ main ()
 @@define(definexxx 1);
 @@code
 ={:=
-
 
 abc(()abcd);
 =:}=;

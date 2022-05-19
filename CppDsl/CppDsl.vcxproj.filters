@@ -26,10 +26,13 @@
     <ClCompile Include="Parser\SourceCodeScript.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
-    <ClCompile Include="Dsl.cpp" />
+    <ClCompile Include="DslParser.cpp" />
     <ClCompile Include="Common\StringFormat.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="DslData.cpp" />
+    <ClCompile Include="Dsl.cpp" />
+    <ClCompile Include="DslUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -76,7 +79,7 @@
     <ClInclude Include="Parser\SourceCodeScript.h">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="Dsl.h" />
+    <ClInclude Include="DslParser.h" />
     <ClInclude Include="Common\BaseType.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -92,6 +95,10 @@
     <ClInclude Include="Common\Queue.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="DslData.h" />
+    <ClInclude Include="Dsl.h" />
+    <ClInclude Include="DslCommon.h" />
+    <ClInclude Include="DslUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\ByteCode.inl">

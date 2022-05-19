@@ -3,14 +3,14 @@
 #define BYTECODE_PRINTF	nullprintf
 
 //--------------------------------------------------------------------------------------
-Dsl::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
+DslParser::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
 {
     switch (mType) {
     case ID_TOKEN:
     {
         char* pStr = mString;
         if (0 != pStr) {
-            ValueData val(pStr, ValueData::TYPE_IDENTIFIER);
+            DslParser::ValueData val(pStr, DslParser::ValueData::VALUE_TYPE_IDENTIFIER);
             return val;
         }
     }
@@ -19,7 +19,7 @@ Dsl::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
     {
         char* pStr = mString;
         if (0 != pStr) {
-            ValueData val(pStr, ValueData::TYPE_NUM);
+            DslParser::ValueData val(pStr, DslParser::ValueData::VALUE_TYPE_NUM);
             return val;
         }
     }
@@ -28,13 +28,13 @@ Dsl::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
     {
         char* pStr = mString;
         if (0 != pStr) {
-            ValueData val(pStr, ValueData::TYPE_STRING);
+            DslParser::ValueData val(pStr, DslParser::ValueData::VALUE_TYPE_STRING);
             return val;
         }
     }
     break;
     }
-    return ValueData();
+    return DslParser::ValueData();
 }
 //--------------------------------------------------------------------------------------
 void RuntimeBuilderData::push(const TokenInfo& info)
@@ -53,33 +53,33 @@ int RuntimeBuilderData::isSemanticStackEmpty(void)const
 {
     return mSemanticStack.Empty();
 }
-void RuntimeBuilderData::pushStatement(Dsl::StatementData* p)
+void RuntimeBuilderData::pushStatement(DslParser::StatementData* p)
 {
     mSemanticStack.PushBack(p);
 }
-Dsl::StatementData* RuntimeBuilderData::popStatement(void)
+DslParser::StatementData* RuntimeBuilderData::popStatement(void)
 {
     if (mSemanticStack.Empty()) {
         return 0;
     }
-    StatementData* cdata = mSemanticStack.Back();
+    DslParser::StatementData* cdata = mSemanticStack.Back();
     mSemanticStack.PopBack();
     return cdata;
 }
-Dsl::StatementData* RuntimeBuilderData::getCurStatement(void)const
+DslParser::StatementData* RuntimeBuilderData::getCurStatement(void)const
 {
     if (mSemanticStack.Empty())
         return 0;
-    StatementData* topData = mSemanticStack.Back();
+    DslParser::StatementData* topData = mSemanticStack.Back();
     return topData;
 }
-Dsl::FunctionData* RuntimeBuilderData::getLastFunction(void)const
+DslParser::FunctionData* RuntimeBuilderData::getLastFunction(void)const
 {
-    StatementData* statement = getCurStatement();
+    DslParser::StatementData* statement = getCurStatement();
     if (0 != statement) {
         auto* f = statement->GetLastFunctionRef();
         if (f->IsFunction())
-            return reinterpret_cast<FunctionData*>(f);
+            return reinterpret_cast<DslParser::FunctionData*>(f);
         else
             return GetNullFunctionPtrRef();
     }
@@ -87,9 +87,9 @@ Dsl::FunctionData* RuntimeBuilderData::getLastFunction(void)const
         return GetNullFunctionPtrRef();
     }
 }
-void RuntimeBuilderData::setLastFunction(Dsl::FunctionData* p)const
+void RuntimeBuilderData::setLastFunction(DslParser::FunctionData* p)const
 {
-    StatementData* statement = getCurStatement();
+    DslParser::StatementData* statement = getCurStatement();
     if (0 != statement) {     
         auto*& f = statement->GetLastFunctionRef();
         f = p;

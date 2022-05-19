@@ -81,7 +81,7 @@
 
 #define DEF_PARSER_FORMAT_IMPL(X,decX)	\
 template<ParserRepeatArg1_##X(typename P)>	\
-inline VOID _Format(ParserRepeatArg2_##X(P,p))	\
+inline void _Format(ParserRepeatArg2_##X(P,p))	\
 {\
 	_Format(ParserRepeatArg1_##decX(p));\
 	const CHAR* fmt=ParseToNextFormat();\
@@ -93,7 +93,7 @@ inline VOID _Format(ParserRepeatArg2_##X(P,p))	\
 
 #define DEF_PARSER_FORMAT(X)	\
 template<ParserRepeatArg1_##X(typename P)>	\
-inline VOID Format(ParserRepeatArg2_##X(P,p))	\
+inline void Format(ParserRepeatArg2_##X(P,p))	\
 {\
 	_Format(ParserRepeatArg1_##X(p));\
 	ParseToEnd();\
