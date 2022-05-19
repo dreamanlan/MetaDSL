@@ -1157,7 +1157,7 @@ namespace DslParser
     private:
         void AddSyntaxComponent(ISyntaxComponent* p)
         {
-            if (m_SyntaxComponentNum >= SyntaxComponentAndPtrArrayPoolSize || 0 == m_SyntaxComponentPool)
+            if (m_SyntaxComponentNum >= SyntaxComponentAndPtrArrayPoolSize)
                 return;
             m_SyntaxComponentPool[m_SyntaxComponentNum] = p;
             ++m_SyntaxComponentNum;

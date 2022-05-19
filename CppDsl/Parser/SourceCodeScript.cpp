@@ -586,7 +586,7 @@ namespace DslParser
             file.SetScriptDelimiter(tokens.getScriptBeginDelimiter(), tokens.getScriptEndDelimiter());
         }
     }
-    std::string TransformPreprocess(const char* input, int len, const char* beginDelim, const char* endDelim);
+    static std::string TransformPreprocess(const char* input, int len, const char* beginDelim, const char* endDelim);
     void ParseGpp(const char* buf, DslFile& file, const char* beginDelim, const char* endDelim, char* gppBuf, int& len)
     {
         std::string str = TransformPreprocess(buf, static_cast<int>(strlen(buf)), beginDelim, endDelim);

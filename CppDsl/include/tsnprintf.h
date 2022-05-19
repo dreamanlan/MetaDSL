@@ -17,10 +17,10 @@
 
 #define DEF_SNPRINTF(X)	\
 template<ParserRepeatArg1_##X(typename P)>\
-inline INT snprintf_(CHAR* buf, size_t size, CHAR const* msg,ParserRepeatArg2_##X(P,p))\
+inline int snprintf_(char* buf, size_t size, char const* msg,ParserRepeatArg2_##X(P,p))\
 {\
 	if(NULL==buf || NULL==msg || size<1) return 0;\
-	StringParser fmt(buf,(INT)size,msg);\
+	StringParser fmt(buf,(int)size,msg);\
 	fmt.Format(ParserRepeatArg1_##X(p));\
 	buf[size-1]='\0';\
 	return fmt.GetLength();\

@@ -4,7 +4,6 @@
 #include "DslParser.h"
 #include "DslData.h"
 #include "tsnprintf.h"
-#include <functional>
 #include <string>
 
 namespace DslFileReadWrite

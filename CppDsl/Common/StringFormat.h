@@ -84,7 +84,7 @@ template<ParserRepeatArg1_##X(typename P)>	\
 inline void _Format(ParserRepeatArg2_##X(P,p))	\
 {\
 	_Format(ParserRepeatArg1_##decX(p));\
-	const CHAR* fmt=ParseToNextFormat();\
+	const char* fmt=ParseToNextFormat();\
 	if(NULL!=fmt)\
 		StringFormatUtility::Value2String(m_pBuffer,m_BufPos,m_BufLen,fmt,p##X,decX);\
   	else\

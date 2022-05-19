@@ -10,7 +10,7 @@
 
 typedef struct _Slk_terminal { 
     slk_size_t  token;
-    char  *name;
+    const char  *name;
 } Slk_terminal_t;
 
 static Slk_terminal_t Slk_terminal [] = { 

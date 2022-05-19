@@ -3,7 +3,7 @@
 
 #include "SlkString.h"
 
-static char * Nonterminal_name[] ={"0"
+static const char * Nonterminal_name[] ={"0"
 
 ,"PROGRAM"
 ,"STATEMENTS"
@@ -103,7 +103,7 @@ static char * Nonterminal_name[] ={"0"
 ,"FUNCTION_PARAMS_22_opt"
 };
 
-static char * Terminal_name[] ={"0"
+static const char * Terminal_name[] ={"0"
 
 ,"OP_TOKEN_0"
 ,"OP_TOKEN_1"
@@ -162,7 +162,7 @@ static char * Terminal_name[] ={"0"
 ,"END_OF_SLK_INPUT"
 };
 
-static char * Action_name[] ={"0"
+static const char * Action_name[] ={"0"
 
 ,"_action_endStatement"
 ,"_action_pushId"
@@ -206,7 +206,7 @@ static char * Action_name[] ={"0"
 ,"_action_pushNum"
 };
 
-static char * Production_name[] ={"0"
+static const char * Production_name[] ={"0"
 
 ,"PROGRAM --> STATEMENTS"
 ,"STATEMENTS --> STATEMENT SEP_STATEMENT_*"
@@ -387,7 +387,7 @@ static char * Production_name[] ={"0"
 #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])
 #define GET_PRODUCTION_NAME(number) (Production_name [number])
 
-char *SlkGetSymbolName ( unsigned int   symbol )
+const char *SlkGetSymbolName ( unsigned int   symbol )
 { if ( symbol >= START_ACTION  &&  symbol < END_ACTION ) {
       return ( GET_ACTION_NAME (symbol) );
   } else if ( symbol >= START_SYMBOL ) {
@@ -399,7 +399,7 @@ char *SlkGetSymbolName ( unsigned int   symbol )
   }
 }
 
-char *SlkGetProductionName ( unsigned int  production_number )
+const char *SlkGetProductionName ( unsigned int  production_number )
 {
   return ( GET_PRODUCTION_NAME (production_number) );
 }

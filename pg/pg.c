@@ -4998,7 +4998,7 @@ void l82(char* l83,
     l92(l83, l84, l85);
 }
 static char l548[] =
-"char *xxxGetSymbolName ( unsigned int   symbol )";
+"const char *xxxGetSymbolName ( unsigned int   symbol )";
 static char l549[] =
 "{ if ( symbol >= START_ACTION  &&  symbol < END_ACTION ) {\n"
 "      return ( GET_ACTION_NAME (symbol) );\n"
@@ -5011,13 +5011,13 @@ static char l549[] =
 "  }\n"
 "}\n";
 static char l550[] =
-"char *xxxGetProductionName ( unsigned int  production_number )";
+"const char *xxxGetProductionName ( unsigned int  production_number )";
 static char l551[] =
 "{\n"
 "  return ( GET_PRODUCTION_NAME (production_number) );\n"
 "}\n";
-static char* l552 = "static char *",
-* l553 = "static char *",
+static char* l552 = "static const char *",
+* l553 = "static const char *",
 * l554 = "private static string[]",
 * l555 = "private static String[]",
 * l556 = "var",
@@ -11045,7 +11045,6 @@ static char l823[] =
 "                slk_size_t  start_symbol ) ";
 static char l824[] =
 "{\n"
-" register\n"
 " slk_size_t  *top, *production;\n"
 " slk_size_t   production_number, entry, symbol, token, new_token;\n"
 " int          production_length, index, level;\n"
@@ -11131,7 +11130,6 @@ static char l825[] =
 "                slk_size_t  start_symbol ) ";
 static char l826[] =
 "{\n"
-" register\n"
 " slk_size_t  *top, *production;\n"
 " slk_size_t   state, production_number, entry, symbol, token, new_token;\n"
 " int          action_number, production_length, index, level;\n"
@@ -11620,7 +11618,7 @@ l836(char* l83,
     }
     fprintf(l566, "#include \"%sConstants.h\" \n\n", l83);
     fprintf(l566, "typedef struct _%s_keyword { \n"
-        "    slk_size_t  token;\n    char  *name;\n}"
+        "    slk_size_t  token;\n    const char  *name;\n}"
         "  %s_keyword_t};\n\n",
         l83, l83);
     fprintf(l566, "static %s_keyword_t %s_keyword [] = { \n",
@@ -11695,7 +11693,7 @@ l838(char* l83,
     }
     fprintf(l566, "#include \"%sConstants.h\" \n\n", l83);
     fprintf(l566, "typedef struct _%s_terminal { \n"
-        "    slk_size_t  token;\n    char  *name;\n}"
+        "    slk_size_t  token;\n    const char  *name;\n}"
         " %s_terminal_t;\n\n",
         l83, l83);
     fprintf(l566, "static %s_terminal_t %s_terminal [] = { \n",

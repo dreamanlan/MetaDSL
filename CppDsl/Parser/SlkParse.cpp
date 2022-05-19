@@ -381,7 +381,6 @@ void SlkParse ( SlkAction  &action,
                 SlkError   &error, 
                 slk_size_t  start_symbol ) 
 {
- register
  slk_size_t  *top, *production;
  slk_size_t   production_number, entry, symbol, token, new_token;
  int          production_length, index, level;
