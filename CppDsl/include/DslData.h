@@ -116,7 +116,7 @@ namespace DslData
                 return false;
             return GetCommentsInfo()->m_FirstCommentOnNewLine;
         }
-        void SetFirstCommentOnNewLine(int v)
+        void SetFirstCommentOnNewLine(bool v)
         {
             if (nullptr == GetCommentsInfo())
                 return;

@@ -35,12 +35,22 @@
 #include <net/if.h>
 #include <limits.h>
 
-#define TRUE			1
-#define FALSE			0
-
 #endif
 
+#ifndef TRUE
+#define TRUE			1
+#endif
+
+#ifndef FALSE
+#define FALSE			0
+#endif
+
+#ifndef INVALID_ID
 #define INVALID_ID		-1
+#endif
+
+#ifndef MyAssert
 #define MyAssert(x)
+#endif
 
 #endif //__BASETYPE_H__

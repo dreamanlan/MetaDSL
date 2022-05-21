@@ -110,7 +110,7 @@ elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Switch")
         ${CLIB_SRC}
     )
     target_compile_options(CppDsl PRIVATE -m64 -mcpu=cortex-a57+fp+simd+crypto+crc -fno-common -fno-short-enums -ffunction-sections -fdata-sections -fPIC -fms-extensions)
-elseif ( WIN32 AND NOT CYGWIN )
+elseif ( WIN32 AND NOT CYGWIN OR ANDROID )
     add_library(CppDsl STATIC
         ${CLIB_SRC}
     )
