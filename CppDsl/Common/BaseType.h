@@ -1,14 +1,12 @@
 #ifndef __BASETYPE_H__
 #define __BASETYPE_H__
 
-#include <assert.h>
-#include <math.h>
-#include <memory.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <ctype.h>
+#include <cassert>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <cstdint>
 
 #if defined(__WINDOWS__)
 #include <winsock2.h>
@@ -47,6 +45,14 @@
 
 #ifndef INVALID_ID
 #define INVALID_ID		-1
+#endif
+
+#ifndef INVALID_INDEX
+#define INVALID_INDEX   -1
+#endif
+
+#ifndef INVALID_INDEX
+#define INVALID_INDEX   -1
 #endif
 
 #ifndef MyAssert
