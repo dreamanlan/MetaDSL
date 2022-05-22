@@ -439,14 +439,18 @@ namespace DslParser
             m_Type = VALUE_TYPE_IDENTIFIER;
             m_StringVal = name;
         }
-        void SetLine(int line)
-        {
-            m_Line = line;
-        }
         void SetTypeAndId(int type, const char* id)
         {
             m_Type = type;
             m_ConstStringVal = id;
+        }
+        void SetType(int type)
+        {
+            m_Type = type;
+        }
+        void SetLine(int line)
+        {
+            m_Line = line;
         }
     private:
         void CopyFrom(const ValueData& other)
@@ -853,6 +857,25 @@ namespace DslParser
             if (0 == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
                 return 0;
             return m_ValueOrFunctions[index]->GetId();
+        }
+        ValueOrFunctionData* GetFirst(void)const
+        {
+            return GetFunction(0);
+        }
+        ValueOrFunctionData* GetSecond(void)const
+        {
+            return GetFunction(1);
+        }
+        ValueOrFunctionData* GetThird(void)const
+        {
+            return GetFunction(2);
+        }
+        ValueOrFunctionData* GetLast(void)const
+        {
+            int num = GetFunctionNum();
+            if (num <= 0)
+                return nullptr;
+            return GetFunction(num - 1);
         }
     public:
         StatementData(IDslStringAndObjectBuffer& buffer);

@@ -67,6 +67,12 @@ namespace DslData
             m_StringVal.clear();
         return m_FunctionVal;
     }
+    FunctionData* ValueData::SetFunctionCopyFrom(const FunctionData& other)
+    {
+        auto* p = SetFunction();
+        p->CopyFrom(other);
+        return p;
+    }
     bool ValueData::IsValid(void)const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
@@ -255,6 +261,28 @@ namespace DslData
         return p;
     }
 
+    ISyntaxComponent* FunctionData::AddParamCopyFrom(const ISyntaxComponent& other)
+    {
+        switch (other.GetSyntaxType()) {
+        case ISyntaxComponent::TYPE_VALUE: {
+            auto* p = AddValueParam();
+            *p = static_cast<const ValueData&>(other);
+            return p;
+        }
+        case ISyntaxComponent::TYPE_FUNCTION: {
+            auto* p = AddFunctionParam();
+            p->CopyFrom(static_cast<const FunctionData&>(other));
+            return p;
+        }
+        case ISyntaxComponent::TYPE_STATEMENT: {
+            auto* p = AddStatementParam();
+            p->CopyFrom(static_cast<const StatementData&>(other));
+            return p;
+        }
+        }
+        return nullptr;
+    }
+
     StatementData::StatementData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
         m_ValueOrFunctions(0)
     {
@@ -329,6 +357,22 @@ namespace DslData
         auto* p = new FunctionData();
         m_ValueOrFunctions.push_back(p);
         return p;
+    }
+    ValueOrFunctionData* StatementData::AddValueOrFunctionCopyFrom(const ValueOrFunctionData& other)
+    {
+        switch (other.GetSyntaxType()) {
+        case ISyntaxComponent::TYPE_VALUE: {
+            auto* p = AddValue();
+            *p = static_cast<const ValueData&>(other);
+            return p;
+        }
+        case ISyntaxComponent::TYPE_FUNCTION: {
+            auto* p = AddFunction();
+            p->CopyFrom(static_cast<const FunctionData&>(other));
+            return p;
+        }
+        }
+        return nullptr;
     }
 
     bool DslFile::Mac2Unix(char* buf, int len)
@@ -419,6 +463,28 @@ namespace DslData
         auto* p = new StatementData();
         m_DslInfos.push_back(p);
         return p;
+    }
+
+    ISyntaxComponent* DslFile::AddDslCopyFrom(const ISyntaxComponent& other)
+    {
+        switch (other.GetSyntaxType()) {
+        case ISyntaxComponent::TYPE_VALUE: {
+            auto* p = AddValue();
+            *p = static_cast<const ValueData&>(other);
+            return p;
+        }
+        case ISyntaxComponent::TYPE_FUNCTION: {
+            auto* p = AddFunction();
+            p->CopyFrom(static_cast<const FunctionData&>(other));
+            return p;
+        }
+        case ISyntaxComponent::TYPE_STATEMENT: {
+            auto* p = AddStatement();
+            p->CopyFrom(static_cast<const StatementData&>(other));
+            return p;
+        }
+        }
+        return nullptr;
     }
 
     void DslFile::LoadBinaryFile(const char* file)

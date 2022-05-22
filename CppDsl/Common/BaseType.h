@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdint>
+#include <cctype>
 
 #if defined(__WINDOWS__)
 #include <winsock2.h>

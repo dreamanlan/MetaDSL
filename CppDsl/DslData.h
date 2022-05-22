@@ -364,11 +364,16 @@ namespace DslData
             m_Type = type;
             m_StringVal = id;
         }
+        void SetType(int type)
+        {
+            m_Type = type;
+        }
         void SetLine(int line)
         {
             m_Line = line;
         }
         FunctionData* SetFunction(void);
+        FunctionData* SetFunctionCopyFrom(const FunctionData& other);
     private:
         void CopyFrom(const ValueData& other);
         void Release(void);
@@ -423,6 +428,7 @@ namespace DslData
         ValueData* AddValueParam(void);
         FunctionData* AddFunctionParam(void);
         StatementData* AddStatementParam(void);
+        ISyntaxComponent* AddParamCopyFrom(const ISyntaxComponent& other);
         void SetParamClass(int v) { m_ParamClass = v; }
         int GetParamClass(void)const { return m_ParamClass; }
         int GetParamClassUnmasked(void)const
@@ -710,6 +716,7 @@ namespace DslData
         void ClearFunctions(void);
         ValueData* AddValue(void);
         FunctionData* AddFunction(void);
+        ValueOrFunctionData* AddValueOrFunctionCopyFrom(const ValueOrFunctionData& other);
         ValueOrFunctionData* GetLastFunction(void)const
         {
             if (0 == static_cast<int>(m_ValueOrFunctions.size()))
@@ -730,6 +737,25 @@ namespace DslData
             if (index < 0 || index >= static_cast<int>(m_ValueOrFunctions.size()) || nullptr == m_ValueOrFunctions[index])
                 return ISyntaxComponent::EmptyString();
             return m_ValueOrFunctions[index]->GetId();
+        }
+        ValueOrFunctionData* GetFirst(void)const
+        {
+            return GetFunction(0);
+        }
+        ValueOrFunctionData* GetSecond(void)const
+        {
+            return GetFunction(1);
+        }
+        ValueOrFunctionData* GetThird(void)const
+        {
+            return GetFunction(2);
+        }
+        ValueOrFunctionData* GetLast(void)const
+        {
+            int num = GetFunctionNum();
+            if (num <= 0)
+                return nullptr;
+            return GetFunction(num - 1);
         }
     public:
         StatementData(void);
@@ -770,6 +796,7 @@ namespace DslData
         ValueData* AddValue(void);
         FunctionData* AddFunction(void);
         StatementData* AddStatement(void);
+        ISyntaxComponent* AddDslCopyFrom(const DslData::ISyntaxComponent& other);
     public:
         DslFile(void);
         ~DslFile(void);
