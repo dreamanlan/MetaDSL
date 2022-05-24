@@ -6,7 +6,7 @@ namespace StringFormatUtility
 
     int CopyBuffer(char* dest, int& pos, int size, const char* src)
     {
-        if (NULL == dest || NULL == src)
+        if (nullptr == dest || nullptr == src)
             return FALSE;
         int len = (int)strlen(src);
         if (pos + len >= size)
@@ -47,7 +47,7 @@ const char* StringParser::ParseToNextFormat(void)
                 for (int j = i; j < len; ++j) {
                     m_TempFmt[j - i] = m_pFmt[j];
                     const char* p = strchr(StringFormatUtility::format_string, m_pFmt[j]);
-                    if (NULL != p) {
+                    if (nullptr != p) {
                         m_FmtPos = j + 1;
                         m_TempFmt[j - i + 1] = 0;
                         return m_TempFmt;
@@ -67,7 +67,7 @@ const char* StringParser::ParseToNextFormat(void)
         }
     }
     m_FmtPos = len;
-    return NULL;
+    return nullptr;
 }
 
 void StringParser::ParseToEnd(void)
@@ -89,7 +89,7 @@ void StringParser::ParseToEnd(void)
                 ++m_FmtIndex;
                 for (int j = i; j < len; ++j) {
                     const char* p = strchr(StringFormatUtility::format_string, m_pFmt[j]);
-                    if (NULL != p) {
+                    if (nullptr != p) {
                         if (FALSE == StringFormatUtility::BasicValue2String(m_pBuffer, m_BufPos, m_BufLen, " @format:%d,unexpected_format ", m_FmtIndex - 1)) {
                             m_FmtPos = len;
                             return;

@@ -52,6 +52,10 @@
 #define INVALID_INDEX   -1
 #endif
 
+#ifndef INVALID_INDEX
+#define INVALID_INDEX   -1
+#endif
+
 #ifndef MyAssert
 #define MyAssert(x)
 #endif

@@ -14,7 +14,7 @@ namespace CollectionMemory
         {
             if (size > MaxSizeV) {
                 size = 1;
-                return NULL;
+                return nullptr;
             }
             return m_Data;
         }
@@ -38,25 +38,25 @@ namespace CollectionMemory
         {
             Cleanup();
             m_Data = new T[size];
-            if (NULL == m_Data) {
+            if (nullptr == m_Data) {
                 size = 1;
-                return NULL;
+                return nullptr;
             }
             m_MaxSize = size;
             return m_Data;
         }
         inline void Clear(void)
         {
-            if (m_MaxSize > 0 && NULL != m_Data) {
+            if (m_MaxSize > 0 && nullptr != m_Data) {
                 memset(m_Data, 0, sizeof(T) * m_MaxSize);
             }
         }
         size_t GetMemoryInUsed(void) const
         {
-            return (m_Data == NULL ? 0 : (sizeof(T) * m_MaxSize));
+            return (m_Data == nullptr ? 0 : (sizeof(T) * m_MaxSize));
         }
     public:
-        DynamicT(void) :m_Data(NULL), m_MaxSize(0)
+        DynamicT(void) :m_Data(nullptr), m_MaxSize(0)
         {}
         virtual ~DynamicT(void)
         {
@@ -65,9 +65,9 @@ namespace CollectionMemory
     private:
         inline void Cleanup(void)
         {
-            if (NULL != m_Data) {
+            if (nullptr != m_Data) {
                 delete[] m_Data;
-                m_Data = NULL;
+                m_Data = nullptr;
             }
             m_MaxSize = 0;
         }
@@ -271,13 +271,13 @@ public://扩展双向队列访问方法（遍历与读写方法）
         return id2Val - id1Val;
     }
 public:
-    DequeT(void) :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(NULL)
+    DequeT(void) :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(nullptr)
     {
         if (SizeV > 0) {
             Init(SizeV);
         }
     }
-    DequeT(int size) :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(NULL)
+    DequeT(int size) :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(nullptr)
     {
         Init(size);
     }
@@ -287,7 +287,7 @@ public:
         m_MaxSize = 1;
         m_Head = 0;
         m_Tail = 0;
-        m_Data = NULL;
+        m_Data = nullptr;
     }
 public:
     DequeT(const DequeT& other)

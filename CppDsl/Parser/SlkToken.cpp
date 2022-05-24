@@ -408,7 +408,7 @@ short SlkToken::get(void)
 
 short SlkToken::getImpl(void)
 {
-    if (NULL == mSource || NULL == mDslFile) {
+    if (nullptr == mSource || nullptr == mDslFile) {
         return END_OF_SLK_INPUT_;
     }
 
@@ -1197,7 +1197,7 @@ void SlkToken::newComment(void)
 
 void SlkToken::pushCommentChar(char c)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurComment)
+    if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || nullptr == mCurComment)
         return;
     mCurComment[mCommentCharIndex] = c;
     ++mCommentCharIndex;
@@ -1205,7 +1205,7 @@ void SlkToken::pushCommentChar(char c)
 
 void SlkToken::endComment(void)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || NULL == mCurComment || NULL == mDslFile->GetUnusedStringPtrRef())
+    if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= 1 || nullptr == mCurComment || nullptr == mDslFile->GetUnusedStringPtrRef())
         return;
     mCurComment[mCommentCharIndex] = '\0';
     mDslFile->GetUnusedStringPtrRef() += mCommentCharIndex + 1;
@@ -1227,7 +1227,7 @@ void SlkToken::newToken(void)
 
 void SlkToken::pushTokenChar(char c)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || NULL == mCurToken)
+    if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || nullptr == mCurToken)
         return;
     mCurToken[mTokenCharIndex] = c;
     ++mTokenCharIndex;
@@ -1235,14 +1235,14 @@ void SlkToken::pushTokenChar(char c)
 
 void SlkToken::tempEndToken(void)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
+    if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || nullptr == mCurToken || nullptr == mDslFile->GetUnusedStringPtrRef())
         return;
     mCurToken[mTokenCharIndex] = '\0';
 }
 
 void SlkToken::endToken(void)
 {
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
+    if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= mTokenCharIndex + 1 || nullptr == mCurToken || nullptr == mDslFile->GetUnusedStringPtrRef())
         return;
     mCurToken[mTokenCharIndex] = '\0';
     mDslFile->GetUnusedStringPtrRef() += mTokenCharIndex + 1;
@@ -1251,7 +1251,7 @@ void SlkToken::endToken(void)
 void SlkToken::endTokenWithEof(void)
 {
     static const char* s_c_Eof = "<<eof>>";
-    if (NULL == mDslFile || mDslFile->GetUnusedStringLength() <= (int)strlen(s_c_Eof) + 1 || NULL == mCurToken || NULL == mDslFile->GetUnusedStringPtrRef())
+    if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= (int)strlen(s_c_Eof) + 1 || nullptr == mCurToken || nullptr == mDslFile->GetUnusedStringPtrRef())
         return;
     strcpy(mCurToken, s_c_Eof);
     mDslFile->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;

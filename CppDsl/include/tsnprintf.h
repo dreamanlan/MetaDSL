@@ -19,7 +19,7 @@
 template<ParserRepeatArg1_##X(typename P)>\
 inline int snprintf_(char* buf, size_t size, char const* msg,ParserRepeatArg2_##X(P,p))\
 {\
-	if(NULL==buf || NULL==msg || size<1) return 0;\
+	if(nullptr==buf || nullptr==msg || size<1) return 0;\
 	StringParser fmt(buf,(int)size,msg);\
 	fmt.Format(ParserRepeatArg1_##X(p));\
 	buf[size-1]='\0';\
@@ -28,7 +28,7 @@ inline int snprintf_(char* buf, size_t size, char const* msg,ParserRepeatArg2_##
 
 inline int snprintf_(char* buf, size_t size, char const* msg)
 {
-    if (NULL == buf || NULL == msg || size < 1) return 0;
+    if (nullptr == buf || nullptr == msg || size < 1) return 0;
     StringParser fmt(buf, (int)size, msg);
     fmt.Format();
     buf[size - 1] = '\0';

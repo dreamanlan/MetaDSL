@@ -217,7 +217,7 @@ namespace DslData
 
     FunctionData& FunctionData::GetNullFunction(void)const
     {
-        return DslFile::NullFunction();
+        return DslFile::GetNullFunction();
     }
 
     void FunctionData::ReleaseParams(void)
@@ -341,6 +341,10 @@ namespace DslData
         }
         m_ValueOrFunctions.clear();
     }
+    ValueOrFunctionData& StatementData::GetNullValueOrFunction(void)const
+    {
+        return DslFile::GetNullFunction();
+    }
 
     void StatementData::ClearFunctions(void)
     {
@@ -384,19 +388,9 @@ namespace DslData
         static NullSyntax s_Null;
         return s_Null;
     }
-    ValueData& DslFile::NullValue(void)
-    {
-        static ValueData s_Null;
-        return s_Null;
-    }
-    FunctionData& DslFile::NullFunction(void)
+    FunctionData& DslFile::GetNullFunction(void)
     {
         static FunctionData s_Null;
-        return s_Null;
-    }
-    StatementData& DslFile::NullStatement(void)
-    {
-        static StatementData s_Null;
         return s_Null;
     }
 

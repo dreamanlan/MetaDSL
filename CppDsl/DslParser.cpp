@@ -55,7 +55,7 @@ namespace DslParser
                 int newSpace = GetCommentsInfo()->m_FirstCommentSpace + DELTA_COMMENT;
                 const char** pNew = (const char**)(pBuffer->NewPtrArray(newSpace));
                 if (pNew) {
-                    if (NULL != GetCommentsInfo()->m_FirstComments) {
+                    if (nullptr != GetCommentsInfo()->m_FirstComments) {
                         memcpy(pNew, GetCommentsInfo()->m_FirstComments, GetCommentsInfo()->m_FirstCommentNum * sizeof(const char*));
                         memset(pNew + GetCommentsInfo()->m_FirstCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
                         pBuffer->DeletePtrArray((void**)GetCommentsInfo()->m_FirstComments, GetCommentsInfo()->m_FirstCommentSpace);
@@ -69,9 +69,9 @@ namespace DslParser
     void ISyntaxComponent::ReleaseFirstComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo)
     {
         if (0 != pBuffer && 0 != pCommentsInfo) {
-            if (NULL != pCommentsInfo->m_FirstComments) {
+            if (nullptr != pCommentsInfo->m_FirstComments) {
                 pBuffer->DeletePtrArray((void**)pCommentsInfo->m_FirstComments, pCommentsInfo->m_FirstCommentSpace);
-                pCommentsInfo->m_FirstComments = NULL;
+                pCommentsInfo->m_FirstComments = nullptr;
             }
         }
     }
@@ -83,7 +83,7 @@ namespace DslParser
                 int newSpace = GetCommentsInfo()->m_LastCommentSpace + DELTA_COMMENT;
                 const char** pNew = (const char**)(pBuffer->NewPtrArray(newSpace));
                 if (pNew) {
-                    if (NULL != GetCommentsInfo()->m_LastComments) {
+                    if (nullptr != GetCommentsInfo()->m_LastComments) {
                         memcpy(pNew, GetCommentsInfo()->m_LastComments, GetCommentsInfo()->m_LastCommentNum * sizeof(const char*));
                         memset(pNew + GetCommentsInfo()->m_LastCommentNum, 0, DELTA_COMMENT * sizeof(const char*));
                         pBuffer->DeletePtrArray((void**)GetCommentsInfo()->m_LastComments, GetCommentsInfo()->m_LastCommentSpace);
@@ -97,9 +97,9 @@ namespace DslParser
     void ISyntaxComponent::ReleaseLastComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo)
     {
         if (0 != pBuffer && 0 != pCommentsInfo) {
-            if (NULL != pCommentsInfo->m_LastComments) {
+            if (nullptr != pCommentsInfo->m_LastComments) {
                 pBuffer->DeletePtrArray((void**)pCommentsInfo->m_LastComments, pCommentsInfo->m_LastCommentSpace);
-                pCommentsInfo->m_LastComments = NULL;
+                pCommentsInfo->m_LastComments = nullptr;
             }
         }
     }
@@ -216,7 +216,7 @@ namespace DslParser
 
     void FunctionData::InitParamsCapacity(int c)
     {
-        if (NULL == m_Params && TRUE == HaveParamOrStatement()) {
+        if (nullptr == m_Params && TRUE == HaveParamOrStatement()) {
             if (HaveStatement()) {
                 c = CalcCapacity(c, INIT_FUNCTION_PARAM, MAX_DELTA_FUNCTION_STATEMENT);
             }
@@ -234,7 +234,7 @@ namespace DslParser
 
     void FunctionData::PrepareParams(void)
     {
-        if (NULL == m_Params && TRUE == HaveParamOrStatement()) {
+        if (nullptr == m_Params && TRUE == HaveParamOrStatement()) {
             m_Params = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(INIT_FUNCTION_PARAM));
             if (m_Params) {
                 m_ParamSpace = INIT_FUNCTION_PARAM;
@@ -266,9 +266,9 @@ namespace DslParser
 
     void FunctionData::ReleaseParams(void)
     {
-        if (NULL != m_Params) {
+        if (nullptr != m_Params) {
             m_Buffer.DeletePtrArray((void**)m_Params, m_ParamSpace);
-            m_Params = NULL;
+            m_Params = nullptr;
         }
     }
 
@@ -295,9 +295,9 @@ namespace DslParser
         auto p = m_pCommentsInfo;
         if (0 == p)
             return;
-        if (NULL != p->m_Comments) {
+        if (nullptr != p->m_Comments) {
             m_Buffer.DeletePtrArray((void**)p->m_Comments, p->m_CommentSpace);
-            p->m_Comments = NULL;
+            p->m_Comments = nullptr;
         }
     }
 
@@ -325,7 +325,7 @@ namespace DslParser
 
     void StatementData::InitFunctionsCapacity(int c)
     {
-        if (NULL == m_ValueOrFunctions) {
+        if (nullptr == m_ValueOrFunctions) {
             c = CalcCapacity(c, INIT_STATEMENT_FUNCTION, MAX_DELTA_STATEMENT_FUNCTION);
             m_ValueOrFunctions = (ValueOrFunctionData**)(m_Buffer.NewPtrArray(c));
             if (m_ValueOrFunctions) {
@@ -336,7 +336,7 @@ namespace DslParser
 
     void StatementData::PrepareFunctions(void)
     {
-        if (NULL == m_ValueOrFunctions) {
+        if (nullptr == m_ValueOrFunctions) {
             m_ValueOrFunctions = (ValueOrFunctionData**)(m_Buffer.NewPtrArray(INIT_STATEMENT_FUNCTION));
             if (m_ValueOrFunctions) {
                 m_ValueOrFunctionSpace = INIT_STATEMENT_FUNCTION;
@@ -362,9 +362,9 @@ namespace DslParser
 
     void StatementData::ReleaseFunctions(void)
     {
-        if (NULL != m_ValueOrFunctions) {
+        if (nullptr != m_ValueOrFunctions) {
             m_Buffer.DeletePtrArray((void**)m_ValueOrFunctions, m_ValueOrFunctionSpace);
-            m_ValueOrFunctions = NULL;
+            m_ValueOrFunctions = nullptr;
         }
     }
 
@@ -374,7 +374,7 @@ namespace DslParser
     }
 
     DslFile::DslFile(IDslStringAndObjectBuffer& buffer) :m_Buffer(buffer), m_IsDebugInfoEnable(FALSE),
-        m_DslInfos(NULL), m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
+        m_DslInfos(nullptr), m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
     {
         Init();
         ClearErrorInfo();
@@ -420,10 +420,10 @@ namespace DslParser
 
     void DslFile::AddDslInfo(ISyntaxComponent* p)
     {
-        if (NULL == p || m_DslInfoNum < 0 || m_DslInfoNum >= m_MaxDslInfoNum)
+        if (nullptr == p || m_DslInfoNum < 0 || m_DslInfoNum >= m_MaxDslInfoNum)
             return;
         PrepareDslInfos();
-        if (NULL == m_DslInfos || m_DslInfoNum >= m_DslInfoSpace)
+        if (nullptr == m_DslInfos || m_DslInfoNum >= m_DslInfoSpace)
             return;
         m_DslInfos[m_DslInfoNum] = p;
         ++m_DslInfoNum;
@@ -431,7 +431,7 @@ namespace DslParser
 
     void DslFile::PrepareDslInfos(void)
     {
-        if (NULL == m_DslInfos) {
+        if (nullptr == m_DslInfos) {
             m_DslInfos = (ISyntaxComponent**)(m_Buffer.NewPtrArray(INIT_DSL_INFO));
             if (m_DslInfos) {
                 m_DslInfoSpace = INIT_DSL_INFO;
@@ -456,9 +456,9 @@ namespace DslParser
     }
     void DslFile::ReleaseDslInfos(void)
     {
-        if (NULL != m_DslInfos) {
+        if (nullptr != m_DslInfos) {
             m_Buffer.DeletePtrArray((void**)m_DslInfos, m_DslInfoSpace);
-            m_DslInfos = NULL;
+            m_DslInfos = nullptr;
         }
     }
 

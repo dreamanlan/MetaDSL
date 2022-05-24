@@ -34,16 +34,16 @@ private:
 //--------------------------------------------------------------------------------------
 inline char* ActionForSourceCodeScript::getLastToken(void) const
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         return mScanner->getLastToken();
     }
     else {
-        return NULL;
+        return nullptr;
     }
 }
 inline int ActionForSourceCodeScript::getLastLineNumber(void) const
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         return mScanner->getLastLineNumber();
     }
     else {
@@ -52,7 +52,7 @@ inline int ActionForSourceCodeScript::getLastLineNumber(void) const
 }
 inline int ActionForSourceCodeScript::getCommentNum(int& commentOnNewLine) const
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         return mScanner->getCommentNum(commentOnNewLine);
     }
     else {
@@ -62,34 +62,34 @@ inline int ActionForSourceCodeScript::getCommentNum(int& commentOnNewLine) const
 }
 inline char* ActionForSourceCodeScript::getComment(int index) const
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         return mScanner->getComment(index);
     }
     else {
-        return NULL;
+        return nullptr;
     }
 }
 inline void ActionForSourceCodeScript::resetComments(void)
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         mScanner->resetComments();
     }
 }
 inline void ActionForSourceCodeScript::setCanFinish(int val)
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         mScanner->setCanFinish(val);
     }
 }
 inline void ActionForSourceCodeScript::setStringDelimiter(const char* begin, const char* end)
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         mScanner->setStringDelimiter(begin, end);
     }
 }
 inline void ActionForSourceCodeScript::setScriptDelimiter(const char* begin, const char* end)
 {
-    if (NULL != mScanner) {
+    if (nullptr != mScanner) {
         mScanner->setScriptDelimiter(begin, end);
     }
 }
@@ -98,21 +98,21 @@ inline void ActionForSourceCodeScript::setScriptDelimiter(const char* begin, con
 inline void ActionForSourceCodeScript::pushId(void)
 {
     char* lastToken = getLastToken();
-    if (NULL != lastToken) {
+    if (nullptr != lastToken) {
         mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::ID_TOKEN));
     }
 }
 inline void ActionForSourceCodeScript::pushNum(void)
 {
     char* lastToken = getLastToken();
-    if (NULL != lastToken) {
+    if (nullptr != lastToken) {
         mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::NUM_TOKEN));
     }
 }
 inline void ActionForSourceCodeScript::pushStr(void)
 {
     char* lastToken = getLastToken();
-    if (NULL != lastToken) {
+    if (nullptr != lastToken) {
         mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::STRING_TOKEN));
     }
 }

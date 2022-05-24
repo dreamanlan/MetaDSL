@@ -403,7 +403,7 @@ namespace DslFileReadWrite
                 auto& component0 = *data.GetParam(0);
                 WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE, delim);
                 fwrite(" ", 1, 1, fp);
-                if (data.IsHighOrder() && NULL != name.GetFunction()) {
+                if (data.IsHighOrder() && nullptr != name.GetFunction()) {
                     auto& call = *name.GetFunction();
                     call.WriteToFile(fp, indent, TRUE, FALSE, delim);
                 }
@@ -419,7 +419,7 @@ namespace DslFileReadWrite
             }
             else {
                 fwrite(" ", 1, 1, fp);
-                if (data.IsHighOrder() && NULL != name.GetFunction()) {
+                if (data.IsHighOrder() && nullptr != name.GetFunction()) {
                     auto& call = *name.GetFunction();
                     call.WriteToFile(fp, indent, TRUE, FALSE, delim);
                 }
@@ -435,7 +435,7 @@ namespace DslFileReadWrite
             }
         }
         else {
-            if (data.IsHighOrder() && NULL != name.GetFunction()) {
+            if (data.IsHighOrder() && nullptr != name.GetFunction()) {
                 auto& lowerOrderFunction = *name.GetFunction();
                 lowerOrderFunction.WriteToFile(fp, indent, firstLineNoIndent, FALSE, delim);
             }
@@ -637,14 +637,14 @@ namespace DslFileReadWrite
         auto* f1 = data.GetFunction(1);
         if (nullptr != f1 && f1->IsFunction())
             func2 = f1->AsFunction();
-        if (num == 2 && NULL != func1 && NULL != func2 && func1->IsTernaryOperatorParamClass() && func2->IsTernaryOperatorParamClass()) {
+        if (num == 2 && nullptr != func1 && nullptr != func2 && func1->IsTernaryOperatorParamClass() && func2->IsTernaryOperatorParamClass()) {
             auto* lowerOrderFunc = func1->GetName().GetFunction();
             typename DslTypeDeduce<DslTypeT>::ISyntaxComponent* pcomp0 = 0;
             if (0 != lowerOrderFunc)
                 pcomp0 = lowerOrderFunc->GetParam(0);
             auto* pcomp1 = func1->GetParam(0);
             auto* pcomp2 = func2->GetParam(0);
-            if (NULL != pcomp0 && NULL != pcomp1 && NULL != pcomp2) {
+            if (nullptr != pcomp0 && nullptr != pcomp1 && nullptr != pcomp2) {
                 WriteComponent(fp, *pcomp0, indent, firstLineNoIndent, FALSE, delim);
                 fwrite(" ? ", 3, 1, fp);
                 WriteComponent(fp, *pcomp1, indent, TRUE, FALSE, delim);

@@ -401,7 +401,7 @@ namespace DslParser
 
         int IsNum(void)const { return (m_Type == VALUE_TYPE_NUM ? TRUE : FALSE); }
         int IsString(void)const { return (m_Type == VALUE_TYPE_STRING ? TRUE : FALSE); }
-        int IsIdentifier(void)const { return (m_Type == VALUE_TYPE_IDENTIFIER && NULL != m_ConstStringVal ? TRUE : FALSE); }
+        int IsIdentifier(void)const { return (m_Type == VALUE_TYPE_IDENTIFIER && nullptr != m_ConstStringVal ? TRUE : FALSE); }
         int IsFunction(void)const { return (m_Type == VALUE_TYPE_FUNCTION ? TRUE : FALSE); }
 
         void SetInvalid(void)
@@ -523,7 +523,7 @@ namespace DslParser
         }
         void SetParam(int index, ISyntaxComponent* pVal)
         {
-            if (NULL == pVal || index < 0 || index >= m_MaxParamNum)
+            if (nullptr == pVal || index < 0 || index >= m_MaxParamNum)
                 return;
             m_Params[index] = pVal;
         }
@@ -565,86 +565,86 @@ namespace DslParser
         int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
         int HaveExternScript(void)const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT ? TRUE : FALSE; }
         int IsHighOrder(void)const { return m_Name.IsFunction(); }
-        FunctionData* GetLowerOrderFunction(void)const
+        FunctionData& GetLowerOrderFunction(void)const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr) {
-                return fptr;
+                return *fptr;
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
-        const FunctionData* GetThisOrLowerOrderCall(void)const
+        const FunctionData& GetThisOrLowerOrderCall(void)const
         {
             if (HaveParam()) {
-                return this;
+                return *this;
             }
-            else if (HaveLowerOrderParam()) {
-                return m_Name.GetFunction();
+            else if (HaveLowerOrderParam() && m_Name.GetFunction()) {
+                return *m_Name.GetFunction();
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
-        FunctionData* GetThisOrLowerOrderCall(void)
+        FunctionData& GetThisOrLowerOrderCall(void)
         {
             if (HaveParam()) {
-                return this;
+                return *this;
             }
-            else if (HaveLowerOrderParam()) {
-                return m_Name.GetFunction();
+            else if (HaveLowerOrderParam() && m_Name.GetFunction()) {
+                return *m_Name.GetFunction();
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
-        const FunctionData* GetThisOrLowerOrderBody(void)const
+        const FunctionData& GetThisOrLowerOrderBody(void)const
         {
             if (HaveStatement()) {
-                return this;
+                return *this;
             }
-            else if (HaveLowerOrderStatement()) {
-                return m_Name.GetFunction();
+            else if (HaveLowerOrderStatement() && m_Name.GetFunction()) {
+                return *m_Name.GetFunction();
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
-        FunctionData* GetThisOrLowerOrderBody(void)
+        FunctionData& GetThisOrLowerOrderBody(void)
         {
             if (HaveStatement()) {
-                return this;
+                return *this;
             }
-            else if (HaveLowerOrderStatement()) {
-                return m_Name.GetFunction();
+            else if (HaveLowerOrderStatement() && m_Name.GetFunction()) {
+                return *m_Name.GetFunction();
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
-        const FunctionData* GetThisOrLowerOrderScript(void)const
+        const FunctionData& GetThisOrLowerOrderScript(void)const
         {
             if (HaveExternScript()) {
-                return this;
+                return *this;
             }
-            else if (HaveLowerOrderExternScript()) {
-                return m_Name.GetFunction();
+            else if (HaveLowerOrderExternScript() && m_Name.GetFunction()) {
+                return *m_Name.GetFunction();
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
-        FunctionData* GetThisOrLowerOrderScript(void)
+        FunctionData& GetThisOrLowerOrderScript(void)
         {
             if (HaveExternScript()) {
-                return this;
+                return *this;
             }
-            else if (HaveLowerOrderExternScript()) {
-                return m_Name.GetFunction();
+            else if (HaveLowerOrderExternScript() && m_Name.GetFunction()) {
+                return *m_Name.GetFunction();
             }
             else {
-                return GetNullFunctionPtr();
+                return *GetNullFunctionPtr();
             }
         }
         int HaveLowerOrderParam(void)const
@@ -782,7 +782,7 @@ namespace DslParser
     public:
         virtual int IsValid(void)const override
         {
-            if (NULL != m_ValueOrFunctions && m_ValueOrFunctionNum > 0 && m_ValueOrFunctions[0]->IsValid())
+            if (nullptr != m_ValueOrFunctions && m_ValueOrFunctionNum > 0 && m_ValueOrFunctions[0]->IsValid())
                 return TRUE;
             else
                 return FALSE;
@@ -814,7 +814,7 @@ namespace DslParser
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual int HaveId(void) const override
         {
-            if (NULL == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
+            if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
                 return FALSE;
             else
                 return m_ValueOrFunctions[m_ValueOrFunctionNum - 1]->HaveId();
@@ -823,24 +823,24 @@ namespace DslParser
         void ClearFunctions(void) { m_ValueOrFunctionNum = 0; }
         void AddFunction(ValueOrFunctionData* pVal)
         {
-            if (NULL == pVal || m_ValueOrFunctionNum < 0 || m_ValueOrFunctionNum >= m_MaxValueOrFunctionNum)
+            if (nullptr == pVal || m_ValueOrFunctionNum < 0 || m_ValueOrFunctionNum >= m_MaxValueOrFunctionNum)
                 return;
             PrepareFunctions();
-            if (NULL == m_ValueOrFunctions || m_ValueOrFunctionNum >= m_ValueOrFunctionSpace)
+            if (nullptr == m_ValueOrFunctions || m_ValueOrFunctionNum >= m_ValueOrFunctionSpace)
                 return;
             m_ValueOrFunctions[m_ValueOrFunctionNum] = pVal;
             ++m_ValueOrFunctionNum;
         }
         ValueOrFunctionData*& GetLastFunctionRef(void)const
         {
-            if (NULL == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
+            if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
                 return GetNullValueOrFunctionPtrRef();
             else
                 return m_ValueOrFunctions[m_ValueOrFunctionNum - 1];
         }
         ValueOrFunctionData*& GetFunctionRef(int index)const
         {
-            if (NULL == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
+            if (nullptr == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
                 return GetNullValueOrFunctionPtrRef();
             return m_ValueOrFunctions[index];
         }
@@ -848,14 +848,14 @@ namespace DslParser
         int GetFunctionNum(void)const { return m_ValueOrFunctionNum; }
         ValueOrFunctionData* GetFunction(int index)const
         {
-            if (NULL == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
-                return 0;
+            if (nullptr == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
+                return GetNullValueOrFunctionPtrRef();
             return m_ValueOrFunctions[index];
         }
         const char* GetFunctionId(int index)const
         {
             if (0 == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
-                return 0;
+                return "";
             return m_ValueOrFunctions[index]->GetId();
         }
         ValueOrFunctionData* GetFirst(void)const
@@ -874,7 +874,7 @@ namespace DslParser
         {
             int num = GetFunctionNum();
             if (num <= 0)
-                return nullptr;
+                return GetNullValueOrFunctionPtrRef();
             return GetFunction(num - 1);
         }
     public:
@@ -1325,7 +1325,7 @@ namespace DslParser
         ISyntaxComponent* GetDslInfo(int index)const
         {
             if (index < 0 || index >= m_DslInfoNum)
-                return NULL;
+                return nullptr;
             return m_DslInfos[index];
         }
         void WriteToFile(FILE* fp, int indent) const;
@@ -1404,9 +1404,7 @@ namespace DslParser
         FunctionData* AddNewFunctionComponent(void) const { return m_Buffer.AddNewFunctionComponent(); }
         StatementData* AddNewStatementComponent(void) const { return m_Buffer.AddNewStatementComponent(); }
     public:
-        NullSyntax* GetNullSyntaxPtr(void) const { return m_Buffer.GetNullSyntaxPtr(); }
         FunctionData* GetNullFunctionPtr(void) { return m_Buffer.GetNullFunctionPtr(); }
-        FunctionData*& GetNullFunctionPtrRef(void) { return m_Buffer.GetNullFunctionPtrRef(); }
     private:
         void PrepareDslInfos(void);
         void ReleaseDslInfos(void);
@@ -1464,7 +1462,7 @@ namespace DslParser
             }
             int Load(void)
             {
-                if (NULL != m_pSource) {
+                if (nullptr != m_pSource) {
                     int r = m_pSource->Load();
                     if (r) {
                         *this = m_pSource->GetIterator();
@@ -1493,7 +1491,7 @@ namespace DslParser
                 return !(operator ==(other));
             }
         public:
-            Iterator(void) :m_pSource(NULL), m_Iterator(""), m_EndIterator(m_Iterator)
+            Iterator(void) :m_pSource(nullptr), m_Iterator(""), m_EndIterator(m_Iterator)
             {
             }
             explicit Iterator(IScriptSource& source) :m_pSource(&source)

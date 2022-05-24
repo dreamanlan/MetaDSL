@@ -11,7 +11,7 @@ namespace DslParser
     class RuntimeBuilderT
     {
     public:
-        RuntimeBuilderT(DslFile& dataFile) :mThis(NULL), mDataFile(&dataFile), mApi()
+        RuntimeBuilderT(DslFile& dataFile) :mThis(nullptr), mDataFile(&dataFile), mApi()
         {
             MyAssert(mDataFile);
             mData.GetNullFunctionPtrRef() = mDataFile->GetNullFunctionPtr();
@@ -67,7 +67,7 @@ namespace DslParser
         inline ValueOrFunctionData& simplifyStatement(FunctionData& data)const;
         inline bool	preconditionCheck(void)const
         {
-            return NULL != mThis && NULL != mDataFile;
+            return nullptr != mThis && nullptr != mDataFile;
         }
     protected:
         RuntimeBuilderData		        mData;

@@ -355,7 +355,7 @@ namespace DslParser
                             last->AddLastComment(cmt);
                         }
                         else if (p->IsHighOrder()) {
-                            p->GetLowerOrderFunction()->AddComment(cmt);
+                            p->GetLowerOrderFunction().AddComment(cmt);
                         }
                         else {
                             p->AddComment(cmt);
@@ -789,7 +789,7 @@ namespace DslParser
                 return name;
             }
         }
-        else if (NULL != data.GetId() && data.GetId()[0] == '-' && data.GetParamNum() == 1) {
+        else if (nullptr != data.GetId() && data.GetId()[0] == '-' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = static_cast<ValueData&>(temp);
@@ -803,7 +803,7 @@ namespace DslParser
                 return data;
             }
         }
-        else if (NULL != data.GetId() && data.GetId()[0] == '+' && data.GetParamNum() == 1) {
+        else if (nullptr != data.GetId() && data.GetId()[0] == '+' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = static_cast<ValueData&>(temp);

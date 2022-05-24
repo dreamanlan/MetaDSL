@@ -27,17 +27,17 @@ public:
     }
     inline bool isNull(void) const
     {
-        if (obj != NULL)
+        if (obj != nullptr)
             return false;
         for (int i = 0; i < PTR_BUFFER_NUM; ++i) {
-            if (ptrBuffer[i] != NULL)
+            if (ptrBuffer[i] != nullptr)
                 return false;
         }
         return true;
     }
     inline void clear(void)
     {
-        obj = NULL;
+        obj = nullptr;
         memset(ptrBuffer, 0, sizeof(ptrBuffer));
     }
 private:
@@ -65,7 +65,7 @@ public:
     {
         /*char buf[1025];
         ::sprintf(buf,"%d<->%d",size,space);
-        ::MessageBox(NULL,buf,"",MB_OK);
+        ::MessageBox(nullptr,buf,"",MB_OK);
         Assert(size<=space);*/
         return (void*)address;
     }
@@ -97,7 +97,7 @@ public:
     {
         /*char buf[1025];
         ::sprintf(buf,"%d<->%d",size,space);
-        ::MessageBox(NULL,buf,"",MB_OK);*/
+        ::MessageBox(nullptr,buf,"",MB_OK);*/
         /*Assert(size<=space);*/
         return (void*)address;
     }
@@ -155,11 +155,11 @@ public:
     inline void detach(void)
     {
         mObj.clear();
-        invoker = NULL;
+        invoker = nullptr;
     }
     inline bool isNull(void) const
     {
-        return mObj.isNull() || invoker == NULL;
+        return mObj.isNull() || invoker == nullptr;
     }
     inline R operator () (void)const
     {
@@ -274,11 +274,11 @@ public:
     inline void detach(void)
     {
         mObj.clear();
-        invoker = NULL;
+        invoker = nullptr;
     }
     inline bool isNull(void) const
     {
-        return mObj.isNull() || invoker == NULL;
+        return mObj.isNull() || invoker == nullptr;
     }
     inline R operator () (P1 p1)const
     {
@@ -428,11 +428,11 @@ public:\
 	inline void detach(void)\
 	{\
 		mObj.clear();\
-		invoker=NULL;\
+		invoker=nullptr;\
 	}\
 	inline bool isNull(void) const\
 	{\
-		return mObj.isNull() || invoker==NULL;\
+		return mObj.isNull() || invoker==nullptr;\
 	}\
 	inline R operator () (RepeatArg2_##X(P,p))const\
 	{\

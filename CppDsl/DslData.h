@@ -579,7 +579,7 @@ namespace DslData
         ISyntaxComponent* GetParam(int index)const
         {
             if (index < 0 || index >= static_cast<int>(m_Params.size()))
-                return nullptr;
+                return &GetNullSyntax();
             return m_Params[index];
         }
         const std::string& GetParamId(int index)const
@@ -717,19 +717,12 @@ namespace DslData
         ValueData* AddValue(void);
         FunctionData* AddFunction(void);
         ValueOrFunctionData* AddValueOrFunctionCopyFrom(const ValueOrFunctionData& other);
-        ValueOrFunctionData* GetLastFunction(void)const
-        {
-            if (0 == static_cast<int>(m_ValueOrFunctions.size()))
-                return nullptr;
-            else
-                return m_ValueOrFunctions[static_cast<int>(m_ValueOrFunctions.size()) - 1];
-        }
     public:
         int GetFunctionNum(void)const { return static_cast<int>(m_ValueOrFunctions.size()); }
         ValueOrFunctionData* GetFunction(int index)const
         {
             if (index < 0 || index >= static_cast<int>(m_ValueOrFunctions.size()))
-                return nullptr;
+                return &GetNullValueOrFunction();
             return m_ValueOrFunctions[index];
         }
         const std::string& GetFunctionId(int index)const
@@ -754,7 +747,7 @@ namespace DslData
         {
             int num = GetFunctionNum();
             if (num <= 0)
-                return nullptr;
+                return &GetNullValueOrFunction();
             return GetFunction(num - 1);
         }
     public:
@@ -774,6 +767,8 @@ namespace DslData
         StatementData& operator=(StatementData&&) = delete;
     private:
         void ReleaseFunctions(void);
+    private:
+        ValueOrFunctionData& GetNullValueOrFunction(void)const;
     private:
         std::vector<ValueOrFunctionData*> m_ValueOrFunctions;
     private:
@@ -870,9 +865,7 @@ namespace DslData
         static bool Mac2Unix(char* buf, int len);
     public:
         static NullSyntax& GetNullSyntax(void);
-        static ValueData& NullValue(void);
-        static FunctionData& NullFunction(void);
-        static StatementData& NullStatement(void);
+        static FunctionData& GetNullFunction(void);
     public:
         static bool DontLoadComments(void)
         {

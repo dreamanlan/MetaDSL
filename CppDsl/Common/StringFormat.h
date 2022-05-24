@@ -85,7 +85,7 @@ inline void _Format(ParserRepeatArg2_##X(P,p))	\
 {\
 	_Format(ParserRepeatArg1_##decX(p));\
 	const char* fmt=ParseToNextFormat();\
-	if(NULL!=fmt)\
+	if(nullptr!=fmt)\
 		StringFormatUtility::Value2String(m_pBuffer,m_BufPos,m_BufLen,fmt,p##X,decX);\
   	else\
 		StringFormatUtility::Value2String(m_pBuffer,m_BufPos,m_BufLen,"",p##X,decX);\
@@ -113,7 +113,7 @@ namespace StringFormatUtility
 
     inline void MyTrimRight(char* dest)
     {
-        if (NULL == dest)
+        if (nullptr == dest)
             return;
         size_t len = strlen(dest);
         for (int i = (int)len - 1; i >= 0; --i) {
@@ -126,8 +126,8 @@ namespace StringFormatUtility
 
     inline char* MyStrNCpy(char* dest, const char* src, size_t len)
     {
-        if (NULL == dest || NULL == src)
-            return NULL;
+        if (nullptr == dest || nullptr == src)
+            return nullptr;
         char* res = strncpy(dest, src, len);
         if (len <= strlen(src)) {
             //·¢Éú×Ö·û´®½Ø¶ÏÊ±£¬²¹Ò»¸ö¿Õ×Ö·û
@@ -332,7 +332,7 @@ private:
     inline void	_Format(P1 p1)
     {
         const char* fmt = ParseToNextFormat();
-        if (NULL != fmt)
+        if (nullptr != fmt)
             StringFormatUtility::Value2String(m_pBuffer, m_BufPos, m_BufLen, fmt, p1, 0);
         else
             StringFormatUtility::Value2String(m_pBuffer, m_BufPos, m_BufLen, "", p1, 0);
