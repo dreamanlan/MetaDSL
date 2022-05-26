@@ -305,7 +305,10 @@ short SlkToken::getOperatorTokenValue(void)const
             val = OP_TOKEN_6_;
         }
         else if (pOperator[0] == '&' && pOperator[1] == '\0') {
-            val = OP_TOKEN_7_;
+            if (lastIsOperator)
+                val = OP_TOKEN_15_;
+            else
+                val = OP_TOKEN_7_;
         }
         else if ((pOperator[0] == '=' || pOperator[0] == '!') && pOperator[1] == '=' && pOperator[2] == '\0' || pOperator[0] == '<' && pOperator[1] == '=' && pOperator[2] == '>' && pOperator[3] == '\0') {
             val = OP_TOKEN_8_;
@@ -323,7 +326,10 @@ short SlkToken::getOperatorTokenValue(void)const
                 val = OP_TOKEN_11_;
         }
         else if ((pOperator[0] == '*' || pOperator[0] == '/' || pOperator[0] == '%') && pOperator[1] == '\0') {
-            val = OP_TOKEN_12_;
+            if (pOperator[0] == '*' && lastIsOperator)
+                val = OP_TOKEN_15_;
+            else
+                val = OP_TOKEN_12_;
         }
         else if ((pOperator[0] == '+' && pOperator[1] == '+' && pOperator[2] == '\0') || (pOperator[0] == '-' && pOperator[1] == '-' && pOperator[2] == '\0') || (pOperator[0] == '~' && pOperator[1] == '\0') || (pOperator[0] == '!' && pOperator[1] == '\0')) {
             val = OP_TOKEN_13_;

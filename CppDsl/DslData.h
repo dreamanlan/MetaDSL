@@ -77,7 +77,7 @@ namespace DslData
         {
             if (nullptr == GetCommentsInfo())
                 return;
-            GetCommentsInfo()->m_FirstComments.push_back(cmt);
+            GetCommentsInfo()->m_FirstComments.push_back(std::move(cmt));
         }
         void RemoveFirstComment(int index)
         {
@@ -131,7 +131,7 @@ namespace DslData
         {
             if (nullptr == GetCommentsInfo())
                 return;
-            GetCommentsInfo()->m_LastComments.push_back(cmt);
+            GetCommentsInfo()->m_LastComments.push_back(std::move(cmt));
         }
         void RemoveLastComment(int index)
         {
@@ -274,14 +274,14 @@ namespace DslData
         ValueData(void) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(), m_FunctionVal(nullptr), m_Line(0) {}
         explicit ValueData(const std::string& val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_StringVal(val), m_FunctionVal(nullptr), m_Line(0) {}
         explicit ValueData(const std::string& val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_FunctionVal(nullptr), m_Line(0) {}
-        explicit ValueData(std::string&& val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_StringVal(val), m_FunctionVal(nullptr), m_Line(0) {}
-        explicit ValueData(std::string&& val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_FunctionVal(nullptr), m_Line(0) {}
+        explicit ValueData(std::string&& val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_StringVal(std::move(val)), m_FunctionVal(nullptr), m_Line(0) {}
+        explicit ValueData(std::string&& val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(std::move(val)), m_FunctionVal(nullptr), m_Line(0) {}
         ValueData(const ValueData& other) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(), m_FunctionVal(nullptr), m_Line(0)
         {
             ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
         }
-        ValueData(ValueData&& other) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(), m_FunctionVal(nullptr), m_Line(0)
+        ValueData(ValueData&& other) noexcept :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(), m_FunctionVal(nullptr), m_Line(0)
         {
             std::swap(*this, other);
         }
@@ -293,7 +293,7 @@ namespace DslData
             CopyFrom(other);
             return *this;
         }
-        ValueData& operator=(ValueData&& other)
+        ValueData& operator=(ValueData&& other) noexcept
         {
             std::swap(*this, other);
             return *this;
@@ -344,25 +344,25 @@ namespace DslData
         {
             Release();
             m_Type = VALUE_TYPE_NUM;
-            m_StringVal = str;
+            m_StringVal = std::move(str);
         }
         void SetString(std::string&& str)
         {
             Release();
             m_Type = VALUE_TYPE_STRING;
-            m_StringVal = str;
+            m_StringVal = std::move(str);
         }
         void SetIdentifier(std::string&& name)
         {
             Release();
             m_Type = VALUE_TYPE_IDENTIFIER;
-            m_StringVal = name;
+            m_StringVal = std::move(name);
         }
         void SetTypeAndId(int type, std::string&& id)
         {
             Release();
             m_Type = type;
-            m_StringVal = id;
+            m_StringVal = std::move(id);
         }
         void SetType(int type)
         {
@@ -599,7 +599,7 @@ namespace DslData
             auto p = m_pCommentsInfo;
             if (nullptr == p)
                 return;
-            p->m_Comments.push_back(cmt);
+            p->m_Comments.push_back(std::move(cmt));
         }
         void RemoveComment(int index)
         {
@@ -808,7 +808,7 @@ namespace DslData
         }
         void SetFileName(std::string&& name)
         {
-            m_FileName = name;
+            m_FileName = std::move(name);
         }
         const std::string& GetFileName(void)const { return m_FileName; }
         void SetStringDelimiter(const char* begin, const char* end);
@@ -832,7 +832,7 @@ namespace DslData
         void AddError(std::string&& err)
         {
             m_HasError = true;
-            m_ErrorInfo.push_back(err);
+            m_ErrorInfo.push_back(std::move(err));
         }
         int HasError(void)const { return m_HasError; }
         int GetErrorNum(void)const { return static_cast<int>(m_ErrorInfo.size()); }

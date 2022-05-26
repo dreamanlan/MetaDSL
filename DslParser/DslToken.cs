@@ -905,7 +905,10 @@ namespace Dsl.Common
                     val = DslConstants.OP_TOKEN_6_;
                 }
                 else if (c0 == '&' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_7_;
+                    if (lastIsOperator)
+                        val = DslConstants.OP_TOKEN_15_;
+                    else
+                        val = DslConstants.OP_TOKEN_7_;
                 }
                 else if ((c0 == '=' || c0 == '!') && c1 == '=' && c2 == '\0' || c0 == '<' && c1 == '=' && c2 == '>' && c3 == '\0') {
                     val = DslConstants.OP_TOKEN_8_;
@@ -923,7 +926,10 @@ namespace Dsl.Common
                         val = DslConstants.OP_TOKEN_11_;
                 }
                 else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_12_;
+                    if (c0 == '*' && lastIsOperator)
+                        val = DslConstants.OP_TOKEN_15_;
+                    else
+                        val = DslConstants.OP_TOKEN_12_;
                 }
                 else if ((c0 == '+' && c1 == '+' && c2 == '\0') || (c0 == '-' && c1 == '-' && c2 == '\0') || (c0 == '~' && c1 == '\0') || (c0 == '!' && c1 == '\0')) {
                     val = DslConstants.OP_TOKEN_13_;

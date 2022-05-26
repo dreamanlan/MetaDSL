@@ -366,7 +366,7 @@ namespace DslParser
             ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
         }
-        ValueData(ValueData&& other) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
+        ValueData(ValueData&& other) noexcept :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(0), m_Line(0)
         {
             ISyntaxComponent::CopyFrom(other);
             CopyFrom(other);
@@ -380,7 +380,7 @@ namespace DslParser
             CopyFrom(other);
             return *this;
         }
-        ValueData& operator=(ValueData&& other)
+        ValueData& operator=(ValueData&& other) noexcept
         {
             if (this == &other)
                 return *this;
@@ -944,6 +944,7 @@ namespace DslParser
         virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
         virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void) = 0;
     public:
+        virtual void Reset(void) = 0;
         virtual ~IDslStringAndObjectBuffer(void) {}
     };
 
@@ -1161,7 +1162,7 @@ namespace DslParser
             memset(m_PtrFreeLinkHeader, 0, sizeof(unsigned int) * PtrArrayPoolFreeLinkHeaderSize);
             m_FreedFreeLinkHeader = 0;
         }
-        void Reset(void)
+        virtual void Reset(void) override
         {
             m_SyntaxComponentNum = 0;
             m_SyntaxComponentCommentsInfoNum = 0;
