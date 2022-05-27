@@ -847,7 +847,7 @@ namespace DslFileReadWrite
         for (int i = 0; i < idCount; ++i) {
             const char* key = StrPolicy::ToCStr(identifiers[i]);
             const char** pp = (const char**)bsearch(&key, keys, ct, sizeof(const char*), stringCompare);
-            int ix = pp - keys;
+            int ix = static_cast<int>(pp - keys);
             if (ix < 0x80) {
                 bytes2[pos2++] = (char)ix;
             }
@@ -881,7 +881,7 @@ namespace DslFileReadWrite
                 if (0 != id)
                     len = strlen(id);
                 pos = 0;
-                write7BitEncodedInt(intbuf, pos, len);
+                write7BitEncodedInt(intbuf, pos, static_cast<int>(len));
                 fwrite(intbuf, 1, pos, fp);
                 if (len > 0)
                     fwrite((void*)id, 1, len, fp);
@@ -1040,7 +1040,7 @@ namespace DslFileReadWrite
     static inline void readBinary(DslFileT& file, const char* buffer, int bufferSize)
     {
         if (bufferSize > 0) {
-            int pos = strlen(c_BinaryIdentity);
+            int pos = static_cast<int>(strlen(c_BinaryIdentity));
             int bytesLen = readInt(buffer, bufferSize, pos);
             pos += 4;
             int bytes2Len = readInt(buffer, bufferSize, pos);

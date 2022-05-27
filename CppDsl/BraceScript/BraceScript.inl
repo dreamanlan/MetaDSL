@@ -95,25 +95,25 @@ static inline double StrToDouble(const std::string& value)
 #define DEFINE_VAR_GET(POSTFIX, NAME, TYPE) \
     static inline TYPE VarGet##POSTFIX(VariableInfo& info, int index)\
     {\
-        return info.##NAME[index];\
+        return info.NAME[index];\
     }
 
 #define DEFINE_VAR_SET(POSTFIX, NAME, TYPE) \
     static inline void VarSet##POSTFIX(VariableInfo& info, int index, TYPE val)\
     {\
-        info.##NAME[index] = val;\
+        info.NAME[index] = val;\
     }
 
 #define DEFINE_VAR_ASSIGN(POSTFIX, NAME) \
     static inline void VarAssign##POSTFIX(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)\
     {\
-        info.##NAME[destIndex] = srcInfo.##NAME[srcIndex];\
+        info.NAME[destIndex] = srcInfo.NAME[srcIndex];\
     }
 
 #define DEFINE_VAR_CAST_ASSIGN(POSTFIX, DESTNAME, DESTTYPE, SRCNAME) \
     static inline void VarCastAssign##POSTFIX(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)\
     {\
-        info.##DESTNAME[destIndex] = static_cast<DESTTYPE>(srcInfo.##SRCNAME[srcIndex]);\
+        info.DESTNAME[destIndex] = static_cast<DESTTYPE>(srcInfo.SRCNAME[srcIndex]);\
     }
 
     DEFINE_VAR_GET(Bool, BoolVars, bool);
@@ -128,7 +128,7 @@ static inline double StrToDouble(const std::string& value)
     DEFINE_VAR_GET(Float, FloatVars, float);
     DEFINE_VAR_GET(Double, DoubleVars, double);
     DEFINE_VAR_GET(String, StringVars, const std::string&);
-    DEFINE_VAR_GET(Object, ObjectVars, UObject*);
+    DEFINE_VAR_GET(Object, ObjectVars, IBraceObject*);
 
     DEFINE_VAR_SET(Bool, BoolVars, bool);
     DEFINE_VAR_SET(Int8, Int8Vars, int8_t);
@@ -142,7 +142,7 @@ static inline double StrToDouble(const std::string& value)
     DEFINE_VAR_SET(Float, FloatVars, float);
     DEFINE_VAR_SET(Double, DoubleVars, double);
     DEFINE_VAR_SET(String, StringVars, const std::string&);
-    DEFINE_VAR_SET(Object, ObjectVars, UObject*);
+    DEFINE_VAR_SET(Object, ObjectVars, IBraceObject*);
 
     DEFINE_VAR_ASSIGN(Bool, BoolVars);
     DEFINE_VAR_ASSIGN(Int8, Int8Vars);
@@ -622,6 +622,24 @@ static inline double StrToDouble(const std::string& value)
         else
             return BRACE_DATA_TYPE_OBJECT;
     }
+    static inline bool NeedFloatArithUnit(int type1, int type2)
+    {
+        bool b1 = false;
+        bool b2 = false;
+        switch (type1) {
+        case BRACE_DATA_TYPE_FLOAT:
+        case BRACE_DATA_TYPE_DOUBLE:
+            b1 = true;
+            break;
+        }
+        switch (type2) {
+        case BRACE_DATA_TYPE_FLOAT:
+        case BRACE_DATA_TYPE_DOUBLE:
+            b2 = true;
+            break;
+        }
+        return b1 || b2;
+    }
     static inline bool CanAssign(int destType, int srcType)
     {
         switch (destType) {
@@ -789,7 +807,7 @@ static inline double StrToDouble(const std::string& value)
         case BRACE_DATA_TYPE_INT32:
             return info.Int32Vars[index];
         case BRACE_DATA_TYPE_INT64:
-            return info.Int64Vars[index];
+            return static_cast<double>(info.Int64Vars[index]);
         case BRACE_DATA_TYPE_UINT8:
             return info.Uint8Vars[index];
         case BRACE_DATA_TYPE_UINT16:
@@ -797,7 +815,7 @@ static inline double StrToDouble(const std::string& value)
         case BRACE_DATA_TYPE_UINT32:
             return info.Uint32Vars[index];
         case BRACE_DATA_TYPE_UINT64:
-            return info.Uint64Vars[index];
+            return static_cast<double>(info.Uint64Vars[index]);
         case BRACE_DATA_TYPE_FLOAT:
             return info.FloatVars[index];
         case BRACE_DATA_TYPE_DOUBLE:
@@ -840,26 +858,37 @@ static inline double StrToDouble(const std::string& value)
         switch (type) {
         case BRACE_DATA_TYPE_BOOL:
             info.BoolVars[index] = val;
+            break;
         case BRACE_DATA_TYPE_INT8:
             info.Int8Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_INT16:
             info.Int16Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_INT32:
             info.Int32Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_INT64:
             info.Int64Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_UINT8:
             info.Uint8Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_UINT16:
             info.Uint16Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_UINT32:
             info.Uint32Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_UINT64:
             info.Uint64Vars[index] = val ? 1 : 0;
+            break;
         case BRACE_DATA_TYPE_FLOAT:
-            info.FloatVars[index] = val ? 1 : 0;
+            info.FloatVars[index] = static_cast<float>(val ? 1 : 0);
+            break;
         case BRACE_DATA_TYPE_DOUBLE:
-            info.DoubleVars[index] = val ? 1 : 0;
+            info.DoubleVars[index] = static_cast<double>(val ? 1 : 0);
+            break;
         }
     }
     static inline void VarSetI64(VariableInfo& info, int type, int index, int64_t val)
@@ -867,26 +896,37 @@ static inline double StrToDouble(const std::string& value)
         switch (type) {
         case BRACE_DATA_TYPE_BOOL:
             info.BoolVars[index] = val != 0;
+            break;
         case BRACE_DATA_TYPE_INT8:
-            info.Int8Vars[index] = val;
+            info.Int8Vars[index] = static_cast<int8_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT16:
-            info.Int16Vars[index] = val;
+            info.Int16Vars[index] = static_cast<int16_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT32:
-            info.Int32Vars[index] = val;
+            info.Int32Vars[index] = static_cast<int32_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT64:
             info.Int64Vars[index] = val;
+            break;
         case BRACE_DATA_TYPE_UINT8:
-            info.Uint8Vars[index] = val;
+            info.Uint8Vars[index] = static_cast<uint8_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT16:
-            info.Uint16Vars[index] = val;
+            info.Uint16Vars[index] = static_cast<uint16_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT32:
-            info.Uint32Vars[index] = val;
+            info.Uint32Vars[index] = static_cast<uint32_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT64:
-            info.Uint64Vars[index] = val;
+            info.Uint64Vars[index] = static_cast<uint64_t>(val);
+            break;
         case BRACE_DATA_TYPE_FLOAT:
-            info.FloatVars[index] = val;
+            info.FloatVars[index] = static_cast<float>(val);
+            break;
         case BRACE_DATA_TYPE_DOUBLE:
-            info.DoubleVars[index] = val;
+            info.DoubleVars[index] = static_cast<double>(val);
+            break;
         }
     }
     static inline void VarSetU64(VariableInfo& info, int type, int index, uint64_t val)
@@ -894,26 +934,37 @@ static inline double StrToDouble(const std::string& value)
         switch (type) {
         case BRACE_DATA_TYPE_BOOL:
             info.BoolVars[index] = val != 0;
+            break;
         case BRACE_DATA_TYPE_INT8:
-            info.Int8Vars[index] = val;
+            info.Int8Vars[index] = static_cast<int8_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT16:
-            info.Int16Vars[index] = val;
+            info.Int16Vars[index] = static_cast<int16_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT32:
-            info.Int32Vars[index] = val;
+            info.Int32Vars[index] = static_cast<int32_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT64:
-            info.Int64Vars[index] = val;
+            info.Int64Vars[index] = static_cast<int64_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT8:
-            info.Uint8Vars[index] = val;
+            info.Uint8Vars[index] = static_cast<uint8_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT16:
-            info.Uint16Vars[index] = val;
+            info.Uint16Vars[index] = static_cast<uint16_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT32:
-            info.Uint32Vars[index] = val;
+            info.Uint32Vars[index] = static_cast<uint32_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT64:
             info.Uint64Vars[index] = val;
+            break;
         case BRACE_DATA_TYPE_FLOAT:
-            info.FloatVars[index] = val;
+            info.FloatVars[index] = static_cast<float>(val);
+            break;
         case BRACE_DATA_TYPE_DOUBLE:
-            info.DoubleVars[index] = val;
+            info.DoubleVars[index] = static_cast<double>(val);
+            break;
         }
     }
     static inline void VarSetF64(VariableInfo& info, int type, int index, double val)
@@ -921,26 +972,37 @@ static inline double StrToDouble(const std::string& value)
         switch (type) {
         case BRACE_DATA_TYPE_BOOL:
             info.BoolVars[index] = val != 0;
+            break;
         case BRACE_DATA_TYPE_INT8:
             info.Int8Vars[index] = static_cast<int8_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT16:
             info.Int16Vars[index] = static_cast<int16_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT32:
             info.Int32Vars[index] = static_cast<int32_t>(val);
+            break;
         case BRACE_DATA_TYPE_INT64:
             info.Int64Vars[index] = static_cast<int64_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT8:
             info.Uint8Vars[index] = static_cast<uint8_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT16:
             info.Uint16Vars[index] = static_cast<uint16_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT32:
             info.Uint32Vars[index] = static_cast<uint32_t>(val);
+            break;
         case BRACE_DATA_TYPE_UINT64:
             info.Uint64Vars[index] = static_cast<uint64_t>(val);
+            break;
         case BRACE_DATA_TYPE_FLOAT:
             info.FloatVars[index] = static_cast<float>(val);
+            break;
         case BRACE_DATA_TYPE_DOUBLE:
             info.DoubleVars[index] = static_cast<double>(val);
+            break;
         }
     }
     static inline void VarSetStr(VariableInfo& info, int type, int index, const std::string& val)
@@ -948,27 +1010,134 @@ static inline double StrToDouble(const std::string& value)
         switch (type) {
         case BRACE_DATA_TYPE_BOOL:
             info.BoolVars[index] = val == "true";
+            break;
         case BRACE_DATA_TYPE_INT8:
             info.Int8Vars[index] = StrToInt32(val);
+            break;
         case BRACE_DATA_TYPE_INT16:
             info.Int16Vars[index] = StrToInt32(val);
+            break;
         case BRACE_DATA_TYPE_INT32:
             info.Int32Vars[index] = StrToInt32(val);
+            break;
         case BRACE_DATA_TYPE_INT64:
             info.Int64Vars[index] = StrToInt64(val);
+            break;
         case BRACE_DATA_TYPE_UINT8:
             info.Uint8Vars[index] = StrToUInt32(val);
+            break;
         case BRACE_DATA_TYPE_UINT16:
             info.Uint16Vars[index] = StrToUInt32(val);
+            break;
         case BRACE_DATA_TYPE_UINT32:
             info.Uint32Vars[index] = StrToUInt32(val);
+            break;
         case BRACE_DATA_TYPE_UINT64:
             info.Uint64Vars[index] = StrToUInt64(val);
+            break;
         case BRACE_DATA_TYPE_FLOAT:
             info.FloatVars[index] = static_cast<float>(StrToInt64(val));
+            break;
         case BRACE_DATA_TYPE_DOUBLE:
             info.DoubleVars[index] = static_cast<double>(StrToInt64(val));
+            break;
         case BRACE_DATA_TYPE_STRING:
             info.StringVars[index] = val;
+            break;
         }
+    }
+
+#define DEF_BINARY_ARITH_EXECUTE(POSTFIX, OPERAND_TYPE, VARGET, VARSET, OPERATOR)   \
+    int ExecuteGG##POSTFIX(void) const\
+    {\
+        if (m_Op1)\
+            m_Op1();\
+        if (m_Op2)\
+            m_Op2();\
+        auto& vars = *CurRuntimeStack().Variables;\
+        auto& srcVars = *GlobalVariables();\
+        OPERAND_TYPE v1 = VARGET(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
+        OPERAND_TYPE v2 = VARGET(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
+        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
+        return BRACE_FLOW_CONTROL_NORMAL;\
+    }\
+    int ExecuteLL##POSTFIX(void) const\
+    {\
+        if (m_Op1)\
+            m_Op1();\
+        if (m_Op2)\
+            m_Op2();\
+        auto& vars = *CurRuntimeStack().Variables;\
+        OPERAND_TYPE v1 = VARGET(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
+        OPERAND_TYPE v2 = VARGET(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
+        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
+        return BRACE_FLOW_CONTROL_NORMAL;\
+    }\
+    int ExecuteGL##POSTFIX(void) const\
+    {\
+        if (m_Op1)\
+            m_Op1();\
+        if (m_Op2)\
+            m_Op2();\
+        auto& vars = *CurRuntimeStack().Variables;\
+        auto& srcVars1 = *GlobalVariables();\
+        auto& srcVars2 = vars;\
+        OPERAND_TYPE v1 = VARGET(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
+        OPERAND_TYPE v2 = VARGET(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
+        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
+        return BRACE_FLOW_CONTROL_NORMAL;\
+    }\
+    int ExecuteLG##POSTFIX(void) const\
+    {\
+        if (m_Op1)\
+            m_Op1();\
+        if (m_Op2)\
+            m_Op2();\
+        auto& vars = *CurRuntimeStack().Variables;\
+        auto& srcVars1 = vars;\
+        auto& srcVars2 = *GlobalVariables();\
+        OPERAND_TYPE v1 = VARGET(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
+        OPERAND_TYPE v2 = VARGET(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
+        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
+        return BRACE_FLOW_CONTROL_NORMAL;\
+    }
+
+#define DEF_UNARY_ARITH_EXECUTE(POSTFIX, OPERAND_TYPE, VARGET, VARSET, OPERATOR)   \
+    int ExecuteG##POSTFIX(void) const\
+    {\
+        if (m_Op1)\
+            m_Op1();\
+        auto& vars = *CurRuntimeStack().Variables;\
+        auto& srcVars = *GlobalVariables();\
+        OPERAND_TYPE v1 = VARGET(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
+        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, OPERATOR v1);\
+        return BRACE_FLOW_CONTROL_NORMAL;\
+    }\
+    int ExecuteL##POSTFIX(void) const\
+    {\
+        if (m_Op1)\
+            m_Op1();\
+        auto& vars = *CurRuntimeStack().Variables;\
+        OPERAND_TYPE v1 = VARGET(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
+        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, OPERATOR v1);\
+        return BRACE_FLOW_CONTROL_NORMAL;\
+    }
+
+#define BUILD_BINARY_ARITH_EXECUTOR(CLASSNAME, POSTFIX)    \
+    if(m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {\
+        executor = std::bind(&CLASSNAME::ExecuteGG##POSTFIX, this);\
+    } else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {\
+        executor = std::bind(&CLASSNAME::ExecuteLL##POSTFIX, this);\
+    } else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {\
+        executor = std::bind(&CLASSNAME::ExecuteGL##POSTFIX, this);\
+    } else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {\
+        executor = std::bind(&CLASSNAME::ExecuteLG##POSTFIX, this);\
+    }
+
+
+#define BUILD_UNARY_ARITH_EXECUTOR(CLASSNAME, POSTFIX)    \
+    if(m_LoadInfo1.IsGlobal) {\
+        executor = std::bind(&CLASSNAME::ExecuteG##POSTFIX, this);\
+    } else {\
+        executor = std::bind(&CLASSNAME::ExecuteL##POSTFIX, this);\
     }

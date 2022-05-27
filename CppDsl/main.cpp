@@ -2,6 +2,8 @@
 //
 #include "BaseType.h"
 #include "Dsl.h"
+#include "BraceScript.h"
+#include <fstream>
 
 int main(int argc, char* argv[])
 {
@@ -95,12 +97,40 @@ int main(int argc, char* argv[])
         DslParser::DslFile dataFile3(*pDslBuffer);
         int len = 1024 * 1024;
         dataFile3.ParseGpp(p2, "={:=", "=:}=", pbuf, len);
-        delete[] pbuf;
-        delete[] pbuf2;
+
         FILE* fp5 = fopen("test_gpp.h", "wb");
         dataFile3.WriteToFile(fp5, 0);
         fclose(fp5);
     }
+    //brace脚本测试
+    {
+        pDslBuffer->Reset();
+        DslParser::DslFile parsedFile(*pDslBuffer);
+        std::ifstream ifs("brace.scp", std::ios_base::in);
+        if (ifs.fail()) {
+            printf("can't open brace.scp !\n");
+            exit(-1);
+        }
+        ifs.read(pbuf, 1024 * 1024);
+        pbuf[ifs.gcount()] = 0;
+        parsedFile.Parse(pbuf);
+        if (parsedFile.HasError()) {
+            for (int i = 0; i < parsedFile.GetErrorNum(); ++i) {
+                printf("[Brace Syntax]: %s", parsedFile.GetErrorInfo(i));
+            }
+        }
+        else {
+            DslData::DslFile dslFile;
+            Dsl::Transform(parsedFile, dslFile);
+            Brace::BraceScript script;
+            script.OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
+            script.OnError = [](auto str) { printf("[Brace Load]: %s\n", str.c_str()); };
+            script.LoadScript(dslFile);
+            script.Run();
+        }
+    }
+    delete[] pbuf;
+    delete[] pbuf2;
     //必须在DslFile都释放后再释放DslStringAndObjectBuffer
     delete pDslBuffer;
     return 0;

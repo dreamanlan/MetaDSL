@@ -112,9 +112,9 @@ namespace DslFileReadWrite
         WriteIndent(fp, indent);
         fwrite(beginDelim, strlen(beginDelim), 1, fp);
         const char* p = str;
-        int len = strlen(p);
+        size_t len = strlen(p);
         while (*p) {
-            int n = strcspn(p, escapeChars);
+            size_t n = strcspn(p, escapeChars);
             if (n < len) {
                 fwrite(p, 1, n, fp);
                 fwrite("\\", 1, 1, fp);

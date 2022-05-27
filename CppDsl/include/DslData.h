@@ -397,9 +397,9 @@ namespace DslData
         virtual bool HaveId() const override { return false; }
     private:
         NullSyntax(const NullSyntax&) = delete;
-        NullSyntax(NullSyntax&&) = delete;
+        NullSyntax(NullSyntax&&) noexcept = delete;
         NullSyntax& operator=(const NullSyntax&) = delete;
-        NullSyntax& operator=(NullSyntax&&) = delete;
+        NullSyntax& operator=(NullSyntax&&) noexcept = delete;
     };
 
     class StatementData;
@@ -649,10 +649,10 @@ namespace DslData
             return m_pCommentsInfo;
         }
     private:
-        FunctionData(const FunctionData& other) = delete;
-        FunctionData(FunctionData&& other) = delete;
-        FunctionData operator=(const FunctionData& other) = delete;
-        FunctionData operator=(FunctionData&& other) = delete;
+        FunctionData(const FunctionData&) = delete;
+        FunctionData(FunctionData&&) noexcept = delete;
+        FunctionData operator=(const FunctionData&) = delete;
+        FunctionData operator=(FunctionData&&) noexcept = delete;
     private:
         void ReleaseParams(void);
         void ReleaseComments(void);
@@ -762,9 +762,9 @@ namespace DslData
         }
     private:
         StatementData(const StatementData&) = delete;
-        StatementData(StatementData&&) = delete;
+        StatementData(StatementData&&) noexcept = delete;
         StatementData& operator=(const StatementData&) = delete;
-        StatementData& operator=(StatementData&&) = delete;
+        StatementData& operator=(StatementData&&) noexcept = delete;
     private:
         void ReleaseFunctions(void);
     private:
@@ -844,9 +844,9 @@ namespace DslData
         }
     private:
         DslFile(const DslFile&) = delete;
-        DslFile(DslFile&&) = delete;
+        DslFile(DslFile&&) noexcept = delete;
         DslFile& operator=(const DslFile&) = delete;
-        DslFile& operator=(DslFile&&) = delete;
+        DslFile& operator=(DslFile&&) noexcept = delete;
     private:
         void Init(void);
         void Release(void);

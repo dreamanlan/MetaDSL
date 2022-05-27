@@ -469,7 +469,7 @@ namespace DslParser
 
         FILE* fp = fopen(file, "rb");
         if (0 != fp) {
-            bufferSize = fread(buffer, 1, 0x80000, fp);
+            bufferSize = static_cast<int>(fread(buffer, 1, 0x80000, fp));
             fclose(fp);
         }
         LoadBinaryCode(buffer, bufferSize);

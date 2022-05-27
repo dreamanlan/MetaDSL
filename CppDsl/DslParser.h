@@ -347,9 +347,9 @@ namespace DslParser
         }
     private:
         ValueOrFunctionData(const ValueOrFunctionData& other) = delete;
-        ValueOrFunctionData(ValueOrFunctionData&& other) = delete;
+        ValueOrFunctionData(ValueOrFunctionData&& other) noexcept = delete;
         ValueOrFunctionData& operator=(const ValueOrFunctionData& other) = delete;
-        ValueOrFunctionData& operator=(ValueOrFunctionData&& other) = delete;
+        ValueOrFunctionData& operator=(ValueOrFunctionData&& other) noexcept = delete;
     };
 
     class ValueData final : public ValueOrFunctionData
@@ -483,9 +483,9 @@ namespace DslParser
         virtual int HaveId()const override { return FALSE; }
     private:
         NullSyntax(const NullSyntax&) = delete;
-        NullSyntax(NullSyntax&& other) = delete;
+        NullSyntax(NullSyntax&& other) noexcept = delete;
         NullSyntax& operator=(const NullSyntax&) = delete;
-        NullSyntax& operator=(NullSyntax&& other) = delete;
+        NullSyntax& operator=(NullSyntax&& other) noexcept = delete;
     };
 
     class IDslStringAndObjectBuffer;
@@ -750,9 +750,9 @@ namespace DslParser
         }
     private:
         FunctionData(const FunctionData& other) = delete;
-        FunctionData(FunctionData&& other) = delete;
+        FunctionData(FunctionData&& other) noexcept = delete;
         FunctionData operator=(const FunctionData& other) = delete;
-        FunctionData& operator=(FunctionData&& other) = delete;
+        FunctionData& operator=(FunctionData&& other) noexcept = delete;
     private:
         void PrepareParams(void);
         void ReleaseParams(void);
@@ -897,9 +897,9 @@ namespace DslParser
         }
     private:
         StatementData(const StatementData&) = delete;
-        StatementData(StatementData&& other) = delete;
+        StatementData(StatementData&& other) noexcept = delete;
         StatementData& operator=(const StatementData&) = delete;
-        StatementData& operator=(StatementData&& other) = delete;
+        StatementData& operator=(StatementData&& other) noexcept = delete;
     private:
         void PrepareFunctions(void);
         void ReleaseFunctions(void);
@@ -1107,7 +1107,7 @@ namespace DslParser
                 //这个块浪费掉了，需要调整空闲链表参数的大小
             }
             if (p) {
-                p->m_PtrPoolIndex = (ptr - reinterpret_cast<void**>(m_SyntaxComponentPool));
+                p->m_PtrPoolIndex = static_cast<int>(ptr - reinterpret_cast<void**>(m_SyntaxComponentPool));
                 int ix = m_PtrFreeLinkHeader[size];
                 if (ix >= 0) {
                     p->m_NextFreeLink = ix;
@@ -1188,9 +1188,9 @@ namespace DslParser
         }
     private:
         DslStringAndObjectBufferT(const DslStringAndObjectBufferT&) = delete;
-        DslStringAndObjectBufferT(DslStringAndObjectBufferT&& other) = delete;
+        DslStringAndObjectBufferT(DslStringAndObjectBufferT&& other) noexcept = delete;
         DslStringAndObjectBufferT& operator=(const DslStringAndObjectBufferT&) = delete;
-        DslStringAndObjectBufferT& operator=(DslStringAndObjectBufferT&& other) = delete;
+        DslStringAndObjectBufferT& operator=(DslStringAndObjectBufferT&& other) noexcept = delete;
     private:
         DslOptions m_Options;
     private:
@@ -1244,9 +1244,9 @@ namespace DslParser
         inline DslTokenApi(SlkToken* p) :m_Impl(p) {}
     private:
         DslTokenApi(const DslTokenApi& other) = delete;
-        DslTokenApi(DslTokenApi&& other) = delete;
+        DslTokenApi(DslTokenApi&& other) noexcept = delete;
         DslTokenApi& operator=(const DslTokenApi& other) = delete;
-        DslTokenApi& operator=(DslTokenApi&& other) = delete;
+        DslTokenApi& operator=(DslTokenApi&& other) noexcept = delete;
     private:
         SlkToken* m_Impl;
     public:
@@ -1304,9 +1304,9 @@ namespace DslParser
         inline void SetImpl(ActionForSourceCodeScript* p) { m_Impl = p; }
     private:
         DslActionApi(const DslActionApi& other) = delete;
-        DslActionApi(DslActionApi&& other) = delete;
+        DslActionApi(DslActionApi&& other) noexcept = delete;
         DslActionApi& operator=(const DslActionApi& other) = delete;
-        DslActionApi& operator=(DslActionApi&& other) = delete;
+        DslActionApi& operator=(DslActionApi&& other) noexcept = delete;
     private:
         ActionForSourceCodeScript* m_Impl;
     };
@@ -1362,9 +1362,9 @@ namespace DslParser
         EndStatementDelegation OnEndStatement;
     private:
         DslFile(const DslFile& other) = delete;
-        DslFile(DslFile&& other) = delete;
+        DslFile(DslFile&& other) noexcept = delete;
         DslFile& operator=(const DslFile& other) = delete;
-        DslFile& operator=(DslFile&& other) = delete;
+        DslFile& operator=(DslFile&& other) noexcept = delete;
     private:
         void Init(void);
         void Release(void);

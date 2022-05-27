@@ -38,6 +38,7 @@ set (CLIB_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories(${CLIB_SRC_PATH}
     ${CLIB_SRC_PATH}/Common
     ${CLIB_SRC_PATH}/Parser
+    ${CLIB_SRC_PATH}/BraceScript
 )
 
 set (CLIB_SRC
@@ -78,6 +79,8 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/Parser/SlkToken.cpp
 	${CLIB_SRC_PATH}/Parser/SourceCodeScript.h
 	${CLIB_SRC_PATH}/Parser/SourceCodeScript.cpp
+	${CLIB_SRC_PATH}/BraceScript/BraceScript.h
+	${CLIB_SRC_PATH}/BraceScript/BraceScript.cpp
 )
     
 link_directories(${CLIB_SRC_PATH}/lib

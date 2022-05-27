@@ -33,6 +33,7 @@
     <ClCompile Include="DslData.cpp" />
     <ClCompile Include="Dsl.cpp" />
     <ClCompile Include="DslUtility.cpp" />
+    <ClCompile Include="BraceScript\BraceScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -99,6 +100,7 @@
     <ClInclude Include="Dsl.h" />
     <ClInclude Include="DslCommon.h" />
     <ClInclude Include="DslUtility.h" />
+    <ClInclude Include="BraceScript\BraceScript.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\ByteCode.inl">

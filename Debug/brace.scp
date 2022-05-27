@@ -1,0 +1,27 @@
+func(main)args($a:int32, $b:float)float
+{
+	return <- $a * $b + 123;
+};
+
+@r = main(12345,1.23);
+echo(@r);
+
+if(@r>0){
+	echo("yes");
+};
+
+@ct = 10;
+while(@ct>0){
+	echo("while: "+@ct);
+	@ct = @ct - 1;
+};
+
+loop(100){
+	echo("loop: "+$$);
+};
+
+foreach("one", "two", "three"){
+	echo("foreach: "+$$);
+};
+
+echo("done.");

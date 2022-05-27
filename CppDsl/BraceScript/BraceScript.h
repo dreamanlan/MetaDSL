@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Dsl.h"
 #include <stack>
 #include <deque>
@@ -53,28 +52,52 @@ namespace Brace
     extern const char* GetBraceDataTypeName(int type);
     extern int GetBraceDataType(const std::string& typeName);
 
+    class IBraceObject
+    {
+    public:
+        virtual int GetObjectTypeId(void)const { return BRACE_OBJECT_UNKNOWN; }
+    public:
+        virtual ~IBraceObject(void) {}
+    };
+
+    template<typename BaseClassT, int TypeId>
+    class BaseBraceObjectT : public BaseClassT, public IBraceObject
+    {
+    public:
+        virtual int GetObjectTypeId(void)const override { return TypeId; }
+    };
+
     struct VarTypeInfo
     {
         int Type;
         int VarIndex;
+        bool IsGlobal;
 
-        VarTypeInfo(void) :Type(BRACE_DATA_TYPE_UNKNOWN), VarIndex(INVALID_INDEX)
+        VarTypeInfo(void) :Type(BRACE_DATA_TYPE_UNKNOWN), VarIndex(INVALID_INDEX), IsGlobal(false)
         {}
-        VarTypeInfo(int type, int varIndex) :Type(type), VarIndex(varIndex)
+        VarTypeInfo(int type, int varIndex) :Type(type), VarIndex(varIndex), IsGlobal(false)
+        {}
+        VarTypeInfo(int type, int varIndex, bool isGlobal) :Type(type), VarIndex(varIndex), IsGlobal(isGlobal)
         {}
     };
     struct VarInfo final : public VarTypeInfo
     {
         std::string Name;
 
-        VarInfo(void) :VarTypeInfo(), Name() {}
-        VarInfo(const std::string& name, int type, int index) :VarTypeInfo(type, index), Name(name) {}
+        VarInfo(void) :VarTypeInfo(), Name() 
+        {}
+        VarInfo(const std::string& name, int type, int index) :VarTypeInfo(type, index), Name(name) 
+        {}
+        VarInfo(const std::string& name, int type, int index, bool isGlobal) :VarTypeInfo(type, index, isGlobal), Name(name) 
+        {}
     };
     struct BraceApiLoadInfo final : public VarTypeInfo
     {
         BraceApiLoadInfo(void) :VarTypeInfo()
         {}
         BraceApiLoadInfo(int type, int varIndex) :VarTypeInfo(type, varIndex)
+        {}
+        BraceApiLoadInfo(int type, int index, bool isGlobal) :VarTypeInfo(type, index, isGlobal)
         {}
     };
 
@@ -94,6 +117,13 @@ namespace Brace
         virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) = 0;
     public:
         virtual ~IBraceApi(void) {}
+    protected:
+        IBraceApi(void) {}
+    private:
+        IBraceApi(const IBraceApi&) = delete;
+        IBraceApi& operator=(const IBraceApi&) = delete;
+        IBraceApi(IBraceApi&&) noexcept = delete;
+        IBraceApi& operator=(IBraceApi&&) noexcept = delete;
     };
 
     struct VariableInfo final
@@ -110,7 +140,7 @@ namespace Brace
         std::vector<float> FloatVars;
         std::vector<double> DoubleVars;
         std::vector<std::string> StringVars;
-        std::vector<UObject*> ObjectVars;
+        std::vector<IBraceObject*> ObjectVars;
 
         int AllocVariable(int type);
     };
@@ -130,7 +160,7 @@ namespace Brace
 
         ProcInfo(void);
         ProcInfo(const ProcInfo& other);
-        ProcInfo(ProcInfo&& other);
+        ProcInfo(ProcInfo&& other) noexcept;
         ~ProcInfo(void);
     private:
         /// Members of ProcInfo are immutable at run time, except for VaraibleInfoPool & VariableInfoStore, which uses Pointers 
@@ -188,7 +218,7 @@ namespace Brace
         ProcInfo* PushNewProcInfo(const std::string& name)const;
         void PopProcInfo(void)const;
         int GenNextUniqueId(void)const;
-        int CurBlockLevel(void)const;
+        int CurBlockId(void)const;
         void PushBlock(void)const;
         void PopBlock(void)const;
         int AllocGlobalVariable(const std::string& name, int type)const;
@@ -208,6 +238,11 @@ namespace Brace
     protected:
         AbstractBraceApi(BraceScript& interpreter) :m_Interpreter(interpreter)
         {}
+    private:
+        AbstractBraceApi(const AbstractBraceApi&) = delete;
+        AbstractBraceApi& operator=(const AbstractBraceApi&) = delete;
+        AbstractBraceApi(AbstractBraceApi&&) noexcept = delete;
+        AbstractBraceApi& operator=(AbstractBraceApi&&) noexcept = delete;
     private:
         BraceScript& GetInterpreter(void)const { return m_Interpreter; }
     private:
@@ -263,9 +298,9 @@ namespace Brace
         ProcInfo* PushNewProcInfo(const std::string& name);
         void PopProcInfo(void);
         int GenNextUniqueId(void) { return m_NextUniqueId++; }
-        int CurBlockLevel(void)const { return m_CurBlockLevel; }
-        void PushBlock(void) { ++m_CurBlockLevel; }
-        void PopBlock(void) { --m_CurBlockLevel; }
+        int CurBlockId(void)const;
+        void PushBlock(void);
+        void PopBlock(void);
         std::string CalcVarKey(const std::string& name, int level)const;
         std::string CalcConstKey(const std::string& name)const;
         int AllocGlobalVariable(const std::string& name, int type);
@@ -282,6 +317,11 @@ namespace Brace
         void Init(void);
         void Release(void);
     private:
+        BraceScript(const BraceScript&) = delete;
+        BraceScript& operator=(const BraceScript&) = delete;
+        BraceScript(BraceScript&&) noexcept = delete;
+        BraceScript& operator=(BraceScript&&) noexcept = delete;
+    private:
         std::unordered_map<std::string, IBraceApiFactory*> m_ApiFactories;
         std::vector<DslData::ISyntaxComponent*> m_AddedSyntaxComponents;
         std::vector<IBraceApi*> m_ApiInstances;
@@ -290,7 +330,8 @@ namespace Brace
         bool m_HasError;
         ProcInfoStack m_ProcInfoStack;
         int m_NextUniqueId;
-        int m_CurBlockLevel;
+        int m_CurBlockId;
+        std::vector<int> m_LexicalScopeStack;
         ProcInfo* m_GlobalProc;
         VariableInfo* m_GlobalVariables;
         RuntimeStack m_RuntimeStack;
