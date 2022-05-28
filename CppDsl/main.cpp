@@ -142,7 +142,8 @@ int main(int argc, char* argv[])
             Dsl::Transform(parsedFile, dslFile);
             Brace::BraceScript script;
             script.OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
-            script.OnError = [](auto str) { printf("[Brace Load]: %s\n", str.c_str()); };
+            script.OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", str.c_str()); };
+            script.OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };
             script.LoadScript(dslFile);
             script.Run();
         }

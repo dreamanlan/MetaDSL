@@ -31,7 +31,7 @@ namespace Brace
                     args.push_back(std::move(p));
                     argLoadInfos.push_back(std::move(argLoadInfo));
                 }
-                return LoadCall(std::move(args), std::move(argLoadInfos), loadInfo, executor);
+                return LoadCall(funcData, std::move(args), std::move(argLoadInfos), loadInfo, executor);
             }
             break;
         }
@@ -137,6 +137,10 @@ namespace Brace
     void AbstractBraceApi::LogInfo(const std::string& msg)const
     {
         GetInterpreter().LogInfo(msg);
+    }
+    void AbstractBraceApi::LogWarn(const std::string& msg)const
+    {
+        GetInterpreter().LogWarn(msg);
     }
     void AbstractBraceApi::LogError(const std::string& msg)const
     {
@@ -640,14 +644,14 @@ namespace Brace
                     auto* pRetVal = pRet->AsValue();
                     if (pRetFunc && pRetFunc->GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON) {
                         auto& typeName = pRetFunc->GetId();
-                        int type = GetBraceDataType(typeName);
+                        int type = GetDataType(typeName);
                         std::string tname = GenTempVarName();
                         int varIndex = AllocVariable(tname, type);
                         proc->RetValue = VarInfo(tname, type, varIndex);
                     }
                     else if (pRetVal) {
                         auto& typeName = pRetVal->GetId();
-                        int type = GetBraceDataType(typeName);
+                        int type = GetDataType(typeName);
                         std::string tname = GenTempVarName();
                         int varIndex = AllocVariable(tname, type);
                         proc->RetValue = VarInfo(tname, type, varIndex);
@@ -666,7 +670,7 @@ namespace Brace
                         if (pf->IsOperatorParamClass() && pf->GetId() == ":") {
                             auto& name = pf->GetParamId(0);
                             auto& typeName = pf->GetParamId(1);
-                            int type = GetBraceDataType(typeName);
+                            int type = GetDataType(typeName);
                             int varIndex = AllocVariable(name, type);
                             proc->Params.push_back(VarInfo(name, type, varIndex));
                         }
@@ -753,7 +757,7 @@ namespace Brace
                             if (pf->IsOperatorParamClass() && pf->GetId() == ":") {
                                 auto& name = pf->GetParamId(0);
                                 auto& typeName = pf->GetParamId(1);
-                                int type = GetBraceDataType(typeName);
+                                int type = GetDataType(typeName);
                                 int varIndex = AllocVariable(name, type);
                                 proc->Params.push_back(VarInfo(name, type, varIndex));
                             }
@@ -796,7 +800,7 @@ namespace Brace
                             if (pf->IsOperatorParamClass() && pf->GetId() == ":") {
                                 auto& name = pf->GetParamId(0);
                                 auto& typeName = pf->GetParamId(1);
-                                int type = GetBraceDataType(typeName);
+                                int type = GetDataType(typeName);
                                 int varIndex = AllocVariable(name, type);
                                 proc->Params.push_back(VarInfo(name, type, varIndex));
                             }
@@ -807,14 +811,14 @@ namespace Brace
                     }
                     if (f3->IsHighOrder() && f3->GetLowerOrderFunction().GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON) {
                         auto& typeName = f3->GetId();
-                        int type = GetBraceDataType(typeName);
+                        int type = GetDataType(typeName);
                         std::string tname = GenTempVarName();
                         int varIndex = AllocVariable(tname, type);
                         proc->RetValue = VarInfo(tname, type, varIndex);
                     }
                     else if (!f3->IsHighOrder()) {
                         auto& typeName = f3->GetId();
-                        int type = GetBraceDataType(typeName);
+                        int type = GetDataType(typeName);
                         std::string tname = GenTempVarName();
                         int varIndex = AllocVariable(tname, type);
                         proc->RetValue = VarInfo(tname, type, varIndex);
@@ -857,19 +861,19 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             m_Op1 = args[0];
             m_LoadInfo1 = argLoadInfos[0];
             int resultType = BRACE_DATA_TYPE_UNKNOWN;
-            bool r = BuildExecutor(resultType, executor);
+            bool r = BuildExecutor(data, resultType, executor);
             m_ResultInfo.Type = resultType;
             m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
             loadInfo = m_ResultInfo;
             return r;
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const = 0;
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
         BraceApiExecutor m_Op1;
         BraceApiLoadInfo m_LoadInfo1;
@@ -882,21 +886,21 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             m_Op1 = args[0];
             m_Op2 = args[1];
             m_LoadInfo1 = argLoadInfos[0];
             m_LoadInfo2 = argLoadInfos[1];
             int resultType = BRACE_DATA_TYPE_UNKNOWN;
-            bool r = BuildExecutor(resultType, executor);
+            bool r = BuildExecutor(data, resultType, executor);
             m_ResultInfo.Type = resultType;
             m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
             loadInfo = m_ResultInfo;
             return r;
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const = 0;
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
         BraceApiExecutor m_Op1;
         BraceApiExecutor m_Op2;
@@ -911,24 +915,32 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
-                resultType = BRACE_DATA_TYPE_STRING;
+            resultType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (resultType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't add type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(AddExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
-                resultType = BRACE_DATA_TYPE_DOUBLE;
                 BUILD_BINARY_ARITH_EXECUTOR(AddExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(AddExp, UInt);
+            }
             else {
-                resultType = m_LoadInfo1.Type;
                 BUILD_BINARY_ARITH_EXECUTOR(AddExp, Int);
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, +);
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, +);
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetF64, +);
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetStr, +);
     };
@@ -939,11 +951,22 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
-                resultType = BRACE_DATA_TYPE_DOUBLE;
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't sub type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = m_LoadInfo1.Type;
                 BUILD_BINARY_ARITH_EXECUTOR(SubExp, Float);
+            }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = m_LoadInfo1.Type;
+                BUILD_BINARY_ARITH_EXECUTOR(SubExp, UInt);
             }
             else {
                 resultType = m_LoadInfo1.Type;
@@ -953,6 +976,7 @@ namespace Brace
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, -);
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, -);
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetF64, -);
     };
     class MulExp final : public BinaryArithLogicBaseExp
@@ -962,20 +986,32 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
-                resultType = BRACE_DATA_TYPE_DOUBLE;
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't mul type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = maxType;
                 BUILD_BINARY_ARITH_EXECUTOR(MulExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(MulExp, UInt);
+            }
             else {
-                resultType = m_LoadInfo1.Type;
+                resultType = maxType;
                 BUILD_BINARY_ARITH_EXECUTOR(MulExp, Int);
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, *);
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, *);
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetF64, *);
     };
     class DivExp final : public BinaryArithLogicBaseExp
@@ -985,11 +1021,22 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
-                resultType = BRACE_DATA_TYPE_DOUBLE;
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't div type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = m_LoadInfo1.Type;
                 BUILD_BINARY_ARITH_EXECUTOR(DivExp, Float);
+            }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = m_LoadInfo1.Type;
+                BUILD_BINARY_ARITH_EXECUTOR(DivExp, UInt);
             }
             else {
                 resultType = m_LoadInfo1.Type;
@@ -999,6 +1046,7 @@ namespace Brace
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, / );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, / );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetF64, / );
     };
     class ModExp final : public BinaryArithLogicBaseExp
@@ -1008,14 +1056,28 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = m_LoadInfo1.Type;
-            BUILD_BINARY_ARITH_EXECUTOR(ModExp, Int);
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't mod type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = m_LoadInfo1.Type;
+                BUILD_BINARY_ARITH_EXECUTOR(ModExp, UInt);
+            }
+            else {
+                resultType = m_LoadInfo1.Type;
+                BUILD_BINARY_ARITH_EXECUTOR(ModExp, Int);
+            }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, %);
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, %);
     };
 
     class BitAndExp final : public BinaryArithLogicBaseExp
@@ -1025,14 +1087,28 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = BRACE_DATA_TYPE_INT64;
-            BUILD_BINARY_ARITH_EXECUTOR(BitAndExp, Int);
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't bit and type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if(NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(BitAndExp, UInt);
+            }
+            else {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(BitAndExp, Int);
+            }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, &);
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, &);
     };
     class BitOrExp final : public BinaryArithLogicBaseExp
     {
@@ -1041,14 +1117,28 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = BRACE_DATA_TYPE_INT64;
-            BUILD_BINARY_ARITH_EXECUTOR(BitOrExp, Int);
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't bit or type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if(NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(BitOrExp, UInt);
+            }
+            else {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(BitOrExp, Int);
+            }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, | );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, | );
     };
     class BitXorExp final : public BinaryArithLogicBaseExp
     {
@@ -1057,14 +1147,28 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = BRACE_DATA_TYPE_INT64;
-            BUILD_BINARY_ARITH_EXECUTOR(BitXorExp, Int);
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't bit xor type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(BitXorExp, UInt);
+            }
+            else {
+                resultType = maxType;
+                BUILD_BINARY_ARITH_EXECUTOR(BitXorExp, Int);
+            }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, ^);
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, ^);
     };
     class BitNotExp final : public UnaryArithLogicBaseExp
     {
@@ -1073,14 +1177,26 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = BRACE_DATA_TYPE_INT64;
-            BUILD_UNARY_ARITH_EXECUTOR(BitNotExp, Int);
+            resultType = m_LoadInfo1.Type;
+            if (resultType >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't bit not type " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if(IsUnsignedType(resultType)) {
+                BUILD_UNARY_ARITH_EXECUTOR(BitNotExp, UInt);
+            }
+            else {
+                BUILD_UNARY_ARITH_EXECUTOR(BitNotExp, Int);
+            }
             return true;
         }
     private:
         DEF_UNARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, ~);
+        DEF_UNARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, ~);
     };
     class LShiftExp final : public BinaryArithLogicBaseExp
     {
@@ -1089,14 +1205,26 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = BRACE_DATA_TYPE_INT64;
-            BUILD_BINARY_ARITH_EXECUTOR(LShiftExp, Int);
+            resultType = m_LoadInfo1.Type;
+            if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_FLOAT || m_LoadInfo2.Type >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't left shift type " << GetDataTypeName(m_LoadInfo1.Type) << " with " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (IsUnsignedType(resultType)) {
+                BUILD_BINARY_ARITH_EXECUTOR(LShiftExp, UInt);
+            }
+            else {
+                BUILD_BINARY_ARITH_EXECUTOR(LShiftExp, Int);
+            }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, << );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, << );
     };
     class RShiftExp final : public BinaryArithLogicBaseExp
     {
@@ -1105,14 +1233,26 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
-            resultType = BRACE_DATA_TYPE_INT64;
-            BUILD_BINARY_ARITH_EXECUTOR(RShiftExp, Int);
+            resultType = m_LoadInfo1.Type;
+            if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_FLOAT || m_LoadInfo2.Type >= BRACE_DATA_TYPE_FLOAT) {
+                std::stringstream ss;
+                ss << "can't right shift type " << GetDataTypeName(m_LoadInfo1.Type) << " with " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (IsUnsignedType(resultType)) {
+                BUILD_BINARY_ARITH_EXECUTOR(RShiftExp, UInt);
+            }
+            else {
+                BUILD_BINARY_ARITH_EXECUTOR(RShiftExp, Int);
+            }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetI64, >> );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetU64, >> );
     };
 
     class GreatExp final : public BinaryArithLogicBaseExp
@@ -1122,22 +1262,38 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't cmp type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(GreatExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(GreatExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(GreatExp, UInt);
+            }
             else {
                 BUILD_BINARY_ARITH_EXECUTOR(GreatExp, Int);
+            }
+            if (IsUnsignedType(m_LoadInfo1.Type) != IsUnsignedType(m_LoadInfo2.Type)) {
+                std::stringstream ss;
+                ss << "signed and unsigned compare type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogWarn(ss.str());
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetBoolean, > );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetBoolean, > );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetBoolean, > );
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetBoolean, > );
     };
@@ -1148,22 +1304,38 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't cmp type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(GreatEqualExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(GreatEqualExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(GreatEqualExp, UInt);
+            }
             else {
                 BUILD_BINARY_ARITH_EXECUTOR(GreatEqualExp, Int);
+            }
+            if (IsUnsignedType(m_LoadInfo1.Type) != IsUnsignedType(m_LoadInfo2.Type)) {
+                std::stringstream ss;
+                ss << "signed and unsigned compare type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogWarn(ss.str());
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetBoolean, >= );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetBoolean, >= );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetBoolean, >= );
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetBoolean, >= );
     };
@@ -1174,22 +1346,38 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't cmp type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(LessExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(LessExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(LessExp, UInt);
+            }
             else {
                 BUILD_BINARY_ARITH_EXECUTOR(LessExp, Int);
+            }
+            if (IsUnsignedType(m_LoadInfo1.Type) != IsUnsignedType(m_LoadInfo2.Type)) {
+                std::stringstream ss;
+                ss << "signed and unsigned compare type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogWarn(ss.str());
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetBoolean, < );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetBoolean, < );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetBoolean, < );
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetBoolean, < );
     };
@@ -1200,22 +1388,38 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't cmp type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(LessEqualExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(LessEqualExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(LessEqualExp, UInt);
+            }
             else {
                 BUILD_BINARY_ARITH_EXECUTOR(LessEqualExp, Int);
+            }
+            if (IsUnsignedType(m_LoadInfo1.Type) != IsUnsignedType(m_LoadInfo2.Type)) {
+                std::stringstream ss;
+                ss << "signed and unsigned compare type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogWarn(ss.str());
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetBoolean, <= );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetBoolean, <= );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetBoolean, <= );
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetBoolean, <= );
     };
@@ -1226,22 +1430,38 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't cmp type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(EqualExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(EqualExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(EqualExp, UInt);
+            }
             else {
                 BUILD_BINARY_ARITH_EXECUTOR(EqualExp, Int);
+            }
+            if (IsUnsignedType(m_LoadInfo1.Type) != IsUnsignedType(m_LoadInfo2.Type)) {
+                std::stringstream ss;
+                ss << "signed and unsigned compare type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogWarn(ss.str());
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetBoolean, == );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetBoolean, == );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetBoolean, == );
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetBoolean, == );
     };
@@ -1252,22 +1472,38 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING) {
+            int maxType = GetMaxType(m_LoadInfo1.Type, m_LoadInfo2.Type);
+            if (maxType > BRACE_DATA_TYPE_STRING) {
+                std::stringstream ss;
+                ss << "can't cmp type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else if (NeedStringArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(NotEqualExp, String);
             }
             else if (NeedFloatArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
                 BUILD_BINARY_ARITH_EXECUTOR(NotEqualExp, Float);
             }
+            else if (NeedUnsignedArithUnit(m_LoadInfo1.Type, m_LoadInfo2.Type)) {
+                BUILD_BINARY_ARITH_EXECUTOR(NotEqualExp, UInt);
+            }
             else {
                 BUILD_BINARY_ARITH_EXECUTOR(NotEqualExp, Int);
+            }
+            if (IsUnsignedType(m_LoadInfo1.Type) != IsUnsignedType(m_LoadInfo2.Type)) {
+                std::stringstream ss;
+                ss << "signed and unsigned compare type " << GetDataTypeName(m_LoadInfo1.Type) << " and " << GetDataTypeName(m_LoadInfo2.Type) << ", line " << data.GetLine();
+                LogWarn(ss.str());
             }
             return true;
         }
     private:
         DEF_BINARY_ARITH_EXECUTE(Int, int64_t, VarGetI64, VarSetBoolean, != );
+        DEF_BINARY_ARITH_EXECUTE(UInt, uint64_t, VarGetU64, VarSetBoolean, != );
         DEF_BINARY_ARITH_EXECUTE(Float, double, VarGetF64, VarSetBoolean, != );
         DEF_BINARY_ARITH_EXECUTE(String, std::string, VarGetStr, VarSetBoolean, != );
     };
@@ -1279,7 +1515,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
             BUILD_BINARY_ARITH_EXECUTOR(AndExp, Bool);
@@ -1295,7 +1531,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
             BUILD_BINARY_ARITH_EXECUTOR(OrExp, Bool);
@@ -1311,7 +1547,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool BuildExecutor(int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = BRACE_DATA_TYPE_BOOL;
             BUILD_UNARY_ARITH_EXECUTOR(NotExp, Bool);
@@ -1348,11 +1584,15 @@ namespace Brace
                     executor = std::bind(&CondExp::ExecuteBool, this);
                 }
                 else if (NeedFloatArithUnit(m_LoadInfo2.Type, m_LoadInfo3.Type)) {
-                    m_ResultInfo.Type = BRACE_DATA_TYPE_DOUBLE;
+                    m_ResultInfo.Type = GetMaxType(m_LoadInfo2.Type, m_LoadInfo3.Type);
                     executor = std::bind(&CondExp::ExecuteFloat, this);
                 }
+                else if (NeedUnsignedArithUnit(m_LoadInfo2.Type, m_LoadInfo3.Type)) {
+                    m_ResultInfo.Type = GetMaxType(m_LoadInfo2.Type, m_LoadInfo3.Type);
+                    executor = std::bind(&CondExp::ExecuteUInt, this);
+                }
                 else {
-                    m_ResultInfo.Type = BRACE_DATA_TYPE_INT64;
+                    m_ResultInfo.Type = GetMaxType(m_LoadInfo2.Type, m_LoadInfo3.Type);
                     executor = std::bind(&CondExp::ExecuteInt, this);
                 }
                 m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
@@ -1384,6 +1624,27 @@ namespace Brace
                     m_Op3();
                 int64_t val = VarGetI64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
                 VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+            }
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteUInt(void) const
+        {
+            auto& gvars = *GlobalVariables();
+            auto& vars = *CurRuntimeStack().Variables;
+            if (m_Op1)
+                m_Op1();
+            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            if (v) {
+                if (m_Op2)
+                    m_Op2();
+                uint64_t val = VarGetU64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+                VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+            }
+            else {
+                if (m_Op3)
+                    m_Op3();
+                uint64_t val = VarGetU64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
+                VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -1466,7 +1727,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             std::swap(m_Args, args);
             std::swap(m_ArgLoadInfos, argLoadInfos);
@@ -2105,7 +2366,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             std::swap(m_Args, args);
             std::swap(m_ArgLoadInfos, argLoadInfos);
@@ -2145,7 +2406,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2158,7 +2419,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2171,7 +2432,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2184,7 +2445,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2197,7 +2458,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2210,7 +2471,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2223,7 +2484,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2236,7 +2497,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2249,7 +2510,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             executor = nullptr;
             return true;
@@ -2449,6 +2710,12 @@ namespace Brace
         if (OnInfo)
             OnInfo(info);
     }
+    void BraceScript::LogWarn(const std::string& warn)
+    {
+        m_HasWarn = true;
+        if (OnWarn)
+            OnWarn(warn);
+    }
     void BraceScript::LogError(const std::string& error)
     {
         m_HasError = true;
@@ -2463,9 +2730,8 @@ namespace Brace
     {
         m_ApiInstances.push_back(p);
     }
-    bool BraceScript::CanAssign(int destType, int srcType)
+    bool BraceScript::CanAssign(int destType, int srcType) const
     {
-        //Object assignment need to be handled further
         return Brace::CanAssign(destType, srcType);
     }
     const ProcInfo* BraceScript::GetProcInfo(const std::string& name)const
@@ -2576,17 +2842,7 @@ namespace Brace
                 }
                 else if (value.length() > 0 && value[0] == '-') {
                     int64_t v = StrToInt64(value);
-                    if (v >= std::numeric_limits<int8_t>::min()) {
-                        type = BRACE_DATA_TYPE_INT8;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int8Vars[index] = static_cast<int8_t>(v);
-                    }
-                    else if (v >= std::numeric_limits<int16_t>::min()) {
-                        type = BRACE_DATA_TYPE_INT16;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int16Vars[index] = static_cast<int16_t>(v);
-                    }
-                    else if (v >= std::numeric_limits<int32_t>::min()) {
+                    if (v >= std::numeric_limits<int32_t>::min()) {
                         type = BRACE_DATA_TYPE_INT32;
                         index = proc->VarInitInfo.AllocVariable(type);
                         proc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
@@ -2599,27 +2855,7 @@ namespace Brace
                 }
                 else {
                     uint64_t v = StrToUInt64(value);
-                    if (v <= static_cast<uint64_t>(std::numeric_limits<int8_t>::max())) {
-                        type = BRACE_DATA_TYPE_INT8;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int8Vars[index] = static_cast<int8_t>(v);
-                    }
-                    else if (v <= std::numeric_limits<uint8_t>::max()) {
-                        type = BRACE_DATA_TYPE_UINT8;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Uint8Vars[index] = static_cast<uint8_t>(v);
-                    }
-                    else if (v <= static_cast<uint64_t>(std::numeric_limits<int16_t>::max())) {
-                        type = BRACE_DATA_TYPE_INT16;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int16Vars[index] = static_cast<int16_t>(v);
-                    }
-                    else if (v <= std::numeric_limits<uint16_t>::max()) {
-                        type = BRACE_DATA_TYPE_UINT16;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Uint16Vars[index] = static_cast<uint16_t>(v);
-                    }
-                    else if (v <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
+                    if (v <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
                         type = BRACE_DATA_TYPE_INT32;
                         index = proc->VarInitInfo.AllocVariable(type);
                         proc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
@@ -2651,7 +2887,7 @@ namespace Brace
             return it->second.VarIndex;
         }
     }
-    auto BraceScript::FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level) -> decltype(proc->VarTypeInfos.end())
+    auto BraceScript::FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level) const -> decltype(proc->VarTypeInfos.end())
     {
         key = CalcVarKey(name, CurBlockId());
         std::string fkey = key;
@@ -3092,6 +3328,7 @@ namespace Brace
     }
     void BraceScript::Init(void)
     {
+        m_HasWarn = false;
         m_HasError = false;
         m_NextUniqueId = 0;
 
@@ -3120,7 +3357,7 @@ namespace Brace
         m_AddedSyntaxComponents.clear();
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_CurBlockId(0), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_CurBlockId(0), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr)
     {
         RegisterInnerApis();
         Init();

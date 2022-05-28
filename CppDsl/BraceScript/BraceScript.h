@@ -25,12 +25,12 @@ namespace Brace
         BRACE_DATA_TYPE_UNKNOWN = -1,
         BRACE_DATA_TYPE_BOOL = 0,
         BRACE_DATA_TYPE_INT8,
-        BRACE_DATA_TYPE_INT16,
-        BRACE_DATA_TYPE_INT32,
-        BRACE_DATA_TYPE_INT64,
         BRACE_DATA_TYPE_UINT8,
+        BRACE_DATA_TYPE_INT16,
         BRACE_DATA_TYPE_UINT16,
+        BRACE_DATA_TYPE_INT32,
         BRACE_DATA_TYPE_UINT32,
+        BRACE_DATA_TYPE_INT64,
         BRACE_DATA_TYPE_UINT64,
         BRACE_DATA_TYPE_FLOAT,
         BRACE_DATA_TYPE_DOUBLE,
@@ -49,8 +49,47 @@ namespace Brace
     struct VariableInfo;
     typedef void (*VarAssignPtr)(VariableInfo&, int, VariableInfo&, int);
     extern VarAssignPtr GetVarAssignPtr(int varType, int srcVarType);
-    extern const char* GetBraceDataTypeName(int type);
-    extern int GetBraceDataType(const std::string& typeName);
+    extern const char* GetDataTypeName(int type);
+    extern int GetDataType(const std::string& typeName);
+
+    extern bool VarGetBoolean(VariableInfo& info, int type, int index);
+    extern int64_t VarGetI64(VariableInfo& info, int type, int index);
+    extern uint64_t VarGetU64(VariableInfo& info, int type, int index);
+    extern double VarGetF64(VariableInfo& info, int type, int index);
+    extern std::string VarGetStr(VariableInfo& info, int type, int index);
+    extern void VarSetBoolean(VariableInfo& info, int type, int index, bool val);
+    extern void VarSetI64(VariableInfo& info, int type, int index, int64_t val);
+    extern void VarSetU64(VariableInfo& info, int type, int index, uint64_t val);
+    extern void VarSetF64(VariableInfo& info, int type, int index, double val);
+    extern void VarSetStr(VariableInfo& info, int type, int index, const std::string& val);
+    extern void VarSetStr(VariableInfo& info, int type, int index, std::string&& val);
+
+    static inline int GetMaxType(int type1, int type2)
+    {
+        return type1 < type2 ? type2 : type1;
+    }
+    static inline bool IsSignedType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_INT8:
+        case BRACE_DATA_TYPE_INT16:
+        case BRACE_DATA_TYPE_INT32:
+        case BRACE_DATA_TYPE_INT64:
+            return true;
+        }
+        return false;
+    }
+    static inline bool IsUnsignedType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_UINT8:
+        case BRACE_DATA_TYPE_UINT16:
+        case BRACE_DATA_TYPE_UINT32:
+        case BRACE_DATA_TYPE_UINT64:
+            return true;
+        }
+        return false;
+    }
 
     class IBraceObject
     {
@@ -202,12 +241,12 @@ namespace Brace
         {
             return false;
         }
-        virtual bool LoadCall(std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
     protected:
-        const char* GetTypeName(int type)const { return GetBraceDataTypeName(type); }
+        const char* GetTypeName(int type)const { return GetDataTypeName(type); }
         std::string GenTempVarName(void)const;
         ProcInfo* GetProcInfo(const std::string& name)const;
         VarTypeInfo* GetGlobalVarTypeInfo(const std::string& name)const;
@@ -225,6 +264,7 @@ namespace Brace
         int AllocVariable(const std::string& name, int type)const;
         int AllocConst(int tok_type, const std::string& value, int& type)const;
         void LogInfo(const std::string& msg)const;
+        void LogWarn(const std::string& msg)const;
         void LogError(const std::string& msg)const;
         void AddSyntaxComponent(DslData::ISyntaxComponent* p)const;
         void AddApiInstance(IBraceApi* p)const;
@@ -270,12 +310,14 @@ namespace Brace
         ~BraceScript(void);
     public:
         LogDelegation OnInfo;
+        LogDelegation OnWarn;
         LogDelegation OnError;
         void RegisterApi(const std::string& id, IBraceApiFactory* pApiFactory);
         void RegisterApi(std::string&& id, IBraceApiFactory* pApiFactory);
         void Reset(void);
         void LoadScript(const DslData::DslFile& file);
         void Run(void);
+        bool HasWarn(void)const { return m_HasWarn; }
         bool HasError(void)const { return m_HasError; }
     private:
         ProcInfo* GlobalProcInfo(void)const;
@@ -286,11 +328,12 @@ namespace Brace
         void PopRuntimeStack(void);
     private:
         void LogInfo(const std::string& info);
-        void LogError(const std::string& info);
+        void LogWarn(const std::string& warn);
+        void LogError(const std::string& error);
         void AddSyntaxComponent(DslData::ISyntaxComponent* p);
         void AddApiInstance(IBraceApi* p);
-        const char* GetTypeName(int type)const { return GetBraceDataTypeName(type); }
-        bool CanAssign(int destType, int srcType);
+        const char* GetTypeName(int type)const { return GetDataTypeName(type); }
+        bool CanAssign(int destType, int srcType) const;
         const ProcInfo* GetProcInfo(const std::string& name)const;
         ProcInfo* GetProcInfo(const std::string& name);
         const ProcInfo* CurProcInfo(void)const;
@@ -305,7 +348,7 @@ namespace Brace
         std::string CalcConstKey(const std::string& name)const;
         int AllocGlobalVariable(const std::string& name, int type);
         int AllocConst(int tok_type, const std::string& value, int& type);
-        auto FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level) -> decltype(proc->VarTypeInfos.end());
+        auto FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level)const -> decltype(proc->VarTypeInfos.end());
         int AllocVariable(const std::string& name, int type);
         BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& loadInfo);
     private:
@@ -327,6 +370,7 @@ namespace Brace
         std::vector<IBraceApi*> m_ApiInstances;
         std::unordered_map<std::string, ProcInfo> m_Procs;
 
+        bool m_HasWarn;
         bool m_HasError;
         ProcInfoStack m_ProcInfoStack;
         int m_NextUniqueId;
