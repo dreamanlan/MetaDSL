@@ -481,28 +481,14 @@ namespace DslData
         return nullptr;
     }
 
-    void DslFile::LoadBinaryFile(const char* file)
+    void DslFile::LoadBinaryCode(const char* buffer, int bufferSize, std::vector<std::string>& reuseKeyBuffer, std::vector<std::string>& reuseIdBuffer)
     {
-        char buffer[0x80000];
-        int bufferSize = 0;
-
-        m_FileName = file;
-        FILE* fp = fopen(file, "rb");
-        if (0 != fp) {
-            bufferSize = static_cast<int>(fread(buffer, 1, 0x80000, fp));
-            fclose(fp);
-        }
-        LoadBinaryCode(buffer, bufferSize);
+        DslFileReadWrite::readBinary(*this, buffer, bufferSize, reuseKeyBuffer, reuseIdBuffer);
     }
-
-    void DslFile::LoadBinaryCode(const char* buffer, int bufferSize)
-    {
-        DslFileReadWrite::readBinary(*this, buffer, bufferSize);
-    }
-    void DslFile::SaveBinaryFile(const char* file) const
+    void DslFile::SaveBinaryFile(FILE* fp) const
     {
 #if FULL_VERSION
-        DslFileReadWrite::writeBinary(file, *this);
+        DslFileReadWrite::writeBinary(fp, *this);
 #endif
     }
     //------------------------------------------------------------------------------------------------------------------------------------

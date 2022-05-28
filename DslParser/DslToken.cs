@@ -186,7 +186,7 @@ namespace Dsl.Common
                         ++mIterator;
                         mTokenQueue.Enqueue(new TokenInfo { Token = "::", TokenValue = DslConstants.COLON_COLON_, LineNumber = mLineNumber });
                         mCurToken = "<";
-                        return DslConstants.OP_TOKEN_9_;
+                        return getOperatorTokenValue();
                     }
                 }
                 else {
@@ -252,6 +252,13 @@ namespace Dsl.Common
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "::";
+
+                if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = PeekNextValidChar(0);
+                if (!char.IsLetter(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return DslConstants.COLON_COLON_;
             }
             else if (CurChar == '?') {
@@ -261,10 +268,24 @@ namespace Dsl.Common
                     if (CurChar == '*') {
                         ++mIterator;
                         mCurToken = "?.*";
+
+                        if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                            return getOperatorTokenValue();
+                        char nextChar = PeekNextValidChar(0);
+                        if (!char.IsLetter(nextChar) && nextChar != '_') {
+                            return getOperatorTokenValue();
+                        }
                         return DslConstants.QUESTION_PERIOD_STAR_;
                     }
                     else {
                         mCurToken = "?.";
+
+                        if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                            return getOperatorTokenValue();
+                        char nextChar = PeekNextValidChar(0);
+                        if (!char.IsLetter(nextChar) && nextChar != '_') {
+                            return getOperatorTokenValue();
+                        }
                         return DslConstants.QUESTION_PERIOD_;
                     }
                 }
@@ -293,31 +314,30 @@ namespace Dsl.Common
             }
             else if (CurChar == '-') {
                 if (NextChar == '>') {
-                    char nextChar = '\0';
-                    for (int start = mIterator + 2; start < mInput.Length; ++start) {
-                        if (mWhiteSpaces.IndexOf(mInput[start]) >= 0) {
-                            continue;
-                        }
-                        else {
-                            nextChar = mInput[start];
-                            break;
-                        }
-                    }
-                    if (nextChar == '*') {
-                        ++mIterator;
-                        ++mIterator;
+                    ++mIterator;
+                    ++mIterator;
+                    if (NextChar == '*') {
                         ++mIterator;
                         mCurToken = "->*";
+
+                        if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                            return getOperatorTokenValue();
+                        char nextChar = PeekNextValidChar(0);
+                        if (!char.IsLetter(nextChar) && nextChar != '_') {
+                            return getOperatorTokenValue();
+                        }
                         return DslConstants.POINTER_STAR_;
                     }
-                    else if (!char.IsLetter(nextChar) && nextChar != '_') {
-                        getOperatorToken();
-                        return getOperatorTokenValue();
-                    }
                     else {
-                        ++mIterator;
-                        ++mIterator;
                         mCurToken = "->";
+
+                        if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                            return getOperatorTokenValue();
+                        char nextChar = PeekNextValidChar(0);
+                        if (!char.IsLetter(nextChar) && nextChar != '_') {
+                            getOperatorToken();
+                            return getOperatorTokenValue();
+                        }
                         return DslConstants.POINTER_;
                     }
                 }
@@ -330,6 +350,13 @@ namespace Dsl.Common
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ".*";
+
+                if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = PeekNextValidChar(0);
+                if (!char.IsLetter(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return DslConstants.PERIOD_STAR_;
             }
             else if (CurChar == '.' && NextChar == '.') {
@@ -342,7 +369,7 @@ namespace Dsl.Common
                 }
                 else {
                     mCurToken = "..";
-                    return DslConstants.OP_TOKEN_12_;
+                    return getOperatorTokenValue();
                 }
             }
             else if (mOperators.IndexOf(CurChar) >= 0) {
@@ -355,6 +382,13 @@ namespace Dsl.Common
 
                 mTokenBuilder.Append(c);
                 mCurToken = mTokenBuilder.ToString();
+
+                if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = PeekNextValidChar(0);
+                if(!char.IsLetter(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return DslConstants.DOT_;
             }
             else if (CurChar == '{') {
@@ -577,7 +611,7 @@ namespace Dsl.Common
             mLog.Log("[info] peek_token is not called in an LL(1) grammar\n");
             return token;
         }
-
+        
         public void setCurToken(string tok)
         {
             mCurToken = tok;
@@ -906,7 +940,7 @@ namespace Dsl.Common
                 }
                 else if (c0 == '&' && c1 == '\0') {
                     if (lastIsOperator)
-                        val = DslConstants.OP_TOKEN_15_;
+                        val = DslConstants.OP_TOKEN_14_;
                     else
                         val = DslConstants.OP_TOKEN_7_;
                 }
@@ -925,9 +959,9 @@ namespace Dsl.Common
                     else
                         val = DslConstants.OP_TOKEN_11_;
                 }
-                else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0') {
+                else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0' || c0 == '.' && c1 == '.' && c2 == '\0') {
                     if (c0 == '*' && lastIsOperator)
-                        val = DslConstants.OP_TOKEN_15_;
+                        val = DslConstants.OP_TOKEN_14_;
                     else
                         val = DslConstants.OP_TOKEN_12_;
                 }
@@ -935,9 +969,13 @@ namespace Dsl.Common
                     val = DslConstants.OP_TOKEN_13_;
                 }
                 else if (c0 == '`') {
-                    val = DslConstants.OP_TOKEN_14_;
+                    val = DslConstants.OP_TOKEN_1_;
                 }
-                else if (c0 == '-' && c1 == '>' && c2 == '\0') {
+                else if (c0 == '-' && c1 == '>' && (c2 == '\0' || c2 == '*' && c3 == '\0') || 
+                    c0 == '.' && (c1 == '\0' || c1 == '*' && c2 == '\0') || 
+                    c0 == ':' && c1 == ':' && c2 == '\0' ||
+                    c0 == '?' && c1 == '.' && (c2 == '\0' || c2 == '*' && c3 == '\0')
+                    ) {
                     val = DslConstants.OP_TOKEN_15_;
                 }
                 else {
@@ -945,6 +983,13 @@ namespace Dsl.Common
                 }
             }
             return val;
+        }
+        public bool isNotIdentifierAndEndParenthesis(char c)
+        {
+            if (0 == c)
+                return false;
+            else
+                return mEndParentheses.IndexOf(c) < 0 && !char.IsLetterOrDigit(c) && c != '_';
         }
         public bool isWhiteSpace(char c)
         {
@@ -1014,6 +1059,27 @@ namespace Dsl.Common
             if (ix >= 0 && mIterator + ix < mInput.Length)
                 c = mInput[mIterator + ix];
             return c;
+        }
+        public char PeekNextValidChar(int beginIndex)
+        {
+            int _;
+            return PeekNextValidChar(beginIndex, out _);
+        }
+        public char PeekNextValidChar(int beginIndex, out int index)
+        {
+            char nextChar = '\0';
+            index = -1;
+            for (int start = mIterator + beginIndex; start < mInput.Length; ++start) {
+                if (mWhiteSpaces.IndexOf(mInput[start]) >= 0) {
+                    continue;
+                }
+                else {
+                    nextChar = mInput[start];
+                    index = start - mIterator;
+                    break;
+                }
+            }
+            return nextChar;
         }
 
         public static bool myisdigit(char c, bool isHex)

@@ -39,7 +39,11 @@ int main(int argc, char* argv[])
         dataFile.OnGetToken.attach([](const DslParser::DslTokenApi& api, char*& tok, short& val, int& line) {
             if (0 == strcmp(tok, "return")) {
                 char* oldCurTok = api.getCurToken();
-                char* oldLastTok = api.getLastToken();
+                char* oldLastTok = api.getLastToken(); 
+                int index;
+                char nc = api.peekNextValidChar(0, index);
+                if (nc == '<' && api.peekChar(index + 1) == '-')
+                    return false;
                 api.setCurToken("<-");
                 api.setLastToken(oldCurTok);
                 api.enqueueToken(api.getCurToken(), api.getOperatorTokenValue(), line);
@@ -74,12 +78,19 @@ int main(int argc, char* argv[])
         FILE* fp3 = fopen("copy.txt", "wb");
         dataFile.WriteToFile(fp3, 0);
         fclose(fp3);
-        dataFile.SaveBinaryFile("binary.txt");
-        DslParser::DslFile dataFile2(*pDslBuffer);
-        dataFile2.LoadBinaryFile("binary.txt");
-        FILE* fp4 = fopen("unbinary.txt", "wb");
-        dataFile2.WriteToFile(fp4, 0);
+        FILE* fp4 = fopen("binary.txt", "wb");
+        dataFile.SaveBinaryFile(fp4);
         fclose(fp4);
+        DslParser::DslFile dataFile2(*pDslBuffer);
+        FILE* fp5 = fopen("binary.txt", "rb");
+        size_t size = fread(pbuf, 1, 1024 * 1024, fp5);
+        fclose(fp5);
+        std::vector<const char*> keys;
+        std::vector<const char*> ids;
+        dataFile2.LoadBinaryCode(pbuf, static_cast<int>(size), keys, ids);
+        FILE* fp6 = fopen("unbinary.txt", "wb");
+        dataFile2.WriteToFile(fp4, 0);
+        fclose(fp6);
 
         DslData::DslFile file;
         Dsl::Transform(dataFile, file);
@@ -87,9 +98,16 @@ int main(int argc, char* argv[])
         file.WriteToFile(dfp, 0);
         fclose(dfp);
 
-        file.SaveBinaryFile("binary2.txt");
+        FILE* fp7 = fopen("binary2.txt", "wb");
+        file.SaveBinaryFile(fp7);
+        fclose(fp7);
         file.Reset();
-        file.LoadBinaryFile("binary2.txt");
+        FILE* fp8 = fopen("binary2.txt", "rb");
+        size_t size2 = fread(pbuf, 1, 1024 * 1024, fp8);
+        fclose(fp8);
+        std::vector<std::string> keys2;
+        std::vector<std::string> ids2;
+        file.LoadBinaryCode(pbuf, static_cast<int>(size2), keys2, ids2);
         dfp = fopen("unbinary2.txt", "wb");
         file.WriteToFile(dfp, 0);
         fclose(dfp);
@@ -98,9 +116,9 @@ int main(int argc, char* argv[])
         int len = 1024 * 1024;
         dataFile3.ParseGpp(p2, "={:=", "=:}=", pbuf, len);
 
-        FILE* fp5 = fopen("test_gpp.h", "wb");
-        dataFile3.WriteToFile(fp5, 0);
-        fclose(fp5);
+        FILE* fp9 = fopen("test_gpp.h", "wb");
+        dataFile3.WriteToFile(fp9, 0);
+        fclose(fp9);
     }
     //braceΩ≈±æ≤‚ ‘
     {

@@ -68,8 +68,11 @@ public:
     char curChar(void)const;
     char nextChar(void)const;
     char peekChar(int ix)const;
+    char peekNextValidChar(int beginIx)const;
+    char peekNextValidChar(int beginIx, int& index)const;
     void getOperatorToken(void);
     short getOperatorTokenValue(void)const;
+    int isNotIdentifierAndEndParenthesis(char c)const;
     int isWhiteSpace(char c) const;
     int isDelimiter(char c) const;
     int isBeginParentheses(char c) const;
@@ -103,7 +106,7 @@ private:
         short TokenValue;
         int LineNumber;
 
-        inline TokenInfo(void) {}
+        inline TokenInfo(void) :Token(nullptr), TokenValue(0), LineNumber(0) {}
         inline TokenInfo(char* token, short tokenValue, int lineNumber) :Token(token), TokenValue(tokenValue), LineNumber(lineNumber) {}
     };
 

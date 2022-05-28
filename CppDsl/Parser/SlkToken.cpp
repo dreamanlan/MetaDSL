@@ -78,6 +78,32 @@ char SlkToken::peekChar(int ix)const
     return c;
 }
 
+char SlkToken::peekNextValidChar(int beginIx)const
+{
+    int _;
+    return peekNextValidChar(beginIx, _);
+}
+char SlkToken::peekNextValidChar(int beginIx, int& index)const
+{
+    char nc = '\0';
+    index = -1;
+    for (int start = beginIx; ; ++start) {
+        char c = *(mIterator + start);
+        if (c == '\0') {
+            break;
+        }
+        else if (isWhiteSpace(c)) {
+            continue;
+        }
+        else {
+            nc = c;
+            index = start;
+            break;
+        }
+    }
+    return nc;
+}
+
 void SlkToken::getOperatorToken(void)
 {
     switch (curChar()) {
@@ -241,8 +267,7 @@ void SlkToken::getOperatorToken(void)
                 ++mIterator;
             }
         }
-    }
-            break;
+    }break;
     default:
     {
         pushTokenChar(curChar());
@@ -306,7 +331,7 @@ short SlkToken::getOperatorTokenValue(void)const
         }
         else if (pOperator[0] == '&' && pOperator[1] == '\0') {
             if (lastIsOperator)
-                val = OP_TOKEN_15_;
+                val = OP_TOKEN_14_;
             else
                 val = OP_TOKEN_7_;
         }
@@ -327,7 +352,7 @@ short SlkToken::getOperatorTokenValue(void)const
         }
         else if ((pOperator[0] == '*' || pOperator[0] == '/' || pOperator[0] == '%') && pOperator[1] == '\0') {
             if (pOperator[0] == '*' && lastIsOperator)
-                val = OP_TOKEN_15_;
+                val = OP_TOKEN_14_;
             else
                 val = OP_TOKEN_12_;
         }
@@ -335,9 +360,9 @@ short SlkToken::getOperatorTokenValue(void)const
             val = OP_TOKEN_13_;
         }
         else if (pOperator[0] == '`') {
-            val = OP_TOKEN_14_;
+            val = OP_TOKEN_1_;
         }
-        else if (pOperator[0] == '-' && pOperator[1] == '>' && pOperator[2] == '\0') {
+        else if (pOperator[0] == '-' && pOperator[1] == '>' && pOperator[2] == '\0' || pOperator[0] == '.' && pOperator[1] == '\0') {
             val = OP_TOKEN_15_;
         }
         else {
@@ -345,6 +370,14 @@ short SlkToken::getOperatorTokenValue(void)const
         }
     }
     return val;
+}
+
+int SlkToken::isNotIdentifierAndEndParenthesis(char c)const
+{
+    if (0 == c)
+        return FALSE;
+    else
+        return (0 == strchr(mEndParentheses, c) && !::isalnum(c) && c != '_') ? TRUE : FALSE;
 }
 
 int SlkToken::isWhiteSpace(char c) const
@@ -555,7 +588,7 @@ short SlkToken::getImpl(void)
         if (curChar() == '\0') {
             char* pInfo = mDslFile->NewErrorInfo();
             if (pInfo)
-                tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:ExternScript can't finish！", line);
+                tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:ExternScript can't finish！", line);
         }
         endToken();
         removeFirstAndLastEmptyLine();
@@ -613,7 +646,7 @@ short SlkToken::getImpl(void)
                 endToken();
                 mTokenQueue.PushBack(TokenInfo(mCurToken, COLON_COLON_, mLineNumber));
                 mCurToken = curToken;
-                return OP_TOKEN_9_;
+                return getOperatorTokenValue();
             }
         }
         else {
@@ -705,6 +738,13 @@ short SlkToken::getImpl(void)
         pushTokenChar(':');
         pushTokenChar(':');
         endToken();
+
+        if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+            return getOperatorTokenValue();
+        char nextChar = peekNextValidChar(0);
+        if (!::isalnum(nextChar) && nextChar != '_') {
+            return getOperatorTokenValue();
+        }
         return COLON_COLON_;
     }
     else if (curChar() == '?') {
@@ -718,12 +758,26 @@ short SlkToken::getImpl(void)
                 pushTokenChar('.');
                 pushTokenChar('*');
                 endToken();
+
+                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = peekNextValidChar(0);
+                if (!::isalnum(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return QUESTION_PERIOD_STAR_;
             }
             else {
                 pushTokenChar('?');
                 pushTokenChar('.');
                 endToken();
+
+                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = peekNextValidChar(0);
+                if (!::isalnum(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return QUESTION_PERIOD_;
             }
         }
@@ -759,40 +813,34 @@ short SlkToken::getImpl(void)
     else if (curChar() == '-') {
         char nc = nextChar();
         if (nc == '>') {
-            nc = '\0';
-            for (int start = 2; ; ++start) {
-                char c = *(mIterator + start);
-                if (c == '\0') {
-                    break;
-                }
-                else if (isWhiteSpace(c)) {
-                    continue;
-                }
-                else {
-                    nc = c;
-                    break;
-                }
-            }
-            if (nc == '*') {
-                ++mIterator;
-                ++mIterator;
+            ++mIterator;
+            ++mIterator;
+            if (curChar() == '*') {
                 ++mIterator;
                 pushTokenChar('-');
                 pushTokenChar('>');
                 pushTokenChar('*');
                 endToken();
+
+                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = peekNextValidChar(0);
+                if (!::isalnum(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return POINTER_STAR_;
             }
-            else if (!::isalpha(nc) && nc != '_') {
-                getOperatorToken();
-                return getOperatorTokenValue();
-            }
             else {
-                ++mIterator;
-                ++mIterator;
                 pushTokenChar('-');
                 pushTokenChar('>');
                 endToken();
+
+                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                    return getOperatorTokenValue();
+                char nextChar = peekNextValidChar(0);
+                if (!::isalnum(nextChar) && nextChar != '_') {
+                    return getOperatorTokenValue();
+                }
                 return POINTER_;
             }
         }
@@ -800,14 +848,6 @@ short SlkToken::getImpl(void)
             getOperatorToken();
             return getOperatorTokenValue();
         }
-    }
-    else if (curChar() == '.' && nextChar() == '*') {
-        ++mIterator;
-        ++mIterator;
-        pushTokenChar('.');
-        pushTokenChar('*');
-        endToken();
-        return PERIOD_STAR_;
     }
     else if (curChar() == '.' && nextChar() == '.') {
         char c = curChar();
@@ -823,7 +863,7 @@ short SlkToken::getImpl(void)
         }
         else {
             endToken();
-            return OP_TOKEN_12_;
+            return getOperatorTokenValue();
         }
     }
     else if (isOperator(curChar())) {//操作符
@@ -831,12 +871,36 @@ short SlkToken::getImpl(void)
         return getOperatorTokenValue();
     }
     else if (curChar() == '.' && 0 == myisdigit(nextChar(), FALSE)) {
-        char c = curChar();
-        ++mIterator;
+        if (nextChar() == '*') {
+            ++mIterator;
+            ++mIterator;
+            pushTokenChar('.');
+            pushTokenChar('*');
+            endToken();
 
-        pushTokenChar(c);
-        endToken();
-        return DOT_;
+            if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                return getOperatorTokenValue();
+            char nextChar = peekNextValidChar(0);
+            if (!::isalnum(nextChar) && nextChar != '_') {
+                return getOperatorTokenValue();
+            }
+            return PERIOD_STAR_;
+        }
+        else {
+            char c = curChar();
+            ++mIterator;
+
+            pushTokenChar(c);
+            endToken();
+
+            if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                return getOperatorTokenValue();
+            char nextChar = peekNextValidChar(0);
+            if (!::isalnum(nextChar) && nextChar != '_') {
+                return getOperatorTokenValue();
+            }
+            return DOT_;
+        }
     }
     else if (curChar() == '(') {
         ++mIterator;
@@ -1005,7 +1069,7 @@ short SlkToken::getImpl(void)
                     else {
                         char* pInfo = mDslFile->NewErrorInfo();
                         if (pInfo)
-                            tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
+                            tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
                         endTokenWithEof();
                         return END_OF_SLK_INPUT_;
                     }
@@ -1017,7 +1081,7 @@ short SlkToken::getImpl(void)
             else {
                 char* pInfo = mDslFile->NewErrorInfo();
                 if (pInfo)
-                    tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:String can't finish！", line);
+                    tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
             }
             endToken();
             /*普通字符串保持源码的样子，不去掉首尾空行
@@ -1149,7 +1213,7 @@ void SlkToken::getBlockString(const char* delimiter, int len)
     if (!pFind) {
         char* pInfo = mDslFile->NewErrorInfo();
         if (pInfo)
-            tsnprintf(pInfo, MAX_ERROR_INFO_CAPACITY, "[line %d ]:Block can't finish, delimiter: %s！", mLineNumber, delimiter);
+            tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:Block can't finish, delimiter: %s！", mLineNumber, delimiter);
         endToken();
         return;
     }

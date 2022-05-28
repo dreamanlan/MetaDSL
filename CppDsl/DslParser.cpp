@@ -253,7 +253,7 @@ namespace DslParser
             int newSpace = m_ParamSpace + delta;
             if (newSpace <= m_MaxParamNum) {
                 SyntaxComponentPtr* pNew = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(newSpace));
-                if (pNew) {
+                if (pNew && m_Params) {
                     memcpy(pNew, m_Params, m_ParamNum * sizeof(SyntaxComponentPtr));
                     memset(pNew + m_ParamNum, 0, delta * sizeof(SyntaxComponentPtr));
                     m_Buffer.DeletePtrArray((void**)m_Params, m_ParamSpace);
@@ -462,26 +462,14 @@ namespace DslParser
         }
     }
 
-    void DslFile::LoadBinaryFile(const char* file)
+    void DslFile::LoadBinaryCode(const char* buffer, int bufferSize, std::vector<const char*>& reuseKeyBuffer, std::vector<const char*>& reuseIdBuffer)
     {
-        char buffer[0x80000];
-        int bufferSize = 0;
-
-        FILE* fp = fopen(file, "rb");
-        if (0 != fp) {
-            bufferSize = static_cast<int>(fread(buffer, 1, 0x80000, fp));
-            fclose(fp);
-        }
-        LoadBinaryCode(buffer, bufferSize);
+        DslFileReadWrite::readBinary(*this, buffer, bufferSize, reuseKeyBuffer, reuseIdBuffer);
     }
-    void DslFile::LoadBinaryCode(const char* buffer, int bufferSize)
-    {
-        DslFileReadWrite::readBinary(*this, buffer, bufferSize);
-    }
-    void DslFile::SaveBinaryFile(const char* file) const
+    void DslFile::SaveBinaryFile(FILE* fp) const
     {
 #if FULL_VERSION
-        DslFileReadWrite::writeBinary(file, *this);
+        DslFileReadWrite::writeBinary(fp, *this);
 #endif
     }
 
@@ -512,13 +500,13 @@ namespace DslParser
     {
         m_HasError = FALSE;
         m_ErrorNum = 0;
-        memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
+        m_Buffer.ZeroErrorInfoBuffer();
     }
     void DslFile::AddError(const char* error)
     {
         char* p = NewErrorInfo();
         if (p)
-            tsnprintf(p, MAX_ERROR_INFO_CAPACITY, "%s", error);
+            tsnprintf(p, m_Buffer.GetSingleErrorInfoCapacity(), "%s", error);
     }
     //------------------------------------------------------------------------------------------------------------------------------------
     void ISyntaxComponent::WriteFirstCommentsToFile(FILE* fp, int indent, int firstLineNoIndent) const

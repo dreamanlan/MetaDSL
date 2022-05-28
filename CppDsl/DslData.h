@@ -797,9 +797,8 @@ namespace DslData
         ~DslFile(void);
         void Reset(void);
     public:
-        void LoadBinaryFile(const char* file);
-        void LoadBinaryCode(const char* buffer, int bufferSize);
-        void SaveBinaryFile(const char* file) const;
+        void LoadBinaryCode(const char* buffer, int bufferSize, std::vector<std::string>& reuseKeyBuffer, std::vector<std::string>& reuseIdBuffer);
+        void SaveBinaryFile(FILE* fp) const;
     public:
         void SetFileName(const std::string& name)
         {

@@ -22,6 +22,22 @@ namespace DslFileReadWrite
         else
             return strcmp(stra, strb);
     }
+    void writeInt(std::vector<char>& s, int& pos, int val)
+    {
+        unsigned int v = val;
+        s.push_back(0); s[pos++] = (char)(v & 0xff);
+        s.push_back(0); s[pos++] = (char)((v & 0xff00) >> 8);
+        s.push_back(0); s[pos++] = (char)((v & 0xff0000) >> 16);
+        s.push_back(0); s[pos++] = (char)((v & 0xff000000) >> 24);
+    }
+    void write7BitEncodedInt(std::vector<char>& s, int& pos, int val)
+    {
+        unsigned int num;
+        for (num = (unsigned int)val; num >= 128; num >>= 7) {
+            s.push_back(0); s[pos++] = (char)(num | 0x80);
+        }
+        s.push_back(0); s[pos++] = (char)num;
+    }
     void writeInt(char* s, int& pos, int val)
     {
         unsigned int v = val;

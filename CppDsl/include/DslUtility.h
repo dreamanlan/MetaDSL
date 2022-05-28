@@ -4,13 +4,14 @@
 #include "DslParser.h"
 #include "DslData.h"
 #include "tsnprintf.h"
-#include <string>
 
 namespace DslFileReadWrite
 {
     static const char* c_BinaryIdentity = "BDSL";
     //------------------------------------------------------------------------------------------------------------------------------------
     int stringCompare(const void* a, const void* b);
+    void writeInt(std::vector<char>& s, int& pos, int val);
+    void write7BitEncodedInt(std::vector<char>& s, int& pos, int val);
     void writeInt(char* s, int& pos, int val);
     void write7BitEncodedInt(char* s, int& pos, int val);
     int readInt(const char* bytes, int size, int pos);
@@ -139,13 +140,13 @@ namespace DslFileReadWrite
         {
             return 0 == strcmp(str, s);
         }
-        static inline void Assign(std::string* ids, int ix, const std::string& id)
+        static inline void Push(std::vector<std::string>& ids, const std::string& id)
         {
-            ids[ix] = id;
+            ids.push_back(id);
         }
-        static inline void Assign(const char** ids, int ix, const char* id)
+        static inline void Push(std::vector<const char*>& ids, const char* id)
         {
-            ids[ix] = id;
+            ids.push_back(id);
         }
         static inline void MemCpy(const char** keys, const std::string* ids, int count)
         {
@@ -266,18 +267,18 @@ namespace DslFileReadWrite
         {
         }
 
-        static inline void CopyStr(DslParser::DslFile& file, const char* keys[], int ix, const char* p, int len)
+        static inline void CopyStr(DslParser::DslFile& file, std::vector<const char*>& keys, const char* p, int len)
         {
             char* id = file.AllocString(len);
             memcpy(id, p, len);
             id[len] = 0;
-            keys[ix] = id;
+            keys.push_back(id);
         }
-        static inline void CopyStr(DslData::DslFile& file, std::string keys[], int ix, const char* p, int len)
+        static inline void CopyStr(DslData::DslFile& file, std::vector<std::string>& keys, const char* p, int len)
         {
             std::string str;
             str.append(p, len);
-            keys[ix] = std::move(str);
+            keys.push_back(std::move(str));
         }
     };
     //------------------------------------------------------------------------------------------------------------------------------------
@@ -731,103 +732,105 @@ namespace DslFileReadWrite
     //---------------------------------------------------------------------------------------------
 #if FULL_VERSION
     template<typename StrT, typename DslTypeT>
-    static inline void writeBinarySyntax(char* s, int capacity, int& pos, StrT* identifiers, int idCapacity, int& idCount, const DslTypeT& data);
+    static inline void writeBinarySyntax(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data);
     template<typename StrT, typename DslTypeT>
-    static inline void writeBinaryValue(char* s, int capacity, int& pos, StrT* identifiers, int idCapacity, int& idCount, const DslTypeT& data)
+    static inline void writeBinaryValue(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
     {
-        s[pos++] = (char)BinCode_BeginValue;
-        s[pos++] = (char)((int)BinCode_ValueTypeBegin + data.GetIdType());
-        StrPolicy::Assign(identifiers, idCount++, data.GetId());
+        s.push_back(0); s[pos++] = (char)BinCode_BeginValue;
+        s.push_back(0); s[pos++] = (char)((int)BinCode_ValueTypeBegin + data.GetIdType());
+        StrPolicy::Push(identifiers, data.GetId()); 
+        idCount++;
         write7BitEncodedInt(s, pos, data.GetLine());
-        s[pos++] = (char)BinCode_EndValue;
+        s.push_back(0); s[pos++] = (char)BinCode_EndValue;
     }
     template<typename StrT, typename DslTypeT>
-    static inline void writeBinaryFunction(char* s, int capacity, int& pos, StrT* identifiers, int idCapacity, int& idCount, const DslTypeT& data)
+    static inline void writeBinaryFunction(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
     {
-        s[pos++] = (char)BinCode_BeginFunction;
-        s[pos++] = (char)((int)BinCode_ParamOrExternClassBegin + data.GetParamClass());
+        s.push_back(0); s[pos++] = (char)BinCode_BeginFunction;
+        s.push_back(0); s[pos++] = (char)((int)BinCode_ParamOrExternClassBegin + data.GetParamClass());
         if (data.HaveParamOrStatement()) {
             write7BitEncodedInt(s, pos, data.GetParamNum());
         }
         if (data.IsHighOrder()) {
             auto& name = data.GetName();
-            writeBinaryFunction(s, capacity, pos, identifiers, idCapacity, idCount, *name.GetFunction());
+            writeBinaryFunction(s, pos, identifiers, idCount, *name.GetFunction());
         }
         else {
-            writeBinaryValue(s, capacity, pos, identifiers, idCapacity, idCount, data.GetName());
+            writeBinaryValue(s, pos, identifiers, idCount, data.GetName());
         }
 
         for (int i = 0; i < data.GetParamNum(); ++i) {
             auto* syntaxData = data.GetParam(i);
-            writeBinarySyntax(s, capacity, pos, identifiers, idCapacity, idCount, *syntaxData);
+            writeBinarySyntax(s, pos, identifiers, idCount, *syntaxData);
         }
-        s[pos++] = (char)BinCode_EndFunction;
+        s.push_back(0); s[pos++] = (char)BinCode_EndFunction;
     }
     template<typename StrT, typename DslTypeT>
-    static inline void writeBinaryStatement(char* s, int capacity, int& pos, StrT* identifiers, int idCapacity, int& idCount, const DslTypeT& data)
+    static inline void writeBinaryStatement(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
     {
-        s[pos++] = (char)BinCode_BeginStatement;
+        s.push_back(0); s[pos++] = (char)BinCode_BeginStatement;
         write7BitEncodedInt(s, pos, data.GetFunctionNum());
         for (int i = 0; i < data.GetFunctionNum(); ++i) {
             auto* f = data.GetFunction(i);
             if (f->IsValue()) {
                 auto* valData = f->AsValue();
-                writeBinaryValue(s, capacity, pos, identifiers, idCapacity, idCount, *valData);
+                writeBinaryValue(s, pos, identifiers, idCount, *valData);
             }
             else {
                 auto* funcData = f->AsFunction();
-                writeBinaryFunction(s, capacity, pos, identifiers, idCapacity, idCount, *funcData);
+                writeBinaryFunction(s, pos, identifiers, idCount, *funcData);
             }
         }
-        s[pos++] = (char)BinCode_EndStatement;
+        s.push_back(0); s[pos++] = (char)BinCode_EndStatement;
     }
     template<typename StrT, typename DslTypeT>
-    static inline void writeBinarySyntax(char* s, int capacity, int& pos, StrT* identifiers, int idCapacity, int& idCount, const DslTypeT& data)
+    static inline void writeBinarySyntax(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
     {
         int syntaxType = data.GetSyntaxType();
         switch (syntaxType) {
         case IDslSyntaxCommon::TYPE_VALUE: {
             auto* val = static_cast<const typename DslTypeDeduce<DslTypeT>::ValueData*>(&data);
             if (0 != val) {
-                writeBinaryValue(s, capacity, pos, identifiers, idCapacity, idCount, *val);
+                writeBinaryValue(s, pos, identifiers, idCount, *val);
             }
             break;
         }
         case IDslSyntaxCommon::TYPE_FUNCTION: {
             auto* val = static_cast<const typename DslTypeDeduce<DslTypeT>::FunctionData*>(&data);
             if (0 != val) {
-                writeBinaryFunction(s, capacity, pos, identifiers, idCapacity, idCount, *val);
+                writeBinaryFunction(s, pos, identifiers, idCount, *val);
             }
             break;
         }
         case IDslSyntaxCommon::TYPE_STATEMENT: {
             auto* val = static_cast<const typename DslTypeDeduce<DslTypeT>::StatementData*>(&data);
             if (0 != val) {
-                writeBinaryStatement(s, capacity, pos, identifiers, idCapacity, idCount, *val);
+                writeBinaryStatement(s, pos, identifiers, idCount, *val);
             }
             break;
         }
         }
     }
     template<typename DslFileT>
-    static inline void writeBinary(const char* file, DslFileT& dslFile)
+    static inline void writeBinary(FILE* fp, DslFileT& dslFile)
     {
 #if FULL_VERSION
-        char bytes1[0x40000];
-        char bytes2[0x40000];
+        std::vector<char> bytes1;
+        std::vector<char> bytes2;
         int pos1 = 0;
         int pos2 = 0;
-        typename DslTypeDeduce<typename std::remove_const<DslFileT>::type>::StrType identifiers[0x10000];
+        std::vector<typename DslTypeDeduce<typename std::remove_const<DslFileT>::type>::StrType> identifiers;
         int idCount = 0;
         for (int i = 0; i < dslFile.GetDslInfoNum(); ++i) {
             auto* info = dslFile.GetDslInfo(i);
-            writeBinarySyntax(bytes1, 0x10000, pos1, identifiers, 0x10000, idCount, *info);
+            writeBinarySyntax(bytes1, pos1, identifiers, idCount, *info);
         }
-        StrPolicy::Null2Empty(identifiers, idCount);
+        StrPolicy::Null2Empty(identifiers.data(), idCount);
 
-        const char* keys[0x10000];
-        StrPolicy::MemCpy(keys, identifiers, 0x10000);
-        qsort(keys, idCount, sizeof(const char*), stringCompare);
+        std::vector<const char*> keys;
+        keys.resize(idCount);
+        StrPolicy::MemCpy(keys.data(), identifiers.data(), idCount);
+        qsort(keys.data(), idCount, sizeof(const char*), stringCompare);
         int k = 0;
         for (int i = 1; i < idCount; ++i) {
             const char* lastId = keys[k];
@@ -840,23 +843,12 @@ namespace DslFileReadWrite
             }
         }
         int ct = k + 1;
-        if (ct > 0x00004000) {
-            assert(0);
-            return;
-        }
         for (int i = 0; i < idCount; ++i) {
             const char* key = StrPolicy::ToCStr(identifiers[i]);
-            const char** pp = (const char**)bsearch(&key, keys, ct, sizeof(const char*), stringCompare);
-            int ix = static_cast<int>(pp - keys);
-            if (ix < 0x80) {
-                bytes2[pos2++] = (char)ix;
-            }
-            else {
-                bytes2[pos2++] = (char)((ix & 0x0000007f) | 0x00000080);
-                bytes2[pos2++] = (char)(ix >> 7);
-            }
+            const char** pp = (const char**)bsearch(&key, keys.data(), ct, sizeof(const char*), stringCompare);
+            int ix = static_cast<int>(pp - keys.data());
+            write7BitEncodedInt(bytes2, pos2, ix);
         }
-        FILE* fp = fopen(file, "wb");
         if (0 != fp) {
             fwrite(c_BinaryIdentity, 1, strlen(c_BinaryIdentity), fp);
 
@@ -873,8 +865,8 @@ namespace DslFileReadWrite
             writeInt(intbuf, pos, ct);
             fwrite(intbuf, 1, pos, fp);
 
-            fwrite(bytes1, 1, pos1, fp);
-            fwrite(bytes2, 1, pos2, fp);
+            fwrite(bytes1.data(), 1, pos1, fp);
+            fwrite(bytes2.data(), 1, pos2, fp);
             for (int i = 0; i < ct; ++i) {
                 const char* id = keys[i];
                 size_t len = 0;
@@ -886,7 +878,6 @@ namespace DslFileReadWrite
                 if (len > 0)
                     fwrite((void*)id, 1, len, fp);
             }
-            fclose(fp);
         }
 #endif
     }
@@ -1036,8 +1027,8 @@ namespace DslFileReadWrite
         }
         return ret;
     }
-    template<typename DslFileT>
-    static inline void readBinary(DslFileT& file, const char* buffer, int bufferSize)
+    template<typename DslFileT, typename StrType>
+    static inline void readBinary(DslFileT& file, const char* buffer, int bufferSize, std::vector<StrType>& keys, std::vector<StrType>& identifiers )
     {
         if (bufferSize > 0) {
             int pos = static_cast<int>(strlen(c_BinaryIdentity));
@@ -1051,9 +1042,9 @@ namespace DslFileReadWrite
             int bytes2Start = bytesStart + bytesLen;
             int keyStart = bytes2Start + bytes2Len;
 
-            typename DslTypeDeduce<DslFileT>::StrType keys[0x10000];
+            keys.reserve(keyCount);
+            keys.clear();
             int ct = 0;
-
             pos = keyStart;
             for (int i = 0; i < keyCount; ++i) {
                 int byteCount;
@@ -1061,36 +1052,35 @@ namespace DslFileReadWrite
                 if (len >= 0) {
                     pos += byteCount;
                     if (len > 0) {
-                        DslPolicy::CopyStr(file, keys, ct++, buffer + pos, len);
+                        DslPolicy::CopyStr(file, keys, buffer + pos, len);
                         pos += len;
                     }
                     else {
-                        keys[ct++] = "";
+                        keys.push_back("");
                     }
+                    ct++;
                 }
                 else {
                     break;
                 }
             }
-            typename DslTypeDeduce<DslFileT>::StrType identifiers[0x10000];
+
+            identifiers.reserve(bytes2Len);
+            identifiers.clear();
             int idCount = 0;
             for (int i = bytes2Start; i < bytes2Start + bytes2Len && i < bufferSize; ++i) {
-                int ix;
-                unsigned char first = (unsigned char)buffer[i];
-                if ((first & 0x80) == 0x80) {
-                    ++i;
-                    unsigned char second = (unsigned char)buffer[i];
-                    ix = (int)(((int)first & 0x0000007f) | ((int)second << 7));
-                }
-                else {
-                    ix = first;
+                int byteCount = 0;
+                int ix = read7BitEncodedInt(buffer, bufferSize, i, byteCount);
+                if (ix >= 0) {
+                    i += byteCount - 1;
                 }
                 if (ix >= 0 && ix < ct) {
-                    identifiers[idCount++] = keys[ix];
+                    identifiers.push_back(keys[ix]);
                 }
                 else {
-                    identifiers[idCount++] = "";
+                    identifiers.push_back("");
                 }
+                idCount++;
             }
 
             int curCodeIndex = 0;
@@ -1103,7 +1093,7 @@ namespace DslFileReadWrite
                     ++curCodeIndex;
                 }
                 if (curCodeIndex < bytesLen) {
-                    auto* p = readBinaryDsl(file, buffer, bufferSize, bytesStart, curCodeIndex, identifiers, idCount, curIdIndex);
+                    auto* p = readBinaryDsl(file, buffer, bufferSize, bytesStart, curCodeIndex, identifiers.data(), idCount, curIdIndex);
                     if (nullptr == p) {
                         break;
                     }

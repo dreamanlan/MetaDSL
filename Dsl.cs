@@ -1142,15 +1142,13 @@ namespace Dsl
             reuseIdBuffer.Clear();
             List<string> identifiers = reuseIdBuffer;
             for (int i = bytes2Start; i < bytes2Start + bytes2Len && i < binaryCode.Length; ++i) {
-                int ix;
-                byte first = binaryCode[i];
-                if ((first & 0x80) == 0x80) {
-                    ++i;
-                    byte second = binaryCode[i];
-                    ix = (int)(((int)first & 0x0000007f) | ((int)second << 7));
+                int byteCount;
+                int ix = Utility.read7BitEncodedInt(binaryCode, i, out byteCount);
+                if (ix >= 0) {
+                    i += byteCount - 1;
                 }
                 else {
-                    ix = first;
+                    break;
                 }
                 if (ix >= 0 && ix < keys.Count) {
                     identifiers.Add(keys[ix]);
@@ -1177,11 +1175,6 @@ namespace Dsl
             byte[] bytes = stream.ToArray();
             SortedDictionary<string, int> dict = new SortedDictionary<string, int>(mStringComparer);
             int ct = identifiers.Count;
-            if (ct > 0x00004000) {
-                System.Diagnostics.Debug.Assert(false);
-                //Console.WriteLine("Identifiers count {0} too large than 0x04000", ct);
-                return;
-            }
             for (int i = 0; i < ct; ++i) {
                 string key = identifiers[i];
                 if (!dict.ContainsKey(key)) {
@@ -1194,13 +1187,7 @@ namespace Dsl
                 for (int i = 0; i < ct; ++i) {
                     string key = identifiers[i];
                     int ix = keys.BinarySearch(key, mStringComparer);
-                    if (ix < 0x80) {
-                        ms.WriteByte((byte)ix);
-                    }
-                    else {
-                        ms.WriteByte((byte)((ix & 0x0000007f) | 0x00000080));
-                        ms.WriteByte((byte)(ix >> 7));
-                    }
+                    Utility.write7BitEncodedInt(ms, ix);
                 }
                 bytes2 = ms.ToArray();
             }

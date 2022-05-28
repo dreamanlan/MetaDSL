@@ -11,6 +11,7 @@ calc.h
 #include "Delegation.h"
 #include "DslCommon.h"
 #include <new>
+#include <vector>
 
 class SlkToken;
 class ActionForSourceCodeScript;
@@ -26,16 +27,15 @@ namespace DslParser
             {
                 SrcT m_Src;
                 DestT m_Dest;
-            } tmp;
-            tmp.m_Src = v;
+            } tmp{.m_Src = v};
             return tmp.m_Dest;
         }
     };
 
     enum
     {
-        MAX_ERROR_INFO_CAPACITY = 1024,
-        MAX_RECORD_ERROR_NUM = 128,
+        SINGLE_ERROR_INFO_CAPACITY = 1024,
+        MAX_ERROR_INFO_NUM = 128,
 
         INIT_FUNCTION_PARAM = 1,
         MAX_DELTA_FUNCTION_PARAM = 8,
@@ -939,6 +939,10 @@ namespace DslParser
         virtual void** NewPtrArray(int size) = 0;
         virtual void DeletePtrArray(void** ptr, int size) = 0;
     public:
+        virtual void ZeroErrorInfoBuffer(void) = 0;
+        virtual char* GetSingleErrorInfoBuffer(int index) = 0;
+        virtual int GetSingleErrorInfoCapacity(void) = 0;
+    public:
         virtual NullSyntax* GetNullSyntaxPtr(void) = 0;
         virtual FunctionData* GetNullFunctionPtr(void) = 0;
         virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
@@ -955,7 +959,10 @@ namespace DslParser
      */
     template<int StringAndObjectBufferSize = STRING_AND_OBJECT_BUFFER_SIZE,
         int SyntaxComponentAndPtrArrayPoolSize = SYNTAXCOMPONENT_AND_PTR_ARRAY_POOL_SIZE,
-        int PtrArrayPoolFreeLinkHeaderSize = PTR_ARRAY_POOL_FREELINK_HEADER_SIZE>
+        int PtrArrayPoolFreeLinkHeaderSize = PTR_ARRAY_POOL_FREELINK_HEADER_SIZE,
+        int MaxErrorInfoNum = MAX_ERROR_INFO_NUM,
+        int SingleErrorInfoCapacity = SINGLE_ERROR_INFO_CAPACITY
+    >
     class DslStringAndObjectBufferT final : public IDslStringAndObjectBuffer
     {
         struct alignas(4) FreeLinkInfo
@@ -1119,6 +1126,21 @@ namespace DslParser
             }
         }
     public:
+        virtual void ZeroErrorInfoBuffer(void) override
+        {
+            memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
+        }
+        virtual char* GetSingleErrorInfoBuffer(int index) override
+        {
+            if (index < 0 || index >= MaxErrorInfoNum)
+                return nullptr;
+            return m_ErrorInfo[index];
+        }
+        virtual int GetSingleErrorInfoCapacity(void) override
+        {
+            return SingleErrorInfoCapacity;
+        }
+    public:
         virtual NullSyntax* GetNullSyntaxPtr(void) override
         {
             return &m_NullSyntax;
@@ -1212,6 +1234,8 @@ namespace DslParser
         int m_PtrFreeLinkHeader[PtrArrayPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置，这个数组的大小就是允许的各个语法组件数组的最大值，语句函数数量、参数数量、单文件DSL数量等受此限制
         int m_FreedFreeLinkHeader;//空闲的空闲块链表的头
     private:
+        char m_ErrorInfo[MaxErrorInfoNum][SingleErrorInfoCapacity];
+    private:
         NullSyntax m_NullSyntax;
         FunctionData m_NullFunction;
         FunctionData* m_pNullFunction;
@@ -1231,8 +1255,11 @@ namespace DslParser
         char curChar(void)const;
         char nextChar(void)const;
         char peekChar(int ix)const;
+        char peekNextValidChar(int beginIx)const;
+        char peekNextValidChar(int beginIx, int& index)const;
         void getOperatorToken(void);
         short getOperatorTokenValue(void)const;
+        int isNotIdentifierAndEndParenthesis(char c)const;
         int isWhiteSpace(char c) const;
         int isDelimiter(char c) const;
         int isBeginParentheses(char c) const;
@@ -1343,9 +1370,8 @@ namespace DslParser
         void ParseGpp(const char* buf, const char* beginDelim, const char* endDelim);
         void ParseGpp(const char* buf, const char* beginDelim, const char* endDelim, char* gppBuf, int& len);
     public:
-        void LoadBinaryFile(const char* file);
-        void LoadBinaryCode(const char* buffer, int bufferSize);
-        void SaveBinaryFile(const char* file) const;
+        void LoadBinaryCode(const char* buffer, int bufferSize, std::vector<const char*>& reuseKeyBuffer, std::vector<const char*>& reuseIdBuffer);
+        void SaveBinaryFile(FILE* fp) const;
     public:
         void SetStringDelimiter(const char* begin, const char* end);
         void SetScriptDelimiter(const char* begin, const char* end);
@@ -1379,21 +1405,26 @@ namespace DslParser
         int GetErrorNum(void)const { return m_ErrorNum; }
         const char* GetErrorInfo(int index) const
         {
-            if (index < 0 || index >= m_ErrorNum || index >= MAX_RECORD_ERROR_NUM)
+            if (index < 0 || index >= m_ErrorNum)
                 return "";
-            return m_ErrorInfo[index];
+            auto* ptr = m_Buffer.GetSingleErrorInfoBuffer(index);
+            if (!ptr)
+                return "";
+            return ptr;
         }
         char* NewErrorInfo(void)
         {
             m_HasError = TRUE;
-            if (m_ErrorNum < MAX_RECORD_ERROR_NUM) {
+            auto* ptr = m_Buffer.GetSingleErrorInfoBuffer(m_ErrorNum);
+            if (ptr) {
                 ++m_ErrorNum;
-                return m_ErrorInfo[m_ErrorNum - 1];
+                return ptr;
             }
             else {
-                return 0;
+                return nullptr;
             }
         }
+        int GetSingleErrorInfoCapacity(void)const { return m_Buffer.GetSingleErrorInfoCapacity(); }
     public:
         char* AllocString(int len) const { return m_Buffer.AllocString(len); }
         char* AllocString(const char* src) const { return m_Buffer.AllocString(src); }
@@ -1425,7 +1456,6 @@ namespace DslParser
         int m_IsDebugInfoEnable;
     private:
         int	m_HasError;
-        char m_ErrorInfo[MAX_RECORD_ERROR_NUM][MAX_ERROR_INFO_CAPACITY];
         int m_ErrorNum;
     public:
         static bool Mac2Unix(char* buf, int len);
@@ -1483,11 +1513,11 @@ namespace DslParser
                 return m_Iterator;
             }
         public:
-            int operator ==(const Iterator& other) const
+            bool operator ==(const Iterator& other) const
             {
                 return m_pSource == other.m_pSource && m_Iterator == other.m_Iterator && m_EndIterator == other.m_EndIterator;
             }
-            int operator !=(const Iterator& other) const
+            bool operator !=(const Iterator& other) const
             {
                 return !(operator ==(other));
             }

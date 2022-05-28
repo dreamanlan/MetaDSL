@@ -17,12 +17,12 @@ implements(ICurly)
 		Exec(str : string)
 		int
 		{
-			return <- atoi(str) + m_Abc;
+			return atoi(str) + m_Abc;
 		};
 		GetAbc()
 		int
 		{
-			return <- m_Abc;
+			return m_Abc;
 		};
 	};
 	private

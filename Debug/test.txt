@@ -99,5 +99,5 @@ externsion(ifndef)extends(Statement)
 
 main()int
 {
-    return a*b+4;
+    return <- a*b+4;
 };

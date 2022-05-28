@@ -250,6 +250,19 @@ namespace DslParser
             return 0;
         return m_Impl->peekChar(ix);
     }
+    char DslTokenApi::peekNextValidChar(int beginIx)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->peekNextValidChar(beginIx);
+    }
+    char DslTokenApi::peekNextValidChar(int beginIx, int& index)const
+    {
+        index = -1;
+        if (!m_Impl)
+            return 0;
+        return m_Impl->peekNextValidChar(beginIx, index);
+    }
     void DslTokenApi::getOperatorToken(void)
     {
         if (!m_Impl)
@@ -261,6 +274,12 @@ namespace DslParser
         if (!m_Impl)
             return 0;
         return m_Impl->getOperatorTokenValue();
+    }
+    int DslTokenApi::isNotIdentifierAndEndParenthesis(char c)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isNotIdentifierAndEndParenthesis(c);
     }
     int DslTokenApi::isWhiteSpace(char c) const
     {

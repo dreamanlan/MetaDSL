@@ -41,6 +41,10 @@ namespace Dsl
                 if (tok == "return") {
                     string oldCurToken = dslToken.getCurToken();
                     string oldLastToken = dslToken.getLastToken();
+                    int index;
+                    char nc = dslToken.PeekNextValidChar(0, out index);
+                    if (nc == '<' && dslToken.PeekChar(index + 1) == '-')
+                        return false;
                     dslToken.setCurToken("<-");
                     dslToken.setLastToken(oldCurToken);
                     dslToken.enqueueToken(dslToken.getCurToken(), dslToken.getOperatorTokenValue(), line);

@@ -36,9 +36,12 @@ skill(kkk)
 	template<:a, b, c:>class A;
 	a::b::c;
 	a::b(abcd);
-	a::(abcd);
-	b::[abcd];
-	c::{abcd};
+	a :: (abcd);
+	b :: [abcd];
+	c :: 
+	{
+		abcd;
+	};
 	{%abcd%};
 	[%abcd%];
 	(%abcd%);
