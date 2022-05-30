@@ -970,24 +970,27 @@ namespace Brace
                 m_Op1 = LoadHelper(*cond, m_LoadInfo1);
                 m_Op2 = LoadHelper(*op1, m_LoadInfo2);
                 m_Op3 = LoadHelper(*op2, m_LoadInfo3);
-                if (m_LoadInfo2.Type == BRACE_DATA_TYPE_STRING || m_LoadInfo3.Type == BRACE_DATA_TYPE_STRING) {
+                auto realType1 = m_LoadInfo1.GetLoadTimeRealType(proc);
+                auto realType2 = m_LoadInfo2.GetLoadTimeRealType(proc);
+                auto realType3 = m_LoadInfo3.GetLoadTimeRealType(proc);
+                if (realType2.Type == BRACE_DATA_TYPE_STRING || realType3.Type == BRACE_DATA_TYPE_STRING) {
                     m_ResultInfo.Type = BRACE_DATA_TYPE_STRING;
                     executor = std::bind(&CondExp::ExecuteString, this);
                 }
-                else if (m_LoadInfo2.Type == BRACE_DATA_TYPE_BOOL && m_LoadInfo3.Type == BRACE_DATA_TYPE_BOOL) {
+                else if (realType2.Type == BRACE_DATA_TYPE_BOOL && realType3.Type == BRACE_DATA_TYPE_BOOL) {
                     m_ResultInfo.Type = BRACE_DATA_TYPE_BOOL;
                     executor = std::bind(&CondExp::ExecuteBool, this);
                 }
-                else if (NeedFloatArithUnit(m_LoadInfo2.Type, m_LoadInfo3.Type)) {
-                    m_ResultInfo.Type = GetMaxType(m_LoadInfo2.Type, m_LoadInfo3.Type);
+                else if (NeedFloatArithUnit(realType2.Type, realType3.Type)) {
+                    m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
                     executor = std::bind(&CondExp::ExecuteFloat, this);
                 }
-                else if (NeedUnsignedArithUnit(m_LoadInfo2.Type, m_LoadInfo3.Type)) {
-                    m_ResultInfo.Type = GetMaxType(m_LoadInfo2.Type, m_LoadInfo3.Type);
+                else if (NeedUnsignedArithUnit(realType2.Type, realType3.Type)) {
+                    m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
                     executor = std::bind(&CondExp::ExecuteUInt, this);
                 }
                 else {
-                    m_ResultInfo.Type = GetMaxType(m_LoadInfo2.Type, m_LoadInfo3.Type);
+                    m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
                     executor = std::bind(&CondExp::ExecuteInt, this);
                 }
                 m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
@@ -1699,7 +1702,11 @@ namespace Brace
             std::swap(m_Args, args);
             std::swap(m_ArgLoadInfos, argLoadInfos);
             if (argLoadInfos.size() > 0) {
-                m_ResultInfo = argLoadInfos[argLoadInfos.size() - 1];
+                auto& lastLoadInfo = argLoadInfos[argLoadInfos.size() - 1];
+                auto lastRealType = lastLoadInfo.GetLoadTimeRealType(proc);
+                m_ResultInfo = lastLoadInfo;
+                m_ResultInfo.Type = lastRealType.Type;
+                m_ResultInfo.ObjectTypeId = lastRealType.ObjectTypeId;
                 m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
                 loadInfo = m_ResultInfo;
             }
