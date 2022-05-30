@@ -1,0 +1,316 @@
+/// ***Notice*** This file is a CPP file, not a header file
+
+#include "BraceScript.h"
+
+namespace Brace
+{
+    class LoopListExp final : public AbstractBraceApi
+    {
+    public:
+        LoopListExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_IteratorIndex(INVALID_INDEX), m_List(), m_LoadInfo(), m_Statements()
+        {
+        }
+    protected:
+        virtual bool LoadFunction(const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            if (funcData.IsHighOrder()) {
+                auto* list = funcData.GetLowerOrderFunction().GetParam(0);
+                m_List = LoadHelper(*list, m_LoadInfo);
+                PushBlock();
+                m_IteratorIndex = AllocVariable("$$", m_LoadInfo.Type);
+                for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
+                    BraceApiLoadInfo argLoadInfo;
+                    auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
+                    if (statement)
+                        m_Statements.push_back(std::move(statement));
+                }
+                m_ObjVars = CurBlockObjVars();
+                PopBlock();
+                executor = std::bind(&LoopListExp::Execute, this);
+            }
+            else {
+                //error
+                std::stringstream ss;
+                ss << "BraceScript error, " << funcData.GetId() << " line " << funcData.GetLine();
+                LogError(ss.str());
+            }
+            return true;
+        }
+        virtual bool LoadStatement(const DslData::StatementData& statementData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            //looplist(exp) func(args);
+            if (statementData.GetFunctionNum() == 2) {
+                auto* first = statementData.GetFirst()->AsFunction();
+                auto* second = statementData.GetSecond()->AsFunction();
+                const std::string& firstId = first->GetId();
+                const std::string& secondId = second->GetId();
+                if (firstId == "looplist" && !first->HaveStatement() && !first->HaveExternScript() &&
+                    !secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
+                    if (first->GetParamNum() > 0) {
+                        auto* exp = first->GetParam(0);
+                        m_List = LoadHelper(*exp, m_LoadInfo);
+                        m_IteratorIndex = AllocVariable("$$", m_LoadInfo.Type);
+                    }
+                    else {
+                        //error
+                        std::stringstream ss;
+                        ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
+                        LogError(ss.str());
+                    }
+                    BraceApiLoadInfo argLoadInfo;
+                    auto statement = LoadHelper(*second, argLoadInfo);
+                    if (statement)
+                        m_Statements.push_back(std::move(statement));
+                    executor = std::bind(&LoopListExp::Execute, this);
+                    return true;
+                }
+            }
+            return false;
+        }
+    private:
+        int Execute(void)const
+        {
+            auto& gvars = *GlobalVariables();
+            auto& vars = *CurRuntimeStack().Variables;
+            if (m_List)
+                m_List();
+            auto& obj = VarGetObject(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.VarIndex);
+            if (nullptr != obj) {
+                for (auto& e : { obj }) {
+                    VarSetObject(vars, m_IteratorIndex, e);
+                    for (auto& statement : m_Statements) {
+                        int v = statement();
+                        if (v == BRACE_FLOW_CONTROL_CONTINUE) {
+                            break;
+                        }
+                        else if (v != BRACE_FLOW_CONTROL_NORMAL) {
+                            FreeObjVars(vars, m_ObjVars);
+                            if (v == BRACE_FLOW_CONTROL_BREAK)
+                                return BRACE_FLOW_CONTROL_NORMAL;
+                            return v;
+                        }
+                    }
+                }
+            }
+            FreeObjVars(vars, m_ObjVars);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+    private:
+        int m_IteratorIndex;
+        BraceApiExecutor m_List;
+        BraceApiLoadInfo m_LoadInfo;
+        std::vector<BraceApiExecutor> m_Statements;
+        std::vector<int> m_ObjVars;
+    };
+
+	class ArrayExp final : public AbstractBraceApi
+    {
+    public:
+        ArrayExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class HashtableExp final : public AbstractBraceApi
+    {
+    public:
+        HashtableExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class LambdaExp final : public AbstractBraceApi
+    {
+    public:
+        LambdaExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadFunction(const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            //(args) => {...}; or (args)int => {...}; or [...](args) => {...}; or [...](args)int => {...};
+            auto* f0 = data.GetParam(0);
+            auto* f1 = data.GetParam(1);
+            bool hasError = false;
+            if (f0 && (f0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION ||
+                f0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_STATEMENT) &&
+                f1 && f1->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                std::string func = GenTempVarName();
+                auto* proc = PushNewProcInfo(func);
+                DslData::FunctionData* pCaptures = nullptr;
+                DslData::FunctionData* pParams = nullptr;
+                if (f0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                    pParams = static_cast<DslData::FunctionData*>(f0);
+                }
+                else {
+                    DslData::StatementData* pSD = static_cast<DslData::StatementData*>(f0);
+                    pParams = pSD->GetFirst()->AsFunction();
+                    auto* pRet = pSD->GetSecond();
+                    auto* pRetFunc = pRet->AsFunction();
+                    auto* pRetVal = pRet->AsValue();
+                    if (pRetFunc && pRetFunc->GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON) {
+                        auto& typeName = pRetFunc->GetId();
+                        int type = GetDataType(typeName);
+                        std::string tname = GenTempVarName();
+                        int varIndex = AllocVariable(tname, type);
+                        proc->RetValue = VarInfo(tname, type, varIndex);
+                    }
+                    else if (pRetVal) {
+                        auto& typeName = pRetVal->GetId();
+                        int type = GetDataType(typeName);
+                        std::string tname = GenTempVarName();
+                        int varIndex = AllocVariable(tname, type);
+                        proc->RetValue = VarInfo(tname, type, varIndex);
+                    }
+                    else {
+                        hasError = true;
+                    }
+                }
+                if (pParams->IsHighOrder())
+                    pCaptures = &pParams->GetLowerOrderFunction();
+                int num = pParams->GetParamNum();
+                for (int ix = 0; ix < num; ++ix) {
+                    auto* p = pParams->GetParam(ix);
+                    if (p->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                        auto* pf = static_cast<const DslData::FunctionData*>(p);
+                        if (pf->IsOperatorParamClass() && pf->GetId() == ":") {
+                            auto& name = pf->GetParamId(0);
+                            auto& typeName = pf->GetParamId(1);
+                            int type = GetDataType(typeName);
+                            int varIndex = AllocVariable(name, type);
+                            proc->Params.push_back(VarInfo(name, type, varIndex));
+                        }
+                    }
+                    else {
+                        hasError = true;
+                    }
+                }
+                auto* pStatements = static_cast<DslData::FunctionData*>(f1);
+                num = pStatements->GetParamNum();
+                for (int ix = 0; ix < num; ++ix) {
+                    auto* exp = pStatements->GetParam(ix);
+                    BraceApiLoadInfo expLoadInfo;
+                    auto statement = LoadHelper(*exp, expLoadInfo);
+                    if (statement)
+                        proc->Codes.push_back(std::move(statement));
+                }
+                loadInfo = BraceApiLoadInfo();
+                executor = nullptr;
+                PopProcInfo();
+                if (!hasError) {
+                    return true;
+                }
+            }
+            else {
+                hasError = true;
+            }
+            if (hasError) {
+                std::stringstream ss;
+                ss << "lambda syntax error, line " << data.GetLine();
+                LogError(ss.str());
+            }
+            return false;
+        }
+    };
+    class LinqExp final : public AbstractBraceApi
+    {
+    public:
+        LinqExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class MemberSetExp final : public AbstractBraceApi
+    {
+    public:
+        MemberSetExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class MemberGetExp final : public AbstractBraceApi
+    {
+    public:
+        MemberGetExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class MemberCallExp final : public AbstractBraceApi
+    {
+    public:
+        MemberCallExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class CollectionSetExp final : public AbstractBraceApi
+    {
+    public:
+        CollectionSetExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class CollectionGetExp final : public AbstractBraceApi
+    {
+    public:
+        CollectionGetExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+    class CollectionCallExp final : public AbstractBraceApi
+    {
+    public:
+        CollectionCallExp(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        {
+            executor = nullptr;
+            return true;
+        }
+    };
+}

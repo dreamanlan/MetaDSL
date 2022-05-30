@@ -1,10 +1,14 @@
-func(main)args($a:int32, $b:float)float
+func(main)args($a:&int32, $b:float)float
 {
+	$t = $a;
+	$a = 456;
+	echo($t, $a);
 	return <- $a * $b + 123;
 };
 
-@r = main(12345,1.23);
-echo(@r);
+@ra = 12345;
+@r = main(@ra,1.23);
+echo("r:" + @r + " ra:" + @ra);
 
 if(@r>0){
 	echo("yes");

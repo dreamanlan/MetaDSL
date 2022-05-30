@@ -6,6 +6,7 @@
 #include <deque>
 #include <unordered_map>
 #include <functional>
+#include <memory>
 
 namespace Brace
 {
@@ -36,19 +37,167 @@ namespace Brace
         BRACE_DATA_TYPE_DOUBLE,
         BRACE_DATA_TYPE_STRING,
         BRACE_DATA_TYPE_OBJECT,
+        BRACE_DATA_TYPE_REF,
         BRACE_DATA_TYPE_NUM
     };
     enum BraceObjectTypeIdEnum
     {
-        BRACE_OBJECT_UNKNOWN = -1,
-        BRACE_OBJECT_ARRAY = 0,
-        BRACE_OBJECT_HASHTABLE,
-        BRACE_OBJECT_NUM
+        BRACE_PREDEFINED_OBJECT_TYPE_UNKNOWN = -1,
+        BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ = 0,
+        BRACE_PREDEFINED_OBJECT_TYPE_NULL,
+        BRACE_PREDEFINED_OBJECT_TYPE_NUM
     };
 
+    class IBraceObject
+    {
+    public:
+        virtual int GetObjectTypeId(void)const = 0;
+    public:
+        virtual ~IBraceObject(void) {}
+    };
+
+    template<int kObjTypeId>
+    class BraceObjectBaseT : public IBraceObject
+    {
+    public:
+        static const int ObjTypeId = kObjTypeId;
+    public:
+        virtual int GetObjectTypeId(void)const override { return ObjTypeId; }
+    };
+
+    struct DataTypeInfo
+    {
+        int Type;
+        int ObjectTypeId;
+
+        DataTypeInfo(void) = default;
+        DataTypeInfo(int type, int objTypeId) :Type(type), ObjectTypeId(objTypeId)
+        {}
+    };
+    struct RegisterInfo : public DataTypeInfo
+    {
+        int VarIndex;
+
+        RegisterInfo(void) = default;
+    };
+    struct GlobalLocalRegisterInfo : public RegisterInfo
+    {
+        bool IsGlobal;
+
+        GlobalLocalRegisterInfo(void) = default;
+    };
+    struct VarInfo final : public GlobalLocalRegisterInfo
+    {
+        std::string Name;
+
+        VarInfo(void) :Name()
+        {
+            Type = BRACE_DATA_TYPE_UNKNOWN;
+            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            VarIndex = INVALID_INDEX;
+            IsGlobal = false;
+        }
+        VarInfo(const std::string& name, int type, int objTypeId, int index) :Name(name)
+        {
+            Type = type;
+            ObjectTypeId = objTypeId;
+            VarIndex = index;
+            IsGlobal = false;
+        }
+        VarInfo(const std::string& name, int type, int objTypeId, int index, bool isGlobal) :Name(name)
+        {
+            Type = type;
+            ObjectTypeId = objTypeId;
+            VarIndex = index;
+            IsGlobal = isGlobal;
+        }
+    };
+    struct ParamRetInfo final : public RegisterInfo
+    {
+        std::string Name;
+        bool IsRef;
+
+        ParamRetInfo(void) :Name(), IsRef(false)
+        {
+            Type = BRACE_DATA_TYPE_UNKNOWN;
+            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            VarIndex = INVALID_INDEX;
+        }
+        ParamRetInfo(const std::string& name, int type, int objTypeId, int index) :Name(name), IsRef(false)
+        {
+            Type = type;
+            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            VarIndex = index;
+        }
+        ParamRetInfo(const std::string& name, int type, int objTypeId, int index, bool isRef) :Name(name), IsRef(isRef)
+        {
+            Type = type;
+            ObjectTypeId = objTypeId;
+            VarIndex = index;
+        }
+    };
+    struct ProcInfo;
+    struct BraceApiLoadInfo final : public GlobalLocalRegisterInfo
+    {
+        bool IsTempVar;
+
+        BraceApiLoadInfo(void) :IsTempVar(true)
+        {
+            Type = BRACE_DATA_TYPE_UNKNOWN;
+            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            VarIndex = INVALID_INDEX;
+            IsGlobal = false;
+        }
+
+        DataTypeInfo GetLoadTimeRealType(const ProcInfo& proc) const;
+    };
     struct VariableInfo;
+    struct ReferenceInfo final : public RegisterInfo
+    {
+        VariableInfo* Vars;
+
+        ReferenceInfo(void):Vars(nullptr)
+        {
+            Type = BRACE_DATA_TYPE_UNKNOWN;
+            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            VarIndex = INVALID_INDEX;
+        }
+        ReferenceInfo(int type, int index, VariableInfo* vars) :Vars(vars)
+        {
+            Type = type;
+            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            VarIndex = index;
+        }
+        ReferenceInfo(int type, int objTypeId, int index, VariableInfo* vars) :Vars(vars)
+        {
+            Type = type;
+            ObjectTypeId = objTypeId;
+            VarIndex = index;
+        }
+    };
+
+    struct VariableInfo final
+    {
+        std::vector<bool> BoolVars;
+        std::vector<int8_t> Int8Vars;
+        std::vector<int16_t> Int16Vars;
+        std::vector<int32_t> Int32Vars;
+        std::vector<int64_t> Int64Vars;
+        std::vector<uint8_t> Uint8Vars;
+        std::vector<uint16_t> Uint16Vars;
+        std::vector<uint32_t> Uint32Vars;
+        std::vector<uint64_t> Uint64Vars;
+        std::vector<float> FloatVars;
+        std::vector<double> DoubleVars;
+        std::vector<std::string> StringVars;
+        std::vector<std::shared_ptr<IBraceObject>> ObjectVars;
+        std::vector<ReferenceInfo> ReferenceVars;
+
+        int AllocVariable(int type);
+    };
+
     typedef void (*VarAssignPtr)(VariableInfo&, int, VariableInfo&, int);
-    extern VarAssignPtr GetVarAssignPtr(int varType, int srcVarType);
+    extern VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIsRef);
     extern const char* GetDataTypeName(int type);
     extern int GetDataType(const std::string& typeName);
 
@@ -91,54 +240,56 @@ namespace Brace
         return false;
     }
 
-    class IBraceObject
-    {
-    public:
-        virtual int GetObjectTypeId(void)const { return BRACE_OBJECT_UNKNOWN; }
-    public:
-        virtual ~IBraceObject(void) {}
-    };
+#define DEFINE_VAR_GET(POSTFIX, NAME, TYPE) \
+    static inline TYPE VarGet##POSTFIX(VariableInfo& info, int index)\
+    {\
+        return info.NAME[index];\
+    }
 
-    template<typename BaseClassT, int TypeId>
-    class BaseBraceObjectT : public BaseClassT, public IBraceObject
-    {
-    public:
-        virtual int GetObjectTypeId(void)const override { return TypeId; }
-    };
+#define DEFINE_VAR_SET(POSTFIX, NAME, TYPE) \
+    static inline void VarSet##POSTFIX(VariableInfo& info, int index, TYPE val)\
+    {\
+        info.NAME[index] = val;\
+    }
 
-    struct VarTypeInfo
-    {
-        int Type;
-        int VarIndex;
-        bool IsGlobal;
+    DEFINE_VAR_GET(Bool, BoolVars, bool);
+    DEFINE_VAR_GET(Int8, Int8Vars, int8_t);
+    DEFINE_VAR_GET(Int16, Int16Vars, int16_t);
+    DEFINE_VAR_GET(Int32, Int32Vars, int32_t);
+    DEFINE_VAR_GET(Int64, Int64Vars, int64_t);
+    DEFINE_VAR_GET(Uint8, Uint8Vars, uint8_t);
+    DEFINE_VAR_GET(Uint16, Uint16Vars, uint16_t);
+    DEFINE_VAR_GET(Uint32, Uint32Vars, uint32_t);
+    DEFINE_VAR_GET(Uint64, Uint64Vars, uint64_t);
+    DEFINE_VAR_GET(Float, FloatVars, float);
+    DEFINE_VAR_GET(Double, DoubleVars, double);
+    DEFINE_VAR_GET(String, StringVars, const std::string&);
+    DEFINE_VAR_GET(Object, ObjectVars, const std::shared_ptr<IBraceObject>&);
+    DEFINE_VAR_GET(Ref, ReferenceVars, const ReferenceInfo&);
 
-        VarTypeInfo(void) :Type(BRACE_DATA_TYPE_UNKNOWN), VarIndex(INVALID_INDEX), IsGlobal(false)
-        {}
-        VarTypeInfo(int type, int varIndex) :Type(type), VarIndex(varIndex), IsGlobal(false)
-        {}
-        VarTypeInfo(int type, int varIndex, bool isGlobal) :Type(type), VarIndex(varIndex), IsGlobal(isGlobal)
-        {}
-    };
-    struct VarInfo final : public VarTypeInfo
-    {
-        std::string Name;
+    DEFINE_VAR_SET(Bool, BoolVars, bool);
+    DEFINE_VAR_SET(Int8, Int8Vars, int8_t);
+    DEFINE_VAR_SET(Int16, Int16Vars, int16_t);
+    DEFINE_VAR_SET(Int32, Int32Vars, int32_t);
+    DEFINE_VAR_SET(Int64, Int64Vars, int64_t);
+    DEFINE_VAR_SET(Uint8, Uint8Vars, uint8_t);
+    DEFINE_VAR_SET(Uint16, Uint16Vars, uint16_t);
+    DEFINE_VAR_SET(Uint32, Uint32Vars, uint32_t);
+    DEFINE_VAR_SET(Uint64, Uint64Vars, uint64_t);
+    DEFINE_VAR_SET(Float, FloatVars, float);
+    DEFINE_VAR_SET(Double, DoubleVars, double);
+    DEFINE_VAR_SET(String, StringVars, const std::string&);
+    DEFINE_VAR_SET(Object, ObjectVars, const std::shared_ptr<IBraceObject>&);
+    DEFINE_VAR_SET(Ref, ReferenceVars, const ReferenceInfo&);
 
-        VarInfo(void) :VarTypeInfo(), Name() 
-        {}
-        VarInfo(const std::string& name, int type, int index) :VarTypeInfo(type, index), Name(name) 
-        {}
-        VarInfo(const std::string& name, int type, int index, bool isGlobal) :VarTypeInfo(type, index, isGlobal), Name(name) 
-        {}
-    };
-    struct BraceApiLoadInfo final : public VarTypeInfo
+    static inline void VarSetString(VariableInfo& info, int index, std::string&& val)
     {
-        BraceApiLoadInfo(void) :VarTypeInfo()
-        {}
-        BraceApiLoadInfo(int type, int varIndex) :VarTypeInfo(type, varIndex)
-        {}
-        BraceApiLoadInfo(int type, int index, bool isGlobal) :VarTypeInfo(type, index, isGlobal)
-        {}
-    };
+        info.StringVars[index] = std::move(val);
+    }
+    static inline void VarSetObject(VariableInfo& info, int index, std::shared_ptr<IBraceObject>&& val)
+    {
+        info.ObjectVars[index] = std::move(val);
+    }
 
     /// Load can be considered in two ways. One is to prepare the execution environment for the current API. IBraceApi forms a tree code 
     /// structure and compound statements can also be added to the language as an API, runtime performance may depend more on c++ optimization
@@ -165,30 +316,11 @@ namespace Brace
         IBraceApi& operator=(IBraceApi&&) noexcept = delete;
     };
 
-    struct VariableInfo final
-    {
-        std::vector<bool> BoolVars;
-        std::vector<int8_t> Int8Vars;
-        std::vector<int16_t> Int16Vars;
-        std::vector<int32_t> Int32Vars;
-        std::vector<int64_t> Int64Vars;
-        std::vector<uint8_t> Uint8Vars;
-        std::vector<uint16_t> Uint16Vars;
-        std::vector<uint32_t> Uint32Vars;
-        std::vector<uint64_t> Uint64Vars;
-        std::vector<float> FloatVars;
-        std::vector<double> DoubleVars;
-        std::vector<std::string> StringVars;
-        std::vector<IBraceObject*> ObjectVars;
-
-        int AllocVariable(int type);
-    };
-
     struct ProcInfo final
     {
         std::string Name;
-        std::vector<VarInfo> Params;
-        VarInfo RetValue;
+        std::vector<ParamRetInfo> Params;
+        ParamRetInfo RetValue;
         std::unordered_map<std::string, VarInfo> VarTypeInfos;
         std::vector<BraceApiExecutor> Codes;
         VariableInfo VarInitInfo;
@@ -229,19 +361,19 @@ namespace Brace
     public:
         virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool LoadValue(const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadFunction(const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadStatement(const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadCall(const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadCall(ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
@@ -249,19 +381,23 @@ namespace Brace
         const char* GetTypeName(int type)const { return GetDataTypeName(type); }
         std::string GenTempVarName(void)const;
         ProcInfo* GetProcInfo(const std::string& name)const;
-        VarTypeInfo* GetGlobalVarTypeInfo(const std::string& name)const;
-        VarTypeInfo* GetVarTypeInfo(const std::string& name)const;
-        VarTypeInfo* GetConstTypeInfo(const std::string& name)const;
-        bool CanAssign(int destType, int srcType)const;
-        ProcInfo* CurProcInfo(void)const;
+        VarInfo* GetGlobalVarInfo(const std::string& name)const;
+        VarInfo* GetVarInfo(const std::string& name)const;
+        VarInfo* GetConstInfo(const std::string& name)const;
+        int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
+        const char* GetObjectTypeName(int objTypeId)const;
+        bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId)const;
         ProcInfo* PushNewProcInfo(const std::string& name)const;
         void PopProcInfo(void)const;
         int GenNextUniqueId(void)const;
         int CurBlockId(void)const;
+        std::vector<int>& CurBlockObjVars(void)const;
         void PushBlock(void)const;
         void PopBlock(void)const;
         int AllocGlobalVariable(const std::string& name, int type)const;
+        int AllocGlobalVariable(const std::string& name, int type, int objTypeId)const;
         int AllocVariable(const std::string& name, int type)const;
+        int AllocVariable(const std::string& name, int type, int objTypeId)const;
         int AllocConst(int tok_type, const std::string& value, int& type)const;
         void LogInfo(const std::string& msg)const;
         void LogWarn(const std::string& msg)const;
@@ -279,6 +415,8 @@ namespace Brace
         AbstractBraceApi(BraceScript& interpreter) :m_Interpreter(interpreter)
         {}
     private:
+        ProcInfo* CurProcInfo(void)const;
+    private:
         AbstractBraceApi(const AbstractBraceApi&) = delete;
         AbstractBraceApi& operator=(const AbstractBraceApi&) = delete;
         AbstractBraceApi(AbstractBraceApi&&) noexcept = delete;
@@ -287,6 +425,8 @@ namespace Brace
         BraceScript& GetInterpreter(void)const { return m_Interpreter; }
     private:
         BraceScript& m_Interpreter;
+    protected:
+        static void FreeObjVars(VariableInfo& vars, const std::vector<int>& objVars);
     };
 
     template<typename ApiT>
@@ -302,9 +442,20 @@ namespace Brace
     typedef std::stack<ProcInfo*> ProcInfoStack;
     typedef std::stack<RuntimeStackInfo> RuntimeStack;
     typedef std::function<void(const std::string&)> LogDelegation;
+    typedef std::function<int(const DslData::ISyntaxComponent&)> GetObjectTypeIdDelegation;
+    typedef std::function<const char* (int)> GetObjectTypeNameDelegation;
+    typedef std::function<bool(int,int)> ObjectAssignCheckDelegation;
     class BraceScript final
     {
         friend class AbstractBraceApi;
+        struct BlockInfo final
+        {
+            int BlockId;
+            std::vector<int> ObjVars;
+
+            BlockInfo(int blockId) :BlockId(blockId), ObjVars()
+            {}
+        };
     public:
         BraceScript(void);
         ~BraceScript(void);
@@ -312,6 +463,25 @@ namespace Brace
         LogDelegation OnInfo;
         LogDelegation OnWarn;
         LogDelegation OnError;
+        GetObjectTypeIdDelegation OnGetObjectTypeId;
+        GetObjectTypeNameDelegation OnGetObjectTypeName;
+        ObjectAssignCheckDelegation OnObjectAssignCheck;
+    public:
+        /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
+        /// See ExternaAPiRef.txt
+        /// -----------------------------------------------------------------------------------------------------------
+        /// RegisterApi("membercall", new BraceApiFactory<MemberCallExp>());
+        /// RegisterApi("memberset", new BraceApiFactory<MemberSetExp>());
+        /// RegisterApi("memberget", new BraceApiFactory<MemberGetExp>());
+        /// RegisterApi("collectioncall", new BraceApiFactory<CollectionCallExp>());
+        /// RegisterApi("collectionset", new BraceApiFactory<CollectionSetExp>());
+        /// RegisterApi("collectionget", new BraceApiFactory<CollectionGetExp>());
+        /// RegisterApi("linq", new BraceApiFactory<LinqExp>());
+        /// RegisterApi("lambda", new BraceApiFactory<LambdaExp>());
+        /// RegisterApi("array", new BraceApiFactory<ArrayExp>());
+        /// RegisterApi("hashtable", new BraceApiFactory<HashtableExp>());
+        /// RegisterApi("looplist", new BraceApiFactory<LoopListExp>());
+        /// -----------------------------------------------------------------------------------------------------------
         void RegisterApi(const std::string& id, IBraceApiFactory* pApiFactory);
         void RegisterApi(std::string&& id, IBraceApiFactory* pApiFactory);
         void Reset(void);
@@ -332,8 +502,9 @@ namespace Brace
         void LogError(const std::string& error);
         void AddSyntaxComponent(DslData::ISyntaxComponent* p);
         void AddApiInstance(IBraceApi* p);
-        const char* GetTypeName(int type)const { return GetDataTypeName(type); }
-        bool CanAssign(int destType, int srcType) const;
+        int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
+        const char* GetObjectTypeName(int objTypeId)const;
+        bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId) const;
         const ProcInfo* GetProcInfo(const std::string& name)const;
         ProcInfo* GetProcInfo(const std::string& name);
         const ProcInfo* CurProcInfo(void)const;
@@ -342,14 +513,18 @@ namespace Brace
         void PopProcInfo(void);
         int GenNextUniqueId(void) { return m_NextUniqueId++; }
         int CurBlockId(void)const;
+        const std::vector<int>& CurBlockObjVars(void)const;
+        std::vector<int>& CurBlockObjVars(void);
         void PushBlock(void);
         void PopBlock(void);
         std::string CalcVarKey(const std::string& name, int level)const;
         std::string CalcConstKey(const std::string& name)const;
         int AllocGlobalVariable(const std::string& name, int type);
-        int AllocConst(int tok_type, const std::string& value, int& type);
+        int AllocGlobalVariable(const std::string& name, int type, int objTypeId);
         auto FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level)const -> decltype(proc->VarTypeInfos.end());
         int AllocVariable(const std::string& name, int type);
+        int AllocVariable(const std::string& name, int type, int objTypeId);
+        int AllocConst(int tok_type, const std::string& value, int& type);
         BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& loadInfo);
     private:
         BraceApiExecutor LoadValue(const DslData::ValueData& data, BraceApiLoadInfo& loadInfo);
@@ -374,8 +549,8 @@ namespace Brace
         bool m_HasError;
         ProcInfoStack m_ProcInfoStack;
         int m_NextUniqueId;
-        int m_CurBlockId;
-        std::vector<int> m_LexicalScopeStack;
+        int m_NextBlockId;
+        std::vector<BlockInfo> m_LexicalScopeStack;
         ProcInfo* m_GlobalProc;
         VariableInfo* m_GlobalVariables;
         RuntimeStack m_RuntimeStack;
