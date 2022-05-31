@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
             script.Run();
 
             Brace::FunctionExecutor funcExer(script);
-            funcExer.Load("main");
+            funcExer.Build("main");
             Brace::VarSetI64(*script.GlobalVariables(), funcExer.ArgInfo(0)->Type, funcExer.ArgInfo(0)->VarIndex, 345);
             Brace::VarSetF64(*script.GlobalVariables(), funcExer.ArgInfo(1)->Type, funcExer.ArgInfo(1)->VarIndex, 3.14);
             funcExer.Run();

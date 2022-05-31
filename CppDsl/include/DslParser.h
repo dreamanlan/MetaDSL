@@ -103,10 +103,10 @@ namespace DslParser
         const char* StringEndDelimiter;
 
         DelimiterInfo(void)
-            :StringBeginDelimiter("\""), StringEndDelimiter("\""), ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}")
+            :ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}"), StringBeginDelimiter("\""), StringEndDelimiter("\"")
         {}
         DelimiterInfo(const char* strBeginDelim, const char* strEndDelim, const char* scpBeginDelim, const char* scpEndDelim)
-            :StringBeginDelimiter(strBeginDelim), StringEndDelimiter(strEndDelim), ScriptBeginDelimiter(scpBeginDelim), ScriptEndDelimiter(scpEndDelim)
+            :ScriptBeginDelimiter(scpBeginDelim), ScriptEndDelimiter(scpEndDelim), StringBeginDelimiter(strBeginDelim), StringEndDelimiter(strEndDelim)
         {}
     };
 

@@ -28,10 +28,10 @@ namespace DslData
         const std::string StringEndDelimiter;
 
         DelimiterInfo(void)
-            :StringBeginDelimiter("\""), StringEndDelimiter("\""), ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}")
+            :ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}"), StringBeginDelimiter("\""), StringEndDelimiter("\"")
         {}
         DelimiterInfo(const std::string& strBeginDelim, const std::string& strEndDelim, const std::string& scpBeginDelim, const std::string& scpEndDelim)
-            :StringBeginDelimiter(strBeginDelim), StringEndDelimiter(strEndDelim), ScriptBeginDelimiter(scpBeginDelim), ScriptEndDelimiter(scpEndDelim)
+            :ScriptBeginDelimiter(scpBeginDelim), ScriptEndDelimiter(scpEndDelim), StringBeginDelimiter(strBeginDelim), StringEndDelimiter(strEndDelim)
         {}
     };
 
@@ -43,7 +43,7 @@ namespace DslData
         std::vector<std::string> m_FirstComments;
         std::vector<std::string> m_LastComments;
 
-        SyntaxComponentCommentsInfo(void) :m_FirstComments(0), m_LastComments(0), m_FirstCommentOnNewLine(false), m_LastCommentOnNewLine(false)
+        SyntaxComponentCommentsInfo(void) :m_FirstCommentOnNewLine(false), m_LastCommentOnNewLine(false), m_FirstComments(0), m_LastComments(0)
         {}
     };
     struct FunctionCommentsInfo : public SyntaxComponentCommentsInfo

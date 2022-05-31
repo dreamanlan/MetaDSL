@@ -214,7 +214,18 @@ namespace Brace
     FunctionExecutor::FunctionExecutor(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Func(nullptr), m_Args(), m_ArgLoadInfos(), m_ArgAssigns(), m_ResultInfo(), m_ResultAssign(nullptr), m_CodeExecutor(nullptr)
     {
     }
-    void FunctionExecutor::Load(const ProcInfo& callerProc, const std::string& func)
+    void FunctionExecutor::Reset(void)
+    {
+        m_Func = nullptr;
+        m_Args.clear();
+        m_ArgLoadInfos.clear(); 
+        m_ArgAssigns.clear();
+        m_ResultInfo = BraceApiLoadInfo();
+        m_ResultAssign = nullptr;
+
+        m_CodeExecutor = nullptr;
+    }
+    void FunctionExecutor::Build(const ProcInfo& callerProc, const std::string& func)
     {
         //fake a FunctionData, we only need funcname and line.
         DslData::FunctionData funcData;
@@ -235,6 +246,10 @@ namespace Brace
             argLoadInfos.push_back(std::move(argInfo));
         }
         LoadCall(callerProc, funcData, std::move(args), std::move(argLoadInfos), resultInfo, m_CodeExecutor);
+    }
+    bool FunctionExecutor::IsValid(void)const
+    {
+        return (bool)m_CodeExecutor;
     }
     int FunctionExecutor::Run(void)const
     {
@@ -1782,63 +1797,34 @@ namespace Brace
             return DataTypeInfo(Type, ObjectTypeId);
         }
     }
+    DataTypeInfo BraceApiLoadInfo::GetLoadTimeRealType(const VariableInfo& vars) const
+    {
+        if (Type == BRACE_DATA_TYPE_REF) {
+            auto& ri = vars.ReferenceVars[VarIndex];
+            return DataTypeInfo(ri.Type, ri.ObjectTypeId);
+        }
+        else {
+            return DataTypeInfo(Type, ObjectTypeId);
+        }
+    }
 
     int VariableInfo::AllocVariable(int type)
     {
         switch (type) {
-        case BRACE_DATA_TYPE_BOOL: {
-            int ix = static_cast<int>(BoolVars.size());
-            BoolVars.push_back(false);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_INT8: {
-            int ix = static_cast<int>(Int8Vars.size());
-            Int8Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_INT16: {
-            int ix = static_cast<int>(Int16Vars.size());
-            Int16Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_INT32: {
-            int ix = static_cast<int>(Int32Vars.size());
-            Int32Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_INT64: {
-            int ix = static_cast<int>(Int64Vars.size());
-            Int64Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_UINT8: {
-            int ix = static_cast<int>(Uint8Vars.size());
-            Uint8Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_UINT16: {
-            int ix = static_cast<int>(Uint16Vars.size());
-            Uint16Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_UINT32: {
-            int ix = static_cast<int>(Uint32Vars.size());
-            Uint32Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_UINT64: {
-            int ix = static_cast<int>(Uint64Vars.size());
-            Uint64Vars.push_back(0);
-            return ix;
-        }
-        case BRACE_DATA_TYPE_FLOAT: {
-            int ix = static_cast<int>(FloatVars.size());
-            FloatVars.push_back(0);
-            return ix;
-        }
+        case BRACE_DATA_TYPE_BOOL:
+        case BRACE_DATA_TYPE_INT8:
+        case BRACE_DATA_TYPE_INT16:
+        case BRACE_DATA_TYPE_INT32:
+        case BRACE_DATA_TYPE_INT64:
+        case BRACE_DATA_TYPE_UINT8:
+        case BRACE_DATA_TYPE_UINT16:
+        case BRACE_DATA_TYPE_UINT32:
+        case BRACE_DATA_TYPE_UINT64:
+        case BRACE_DATA_TYPE_FLOAT:
         case BRACE_DATA_TYPE_DOUBLE: {
-            int ix = static_cast<int>(DoubleVars.size());
-            DoubleVars.push_back(0);
+            int ix = static_cast<int>(NumericVars.size());
+            NumericValue nv{};
+            NumericVars.push_back(nv);
             return ix;
         }
         case BRACE_DATA_TYPE_STRING: {
@@ -2170,12 +2156,12 @@ namespace Brace
                 if (value == "true" || value == "false") {
                     type = BRACE_DATA_TYPE_BOOL;
                     index = curProc->VarInitInfo.AllocVariable(type);
-                    curProc->VarInitInfo.BoolVars[index] = value == "true";
+                    curProc->VarInitInfo.NumericVars[index].BoolVal = value == "true";
                 }
                 else if (value == "null") {
                     type = BRACE_DATA_TYPE_OBJECT;
                     index = curProc->VarInitInfo.AllocVariable(type);
-                    curProc->VarInitInfo.BoolVars[index] = value == "true";
+                    curProc->VarInitInfo.ObjectVars[index] = nullptr;
                 }
                 break;
             case DslData::ValueData::VALUE_TYPE_STRING:
@@ -2189,12 +2175,12 @@ namespace Brace
                     if (v >= std::numeric_limits<float>::min() && v <= std::numeric_limits<float>::max()) {
                         type = BRACE_DATA_TYPE_FLOAT;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.FloatVars[index] = static_cast<float>(v);
+                        curProc->VarInitInfo.NumericVars[index].FloatVal = static_cast<float>(v);
                     }
                     else {
                         type = BRACE_DATA_TYPE_DOUBLE;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.DoubleVars[index] = v;
+                        curProc->VarInitInfo.NumericVars[index].DoubleVal = v;
                     }
                 }
                 else if (value.length() > 0 && value[0] == '-') {
@@ -2202,12 +2188,12 @@ namespace Brace
                     if (v >= std::numeric_limits<int32_t>::min()) {
                         type = BRACE_DATA_TYPE_INT32;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
+                        curProc->VarInitInfo.NumericVars[index].Int32Val = static_cast<int32_t>(v);
                     }
                     else if (v >= std::numeric_limits<int64_t>::min()) {
                         type = BRACE_DATA_TYPE_INT64;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.Int64Vars[index] = v;
+                        curProc->VarInitInfo.NumericVars[index].Int64Val = v;
                     }
                 }
                 else {
@@ -2215,22 +2201,22 @@ namespace Brace
                     if (v <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
                         type = BRACE_DATA_TYPE_INT32;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
+                        curProc->VarInitInfo.NumericVars[index].Int32Val = static_cast<int32_t>(v);
                     }
                     else if (v <= std::numeric_limits<uint32_t>::max()) {
                         type = BRACE_DATA_TYPE_UINT32;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.Uint32Vars[index] = static_cast<uint32_t>(v);
+                        curProc->VarInitInfo.NumericVars[index].UInt32Val = static_cast<uint32_t>(v);
                     }
                     else if (v <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
                         type = BRACE_DATA_TYPE_INT64;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.Int64Vars[index] = static_cast<int64_t>(v);
+                        curProc->VarInitInfo.NumericVars[index].Int64Val = static_cast<int64_t>(v);
                     }
                     else if (v <= std::numeric_limits<uint64_t>::max()) {
                         type = BRACE_DATA_TYPE_UINT64;
                         index = curProc->VarInitInfo.AllocVariable(type);
-                        curProc->VarInitInfo.Uint64Vars[index] = v;
+                        curProc->VarInitInfo.NumericVars[index].UInt64Val = v;
                     }
                 }
                 break;
@@ -2772,4 +2758,5 @@ namespace Brace
             sptr = nullptr;
         }
     }
+
 }

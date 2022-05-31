@@ -94,47 +94,223 @@ static inline double StrToDouble(const std::string& value)
 
 static inline void VarAssignBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = srcInfo.BoolVars[srcIndex];
+    info.NumericVars[destIndex].BoolVal = srcInfo.NumericVars[srcIndex].BoolVal;
 }
 static inline void VarAssignInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = srcInfo.Int8Vars[srcIndex];
+    info.NumericVars[destIndex].Int8Val = srcInfo.NumericVars[srcIndex].Int8Val;
 }
 static inline void VarAssignInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = srcInfo.Int16Vars[srcIndex];
+    info.NumericVars[destIndex].Int16Val = srcInfo.NumericVars[srcIndex].Int16Val;
 }
 static inline void VarAssignInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = srcInfo.Int32Vars[srcIndex];
+    info.NumericVars[destIndex].Int32Val = srcInfo.NumericVars[srcIndex].Int32Val;
 }
 static inline void VarAssignInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = srcInfo.Int64Vars[srcIndex];
+    info.NumericVars[destIndex].Int64Val = srcInfo.NumericVars[srcIndex].Int64Val;
 }
-static inline void VarAssignUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarAssignUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = srcInfo.Uint8Vars[srcIndex];
+    info.NumericVars[destIndex].UInt8Val = srcInfo.NumericVars[srcIndex].UInt8Val;
 }
-static inline void VarAssignUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarAssignUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = srcInfo.Uint16Vars[srcIndex];
+    info.NumericVars[destIndex].UInt16Val = srcInfo.NumericVars[srcIndex].UInt16Val;
 }
-static inline void VarAssignUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarAssignUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = srcInfo.Uint32Vars[srcIndex];
+    info.NumericVars[destIndex].UInt32Val = srcInfo.NumericVars[srcIndex].UInt32Val;
 }
-static inline void VarAssignUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarAssignUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = srcInfo.Uint64Vars[srcIndex];
+    info.NumericVars[destIndex].UInt64Val = srcInfo.NumericVars[srcIndex].UInt64Val;
 }
 static inline void VarAssignFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = srcInfo.FloatVars[srcIndex];
+    info.NumericVars[destIndex].FloatVal = srcInfo.NumericVars[srcIndex].FloatVal;
 }
 static inline void VarAssignDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = srcInfo.DoubleVars[srcIndex];
+    info.NumericVars[destIndex].DoubleVal = srcInfo.NumericVars[srcIndex].DoubleVal;
+}
+static inline void VarAssignFromRefBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].BoolVal = sri.Vars->NumericVars[sri.VarIndex].BoolVal;
+}
+static inline void VarAssignFromRefInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].Int8Val = sri.Vars->NumericVars[sri.VarIndex].Int8Val;
+}
+static inline void VarAssignFromRefInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].Int16Val = sri.Vars->NumericVars[sri.VarIndex].Int16Val;
+}
+static inline void VarAssignFromRefInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].Int32Val = sri.Vars->NumericVars[sri.VarIndex].Int32Val;
+}
+static inline void VarAssignFromRefInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].Int64Val = sri.Vars->NumericVars[sri.VarIndex].Int64Val;
+}
+static inline void VarAssignFromRefUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].UInt8Val = sri.Vars->NumericVars[sri.VarIndex].UInt8Val;
+}
+static inline void VarAssignFromRefUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].UInt16Val = sri.Vars->NumericVars[sri.VarIndex].UInt16Val;
+}
+static inline void VarAssignFromRefUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].UInt32Val = sri.Vars->NumericVars[sri.VarIndex].UInt32Val;
+}
+static inline void VarAssignFromRefUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].UInt64Val = sri.Vars->NumericVars[sri.VarIndex].UInt64Val;
+}
+static inline void VarAssignFromRefFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].FloatVal = sri.Vars->NumericVars[sri.VarIndex].FloatVal;
+}
+static inline void VarAssignFromRefDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    info.NumericVars[destIndex].DoubleVal = sri.Vars->NumericVars[sri.VarIndex].DoubleVal;
+}
+static inline void VarAssignToRefBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = srcInfo.NumericVars[srcIndex].BoolVal;
+}
+static inline void VarAssignToRefInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = srcInfo.NumericVars[srcIndex].Int8Val;
+}
+static inline void VarAssignToRefInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = srcInfo.NumericVars[srcIndex].Int16Val;
+}
+static inline void VarAssignToRefInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = srcInfo.NumericVars[srcIndex].Int32Val;
+}
+static inline void VarAssignToRefInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = srcInfo.NumericVars[srcIndex].Int64Val;
+}
+static inline void VarAssignToRefUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = srcInfo.NumericVars[srcIndex].UInt8Val;
+}
+static inline void VarAssignToRefUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = srcInfo.NumericVars[srcIndex].UInt16Val;
+}
+static inline void VarAssignToRefUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = srcInfo.NumericVars[srcIndex].UInt32Val;
+}
+static inline void VarAssignToRefUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = srcInfo.NumericVars[srcIndex].UInt64Val;
+}
+static inline void VarAssignToRefFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = srcInfo.NumericVars[srcIndex].FloatVal;
+}
+static inline void VarAssignToRefDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = srcInfo.NumericVars[srcIndex].DoubleVal;
+}
+static inline void VarAssignFromToRefBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = sri.Vars->NumericVars[sri.VarIndex].BoolVal;
+}
+static inline void VarAssignFromToRefInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = sri.Vars->NumericVars[sri.VarIndex].Int8Val;
+}
+static inline void VarAssignFromToRefInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = sri.Vars->NumericVars[sri.VarIndex].Int16Val;
+}
+static inline void VarAssignFromToRefInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = sri.Vars->NumericVars[sri.VarIndex].Int32Val;
+}
+static inline void VarAssignFromToRefInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = sri.Vars->NumericVars[sri.VarIndex].Int64Val;
+}
+static inline void VarAssignFromToRefUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = sri.Vars->NumericVars[sri.VarIndex].UInt8Val;
+}
+static inline void VarAssignFromToRefUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = sri.Vars->NumericVars[sri.VarIndex].UInt16Val;
+}
+static inline void VarAssignFromToRefUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = sri.Vars->NumericVars[sri.VarIndex].UInt32Val;
+}
+static inline void VarAssignFromToRefUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = sri.Vars->NumericVars[sri.VarIndex].UInt64Val;
+}
+static inline void VarAssignFromToRefFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = sri.Vars->NumericVars[sri.VarIndex].FloatVal;
+}
+static inline void VarAssignFromToRefDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+{
+    auto& ri = info.ReferenceVars[destIndex];
+    auto& sri = srcInfo.ReferenceVars[srcIndex];
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = sri.Vars->NumericVars[sri.VarIndex].DoubleVal;
 }
 static inline void VarAssignString(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
@@ -143,61 +319,6 @@ static inline void VarAssignString(VariableInfo& info, int destIndex, VariableIn
 static inline void VarAssignObject(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     info.ObjectVars[destIndex] = srcInfo.ObjectVars[srcIndex];
-}
-static inline void VarAssignFromRefBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = sri.Vars->BoolVars[sri.VarIndex];
-}
-static inline void VarAssignFromRefInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = sri.Vars->Int8Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = sri.Vars->Int16Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = sri.Vars->Int32Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = sri.Vars->Int64Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = sri.Vars->Uint8Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = sri.Vars->Uint16Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = sri.Vars->Uint32Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = sri.Vars->Uint64Vars[sri.VarIndex];
-}
-static inline void VarAssignFromRefFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = sri.Vars->FloatVars[sri.VarIndex];
-}
-static inline void VarAssignFromRefDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = sri.Vars->DoubleVars[sri.VarIndex];
 }
 static inline void VarAssignFromRefString(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
@@ -209,61 +330,6 @@ static inline void VarAssignFromRefObject(VariableInfo& info, int destIndex, Var
     auto& sri = srcInfo.ReferenceVars[srcIndex];
     info.ObjectVars[destIndex] = sri.Vars->ObjectVars[sri.VarIndex];
 }
-static inline void VarAssignToRefBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = srcInfo.BoolVars[srcIndex];
-}
-static inline void VarAssignToRefInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = srcInfo.Int8Vars[srcIndex];
-}
-static inline void VarAssignToRefInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = srcInfo.Int16Vars[srcIndex];
-}
-static inline void VarAssignToRefInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = srcInfo.Int32Vars[srcIndex];
-}
-static inline void VarAssignToRefInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = srcInfo.Int64Vars[srcIndex];
-}
-static inline void VarAssignToRefUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = srcInfo.Uint8Vars[srcIndex];
-}
-static inline void VarAssignToRefUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = srcInfo.Uint16Vars[srcIndex];
-}
-static inline void VarAssignToRefUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = srcInfo.Uint32Vars[srcIndex];
-}
-static inline void VarAssignToRefUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = srcInfo.Uint64Vars[srcIndex];
-}
-static inline void VarAssignToRefFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = srcInfo.FloatVars[srcIndex];
-}
-static inline void VarAssignToRefDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = srcInfo.DoubleVars[srcIndex];
-}
 static inline void VarAssignToRefString(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
@@ -273,72 +339,6 @@ static inline void VarAssignToRefObject(VariableInfo& info, int destIndex, Varia
 {
     auto& ri = info.ReferenceVars[destIndex];
     ri.Vars->ObjectVars[ri.VarIndex] = srcInfo.ObjectVars[srcIndex];
-}
-static inline void VarAssignFromToRefBool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = sri.Vars->BoolVars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = sri.Vars->Int8Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = sri.Vars->Int16Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = sri.Vars->Int32Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = sri.Vars->Int64Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = sri.Vars->Uint8Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = sri.Vars->Uint16Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = sri.Vars->Uint32Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = sri.Vars->Uint64Vars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = sri.Vars->FloatVars[sri.VarIndex];
-}
-static inline void VarAssignFromToRefDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
-{
-    auto& ri = info.ReferenceVars[destIndex];
-    auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = sri.Vars->DoubleVars[sri.VarIndex];
 }
 static inline void VarAssignFromToRefString(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
@@ -354,2125 +354,2124 @@ static inline void VarAssignFromToRefObject(VariableInfo& info, int destIndex, V
 }
 static inline void VarCastAssignBoolInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignBoolInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignBoolInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignBoolInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignBoolUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignBoolUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignBoolUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignBoolUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignBoolUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignBoolUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignBoolUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignBoolUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.BoolVars[destIndex] = static_cast<bool>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignInt8Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt8UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignInt8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignInt8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignInt8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int8Vars[destIndex] = static_cast<int8_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignInt16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignInt16Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt16UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignInt16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignInt16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int16Vars[destIndex] = static_cast<int16_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignInt32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignInt32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignInt32Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt32UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignInt32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int32Vars[destIndex] = static_cast<int32_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignInt64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignInt64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignInt64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignInt64Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignInt64UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Int64Vars[destIndex] = static_cast<int64_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignUint8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignUint8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignUint8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignUint8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignUint8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignUint8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignUint8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignUint8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
-static inline void VarCastAssignUint8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignUint8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignUint16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignUint16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignUint16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignUint16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignUint16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignUint16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignUint16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignUint16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
-static inline void VarCastAssignUint16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignUint16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignUint32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignUint32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignUint32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignUint32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignUint32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignUint32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignUint32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignUint32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
-static inline void VarCastAssignUint32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignUint32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignUint64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.BoolVars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignUint64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignUint64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignUint64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignUint64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignUint64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignUint64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignUint64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignUint64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignUint64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignUInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignFloatInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignFloatInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignFloatInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignFloatInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignFloatUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFloatUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignFloatUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFloatUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignFloatUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFloatUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignFloatUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFloatUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignFloatDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.FloatVars[destIndex] = static_cast<float>(srcInfo.DoubleVars[srcIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignDoubleInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Int8Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignDoubleInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Int16Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignDoubleInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Int32Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignDoubleInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Int64Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignDoubleUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignDoubleUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Uint8Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignDoubleUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignDoubleUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Uint16Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignDoubleUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignDoubleUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Uint32Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignDoubleUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignDoubleUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.Uint64Vars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignDoubleFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
-    info.DoubleVars[destIndex] = static_cast<double>(srcInfo.FloatVars[srcIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignFromRefBoolInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromRefBoolInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromRefBoolInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromRefBoolInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefBoolUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefBoolUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefBoolUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefBoolUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefBoolUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefBoolUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefBoolUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefBoolUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.BoolVars[destIndex] = static_cast<bool>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromRefInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromRefInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromRefInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefInt8Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt8UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefInt8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefInt8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefInt8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromRefInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int8Vars[destIndex] = static_cast<int8_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromRefInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromRefInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromRefInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromRefInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefInt16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefInt16Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt16UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefInt16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefInt16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromRefInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int16Vars[destIndex] = static_cast<int16_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromRefInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromRefInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromRefInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromRefInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefInt32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefInt32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefInt32Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt32UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefInt32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromRefInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int32Vars[destIndex] = static_cast<int32_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromRefInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromRefInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromRefInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromRefInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromRefInt64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefInt64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefInt64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefInt64Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefInt64UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromRefInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Int64Vars[destIndex] = static_cast<int64_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromRefUint8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromRefUint8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromRefUint8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromRefUint8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromRefUint8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefUint8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefUint8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefUint8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
-static inline void VarCastAssignFromRefUint8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromRefUint8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint8Vars[destIndex] = static_cast<uint8_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromRefUint16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromRefUint16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromRefUint16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromRefUint16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromRefUint16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefUint16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefUint16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefUint16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
-static inline void VarCastAssignFromRefUint16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromRefUint16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint16Vars[destIndex] = static_cast<uint16_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromRefUint32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromRefUint32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromRefUint32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromRefUint32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromRefUint32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefUint32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefUint32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefUint32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
-static inline void VarCastAssignFromRefUint32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromRefUint32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint32Vars[destIndex] = static_cast<uint32_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromRefUint64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromRefUint64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromRefUint64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromRefUint64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromRefUint64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefUint64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefUint64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefUint64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefUint64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromRefUint64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefUInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.Uint64Vars[destIndex] = static_cast<uint64_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromRefFloatInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromRefFloatInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromRefFloatInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromRefFloatInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefFloatUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefFloatUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefFloatUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefFloatUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefFloatUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefFloatUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefFloatUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefFloatUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefFloatDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.FloatVars[destIndex] = static_cast<float>(sri.Vars->DoubleVars[sri.VarIndex]);
+    info.NumericVars[destIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromRefDoubleInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Int8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromRefDoubleInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Int16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromRefDoubleInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Int32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromRefDoubleInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Int64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromRefDoubleUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefDoubleUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromRefDoubleUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefDoubleUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromRefDoubleUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefDoubleUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromRefDoubleUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromRefDoubleUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromRefDoubleFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    info.DoubleVars[destIndex] = static_cast<double>(sri.Vars->FloatVars[sri.VarIndex]);
+    info.NumericVars[destIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignToRefBoolInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignToRefBoolInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignToRefBoolInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignToRefBoolInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefBoolUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefBoolUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefBoolUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefBoolUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefBoolUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefBoolUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefBoolUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefBoolUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignToRefInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignToRefInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignToRefInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefInt8Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt8UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefInt8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefInt8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefInt8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignToRefInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignToRefInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignToRefInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignToRefInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignToRefInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefInt16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefInt16Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt16UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefInt16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefInt16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignToRefInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignToRefInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignToRefInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignToRefInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignToRefInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefInt32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefInt32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefInt32Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt32UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefInt32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignToRefInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignToRefInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
 static inline void VarCastAssignToRefInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignToRefInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignToRefInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignToRefInt64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefInt64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefInt64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefInt64Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefInt64UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignToRefInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignToRefUint8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignToRefUint8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignToRefUint8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignToRefUint8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignToRefUint8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefUint8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefUint8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefUint8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
-static inline void VarCastAssignToRefUint8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignToRefUint8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignToRefUint16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignToRefUint16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignToRefUint16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignToRefUint16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignToRefUint16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefUint16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefUint16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefUint16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
-static inline void VarCastAssignToRefUint16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignToRefUint16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignToRefUint32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignToRefUint32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignToRefUint32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignToRefUint32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignToRefUint32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefUint32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefUint32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefUint32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
-static inline void VarCastAssignToRefUint32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignToRefUint32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
-static inline void VarCastAssignToRefUint64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.BoolVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].BoolVal);
 }
-static inline void VarCastAssignToRefUint64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
-static inline void VarCastAssignToRefUint64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
-static inline void VarCastAssignToRefUint64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
-static inline void VarCastAssignToRefUint64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefUint64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefUint64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefUint64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefUint64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
-static inline void VarCastAssignToRefUint64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefUInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignToRefFloatInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignToRefFloatInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignToRefFloatInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignToRefFloatInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefFloatUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefFloatUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefFloatUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefFloatUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefFloatUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefFloatUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefFloatUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefFloatUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefFloatDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(srcInfo.DoubleVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(srcInfo.NumericVars[srcIndex].DoubleVal);
 }
 static inline void VarCastAssignToRefDoubleInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Int8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int8Val);
 }
 static inline void VarCastAssignToRefDoubleInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Int16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int16Val);
 }
 static inline void VarCastAssignToRefDoubleInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Int32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int32Val);
 }
 static inline void VarCastAssignToRefDoubleInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Int64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].Int64Val);
 }
-static inline void VarCastAssignToRefDoubleUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefDoubleUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Uint8Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt8Val);
 }
-static inline void VarCastAssignToRefDoubleUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefDoubleUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Uint16Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt16Val);
 }
-static inline void VarCastAssignToRefDoubleUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefDoubleUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Uint32Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt32Val);
 }
-static inline void VarCastAssignToRefDoubleUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignToRefDoubleUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.Uint64Vars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].UInt64Val);
 }
 static inline void VarCastAssignToRefDoubleFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(srcInfo.FloatVars[srcIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(srcInfo.NumericVars[srcIndex].FloatVal);
 }
 static inline void VarCastAssignFromToRefBoolInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromToRefBoolInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromToRefBoolInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromToRefBoolInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefBoolUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefBoolUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefBoolUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefBoolUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefBoolUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefBoolUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefBoolUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefBoolUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->BoolVars[ri.VarIndex] = static_cast<bool>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].BoolVal = static_cast<bool>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromToRefInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromToRefInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromToRefInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefInt8Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt8UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefInt8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefInt8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefInt8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromToRefInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int8Vars[ri.VarIndex] = static_cast<int8_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int8Val = static_cast<int8_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromToRefInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromToRefInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromToRefInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromToRefInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefInt16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefInt16Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt16UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefInt16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefInt16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromToRefInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int16Vars[ri.VarIndex] = static_cast<int16_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int16Val = static_cast<int16_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromToRefInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromToRefInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromToRefInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromToRefInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefInt32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefInt32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefInt32Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt32UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefInt32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromToRefInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int32Vars[ri.VarIndex] = static_cast<int32_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int32Val = static_cast<int32_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromToRefInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
 static inline void VarCastAssignFromToRefInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromToRefInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromToRefInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromToRefInt64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefInt64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefInt64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefInt64Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefInt64UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
 static inline void VarCastAssignFromToRefInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Int64Vars[ri.VarIndex] = static_cast<int64_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].Int64Val = static_cast<int64_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromToRefUint8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromToRefUint8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromToRefUint8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromToRefUint8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromToRefUint8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefUint8Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefUint8Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefUint8Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
-static inline void VarCastAssignFromToRefUint8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromToRefUint8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt8Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint8Vars[ri.VarIndex] = static_cast<uint8_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt8Val = static_cast<uint8_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromToRefUint16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromToRefUint16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromToRefUint16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromToRefUint16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromToRefUint16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefUint16Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefUint16Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefUint16Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
-static inline void VarCastAssignFromToRefUint16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromToRefUint16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt16Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint16Vars[ri.VarIndex] = static_cast<uint16_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt16Val = static_cast<uint16_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromToRefUint32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromToRefUint32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromToRefUint32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromToRefUint32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromToRefUint32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefUint32Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefUint32Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefUint32Uint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32UInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
-static inline void VarCastAssignFromToRefUint32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromToRefUint32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt32Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint32Vars[ri.VarIndex] = static_cast<uint32_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt32Val = static_cast<uint32_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
-static inline void VarCastAssignFromToRefUint64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Bool(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->BoolVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].BoolVal);
 }
-static inline void VarCastAssignFromToRefUint64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Int8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
-static inline void VarCastAssignFromToRefUint64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Int16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
-static inline void VarCastAssignFromToRefUint64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Int32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
-static inline void VarCastAssignFromToRefUint64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Int64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefUint64Uint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64UInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefUint64Uint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64UInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefUint64Uint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64UInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefUint64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Float(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-static inline void VarCastAssignFromToRefUint64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefUInt64Double(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->Uint64Vars[ri.VarIndex] = static_cast<uint64_t>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].UInt64Val = static_cast<uint64_t>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromToRefFloatInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromToRefFloatInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromToRefFloatInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromToRefFloatInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefFloatUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefFloatUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefFloatUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefFloatUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefFloatUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefFloatUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefFloatUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefFloatUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefFloatDouble(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->FloatVars[ri.VarIndex] = static_cast<float>(sri.Vars->DoubleVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].FloatVal = static_cast<float>(sri.Vars->NumericVars[sri.VarIndex].DoubleVal);
 }
 static inline void VarCastAssignFromToRefDoubleInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Int8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int8Val);
 }
 static inline void VarCastAssignFromToRefDoubleInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Int16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int16Val);
 }
 static inline void VarCastAssignFromToRefDoubleInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Int32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int32Val);
 }
 static inline void VarCastAssignFromToRefDoubleInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Int64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].Int64Val);
 }
-static inline void VarCastAssignFromToRefDoubleUint8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefDoubleUInt8(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Uint8Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt8Val);
 }
-static inline void VarCastAssignFromToRefDoubleUint16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefDoubleUInt16(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Uint16Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt16Val);
 }
-static inline void VarCastAssignFromToRefDoubleUint32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefDoubleUInt32(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Uint32Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt32Val);
 }
-static inline void VarCastAssignFromToRefDoubleUint64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+static inline void VarCastAssignFromToRefDoubleUInt64(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->Uint64Vars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].UInt64Val);
 }
 static inline void VarCastAssignFromToRefDoubleFloat(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
 {
     auto& ri = info.ReferenceVars[destIndex];
     auto& sri = srcInfo.ReferenceVars[srcIndex];
-    ri.Vars->DoubleVars[ri.VarIndex] = static_cast<double>(sri.Vars->FloatVars[sri.VarIndex]);
+    ri.Vars->NumericVars[ri.VarIndex].DoubleVal = static_cast<double>(sri.Vars->NumericVars[sri.VarIndex].FloatVal);
 }
-
 VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIsRef)
 {
     if (isRef && srcIsRef) {
@@ -2490,13 +2489,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromToRefBoolInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefBoolUint8;
+                return VarCastAssignFromToRefBoolUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefBoolUint16;
+                return VarCastAssignFromToRefBoolUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefBoolUint32;
+                return VarCastAssignFromToRefBoolUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefBoolUint64;
+                return VarCastAssignFromToRefBoolUInt64;
             }
         case BRACE_DATA_TYPE_INT8:
             switch (srcVarType) {
@@ -2511,13 +2510,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromToRefInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefInt8Uint8;
+                return VarCastAssignFromToRefInt8UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefInt8Uint16;
+                return VarCastAssignFromToRefInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefInt8Uint32;
+                return VarCastAssignFromToRefInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefInt8Uint64;
+                return VarCastAssignFromToRefInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromToRefInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2536,13 +2535,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromToRefInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefInt16Uint8;
+                return VarCastAssignFromToRefInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefInt16Uint16;
+                return VarCastAssignFromToRefInt16UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefInt16Uint32;
+                return VarCastAssignFromToRefInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefInt16Uint64;
+                return VarCastAssignFromToRefInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromToRefInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2561,13 +2560,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromToRefInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefInt32Uint8;
+                return VarCastAssignFromToRefInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefInt32Uint16;
+                return VarCastAssignFromToRefInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefInt32Uint32;
+                return VarCastAssignFromToRefInt32UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefInt32Uint64;
+                return VarCastAssignFromToRefInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromToRefInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2586,13 +2585,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarAssignFromToRefInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefInt64Uint8;
+                return VarCastAssignFromToRefInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefInt64Uint16;
+                return VarCastAssignFromToRefInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefInt64Uint32;
+                return VarCastAssignFromToRefInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefInt64Uint64;
+                return VarCastAssignFromToRefInt64UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromToRefInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2601,102 +2600,102 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
         case BRACE_DATA_TYPE_UINT8:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromToRefUint8Bool;
+                return VarCastAssignFromToRefUInt8Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromToRefUint8Int8;
+                return VarCastAssignFromToRefUInt8Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromToRefUint8Int16;
+                return VarCastAssignFromToRefUInt8Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromToRefUint8Int32;
+                return VarCastAssignFromToRefUInt8Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromToRefUint8Int64;
+                return VarCastAssignFromToRefUInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarAssignFromToRefUint8;
+                return VarAssignFromToRefUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefUint8Uint16;
+                return VarCastAssignFromToRefUInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefUint8Uint32;
+                return VarCastAssignFromToRefUInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefUint8Uint64;
+                return VarCastAssignFromToRefUInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromToRefUint8Float;
+                return VarCastAssignFromToRefUInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromToRefUint8Double;
+                return VarCastAssignFromToRefUInt8Double;
             }
         case BRACE_DATA_TYPE_UINT16:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromToRefUint16Bool;
+                return VarCastAssignFromToRefUInt16Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromToRefUint16Int8;
+                return VarCastAssignFromToRefUInt16Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromToRefUint16Int16;
+                return VarCastAssignFromToRefUInt16Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromToRefUint16Int32;
+                return VarCastAssignFromToRefUInt16Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromToRefUint16Int64;
+                return VarCastAssignFromToRefUInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefUint16Uint8;
+                return VarCastAssignFromToRefUInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarAssignFromToRefUint16;
+                return VarAssignFromToRefUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefUint16Uint32;
+                return VarCastAssignFromToRefUInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefUint16Uint64;
+                return VarCastAssignFromToRefUInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromToRefUint16Float;
+                return VarCastAssignFromToRefUInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromToRefUint16Double;
+                return VarCastAssignFromToRefUInt16Double;
             }
         case BRACE_DATA_TYPE_UINT32:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromToRefUint32Bool;
+                return VarCastAssignFromToRefUInt32Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromToRefUint32Int8;
+                return VarCastAssignFromToRefUInt32Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromToRefUint32Int16;
+                return VarCastAssignFromToRefUInt32Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromToRefUint32Int32;
+                return VarCastAssignFromToRefUInt32Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromToRefUint32Int64;
+                return VarCastAssignFromToRefUInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefUint32Uint8;
+                return VarCastAssignFromToRefUInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefUint32Uint16;
+                return VarCastAssignFromToRefUInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarAssignFromToRefUint32;
+                return VarAssignFromToRefUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefUint32Uint64;
+                return VarCastAssignFromToRefUInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromToRefUint32Float;
+                return VarCastAssignFromToRefUInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromToRefUint32Double;
+                return VarCastAssignFromToRefUInt32Double;
             }
         case BRACE_DATA_TYPE_UINT64:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromToRefUint64Bool;
+                return VarCastAssignFromToRefUInt64Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromToRefUint64Int8;
+                return VarCastAssignFromToRefUInt64Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromToRefUint64Int16;
+                return VarCastAssignFromToRefUInt64Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromToRefUint64Int32;
+                return VarCastAssignFromToRefUInt64Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromToRefUint64Int64;
+                return VarCastAssignFromToRefUInt64Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefUint64Uint8;
+                return VarCastAssignFromToRefUInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefUint64Uint16;
+                return VarCastAssignFromToRefUInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefUint64Uint32;
+                return VarCastAssignFromToRefUInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarAssignFromToRefUint64;
+                return VarAssignFromToRefUInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromToRefUint64Float;
+                return VarCastAssignFromToRefUInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromToRefUint64Double;
+                return VarCastAssignFromToRefUInt64Double;
             }
         case BRACE_DATA_TYPE_FLOAT:
             switch (srcVarType) {
@@ -2709,13 +2708,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromToRefFloatInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefFloatUint8;
+                return VarCastAssignFromToRefFloatUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefFloatUint16;
+                return VarCastAssignFromToRefFloatUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefFloatUint32;
+                return VarCastAssignFromToRefFloatUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefFloatUint64;
+                return VarCastAssignFromToRefFloatUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarAssignFromToRefFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2732,13 +2731,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromToRefDoubleInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromToRefDoubleUint8;
+                return VarCastAssignFromToRefDoubleUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromToRefDoubleUint16;
+                return VarCastAssignFromToRefDoubleUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromToRefDoubleUint32;
+                return VarCastAssignFromToRefDoubleUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromToRefDoubleUint64;
+                return VarCastAssignFromToRefDoubleUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromToRefDoubleFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2773,13 +2772,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromRefBoolInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefBoolUint8;
+                return VarCastAssignFromRefBoolUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefBoolUint16;
+                return VarCastAssignFromRefBoolUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefBoolUint32;
+                return VarCastAssignFromRefBoolUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefBoolUint64;
+                return VarCastAssignFromRefBoolUInt64;
             }
         case BRACE_DATA_TYPE_INT8:
             switch (srcVarType) {
@@ -2794,13 +2793,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromRefInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefInt8Uint8;
+                return VarCastAssignFromRefInt8UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefInt8Uint16;
+                return VarCastAssignFromRefInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefInt8Uint32;
+                return VarCastAssignFromRefInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefInt8Uint64;
+                return VarCastAssignFromRefInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromRefInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2819,13 +2818,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromRefInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefInt16Uint8;
+                return VarCastAssignFromRefInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefInt16Uint16;
+                return VarCastAssignFromRefInt16UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefInt16Uint32;
+                return VarCastAssignFromRefInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefInt16Uint64;
+                return VarCastAssignFromRefInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromRefInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2844,13 +2843,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromRefInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefInt32Uint8;
+                return VarCastAssignFromRefInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefInt32Uint16;
+                return VarCastAssignFromRefInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefInt32Uint32;
+                return VarCastAssignFromRefInt32UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefInt32Uint64;
+                return VarCastAssignFromRefInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromRefInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2869,13 +2868,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarAssignFromRefInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefInt64Uint8;
+                return VarCastAssignFromRefInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefInt64Uint16;
+                return VarCastAssignFromRefInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefInt64Uint32;
+                return VarCastAssignFromRefInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefInt64Uint64;
+                return VarCastAssignFromRefInt64UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromRefInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -2884,102 +2883,102 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
         case BRACE_DATA_TYPE_UINT8:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromRefUint8Bool;
+                return VarCastAssignFromRefUInt8Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromRefUint8Int8;
+                return VarCastAssignFromRefUInt8Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromRefUint8Int16;
+                return VarCastAssignFromRefUInt8Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromRefUint8Int32;
+                return VarCastAssignFromRefUInt8Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromRefUint8Int64;
+                return VarCastAssignFromRefUInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarAssignFromRefUint8;
+                return VarAssignFromRefUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefUint8Uint16;
+                return VarCastAssignFromRefUInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefUint8Uint32;
+                return VarCastAssignFromRefUInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefUint8Uint64;
+                return VarCastAssignFromRefUInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromRefUint8Float;
+                return VarCastAssignFromRefUInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromRefUint8Double;
+                return VarCastAssignFromRefUInt8Double;
             }
         case BRACE_DATA_TYPE_UINT16:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromRefUint16Bool;
+                return VarCastAssignFromRefUInt16Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromRefUint16Int8;
+                return VarCastAssignFromRefUInt16Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromRefUint16Int16;
+                return VarCastAssignFromRefUInt16Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromRefUint16Int32;
+                return VarCastAssignFromRefUInt16Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromRefUint16Int64;
+                return VarCastAssignFromRefUInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefUint16Uint8;
+                return VarCastAssignFromRefUInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarAssignFromRefUint16;
+                return VarAssignFromRefUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefUint16Uint32;
+                return VarCastAssignFromRefUInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefUint16Uint64;
+                return VarCastAssignFromRefUInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromRefUint16Float;
+                return VarCastAssignFromRefUInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromRefUint16Double;
+                return VarCastAssignFromRefUInt16Double;
             }
         case BRACE_DATA_TYPE_UINT32:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromRefUint32Bool;
+                return VarCastAssignFromRefUInt32Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromRefUint32Int8;
+                return VarCastAssignFromRefUInt32Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromRefUint32Int16;
+                return VarCastAssignFromRefUInt32Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromRefUint32Int32;
+                return VarCastAssignFromRefUInt32Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromRefUint32Int64;
+                return VarCastAssignFromRefUInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefUint32Uint8;
+                return VarCastAssignFromRefUInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefUint32Uint16;
+                return VarCastAssignFromRefUInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarAssignFromRefUint32;
+                return VarAssignFromRefUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefUint32Uint64;
+                return VarCastAssignFromRefUInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromRefUint32Float;
+                return VarCastAssignFromRefUInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromRefUint32Double;
+                return VarCastAssignFromRefUInt32Double;
             }
         case BRACE_DATA_TYPE_UINT64:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignFromRefUint64Bool;
+                return VarCastAssignFromRefUInt64Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignFromRefUint64Int8;
+                return VarCastAssignFromRefUInt64Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignFromRefUint64Int16;
+                return VarCastAssignFromRefUInt64Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignFromRefUint64Int32;
+                return VarCastAssignFromRefUInt64Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignFromRefUint64Int64;
+                return VarCastAssignFromRefUInt64Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefUint64Uint8;
+                return VarCastAssignFromRefUInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefUint64Uint16;
+                return VarCastAssignFromRefUInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefUint64Uint32;
+                return VarCastAssignFromRefUInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarAssignFromRefUint64;
+                return VarAssignFromRefUInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignFromRefUint64Float;
+                return VarCastAssignFromRefUInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignFromRefUint64Double;
+                return VarCastAssignFromRefUInt64Double;
             }
         case BRACE_DATA_TYPE_FLOAT:
             switch (srcVarType) {
@@ -2992,13 +2991,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromRefFloatInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefFloatUint8;
+                return VarCastAssignFromRefFloatUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefFloatUint16;
+                return VarCastAssignFromRefFloatUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefFloatUint32;
+                return VarCastAssignFromRefFloatUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefFloatUint64;
+                return VarCastAssignFromRefFloatUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarAssignFromRefFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3015,13 +3014,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFromRefDoubleInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFromRefDoubleUint8;
+                return VarCastAssignFromRefDoubleUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFromRefDoubleUint16;
+                return VarCastAssignFromRefDoubleUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFromRefDoubleUint32;
+                return VarCastAssignFromRefDoubleUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFromRefDoubleUint64;
+                return VarCastAssignFromRefDoubleUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignFromRefDoubleFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3056,13 +3055,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignToRefBoolInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefBoolUint8;
+                return VarCastAssignToRefBoolUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefBoolUint16;
+                return VarCastAssignToRefBoolUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefBoolUint32;
+                return VarCastAssignToRefBoolUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefBoolUint64;
+                return VarCastAssignToRefBoolUInt64;
             }
         case BRACE_DATA_TYPE_INT8:
             switch (srcVarType) {
@@ -3077,13 +3076,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignToRefInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefInt8Uint8;
+                return VarCastAssignToRefInt8UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefInt8Uint16;
+                return VarCastAssignToRefInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefInt8Uint32;
+                return VarCastAssignToRefInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefInt8Uint64;
+                return VarCastAssignToRefInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignToRefInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3102,13 +3101,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignToRefInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefInt16Uint8;
+                return VarCastAssignToRefInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefInt16Uint16;
+                return VarCastAssignToRefInt16UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefInt16Uint32;
+                return VarCastAssignToRefInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefInt16Uint64;
+                return VarCastAssignToRefInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignToRefInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3127,13 +3126,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignToRefInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefInt32Uint8;
+                return VarCastAssignToRefInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefInt32Uint16;
+                return VarCastAssignToRefInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefInt32Uint32;
+                return VarCastAssignToRefInt32UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefInt32Uint64;
+                return VarCastAssignToRefInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignToRefInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3152,13 +3151,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarAssignToRefInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefInt64Uint8;
+                return VarCastAssignToRefInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefInt64Uint16;
+                return VarCastAssignToRefInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefInt64Uint32;
+                return VarCastAssignToRefInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefInt64Uint64;
+                return VarCastAssignToRefInt64UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignToRefInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3167,102 +3166,102 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
         case BRACE_DATA_TYPE_UINT8:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignToRefUint8Bool;
+                return VarCastAssignToRefUInt8Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignToRefUint8Int8;
+                return VarCastAssignToRefUInt8Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignToRefUint8Int16;
+                return VarCastAssignToRefUInt8Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignToRefUint8Int32;
+                return VarCastAssignToRefUInt8Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignToRefUint8Int64;
+                return VarCastAssignToRefUInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarAssignToRefUint8;
+                return VarAssignToRefUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefUint8Uint16;
+                return VarCastAssignToRefUInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefUint8Uint32;
+                return VarCastAssignToRefUInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefUint8Uint64;
+                return VarCastAssignToRefUInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignToRefUint8Float;
+                return VarCastAssignToRefUInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignToRefUint8Double;
+                return VarCastAssignToRefUInt8Double;
             }
         case BRACE_DATA_TYPE_UINT16:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignToRefUint16Bool;
+                return VarCastAssignToRefUInt16Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignToRefUint16Int8;
+                return VarCastAssignToRefUInt16Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignToRefUint16Int16;
+                return VarCastAssignToRefUInt16Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignToRefUint16Int32;
+                return VarCastAssignToRefUInt16Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignToRefUint16Int64;
+                return VarCastAssignToRefUInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefUint16Uint8;
+                return VarCastAssignToRefUInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarAssignToRefUint16;
+                return VarAssignToRefUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefUint16Uint32;
+                return VarCastAssignToRefUInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefUint16Uint64;
+                return VarCastAssignToRefUInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignToRefUint16Float;
+                return VarCastAssignToRefUInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignToRefUint16Double;
+                return VarCastAssignToRefUInt16Double;
             }
         case BRACE_DATA_TYPE_UINT32:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignToRefUint32Bool;
+                return VarCastAssignToRefUInt32Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignToRefUint32Int8;
+                return VarCastAssignToRefUInt32Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignToRefUint32Int16;
+                return VarCastAssignToRefUInt32Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignToRefUint32Int32;
+                return VarCastAssignToRefUInt32Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignToRefUint32Int64;
+                return VarCastAssignToRefUInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefUint32Uint8;
+                return VarCastAssignToRefUInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefUint32Uint16;
+                return VarCastAssignToRefUInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarAssignToRefUint32;
+                return VarAssignToRefUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefUint32Uint64;
+                return VarCastAssignToRefUInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignToRefUint32Float;
+                return VarCastAssignToRefUInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignToRefUint32Double;
+                return VarCastAssignToRefUInt32Double;
             }
         case BRACE_DATA_TYPE_UINT64:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignToRefUint64Bool;
+                return VarCastAssignToRefUInt64Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignToRefUint64Int8;
+                return VarCastAssignToRefUInt64Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignToRefUint64Int16;
+                return VarCastAssignToRefUInt64Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignToRefUint64Int32;
+                return VarCastAssignToRefUInt64Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignToRefUint64Int64;
+                return VarCastAssignToRefUInt64Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefUint64Uint8;
+                return VarCastAssignToRefUInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefUint64Uint16;
+                return VarCastAssignToRefUInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefUint64Uint32;
+                return VarCastAssignToRefUInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarAssignToRefUint64;
+                return VarAssignToRefUInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignToRefUint64Float;
+                return VarCastAssignToRefUInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignToRefUint64Double;
+                return VarCastAssignToRefUInt64Double;
             }
         case BRACE_DATA_TYPE_FLOAT:
             switch (srcVarType) {
@@ -3275,13 +3274,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignToRefFloatInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefFloatUint8;
+                return VarCastAssignToRefFloatUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefFloatUint16;
+                return VarCastAssignToRefFloatUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefFloatUint32;
+                return VarCastAssignToRefFloatUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefFloatUint64;
+                return VarCastAssignToRefFloatUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarAssignToRefFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3298,13 +3297,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignToRefDoubleInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignToRefDoubleUint8;
+                return VarCastAssignToRefDoubleUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignToRefDoubleUint16;
+                return VarCastAssignToRefDoubleUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignToRefDoubleUint32;
+                return VarCastAssignToRefDoubleUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignToRefDoubleUint64;
+                return VarCastAssignToRefDoubleUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignToRefDoubleFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3339,13 +3338,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignBoolInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignBoolUint8;
+                return VarCastAssignBoolUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignBoolUint16;
+                return VarCastAssignBoolUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignBoolUint32;
+                return VarCastAssignBoolUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignBoolUint64;
+                return VarCastAssignBoolUInt64;
             }
         case BRACE_DATA_TYPE_INT8:
             switch (srcVarType) {
@@ -3360,13 +3359,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignInt8Uint8;
+                return VarCastAssignInt8UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignInt8Uint16;
+                return VarCastAssignInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignInt8Uint32;
+                return VarCastAssignInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignInt8Uint64;
+                return VarCastAssignInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3385,13 +3384,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignInt16Uint8;
+                return VarCastAssignInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignInt16Uint16;
+                return VarCastAssignInt16UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignInt16Uint32;
+                return VarCastAssignInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignInt16Uint64;
+                return VarCastAssignInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3410,13 +3409,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignInt32Uint8;
+                return VarCastAssignInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignInt32Uint16;
+                return VarCastAssignInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignInt32Uint32;
+                return VarCastAssignInt32UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignInt32Uint64;
+                return VarCastAssignInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3435,13 +3434,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarAssignInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignInt64Uint8;
+                return VarCastAssignInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignInt64Uint16;
+                return VarCastAssignInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignInt64Uint32;
+                return VarCastAssignInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignInt64Uint64;
+                return VarCastAssignInt64UInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3450,102 +3449,102 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
         case BRACE_DATA_TYPE_UINT8:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignUint8Bool;
+                return VarCastAssignUInt8Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignUint8Int8;
+                return VarCastAssignUInt8Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignUint8Int16;
+                return VarCastAssignUInt8Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignUint8Int32;
+                return VarCastAssignUInt8Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignUint8Int64;
+                return VarCastAssignUInt8Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarAssignUint8;
+                return VarAssignUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignUint8Uint16;
+                return VarCastAssignUInt8UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignUint8Uint32;
+                return VarCastAssignUInt8UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignUint8Uint64;
+                return VarCastAssignUInt8UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignUint8Float;
+                return VarCastAssignUInt8Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignUint8Double;
+                return VarCastAssignUInt8Double;
             }
         case BRACE_DATA_TYPE_UINT16:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignUint16Bool;
+                return VarCastAssignUInt16Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignUint16Int8;
+                return VarCastAssignUInt16Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignUint16Int16;
+                return VarCastAssignUInt16Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignUint16Int32;
+                return VarCastAssignUInt16Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignUint16Int64;
+                return VarCastAssignUInt16Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignUint16Uint8;
+                return VarCastAssignUInt16UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarAssignUint16;
+                return VarAssignUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignUint16Uint32;
+                return VarCastAssignUInt16UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignUint16Uint64;
+                return VarCastAssignUInt16UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignUint16Float;
+                return VarCastAssignUInt16Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignUint16Double;
+                return VarCastAssignUInt16Double;
             }
         case BRACE_DATA_TYPE_UINT32:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignUint32Bool;
+                return VarCastAssignUInt32Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignUint32Int8;
+                return VarCastAssignUInt32Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignUint32Int16;
+                return VarCastAssignUInt32Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignUint32Int32;
+                return VarCastAssignUInt32Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignUint32Int64;
+                return VarCastAssignUInt32Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignUint32Uint8;
+                return VarCastAssignUInt32UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignUint32Uint16;
+                return VarCastAssignUInt32UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarAssignUint32;
+                return VarAssignUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignUint32Uint64;
+                return VarCastAssignUInt32UInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignUint32Float;
+                return VarCastAssignUInt32Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignUint32Double;
+                return VarCastAssignUInt32Double;
             }
         case BRACE_DATA_TYPE_UINT64:
             switch (srcVarType) {
             case BRACE_DATA_TYPE_BOOL:
-                return VarCastAssignUint64Bool;
+                return VarCastAssignUInt64Bool;
             case BRACE_DATA_TYPE_INT8:
-                return VarCastAssignUint64Int8;
+                return VarCastAssignUInt64Int8;
             case BRACE_DATA_TYPE_INT16:
-                return VarCastAssignUint64Int16;
+                return VarCastAssignUInt64Int16;
             case BRACE_DATA_TYPE_INT32:
-                return VarCastAssignUint64Int32;
+                return VarCastAssignUInt64Int32;
             case BRACE_DATA_TYPE_INT64:
-                return VarCastAssignUint64Int64;
+                return VarCastAssignUInt64Int64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignUint64Uint8;
+                return VarCastAssignUInt64UInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignUint64Uint16;
+                return VarCastAssignUInt64UInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignUint64Uint32;
+                return VarCastAssignUInt64UInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarAssignUint64;
+                return VarAssignUInt64;
             case BRACE_DATA_TYPE_FLOAT:
-                return VarCastAssignUint64Float;
+                return VarCastAssignUInt64Float;
             case BRACE_DATA_TYPE_DOUBLE:
-                return VarCastAssignUint64Double;
+                return VarCastAssignUInt64Double;
             }
         case BRACE_DATA_TYPE_FLOAT:
             switch (srcVarType) {
@@ -3558,13 +3557,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignFloatInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignFloatUint8;
+                return VarCastAssignFloatUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignFloatUint16;
+                return VarCastAssignFloatUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignFloatUint32;
+                return VarCastAssignFloatUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignFloatUint64;
+                return VarCastAssignFloatUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarAssignFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3581,13 +3580,13 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
             case BRACE_DATA_TYPE_INT64:
                 return VarCastAssignDoubleInt64;
             case BRACE_DATA_TYPE_UINT8:
-                return VarCastAssignDoubleUint8;
+                return VarCastAssignDoubleUInt8;
             case BRACE_DATA_TYPE_UINT16:
-                return VarCastAssignDoubleUint16;
+                return VarCastAssignDoubleUInt16;
             case BRACE_DATA_TYPE_UINT32:
-                return VarCastAssignDoubleUint32;
+                return VarCastAssignDoubleUInt32;
             case BRACE_DATA_TYPE_UINT64:
-                return VarCastAssignDoubleUint64;
+                return VarCastAssignDoubleUInt64;
             case BRACE_DATA_TYPE_FLOAT:
                 return VarCastAssignDoubleFloat;
             case BRACE_DATA_TYPE_DOUBLE:
@@ -3609,6 +3608,7 @@ VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIs
     }
     return nullptr;
 }
+
 const char* GetDataTypeName(int type)
 {
     switch (type) {
@@ -3677,27 +3677,27 @@ bool VarGetBoolean(VariableInfo& info, int type, int index)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        return info.BoolVars[index];
+        return info.NumericVars[index].BoolVal;
     case BRACE_DATA_TYPE_INT8:
-        return info.Int8Vars[index] != 0;
+        return info.NumericVars[index].Int8Val != 0;
     case BRACE_DATA_TYPE_INT16:
-        return info.Int16Vars[index] != 0;
+        return info.NumericVars[index].Int16Val != 0;
     case BRACE_DATA_TYPE_INT32:
-        return info.Int32Vars[index] != 0;
+        return info.NumericVars[index].Int32Val != 0;
     case BRACE_DATA_TYPE_INT64:
-        return info.Int64Vars[index] != 0;
+        return info.NumericVars[index].Int64Val != 0;
     case BRACE_DATA_TYPE_UINT8:
-        return info.Uint8Vars[index] != 0;
+        return info.NumericVars[index].UInt8Val != 0;
     case BRACE_DATA_TYPE_UINT16:
-        return info.Uint16Vars[index] != 0;
+        return info.NumericVars[index].UInt16Val != 0;
     case BRACE_DATA_TYPE_UINT32:
-        return info.Uint32Vars[index] != 0;
+        return info.NumericVars[index].UInt32Val != 0;
     case BRACE_DATA_TYPE_UINT64:
-        return info.Uint64Vars[index] != 0;
+        return info.NumericVars[index].UInt64Val != 0;
     case BRACE_DATA_TYPE_FLOAT:
-        return info.FloatVars[index] != 0;
+        return info.NumericVars[index].FloatVal != 0;
     case BRACE_DATA_TYPE_DOUBLE:
-        return info.DoubleVars[index] != 0;
+        return info.NumericVars[index].DoubleVal != 0;
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
         return VarGetBoolean(*refInfo.Vars, refInfo.Type, refInfo.VarIndex);
@@ -3709,27 +3709,27 @@ int64_t VarGetI64(VariableInfo& info, int type, int index)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        return info.BoolVars[index] ? 1 : 0;
+        return info.NumericVars[index].BoolVal ? 1 : 0;
     case BRACE_DATA_TYPE_INT8:
-        return info.Int8Vars[index];
+        return info.NumericVars[index].Int8Val;
     case BRACE_DATA_TYPE_INT16:
-        return info.Int16Vars[index];
+        return info.NumericVars[index].Int16Val;
     case BRACE_DATA_TYPE_INT32:
-        return info.Int32Vars[index];
+        return info.NumericVars[index].Int32Val;
     case BRACE_DATA_TYPE_INT64:
-        return info.Int64Vars[index];
+        return info.NumericVars[index].Int64Val;
     case BRACE_DATA_TYPE_UINT8:
-        return info.Uint8Vars[index];
+        return info.NumericVars[index].UInt8Val;
     case BRACE_DATA_TYPE_UINT16:
-        return info.Uint16Vars[index];
+        return info.NumericVars[index].UInt16Val;
     case BRACE_DATA_TYPE_UINT32:
-        return info.Uint32Vars[index];
+        return info.NumericVars[index].UInt32Val;
     case BRACE_DATA_TYPE_UINT64:
-        return static_cast<int64_t>(info.Uint64Vars[index]);
+        return static_cast<int64_t>(info.NumericVars[index].UInt64Val);
     case BRACE_DATA_TYPE_FLOAT:
-        return static_cast<int64_t>(info.FloatVars[index]);
+        return static_cast<int64_t>(info.NumericVars[index].FloatVal);
     case BRACE_DATA_TYPE_DOUBLE:
-        return static_cast<int64_t>(info.DoubleVars[index]);
+        return static_cast<int64_t>(info.NumericVars[index].DoubleVal);
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
         return VarGetI64(*refInfo.Vars, refInfo.Type, refInfo.VarIndex);
@@ -3741,27 +3741,27 @@ uint64_t VarGetU64(VariableInfo& info, int type, int index)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        return static_cast<uint64_t>(info.BoolVars[index] ? 1 : 0);
+        return static_cast<uint64_t>(info.NumericVars[index].BoolVal ? 1 : 0);
     case BRACE_DATA_TYPE_INT8:
-        return static_cast<uint64_t>(info.Int8Vars[index]);
+        return static_cast<uint64_t>(info.NumericVars[index].Int8Val);
     case BRACE_DATA_TYPE_INT16:
-        return static_cast<uint64_t>(info.Int16Vars[index]);
+        return static_cast<uint64_t>(info.NumericVars[index].Int16Val);
     case BRACE_DATA_TYPE_INT32:
-        return static_cast<uint64_t>(info.Int32Vars[index]);
+        return static_cast<uint64_t>(info.NumericVars[index].Int32Val);
     case BRACE_DATA_TYPE_INT64:
-        return static_cast<uint64_t>(info.Int64Vars[index]);
+        return static_cast<uint64_t>(info.NumericVars[index].Int64Val);
     case BRACE_DATA_TYPE_UINT8:
-        return info.Uint8Vars[index];
+        return info.NumericVars[index].UInt8Val;
     case BRACE_DATA_TYPE_UINT16:
-        return info.Uint16Vars[index];
+        return info.NumericVars[index].UInt16Val;
     case BRACE_DATA_TYPE_UINT32:
-        return info.Uint32Vars[index];
+        return info.NumericVars[index].UInt32Val;
     case BRACE_DATA_TYPE_UINT64:
-        return info.Uint64Vars[index];
+        return info.NumericVars[index].UInt64Val;
     case BRACE_DATA_TYPE_FLOAT:
-        return static_cast<uint64_t>(info.FloatVars[index]);
+        return static_cast<uint64_t>(info.NumericVars[index].FloatVal);
     case BRACE_DATA_TYPE_DOUBLE:
-        return static_cast<uint64_t>(info.DoubleVars[index]);
+        return static_cast<uint64_t>(info.NumericVars[index].DoubleVal);
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
         return VarGetU64(*refInfo.Vars, refInfo.Type, refInfo.VarIndex);
@@ -3773,27 +3773,27 @@ double VarGetF64(VariableInfo& info, int type, int index)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        return info.BoolVars[index] ? 1 : 0;
+        return info.NumericVars[index].BoolVal ? 1 : 0;
     case BRACE_DATA_TYPE_INT8:
-        return info.Int8Vars[index];
+        return info.NumericVars[index].Int8Val;
     case BRACE_DATA_TYPE_INT16:
-        return info.Int16Vars[index];
+        return info.NumericVars[index].Int16Val;
     case BRACE_DATA_TYPE_INT32:
-        return info.Int32Vars[index];
+        return info.NumericVars[index].Int32Val;
     case BRACE_DATA_TYPE_INT64:
-        return static_cast<double>(info.Int64Vars[index]);
+        return static_cast<double>(info.NumericVars[index].Int64Val);
     case BRACE_DATA_TYPE_UINT8:
-        return info.Uint8Vars[index];
+        return info.NumericVars[index].UInt8Val;
     case BRACE_DATA_TYPE_UINT16:
-        return info.Uint16Vars[index];
+        return info.NumericVars[index].UInt16Val;
     case BRACE_DATA_TYPE_UINT32:
-        return info.Uint32Vars[index];
+        return info.NumericVars[index].UInt32Val;
     case BRACE_DATA_TYPE_UINT64:
-        return static_cast<double>(info.Uint64Vars[index]);
+        return static_cast<double>(info.NumericVars[index].UInt64Val);
     case BRACE_DATA_TYPE_FLOAT:
-        return info.FloatVars[index];
+        return info.NumericVars[index].FloatVal;
     case BRACE_DATA_TYPE_DOUBLE:
-        return info.DoubleVars[index];
+        return info.NumericVars[index].DoubleVal;
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
         return VarGetF64(*refInfo.Vars, refInfo.Type, refInfo.VarIndex);
@@ -3805,27 +3805,27 @@ std::string VarGetStr(VariableInfo& info, int type, int index)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        return info.BoolVars[index] ? "true" : "false";
+        return info.NumericVars[index].BoolVal ? "true" : "false";
     case BRACE_DATA_TYPE_INT8:
-        return std::to_string(info.Int8Vars[index]);
+        return std::to_string(info.NumericVars[index].Int8Val);
     case BRACE_DATA_TYPE_INT16:
-        return std::to_string(info.Int16Vars[index]);
+        return std::to_string(info.NumericVars[index].Int16Val);
     case BRACE_DATA_TYPE_INT32:
-        return std::to_string(info.Int32Vars[index]);
+        return std::to_string(info.NumericVars[index].Int32Val);
     case BRACE_DATA_TYPE_INT64:
-        return std::to_string(info.Int64Vars[index]);
+        return std::to_string(info.NumericVars[index].Int64Val);
     case BRACE_DATA_TYPE_UINT8:
-        return std::to_string(info.Uint8Vars[index]);
+        return std::to_string(info.NumericVars[index].UInt8Val);
     case BRACE_DATA_TYPE_UINT16:
-        return std::to_string(info.Uint16Vars[index]);
+        return std::to_string(info.NumericVars[index].UInt16Val);
     case BRACE_DATA_TYPE_UINT32:
-        return std::to_string(info.Uint32Vars[index]);
+        return std::to_string(info.NumericVars[index].UInt32Val);
     case BRACE_DATA_TYPE_UINT64:
-        return std::to_string(info.Uint64Vars[index]);
+        return std::to_string(info.NumericVars[index].UInt64Val);
     case BRACE_DATA_TYPE_FLOAT:
-        return std::to_string(info.FloatVars[index]);
+        return std::to_string(info.NumericVars[index].FloatVal);
     case BRACE_DATA_TYPE_DOUBLE:
-        return std::to_string(info.DoubleVars[index]);
+        return std::to_string(info.NumericVars[index].DoubleVal);
     case BRACE_DATA_TYPE_STRING:
         return info.StringVars[index];
     case BRACE_DATA_TYPE_REF: {
@@ -3839,37 +3839,37 @@ void VarSetBoolean(VariableInfo& info, int type, int index, bool val)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        info.BoolVars[index] = val;
+        info.NumericVars[index].BoolVal = val;
         break;
     case BRACE_DATA_TYPE_INT8:
-        info.Int8Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].Int8Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_INT16:
-        info.Int16Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].Int16Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_INT32:
-        info.Int32Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].Int32Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_INT64:
-        info.Int64Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].Int64Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_UINT8:
-        info.Uint8Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].UInt8Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_UINT16:
-        info.Uint16Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].UInt16Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_UINT32:
-        info.Uint32Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].UInt32Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_UINT64:
-        info.Uint64Vars[index] = val ? 1 : 0;
+        info.NumericVars[index].UInt64Val = val ? 1 : 0;
         break;
     case BRACE_DATA_TYPE_FLOAT:
-        info.FloatVars[index] = static_cast<float>(val ? 1 : 0);
+        info.NumericVars[index].FloatVal = static_cast<float>(val ? 1 : 0);
         break;
     case BRACE_DATA_TYPE_DOUBLE:
-        info.DoubleVars[index] = static_cast<double>(val ? 1 : 0);
+        info.NumericVars[index].DoubleVal = static_cast<double>(val ? 1 : 0);
         break;
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
@@ -3882,37 +3882,37 @@ void VarSetI64(VariableInfo& info, int type, int index, int64_t val)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        info.BoolVars[index] = val != 0;
+        info.NumericVars[index].BoolVal = val != 0;
         break;
     case BRACE_DATA_TYPE_INT8:
-        info.Int8Vars[index] = static_cast<int8_t>(val);
+        info.NumericVars[index].Int8Val = static_cast<int8_t>(val);
         break;
     case BRACE_DATA_TYPE_INT16:
-        info.Int16Vars[index] = static_cast<int16_t>(val);
+        info.NumericVars[index].Int16Val = static_cast<int16_t>(val);
         break;
     case BRACE_DATA_TYPE_INT32:
-        info.Int32Vars[index] = static_cast<int32_t>(val);
+        info.NumericVars[index].Int32Val = static_cast<int32_t>(val);
         break;
     case BRACE_DATA_TYPE_INT64:
-        info.Int64Vars[index] = val;
+        info.NumericVars[index].Int64Val = val;
         break;
     case BRACE_DATA_TYPE_UINT8:
-        info.Uint8Vars[index] = static_cast<uint8_t>(val);
+        info.NumericVars[index].UInt8Val = static_cast<uint8_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT16:
-        info.Uint16Vars[index] = static_cast<uint16_t>(val);
+        info.NumericVars[index].UInt16Val = static_cast<uint16_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT32:
-        info.Uint32Vars[index] = static_cast<uint32_t>(val);
+        info.NumericVars[index].UInt32Val = static_cast<uint32_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT64:
-        info.Uint64Vars[index] = static_cast<uint64_t>(val);
+        info.NumericVars[index].UInt64Val = static_cast<uint64_t>(val);
         break;
     case BRACE_DATA_TYPE_FLOAT:
-        info.FloatVars[index] = static_cast<float>(val);
+        info.NumericVars[index].FloatVal = static_cast<float>(val);
         break;
     case BRACE_DATA_TYPE_DOUBLE:
-        info.DoubleVars[index] = static_cast<double>(val);
+        info.NumericVars[index].DoubleVal = static_cast<double>(val);
         break;
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
@@ -3925,37 +3925,37 @@ void VarSetU64(VariableInfo& info, int type, int index, uint64_t val)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        info.BoolVars[index] = val != 0;
+        info.NumericVars[index].BoolVal = val != 0;
         break;
     case BRACE_DATA_TYPE_INT8:
-        info.Int8Vars[index] = static_cast<int8_t>(val);
+        info.NumericVars[index].Int8Val = static_cast<int8_t>(val);
         break;
     case BRACE_DATA_TYPE_INT16:
-        info.Int16Vars[index] = static_cast<int16_t>(val);
+        info.NumericVars[index].Int16Val = static_cast<int16_t>(val);
         break;
     case BRACE_DATA_TYPE_INT32:
-        info.Int32Vars[index] = static_cast<int32_t>(val);
+        info.NumericVars[index].Int32Val = static_cast<int32_t>(val);
         break;
     case BRACE_DATA_TYPE_INT64:
-        info.Int64Vars[index] = static_cast<int64_t>(val);
+        info.NumericVars[index].Int64Val = static_cast<int64_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT8:
-        info.Uint8Vars[index] = static_cast<uint8_t>(val);
+        info.NumericVars[index].UInt8Val = static_cast<uint8_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT16:
-        info.Uint16Vars[index] = static_cast<uint16_t>(val);
+        info.NumericVars[index].UInt16Val = static_cast<uint16_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT32:
-        info.Uint32Vars[index] = static_cast<uint32_t>(val);
+        info.NumericVars[index].UInt32Val = static_cast<uint32_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT64:
-        info.Uint64Vars[index] = val;
+        info.NumericVars[index].UInt64Val = val;
         break;
     case BRACE_DATA_TYPE_FLOAT:
-        info.FloatVars[index] = static_cast<float>(val);
+        info.NumericVars[index].FloatVal = static_cast<float>(val);
         break;
     case BRACE_DATA_TYPE_DOUBLE:
-        info.DoubleVars[index] = static_cast<double>(val);
+        info.NumericVars[index].DoubleVal = static_cast<double>(val);
         break;
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
@@ -3968,37 +3968,37 @@ void VarSetF64(VariableInfo& info, int type, int index, double val)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        info.BoolVars[index] = val != 0;
+        info.NumericVars[index].BoolVal = val != 0;
         break;
     case BRACE_DATA_TYPE_INT8:
-        info.Int8Vars[index] = static_cast<int8_t>(val);
+        info.NumericVars[index].Int8Val = static_cast<int8_t>(val);
         break;
     case BRACE_DATA_TYPE_INT16:
-        info.Int16Vars[index] = static_cast<int16_t>(val);
+        info.NumericVars[index].Int16Val = static_cast<int16_t>(val);
         break;
     case BRACE_DATA_TYPE_INT32:
-        info.Int32Vars[index] = static_cast<int32_t>(val);
+        info.NumericVars[index].Int32Val = static_cast<int32_t>(val);
         break;
     case BRACE_DATA_TYPE_INT64:
-        info.Int64Vars[index] = static_cast<int64_t>(val);
+        info.NumericVars[index].Int64Val = static_cast<int64_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT8:
-        info.Uint8Vars[index] = static_cast<uint8_t>(val);
+        info.NumericVars[index].UInt8Val = static_cast<uint8_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT16:
-        info.Uint16Vars[index] = static_cast<uint16_t>(val);
+        info.NumericVars[index].UInt16Val = static_cast<uint16_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT32:
-        info.Uint32Vars[index] = static_cast<uint32_t>(val);
+        info.NumericVars[index].UInt32Val = static_cast<uint32_t>(val);
         break;
     case BRACE_DATA_TYPE_UINT64:
-        info.Uint64Vars[index] = static_cast<uint64_t>(val);
+        info.NumericVars[index].UInt64Val = static_cast<uint64_t>(val);
         break;
     case BRACE_DATA_TYPE_FLOAT:
-        info.FloatVars[index] = static_cast<float>(val);
+        info.NumericVars[index].FloatVal = static_cast<float>(val);
         break;
     case BRACE_DATA_TYPE_DOUBLE:
-        info.DoubleVars[index] = static_cast<double>(val);
+        info.NumericVars[index].DoubleVal = static_cast<double>(val);
         break;
     case BRACE_DATA_TYPE_REF: {
         auto& refInfo = info.ReferenceVars[index];
@@ -4011,37 +4011,37 @@ void VarSetStr(VariableInfo& info, int type, int index, const std::string& val)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        info.BoolVars[index] = val == "true";
+        info.NumericVars[index].BoolVal = val == "true";
         break;
     case BRACE_DATA_TYPE_INT8:
-        info.Int8Vars[index] = StrToInt32(val);
+        info.NumericVars[index].Int8Val = StrToInt32(val);
         break;
     case BRACE_DATA_TYPE_INT16:
-        info.Int16Vars[index] = StrToInt32(val);
+        info.NumericVars[index].Int16Val = StrToInt32(val);
         break;
     case BRACE_DATA_TYPE_INT32:
-        info.Int32Vars[index] = StrToInt32(val);
+        info.NumericVars[index].Int32Val = StrToInt32(val);
         break;
     case BRACE_DATA_TYPE_INT64:
-        info.Int64Vars[index] = StrToInt64(val);
+        info.NumericVars[index].Int64Val = StrToInt64(val);
         break;
     case BRACE_DATA_TYPE_UINT8:
-        info.Uint8Vars[index] = StrToUInt32(val);
+        info.NumericVars[index].UInt8Val = StrToUInt32(val);
         break;
     case BRACE_DATA_TYPE_UINT16:
-        info.Uint16Vars[index] = StrToUInt32(val);
+        info.NumericVars[index].UInt16Val = StrToUInt32(val);
         break;
     case BRACE_DATA_TYPE_UINT32:
-        info.Uint32Vars[index] = StrToUInt32(val);
+        info.NumericVars[index].UInt32Val = StrToUInt32(val);
         break;
     case BRACE_DATA_TYPE_UINT64:
-        info.Uint64Vars[index] = StrToUInt64(val);
+        info.NumericVars[index].UInt64Val = StrToUInt64(val);
         break;
     case BRACE_DATA_TYPE_FLOAT:
-        info.FloatVars[index] = static_cast<float>(StrToInt64(val));
+        info.NumericVars[index].FloatVal = static_cast<float>(StrToInt64(val));
         break;
     case BRACE_DATA_TYPE_DOUBLE:
-        info.DoubleVars[index] = static_cast<double>(StrToInt64(val));
+        info.NumericVars[index].DoubleVal = static_cast<double>(StrToInt64(val));
         break;
     case BRACE_DATA_TYPE_STRING:
         info.StringVars[index] = val;
@@ -4057,37 +4057,37 @@ void VarSetStr(VariableInfo& info, int type, int index, std::string&& val)
 {
     switch (type) {
     case BRACE_DATA_TYPE_BOOL:
-        info.BoolVars[index] = val == "true";
+        info.NumericVars[index].BoolVal = val == "true";
         break;
     case BRACE_DATA_TYPE_INT8:
-        info.Int8Vars[index] = StrToInt32(val);
+        info.NumericVars[index].Int8Val = StrToInt32(val);
         break;
     case BRACE_DATA_TYPE_INT16:
-        info.Int16Vars[index] = StrToInt32(val);
+        info.NumericVars[index].Int16Val = StrToInt32(val);
         break;
     case BRACE_DATA_TYPE_INT32:
-        info.Int32Vars[index] = StrToInt32(val);
+        info.NumericVars[index].Int32Val = StrToInt32(val);
         break;
     case BRACE_DATA_TYPE_INT64:
-        info.Int64Vars[index] = StrToInt64(val);
+        info.NumericVars[index].Int64Val = StrToInt64(val);
         break;
     case BRACE_DATA_TYPE_UINT8:
-        info.Uint8Vars[index] = StrToUInt32(val);
+        info.NumericVars[index].UInt8Val = StrToUInt32(val);
         break;
     case BRACE_DATA_TYPE_UINT16:
-        info.Uint16Vars[index] = StrToUInt32(val);
+        info.NumericVars[index].UInt16Val = StrToUInt32(val);
         break;
     case BRACE_DATA_TYPE_UINT32:
-        info.Uint32Vars[index] = StrToUInt32(val);
+        info.NumericVars[index].UInt32Val = StrToUInt32(val);
         break;
     case BRACE_DATA_TYPE_UINT64:
-        info.Uint64Vars[index] = StrToUInt64(val);
+        info.NumericVars[index].UInt64Val = StrToUInt64(val);
         break;
     case BRACE_DATA_TYPE_FLOAT:
-        info.FloatVars[index] = static_cast<float>(StrToInt64(val));
+        info.NumericVars[index].FloatVal = static_cast<float>(StrToInt64(val));
         break;
     case BRACE_DATA_TYPE_DOUBLE:
-        info.DoubleVars[index] = static_cast<double>(StrToInt64(val));
+        info.NumericVars[index].DoubleVal = static_cast<double>(StrToInt64(val));
         break;
     case BRACE_DATA_TYPE_STRING:
         info.StringVars[index] = std::move(val);
@@ -4204,98 +4204,3 @@ static inline bool CanAssign(int destType, int srcType)
     }
     return false;
 }
-
-#define DEF_BINARY_ARITH_EXECUTE(POSTFIX, OPERAND_TYPE, VARGET, VARSET, OPERATOR)   \
-    int ExecuteGG##POSTFIX(void) const\
-    {\
-        if (m_Op1)\
-            m_Op1();\
-        if (m_Op2)\
-            m_Op2();\
-        auto& vars = *CurRuntimeStack().Variables;\
-        auto& srcVars = *GlobalVariables();\
-        OPERAND_TYPE v1 = VARGET(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
-        OPERAND_TYPE v2 = VARGET(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
-        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
-        return BRACE_FLOW_CONTROL_NORMAL;\
-    }\
-    int ExecuteLL##POSTFIX(void) const\
-    {\
-        if (m_Op1)\
-            m_Op1();\
-        if (m_Op2)\
-            m_Op2();\
-        auto& vars = *CurRuntimeStack().Variables;\
-        OPERAND_TYPE v1 = VARGET(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
-        OPERAND_TYPE v2 = VARGET(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
-        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
-        return BRACE_FLOW_CONTROL_NORMAL;\
-    }\
-    int ExecuteGL##POSTFIX(void) const\
-    {\
-        if (m_Op1)\
-            m_Op1();\
-        if (m_Op2)\
-            m_Op2();\
-        auto& vars = *CurRuntimeStack().Variables;\
-        auto& srcVars1 = *GlobalVariables();\
-        auto& srcVars2 = vars;\
-        OPERAND_TYPE v1 = VARGET(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
-        OPERAND_TYPE v2 = VARGET(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
-        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
-        return BRACE_FLOW_CONTROL_NORMAL;\
-    }\
-    int ExecuteLG##POSTFIX(void) const\
-    {\
-        if (m_Op1)\
-            m_Op1();\
-        if (m_Op2)\
-            m_Op2();\
-        auto& vars = *CurRuntimeStack().Variables;\
-        auto& srcVars1 = vars;\
-        auto& srcVars2 = *GlobalVariables();\
-        OPERAND_TYPE v1 = VARGET(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
-        OPERAND_TYPE v2 = VARGET(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);\
-        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 OPERATOR v2);\
-        return BRACE_FLOW_CONTROL_NORMAL;\
-    }
-
-#define DEF_UNARY_ARITH_EXECUTE(POSTFIX, OPERAND_TYPE, VARGET, VARSET, OPERATOR)   \
-    int ExecuteG##POSTFIX(void) const\
-    {\
-        if (m_Op1)\
-            m_Op1();\
-        auto& vars = *CurRuntimeStack().Variables;\
-        auto& srcVars = *GlobalVariables();\
-        OPERAND_TYPE v1 = VARGET(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
-        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, OPERATOR v1);\
-        return BRACE_FLOW_CONTROL_NORMAL;\
-    }\
-    int ExecuteL##POSTFIX(void) const\
-    {\
-        if (m_Op1)\
-            m_Op1();\
-        auto& vars = *CurRuntimeStack().Variables;\
-        OPERAND_TYPE v1 = VARGET(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);\
-        VARSET(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, OPERATOR v1);\
-        return BRACE_FLOW_CONTROL_NORMAL;\
-    }
-
-#define BUILD_BINARY_ARITH_EXECUTOR(CLASSNAME, POSTFIX)    \
-    if(m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {\
-        executor = std::bind(&CLASSNAME::ExecuteGG##POSTFIX, this);\
-    } else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {\
-        executor = std::bind(&CLASSNAME::ExecuteLL##POSTFIX, this);\
-    } else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {\
-        executor = std::bind(&CLASSNAME::ExecuteGL##POSTFIX, this);\
-    } else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {\
-        executor = std::bind(&CLASSNAME::ExecuteLG##POSTFIX, this);\
-    }
-
-
-#define BUILD_UNARY_ARITH_EXECUTOR(CLASSNAME, POSTFIX)    \
-    if(m_LoadInfo1.IsGlobal) {\
-        executor = std::bind(&CLASSNAME::ExecuteG##POSTFIX, this);\
-    } else {\
-        executor = std::bind(&CLASSNAME::ExecuteL##POSTFIX, this);\
-    }

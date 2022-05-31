@@ -4,16 +4,14 @@ script(main)
         , "BRACE_DATA_TYPE_UINT8", "BRACE_DATA_TYPE_UINT16", "BRACE_DATA_TYPE_UINT32", "BRACE_DATA_TYPE_UINT64"
         , "BRACE_DATA_TYPE_FLOAT", "BRACE_DATA_TYPE_DOUBLE"];
     $braceTypeNames = ["Bool", "Int8", "Int16", "Int32", "Int64"
-        , "Uint8", "Uint16", "Uint32", "Uint64"
+        , "UInt8", "UInt16", "UInt32", "UInt64"
         , "Float", "Double"];
     $cppTypes = ["bool", "int8_t", "int16_t", "int32_t", "int64_t"
         , "uint8_t", "uint16_t", "uint32_t", "uint64_t"
         , "float", "double"];
-    $fullTypeNames = ["Bool", "Int8", "Int16", "Int32", "Int64"
-        , "Uint8", "Uint16", "Uint32", "Uint64"
-        , "Float", "Double", "String", "Object"];
+    $specTypeNames = ["String", "Object"];
 
-    call("writeVarAssign", $fullTypeNames);
+    call("writeVarAssign", $braceTypeNames, $specTypeNames);
 
     call("writeVarCastAssign", $braceTypeNames, $cppTypes);
 
@@ -67,11 +65,64 @@ script(main)
 
     return(0);
 };
-script(writeVarAssign)args($fullTypeNames)
+script(writeVarAssign)args($braceTypeNames, $specTypeNames)
 {
     //VarAssign
-    loop(listsize($fullTypeNames)){
-        $typeName = $fullTypeNames[$$];
+    loop(listsize($braceTypeNames)){
+        $typeName = $braceTypeNames[$$];
+
+        writeblock
+        {:
+    static inline void VarAssign{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+    {
+        info.NumericVars[destIndex].{% $typeName %}Val = srcInfo.NumericVars[srcIndex].{% $typeName %}Val;
+    }
+        :};        
+    };
+    //VarAssignFromRef
+    loop(listsize($braceTypeNames)){
+        $typeName = $braceTypeNames[$$];
+
+        writeblock
+        {:
+    static inline void VarAssignFromRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+    {
+        auto& sri = srcInfo.ReferenceVars[srcIndex];
+        info.NumericVars[destIndex].{% $typeName %}Val = sri.Vars->NumericVars[sri.VarIndex].{% $typeName %}Val;
+    }
+        :};        
+    };
+    //VarAssignToRef
+    loop(listsize($braceTypeNames)){
+        $typeName = $braceTypeNames[$$];
+
+        writeblock
+        {:
+    static inline void VarAssignToRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+    {
+        auto& ri = info.ReferenceVars[destIndex];
+        ri.Vars->NumericVars[ri.VarIndex].{% $typeName %}Val = srcInfo.NumericVars[srcIndex].{% $typeName %}Val;
+    }
+        :};        
+    };
+    //VarAssignFromToRef
+    loop(listsize($braceTypeNames)){
+        $typeName = $braceTypeNames[$$];
+
+        writeblock
+        {:
+    static inline void VarAssignFromToRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
+    {
+        auto& ri = info.ReferenceVars[destIndex];
+        auto& sri = srcInfo.ReferenceVars[srcIndex];
+        ri.Vars->NumericVars[ri.VarIndex].{% $typeName %}Val = sri.Vars->NumericVars[sri.VarIndex].{% $typeName %}Val;
+    }
+        :};        
+    };
+    //--------------
+    //VarAssign
+    loop(listsize($specTypeNames)){
+        $typeName = $specTypeNames[$$];
 
         writeblock
         {:
@@ -82,8 +133,8 @@ script(writeVarAssign)args($fullTypeNames)
         :};        
     };
     //VarAssignFromRef
-    loop(listsize($fullTypeNames)){
-        $typeName = $fullTypeNames[$$];
+    loop(listsize($specTypeNames)){
+        $typeName = $specTypeNames[$$];
 
         writeblock
         {:
@@ -95,8 +146,8 @@ script(writeVarAssign)args($fullTypeNames)
         :};        
     };
     //VarAssignToRef
-    loop(listsize($fullTypeNames)){
-        $typeName = $fullTypeNames[$$];
+    loop(listsize($specTypeNames)){
+        $typeName = $specTypeNames[$$];
 
         writeblock
         {:
@@ -108,8 +159,8 @@ script(writeVarAssign)args($fullTypeNames)
         :};        
     };
     //VarAssignFromToRef
-    loop(listsize($fullTypeNames)){
-        $typeName = $fullTypeNames[$$];
+    loop(listsize($specTypeNames)){
+        $typeName = $specTypeNames[$$];
 
         writeblock
         {:
@@ -144,7 +195,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
                 {:
     static inline void VarCastAssign{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
-        info.{% $firstName %}Vars[destIndex] = static_cast<{% $firstType %}>(srcInfo.{% $secondName %}Vars[srcIndex]);
+        info.NumericVars[destIndex].{% $firstName %}Val = static_cast<{% $firstType %}>(srcInfo.NumericVars[srcIndex].{% $secondName %}Val);
     }
                 :};
             };
@@ -172,7 +223,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
     static inline void VarCastAssignFromRef{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
         auto& sri = srcInfo.ReferenceVars[srcIndex];
-        info.{% $firstName %}Vars[destIndex] = static_cast<{% $firstType %}>(sri.Vars->{% $secondName %}Vars[sri.VarIndex]);
+        info.NumericVars[destIndex].{% $firstName %}Val = static_cast<{% $firstType %}>(sri.Vars->NumericVars[sri.VarIndex].{% $secondName %}Val);
     }
                 :};
             };
@@ -200,7 +251,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
     static inline void VarCastAssignToRef{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
         auto& ri = info.ReferenceVars[destIndex];
-        ri.Vars->{% $firstName %}Vars[ri.VarIndex] = static_cast<{% $firstType %}>(srcInfo.{% $secondName %}Vars[srcIndex]);
+        ri.Vars->NumericVars[ri.VarIndex].{% $firstName %}Val = static_cast<{% $firstType %}>(srcInfo.NumericVars[srcIndex].{% $secondName %}Val);
     }
                 :};
             };
@@ -229,7 +280,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
     {
         auto& ri = info.ReferenceVars[destIndex];
         auto& sri = srcInfo.ReferenceVars[srcIndex];
-        ri.Vars->{% $firstName %}Vars[ri.VarIndex] = static_cast<{% $firstType %}>(sri.Vars->{% $secondName %}Vars[sri.VarIndex]);
+        ri.Vars->NumericVars[ri.VarIndex].{% $firstName %}Val = static_cast<{% $firstType %}>(sri.Vars->NumericVars[sri.VarIndex].{% $secondName %}Val);
     }
                 :};
             };
@@ -368,6 +419,90 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         }
     :});
 };
+script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $opr)
+{
+    return(block
+    {:
+        int ExecuteGG{% $postfix %}(void) const
+        {
+            if (m_Op1)
+                m_Op1();
+            if (m_Op2)
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteLL{% $postfix %}(void) const
+        {
+            if (m_Op1)
+                m_Op1();
+            if (m_Op2)
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(vars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteGL{% $postfix %}(void) const
+        {
+            if (m_Op1)
+                m_Op1();
+            if (m_Op2)
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars1 = *GlobalVariables();
+            auto& srcVars2 = vars;
+            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.VarIndex);
+            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteLG{% $postfix %}(void) const
+        {
+            if (m_Op1)
+                m_Op1();
+            if (m_Op2)
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars1 = vars;
+            auto& srcVars2 = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.VarIndex);
+            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+    :});
+};
+script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $opr)
+{
+    return(block
+    {:    
+        int ExecuteG{% $postfix %}(void) const
+        {
+            if (m_Op1)
+                m_Op1();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
+            {% $varSet %}(vars, m_ResultInfo.VarIndex, {% $opr %} v1);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteL{% $postfix %}(void) const
+        {
+            if (m_Op1)
+                m_Op1();
+            auto& vars = *CurRuntimeVariables();
+            {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.VarIndex);
+            {% $varSet %}(vars, m_ResultInfo.VarIndex, {% $opr %} v1);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+    :});
+};
 script(getBinaryExecuteBuildCode)args($className, $postfix)
 {
     return(block
@@ -436,6 +571,47 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_STRING";
         $buildArithExecutor = block
         {:
+            else if (m_LoadInfo1.Type == m_LoadInfo2.Type) {
+                resultType = BRACE_DATA_TYPE_BOOL;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_BOOL:
+{% getBinaryExecuteBuildCode($className, "BoolBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT8:
+{% getBinaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getBinaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getBinaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getBinaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getBinaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getBinaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getBinaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getBinaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+{% getBinaryExecuteBuildCode($className, "FloatBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getBinaryExecuteBuildCode($className, "DoubleBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_STRING:
+{% getBinaryExecuteBuildCode($className, "StringBoth"); %}
+                    break;
+                }
+            }
             else if (NeedStringArithUnit(load1.Type, load2.Type)) {
                 resultType = BRACE_DATA_TYPE_BOOL;
 {% getBinaryExecuteBuildCode($className, "String"); %}
@@ -455,6 +631,18 @@ script(writeBinaryExp)args($className, $op)
         :};
         $executeCode = block
         {:
+{% getBinaryExecuteCodeBoth("BoolBoth", "bool", "VarGetBool", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("FloatBoth", "float", "VarGetFloat", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("DoubleBoth", "double", "VarGetDouble", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("StringBoth", "const std::string&", "VarGetString", "VarSetBool", $op); %}
 {% getBinaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetBoolean", $op); %}
 {% getBinaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetBoolean", $op); %}
 {% getBinaryExecuteCode("Float", "double", "VarGetF64", "VarSetBoolean", $op); %}
@@ -465,6 +653,47 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_STRING";
         $buildArithExecutor = block
         {:
+            else if (m_LoadInfo1.Type == m_LoadInfo2.Type) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_BOOL:
+{% getBinaryExecuteBuildCode($className, "BoolBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT8:
+{% getBinaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getBinaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getBinaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getBinaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getBinaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getBinaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getBinaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getBinaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+{% getBinaryExecuteBuildCode($className, "FloatBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getBinaryExecuteBuildCode($className, "DoubleBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_STRING:
+{% getBinaryExecuteBuildCode($className, "StringBoth"); %}
+                    break;
+                }
+            }
             else if (NeedStringArithUnit(load1.Type, load2.Type)) {
 {% getBinaryExecuteBuildCode($className, "String"); %}
             }
@@ -480,6 +709,18 @@ script(writeBinaryExp)args($className, $op)
         :};
         $executeCode = block
         {:
+{% getBinaryExecuteCodeBoth("BoolBoth", "bool", "VarGetBool", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", $op); %}
+{% getBinaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", $op); %}
+{% getBinaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", $op); %}
+{% getBinaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", $op); %}
+{% getBinaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", $op); %}
+{% getBinaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", $op); %}
+{% getBinaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", $op); %}
+{% getBinaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", $op); %}
+{% getBinaryExecuteCodeBoth("FloatBoth", "float", "VarGetFloat", "VarSetFloat", $op); %}
+{% getBinaryExecuteCodeBoth("DoubleBoth", "double", "VarGetDouble", "VarSetDouble", $op); %}
+{% getBinaryExecuteCodeBoth("StringBoth", "const std::string&", "VarGetString", "VarSetString", $op); %}
 {% getBinaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", $op); %}
 {% getBinaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", $op); %}
 {% getBinaryExecuteCode("Float", "double", "VarGetF64", "VarSetF64", $op); %}
@@ -490,6 +731,41 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_DOUBLE";
         $buildArithExecutor = block
         {:
+            else if (m_LoadInfo1.Type == m_LoadInfo2.Type && m_LoadInfo1.Type != BRACE_DATA_TYPE_BOOL) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+{% getBinaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getBinaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getBinaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getBinaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getBinaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getBinaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getBinaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getBinaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+{% getBinaryExecuteBuildCode($className, "FloatBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getBinaryExecuteBuildCode($className, "DoubleBoth"); %}
+                    break;
+                }
+            }
             else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
 {% getBinaryExecuteBuildCode($className, "Float"); %}
             }
@@ -502,6 +778,16 @@ script(writeBinaryExp)args($className, $op)
         :};
         $executeCode = block
         {:
+{% getBinaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", $op); %}
+{% getBinaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", $op); %}
+{% getBinaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", $op); %}
+{% getBinaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", $op); %}
+{% getBinaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", $op); %}
+{% getBinaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", $op); %}
+{% getBinaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", $op); %}
+{% getBinaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", $op); %}
+{% getBinaryExecuteCodeBoth("FloatBoth", "float", "VarGetFloat", "VarSetFloat", $op); %}
+{% getBinaryExecuteCodeBoth("DoubleBoth", "double", "VarGetDouble", "VarSetDouble", $op); %}
 {% getBinaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", $op); %}
 {% getBinaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", $op); %}
 {% getBinaryExecuteCode("Float", "double", "VarGetF64", "VarSetF64", $op); %}
@@ -511,6 +797,38 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
+            else if (m_LoadInfo1.Type == m_LoadInfo2.Type) {
+                resultType = BRACE_DATA_TYPE_BOOL;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_BOOL:
+{% getBinaryExecuteBuildCode($className, "BoolBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT8:
+{% getBinaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getBinaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getBinaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getBinaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getBinaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getBinaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getBinaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getBinaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                }
+            }
             else {
                 resultType = BRACE_DATA_TYPE_BOOL;
 {% getBinaryExecuteBuildCode($className, "Bool"); %}
@@ -518,6 +836,15 @@ script(writeBinaryExp)args($className, $op)
         :};
         $executeCode = block
         {:
+{% getBinaryExecuteCodeBoth("BoolBoth", "bool", "VarGetBool", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetBool", $op); %}
+{% getBinaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetBool", $op); %}
 {% getBinaryExecuteCode("Bool", "bool", "VarGetBoolean", "VarSetBoolean", $op); %}
         :};
     }
@@ -525,6 +852,35 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
+            else if (m_LoadInfo1.Type == m_LoadInfo2.Type && m_LoadInfo1.Type != BRACE_DATA_TYPE_BOOL) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+{% getBinaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getBinaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getBinaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getBinaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getBinaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getBinaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getBinaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getBinaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                }
+            }
             else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
 {% getBinaryExecuteBuildCode($className, "UInt"); %}
             }
@@ -534,6 +890,14 @@ script(writeBinaryExp)args($className, $op)
         :};
         $executeCode = block
         {:
+{% getBinaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", $op); %}
+{% getBinaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", $op); %}
+{% getBinaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", $op); %}
+{% getBinaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", $op); %}
+{% getBinaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", $op); %}
+{% getBinaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", $op); %}
+{% getBinaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", $op); %}
+{% getBinaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", $op); %}
 {% getBinaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", $op); %}
 {% getBinaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", $op); %}
         :};
@@ -585,6 +949,35 @@ script(writeBitNotExp)
                 LogError(ss.str());
                 return false;
             }
+            else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_UINT64) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+{% getUnaryExecuteBuildCode("BitNotExp", "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getUnaryExecuteBuildCode("BitNotExp", "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getUnaryExecuteBuildCode("BitNotExp", "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode("BitNotExp", "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getUnaryExecuteBuildCode("BitNotExp", "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getUnaryExecuteBuildCode("BitNotExp", "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getUnaryExecuteBuildCode("BitNotExp", "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode("BitNotExp", "UInt64Both"); %}
+                    break;
+                }
+            }
             else if(IsUnsignedType(resultType)) {
 {% getUnaryExecuteBuildCode("BitNotExp", "UInt"); %}
             }
@@ -594,6 +987,14 @@ script(writeBitNotExp)
             return true;
         }
     private:
+{% getUnaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", "~"); %}
+{% getUnaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", "~"); %}
+{% getUnaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", "~"); %}
+{% getUnaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", "~"); %}
+{% getUnaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", "~"); %}
+{% getUnaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", "~"); %}
+{% getUnaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", "~"); %}
+{% getUnaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", "~"); %}
 {% getUnaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", "~"); %}
 {% getUnaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", "~"); %}
     };
@@ -619,6 +1020,38 @@ script(writeNotExp)
                 LogError(ss.str());
                 return false;
             }
+            else if (m_LoadInfo1.Type <= BRACE_DATA_TYPE_UINT64) {
+                resultType = BRACE_DATA_TYPE_BOOL;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_BOOL:
+{% getUnaryExecuteBuildCode("NotExp", "BoolBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT8:
+{% getUnaryExecuteBuildCode("NotExp", "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getUnaryExecuteBuildCode("NotExp", "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getUnaryExecuteBuildCode("NotExp", "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode("NotExp", "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getUnaryExecuteBuildCode("NotExp", "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getUnaryExecuteBuildCode("NotExp", "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getUnaryExecuteBuildCode("NotExp", "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode("NotExp", "UInt64Both"); %}
+                    break;
+                }
+            }
             else {
                 resultType = BRACE_DATA_TYPE_BOOL;
 {% getUnaryExecuteBuildCode("NotExp", "Bool"); %}
@@ -626,6 +1059,15 @@ script(writeNotExp)
             return true;
         }
     private:
+{% getUnaryExecuteCodeBoth("BoolBoth", "bool", "VarGetBool", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetBool", "!"); %}
+{% getUnaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetBool", "!"); %}
 {% getUnaryExecuteCode("Bool", "bool", "VarGetBoolean", "VarSetBoolean", "!"); %}
     };
     :};

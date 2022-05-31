@@ -136,6 +136,7 @@ namespace Brace
             VarIndex = index;
         }
     };
+    struct VariableInfo;
     struct ProcInfo;
     struct BraceApiLoadInfo final : public GlobalLocalRegisterInfo
     {
@@ -150,8 +151,8 @@ namespace Brace
         }
 
         DataTypeInfo GetLoadTimeRealType(const ProcInfo& proc) const;
+        DataTypeInfo GetLoadTimeRealType(const VariableInfo& vars) const;
     };
-    struct VariableInfo;
     struct ReferenceInfo final : public RegisterInfo
     {
         VariableInfo* Vars;
@@ -176,19 +177,23 @@ namespace Brace
         }
     };
 
+    union NumericValue final
+    {
+        bool BoolVal;
+        int8_t Int8Val;
+        int16_t Int16Val;
+        int32_t Int32Val;
+        int64_t Int64Val;
+        uint8_t UInt8Val;
+        uint16_t UInt16Val;
+        uint32_t UInt32Val;
+        uint64_t UInt64Val;
+        float FloatVal;
+        double DoubleVal;
+    };
     struct VariableInfo final
     {
-        std::vector<bool> BoolVars;
-        std::vector<int8_t> Int8Vars;
-        std::vector<int16_t> Int16Vars;
-        std::vector<int32_t> Int32Vars;
-        std::vector<int64_t> Int64Vars;
-        std::vector<uint8_t> Uint8Vars;
-        std::vector<uint16_t> Uint16Vars;
-        std::vector<uint32_t> Uint32Vars;
-        std::vector<uint64_t> Uint64Vars;
-        std::vector<float> FloatVars;
-        std::vector<double> DoubleVars;
+        std::vector<NumericValue> NumericVars;
         std::vector<std::string> StringVars;
         std::vector<std::shared_ptr<IBraceObject>> ObjectVars;
         std::vector<ReferenceInfo> ReferenceVars;
@@ -240,6 +245,19 @@ namespace Brace
         return false;
     }
 
+
+#define DEFINE_VAR_GET_NUMERIC(POSTFIX, NAME, TYPE) \
+    static inline TYPE VarGet##POSTFIX(VariableInfo& info, int index)\
+    {\
+        return info.NumericVars[index].NAME;\
+    }
+
+#define DEFINE_VAR_SET_NUMERIC(POSTFIX, NAME, TYPE) \
+    static inline void VarSet##POSTFIX(VariableInfo& info, int index, TYPE val)\
+    {\
+        info.NumericVars[index].NAME = val;\
+    }
+
 #define DEFINE_VAR_GET(POSTFIX, NAME, TYPE) \
     static inline TYPE VarGet##POSTFIX(VariableInfo& info, int index)\
     {\
@@ -252,32 +270,32 @@ namespace Brace
         info.NAME[index] = val;\
     }
 
-    DEFINE_VAR_GET(Bool, BoolVars, bool);
-    DEFINE_VAR_GET(Int8, Int8Vars, int8_t);
-    DEFINE_VAR_GET(Int16, Int16Vars, int16_t);
-    DEFINE_VAR_GET(Int32, Int32Vars, int32_t);
-    DEFINE_VAR_GET(Int64, Int64Vars, int64_t);
-    DEFINE_VAR_GET(Uint8, Uint8Vars, uint8_t);
-    DEFINE_VAR_GET(Uint16, Uint16Vars, uint16_t);
-    DEFINE_VAR_GET(Uint32, Uint32Vars, uint32_t);
-    DEFINE_VAR_GET(Uint64, Uint64Vars, uint64_t);
-    DEFINE_VAR_GET(Float, FloatVars, float);
-    DEFINE_VAR_GET(Double, DoubleVars, double);
+    DEFINE_VAR_GET_NUMERIC(Bool, BoolVal, bool);
+    DEFINE_VAR_GET_NUMERIC(Int8, Int8Val, int8_t);
+    DEFINE_VAR_GET_NUMERIC(Int16, Int16Val, int16_t);
+    DEFINE_VAR_GET_NUMERIC(Int32, Int32Val, int32_t);
+    DEFINE_VAR_GET_NUMERIC(Int64, Int64Val, int64_t);
+    DEFINE_VAR_GET_NUMERIC(UInt8, UInt8Val, uint8_t);
+    DEFINE_VAR_GET_NUMERIC(UInt16, UInt16Val, uint16_t);
+    DEFINE_VAR_GET_NUMERIC(UInt32, UInt32Val, uint32_t);
+    DEFINE_VAR_GET_NUMERIC(UInt64, UInt64Val, uint64_t);
+    DEFINE_VAR_GET_NUMERIC(Float, FloatVal, float);
+    DEFINE_VAR_GET_NUMERIC(Double, DoubleVal, double);
     DEFINE_VAR_GET(String, StringVars, const std::string&);
     DEFINE_VAR_GET(Object, ObjectVars, const std::shared_ptr<IBraceObject>&);
     DEFINE_VAR_GET(Ref, ReferenceVars, const ReferenceInfo&);
 
-    DEFINE_VAR_SET(Bool, BoolVars, bool);
-    DEFINE_VAR_SET(Int8, Int8Vars, int8_t);
-    DEFINE_VAR_SET(Int16, Int16Vars, int16_t);
-    DEFINE_VAR_SET(Int32, Int32Vars, int32_t);
-    DEFINE_VAR_SET(Int64, Int64Vars, int64_t);
-    DEFINE_VAR_SET(Uint8, Uint8Vars, uint8_t);
-    DEFINE_VAR_SET(Uint16, Uint16Vars, uint16_t);
-    DEFINE_VAR_SET(Uint32, Uint32Vars, uint32_t);
-    DEFINE_VAR_SET(Uint64, Uint64Vars, uint64_t);
-    DEFINE_VAR_SET(Float, FloatVars, float);
-    DEFINE_VAR_SET(Double, DoubleVars, double);
+    DEFINE_VAR_SET_NUMERIC(Bool, BoolVal, bool);
+    DEFINE_VAR_SET_NUMERIC(Int8, Int8Val, int8_t);
+    DEFINE_VAR_SET_NUMERIC(Int16, Int16Val, int16_t);
+    DEFINE_VAR_SET_NUMERIC(Int32, Int32Val, int32_t);
+    DEFINE_VAR_SET_NUMERIC(Int64, Int64Val, int64_t);
+    DEFINE_VAR_SET_NUMERIC(UInt8, UInt8Val, uint8_t);
+    DEFINE_VAR_SET_NUMERIC(UInt16, UInt16Val, uint16_t);
+    DEFINE_VAR_SET_NUMERIC(UInt32, UInt32Val, uint32_t);
+    DEFINE_VAR_SET_NUMERIC(UInt64, UInt64Val, uint64_t);
+    DEFINE_VAR_SET_NUMERIC(Float, FloatVal, float);
+    DEFINE_VAR_SET_NUMERIC(Double, DoubleVal, double);
     DEFINE_VAR_SET(String, StringVars, const std::string&);
     DEFINE_VAR_SET(Object, ObjectVars, const std::shared_ptr<IBraceObject>&);
     DEFINE_VAR_SET(Ref, ReferenceVars, const ReferenceInfo&);
@@ -435,8 +453,10 @@ namespace Brace
     public:
         FunctionExecutor(BraceScript& interpreter);
     public:
-        void Load(const std::string& func) { Load(*CurProcInfo(), func); }
-        void Load(const ProcInfo& callerProc, const std::string& func);
+        void Reset(void);
+        void Build(const std::string& func) { Build(*CurProcInfo(), func); }
+        void Build(const ProcInfo& callerProc, const std::string& func);
+        bool IsValid(void)const;
         int Run(void)const;
         int GetArgCount(void)const;
         const BraceApiLoadInfo* ArgInfo(int ix) const;
