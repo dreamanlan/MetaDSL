@@ -343,7 +343,6 @@ namespace Brace
 
     struct RuntimeStackInfo final
     {
-        const RuntimeStackInfo* LastStackInfo;
         const ProcInfo* Proc;
         VariableInfo* Variables;
     };
@@ -358,22 +357,23 @@ namespace Brace
 
     class AbstractBraceApi : public IBraceApi
     {
+        friend class FunctionExecutor;
     public:
         virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadCall(ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
         {
             return false;
         }
@@ -408,7 +408,8 @@ namespace Brace
     protected:
         ProcInfo* GlobalProcInfo(void)const;
         VariableInfo* GlobalVariables(void)const;
-        RuntimeStackInfo& CurRuntimeStack(void)const;
+        const ProcInfo* CurRuntimeProcInfo(void)const;
+        VariableInfo* CurRuntimeVariables(void)const;
         void PushRuntimeStack(const ProcInfo* procInfo)const;
         void PopRuntimeStack(void)const;
     protected:
@@ -427,6 +428,32 @@ namespace Brace
         BraceScript& m_Interpreter;
     protected:
         static void FreeObjVars(VariableInfo& vars, const std::vector<int>& objVars);
+    };
+
+    class FunctionExecutor final : public AbstractBraceApi
+    {
+    public:
+        FunctionExecutor(BraceScript& interpreter);
+    public:
+        void Load(const std::string& func) { Load(*CurProcInfo(), func); }
+        void Load(const ProcInfo& callerProc, const std::string& func);
+        int Run(void)const;
+        int GetArgCount(void)const;
+        const BraceApiLoadInfo* ArgInfo(int ix) const;
+        const BraceApiLoadInfo* ResultInfo(void) const;
+    protected:
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override;
+    private:
+        int Execute(void)const;
+    private:
+        const ProcInfo* m_Func;
+        std::vector<BraceApiExecutor> m_Args;
+        std::vector<BraceApiLoadInfo> m_ArgLoadInfos;
+        std::vector<VarAssignPtr> m_ArgAssigns;
+        BraceApiLoadInfo m_ResultInfo;
+        VarAssignPtr m_ResultAssign;
+
+        BraceApiExecutor m_CodeExecutor;
     };
 
     template<typename ApiT>
@@ -487,13 +514,13 @@ namespace Brace
         void Reset(void);
         void LoadScript(const DslData::DslFile& file);
         void Run(void);
+        ProcInfo* GlobalProcInfo(void)const;
+        VariableInfo* GlobalVariables(void)const;
         bool HasWarn(void)const { return m_HasWarn; }
         bool HasError(void)const { return m_HasError; }
     private:
-        ProcInfo* GlobalProcInfo(void)const;
-        VariableInfo* GlobalVariables(void)const;
-        const RuntimeStackInfo& CurRuntimeStack(void)const;
-        RuntimeStackInfo& CurRuntimeStack(void);
+        const ProcInfo* CurRuntimeProcInfo(void)const;
+        VariableInfo* CurRuntimeVariables(void)const;
         void PushRuntimeStack(const ProcInfo* procInfo);
         void PopRuntimeStack(void);
     private:
@@ -549,7 +576,7 @@ namespace Brace
         bool m_HasError;
         ProcInfoStack m_ProcInfoStack;
         int m_NextUniqueId;
-        int m_NextBlockId;
+        int m_LastBlockId;
         std::vector<BlockInfo> m_LexicalScopeStack;
         ProcInfo* m_GlobalProc;
         VariableInfo* m_GlobalVariables;

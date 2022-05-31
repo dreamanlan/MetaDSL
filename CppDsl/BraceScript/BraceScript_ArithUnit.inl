@@ -86,7 +86,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -99,7 +99,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
@@ -111,7 +111,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -125,7 +125,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -140,7 +140,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -153,7 +153,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
@@ -165,7 +165,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -179,7 +179,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -194,7 +194,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -207,7 +207,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
@@ -219,7 +219,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -233,7 +233,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -248,7 +248,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -261,7 +261,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetStr(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
@@ -273,7 +273,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -287,7 +287,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -369,7 +369,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -382,7 +382,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
@@ -394,7 +394,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -408,7 +408,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -423,7 +423,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -436,7 +436,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
@@ -448,7 +448,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -462,7 +462,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -477,7 +477,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -490,7 +490,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
@@ -502,7 +502,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -516,7 +516,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -598,7 +598,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -611,7 +611,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
@@ -623,7 +623,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -637,7 +637,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -652,7 +652,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -665,7 +665,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
@@ -677,7 +677,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -691,7 +691,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -706,7 +706,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -719,7 +719,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
@@ -731,7 +731,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -745,7 +745,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -827,7 +827,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -840,7 +840,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
@@ -852,7 +852,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -866,7 +866,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -881,7 +881,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -894,7 +894,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
@@ -906,7 +906,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -920,7 +920,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -935,7 +935,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -948,7 +948,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
@@ -960,7 +960,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -974,7 +974,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1041,7 +1041,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1054,7 +1054,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 % v2);
@@ -1066,7 +1066,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1080,7 +1080,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1095,7 +1095,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1108,7 +1108,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 % v2);
@@ -1120,7 +1120,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1134,7 +1134,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1201,7 +1201,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1214,7 +1214,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 << v2);
@@ -1226,7 +1226,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1240,7 +1240,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1255,7 +1255,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1268,7 +1268,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 << v2);
@@ -1280,7 +1280,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1294,7 +1294,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1361,7 +1361,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1374,7 +1374,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >> v2);
@@ -1386,7 +1386,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1400,7 +1400,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1415,7 +1415,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1428,7 +1428,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >> v2);
@@ -1440,7 +1440,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1454,7 +1454,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1521,7 +1521,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1534,7 +1534,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 & v2);
@@ -1546,7 +1546,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1560,7 +1560,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1575,7 +1575,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1588,7 +1588,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 & v2);
@@ -1600,7 +1600,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1614,7 +1614,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1681,7 +1681,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1694,7 +1694,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 | v2);
@@ -1706,7 +1706,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1720,7 +1720,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1735,7 +1735,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1748,7 +1748,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 | v2);
@@ -1760,7 +1760,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1774,7 +1774,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1841,7 +1841,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1854,7 +1854,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 ^ v2);
@@ -1866,7 +1866,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1880,7 +1880,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1895,7 +1895,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -1908,7 +1908,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 ^ v2);
@@ -1920,7 +1920,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1934,7 +1934,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2035,7 +2035,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2048,7 +2048,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
@@ -2060,7 +2060,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2074,7 +2074,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2089,7 +2089,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2102,7 +2102,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
@@ -2114,7 +2114,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2128,7 +2128,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2143,7 +2143,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2156,7 +2156,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
@@ -2168,7 +2168,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2182,7 +2182,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2197,7 +2197,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2210,7 +2210,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
@@ -2222,7 +2222,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2236,7 +2236,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2337,7 +2337,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2350,7 +2350,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
@@ -2362,7 +2362,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2376,7 +2376,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2391,7 +2391,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2404,7 +2404,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
@@ -2416,7 +2416,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2430,7 +2430,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2445,7 +2445,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2458,7 +2458,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
@@ -2470,7 +2470,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2484,7 +2484,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2499,7 +2499,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2512,7 +2512,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
@@ -2524,7 +2524,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2538,7 +2538,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2639,7 +2639,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2652,7 +2652,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
@@ -2664,7 +2664,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2678,7 +2678,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2693,7 +2693,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2706,7 +2706,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
@@ -2718,7 +2718,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2732,7 +2732,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2747,7 +2747,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2760,7 +2760,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
@@ -2772,7 +2772,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2786,7 +2786,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2801,7 +2801,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2814,7 +2814,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
@@ -2826,7 +2826,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2840,7 +2840,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2941,7 +2941,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -2954,7 +2954,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
@@ -2966,7 +2966,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2980,7 +2980,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2995,7 +2995,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3008,7 +3008,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
@@ -3020,7 +3020,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3034,7 +3034,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3049,7 +3049,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3062,7 +3062,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
@@ -3074,7 +3074,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3088,7 +3088,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3103,7 +3103,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3116,7 +3116,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
@@ -3128,7 +3128,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3142,7 +3142,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3243,7 +3243,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3256,7 +3256,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
@@ -3268,7 +3268,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3282,7 +3282,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3297,7 +3297,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3310,7 +3310,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
@@ -3322,7 +3322,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3336,7 +3336,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3351,7 +3351,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3364,7 +3364,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
@@ -3376,7 +3376,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3390,7 +3390,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3405,7 +3405,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3418,7 +3418,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
@@ -3430,7 +3430,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3444,7 +3444,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3545,7 +3545,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3558,7 +3558,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         int64_t v2 = VarGetI64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
@@ -3570,7 +3570,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3584,7 +3584,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3599,7 +3599,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3612,7 +3612,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         uint64_t v2 = VarGetU64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
@@ -3624,7 +3624,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3638,7 +3638,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3653,7 +3653,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3666,7 +3666,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         double v2 = VarGetF64(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
@@ -3678,7 +3678,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3692,7 +3692,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3707,7 +3707,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3720,7 +3720,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         std::string v2 = VarGetStr(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
@@ -3732,7 +3732,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3746,7 +3746,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3799,7 +3799,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         bool v1 = VarGetBoolean(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         bool v2 = VarGetBoolean(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3812,7 +3812,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBoolean(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         bool v2 = VarGetBoolean(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 && v2);
@@ -3824,7 +3824,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         bool v1 = VarGetBoolean(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3838,7 +3838,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         bool v1 = VarGetBoolean(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3891,7 +3891,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         bool v1 = VarGetBoolean(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         bool v2 = VarGetBoolean(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -3904,7 +3904,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBoolean(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         bool v2 = VarGetBoolean(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 || v2);
@@ -3916,7 +3916,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
         auto& srcVars2 = vars;
         bool v1 = VarGetBoolean(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3930,7 +3930,7 @@ private:
             m_Op1();
         if (m_Op2)
             m_Op2();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
         auto& srcVars2 = *GlobalVariables();
         bool v1 = VarGetBoolean(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3982,7 +3982,7 @@ private:
     {
         if (m_Op1)
             m_Op1();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ~v1);
@@ -3992,7 +3992,7 @@ private:
     {
         if (m_Op1)
             m_Op1();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ~v1);
         return BRACE_FLOW_CONTROL_NORMAL;
@@ -4002,7 +4002,7 @@ private:
     {
         if (m_Op1)
             m_Op1();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ~v1);
@@ -4012,7 +4012,7 @@ private:
     {
         if (m_Op1)
             m_Op1();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ~v1);
         return BRACE_FLOW_CONTROL_NORMAL;
@@ -4052,7 +4052,7 @@ private:
     {
         if (m_Op1)
             m_Op1();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
         bool v1 = VarGetBoolean(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, !v1);
@@ -4062,7 +4062,7 @@ private:
     {
         if (m_Op1)
             m_Op1();
-        auto& vars = *CurRuntimeStack().Variables;
+        auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBoolean(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
         VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, !v1);
         return BRACE_FLOW_CONTROL_NORMAL;

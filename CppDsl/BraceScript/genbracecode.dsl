@@ -294,7 +294,7 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1();
             if (m_Op2)
                 m_Op2();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             auto& srcVars = *GlobalVariables();
             {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
@@ -307,7 +307,7 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1();
             if (m_Op2)
                 m_Op2();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
             {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
@@ -319,7 +319,7 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1();
             if (m_Op2)
                 m_Op2();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             auto& srcVars1 = *GlobalVariables();
             auto& srcVars2 = vars;
             {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -333,7 +333,7 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1();
             if (m_Op2)
                 m_Op2();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             auto& srcVars1 = vars;
             auto& srcVars2 = *GlobalVariables();
             {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -351,7 +351,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         {
             if (m_Op1)
                 m_Op1();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             auto& srcVars = *GlobalVariables();
             {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
@@ -361,7 +361,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         {
             if (m_Op1)
                 m_Op1();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;

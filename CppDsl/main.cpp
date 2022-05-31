@@ -146,6 +146,14 @@ int main(int argc, char* argv[])
             script.OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };
             script.LoadScript(dslFile);
             script.Run();
+
+            Brace::FunctionExecutor funcExer(script);
+            funcExer.Load("main");
+            Brace::VarSetI64(*script.GlobalVariables(), funcExer.ArgInfo(0)->Type, funcExer.ArgInfo(0)->VarIndex, 345);
+            Brace::VarSetF64(*script.GlobalVariables(), funcExer.ArgInfo(1)->Type, funcExer.ArgInfo(1)->VarIndex, 3.14);
+            funcExer.Run();
+            int64_t v = Brace::VarGetI64(*script.GlobalVariables(), funcExer.ResultInfo()->Type, funcExer.ResultInfo()->VarIndex);
+            printf("FunctionExecutor result: %lld\n", v);
         }
     }
     delete[] pbuf;

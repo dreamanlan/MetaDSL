@@ -16,14 +16,14 @@ namespace Brace
     bool AbstractBraceApi::Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
     {
         bool ret = false;
-        auto* proc = CurProcInfo();
+        auto* curProc = CurProcInfo();
         switch (syntax.GetSyntaxType()) {
         case DslData::ISyntaxComponent::TYPE_VALUE:
-            ret = LoadValue(*proc, static_cast<const DslData::ValueData&>(syntax), loadInfo, executor);
+            ret = LoadValue(*curProc, static_cast<const DslData::ValueData&>(syntax), loadInfo, executor);
             break;
         case DslData::ISyntaxComponent::TYPE_FUNCTION: {
             auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
-            ret = LoadFunction(*proc, funcData, loadInfo, executor);
+            ret = LoadFunction(*curProc, funcData, loadInfo, executor);
             if (!ret && !funcData.IsHighOrder() && funcData.HaveParam()) {
                 //Provide a Load specifically for function calls
                 int num = funcData.GetParamNum();
@@ -36,12 +36,12 @@ namespace Brace
                     args.push_back(std::move(p));
                     argLoadInfos.push_back(std::move(argLoadInfo));
                 }
-                return LoadCall(*proc, funcData, std::move(args), std::move(argLoadInfos), loadInfo, executor);
+                return LoadCall(*curProc, funcData, std::move(args), std::move(argLoadInfos), loadInfo, executor);
             }
             break;
         }
         case DslData::ISyntaxComponent::TYPE_STATEMENT:
-            ret = LoadStatement(*proc, static_cast<const DslData::StatementData&>(syntax), loadInfo, executor);
+            ret = LoadStatement(*curProc, static_cast<const DslData::StatementData&>(syntax), loadInfo, executor);
             break;
         }
         return ret;
@@ -194,9 +194,13 @@ namespace Brace
     {
         return GetInterpreter().GlobalVariables();
     }
-    RuntimeStackInfo& AbstractBraceApi::CurRuntimeStack(void)const
+    const ProcInfo* AbstractBraceApi::CurRuntimeProcInfo(void)const
     {
-        return GetInterpreter().CurRuntimeStack();
+        return GetInterpreter().CurRuntimeProcInfo();
+    }
+    VariableInfo* AbstractBraceApi::CurRuntimeVariables(void)const
+    {
+        return GetInterpreter().CurRuntimeVariables();
     }
     void AbstractBraceApi::PushRuntimeStack(const ProcInfo* procInfo)const
     {
@@ -207,6 +211,140 @@ namespace Brace
         GetInterpreter().PopRuntimeStack();
     }
 
+    FunctionExecutor::FunctionExecutor(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Func(nullptr), m_Args(), m_ArgLoadInfos(), m_ArgAssigns(), m_ResultInfo(), m_ResultAssign(nullptr), m_CodeExecutor(nullptr)
+    {
+    }
+    void FunctionExecutor::Load(const ProcInfo& callerProc, const std::string& func)
+    {
+        //fake a FunctionData, we only need funcname and line.
+        DslData::FunctionData funcData;
+        funcData.GetName().SetIdentifier(func);
+        std::vector<BraceApiExecutor> args;
+        std::vector<BraceApiLoadInfo> argLoadInfos;
+        BraceApiLoadInfo resultInfo;
+        auto* f = GetProcInfo(func);
+        if (nullptr == f)
+            return;
+        for (int ix = 0; ix < static_cast<int>(f->Params.size()); ++ix) {
+            BraceApiLoadInfo argInfo;
+            std::string argName = GenTempVarName();
+            argInfo.Type = f->Params[ix].Type;
+            argInfo.ObjectTypeId = f->Params[ix].ObjectTypeId;
+            argInfo.VarIndex = AllocVariable(argName, argInfo.Type, argInfo.ObjectTypeId);
+            args.push_back(nullptr);
+            argLoadInfos.push_back(std::move(argInfo));
+        }
+        LoadCall(callerProc, funcData, std::move(args), std::move(argLoadInfos), resultInfo, m_CodeExecutor);
+    }
+    int FunctionExecutor::Run(void)const
+    {
+        if (m_CodeExecutor)
+            return m_CodeExecutor();
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int FunctionExecutor::GetArgCount(void)const
+    {
+        return static_cast<int>(m_ArgLoadInfos.size());
+    }
+    const BraceApiLoadInfo* FunctionExecutor::ArgInfo(int ix) const 
+    {
+        if (ix < 0 || ix >= static_cast<int>(m_ArgLoadInfos.size()))
+            return nullptr; 
+        return &m_ArgLoadInfos[ix]; 
+    }
+    const BraceApiLoadInfo* FunctionExecutor::ResultInfo(void) const 
+    { 
+        return &m_ResultInfo; 
+    }
+    bool FunctionExecutor::LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+    {
+        const std::string& func = data.GetId();
+        m_Func = GetProcInfo(func);
+        if (nullptr == m_Func) {
+            std::stringstream ss;
+            ss << "func " << func << " undefined, line " << data.GetLine();
+            LogError(ss.str());
+            return false;
+        }
+        std::swap(m_Args, args);
+        std::swap(m_ArgLoadInfos, argLoadInfos);
+
+        int num = static_cast<int>(m_ArgLoadInfos.size());
+        for (int ix = 0; ix < num; ++ix) {
+            auto& argLoadInfo = m_ArgLoadInfos[ix];
+            auto realArgType = argLoadInfo.GetLoadTimeRealType(curProc);
+            if (ix < static_cast<int>(m_Func->Params.size())) {
+                auto& paramInfo = m_Func->Params[ix];
+                if (paramInfo.IsRef) {
+                    if (paramInfo.Type != realArgType.Type && paramInfo.ObjectTypeId != realArgType.ObjectTypeId) {
+                        std::stringstream ss;
+                        ss << "func arg dismatch error, line " << data.GetLine();
+                        LogError(ss.str());
+                    }
+                }
+                else {
+                    if (!CanAssign(paramInfo.Type, paramInfo.ObjectTypeId, realArgType.Type, realArgType.ObjectTypeId)) {
+                        std::stringstream ss;
+                        ss << "func arg dismatch error, line " << data.GetLine();
+                        LogError(ss.str());
+                    }
+                }
+                auto ptr = GetVarAssignPtr(paramInfo.Type, paramInfo.IsRef, realArgType.Type, argLoadInfo.Type == BRACE_DATA_TYPE_REF);
+                m_ArgAssigns.push_back(ptr);
+            };
+        }
+        m_ResultInfo.Type = m_Func->RetValue.Type;
+        m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+        m_ResultAssign = GetVarAssignPtr(m_ResultInfo.Type, false, m_Func->RetValue.Type, false);
+        loadInfo = m_ResultInfo;
+        executor = std::bind(&FunctionExecutor::Execute, this);
+        return true;
+    }
+    int FunctionExecutor::Execute(void)const
+    {
+        //push args
+        auto& lastVars = *CurRuntimeVariables();
+        for (auto& arg : m_Args) {
+            if (arg)
+                arg();
+        }
+        //run curProc
+        int r = BRACE_FLOW_CONTROL_NORMAL;
+        PushRuntimeStack(m_Func);
+        auto& gvars = *GlobalVariables();
+        auto& vars = *CurRuntimeVariables();
+        for (int ix = 0; ix < static_cast<int>(m_ArgLoadInfos.size()) && ix < static_cast<int>(m_ArgAssigns.size()); ++ix) {
+            auto& destInfo = m_Func->Params[ix];
+            auto& srcInfo = m_ArgLoadInfos[ix];
+            if (destInfo.IsRef) {
+                vars.ReferenceVars[destInfo.VarIndex] = ReferenceInfo(srcInfo.Type, srcInfo.ObjectTypeId, srcInfo.VarIndex, srcInfo.IsGlobal ? &gvars : &lastVars);
+            }
+            auto ptr = m_ArgAssigns[ix];
+            if (srcInfo.IsGlobal)
+                (*ptr)(vars, destInfo.VarIndex, gvars, srcInfo.VarIndex);
+            else
+                (*ptr)(vars, destInfo.VarIndex, lastVars, srcInfo.VarIndex);
+        }
+        for (auto& p : m_Func->Codes) {
+            r = p();
+            switch (r) {
+            case BRACE_FLOW_CONTROL_RETURN:
+                r = BRACE_FLOW_CONTROL_NORMAL;
+                goto EXIT;
+            case BRACE_FLOW_CONTROL_EXCEPTION:
+                break;
+            case BRACE_FLOW_CONTROL_EFFECT:
+                break;
+            }
+        }
+    EXIT:
+        if (m_ResultAssign) {
+            (*m_ResultAssign)(lastVars, m_ResultInfo.VarIndex, vars, m_Func->RetValue.VarIndex);
+        }
+        PopRuntimeStack();
+        return r;
+    }
+
     class GlobalVarSet final : public AbstractBraceApi
     {
     public:
@@ -214,7 +352,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //@var = exp; or @var : type = exp;
             DslData::ISyntaxComponent* param1 = data.GetParam(0);
@@ -223,7 +361,7 @@ namespace Brace
                 return false;
             BraceApiLoadInfo argLoadInfo;
             m_Exp = LoadHelper(*param2, argLoadInfo);
-            auto realArgType = argLoadInfo.GetLoadTimeRealType(proc);
+            auto realArgType = argLoadInfo.GetLoadTimeRealType(curProc);
             int varType = BRACE_DATA_TYPE_UNKNOWN;
             int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
             DslData::FunctionData* pFunc = nullptr;
@@ -298,7 +436,7 @@ namespace Brace
                 m_Exp();
             if (m_Fptr) {
                 auto& vars = *GlobalVariables();
-                auto& srcVars = *CurRuntimeStack().Variables;
+                auto& srcVars = *CurRuntimeVariables();
                 (*m_Fptr)(vars, m_VarIndex, srcVars, m_SrcVarIndex);
             }
             return 0;
@@ -316,7 +454,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             const std::string& varId = data.GetId();
             auto* info = GetGlobalVarInfo(varId);
@@ -340,7 +478,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //$var = exp; or $var : type = exp;
             DslData::ISyntaxComponent* param1 = data.GetParam(0);
@@ -349,7 +487,7 @@ namespace Brace
                 return false;
             BraceApiLoadInfo argLoadInfo;
             m_Exp = LoadHelper(*param2, argLoadInfo);
-            auto realArgType = argLoadInfo.GetLoadTimeRealType(proc);
+            auto realArgType = argLoadInfo.GetLoadTimeRealType(curProc);
             int varType = BRACE_DATA_TYPE_UNKNOWN;
             int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
             DslData::FunctionData* pFunc = nullptr;
@@ -372,7 +510,7 @@ namespace Brace
                 m_VarIndex = varInfo->VarIndex;
                 DataTypeInfo realVarType(varType, varInfo->ObjectTypeId);
                 if (varType == BRACE_DATA_TYPE_REF) {
-                    auto& ri = proc.VarInitInfo.ReferenceVars[m_VarIndex];
+                    auto& ri = curProc.VarInitInfo.ReferenceVars[m_VarIndex];
                     realVarType = DataTypeInfo(ri.Type, ri.ObjectTypeId);
                     isRef = true;
                     varType = realVarType.Type;
@@ -413,7 +551,7 @@ namespace Brace
             if (m_Exp)
                 m_Exp();
             if (m_Fptr) {
-                auto& vars = *CurRuntimeStack().Variables;
+                auto& vars = *CurRuntimeVariables();
                 auto& srcVars = *GlobalVariables();
                 (*m_Fptr)(vars, m_VarIndex, srcVars, m_SrcVarIndex);
             }
@@ -424,7 +562,7 @@ namespace Brace
             if (m_Exp)
                 m_Exp();
             if (m_Fptr) {
-                auto& vars = *CurRuntimeStack().Variables;
+                auto& vars = *CurRuntimeVariables();
                 (*m_Fptr)(vars, m_VarIndex, vars, m_SrcVarIndex);
             }
             return 0;
@@ -442,7 +580,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             const std::string& varId = data.GetId();
             auto* info = GetVarInfo(varId);
@@ -466,7 +604,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             const std::string& varId = data.GetId();
             auto* info = GetConstInfo(varId);
@@ -483,109 +621,6 @@ namespace Brace
             return true;
         }
     };
-    class FunctionCall final : public AbstractBraceApi
-    {
-    public:
-        FunctionCall(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Func(nullptr), m_Args(), m_ArgIndexes(), m_ArgAssigns(), m_ResultInfo(), m_ResultAssign(nullptr)
-        {
-        }
-    protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
-        {
-            if (!data.IsHighOrder() && data.HaveParam()) {
-                const std::string& func = data.GetId();
-                m_Func = GetProcInfo(func);
-                int num = data.GetParamNum();
-                for (int ix = 0; ix < num; ++ix) {
-                    DslData::ISyntaxComponent* param = data.GetParam(ix);
-                    BraceApiLoadInfo argLoadInfo;
-                    auto p = LoadHelper(*param, argLoadInfo);
-                    auto realArgType = argLoadInfo.GetLoadTimeRealType(proc);
-                    if (ix < static_cast<int>(m_Func->Params.size())) {
-                        auto& paramInfo = m_Func->Params[ix];
-                        if (paramInfo.IsRef) {
-                            if (paramInfo.Type != realArgType.Type && paramInfo.ObjectTypeId != realArgType.ObjectTypeId) {
-                                std::stringstream ss;
-                                ss << "func arg dismatch error, line " << data.GetLine();
-                                LogError(ss.str());
-                            }
-                        }
-                        else {
-                            if (!CanAssign(paramInfo.Type, paramInfo.ObjectTypeId, realArgType.Type, realArgType.ObjectTypeId)) {
-                                std::stringstream ss;
-                                ss << "func arg dismatch error, line " << data.GetLine();
-                                LogError(ss.str());
-                            }
-                        }
-                        auto ptr = GetVarAssignPtr(paramInfo.Type, paramInfo.IsRef, realArgType.Type, argLoadInfo.Type == BRACE_DATA_TYPE_REF);
-                        m_ArgAssigns.push_back(ptr);
-                    };
-                    m_Args.push_back(std::move(p));
-                    m_ArgIndexes.push_back(std::move(argLoadInfo));
-                }
-                m_ResultInfo.Type = m_Func->RetValue.Type;
-                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
-                m_ResultAssign = GetVarAssignPtr(m_ResultInfo.Type, false, m_Func->RetValue.Type, false);
-                loadInfo = m_ResultInfo;
-                executor = std::bind(&FunctionCall::Execute, this);
-                return true;
-            }
-            return false;
-        }
-    private:
-        int Execute(void)const
-        {
-            //push args
-            auto& stackInfo = CurRuntimeStack();
-            for (auto& arg : m_Args) {
-                if (arg)
-                    arg();
-            }
-            //run proc
-            int r = BRACE_FLOW_CONTROL_NORMAL;
-            PushRuntimeStack(m_Func);
-            auto& gvars = *GlobalVariables();
-            auto& lastVars = *CurRuntimeStack().LastStackInfo->Variables;
-            auto& vars = *CurRuntimeStack().Variables;
-            for (int ix = 0; ix < static_cast<int>(m_ArgIndexes.size()) && ix < static_cast<int>(m_ArgAssigns.size()); ++ix) {
-                auto& destInfo = m_Func->Params[ix];
-                auto& srcInfo = m_ArgIndexes[ix];
-                if (destInfo.IsRef) {
-                    vars.ReferenceVars[destInfo.VarIndex] = ReferenceInfo(srcInfo.Type, srcInfo.ObjectTypeId, srcInfo.VarIndex, srcInfo.IsGlobal ? &gvars : &lastVars);
-                }
-                auto ptr = m_ArgAssigns[ix];
-                if (srcInfo.IsGlobal)
-                    (*ptr)(vars, destInfo.VarIndex, gvars, srcInfo.VarIndex);
-                else
-                    (*ptr)(vars, destInfo.VarIndex, lastVars, srcInfo.VarIndex);
-            }
-            for (auto& p : m_Func->Codes) {
-                r = p();
-                switch (r) {
-                case BRACE_FLOW_CONTROL_RETURN:
-                    r = BRACE_FLOW_CONTROL_NORMAL;
-                    goto EXIT;
-                case BRACE_FLOW_CONTROL_EXCEPTION:
-                    break;
-                case BRACE_FLOW_CONTROL_EFFECT:
-                    break;
-                }
-            }
-        EXIT:
-            if (m_ResultAssign) {
-                (*m_ResultAssign)(lastVars, m_ResultInfo.VarIndex, vars, m_Func->RetValue.VarIndex);
-            }
-            PopRuntimeStack();
-            return r;
-        }
-    private:
-        const ProcInfo* m_Func;
-        std::vector<BraceApiExecutor> m_Args;
-        std::vector<BraceApiLoadInfo> m_ArgIndexes;
-        std::vector<VarAssignPtr> m_ArgAssigns;
-        BraceApiLoadInfo m_ResultInfo;
-        VarAssignPtr m_ResultAssign;
-    };
     class BreakExp final : public AbstractBraceApi
     {
     public:
@@ -593,7 +628,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             loadInfo = BraceApiLoadInfo();
             executor = std::bind(&BreakExp::Execute, this);
@@ -612,7 +647,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(ProcInfo& proc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             loadInfo = BraceApiLoadInfo();
             executor = std::bind(&ContinueExp::Execute, this);
@@ -631,11 +666,11 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //return(...); or return <- expression;
-            m_ResultInfo.Type = proc.RetValue.Type;
-            m_ResultInfo.VarIndex = proc.RetValue.VarIndex;
+            m_ResultInfo.Type = curProc.RetValue.Type;
+            m_ResultInfo.VarIndex = curProc.RetValue.VarIndex;
             if (!data.IsHighOrder()) {
                 if (data.IsOperatorParamClass() && data.GetParamNum() == 2) {
                     auto* exp = data.GetParam(1);
@@ -645,7 +680,7 @@ namespace Brace
                     auto* exp = data.GetParam(0);
                     m_Arg = LoadHelper(*exp, m_LoadInfo);
                 }
-                m_Assign = GetVarAssignPtr(m_ResultInfo.Type, false, m_LoadInfo.Type, m_LoadInfo.GetLoadTimeRealType(proc).Type == BRACE_DATA_TYPE_REF);
+                m_Assign = GetVarAssignPtr(m_ResultInfo.Type, false, m_LoadInfo.Type, m_LoadInfo.GetLoadTimeRealType(curProc).Type == BRACE_DATA_TYPE_REF);
                 if (m_LoadInfo.IsGlobal)
                     executor = std::bind(&ReturnExp::ExecuteG, this);
                 else
@@ -657,17 +692,17 @@ namespace Brace
             LogError(ss.str());
             return false;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //return symbol;
-            m_ResultInfo.Type = proc.RetValue.Type;
-            m_ResultInfo.VarIndex = proc.RetValue.VarIndex;
+            m_ResultInfo.Type = curProc.RetValue.Type;
+            m_ResultInfo.VarIndex = curProc.RetValue.VarIndex;
             if (data.GetFunctionNum() == 2) {
                 auto* f1 = data.GetFirst()->AsValue();
                 auto* f2 = data.GetSecond()->AsValue();
                 if (f1 && f2) {
                     m_Arg = LoadHelper(*f2, m_LoadInfo);
-                    m_Assign = GetVarAssignPtr(m_ResultInfo.Type, false, m_LoadInfo.GetLoadTimeRealType(proc).Type, m_LoadInfo.Type == BRACE_DATA_TYPE_REF);
+                    m_Assign = GetVarAssignPtr(m_ResultInfo.Type, false, m_LoadInfo.GetLoadTimeRealType(curProc).Type, m_LoadInfo.Type == BRACE_DATA_TYPE_REF);
                     if (m_LoadInfo.IsGlobal)
                         executor = std::bind(&ReturnExp::ExecuteG, this);
                     else
@@ -686,7 +721,7 @@ namespace Brace
             if (m_Arg)
                 m_Arg();
             if (m_Assign) {
-                auto& vars = *CurRuntimeStack().Variables;
+                auto& vars = *CurRuntimeVariables();
                 auto& srcVars = *GlobalVariables();
                 (*m_Assign)(vars, m_ResultInfo.VarIndex, srcVars, m_LoadInfo.VarIndex);
             }
@@ -697,7 +732,7 @@ namespace Brace
             if (m_Arg)
                 m_Arg();
             if (m_Assign) {
-                auto& vars = *CurRuntimeStack().Variables;
+                auto& vars = *CurRuntimeVariables();
                 (*m_Assign)(vars, m_ResultInfo.VarIndex, vars, m_LoadInfo.VarIndex);
             }
             return BRACE_FLOW_CONTROL_RETURN;
@@ -715,19 +750,19 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //func(name){...};
             if (data.IsHighOrder()) {
                 const std::string& func = data.GetLowerOrderFunction().GetParamId(0);
-                auto* proc = PushNewProcInfo(func);
+                auto* curProc = PushNewProcInfo(func);
                 int num = data.GetParamNum();
                 for (int ix = 0; ix < num; ++ix) {
                     auto* exp = data.GetParam(ix);
                     BraceApiLoadInfo expLoadInfo;
                     auto statement = LoadHelper(*exp, expLoadInfo);
                     if (statement)
-                        proc->Codes.push_back(std::move(statement));
+                        curProc->Codes.push_back(std::move(statement));
                 }
                 loadInfo = BraceApiLoadInfo();
                 executor = nullptr;
@@ -741,7 +776,7 @@ namespace Brace
             }
             return false;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //func(name)args($a:int32,$b:int8,...)int{...}; or func(name)args($a:int32,$b:int8,...){...};
             bool hasError = false;
@@ -750,7 +785,7 @@ namespace Brace
                 auto* f2 = data.GetSecond()->AsFunction();
                 if (f1 && !f1->IsHighOrder() && f1->HaveParam() && f2 && f2->IsHighOrder() && f2->HaveStatement()) {
                     const std::string& func = f1->GetParamId(0);
-                    auto* proc = PushNewProcInfo(func);
+                    auto* newProc = PushNewProcInfo(func);
                     auto& callData = f2->GetLowerOrderFunction();
                     for (int ix = 0; ix < callData.GetParamNum(); ++ix) {
                         auto* p = callData.GetParam(ix);
@@ -772,12 +807,12 @@ namespace Brace
                                 }
                                 if (nullptr != typeFunc) {
                                     int varIndex = AllocVariable(name, BRACE_DATA_TYPE_REF);
-                                    proc->VarInitInfo.ReferenceVars[varIndex] = ReferenceInfo(type, objTypeId, INVALID_INDEX, nullptr);
-                                    proc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, true));
+                                    newProc->VarInitInfo.ReferenceVars[varIndex] = ReferenceInfo(type, objTypeId, INVALID_INDEX, nullptr);
+                                    newProc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, true));
                                 }
                                 else{
                                     int varIndex = AllocVariable(name, type, objTypeId);
-                                    proc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, false));
+                                    newProc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, false));
                                 }
                             }
                         }
@@ -791,7 +826,7 @@ namespace Brace
                         BraceApiLoadInfo expLoadInfo;
                         auto statement = LoadHelper(*exp, expLoadInfo);
                         if (statement)
-                            proc->Codes.push_back(std::move(statement));
+                            newProc->Codes.push_back(std::move(statement));
                     }
                     loadInfo = BraceApiLoadInfo();
                     executor = nullptr;
@@ -810,7 +845,7 @@ namespace Brace
                     f2 && !f2->IsHighOrder() && f2->HaveParam() &&
                     f3 && f3->HaveStatement()) {
                     const std::string& func = f1->GetParamId(0);
-                    auto* proc = PushNewProcInfo(func);
+                    auto* newProc = PushNewProcInfo(func);
                     auto& callData = *f2;
                     for (int ix = 0; ix < callData.GetParamNum(); ++ix) {
                         auto* p = callData.GetParam(ix);
@@ -832,12 +867,12 @@ namespace Brace
                                 }
                                 if (nullptr != typeFunc) {
                                     int varIndex = AllocVariable(name, BRACE_DATA_TYPE_REF);
-                                    proc->VarInitInfo.ReferenceVars[varIndex] = ReferenceInfo(type, objTypeId, INVALID_INDEX, nullptr);
-                                    proc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, true));
+                                    newProc->VarInitInfo.ReferenceVars[varIndex] = ReferenceInfo(type, objTypeId, INVALID_INDEX, nullptr);
+                                    newProc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, true));
                                 }
                                 else {
                                     int varIndex = AllocVariable(name, type, objTypeId);
-                                    proc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, false));
+                                    newProc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, false));
                                 }
                             }
                         }
@@ -854,7 +889,7 @@ namespace Brace
                         }
                         std::string tname = GenTempVarName();
                         int varIndex = AllocVariable(tname, type, objTypeId);
-                        proc->RetValue = ParamRetInfo(tname, type, objTypeId, varIndex);
+                        newProc->RetValue = ParamRetInfo(tname, type, objTypeId, varIndex);
                     }
                     else if (!f3->IsHighOrder()) {
                         auto& typeName = f3->GetId();
@@ -865,7 +900,7 @@ namespace Brace
                         }
                         std::string tname = GenTempVarName();
                         int varIndex = AllocVariable(tname, type, objTypeId);
-                        proc->RetValue = ParamRetInfo(tname, type, objTypeId, varIndex);
+                        newProc->RetValue = ParamRetInfo(tname, type, objTypeId, varIndex);
                     }
                     else {
                         hasError = true;
@@ -876,7 +911,7 @@ namespace Brace
                         BraceApiLoadInfo expLoadInfo;
                         auto statement = LoadHelper(*exp, expLoadInfo);
                         if (statement)
-                            proc->Codes.push_back(std::move(statement));
+                            newProc->Codes.push_back(std::move(statement));
                     }
                     loadInfo = BraceApiLoadInfo();
                     executor = nullptr;
@@ -905,12 +940,12 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             m_Op1 = args[0];
             m_LoadInfo1 = argLoadInfos[0];
             int resultType = BRACE_DATA_TYPE_UNKNOWN;
-            bool r = BuildExecutor(data, m_LoadInfo1.GetLoadTimeRealType(proc), resultType, executor);
+            bool r = BuildExecutor(data, m_LoadInfo1.GetLoadTimeRealType(curProc), resultType, executor);
             m_ResultInfo.Type = resultType;
             m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
             loadInfo = m_ResultInfo;
@@ -930,14 +965,14 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             m_Op1 = args[0];
             m_Op2 = args[1];
             m_LoadInfo1 = argLoadInfos[0];
             m_LoadInfo2 = argLoadInfos[1];
             int resultType = BRACE_DATA_TYPE_UNKNOWN;
-            bool r = BuildExecutor(data, m_LoadInfo1.GetLoadTimeRealType(proc), m_LoadInfo2.GetLoadTimeRealType(proc), resultType, executor);
+            bool r = BuildExecutor(data, m_LoadInfo1.GetLoadTimeRealType(curProc), m_LoadInfo2.GetLoadTimeRealType(curProc), resultType, executor);
             m_ResultInfo.Type = resultType;
             m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
             loadInfo = m_ResultInfo;
@@ -959,7 +994,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             auto* funcData1 = data.GetFirst()->AsFunction();
             auto* funcData2 = data.GetSecond()->AsFunction();
@@ -970,9 +1005,9 @@ namespace Brace
                 m_Op1 = LoadHelper(*cond, m_LoadInfo1);
                 m_Op2 = LoadHelper(*op1, m_LoadInfo2);
                 m_Op3 = LoadHelper(*op2, m_LoadInfo3);
-                auto realType1 = m_LoadInfo1.GetLoadTimeRealType(proc);
-                auto realType2 = m_LoadInfo2.GetLoadTimeRealType(proc);
-                auto realType3 = m_LoadInfo3.GetLoadTimeRealType(proc);
+                auto realType1 = m_LoadInfo1.GetLoadTimeRealType(curProc);
+                auto realType2 = m_LoadInfo2.GetLoadTimeRealType(curProc);
+                auto realType3 = m_LoadInfo3.GetLoadTimeRealType(curProc);
                 if (realType2.Type == BRACE_DATA_TYPE_STRING || realType3.Type == BRACE_DATA_TYPE_STRING) {
                     m_ResultInfo.Type = BRACE_DATA_TYPE_STRING;
                     executor = std::bind(&CondExp::ExecuteString, this);
@@ -1007,7 +1042,7 @@ namespace Brace
         int ExecuteInt(void) const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             if (m_Op1)
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1028,7 +1063,7 @@ namespace Brace
         int ExecuteUInt(void) const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             if (m_Op1)
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1049,7 +1084,7 @@ namespace Brace
         int ExecuteFloat(void) const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             if (m_Op1)
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1070,7 +1105,7 @@ namespace Brace
         int ExecuteString(void) const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             if (m_Op1)
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1091,7 +1126,7 @@ namespace Brace
         int ExecuteBool(void) const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             if (m_Op1)
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1125,7 +1160,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             std::swap(m_Args, args);
             std::swap(m_ArgLoadInfos, argLoadInfos);
@@ -1142,7 +1177,7 @@ namespace Brace
             }
             std::stringstream ss;
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             for (auto& info : m_ArgLoadInfos) {
                 if (info.Type != BRACE_DATA_TYPE_UNKNOWN) {
                     if (info.IsGlobal)
@@ -1166,7 +1201,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             if (funcData.IsHighOrder()) {
                 auto* cond = funcData.GetLowerOrderFunction().GetParam(0);
@@ -1192,7 +1227,7 @@ namespace Brace
             }
             return true;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //if(exp) func(args);
             int funcNum = data.GetFunctionNum();
@@ -1285,7 +1320,7 @@ namespace Brace
         int Execute(void)const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             int ct = static_cast<int>(m_Clauses.size());
             for (int ix = 0; ix < ct; ++ix) {
                 auto& clause = m_Clauses[ix];
@@ -1334,7 +1369,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             if (funcData.IsHighOrder()) {
                 auto* cond = funcData.GetLowerOrderFunction().GetParam(0);
@@ -1358,7 +1393,7 @@ namespace Brace
             }
             return true;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //while(exp) func(args);
             if (data.GetFunctionNum() == 2) {
@@ -1392,7 +1427,7 @@ namespace Brace
         int Execute(void)const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             for (; ; ) {
                 if (m_Condition)
                     m_Condition();
@@ -1430,7 +1465,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             if (funcData.IsHighOrder()) {
                 auto* count = funcData.GetLowerOrderFunction().GetParam(0);
@@ -1455,7 +1490,7 @@ namespace Brace
             }
             return true;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //loop(exp) func(args);
             if (data.GetFunctionNum() == 2) {
@@ -1489,7 +1524,7 @@ namespace Brace
         int Execute(void)const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             if (m_Count)
                 m_Count();
             long ct = static_cast<long>(VarGetI64(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex));
@@ -1527,7 +1562,7 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(ProcInfo& proc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& funcData, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             int iteratorType = BRACE_DATA_TYPE_UNKNOWN;
             if (funcData.IsHighOrder()) {
@@ -1576,7 +1611,7 @@ namespace Brace
             executor = std::bind(&ForeachExp::Execute, this);
             return true;
         }
-        virtual bool LoadStatement(ProcInfo& proc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             //foreach(exp1,exp2,...) func(args);
             if (data.GetFunctionNum() == 2) {
@@ -1635,7 +1670,7 @@ namespace Brace
         int Execute(void)const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             for (int ix = 0; ix < static_cast<int>(m_Elements.size()); ++ix) {
                 auto& elem = m_Elements[ix];
                 if (elem)
@@ -1697,13 +1732,13 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override
         {
             std::swap(m_Args, args);
             std::swap(m_ArgLoadInfos, argLoadInfos);
             if (argLoadInfos.size() > 0) {
                 auto& lastLoadInfo = argLoadInfos[argLoadInfos.size() - 1];
-                auto lastRealType = lastLoadInfo.GetLoadTimeRealType(proc);
+                auto lastRealType = lastLoadInfo.GetLoadTimeRealType(curProc);
                 m_ResultInfo = lastLoadInfo;
                 m_ResultInfo.Type = lastRealType.Type;
                 m_ResultInfo.ObjectTypeId = lastRealType.ObjectTypeId;
@@ -1717,7 +1752,7 @@ namespace Brace
         int Execute(void)const
         {
             auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeStack().Variables;
+            auto& vars = *CurRuntimeVariables();
             for (auto& op : m_Args) {
                 if (op)
                     op();
@@ -1737,10 +1772,10 @@ namespace Brace
 
 #include "BraceScript_ArithUnit.inl"
 
-    DataTypeInfo BraceApiLoadInfo::GetLoadTimeRealType(const ProcInfo& proc) const
+    DataTypeInfo BraceApiLoadInfo::GetLoadTimeRealType(const ProcInfo& curProc) const
     {
         if (Type == BRACE_DATA_TYPE_REF) {
-            auto& ri = proc.VarInitInfo.ReferenceVars[VarIndex];
+            auto& ri = curProc.VarInitInfo.ReferenceVars[VarIndex];
             return DataTypeInfo(ri.Type, ri.ObjectTypeId);
         }
         else {
@@ -1911,28 +1946,26 @@ namespace Brace
     {
         return m_GlobalVariables;
     }
-    const RuntimeStackInfo& BraceScript::CurRuntimeStack(void)const
+    const ProcInfo* BraceScript::CurRuntimeProcInfo(void)const
     {
-        return m_RuntimeStack.top();
+        if (m_RuntimeStack.empty()) {
+            return m_GlobalProc;
+        }
+        return m_RuntimeStack.top().Proc;
     }
-    RuntimeStackInfo& BraceScript::CurRuntimeStack(void)
+    VariableInfo* BraceScript::CurRuntimeVariables(void)const
     {
-        return m_RuntimeStack.top();
+        if (m_RuntimeStack.empty()) {
+            return m_GlobalVariables;
+        }
+        return m_RuntimeStack.top().Variables;
     }
     void BraceScript::PushRuntimeStack(const ProcInfo* procInfo)
     {
-        const RuntimeStackInfo* lastStack = nullptr;
-        if (!m_RuntimeStack.empty()) {
-            lastStack = &m_RuntimeStack.top();
-        }
         RuntimeStackInfo rsi{};
-        rsi.LastStackInfo = lastStack;
         rsi.Proc = procInfo;
         rsi.Variables = procInfo->AllocVariableInfo();
         m_RuntimeStack.push(std::move(rsi));
-        if (m_RuntimeStack.size() == 1) {
-            m_GlobalVariables = m_RuntimeStack.top().Variables;
-        }
     }
     void BraceScript::PopRuntimeStack(void)
     {
@@ -2011,10 +2044,14 @@ namespace Brace
     }
     const ProcInfo* BraceScript::CurProcInfo(void)const
     {
+        if (m_ProcInfoStack.empty())
+            return m_GlobalProc;
         return m_ProcInfoStack.top();
     }
     ProcInfo* BraceScript::CurProcInfo(void)
     {
+        if (m_ProcInfoStack.empty())
+            return m_GlobalProc;
         return m_ProcInfoStack.top();
     }
     ProcInfo* BraceScript::PushNewProcInfo(const std::string& name)
@@ -2033,6 +2070,8 @@ namespace Brace
     }
     int BraceScript::CurBlockId(void)const
     {
+        if (m_LexicalScopeStack.empty())
+            return 0;
         return m_LexicalScopeStack.back().BlockId;
     }
     const std::vector<int>& BraceScript::CurBlockObjVars(void)const {
@@ -2043,7 +2082,8 @@ namespace Brace
     }
     void BraceScript::PushBlock(void)
     {
-        BlockInfo bi(m_NextBlockId++);
+        ++m_LastBlockId;
+        BlockInfo bi(m_LastBlockId);
         m_LexicalScopeStack.push_back(std::move(bi));
     }
     void BraceScript::PopBlock(void)
@@ -2076,19 +2116,21 @@ namespace Brace
             return it->second.VarIndex;
         }
     }
-    auto BraceScript::FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level) const -> decltype(proc->VarTypeInfos.end())
+    auto BraceScript::FindVariable(ProcInfo* curProc, const std::string& name, std::string& key, int& level) const -> decltype(curProc->VarTypeInfos.end())
     {
         key = CalcVarKey(name, CurBlockId());
         std::string fkey = key;
-        int curLevel = static_cast<int>(m_LexicalScopeStack.size()) - 1;
-        decltype(proc->VarTypeInfos.end()) it;
+        int curLevel = static_cast<int>(m_LexicalScopeStack.size());
+        decltype(curProc->VarTypeInfos.end()) it;
         while (curLevel >= 0) {
-            it = proc->VarTypeInfos.find(fkey);
-            if (it != proc->VarTypeInfos.end())
+            it = curProc->VarTypeInfos.find(fkey);
+            if (it != curProc->VarTypeInfos.end())
                 break;
             --curLevel;
-            if (curLevel >= 0)
-                fkey = CalcVarKey(name, m_LexicalScopeStack[curLevel].BlockId);
+            if (curLevel > 0)
+                fkey = CalcVarKey(name, m_LexicalScopeStack[curLevel - 1].BlockId);
+            else
+                fkey = CalcVarKey(name, 0);
         }
         return it;
     }
@@ -2098,13 +2140,13 @@ namespace Brace
     }
     int BraceScript::AllocVariable(const std::string& name, int type, int objTypeId)
     {
-        auto* proc = CurProcInfo();
+        auto* curProc = CurProcInfo();
         std::string key;
         int level;
-        auto it = FindVariable(proc, name, key, level);
-        if (it == proc->VarTypeInfos.end()) {
-            int index = proc->VarInitInfo.AllocVariable(type);
-            proc->VarTypeInfos.insert(std::make_pair(key, VarInfo(name, type, objTypeId, index)));
+        auto it = FindVariable(curProc, name, key, level);
+        if (it == curProc->VarTypeInfos.end()) {
+            int index = curProc->VarInitInfo.AllocVariable(type);
+            curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(name, type, objTypeId, index)));
             if (type == BRACE_DATA_TYPE_OBJECT) {
                 auto& bi = m_LexicalScopeStack.back();
                 bi.ObjVars.push_back(index);
@@ -2118,86 +2160,86 @@ namespace Brace
     int BraceScript::AllocConst(int tok_type, const std::string& value, int& type)
     {
         std::string key = CalcConstKey(value);
-        auto* proc = GlobalProcInfo();
-        auto it = proc->VarTypeInfos.find(key);
-        if (it == proc->VarTypeInfos.end()) {
+        auto* curProc = GlobalProcInfo();
+        auto it = curProc->VarTypeInfos.find(key);
+        if (it == curProc->VarTypeInfos.end()) {
             int index = INVALID_INDEX;
             type = BRACE_DATA_TYPE_UNKNOWN;
             switch (tok_type) {
             case DslData::ValueData::VALUE_TYPE_IDENTIFIER:
                 if (value == "true" || value == "false") {
                     type = BRACE_DATA_TYPE_BOOL;
-                    index = proc->VarInitInfo.AllocVariable(type);
-                    proc->VarInitInfo.BoolVars[index] = value == "true";
+                    index = curProc->VarInitInfo.AllocVariable(type);
+                    curProc->VarInitInfo.BoolVars[index] = value == "true";
                 }
                 else if (value == "null") {
                     type = BRACE_DATA_TYPE_OBJECT;
-                    index = proc->VarInitInfo.AllocVariable(type);
-                    proc->VarInitInfo.BoolVars[index] = value == "true";
+                    index = curProc->VarInitInfo.AllocVariable(type);
+                    curProc->VarInitInfo.BoolVars[index] = value == "true";
                 }
                 break;
             case DslData::ValueData::VALUE_TYPE_STRING:
                 type = BRACE_DATA_TYPE_STRING;
-                index = proc->VarInitInfo.AllocVariable(type);
-                proc->VarInitInfo.StringVars[index] = value;
+                index = curProc->VarInitInfo.AllocVariable(type);
+                curProc->VarInitInfo.StringVars[index] = value;
                 break;
             case DslData::ValueData::VALUE_TYPE_NUM:
                 if (value.find('.', 0) != std::string::npos) {
                     double v = StrToDouble(value);
                     if (v >= std::numeric_limits<float>::min() && v <= std::numeric_limits<float>::max()) {
                         type = BRACE_DATA_TYPE_FLOAT;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.FloatVars[index] = static_cast<float>(v);
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.FloatVars[index] = static_cast<float>(v);
                     }
                     else {
                         type = BRACE_DATA_TYPE_DOUBLE;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.DoubleVars[index] = v;
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.DoubleVars[index] = v;
                     }
                 }
                 else if (value.length() > 0 && value[0] == '-') {
                     int64_t v = StrToInt64(value);
                     if (v >= std::numeric_limits<int32_t>::min()) {
                         type = BRACE_DATA_TYPE_INT32;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
                     }
                     else if (v >= std::numeric_limits<int64_t>::min()) {
                         type = BRACE_DATA_TYPE_INT64;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int64Vars[index] = v;
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.Int64Vars[index] = v;
                     }
                 }
                 else {
                     uint64_t v = StrToUInt64(value);
                     if (v <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
                         type = BRACE_DATA_TYPE_INT32;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.Int32Vars[index] = static_cast<int32_t>(v);
                     }
                     else if (v <= std::numeric_limits<uint32_t>::max()) {
                         type = BRACE_DATA_TYPE_UINT32;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Uint32Vars[index] = static_cast<uint32_t>(v);
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.Uint32Vars[index] = static_cast<uint32_t>(v);
                     }
                     else if (v <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
                         type = BRACE_DATA_TYPE_INT64;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Int64Vars[index] = static_cast<int64_t>(v);
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.Int64Vars[index] = static_cast<int64_t>(v);
                     }
                     else if (v <= std::numeric_limits<uint64_t>::max()) {
                         type = BRACE_DATA_TYPE_UINT64;
-                        index = proc->VarInitInfo.AllocVariable(type);
-                        proc->VarInitInfo.Uint64Vars[index] = v;
+                        index = curProc->VarInitInfo.AllocVariable(type);
+                        curProc->VarInitInfo.Uint64Vars[index] = v;
                     }
                 }
                 break;
             }
             if (type != BRACE_DATA_TYPE_UNKNOWN) {
                 if(type==BRACE_DATA_TYPE_OBJECT)
-                    proc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, BRACE_PREDEFINED_OBJECT_TYPE_NULL, index, true)));
+                    curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, BRACE_PREDEFINED_OBJECT_TYPE_NULL, index, true)));
                 else
-                    proc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ, index, true)));
+                    curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ, index, true)));
             }
             return index;
         }
@@ -2511,7 +2553,7 @@ namespace Brace
         IBraceApi* api = nullptr;
         const std::string& name = data.GetId();
         if (!data.IsHighOrder() && m_Procs.find(name) != m_Procs.end()) {
-            api = new FunctionCall(*this);
+            api = new FunctionExecutor(*this);
             AddApiInstance(api);
         }
         else {
@@ -2638,11 +2680,14 @@ namespace Brace
         m_HasWarn = false;
         m_HasError = false;
         m_NextUniqueId = 0;
+        m_LastBlockId = 0;
 
         std::string name = "global";
         auto pair = m_Procs.insert(std::make_pair(name, ProcInfo()));
         auto* p = &(pair.first->second);
+        m_GlobalProc = p;
         p->Name = name;
+        m_GlobalVariables = &(p->VarInitInfo);
     }
     void BraceScript::Release(void)
     {
@@ -2664,7 +2709,7 @@ namespace Brace
         m_AddedSyntaxComponents.clear();
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_NextBlockId(0), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr)
     {
         RegisterInnerApis();
         Init();
@@ -2696,11 +2741,6 @@ namespace Brace
     }
     void BraceScript::LoadScript(const DslData::DslFile& file)
     {
-        m_NextBlockId = 0;
-        auto it = m_Procs.find("global");
-        m_GlobalProc = &(it->second);
-        m_ProcInfoStack.push(&(it->second));
-        PushBlock();
         for (int ix = 0; ix < file.GetDslInfoNum(); ++ix) {
             auto* p = file.GetDslInfo(ix);
             BraceApiLoadInfo loadInfo;
@@ -2709,16 +2749,13 @@ namespace Brace
                 m_GlobalProc->Codes.push_back(std::move(executor));
             }
         }
-        PopBlock();
-        m_ProcInfoStack.pop();
     }
     void BraceScript::Run(void)
     {
         if (nullptr == m_GlobalProc)
             return;
-        auto* proc = m_GlobalProc;
-        PushRuntimeStack(proc);
-        for (auto& p : proc->Codes) {
+        auto* curProc = m_GlobalProc;
+        for (auto& p : curProc->Codes) {
             int r = p();
             switch (r) {
             case BRACE_FLOW_CONTROL_RETURN:
@@ -2734,6 +2771,5 @@ namespace Brace
         for (auto& sptr : m_GlobalVariables->ObjectVars) {
             sptr = nullptr;
         }
-        PopRuntimeStack();
     }
 }
