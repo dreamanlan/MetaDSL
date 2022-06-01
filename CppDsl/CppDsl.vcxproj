@@ -58,6 +58,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;__WINDOWS__;FULL_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\BraceScript;.\Parser;.\Common;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,6 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BraceScript\BraceCoroutine.cpp" />
     <ClCompile Include="BraceScript\BraceScript.cpp" />
     <ClCompile Include="Common\StringFormat.cpp" />
     <ClCompile Include="Dsl.cpp" />
@@ -101,6 +103,7 @@
     <ClCompile Include="Parser\SourceCodeScript.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BraceScript\BraceCoroutine.h" />
     <ClInclude Include="BraceScript\BraceScript.h" />
     <ClInclude Include="Common\Queue.h" />
     <ClInclude Include="Common\StaticCheck.h" />

@@ -322,7 +322,7 @@ namespace Brace
     class IBraceApi
     {
     public:
-        virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) = 0;
+        virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) = 0;
     public:
         virtual ~IBraceApi(void) {}
     protected:
@@ -377,21 +377,21 @@ namespace Brace
     {
         friend class FunctionExecutor;
     public:
-        virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override;
+        virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor)
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
@@ -422,7 +422,7 @@ namespace Brace
         void LogError(const std::string& msg)const;
         void AddSyntaxComponent(DslData::ISyntaxComponent* p)const;
         void AddApiInstance(IBraceApi* p)const;
-        BraceApiExecutor LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& loadInfo)const;
+        BraceApiExecutor LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo)const;
     protected:
         ProcInfo* GlobalProcInfo(void)const;
         VariableInfo* GlobalVariables(void)const;
@@ -462,7 +462,7 @@ namespace Brace
         const BraceApiLoadInfo* ArgInfo(int ix) const;
         const BraceApiLoadInfo* ResultInfo(void) const;
     protected:
-        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& loadInfo, BraceApiExecutor& executor) override;
+        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     private:
         int Execute(void)const;
     private:
@@ -474,6 +474,29 @@ namespace Brace
         VarAssignPtr m_ResultAssign;
 
         BraceApiExecutor m_CodeExecutor;
+    };
+
+    /// <summary>
+    /// Convenient but not efficient
+    /// </summary>
+    class SimpleBraceApiBase : public AbstractBraceApi
+    {
+    public:
+        SimpleBraceApiBase(BraceScript& interpreter);
+    protected:
+        virtual bool LoadCall(const ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
+    protected:
+        virtual bool TypeInference(const ProcInfo& proc, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const
+        {
+            resultInfo = Brace::BraceApiLoadInfo();
+            return true;
+        }
+        virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiLoadInfo>& argInfos)const = 0;
+    private:
+        int ExecuteImpl(void)const;
+    private:
+        std::vector<Brace::BraceApiExecutor> m_Args;
+        std::vector<Brace::BraceApiLoadInfo> m_ArgLoadInfos;
     };
 
     template<typename ApiT>
@@ -572,11 +595,11 @@ namespace Brace
         int AllocVariable(const std::string& name, int type);
         int AllocVariable(const std::string& name, int type, int objTypeId);
         int AllocConst(int tok_type, const std::string& value, int& type);
-        BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& loadInfo);
+        BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo);
     private:
-        BraceApiExecutor LoadValue(const DslData::ValueData& data, BraceApiLoadInfo& loadInfo);
-        BraceApiExecutor LoadFunction(const DslData::FunctionData& data, BraceApiLoadInfo& loadInfo);
-        BraceApiExecutor LoadStatement(const DslData::StatementData& data, BraceApiLoadInfo& loadInfo);
+        BraceApiExecutor LoadValue(const DslData::ValueData& data, BraceApiLoadInfo& resultInfo);
+        BraceApiExecutor LoadFunction(const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo);
+        BraceApiExecutor LoadStatement(const DslData::StatementData& data, BraceApiLoadInfo& resultInfo);
         IBraceApi* CreateApi(const std::string& name);
         void RegisterInnerApis(void);
         void Init(void);

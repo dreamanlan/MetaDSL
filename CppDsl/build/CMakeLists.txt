@@ -81,6 +81,8 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/Parser/SourceCodeScript.cpp
 	${CLIB_SRC_PATH}/BraceScript/BraceScript.h
 	${CLIB_SRC_PATH}/BraceScript/BraceScript.cpp
+	${CLIB_SRC_PATH}/BraceScript/BraceCoroutine.h
+	${CLIB_SRC_PATH}/BraceScript/BraceCoroutine.cpp
 )
     
 link_directories(${CLIB_SRC_PATH}/lib

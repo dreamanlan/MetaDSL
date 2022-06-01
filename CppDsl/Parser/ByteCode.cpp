@@ -7,10 +7,10 @@ class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 {
     typedef RuntimeBuilderT<TestRuntimeBuilder> BaseType;
 public:
-    char* getLastToken(void) const { return ""; }
+    char* getLastToken(void) const { return const_cast<char*>(""); }
     int getLastLineNumber(void) const { return 0; }
     int getCommentNum(int& commentOnNewLine) const { return 0; }
-    char* getComment(int index) const { return ""; }
+    char* getComment(int index) const { return const_cast<char*>(""); }
     void resetComments(void) {}
     void setCanFinish(int val) {}
     void setStringDelimiter(const char* begin, const char* end) {}

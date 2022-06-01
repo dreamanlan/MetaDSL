@@ -3,9 +3,18 @@
 #include "BaseType.h"
 #include "Dsl.h"
 #include "BraceScript.h"
+#include "BraceCoroutine.h"
 #include <fstream>
+#include <iostream>
+#include <sstream>
+#include <chrono>
 
-int main(int argc, char* argv[])
+int RealMain(void);
+void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt);
+void Tick(void);
+void Terminate(void);
+int main(int argc, char* argv[])DEFINE_SEQUENCING(return RealMain());
+int RealMain(void)
 {
     char* pbuf = new char[1024 * 1024 + 1];
     char* pbuf2 = new char[1024 * 1024 + 1];
@@ -44,7 +53,7 @@ int main(int argc, char* argv[])
                 char nc = api.peekNextValidChar(0, index);
                 if (nc == '<' && api.peekChar(index + 1) == '-')
                     return false;
-                api.setCurToken("<-");
+                api.setCurToken(const_cast<char*>("<-"));
                 api.setLastToken(oldCurTok);
                 api.enqueueToken(api.getCurToken(), api.getOperatorTokenValue(), line);
                 api.setCurToken(oldCurTok);
@@ -155,6 +164,18 @@ int main(int argc, char* argv[])
             int64_t v = Brace::VarGetI64(*script.GlobalVariables(), funcExer.ResultInfo()->Type, funcExer.ResultInfo()->VarIndex);
             printf("FunctionExecutor result: %lld\n", v);
         }
+
+        printf("Enter script:");
+        std::string scp;
+        std::getline(std::cin, scp);
+        InitScript(pDslBuffer, scp);
+
+        for (int i = 0; i < 100; ++i) {
+            printf("Tick %d", i);
+            Tick();
+            ::Sleep(100);
+        }
+        Terminate();
     }
     delete[] pbuf;
     delete[] pbuf2;
@@ -163,3 +184,113 @@ int main(int argc, char* argv[])
     return 0;
 }
 
+class WaitExp final : public Brace::SimpleBraceApiBase
+{
+public:
+    WaitExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+    {
+    }
+protected:
+    virtual bool TypeInference(const Brace::ProcInfo& proc, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+    {
+        for (auto& ali : argInfos) {
+            if (ali.Type != Brace::BRACE_DATA_TYPE_INT32) {
+                std::stringstream ss;
+                ss << "wait's param must be int32 ! line: " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+        }
+        resultInfo = Brace::BraceApiLoadInfo();
+        return true;
+    }
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos)const override
+    {
+        auto sv = std::chrono::system_clock::now();
+
+        for (auto& argInfo : argInfos) {
+            if (argInfo.Type == Brace::BRACE_DATA_TYPE_INT32) {
+                int v = (argInfo.IsGlobal ? gvars : lvars).NumericVars[argInfo.VarIndex].Int32Val;
+                if (v <= 60000) {
+                    auto cv = sv;
+                    while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
+                        Brace::Detach();
+                        cv = std::chrono::system_clock::now();
+                    }
+                }
+            }
+        }
+    }
+};
+
+class RoutineAlone;
+static RoutineAlone* g_RoutineAlone = nullptr;
+
+class RoutineAlone : public Brace::Coroutine
+{
+public:
+    void SetScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt) {
+        m_pBuffer = pBuffer;
+        m_pBraceScript = new Brace::BraceScript();
+        m_pDslFile = new DslData::DslFile();
+        m_pParsedFile = new DslParser::DslFile(*m_pBuffer);
+        m_ScriptTxt = txt;
+    }
+protected:
+    virtual void Routine(void) override
+    {
+        Do();
+        //The coroutine must call Detach or Resume at least once
+        Brace::Detach();
+    }
+public:
+     void Do(void)
+    {
+        m_pBuffer->Reset();
+        m_pParsedFile->Reset();
+        m_pParsedFile->Parse(m_ScriptTxt.c_str());
+        if (m_pParsedFile->HasError()) {
+            for (int i = 0; i < m_pParsedFile->GetErrorNum(); ++i) {
+                printf("[Brace Syntax]: %s", m_pParsedFile->GetErrorInfo(i));
+            }
+        }
+        else {
+            m_pDslFile->Reset();
+            Dsl::Transform(*m_pParsedFile, *m_pDslFile);
+            m_pBraceScript->Reset();
+            m_pBraceScript->RegisterApi("wait", new Brace::BraceApiFactory<WaitExp>());
+            m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
+            m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", str.c_str()); };
+            m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };
+            m_pBraceScript->LoadScript(*m_pDslFile);
+            m_pBraceScript->Run();
+        }
+    }
+private:
+    DslParser::IDslStringAndObjectBuffer* m_pBuffer;
+    Brace::BraceScript* m_pBraceScript;
+    DslData::DslFile* m_pDslFile;
+    DslParser::DslFile* m_pParsedFile;
+    std::string m_ScriptTxt;
+};
+
+void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt)
+{
+    if (nullptr == g_RoutineAlone) {
+        g_RoutineAlone = new RoutineAlone();
+    }
+    g_RoutineAlone->SetScript(pBuffer, txt);
+}
+void Tick(void)
+{
+    if (g_RoutineAlone->IsTerminated())
+        g_RoutineAlone->Reset();
+    Brace::Call(g_RoutineAlone);
+}
+void Terminate(void)
+{
+    if (nullptr != g_RoutineAlone) {
+        delete g_RoutineAlone;
+        g_RoutineAlone = nullptr;
+    }
+}
