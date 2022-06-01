@@ -249,11 +249,11 @@ namespace Brace
     }
     bool FunctionExecutor::IsValid(void)const
     {
-        return (bool)m_CodeExecutor;
+        return !m_CodeExecutor.isNull();
     }
     int FunctionExecutor::Run(void)const
     {
-        if (m_CodeExecutor)
+        if (!m_CodeExecutor.isNull())
             return m_CodeExecutor();
         return BRACE_FLOW_CONTROL_NORMAL;
     }
@@ -312,7 +312,7 @@ namespace Brace
         m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
         m_ResultAssign = GetVarAssignPtr(m_ResultInfo.Type, false, m_Func->RetValue.Type, false);
         resultInfo = m_ResultInfo;
-        executor = std::bind(&FunctionExecutor::Execute, this);
+        executor.attach(this, &FunctionExecutor::Execute);
         return true;
     }
     int FunctionExecutor::Execute(void)const
@@ -320,7 +320,7 @@ namespace Brace
         //push args
         auto& lastVars = *CurRuntimeVariables();
         for (auto& arg : m_Args) {
-            if (arg)
+            if (!arg.isNull())
                 arg();
         }
         //run curProc
@@ -369,7 +369,7 @@ namespace Brace
         std::swap(m_ArgLoadInfos, argLoadInfos);
         bool r = TypeInference(proc, data, m_ArgLoadInfos, resultInfo);
         if (r)
-            executor = std::bind(&SimpleBraceApiBase::ExecuteImpl, this);
+            executor.attach(this, &SimpleBraceApiBase::ExecuteImpl);
         return r;
     }
     int SimpleBraceApiBase::ExecuteImpl(void)const
@@ -377,7 +377,7 @@ namespace Brace
         auto& gvars = *GlobalVariables();
         auto& lvars = *CurRuntimeVariables();
         for (auto& op : m_Args) {
-            if (op)
+            if (!op.isNull())
                 op();
         }
         Execute(gvars, lvars, m_ArgLoadInfos);
@@ -453,15 +453,15 @@ namespace Brace
 
             m_Fptr = GetVarAssignPtr(varType, false, realArgType.Type, srcIsRef);
             if (argLoadInfo.IsGlobal)
-                executor = std::bind(&GlobalVarSet::ExecuteFromGlobal, this);
+                executor.attach(this, &GlobalVarSet::ExecuteFromGlobal);
             else
-                executor = std::bind(&GlobalVarSet::ExecuteFromLocal, this);
+                executor.attach(this, &GlobalVarSet::ExecuteFromLocal);
             return true;
         }
     private:
         int ExecuteFromGlobal(void) const
         {
-            if (m_Exp)
+            if (!m_Exp.isNull())
                 m_Exp();
             if (m_Fptr) {
                 auto& vars = *GlobalVariables();
@@ -471,7 +471,7 @@ namespace Brace
         }
         int ExecuteFromLocal(void) const
         {
-            if (m_Exp)
+            if (!m_Exp.isNull())
                 m_Exp();
             if (m_Fptr) {
                 auto& vars = *GlobalVariables();
@@ -579,15 +579,15 @@ namespace Brace
             
             m_Fptr = GetVarAssignPtr(varType, isRef, realArgType.Type, srcIsRef);
             if (argLoadInfo.IsGlobal)
-                executor = std::bind(&LocalVarSet::ExecuteFromGlobal, this);
+                executor.attach(this, &LocalVarSet::ExecuteFromGlobal);
             else
-                executor = std::bind(&LocalVarSet::ExecuteFromLocal, this);
+                executor.attach(this, &LocalVarSet::ExecuteFromLocal);
             return true;
         }
     private:
         int ExecuteFromGlobal(void) const
         {
-            if (m_Exp)
+            if (!m_Exp.isNull())
                 m_Exp();
             if (m_Fptr) {
                 auto& vars = *CurRuntimeVariables();
@@ -598,7 +598,7 @@ namespace Brace
         }
         int ExecuteFromLocal(void) const
         {
-            if (m_Exp)
+            if (!m_Exp.isNull())
                 m_Exp();
             if (m_Fptr) {
                 auto& vars = *CurRuntimeVariables();
@@ -670,7 +670,7 @@ namespace Brace
         virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
         {
             resultInfo = BraceApiLoadInfo();
-            executor = std::bind(&BreakExp::Execute, this);
+            executor.attach(this, &BreakExp::Execute);
             return false;
         }
     private:
@@ -689,7 +689,7 @@ namespace Brace
         virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
         {
             resultInfo = BraceApiLoadInfo();
-            executor = std::bind(&ContinueExp::Execute, this);
+            executor.attach(this, &ContinueExp::Execute);
             return false;
         }
     private:
@@ -721,9 +721,9 @@ namespace Brace
                 }
                 m_Assign = GetVarAssignPtr(m_ResultInfo.Type, false, m_LoadInfo.Type, m_LoadInfo.GetLoadTimeRealType(curProc).Type == BRACE_DATA_TYPE_REF);
                 if (m_LoadInfo.IsGlobal)
-                    executor = std::bind(&ReturnExp::ExecuteG, this);
+                    executor.attach(this, &ReturnExp::ExecuteG);
                 else
-                    executor = std::bind(&ReturnExp::ExecuteL, this);
+                    executor.attach(this, &ReturnExp::ExecuteL);
                 return true;
             }
             std::stringstream ss;
@@ -743,9 +743,9 @@ namespace Brace
                     m_Arg = LoadHelper(*f2, m_LoadInfo);
                     m_Assign = GetVarAssignPtr(m_ResultInfo.Type, false, m_LoadInfo.GetLoadTimeRealType(curProc).Type, m_LoadInfo.Type == BRACE_DATA_TYPE_REF);
                     if (m_LoadInfo.IsGlobal)
-                        executor = std::bind(&ReturnExp::ExecuteG, this);
+                        executor.attach(this, &ReturnExp::ExecuteG);
                     else
-                        executor = std::bind(&ReturnExp::ExecuteL, this);
+                        executor.attach(this, &ReturnExp::ExecuteL);
                     return true;
                 }
             }
@@ -757,7 +757,7 @@ namespace Brace
     private:
         int ExecuteG(void) const
         {
-            if (m_Arg)
+            if (!m_Arg.isNull())
                 m_Arg();
             if (m_Assign) {
                 auto& vars = *CurRuntimeVariables();
@@ -768,7 +768,7 @@ namespace Brace
         }
         int ExecuteL(void) const
         {
-            if (m_Arg)
+            if (!m_Arg.isNull())
                 m_Arg();
             if (m_Assign) {
                 auto& vars = *CurRuntimeVariables();
@@ -800,7 +800,7 @@ namespace Brace
                     auto* exp = data.GetParam(ix);
                     BraceApiLoadInfo expLoadInfo;
                     auto statement = LoadHelper(*exp, expLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         curProc->Codes.push_back(std::move(statement));
                 }
                 resultInfo = BraceApiLoadInfo();
@@ -864,7 +864,7 @@ namespace Brace
                         auto* exp = f2->GetParam(ix);
                         BraceApiLoadInfo expLoadInfo;
                         auto statement = LoadHelper(*exp, expLoadInfo);
-                        if (statement)
+                        if (!statement.isNull())
                             newProc->Codes.push_back(std::move(statement));
                     }
                     resultInfo = BraceApiLoadInfo();
@@ -949,7 +949,7 @@ namespace Brace
                         auto* exp = f3->GetParam(ix);
                         BraceApiLoadInfo expLoadInfo;
                         auto statement = LoadHelper(*exp, expLoadInfo);
-                        if (statement)
+                        if (!statement.isNull())
                             newProc->Codes.push_back(std::move(statement));
                     }
                     resultInfo = BraceApiLoadInfo();
@@ -1049,23 +1049,23 @@ namespace Brace
                 auto realType3 = m_LoadInfo3.GetLoadTimeRealType(curProc);
                 if (realType2.Type == BRACE_DATA_TYPE_STRING || realType3.Type == BRACE_DATA_TYPE_STRING) {
                     m_ResultInfo.Type = BRACE_DATA_TYPE_STRING;
-                    executor = std::bind(&CondExp::ExecuteString, this);
+                    executor.attach(this, &CondExp::ExecuteString);
                 }
                 else if (realType2.Type == BRACE_DATA_TYPE_BOOL && realType3.Type == BRACE_DATA_TYPE_BOOL) {
                     m_ResultInfo.Type = BRACE_DATA_TYPE_BOOL;
-                    executor = std::bind(&CondExp::ExecuteBool, this);
+                    executor.attach(this, &CondExp::ExecuteBool);
                 }
                 else if (NeedFloatArithUnit(realType2.Type, realType3.Type)) {
                     m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
-                    executor = std::bind(&CondExp::ExecuteFloat, this);
+                    executor.attach(this, &CondExp::ExecuteFloat);
                 }
                 else if (NeedUnsignedArithUnit(realType2.Type, realType3.Type)) {
                     m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
-                    executor = std::bind(&CondExp::ExecuteUInt, this);
+                    executor.attach(this, &CondExp::ExecuteUInt);
                 }
                 else {
                     m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
-                    executor = std::bind(&CondExp::ExecuteInt, this);
+                    executor.attach(this, &CondExp::ExecuteInt);
                 }
                 m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
             }
@@ -1082,17 +1082,17 @@ namespace Brace
         {
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
-                if (m_Op2)
+                if (!m_Op2.isNull())
                     m_Op2();
                 int64_t val = VarGetI64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
                 VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
-                if (m_Op3)
+                if (!m_Op3.isNull())
                     m_Op3();
                 int64_t val = VarGetI64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
                 VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
@@ -1103,17 +1103,17 @@ namespace Brace
         {
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
-                if (m_Op2)
+                if (!m_Op2.isNull())
                     m_Op2();
                 uint64_t val = VarGetU64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
                 VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
-                if (m_Op3)
+                if (!m_Op3.isNull())
                     m_Op3();
                 uint64_t val = VarGetU64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
                 VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
@@ -1124,17 +1124,17 @@ namespace Brace
         {
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
-                if (m_Op2)
+                if (!m_Op2.isNull())
                     m_Op2();
                 double val = VarGetF64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
                 VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
-                if (m_Op3)
+                if (!m_Op3.isNull())
                     m_Op3();
                 double val = VarGetF64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
                 VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
@@ -1145,17 +1145,17 @@ namespace Brace
         {
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
-                if (m_Op2)
+                if (!m_Op2.isNull())
                     m_Op2();
                 std::string val = VarGetStr(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
                 VarSetStr(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
-                if (m_Op3)
+                if (!m_Op3.isNull())
                     m_Op3();
                 std::string val = VarGetStr(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
                 VarSetStr(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
@@ -1166,17 +1166,17 @@ namespace Brace
         {
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
-                if (m_Op2)
+                if (!m_Op2.isNull())
                     m_Op2();
                 bool val = VarGetBoolean(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
                 VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
-                if (m_Op3)
+                if (!m_Op3.isNull())
                     m_Op3();
                 bool val = VarGetBoolean(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
                 VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
@@ -1204,14 +1204,14 @@ namespace Brace
             std::swap(m_Args, args);
             std::swap(m_ArgLoadInfos, argLoadInfos);
             resultInfo = BraceApiLoadInfo();
-            executor = std::bind(&EchoExp::Execute, this);
+            executor.attach(this, &EchoExp::Execute);
             return true;
         }
     private:
         int Execute(void)const
         {
             for (auto& p : m_Args) {
-                if (p)
+                if (!p.isNull())
                     p();
             }
             std::stringstream ss;
@@ -1250,13 +1250,13 @@ namespace Brace
                 for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         item.Statements.push_back(std::move(statement));
                 }
                 item.ObjVars = CurBlockObjVars();
                 PopBlock();
                 m_Clauses.push_back(std::move(item));
-                executor = std::bind(&IfExp::Execute, this);
+                executor.attach(this, &IfExp::Execute);
             }
             else {
                 //error
@@ -1290,10 +1290,10 @@ namespace Brace
                     }
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*second, argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         item.Statements.push_back(std::move(statement));
                     m_Clauses.push_back(std::move(item));
-                    executor = std::bind(&IfExp::Execute, this);
+                    executor.attach(this, &IfExp::Execute);
                     return true;
                 }
             }
@@ -1317,7 +1317,7 @@ namespace Brace
                     for (int iix = 0; iix < fData->GetParamNum(); ++iix) {
                         BraceApiLoadInfo argLoadInfo;
                         auto statement = LoadHelper(*fData->GetParam(iix), argLoadInfo);
-                        if (statement)
+                        if (!statement.isNull())
                             item.Statements.push_back(std::move(statement));
                     }
                     item.ObjVars = CurBlockObjVars();
@@ -1337,7 +1337,7 @@ namespace Brace
                         for (int iix = 0; iix < fData->GetParamNum(); ++iix) {
                             BraceApiLoadInfo argLoadInfo;
                             auto statement = LoadHelper(*fData->GetParam(iix), argLoadInfo);
-                            if (statement)
+                            if (!statement.isNull())
                                 item.Statements.push_back(std::move(statement));
                         }
                         item.ObjVars = CurBlockObjVars();
@@ -1352,7 +1352,7 @@ namespace Brace
                     LogError(ss.str());
                 }
             }
-            executor = std::bind(&IfExp::Execute, this);
+            executor.attach(this, &IfExp::Execute);
             return true;
         }
     private:
@@ -1363,7 +1363,7 @@ namespace Brace
             int ct = static_cast<int>(m_Clauses.size());
             for (int ix = 0; ix < ct; ++ix) {
                 auto& clause = m_Clauses[ix];
-                if (clause.Condition)
+                if (!clause.Condition.isNull())
                     clause.Condition();
                 if (VarGetBoolean(clause.LoadInfo.IsGlobal ? gvars : vars, clause.LoadInfo.Type, clause.LoadInfo.VarIndex)) {
                     for (auto& statement : clause.Statements) {
@@ -1417,12 +1417,12 @@ namespace Brace
                 for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         m_Statements.push_back(std::move(statement));
                 }
                 m_ObjVars = CurBlockObjVars();
                 PopBlock();
-                executor = std::bind(&WhileExp::Execute, this);
+                executor.attach(this, &WhileExp::Execute);
             }
             else {
                 //error
@@ -1454,9 +1454,9 @@ namespace Brace
                     }
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*second, argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         m_Statements.push_back(std::move(statement));
-                    executor = std::bind(&WhileExp::Execute, this);
+                    executor.attach(this, &WhileExp::Execute);
                     return true;
                 }
             }
@@ -1468,7 +1468,7 @@ namespace Brace
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
             for (; ; ) {
-                if (m_Condition)
+                if (!m_Condition.isNull())
                     m_Condition();
                 if (VarGetBoolean(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex)) {
                     for (auto& statement : m_Statements) {
@@ -1514,12 +1514,12 @@ namespace Brace
                 for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         m_Statements.push_back(std::move(statement));
                 }
                 m_ObjVars = CurBlockObjVars();
                 PopBlock();
-                executor = std::bind(&LoopExp::Execute, this);
+                executor.attach(this, &LoopExp::Execute);
             }
             else {
                 //error
@@ -1551,9 +1551,9 @@ namespace Brace
                     }
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*second, argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         m_Statements.push_back(std::move(statement));
-                    executor = std::bind(&LoopExp::Execute, this);
+                    executor.attach(this, &LoopExp::Execute);
                     return true;
                 }
             }
@@ -1564,7 +1564,7 @@ namespace Brace
         {
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
-            if (m_Count)
+            if (!m_Count.isNull())
                 m_Count();
             long ct = static_cast<long>(VarGetI64(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex));
             for (int i = 0; i < ct; ++i) {
@@ -1641,13 +1641,13 @@ namespace Brace
                 for (int ix = 0; ix < fnum; ++ix) {
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         m_Statements.push_back(std::move(statement));
                 }
             }
             m_ObjVars = CurBlockObjVars();
             PopBlock();
-            executor = std::bind(&ForeachExp::Execute, this);
+            executor.attach(this, &ForeachExp::Execute);
             return true;
         }
         virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
@@ -1697,9 +1697,9 @@ namespace Brace
                     }
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*second, argLoadInfo);
-                    if (statement)
+                    if (!statement.isNull())
                         m_Statements.push_back(std::move(statement));
-                    executor = std::bind(&ForeachExp::Execute, this);
+                    executor.attach(this, &ForeachExp::Execute);
                     return true;
                 }
             }
@@ -1712,7 +1712,7 @@ namespace Brace
             auto& vars = *CurRuntimeVariables();
             for (int ix = 0; ix < static_cast<int>(m_Elements.size()); ++ix) {
                 auto& elem = m_Elements[ix];
-                if (elem)
+                if (!elem.isNull())
                     elem();
             }
             for (int ix = 0; ix < static_cast<int>(m_ElementLoadInfos.size()); ++ix) {
@@ -1784,7 +1784,7 @@ namespace Brace
                 m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
                 resultInfo = m_ResultInfo;
             }
-            executor = std::bind(&ParenthesisExp::Execute, this);
+            executor.attach(this, &ParenthesisExp::Execute);
             return true;
         }
     private:
@@ -1793,7 +1793,7 @@ namespace Brace
             auto& gvars = *GlobalVariables();
             auto& vars = *CurRuntimeVariables();
             for (auto& op : m_Args) {
-                if (op)
+                if (!op.isNull())
                     op();
             }
             if (m_ArgLoadInfos.size() > 0) {
@@ -2755,7 +2755,7 @@ namespace Brace
             auto* p = file.GetDslInfo(ix);
             BraceApiLoadInfo resultInfo;
             auto executor = Load(*p, resultInfo);
-            if (executor) {
+            if (!executor.isNull()) {
                 m_GlobalProc->Codes.push_back(std::move(executor));
             }
         }

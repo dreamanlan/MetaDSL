@@ -318,7 +318,7 @@ namespace Brace
     /// We implement first one first.
     class BraceScript;
     //We only need a member function to run, not a virtual function
-    using BraceApiExecutor = std::function<int(void)>;
+    using BraceApiExecutor = Delegation0<int>;
     class IBraceApi
     {
     public:

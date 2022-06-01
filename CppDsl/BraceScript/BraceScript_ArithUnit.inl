@@ -19,181 +19,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &AddExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &AddExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AddExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &AddExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -201,61 +201,61 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGGString, this);
+                executor.attach(this, &AddExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLLString, this);
+                executor.attach(this, &AddExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGLString, this);
+                executor.attach(this, &AddExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLGString, this);
+                executor.attach(this, &AddExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGGFloat, this);
+                executor.attach(this, &AddExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLLFloat, this);
+                executor.attach(this, &AddExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGLFloat, this);
+                executor.attach(this, &AddExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLGFloat, this);
+                executor.attach(this, &AddExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGGUInt, this);
+                executor.attach(this, &AddExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLLUInt, this);
+                executor.attach(this, &AddExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGLUInt, this);
+                executor.attach(this, &AddExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLGUInt, this);
+                executor.attach(this, &AddExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGGInt, this);
+                executor.attach(this, &AddExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLLInt, this);
+                executor.attach(this, &AddExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteGLInt, this);
+                executor.attach(this, &AddExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AddExp::ExecuteLGInt, this);
+                executor.attach(this, &AddExp::ExecuteLGInt);
             }
 
         }
@@ -265,9 +265,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -278,9 +278,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -290,9 +290,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -304,9 +304,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -319,9 +319,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -332,9 +332,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -344,9 +344,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -358,9 +358,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -373,9 +373,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -386,9 +386,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -398,9 +398,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -412,9 +412,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -427,9 +427,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -440,9 +440,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -452,9 +452,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -466,9 +466,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -481,9 +481,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -494,9 +494,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -506,9 +506,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -520,9 +520,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -535,9 +535,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -548,9 +548,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -560,9 +560,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -574,9 +574,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -589,9 +589,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -602,9 +602,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -614,9 +614,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -628,9 +628,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -643,9 +643,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -656,9 +656,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -668,9 +668,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -682,9 +682,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -697,9 +697,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -710,9 +710,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -722,9 +722,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -736,9 +736,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -751,9 +751,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -764,9 +764,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -776,9 +776,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -790,9 +790,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -805,9 +805,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -818,9 +818,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -830,9 +830,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -844,9 +844,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -859,9 +859,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -872,9 +872,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -884,9 +884,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -898,9 +898,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -913,9 +913,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -926,9 +926,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -938,9 +938,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -952,9 +952,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -967,9 +967,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -980,9 +980,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -992,9 +992,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1006,9 +1006,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1021,9 +1021,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1034,9 +1034,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1046,9 +1046,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1060,9 +1060,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1075,9 +1075,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1088,9 +1088,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1100,9 +1100,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1114,9 +1114,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1150,151 +1150,151 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &SubExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &SubExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &SubExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &SubExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &SubExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &SubExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &SubExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &SubExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&SubExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &SubExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
@@ -1302,46 +1302,46 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteGGFloat, this);
+                executor.attach(this, &SubExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteLLFloat, this);
+                executor.attach(this, &SubExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteGLFloat, this);
+                executor.attach(this, &SubExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteLGFloat, this);
+                executor.attach(this, &SubExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteGGUInt, this);
+                executor.attach(this, &SubExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteLLUInt, this);
+                executor.attach(this, &SubExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteGLUInt, this);
+                executor.attach(this, &SubExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteLGUInt, this);
+                executor.attach(this, &SubExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteGGInt, this);
+                executor.attach(this, &SubExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteLLInt, this);
+                executor.attach(this, &SubExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteGLInt, this);
+                executor.attach(this, &SubExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&SubExp::ExecuteLGInt, this);
+                executor.attach(this, &SubExp::ExecuteLGInt);
             }
 
         }
@@ -1351,9 +1351,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1364,9 +1364,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -1376,9 +1376,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1390,9 +1390,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1405,9 +1405,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1418,9 +1418,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -1430,9 +1430,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1444,9 +1444,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1459,9 +1459,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1472,9 +1472,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -1484,9 +1484,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1498,9 +1498,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1513,9 +1513,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1526,9 +1526,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -1538,9 +1538,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1552,9 +1552,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1567,9 +1567,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1580,9 +1580,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -1592,9 +1592,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1606,9 +1606,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1621,9 +1621,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1634,9 +1634,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -1646,9 +1646,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1660,9 +1660,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1675,9 +1675,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1688,9 +1688,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -1700,9 +1700,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1714,9 +1714,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1729,9 +1729,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1742,9 +1742,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -1754,9 +1754,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1768,9 +1768,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1783,9 +1783,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1796,9 +1796,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -1808,9 +1808,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1822,9 +1822,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1837,9 +1837,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1850,9 +1850,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -1862,9 +1862,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1876,9 +1876,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1891,9 +1891,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1904,9 +1904,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1916,9 +1916,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1930,9 +1930,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1945,9 +1945,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -1958,9 +1958,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -1970,9 +1970,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -1984,9 +1984,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -1999,9 +1999,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2012,9 +2012,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2024,9 +2024,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2038,9 +2038,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2074,151 +2074,151 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &MulExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &MulExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &MulExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &MulExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &MulExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &MulExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &MulExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &MulExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&MulExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &MulExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
@@ -2226,46 +2226,46 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteGGFloat, this);
+                executor.attach(this, &MulExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteLLFloat, this);
+                executor.attach(this, &MulExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteGLFloat, this);
+                executor.attach(this, &MulExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteLGFloat, this);
+                executor.attach(this, &MulExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteGGUInt, this);
+                executor.attach(this, &MulExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteLLUInt, this);
+                executor.attach(this, &MulExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteGLUInt, this);
+                executor.attach(this, &MulExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteLGUInt, this);
+                executor.attach(this, &MulExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteGGInt, this);
+                executor.attach(this, &MulExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteLLInt, this);
+                executor.attach(this, &MulExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteGLInt, this);
+                executor.attach(this, &MulExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&MulExp::ExecuteLGInt, this);
+                executor.attach(this, &MulExp::ExecuteLGInt);
             }
 
         }
@@ -2275,9 +2275,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2288,9 +2288,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -2300,9 +2300,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2314,9 +2314,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2329,9 +2329,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2342,9 +2342,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -2354,9 +2354,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2368,9 +2368,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2383,9 +2383,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2396,9 +2396,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -2408,9 +2408,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2422,9 +2422,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2437,9 +2437,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2450,9 +2450,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -2462,9 +2462,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2476,9 +2476,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2491,9 +2491,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2504,9 +2504,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -2516,9 +2516,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2530,9 +2530,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2545,9 +2545,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2558,9 +2558,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -2570,9 +2570,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2584,9 +2584,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2599,9 +2599,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2612,9 +2612,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -2624,9 +2624,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2638,9 +2638,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2653,9 +2653,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2666,9 +2666,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -2678,9 +2678,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2692,9 +2692,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2707,9 +2707,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2720,9 +2720,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -2732,9 +2732,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2746,9 +2746,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2761,9 +2761,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2774,9 +2774,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -2786,9 +2786,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2800,9 +2800,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2815,9 +2815,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2828,9 +2828,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2840,9 +2840,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2854,9 +2854,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2869,9 +2869,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2882,9 +2882,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2894,9 +2894,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2908,9 +2908,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2923,9 +2923,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -2936,9 +2936,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -2948,9 +2948,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -2962,9 +2962,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -2998,151 +2998,151 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &DivExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &DivExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &DivExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &DivExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &DivExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &DivExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &DivExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &DivExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&DivExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &DivExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
@@ -3150,46 +3150,46 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteGGFloat, this);
+                executor.attach(this, &DivExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteLLFloat, this);
+                executor.attach(this, &DivExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteGLFloat, this);
+                executor.attach(this, &DivExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteLGFloat, this);
+                executor.attach(this, &DivExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteGGUInt, this);
+                executor.attach(this, &DivExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteLLUInt, this);
+                executor.attach(this, &DivExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteGLUInt, this);
+                executor.attach(this, &DivExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteLGUInt, this);
+                executor.attach(this, &DivExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteGGInt, this);
+                executor.attach(this, &DivExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteLLInt, this);
+                executor.attach(this, &DivExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteGLInt, this);
+                executor.attach(this, &DivExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&DivExp::ExecuteLGInt, this);
+                executor.attach(this, &DivExp::ExecuteLGInt);
             }
 
         }
@@ -3199,9 +3199,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3212,9 +3212,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -3224,9 +3224,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3238,9 +3238,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3253,9 +3253,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3266,9 +3266,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -3278,9 +3278,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3292,9 +3292,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3307,9 +3307,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3320,9 +3320,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -3332,9 +3332,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3346,9 +3346,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3361,9 +3361,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3374,9 +3374,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -3386,9 +3386,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3400,9 +3400,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3415,9 +3415,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3428,9 +3428,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -3440,9 +3440,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3454,9 +3454,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3469,9 +3469,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3482,9 +3482,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -3494,9 +3494,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3508,9 +3508,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3523,9 +3523,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3536,9 +3536,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -3548,9 +3548,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3562,9 +3562,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3577,9 +3577,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3590,9 +3590,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -3602,9 +3602,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3616,9 +3616,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3631,9 +3631,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3644,9 +3644,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -3656,9 +3656,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3670,9 +3670,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3685,9 +3685,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3698,9 +3698,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -3710,9 +3710,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3724,9 +3724,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3739,9 +3739,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3752,9 +3752,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3764,9 +3764,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3778,9 +3778,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3793,9 +3793,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3806,9 +3806,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3818,9 +3818,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3832,9 +3832,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3847,9 +3847,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -3860,9 +3860,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -3872,9 +3872,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -3886,9 +3886,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -3922,121 +3922,121 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&ModExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &ModExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -4044,31 +4044,31 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteGGUInt, this);
+                executor.attach(this, &ModExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteLLUInt, this);
+                executor.attach(this, &ModExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteGLUInt, this);
+                executor.attach(this, &ModExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteLGUInt, this);
+                executor.attach(this, &ModExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteGGInt, this);
+                executor.attach(this, &ModExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteLLInt, this);
+                executor.attach(this, &ModExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteGLInt, this);
+                executor.attach(this, &ModExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&ModExp::ExecuteLGInt, this);
+                executor.attach(this, &ModExp::ExecuteLGInt);
             }
 
         }
@@ -4078,9 +4078,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4091,9 +4091,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -4103,9 +4103,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4117,9 +4117,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4132,9 +4132,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4145,9 +4145,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -4157,9 +4157,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4171,9 +4171,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4186,9 +4186,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4199,9 +4199,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -4211,9 +4211,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4225,9 +4225,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4240,9 +4240,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4253,9 +4253,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -4265,9 +4265,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4279,9 +4279,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4294,9 +4294,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4307,9 +4307,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -4319,9 +4319,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4333,9 +4333,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4348,9 +4348,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4361,9 +4361,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -4373,9 +4373,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4387,9 +4387,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4402,9 +4402,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4415,9 +4415,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -4427,9 +4427,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4441,9 +4441,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4456,9 +4456,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4469,9 +4469,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -4481,9 +4481,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4495,9 +4495,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4510,9 +4510,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4523,9 +4523,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -4535,9 +4535,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4549,9 +4549,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4564,9 +4564,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4577,9 +4577,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -4589,9 +4589,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4603,9 +4603,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4639,121 +4639,121 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LShiftExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &LShiftExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -4761,31 +4761,31 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteGGUInt, this);
+                executor.attach(this, &LShiftExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteLLUInt, this);
+                executor.attach(this, &LShiftExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteGLUInt, this);
+                executor.attach(this, &LShiftExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteLGUInt, this);
+                executor.attach(this, &LShiftExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteGGInt, this);
+                executor.attach(this, &LShiftExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteLLInt, this);
+                executor.attach(this, &LShiftExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteGLInt, this);
+                executor.attach(this, &LShiftExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LShiftExp::ExecuteLGInt, this);
+                executor.attach(this, &LShiftExp::ExecuteLGInt);
             }
 
         }
@@ -4795,9 +4795,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4808,9 +4808,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -4820,9 +4820,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4834,9 +4834,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4849,9 +4849,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4862,9 +4862,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -4874,9 +4874,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4888,9 +4888,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4903,9 +4903,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4916,9 +4916,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -4928,9 +4928,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4942,9 +4942,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -4957,9 +4957,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -4970,9 +4970,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -4982,9 +4982,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -4996,9 +4996,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5011,9 +5011,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5024,9 +5024,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -5036,9 +5036,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5050,9 +5050,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5065,9 +5065,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5078,9 +5078,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -5090,9 +5090,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5104,9 +5104,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5119,9 +5119,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5132,9 +5132,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -5144,9 +5144,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5158,9 +5158,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5173,9 +5173,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5186,9 +5186,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -5198,9 +5198,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5212,9 +5212,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5227,9 +5227,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5240,9 +5240,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -5252,9 +5252,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5266,9 +5266,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5281,9 +5281,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5294,9 +5294,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -5306,9 +5306,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5320,9 +5320,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5356,121 +5356,121 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&RShiftExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &RShiftExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -5478,31 +5478,31 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteGGUInt, this);
+                executor.attach(this, &RShiftExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteLLUInt, this);
+                executor.attach(this, &RShiftExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteGLUInt, this);
+                executor.attach(this, &RShiftExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteLGUInt, this);
+                executor.attach(this, &RShiftExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteGGInt, this);
+                executor.attach(this, &RShiftExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteLLInt, this);
+                executor.attach(this, &RShiftExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteGLInt, this);
+                executor.attach(this, &RShiftExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&RShiftExp::ExecuteLGInt, this);
+                executor.attach(this, &RShiftExp::ExecuteLGInt);
             }
 
         }
@@ -5512,9 +5512,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5525,9 +5525,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -5537,9 +5537,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5551,9 +5551,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5566,9 +5566,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5579,9 +5579,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -5591,9 +5591,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5605,9 +5605,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5620,9 +5620,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5633,9 +5633,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -5645,9 +5645,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5659,9 +5659,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5674,9 +5674,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5687,9 +5687,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -5699,9 +5699,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5713,9 +5713,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5728,9 +5728,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5741,9 +5741,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -5753,9 +5753,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5767,9 +5767,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5782,9 +5782,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5795,9 +5795,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -5807,9 +5807,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5821,9 +5821,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5836,9 +5836,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5849,9 +5849,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -5861,9 +5861,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5875,9 +5875,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5890,9 +5890,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5903,9 +5903,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -5915,9 +5915,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5929,9 +5929,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5944,9 +5944,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -5957,9 +5957,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -5969,9 +5969,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -5983,9 +5983,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -5998,9 +5998,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6011,9 +6011,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -6023,9 +6023,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6037,9 +6037,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6073,121 +6073,121 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitAndExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &BitAndExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -6195,31 +6195,31 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteGGUInt, this);
+                executor.attach(this, &BitAndExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteLLUInt, this);
+                executor.attach(this, &BitAndExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteGLUInt, this);
+                executor.attach(this, &BitAndExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteLGUInt, this);
+                executor.attach(this, &BitAndExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteGGInt, this);
+                executor.attach(this, &BitAndExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteLLInt, this);
+                executor.attach(this, &BitAndExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteGLInt, this);
+                executor.attach(this, &BitAndExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitAndExp::ExecuteLGInt, this);
+                executor.attach(this, &BitAndExp::ExecuteLGInt);
             }
 
         }
@@ -6229,9 +6229,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6242,9 +6242,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -6254,9 +6254,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6268,9 +6268,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6283,9 +6283,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6296,9 +6296,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -6308,9 +6308,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6322,9 +6322,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6337,9 +6337,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6350,9 +6350,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -6362,9 +6362,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6376,9 +6376,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6391,9 +6391,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6404,9 +6404,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -6416,9 +6416,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6430,9 +6430,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6445,9 +6445,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6458,9 +6458,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -6470,9 +6470,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6484,9 +6484,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6499,9 +6499,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6512,9 +6512,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -6524,9 +6524,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6538,9 +6538,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6553,9 +6553,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6566,9 +6566,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -6578,9 +6578,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6592,9 +6592,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6607,9 +6607,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6620,9 +6620,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -6632,9 +6632,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6646,9 +6646,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6661,9 +6661,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6674,9 +6674,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -6686,9 +6686,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6700,9 +6700,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6715,9 +6715,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6728,9 +6728,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -6740,9 +6740,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6754,9 +6754,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -6790,121 +6790,121 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitOrExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &BitOrExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -6912,31 +6912,31 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteGGUInt, this);
+                executor.attach(this, &BitOrExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteLLUInt, this);
+                executor.attach(this, &BitOrExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteGLUInt, this);
+                executor.attach(this, &BitOrExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteLGUInt, this);
+                executor.attach(this, &BitOrExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteGGInt, this);
+                executor.attach(this, &BitOrExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteLLInt, this);
+                executor.attach(this, &BitOrExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteGLInt, this);
+                executor.attach(this, &BitOrExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitOrExp::ExecuteLGInt, this);
+                executor.attach(this, &BitOrExp::ExecuteLGInt);
             }
 
         }
@@ -6946,9 +6946,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -6959,9 +6959,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -6971,9 +6971,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -6985,9 +6985,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7000,9 +7000,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7013,9 +7013,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -7025,9 +7025,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7039,9 +7039,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7054,9 +7054,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7067,9 +7067,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -7079,9 +7079,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7093,9 +7093,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7108,9 +7108,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7121,9 +7121,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -7133,9 +7133,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7147,9 +7147,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7162,9 +7162,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7175,9 +7175,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -7187,9 +7187,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7201,9 +7201,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7216,9 +7216,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7229,9 +7229,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -7241,9 +7241,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7255,9 +7255,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7270,9 +7270,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7283,9 +7283,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -7295,9 +7295,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7309,9 +7309,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7324,9 +7324,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7337,9 +7337,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -7349,9 +7349,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7363,9 +7363,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7378,9 +7378,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7391,9 +7391,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -7403,9 +7403,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7417,9 +7417,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7432,9 +7432,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7445,9 +7445,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -7457,9 +7457,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7471,9 +7471,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7507,121 +7507,121 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&BitXorExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &BitXorExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -7629,31 +7629,31 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteGGUInt, this);
+                executor.attach(this, &BitXorExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteLLUInt, this);
+                executor.attach(this, &BitXorExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteGLUInt, this);
+                executor.attach(this, &BitXorExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteLGUInt, this);
+                executor.attach(this, &BitXorExp::ExecuteLGUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteGGInt, this);
+                executor.attach(this, &BitXorExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteLLInt, this);
+                executor.attach(this, &BitXorExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteGLInt, this);
+                executor.attach(this, &BitXorExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&BitXorExp::ExecuteLGInt, this);
+                executor.attach(this, &BitXorExp::ExecuteLGInt);
             }
 
         }
@@ -7663,9 +7663,9 @@ protected:
 private:
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7676,9 +7676,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -7688,9 +7688,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7702,9 +7702,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7717,9 +7717,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7730,9 +7730,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -7742,9 +7742,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7756,9 +7756,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7771,9 +7771,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7784,9 +7784,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -7796,9 +7796,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7810,9 +7810,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7825,9 +7825,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7838,9 +7838,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -7850,9 +7850,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7864,9 +7864,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7879,9 +7879,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7892,9 +7892,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -7904,9 +7904,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7918,9 +7918,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7933,9 +7933,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -7946,9 +7946,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -7958,9 +7958,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -7972,9 +7972,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -7987,9 +7987,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8000,9 +8000,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -8012,9 +8012,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8026,9 +8026,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8041,9 +8041,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8054,9 +8054,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -8066,9 +8066,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8080,9 +8080,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8095,9 +8095,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8108,9 +8108,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -8120,9 +8120,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8134,9 +8134,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8149,9 +8149,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8162,9 +8162,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -8174,9 +8174,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8188,9 +8188,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8224,181 +8224,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &GreatExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &GreatExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -8407,64 +8407,64 @@ protected:
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGGString, this);
+                executor.attach(this, &GreatExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLLString, this);
+                executor.attach(this, &GreatExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGLString, this);
+                executor.attach(this, &GreatExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLGString, this);
+                executor.attach(this, &GreatExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGGFloat, this);
+                executor.attach(this, &GreatExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLLFloat, this);
+                executor.attach(this, &GreatExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGLFloat, this);
+                executor.attach(this, &GreatExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLGFloat, this);
+                executor.attach(this, &GreatExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGGUInt, this);
+                executor.attach(this, &GreatExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLLUInt, this);
+                executor.attach(this, &GreatExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGLUInt, this);
+                executor.attach(this, &GreatExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLGUInt, this);
+                executor.attach(this, &GreatExp::ExecuteLGUInt);
             }
 
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGGInt, this);
+                executor.attach(this, &GreatExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLLInt, this);
+                executor.attach(this, &GreatExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteGLInt, this);
+                executor.attach(this, &GreatExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatExp::ExecuteLGInt, this);
+                executor.attach(this, &GreatExp::ExecuteLGInt);
             }
 
         }
@@ -8474,9 +8474,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8487,9 +8487,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -8499,9 +8499,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8513,9 +8513,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8528,9 +8528,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8541,9 +8541,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -8553,9 +8553,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8567,9 +8567,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8582,9 +8582,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8595,9 +8595,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -8607,9 +8607,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8621,9 +8621,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8636,9 +8636,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8649,9 +8649,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -8661,9 +8661,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8675,9 +8675,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8690,9 +8690,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8703,9 +8703,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -8715,9 +8715,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8729,9 +8729,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8744,9 +8744,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8757,9 +8757,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -8769,9 +8769,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8783,9 +8783,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8798,9 +8798,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8811,9 +8811,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -8823,9 +8823,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8837,9 +8837,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8852,9 +8852,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8865,9 +8865,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -8877,9 +8877,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8891,9 +8891,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8906,9 +8906,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8919,9 +8919,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -8931,9 +8931,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8945,9 +8945,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -8960,9 +8960,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -8973,9 +8973,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -8985,9 +8985,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -8999,9 +8999,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9014,9 +9014,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9027,9 +9027,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -9039,9 +9039,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9053,9 +9053,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9068,9 +9068,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9081,9 +9081,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -9093,9 +9093,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9107,9 +9107,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9122,9 +9122,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9135,9 +9135,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -9147,9 +9147,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9161,9 +9161,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9176,9 +9176,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9189,9 +9189,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -9201,9 +9201,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9215,9 +9215,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9230,9 +9230,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9243,9 +9243,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -9255,9 +9255,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9269,9 +9269,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9284,9 +9284,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9297,9 +9297,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -9309,9 +9309,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9323,9 +9323,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9359,181 +9359,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&GreatEqualExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &GreatEqualExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -9542,64 +9542,64 @@ protected:
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGGString, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLLString, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGLString, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLGString, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGGFloat, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLLFloat, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGLFloat, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLGFloat, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGGUInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLLUInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGLUInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLGUInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLGUInt);
             }
 
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGGInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLLInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteGLInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&GreatEqualExp::ExecuteLGInt, this);
+                executor.attach(this, &GreatEqualExp::ExecuteLGInt);
             }
 
         }
@@ -9609,9 +9609,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9622,9 +9622,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -9634,9 +9634,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9648,9 +9648,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9663,9 +9663,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9676,9 +9676,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -9688,9 +9688,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9702,9 +9702,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9717,9 +9717,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9730,9 +9730,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -9742,9 +9742,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9756,9 +9756,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9771,9 +9771,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9784,9 +9784,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -9796,9 +9796,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9810,9 +9810,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9825,9 +9825,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9838,9 +9838,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -9850,9 +9850,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9864,9 +9864,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9879,9 +9879,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9892,9 +9892,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -9904,9 +9904,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9918,9 +9918,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9933,9 +9933,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -9946,9 +9946,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -9958,9 +9958,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -9972,9 +9972,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -9987,9 +9987,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10000,9 +10000,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -10012,9 +10012,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10026,9 +10026,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10041,9 +10041,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10054,9 +10054,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -10066,9 +10066,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10080,9 +10080,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10095,9 +10095,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10108,9 +10108,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -10120,9 +10120,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10134,9 +10134,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10149,9 +10149,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10162,9 +10162,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -10174,9 +10174,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10188,9 +10188,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10203,9 +10203,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10216,9 +10216,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -10228,9 +10228,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10242,9 +10242,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10257,9 +10257,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10270,9 +10270,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -10282,9 +10282,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10296,9 +10296,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10311,9 +10311,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10324,9 +10324,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -10336,9 +10336,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10350,9 +10350,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10365,9 +10365,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10378,9 +10378,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -10390,9 +10390,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10404,9 +10404,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10419,9 +10419,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10432,9 +10432,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -10444,9 +10444,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10458,9 +10458,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10494,181 +10494,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &LessExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &LessExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &LessExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -10677,64 +10677,64 @@ protected:
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGGString, this);
+                executor.attach(this, &LessExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLLString, this);
+                executor.attach(this, &LessExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGLString, this);
+                executor.attach(this, &LessExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLGString, this);
+                executor.attach(this, &LessExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGGFloat, this);
+                executor.attach(this, &LessExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLLFloat, this);
+                executor.attach(this, &LessExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGLFloat, this);
+                executor.attach(this, &LessExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLGFloat, this);
+                executor.attach(this, &LessExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGGUInt, this);
+                executor.attach(this, &LessExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLLUInt, this);
+                executor.attach(this, &LessExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGLUInt, this);
+                executor.attach(this, &LessExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLGUInt, this);
+                executor.attach(this, &LessExp::ExecuteLGUInt);
             }
 
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGGInt, this);
+                executor.attach(this, &LessExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLLInt, this);
+                executor.attach(this, &LessExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteGLInt, this);
+                executor.attach(this, &LessExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessExp::ExecuteLGInt, this);
+                executor.attach(this, &LessExp::ExecuteLGInt);
             }
 
         }
@@ -10744,9 +10744,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10757,9 +10757,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -10769,9 +10769,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10783,9 +10783,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10798,9 +10798,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10811,9 +10811,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -10823,9 +10823,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10837,9 +10837,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10852,9 +10852,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10865,9 +10865,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -10877,9 +10877,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10891,9 +10891,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10906,9 +10906,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10919,9 +10919,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -10931,9 +10931,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10945,9 +10945,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -10960,9 +10960,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -10973,9 +10973,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -10985,9 +10985,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -10999,9 +10999,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11014,9 +11014,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11027,9 +11027,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -11039,9 +11039,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11053,9 +11053,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11068,9 +11068,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11081,9 +11081,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -11093,9 +11093,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11107,9 +11107,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11122,9 +11122,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11135,9 +11135,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -11147,9 +11147,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11161,9 +11161,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11176,9 +11176,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11189,9 +11189,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -11201,9 +11201,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11215,9 +11215,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11230,9 +11230,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11243,9 +11243,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -11255,9 +11255,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11269,9 +11269,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11284,9 +11284,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11297,9 +11297,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -11309,9 +11309,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11323,9 +11323,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11338,9 +11338,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11351,9 +11351,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -11363,9 +11363,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11377,9 +11377,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11392,9 +11392,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11405,9 +11405,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -11417,9 +11417,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11431,9 +11431,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11446,9 +11446,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11459,9 +11459,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -11471,9 +11471,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11485,9 +11485,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11500,9 +11500,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11513,9 +11513,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -11525,9 +11525,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11539,9 +11539,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11554,9 +11554,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11567,9 +11567,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -11579,9 +11579,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11593,9 +11593,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11629,181 +11629,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&LessEqualExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &LessEqualExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -11812,64 +11812,64 @@ protected:
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGGString, this);
+                executor.attach(this, &LessEqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLLString, this);
+                executor.attach(this, &LessEqualExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGLString, this);
+                executor.attach(this, &LessEqualExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLGString, this);
+                executor.attach(this, &LessEqualExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGGFloat, this);
+                executor.attach(this, &LessEqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLLFloat, this);
+                executor.attach(this, &LessEqualExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGLFloat, this);
+                executor.attach(this, &LessEqualExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLGFloat, this);
+                executor.attach(this, &LessEqualExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGGUInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLLUInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGLUInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLGUInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteLGUInt);
             }
 
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGGInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLLInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteGLInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&LessEqualExp::ExecuteLGInt, this);
+                executor.attach(this, &LessEqualExp::ExecuteLGInt);
             }
 
         }
@@ -11879,9 +11879,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11892,9 +11892,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -11904,9 +11904,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11918,9 +11918,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11933,9 +11933,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -11946,9 +11946,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -11958,9 +11958,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -11972,9 +11972,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -11987,9 +11987,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12000,9 +12000,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -12012,9 +12012,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12026,9 +12026,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12041,9 +12041,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12054,9 +12054,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -12066,9 +12066,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12080,9 +12080,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12095,9 +12095,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12108,9 +12108,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -12120,9 +12120,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12134,9 +12134,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12149,9 +12149,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12162,9 +12162,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -12174,9 +12174,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12188,9 +12188,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12203,9 +12203,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12216,9 +12216,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -12228,9 +12228,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12242,9 +12242,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12257,9 +12257,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12270,9 +12270,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -12282,9 +12282,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12296,9 +12296,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12311,9 +12311,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12324,9 +12324,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -12336,9 +12336,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12350,9 +12350,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12365,9 +12365,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12378,9 +12378,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -12390,9 +12390,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12404,9 +12404,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12419,9 +12419,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12432,9 +12432,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -12444,9 +12444,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12458,9 +12458,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12473,9 +12473,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12486,9 +12486,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -12498,9 +12498,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12512,9 +12512,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12527,9 +12527,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12540,9 +12540,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -12552,9 +12552,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12566,9 +12566,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12581,9 +12581,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12594,9 +12594,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -12606,9 +12606,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12620,9 +12620,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12635,9 +12635,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12648,9 +12648,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -12660,9 +12660,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12674,9 +12674,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12689,9 +12689,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -12702,9 +12702,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -12714,9 +12714,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -12728,9 +12728,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -12764,181 +12764,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &EqualExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&EqualExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &EqualExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -12947,64 +12947,64 @@ protected:
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGGString, this);
+                executor.attach(this, &EqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLLString, this);
+                executor.attach(this, &EqualExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGLString, this);
+                executor.attach(this, &EqualExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLGString, this);
+                executor.attach(this, &EqualExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGGFloat, this);
+                executor.attach(this, &EqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLLFloat, this);
+                executor.attach(this, &EqualExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGLFloat, this);
+                executor.attach(this, &EqualExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLGFloat, this);
+                executor.attach(this, &EqualExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGGUInt, this);
+                executor.attach(this, &EqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLLUInt, this);
+                executor.attach(this, &EqualExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGLUInt, this);
+                executor.attach(this, &EqualExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLGUInt, this);
+                executor.attach(this, &EqualExp::ExecuteLGUInt);
             }
 
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGGInt, this);
+                executor.attach(this, &EqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLLInt, this);
+                executor.attach(this, &EqualExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteGLInt, this);
+                executor.attach(this, &EqualExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&EqualExp::ExecuteLGInt, this);
+                executor.attach(this, &EqualExp::ExecuteLGInt);
             }
 
         }
@@ -13014,9 +13014,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13027,9 +13027,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -13039,9 +13039,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13053,9 +13053,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13068,9 +13068,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13081,9 +13081,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -13093,9 +13093,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13107,9 +13107,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13122,9 +13122,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13135,9 +13135,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -13147,9 +13147,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13161,9 +13161,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13176,9 +13176,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13189,9 +13189,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -13201,9 +13201,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13215,9 +13215,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13230,9 +13230,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13243,9 +13243,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -13255,9 +13255,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13269,9 +13269,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13284,9 +13284,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13297,9 +13297,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -13309,9 +13309,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13323,9 +13323,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13338,9 +13338,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13351,9 +13351,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -13363,9 +13363,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13377,9 +13377,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13392,9 +13392,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13405,9 +13405,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -13417,9 +13417,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13431,9 +13431,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13446,9 +13446,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13459,9 +13459,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -13471,9 +13471,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13485,9 +13485,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13500,9 +13500,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13513,9 +13513,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -13525,9 +13525,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13539,9 +13539,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13554,9 +13554,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13567,9 +13567,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -13579,9 +13579,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13593,9 +13593,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13608,9 +13608,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13621,9 +13621,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -13633,9 +13633,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13647,9 +13647,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13662,9 +13662,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13675,9 +13675,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -13687,9 +13687,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13701,9 +13701,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13716,9 +13716,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13729,9 +13729,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -13741,9 +13741,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13755,9 +13755,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13770,9 +13770,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13783,9 +13783,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -13795,9 +13795,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13809,9 +13809,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13824,9 +13824,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -13837,9 +13837,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -13849,9 +13849,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -13863,9 +13863,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -13899,181 +13899,181 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGUInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGFloatBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLFloatBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLFloatBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLFloatBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGFloatBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGFloatBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGDoubleBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLDoubleBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLDoubleBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLDoubleBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGDoubleBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGDoubleBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_STRING:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGGStringBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLLStringBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLLStringBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteGLStringBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteGLStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&NotEqualExp::ExecuteLGStringBoth, this);
+                    executor.attach(this, &NotEqualExp::ExecuteLGStringBoth);
                 }
 
                 break;
@@ -14082,64 +14082,64 @@ protected:
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGGString, this);
+                executor.attach(this, &NotEqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLLString, this);
+                executor.attach(this, &NotEqualExp::ExecuteLLString);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGLString, this);
+                executor.attach(this, &NotEqualExp::ExecuteGLString);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLGString, this);
+                executor.attach(this, &NotEqualExp::ExecuteLGString);
             }
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGGFloat, this);
+                executor.attach(this, &NotEqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLLFloat, this);
+                executor.attach(this, &NotEqualExp::ExecuteLLFloat);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGLFloat, this);
+                executor.attach(this, &NotEqualExp::ExecuteGLFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLGFloat, this);
+                executor.attach(this, &NotEqualExp::ExecuteLGFloat);
             }
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGGUInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLLUInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteLLUInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGLUInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteGLUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLGUInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteLGUInt);
             }
 
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGGInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLLInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteLLInt);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteGLInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteGLInt);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&NotEqualExp::ExecuteLGInt, this);
+                executor.attach(this, &NotEqualExp::ExecuteLGInt);
             }
 
         }
@@ -14149,9 +14149,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14162,9 +14162,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -14174,9 +14174,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14188,9 +14188,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14203,9 +14203,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14216,9 +14216,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -14228,9 +14228,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14242,9 +14242,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14257,9 +14257,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14270,9 +14270,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -14282,9 +14282,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14296,9 +14296,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14311,9 +14311,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14324,9 +14324,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -14336,9 +14336,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14350,9 +14350,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14365,9 +14365,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14378,9 +14378,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -14390,9 +14390,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14404,9 +14404,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14419,9 +14419,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14432,9 +14432,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -14444,9 +14444,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14458,9 +14458,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14473,9 +14473,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14486,9 +14486,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -14498,9 +14498,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14512,9 +14512,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14527,9 +14527,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14540,9 +14540,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -14552,9 +14552,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14566,9 +14566,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14581,9 +14581,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14594,9 +14594,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -14606,9 +14606,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14620,9 +14620,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14635,9 +14635,9 @@ private:
 
     int ExecuteGGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14648,9 +14648,9 @@ private:
     }
     int ExecuteLLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
@@ -14660,9 +14660,9 @@ private:
     }
     int ExecuteGLFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14674,9 +14674,9 @@ private:
     }
     int ExecuteLGFloatBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14689,9 +14689,9 @@ private:
 
     int ExecuteGGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14702,9 +14702,9 @@ private:
     }
     int ExecuteLLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
@@ -14714,9 +14714,9 @@ private:
     }
     int ExecuteGLDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14728,9 +14728,9 @@ private:
     }
     int ExecuteLGDoubleBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14743,9 +14743,9 @@ private:
 
     int ExecuteGGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14756,9 +14756,9 @@ private:
     }
     int ExecuteLLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         const std::string& v1 = VarGetString(vars, m_LoadInfo1.VarIndex);
@@ -14768,9 +14768,9 @@ private:
     }
     int ExecuteGLStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14782,9 +14782,9 @@ private:
     }
     int ExecuteLGStringBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14797,9 +14797,9 @@ private:
 
     int ExecuteGGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14810,9 +14810,9 @@ private:
     }
     int ExecuteLLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -14822,9 +14822,9 @@ private:
     }
     int ExecuteGLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14836,9 +14836,9 @@ private:
     }
     int ExecuteLGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14851,9 +14851,9 @@ private:
 
     int ExecuteGGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14864,9 +14864,9 @@ private:
     }
     int ExecuteLLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -14876,9 +14876,9 @@ private:
     }
     int ExecuteGLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14890,9 +14890,9 @@ private:
     }
     int ExecuteLGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14905,9 +14905,9 @@ private:
 
     int ExecuteGGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14918,9 +14918,9 @@ private:
     }
     int ExecuteLLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -14930,9 +14930,9 @@ private:
     }
     int ExecuteGLFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14944,9 +14944,9 @@ private:
     }
     int ExecuteLGFloat(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -14959,9 +14959,9 @@ private:
 
     int ExecuteGGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -14972,9 +14972,9 @@ private:
     }
     int ExecuteLLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         std::string v1 = VarGetStr(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -14984,9 +14984,9 @@ private:
     }
     int ExecuteGLString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -14998,9 +14998,9 @@ private:
     }
     int ExecuteLGString(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15034,136 +15034,136 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &AndExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &AndExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &AndExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &AndExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&AndExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &AndExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -15172,16 +15172,16 @@ protected:
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AndExp::ExecuteGGBool, this);
+                executor.attach(this, &AndExp::ExecuteGGBool);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AndExp::ExecuteLLBool, this);
+                executor.attach(this, &AndExp::ExecuteLLBool);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AndExp::ExecuteGLBool, this);
+                executor.attach(this, &AndExp::ExecuteGLBool);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&AndExp::ExecuteLGBool, this);
+                executor.attach(this, &AndExp::ExecuteLGBool);
             }
 
         }
@@ -15191,9 +15191,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15204,9 +15204,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -15216,9 +15216,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15230,9 +15230,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15245,9 +15245,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15258,9 +15258,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -15270,9 +15270,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15284,9 +15284,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15299,9 +15299,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15312,9 +15312,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -15324,9 +15324,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15338,9 +15338,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15353,9 +15353,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15366,9 +15366,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -15378,9 +15378,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15392,9 +15392,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15407,9 +15407,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15420,9 +15420,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -15432,9 +15432,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15446,9 +15446,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15461,9 +15461,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15474,9 +15474,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -15486,9 +15486,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15500,9 +15500,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15515,9 +15515,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15528,9 +15528,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -15540,9 +15540,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15554,9 +15554,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15569,9 +15569,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15582,9 +15582,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -15594,9 +15594,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15608,9 +15608,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15623,9 +15623,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15636,9 +15636,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -15648,9 +15648,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15662,9 +15662,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15677,9 +15677,9 @@ private:
 
     int ExecuteGGBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15690,9 +15690,9 @@ private:
     }
     int ExecuteLLBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBoolean(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -15702,9 +15702,9 @@ private:
     }
     int ExecuteGLBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15716,9 +15716,9 @@ private:
     }
     int ExecuteLGBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15752,136 +15752,136 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGBoolBoth, this);
+                    executor.attach(this, &OrExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLBoolBoth, this);
+                    executor.attach(this, &OrExp::ExecuteLLBoolBoth);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLBoolBoth, this);
+                    executor.attach(this, &OrExp::ExecuteGLBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGBoolBoth, this);
+                    executor.attach(this, &OrExp::ExecuteLGBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGUInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLUInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLUInt8Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLUInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGUInt8Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGUInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLUInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLUInt16Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLUInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGUInt16Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGUInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLUInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLUInt32Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLUInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGUInt32Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGGUInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLLUInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteLLUInt64Both);
                 }
                 else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteGLUInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteGLUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&OrExp::ExecuteLGUInt64Both, this);
+                    executor.attach(this, &OrExp::ExecuteLGUInt64Both);
                 }
 
                 break;
@@ -15890,16 +15890,16 @@ protected:
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&OrExp::ExecuteGGBool, this);
+                executor.attach(this, &OrExp::ExecuteGGBool);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&OrExp::ExecuteLLBool, this);
+                executor.attach(this, &OrExp::ExecuteLLBool);
             }
             else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&OrExp::ExecuteGLBool, this);
+                executor.attach(this, &OrExp::ExecuteGLBool);
             }
             else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                executor = std::bind(&OrExp::ExecuteLGBool, this);
+                executor.attach(this, &OrExp::ExecuteLGBool);
             }
 
         }
@@ -15909,9 +15909,9 @@ protected:
 private:
     int ExecuteGGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15922,9 +15922,9 @@ private:
     }
     int ExecuteLLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -15934,9 +15934,9 @@ private:
     }
     int ExecuteGLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -15948,9 +15948,9 @@ private:
     }
     int ExecuteLGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -15963,9 +15963,9 @@ private:
 
     int ExecuteGGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -15976,9 +15976,9 @@ private:
     }
     int ExecuteLLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -15988,9 +15988,9 @@ private:
     }
     int ExecuteGLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16002,9 +16002,9 @@ private:
     }
     int ExecuteLGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16017,9 +16017,9 @@ private:
 
     int ExecuteGGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16030,9 +16030,9 @@ private:
     }
     int ExecuteLLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -16042,9 +16042,9 @@ private:
     }
     int ExecuteGLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16056,9 +16056,9 @@ private:
     }
     int ExecuteLGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16071,9 +16071,9 @@ private:
 
     int ExecuteGGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16084,9 +16084,9 @@ private:
     }
     int ExecuteLLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -16096,9 +16096,9 @@ private:
     }
     int ExecuteGLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16110,9 +16110,9 @@ private:
     }
     int ExecuteLGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16125,9 +16125,9 @@ private:
 
     int ExecuteGGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16138,9 +16138,9 @@ private:
     }
     int ExecuteLLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -16150,9 +16150,9 @@ private:
     }
     int ExecuteGLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16164,9 +16164,9 @@ private:
     }
     int ExecuteLGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16179,9 +16179,9 @@ private:
 
     int ExecuteGGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16192,9 +16192,9 @@ private:
     }
     int ExecuteLLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -16204,9 +16204,9 @@ private:
     }
     int ExecuteGLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16218,9 +16218,9 @@ private:
     }
     int ExecuteLGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16233,9 +16233,9 @@ private:
 
     int ExecuteGGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16246,9 +16246,9 @@ private:
     }
     int ExecuteLLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -16258,9 +16258,9 @@ private:
     }
     int ExecuteGLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16272,9 +16272,9 @@ private:
     }
     int ExecuteLGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16287,9 +16287,9 @@ private:
 
     int ExecuteGGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16300,9 +16300,9 @@ private:
     }
     int ExecuteLLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -16312,9 +16312,9 @@ private:
     }
     int ExecuteGLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16326,9 +16326,9 @@ private:
     }
     int ExecuteLGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16341,9 +16341,9 @@ private:
 
     int ExecuteGGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16354,9 +16354,9 @@ private:
     }
     int ExecuteLLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -16366,9 +16366,9 @@ private:
     }
     int ExecuteGLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16380,9 +16380,9 @@ private:
     }
     int ExecuteLGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16395,9 +16395,9 @@ private:
 
     int ExecuteGGBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16408,9 +16408,9 @@ private:
     }
     int ExecuteLLBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBoolean(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -16420,9 +16420,9 @@ private:
     }
     int ExecuteGLBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = *GlobalVariables();
@@ -16434,9 +16434,9 @@ private:
     }
     int ExecuteLGBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
-        if (m_Op2)
+        if (!m_Op2.isNull())
             m_Op2();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars1 = vars;
@@ -16470,73 +16470,73 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGInt8Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGInt8Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLInt8Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGInt16Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGInt16Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLInt16Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGInt32Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGInt32Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLInt32Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGInt64Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGInt64Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLInt64Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGUInt8Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGUInt8Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLUInt8Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGUInt16Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGUInt16Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLUInt16Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGUInt32Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGUInt32Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLUInt32Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&BitNotExp::ExecuteGUInt64Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteGUInt64Both);
                 }
                 else {
-                    executor = std::bind(&BitNotExp::ExecuteLUInt64Both, this);
+                    executor.attach(this, &BitNotExp::ExecuteLUInt64Both);
                 }
 
                 break;
@@ -16544,19 +16544,19 @@ protected:
         }
         else if (IsUnsignedType(resultType)) {
             if (m_LoadInfo1.IsGlobal) {
-                executor = std::bind(&BitNotExp::ExecuteGUInt, this);
+                executor.attach(this, &BitNotExp::ExecuteGUInt);
             }
             else {
-                executor = std::bind(&BitNotExp::ExecuteLUInt, this);
+                executor.attach(this, &BitNotExp::ExecuteLUInt);
             }
 
         }
         else {
             if (m_LoadInfo1.IsGlobal) {
-                executor = std::bind(&BitNotExp::ExecuteGInt, this);
+                executor.attach(this, &BitNotExp::ExecuteGInt);
             }
             else {
-                executor = std::bind(&BitNotExp::ExecuteLInt, this);
+                executor.attach(this, &BitNotExp::ExecuteLInt);
             }
 
         }
@@ -16565,7 +16565,7 @@ protected:
 private:
     int ExecuteGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16575,7 +16575,7 @@ private:
     }
     int ExecuteLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -16585,7 +16585,7 @@ private:
 
     int ExecuteGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16595,7 +16595,7 @@ private:
     }
     int ExecuteLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -16605,7 +16605,7 @@ private:
 
     int ExecuteGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16615,7 +16615,7 @@ private:
     }
     int ExecuteLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -16625,7 +16625,7 @@ private:
 
     int ExecuteGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16635,7 +16635,7 @@ private:
     }
     int ExecuteLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -16645,7 +16645,7 @@ private:
 
     int ExecuteGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16655,7 +16655,7 @@ private:
     }
     int ExecuteLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -16665,7 +16665,7 @@ private:
 
     int ExecuteGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16675,7 +16675,7 @@ private:
     }
     int ExecuteLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -16685,7 +16685,7 @@ private:
 
     int ExecuteGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16695,7 +16695,7 @@ private:
     }
     int ExecuteLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -16705,7 +16705,7 @@ private:
 
     int ExecuteGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16715,7 +16715,7 @@ private:
     }
     int ExecuteLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -16725,7 +16725,7 @@ private:
 
     int ExecuteGInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16735,7 +16735,7 @@ private:
     }
     int ExecuteLInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -16745,7 +16745,7 @@ private:
 
     int ExecuteGUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16755,7 +16755,7 @@ private:
     }
     int ExecuteLUInt(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -16785,82 +16785,82 @@ protected:
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGBoolBoth, this);
+                    executor.attach(this, &NotExp::ExecuteGBoolBoth);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLBoolBoth, this);
+                    executor.attach(this, &NotExp::ExecuteLBoolBoth);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT8:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGInt8Both, this);
+                    executor.attach(this, &NotExp::ExecuteGInt8Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLInt8Both, this);
+                    executor.attach(this, &NotExp::ExecuteLInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT16:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGInt16Both, this);
+                    executor.attach(this, &NotExp::ExecuteGInt16Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLInt16Both, this);
+                    executor.attach(this, &NotExp::ExecuteLInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT32:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGInt32Both, this);
+                    executor.attach(this, &NotExp::ExecuteGInt32Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLInt32Both, this);
+                    executor.attach(this, &NotExp::ExecuteLInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_INT64:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGInt64Both, this);
+                    executor.attach(this, &NotExp::ExecuteGInt64Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLInt64Both, this);
+                    executor.attach(this, &NotExp::ExecuteLInt64Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGUInt8Both, this);
+                    executor.attach(this, &NotExp::ExecuteGUInt8Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLUInt8Both, this);
+                    executor.attach(this, &NotExp::ExecuteLUInt8Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGUInt16Both, this);
+                    executor.attach(this, &NotExp::ExecuteGUInt16Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLUInt16Both, this);
+                    executor.attach(this, &NotExp::ExecuteLUInt16Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGUInt32Both, this);
+                    executor.attach(this, &NotExp::ExecuteGUInt32Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLUInt32Both, this);
+                    executor.attach(this, &NotExp::ExecuteLUInt32Both);
                 }
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
                 if (m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&NotExp::ExecuteGUInt64Both, this);
+                    executor.attach(this, &NotExp::ExecuteGUInt64Both);
                 }
                 else {
-                    executor = std::bind(&NotExp::ExecuteLUInt64Both, this);
+                    executor.attach(this, &NotExp::ExecuteLUInt64Both);
                 }
 
                 break;
@@ -16869,10 +16869,10 @@ protected:
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
             if (m_LoadInfo1.IsGlobal) {
-                executor = std::bind(&NotExp::ExecuteGBool, this);
+                executor.attach(this, &NotExp::ExecuteGBool);
             }
             else {
-                executor = std::bind(&NotExp::ExecuteLBool, this);
+                executor.attach(this, &NotExp::ExecuteLBool);
             }
 
         }
@@ -16881,7 +16881,7 @@ protected:
 private:
     int ExecuteGBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16891,7 +16891,7 @@ private:
     }
     int ExecuteLBoolBoth(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBool(vars, m_LoadInfo1.VarIndex);
@@ -16901,7 +16901,7 @@ private:
 
     int ExecuteGInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16911,7 +16911,7 @@ private:
     }
     int ExecuteLInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
@@ -16921,7 +16921,7 @@ private:
 
     int ExecuteGInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16931,7 +16931,7 @@ private:
     }
     int ExecuteLInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
@@ -16941,7 +16941,7 @@ private:
 
     int ExecuteGInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16951,7 +16951,7 @@ private:
     }
     int ExecuteLInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
@@ -16961,7 +16961,7 @@ private:
 
     int ExecuteGInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16971,7 +16971,7 @@ private:
     }
     int ExecuteLInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
@@ -16981,7 +16981,7 @@ private:
 
     int ExecuteGUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -16991,7 +16991,7 @@ private:
     }
     int ExecuteLUInt8Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
@@ -17001,7 +17001,7 @@ private:
 
     int ExecuteGUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -17011,7 +17011,7 @@ private:
     }
     int ExecuteLUInt16Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
@@ -17021,7 +17021,7 @@ private:
 
     int ExecuteGUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -17031,7 +17031,7 @@ private:
     }
     int ExecuteLUInt32Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
@@ -17041,7 +17041,7 @@ private:
 
     int ExecuteGUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -17051,7 +17051,7 @@ private:
     }
     int ExecuteLUInt64Both(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
@@ -17061,7 +17061,7 @@ private:
 
     int ExecuteGBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         auto& srcVars = *GlobalVariables();
@@ -17071,7 +17071,7 @@ private:
     }
     int ExecuteLBool(void) const
     {
-        if (m_Op1)
+        if (!m_Op1.isNull())
             m_Op1();
         auto& vars = *CurRuntimeVariables();
         bool v1 = VarGetBoolean(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);

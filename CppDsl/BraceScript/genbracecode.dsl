@@ -341,9 +341,9 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
     {:
         int ExecuteGG{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars = *GlobalVariables();
@@ -354,9 +354,9 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         }
         int ExecuteLL{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -366,9 +366,9 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         }
         int ExecuteGL{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars1 = *GlobalVariables();
@@ -380,9 +380,9 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         }
         int ExecuteLG{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars1 = vars;
@@ -400,7 +400,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
     {:    
         int ExecuteG{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars = *GlobalVariables();
@@ -410,7 +410,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         }
         int ExecuteL{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             auto& vars = *CurRuntimeVariables();
             {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
@@ -425,9 +425,9 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
     {:
         int ExecuteGG{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars = *GlobalVariables();
@@ -438,9 +438,9 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
         }
         int ExecuteLL{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.VarIndex);
@@ -450,9 +450,9 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
         }
         int ExecuteGL{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars1 = *GlobalVariables();
@@ -464,9 +464,9 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
         }
         int ExecuteLG{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
-            if (m_Op2)
+            if (!m_Op2.isNull())
                 m_Op2();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars1 = vars;
@@ -484,7 +484,7 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
     {:    
         int ExecuteG{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             auto& vars = *CurRuntimeVariables();
             auto& srcVars = *GlobalVariables();
@@ -494,7 +494,7 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
         }
         int ExecuteL{% $postfix %}(void) const
         {
-            if (m_Op1)
+            if (!m_Op1.isNull())
                 m_Op1();
             auto& vars = *CurRuntimeVariables();
             {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.VarIndex);
@@ -508,13 +508,13 @@ script(getBinaryExecuteBuildCode)args($className, $postfix)
     return(block
     {:
                 if(m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&{% $className %}::ExecuteGG{% $postfix %}, this);
+                    executor.attach(this, &{% $className %}::ExecuteGG{% $postfix %});
                 } else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&{% $className %}::ExecuteLL{% $postfix %}, this);
+                    executor.attach(this, &{% $className %}::ExecuteLL{% $postfix %});
                 } else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&{% $className %}::ExecuteGL{% $postfix %}, this);
+                    executor.attach(this, &{% $className %}::ExecuteGL{% $postfix %});
                 } else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
-                    executor = std::bind(&{% $className %}::ExecuteLG{% $postfix %}, this);
+                    executor.attach(this, &{% $className %}::ExecuteLG{% $postfix %});
                 }
     :});
 };
@@ -523,9 +523,9 @@ script(getUnaryExecuteBuildCode)args($className, $postfix)
     return(block
     {:
                 if(m_LoadInfo1.IsGlobal) {
-                    executor = std::bind(&{% $className %}::ExecuteG{% $postfix %}, this);
+                    executor.attach(this, &{% $className %}::ExecuteG{% $postfix %});
                 } else {
-                    executor = std::bind(&{% $className %}::ExecuteL{% $postfix %}, this);
+                    executor.attach(this, &{% $className %}::ExecuteL{% $postfix %});
                 }
     :});
 };

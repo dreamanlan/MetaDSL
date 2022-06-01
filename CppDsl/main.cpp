@@ -206,17 +206,17 @@ protected:
     }
     virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos)const override
     {
-        auto sv = std::chrono::system_clock::now();
+        //auto sv = std::chrono::system_clock::now();
 
         for (auto& argInfo : argInfos) {
             if (argInfo.Type == Brace::BRACE_DATA_TYPE_INT32) {
                 int v = (argInfo.IsGlobal ? gvars : lvars).NumericVars[argInfo.VarIndex].Int32Val;
                 if (v <= 60000) {
-                    auto cv = sv;
-                    while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
+                    //auto cv = sv;
+                    //while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
                         Brace::Detach();
-                        cv = std::chrono::system_clock::now();
-                    }
+                    //    cv = std::chrono::system_clock::now();
+                    //}
                 }
             }
         }

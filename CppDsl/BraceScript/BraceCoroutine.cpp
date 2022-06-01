@@ -10,7 +10,7 @@
  * 
  */
 
-#define Synchronize {jmp_buf E; if (!setjmp(E)) longjmp(E, 1);}
+#define Synchronize //{jmp_buf E; if (!setjmp(E)) longjmp(E, 1);}
 
 #include "BraceCoroutine.h"
 #include <stdlib.h>
