@@ -108,6 +108,39 @@ private:
     Fptr mFunc;
 };
 
+template<typename Delegation, typename T, typename R>
+struct ConstMemFuncInvoker0
+{
+public:
+    typedef ConstMemFuncInvoker0<Delegation, T, R> ThisType;
+    typedef R(T::* Fptr)(void)const;
+    ConstMemFuncInvoker0(const T* obj, Fptr func)
+    {
+        mObj = obj;
+        mFunc = func;
+    }
+    static inline R invoke(const ObjectPlaceHolder* address)
+    {
+        const ThisType* pThis = reinterpret_cast<const ThisType*>(address);
+        const T* pObj = pThis->mObj;
+        Fptr pFunc = pThis->mFunc;
+        return (pObj->*pFunc)();
+    }
+    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    {
+        /*char buf[1025];
+        ::sprintf(buf,"%d<->%d",size,space);
+        ::MessageBox(nullptr,buf,"",MB_OK);*/
+        /*Assert(size<=space);*/
+        return (void*)address;
+    }
+    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    {}
+private:
+    const T* mObj;
+    Fptr mFunc;
+};
+
 template<typename R>
 struct Delegation0
 {
@@ -125,6 +158,11 @@ public:
         invoker = other.invoker;
     }
     template<typename T>
+    Delegation0(const T* obj, R(T::* fptr)(void)const)
+    {
+        attach(obj, fptr);
+    }
+    template<typename T>
     Delegation0(T* obj, R(T::* fptr)(void))
     {
         attach(obj, fptr);
@@ -140,6 +178,12 @@ public:
         mObj = other.mObj;
         invoker = other.invoker;
         return *this;
+    }
+    template<typename T>
+    inline void attach(const T* obj, R(T::* fptr)(void)const)
+    {
+        invoker = ConstMemFuncInvoker0<ThisType, T, R>::invoke;
+        new(&mObj, sizeof(ObjectPlaceHolder)) ConstMemFuncInvoker0<ThisType, T, R>(obj, fptr);
     }
     template<typename T>
     inline void attach(T* obj, R(T::* fptr)(void))
@@ -227,6 +271,36 @@ private:
     Fptr mFunc;
 };
 
+template<typename Delegation, typename T, typename R, typename P1>
+struct ConstMemFuncInvoker1
+{
+public:
+    typedef ConstMemFuncInvoker1<Delegation, T, R, P1> ThisType;
+    typedef R(T::* Fptr)(P1)const;
+    ConstMemFuncInvoker1(const T* obj, Fptr func)
+    {
+        mObj = obj;
+        mFunc = func;
+    }
+    static inline R invoke(const ObjectPlaceHolder* address, P1 p1)
+    {
+        const ThisType* pThis = reinterpret_cast<const ThisType*>(address);
+        const T* pObj = pThis->mObj;
+        Fptr pFunc = pThis->mFunc;
+        return (pObj->*pFunc)(p1);
+    }
+    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    {
+        /*Assert(size<=space);*/
+        return (void*)address;
+    }
+    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    {}
+private:
+    const T* mObj;
+    Fptr mFunc;
+};
+
 template<typename R, typename P1>
 struct Delegation1
 {
@@ -244,6 +318,11 @@ public:
         invoker = other.invoker;
     }
     template<typename T>
+    Delegation1(const T* obj, R(T::* fptr)(P1)const)
+    {
+        attach(obj, fptr);
+    }
+    template<typename T>
     Delegation1(T* obj, R(T::* fptr)(P1))
     {
         attach(obj, fptr);
@@ -259,6 +338,12 @@ public:
         mObj = other.mObj;
         invoker = other.invoker;
         return *this;
+    }
+    template<typename T>
+    inline void attach(const T* obj, R(T::* fptr)(P1))
+    {
+        invoker = ConstMemFuncInvoker1<ThisType, T, R, P1>::invoke;
+        new(&mObj, sizeof(ObjectPlaceHolder)) ConstMemFuncInvoker1<ThisType, T, R, P1>(obj, fptr);
     }
     template<typename T>
     inline void attach(T* obj, R(T::* fptr)(P1))
@@ -381,6 +466,36 @@ private:\
 	Fptr mFunc;\
 };\
 \
+template<typename Delegation,typename T,typename R,RepeatArg1_##X(typename P)>\
+struct ConstMemFuncInvoker##X\
+{\
+public:\
+	typedef ConstMemFuncInvoker##X<Delegation,T,R,RepeatArg1_##X(P)> ThisType;\
+	typedef R (T::*Fptr)(RepeatArg1_##X(P))const;\
+	ConstMemFuncInvoker##X(const T* obj,Fptr func)\
+	{\
+		mObj=obj;\
+		mFunc=func;\
+	}\
+	static inline R invoke(const ObjectPlaceHolder* address,RepeatArg2_##X(P,p))\
+	{\
+		const ThisType* pThis=reinterpret_cast<const ThisType*>(address);\
+		const T* pObj=pThis->mObj;\
+		Fptr pFunc=pThis->mFunc;\
+		return (pObj->*pFunc)(RepeatArg1_##X(p));\
+	}\
+	static inline void* operator new (size_t size,const ObjectPlaceHolder* address,size_t space)\
+	{\
+		/*Assert(size<=space);*/\
+		return (void*)address;\
+	}\
+	static inline void operator delete(void*,const ObjectPlaceHolder* address,size_t space)\
+	{}\
+private:\
+	const T* mObj;\
+	Fptr mFunc;\
+};\
+\
 template<typename R,RepeatArg1_##X(typename P)>\
 struct Delegation##X\
 {\
@@ -398,6 +513,11 @@ public:\
 		invoker=other.invoker;\
 	}\
 	template<typename T>\
+	Delegation##X(const T* obj,R (T::*fptr)(RepeatArg1_##X(P))const)\
+	{\
+		attach(obj,fptr);\
+	}\
+	template<typename T>\
 	Delegation##X(T* obj,R (T::*fptr)(RepeatArg1_##X(P)))\
 	{\
 		attach(obj,fptr);\
@@ -413,6 +533,12 @@ public:\
 		mObj=other.mObj;\
 		invoker=other.invoker;\
 		return *this;\
+	}\
+	template<typename T>\
+	inline void attach(const T* obj,R (T::*fptr)(RepeatArg1_##X(P))const)\
+	{\
+		invoker=ConstMemFuncInvoker##X<ThisType,T,R,RepeatArg1_##X(P)>::invoke;\
+		new(&mObj,sizeof(ObjectPlaceHolder)) ConstMemFuncInvoker##X<ThisType,T,R,RepeatArg1_##X(P)>(obj,fptr);\
 	}\
 	template<typename T>\
 	inline void attach(T* obj,R (T::*fptr)(RepeatArg1_##X(P)))\
