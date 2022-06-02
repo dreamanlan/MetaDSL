@@ -1,4 +1,4 @@
-// Dsl.cpp : ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌÐòµÄÈë¿Úµã¡£
+ï»¿// Dsl.cpp : å®šä¹‰æŽ§åˆ¶å°åº”ç”¨ç¨‹åºçš„å…¥å£ç‚¹ã€‚
 //
 #include "BaseType.h"
 #include "Dsl.h"
@@ -64,22 +64,22 @@ int main(int argc, char* argv[])
         dataFile.OnBeforeAddFunction.attach([](auto& api, auto* sd) {
             const char* pId = sd->GetFunctionId(0);
             if (sd->GetFunctionNum() > 0 && pId && 0 != strcmp(pId, "if")) {
-                //ÔÚBeforeAddFunction»Øµ÷Àï½áÊøµ±Ç°Óï¾ä²¢¿ªÊ¼Ò»¸öÐÂÓï¾ä£¬Ð§¹ûÉÏÏàµ±ÓÚ¸øÇ°Ò»¸öº¯Êý¼ÓÉÏ·ÖºÅ
+                //åœ¨BeforeAddFunctionå›žè°ƒé‡Œç»“æŸå½“å‰è¯­å¥å¹¶å¼€å§‹ä¸€ä¸ªæ–°è¯­å¥ï¼Œæ•ˆæžœä¸Šç›¸å½“äºŽç»™å‰ä¸€ä¸ªå‡½æ•°åŠ ä¸Šåˆ†å·
                 //api.endStatement();
                 //api.beginStatement();
             }
             return true;
             });
         dataFile.OnAddFunction.attach([](auto& api, auto* sd, auto* func) {
-            //ÔÚAddFunctionÀïÒ»°ã²»ÒªÐÞ¸Ä³ÌÐò½á¹¹£¬µ«¿ÉÒÔÐÞ¸ÄÌí¼Óº¯ÊýµÄÐÅÏ¢
+            //åœ¨AddFunctioné‡Œä¸€èˆ¬ä¸è¦ä¿®æ”¹ç¨‹åºç»“æž„ï¼Œä½†å¯ä»¥ä¿®æ”¹æ·»åŠ å‡½æ•°çš„ä¿¡æ¯
             return true;
             });
         dataFile.OnBeforeEndStatement.attach([](auto& api) {
-            //ÔÚBeforeEndStatementÀï¿ÉÒÔÐÞ¸Ä³ÌÐò½á¹¹£¬Òª·ûºÏdslµÄÓï·¨ÓïÒåÁ÷³Ì
+            //åœ¨BeforeEndStatementé‡Œå¯ä»¥ä¿®æ”¹ç¨‹åºç»“æž„ï¼Œè¦ç¬¦åˆdslçš„è¯­æ³•è¯­ä¹‰æµç¨‹
             return true;
             });
         dataFile.OnEndStatement.attach([](auto& api, auto*& sd) {
-            //ÔÚEndStatementÀïÒ»°ã²»ÒªÐÞ¸Ä³ÌÐò½á¹¹£¬µ«¿ÉÒÔÐÞ¸Ä»òÕûÌåÌæ»»µ±Ç°Óï¾ä£¬ÔÚ»Øµ÷ºó»á»¯¼òÓï¾ä²¢Ìí¼Óµ½ÉÏÒ»²ãÓï·¨¹¹ÔìÖÐ
+            //åœ¨EndStatementé‡Œä¸€èˆ¬ä¸è¦ä¿®æ”¹ç¨‹åºç»“æž„ï¼Œä½†å¯ä»¥ä¿®æ”¹æˆ–æ•´ä½“æ›¿æ¢å½“å‰è¯­å¥ï¼Œåœ¨å›žè°ƒåŽä¼šåŒ–ç®€è¯­å¥å¹¶æ·»åŠ åˆ°ä¸Šä¸€å±‚è¯­æ³•æž„é€ ä¸­
             return true;
             });
         dataFile.Parse(p);
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
         dataFile3.WriteToFile(fp9, 0);
         fclose(fp9);
     }
-    //brace½Å±¾²âÊÔ
+    //braceè„šæœ¬æµ‹è¯•
     {
         pDslBuffer->Reset();
         DslParser::DslFile parsedFile(*pDslBuffer);
@@ -173,13 +173,17 @@ int main(int argc, char* argv[])
         for (int i = 0; i < 100; ++i) {
             printf("Tick %d", i);
             Tick();
+#ifdef WIN32
             ::Sleep(100);
+#else
+            ::usleep(100000);
+#endif
         }
         Terminate();
     }
     delete[] pbuf;
     delete[] pbuf2;
-    //±ØÐëÔÚDslFile¶¼ÊÍ·ÅºóÔÙÊÍ·ÅDslStringAndObjectBuffer
+    //å¿…é¡»åœ¨DslFileéƒ½é‡Šæ”¾åŽå†é‡Šæ”¾DslStringAndObjectBuffer
     delete pDslBuffer;
     return 0;
 }

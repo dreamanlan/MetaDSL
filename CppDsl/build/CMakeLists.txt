@@ -84,6 +84,10 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/BraceScript/BraceScript.cpp
 	${CLIB_SRC_PATH}/BraceScript/BraceCoroutine.h
 	${CLIB_SRC_PATH}/BraceScript/BraceCoroutine.cpp
+	${CLIB_SRC_PATH}/BraceScript/SimpleCoroutine.h
+	${CLIB_SRC_PATH}/BraceScript/SimpleCoroutine.cpp
+	${CLIB_SRC_PATH}/BraceScript/ShareStackCoroutine.h
+	${CLIB_SRC_PATH}/BraceScript/ShareStackCoroutine.cpp
 )
 
 if ( WIN32 AND NOT CYGWIN)
