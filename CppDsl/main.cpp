@@ -173,10 +173,10 @@ int main(int argc, char* argv[])
         for (int i = 0; i < 100; ++i) {
             printf("Tick %d", i);
             Tick();
-#ifdef WIN32
-            ::Sleep(100);
-#else
+#ifdef __LINUX__
             ::usleep(100000);
+#else
+            ::Sleep(100);
 #endif
         }
         Terminate();

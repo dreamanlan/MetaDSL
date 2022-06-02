@@ -90,12 +90,20 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/BraceScript/ShareStackCoroutine.cpp
 )
 
-if ( WIN32 AND NOT CYGWIN)
+if (APPLE)
+    if (IOS)
+        set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/iOS)
+    else ()
+        set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib)
+    endif ()
+elseif ( WIN32 AND NOT CYGWIN)
     if (CMAKE_SIZEOF_VOID_P EQUAL 64)
         set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/x86_64)
     else ()
         set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/x86)
     endif ()
+else ()
+    set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/Android)
 endif ()
     
 link_directories(${CLIB_SRC_PATH}/lib
