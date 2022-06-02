@@ -22,13 +22,13 @@ namespace CoroutineWithShareStack
         friend void Resume(Coroutine*);
         friend void Call(Coroutine*);
         friend void Detach(void);
-        friend void InitSequencing(size_t main_StackSize);
+        friend void InitSequencing(int main_StackSize);
     public:
         bool IsTerminated(void)const;
         void Reset(void);
         void CallFromMain(void);
     protected:
-        Coroutine(size_t stackSize = DEFAULT_STACK_SIZE);
+        Coroutine(int stackSize = DEFAULT_STACK_SIZE);
         virtual ~Coroutine(void);
         virtual void Routine(void) = 0;
     private:
@@ -43,5 +43,5 @@ namespace CoroutineWithShareStack
     extern void Detach(void);
     extern Coroutine* CurrentCoroutine(void);
     extern Coroutine* MainCoroutine(void);
-    extern void InitSequencing(size_t main_StackSize);
+    extern void InitSequencing(int main_StackSize);
 }

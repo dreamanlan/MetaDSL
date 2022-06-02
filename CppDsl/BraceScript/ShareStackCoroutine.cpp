@@ -40,7 +40,7 @@ namespace CoroutineWithShareStack
         Coroutine* MyCoroutine;
         jmp_buf jmpb;
         int used;
-        size_t size;
+        int size;
         struct Task* pred, * suc;
         struct Task* prev, * next;
     };
@@ -48,11 +48,11 @@ namespace CoroutineWithShareStack
     struct CoroutineData final
     {
         Task* MyTask;
-        size_t StackSize;
+        int StackSize;
         int Ready, Terminated;
         Coroutine* Caller, * Callee;
 
-        CoroutineData(size_t stackSize)
+        CoroutineData(int stackSize)
         {
             MyTask = nullptr;
             StackSize = stackSize;
@@ -86,7 +86,7 @@ namespace CoroutineWithShareStack
     static CoroutineMain g_Main;
     static Coroutine* g_Current = nullptr;
 
-    Coroutine::Coroutine(size_t stackSize)
+    Coroutine::Coroutine(int stackSize)
     {
         m_pData = new CoroutineData(stackSize);
     }
@@ -151,7 +151,7 @@ namespace CoroutineWithShareStack
     }
     inline void Coroutine::Eat(void)
     {
-        static size_t d;
+        static int d;
         static Task* p;
         Task t{};
         // eat stack
@@ -282,7 +282,7 @@ namespace CoroutineWithShareStack
     {
         return &g_Main;
     }
-    void InitSequencing(size_t main_StackSize)
+    void InitSequencing(int main_StackSize)
     {
         Task tmp{};
         tmp.size = ULONG_MAX;
