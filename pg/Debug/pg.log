@@ -1,0 +1,17 @@
+﻿  pg.c
+D:\GitHub\MetaDSL\pg\pg.c(3401,20): warning C4018: “>”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(3411,33): warning C4018: “>”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4298,27): warning C4018: “<”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4303,23): warning C4018: “<=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4374,27): warning C4018: “>=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4380,27): warning C4018: “<=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4428,23): warning C4018: “<=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4634,27): warning C4018: “>=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(4742,35): warning C4018: “>=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(7727,23): warning C4018: “>=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(7781,27): warning C4018: “>=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(7811,23): warning C4018: “>=”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(14711,27): warning C4018: “<”: 有符号/无符号不匹配
+D:\GitHub\MetaDSL\pg\pg.c(14749,24): warning C4018: “>”: 有符号/无符号不匹配
+  main.cpp
+  pg.vcxproj -> D:\GitHub\MetaDSL\Debug\pg.exe

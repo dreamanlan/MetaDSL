@@ -1569,18 +1569,16 @@ namespace Brace
             long ct = static_cast<long>(VarGetI64(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex));
             for (int i = 0; i < ct; ++i) {
                 VarSetI64(vars, m_LoadInfo.Type, m_IteratorIndex, i);
-                for (int index = 0; index < static_cast<int>(m_Statements.size()); ++index) {
-                    for (auto& statement : m_Statements) {
-                        int v = statement();
-                        if (v == BRACE_FLOW_CONTROL_CONTINUE) {
-                            break;
-                        }
-                        else if (v != BRACE_FLOW_CONTROL_NORMAL) {
-                            FreeObjVars(vars, m_ObjVars);
-                            if (v == BRACE_FLOW_CONTROL_BREAK)
-                                return BRACE_FLOW_CONTROL_NORMAL;
-                            return v;
-                        }
+                for (auto& statement : m_Statements) {
+                    int v = statement();
+                    if (v == BRACE_FLOW_CONTROL_CONTINUE) {
+                        break;
+                    }
+                    else if (v != BRACE_FLOW_CONTROL_NORMAL) {
+                        FreeObjVars(vars, m_ObjVars);
+                        if (v == BRACE_FLOW_CONTROL_BREAK)
+                            return BRACE_FLOW_CONTROL_NORMAL;
+                        return v;
                     }
                 }
             }
@@ -2719,7 +2717,7 @@ namespace Brace
         m_AddedSyntaxComponents.clear();
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr), m_ContextObject(nullptr)
     {
         RegisterInnerApis();
         Init();
@@ -2727,6 +2725,9 @@ namespace Brace
     BraceScript::~BraceScript(void)
     {
         Release();
+
+        m_ContextObject = nullptr;
+
         for (auto& pair : m_ApiFactories) {
             delete pair.second;
         }
@@ -2743,6 +2744,14 @@ namespace Brace
         if (it == m_ApiFactories.end()) {
             m_ApiFactories.insert(std::make_pair(std::move(id), pApiFactory));
         }
+    }
+    void BraceScript::SetContextObject(IBraceObject* pContext)
+    {
+        m_ContextObject = pContext;
+    }
+    IBraceObject* BraceScript::GetContextObject(void)const
+    {
+        return m_ContextObject;
     }
     void BraceScript::Reset(void)
     {

@@ -1,49 +1,67 @@
-/**
- * This code modified from <<A Portable C++ Library for Coroutine Sequencing>>
- * 
- * Keld Helsgaun
- * E-mail: keld@ruc.dk
- * 
- * Department of Computer Science
- * Roskilde University
- * DK-4000 Roskilde, Denmark
- * 
- */
-
-#define Synchronize //{jmp_buf E; if (!setjmp(E)) longjmp(E, 1);}
-
 #include "BraceCoroutine.h"
-#include <stdlib.h>
-#include <string.h>
+#include "boost/context/fiber.hpp"
 #include <iostream>
 
-#if defined(_WIN32)
-#pragma warning(disable:4611)
-#endif
-
-/// Maybe there are two patterns:
-/// 1、Call <-> Detach pair, coroutines can be called by Tick(non-coroutine), so coroutines are driven by main logic.
-/// 2、Resume <-> Resume tuple, switching between coroutines.
-
-namespace Brace
+namespace CoroutineWithBoostContext
 {
-    char* g_StackBottom;
-
-#define Terminated(C) (!(C)->m_StackBuffer && (C)->m_BufferSize)
-
+#define Terminated(C) (!(C)->m_pData->Environment)
+    
+    namespace ctx = boost::context;
+    using fiber = ctx::fiber;
+    
     static inline void Error(const char* message)
     {
         std::cerr << "Error: " << message << std::endl;
         //exit(0);
     }
 
-    Coroutine* Coroutine::m_ToBeResumed = nullptr;
-    static Coroutine* g_Current = nullptr, * g_Next = nullptr;
+    static Coroutine* g_Current = nullptr;
+
+    struct CoroutineData final
+    {
+        fiber Environment;
+        size_t BufferSize;
+        Coroutine* Caller, * Callee;
+        Coroutine* ResumeFrom;
+        Coroutine* Current;
+
+        CoroutineData(Coroutine* current, int bufferSize) :Environment{}
+        {
+            BufferSize = bufferSize;
+            Callee = Caller = nullptr;
+            ResumeFrom = nullptr;
+            Current = current;
+        }
+        ~CoroutineData(void)
+        {
+            Callee = Caller = nullptr;
+            ResumeFrom = nullptr;
+            Current = nullptr;
+        }
+        void BuildEnv(void)
+        {
+            ctx::fixedsize_stack salloc(BufferSize);
+            ctx::stack_context sctx(salloc.allocate());
+            void* sp = static_cast<char*>(sctx.sp);
+            std::size_t size = sctx.size;
+
+            Environment = fiber(std::allocator_arg, ctx::preallocated(sp, size, sctx), salloc, [this](fiber&& c) { return Callcc(std::move(c)); });
+        }
+        fiber Callcc(fiber&& cont)const
+        {
+            ResumeFrom->m_pData->Environment = std::move(cont);
+            Current->Routine();
+            if (Current == g_Current) {
+                Current->Exit();
+            }
+            return std::move(ResumeFrom->m_pData->Environment);
+        }
+    };
 
     class CoroutineMain : public Coroutine
     {
     public:
-        CoroutineMain(void) :Coroutine()
+        CoroutineMain(void) :Coroutine(1024*1024)
         {
             g_Current = this;
         }
@@ -54,21 +72,14 @@ namespace Brace
 
     static CoroutineMain g_Main;
 
-    Coroutine::Coroutine(void) : m_Environment{}
+    Coroutine::Coroutine(int stackSize)
     {
-        char x{};
-        if (g_StackBottom)
-            if (&x < g_StackBottom ? &x <= (char*)this && (char*)this <= g_StackBottom : &x >= (char*)this && (char*)this >= g_StackBottom)
-                Error("Attempt to allocate a Coroutine on the stack");
-        m_StackBuffer = nullptr;
-        m_Low = m_High = nullptr;
-        m_BufferSize = 0;
-        m_Callee = m_Caller = nullptr;
+        m_pData = new CoroutineData(this, stackSize);
     }
     Coroutine::~Coroutine(void)
     {
-        delete m_StackBuffer;
-        m_StackBuffer = nullptr;
+        delete m_pData;
+        m_pData = nullptr;
     }
     bool Coroutine::IsTerminated(void)const
     {
@@ -80,74 +91,34 @@ namespace Brace
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
         }
-        delete m_StackBuffer;
-        m_StackBuffer = nullptr;
-        m_Low = m_High = nullptr;
-        m_BufferSize = 0;
-        if (nullptr != m_Callee) {
-            m_Callee->m_Caller = m_Caller;
+        if (nullptr != m_pData->Callee) {
+            m_pData->Callee->m_pData->Caller = m_pData->Caller;
         }
-        if (nullptr != m_Caller) {
-            m_Caller->m_Callee = m_Callee;
+        if (nullptr != m_pData->Caller) {
+            m_pData->Caller->m_pData->Callee = m_pData->Callee;
         }
-        m_Callee = m_Caller = nullptr;
+        m_pData->Callee = m_pData->Caller = nullptr;
+        m_pData->ResumeFrom = nullptr;
+
+        m_pData->BuildEnv();
     }
-    inline void Coroutine::RestoreStack(void)
+    void Coroutine::CallFromMain(void)
     {
-        Synchronize;
-        char x{};
-        if (&x >= m_Low && &x <= m_High)
-            RestoreStack();
-        g_Current = this;
-        memcpy(m_Low, m_StackBuffer, m_High - m_Low);
-        longjmp(g_Current->m_Environment, 1);
-    }
-    inline void Coroutine::StoreStack(void)
-    {
-        if (nullptr == m_Low) {
-            if (nullptr == g_StackBottom) {
-                Error("StackBottom is not initialized");
-                return;
-            }
-            m_Low = m_High = g_StackBottom;
-        }
-        char x{};
-        if (&x > g_StackBottom)
-            m_High = &x;
-        else
-            m_Low = &x;
-        if (m_High - m_Low > static_cast<int>(m_BufferSize)) {
-            delete m_StackBuffer;
-            m_BufferSize = m_High - m_Low;
-            m_StackBuffer = new char[m_BufferSize];
-            if (nullptr == m_StackBuffer) {
-                Error("No more space available");
-                return;
-            }
-        }
-        Synchronize;
-        memcpy(m_StackBuffer, m_Low, m_High - m_Low);
+        if (IsTerminated())
+            Reset();
+        CoroutineWithBoostContext::Call(this);
     }
     inline void Coroutine::Enter()
     {
-        if (!Terminated(g_Current)) {
-            g_Current->StoreStack();
-            if (setjmp(g_Current->m_Environment))
-                return;
-        }
+        Coroutine* pCurrent = g_Current;
         g_Current = this;
-        if (!m_StackBuffer) {
-            Routine();
-            delete g_Current->m_StackBuffer;
-            g_Current->m_StackBuffer = nullptr;
-            if (m_ToBeResumed) {
-                g_Next = m_ToBeResumed;
-                m_ToBeResumed = nullptr;
-                Resume(g_Next);
-            }
-            Detach();
-        }
-        RestoreStack();
+        m_pData->ResumeFrom = pCurrent;
+        m_pData->Environment = std::move(m_pData->Environment).resume();
+    }
+    inline void Coroutine::Exit()
+    {
+        if (g_Current == this)
+            g_Current = &g_Main;
     }
 
     void Resume(Coroutine* next)
@@ -163,12 +134,12 @@ namespace Brace
             Error("Attempt to Resume a terminated Coroutine");
             return;
         }
-        if (next->m_Caller) {
+        if (next->m_pData->Caller) {
             Error("Attempt to Resume an attached Coroutine");
             return;
         }
-        while (next->m_Callee) {
-            next = next->m_Callee;
+        while (next->m_pData->Callee) {
+            next = next->m_pData->Callee;
         }
         next->Enter();
     }
@@ -182,14 +153,14 @@ namespace Brace
             Error("Attempt to Call a terminated Coroutine");
             return;
         }
-        if (next->m_Caller) {
+        if (next->m_pData->Caller) {
             Error("Attempt to Call an attached Coroutine");
             return;
         }
-        g_Current->m_Callee = next;
-        next->m_Caller = g_Current;
-        while (next->m_Callee) {
-            next = next->m_Callee;
+        g_Current->m_pData->Callee = next;
+        next->m_pData->Caller = g_Current;
+        while (next->m_pData->Callee) {
+            next = next->m_pData->Callee;
         }
         if (next == g_Current) {
             Error("Attempt to Call an operating Coroutine");
@@ -199,24 +170,24 @@ namespace Brace
     }
     void Detach(void)
     {
-        g_Next = g_Current->m_Caller;
-        if (g_Next) {
-            g_Current->m_Caller = g_Next->m_Callee = nullptr;
+        Coroutine* next = g_Current->m_pData->Caller;
+        if (next) {
+            g_Current->m_pData->Caller = next->m_pData->Callee = nullptr;
         }
         else {
-            g_Next = &g_Main;
-            while (g_Next->m_Callee) {
-                g_Next = g_Next->m_Callee;
+            next = &g_Main;
+            while (next->m_pData->Callee) {
+                next = next->m_pData->Callee;
             }
         }
-        g_Next->Enter();
+        next->Enter();
     }
     Coroutine* CurrentCoroutine(void)
-    { 
-        return g_Current; 
+    {
+        return g_Current;
     }
-    Coroutine* MainCoroutine(void) 
-    { 
-        return &g_Main; 
+    Coroutine* MainCoroutine(void)
+    {
+        return &g_Main;
     }
 }

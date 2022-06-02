@@ -57,14 +57,17 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;__WINDOWS__;FULL_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\BraceScript;.\Parser;.\Common;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\deps\include;.\BraceScript;.\Parser;.\Common;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>Default</LanguageStandard>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <StackReserveSize>20480000</StackReserveSize>
       <StackCommitSize>20480000</StackCommitSize>
+      <AdditionalLibraryDirectories>.\deps\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -86,6 +89,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BraceScript\BraceCoroutine.cpp" />
+    <ClCompile Include="BraceScript\ShareStackCoroutine.cpp" />
+    <ClCompile Include="BraceScript\SimpleCoroutine.cpp" />
     <ClCompile Include="BraceScript\BraceScript.cpp" />
     <ClCompile Include="Common\StringFormat.cpp" />
     <ClCompile Include="Dsl.cpp" />
@@ -104,6 +109,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BraceScript\BraceCoroutine.h" />
+    <ClInclude Include="BraceScript\ShareStackCoroutine.h" />
+    <ClInclude Include="BraceScript\SimpleCoroutine.h" />
     <ClInclude Include="BraceScript\BraceScript.h" />
     <ClInclude Include="Common\Queue.h" />
     <ClInclude Include="Common\StaticCheck.h" />
@@ -129,6 +136,8 @@
     <ClInclude Include="Parser\SourceCodeScript.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BraceScript\BraceScript_ArithUnit.inl" />
+    <None Include="BraceScript\BraceScript_Assignment.inl" />
     <None Include="Parser\ByteCode.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

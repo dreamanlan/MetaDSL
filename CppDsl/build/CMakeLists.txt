@@ -39,6 +39,7 @@ include_directories(${CLIB_SRC_PATH}
     ${CLIB_SRC_PATH}/Common
     ${CLIB_SRC_PATH}/Parser
     ${CLIB_SRC_PATH}/BraceScript
+    ${CLIB_SRC_PATH}/deps/include
 )
 
 set (CLIB_SRC
@@ -84,8 +85,21 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/BraceScript/BraceCoroutine.h
 	${CLIB_SRC_PATH}/BraceScript/BraceCoroutine.cpp
 )
+
+if ( WIN32 AND NOT CYGWIN)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 64)
+        set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/x86_64)
+    else ()
+        set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/x86)
+    endif ()
+endif ()
     
 link_directories(${CLIB_SRC_PATH}/lib
+    ${DEPS_LIB_PATH}
+)
+
+set (THIRDPART_LIB
+    boost_context
 )
 
 if (APPLE)

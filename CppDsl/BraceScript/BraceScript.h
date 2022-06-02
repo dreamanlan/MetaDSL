@@ -45,6 +45,7 @@ namespace Brace
         BRACE_PREDEFINED_OBJECT_TYPE_UNKNOWN = -1,
         BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ = 0,
         BRACE_PREDEFINED_OBJECT_TYPE_NULL,
+        BRACE_PREDEFINED_OBJECT_TYPE_CONTEXT,
         BRACE_PREDEFINED_OBJECT_TYPE_NUM
     };
 
@@ -554,6 +555,8 @@ namespace Brace
         /// -----------------------------------------------------------------------------------------------------------
         void RegisterApi(const std::string& id, IBraceApiFactory* pApiFactory);
         void RegisterApi(std::string&& id, IBraceApiFactory* pApiFactory);
+        void SetContextObject(IBraceObject* pContext);
+        IBraceObject* GetContextObject(void)const;
         void Reset(void);
         void LoadScript(const DslData::DslFile& file);
         void Run(void);
@@ -624,5 +627,7 @@ namespace Brace
         ProcInfo* m_GlobalProc;
         VariableInfo* m_GlobalVariables;
         RuntimeStack m_RuntimeStack;
+
+        IBraceObject* m_ContextObject;
     };
 }

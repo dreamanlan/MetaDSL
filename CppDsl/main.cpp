@@ -3,18 +3,18 @@
 #include "BaseType.h"
 #include "Dsl.h"
 #include "BraceScript.h"
+#include "SimpleCoroutine.h"
+#include "ShareStackCoroutine.h"
 #include "BraceCoroutine.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <chrono>
 
-int RealMain(void);
 void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt);
 void Tick(void);
 void Terminate(void);
-int main(int argc, char* argv[])DEFINE_SEQUENCING(return RealMain());
-int RealMain(void)
+int main(int argc, char* argv[])
 {
     char* pbuf = new char[1024 * 1024 + 1];
     char* pbuf2 = new char[1024 * 1024 + 1];
@@ -206,27 +206,27 @@ protected:
     }
     virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos)const override
     {
-        //auto sv = std::chrono::system_clock::now();
+        auto sv = std::chrono::system_clock::now();
 
         for (auto& argInfo : argInfos) {
             if (argInfo.Type == Brace::BRACE_DATA_TYPE_INT32) {
                 int v = (argInfo.IsGlobal ? gvars : lvars).NumericVars[argInfo.VarIndex].Int32Val;
                 if (v <= 60000) {
-                    //auto cv = sv;
-                    //while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
-                        Brace::Detach();
-                    //    cv = std::chrono::system_clock::now();
-                    //}
+                    auto cv = sv;
+                    while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
+                        
+                        CoroutineWithBoostContext::Detach();
+
+                        cv = std::chrono::system_clock::now();
+                    }
+                    printf("wait finish.");
                 }
             }
         }
     }
 };
 
-class RoutineAlone;
-static RoutineAlone* g_RoutineAlone = nullptr;
-
-class RoutineAlone : public Brace::Coroutine
+class ScriptEnv final
 {
 public:
     void SetScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt) {
@@ -236,15 +236,23 @@ public:
         m_pParsedFile = new DslParser::DslFile(*m_pBuffer);
         m_ScriptTxt = txt;
     }
-protected:
-    virtual void Routine(void) override
+    ~ScriptEnv(void)
     {
-        Do();
-        //The coroutine must call Detach or Resume at least once
-        Brace::Detach();
+        if (nullptr != m_pBraceScript) {
+            delete m_pBraceScript;
+            m_pBraceScript = nullptr;
+        }
+        if (nullptr != m_pDslFile) {
+            delete m_pDslFile;
+            m_pDslFile = nullptr;
+        }
+        if (nullptr != m_pParsedFile) {
+            delete m_pParsedFile;
+            m_pParsedFile = nullptr;
+        }
     }
 public:
-     void Do(void)
+    void Run(void)
     {
         m_pBuffer->Reset();
         m_pParsedFile->Reset();
@@ -273,24 +281,85 @@ private:
     DslParser::DslFile* m_pParsedFile;
     std::string m_ScriptTxt;
 };
+static ScriptEnv* g_ScriptEnv = nullptr;
+
+class LongJmpRoutine1 : public CoroutineWithLongJmp::Coroutine
+{
+public:
+    LongJmpRoutine1(int bufferSize) :CoroutineWithLongJmp::Coroutine(bufferSize)
+    {}
+protected:
+    virtual void Routine(void) override
+    {
+        g_ScriptEnv->Run();
+    }
+};
+class LongJmpRoutine2 : public CoroutineWithShareStack::Coroutine
+{
+public:
+    LongJmpRoutine2(int bufferSize):CoroutineWithShareStack::Coroutine(bufferSize)
+    {}
+protected:
+    virtual void Routine(void) override
+    {
+        g_ScriptEnv->Run();
+    }
+};
+static LongJmpRoutine1* g_LongJmpRoutine1 = nullptr;
+static LongJmpRoutine2* g_LongJmpRoutine2 = nullptr;
+
+class BoostContextRoutine : public CoroutineWithBoostContext::Coroutine
+{
+public:
+    BoostContextRoutine(int stackSize):CoroutineWithBoostContext::Coroutine(stackSize)
+    {}
+protected:
+    virtual void Routine(void)override
+    {
+        g_ScriptEnv->Run();
+    }
+};
+static BoostContextRoutine* g_BoostContextRoutine = nullptr;
 
 void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt)
 {
-    if (nullptr == g_RoutineAlone) {
-        g_RoutineAlone = new RoutineAlone();
+    if (nullptr == g_ScriptEnv) {
+        g_ScriptEnv = new ScriptEnv();
     }
-    g_RoutineAlone->SetScript(pBuffer, txt);
+    if (nullptr == g_LongJmpRoutine1) {
+        g_LongJmpRoutine1 = new LongJmpRoutine1(4 * 1024);
+    }
+    if (nullptr == g_LongJmpRoutine2) {
+        g_LongJmpRoutine2 = new LongJmpRoutine2(1024*1024);
+    }
+    if (nullptr == g_BoostContextRoutine) {
+        g_BoostContextRoutine = new BoostContextRoutine(1024*1024);
+    }
+    g_ScriptEnv->SetScript(pBuffer, txt);
 }
 void Tick(void)
 {
-    if (g_RoutineAlone->IsTerminated())
-        g_RoutineAlone->Reset();
-    Brace::Call(g_RoutineAlone);
+    //g_LongJmpRoutine1->CallFromMain();
+    //g_LongJmpRoutine2->CallFromMain();
+    g_BoostContextRoutine->CallFromMain();
+    //g_ScriptEnv->Run();
 }
 void Terminate(void)
 {
-    if (nullptr != g_RoutineAlone) {
-        delete g_RoutineAlone;
-        g_RoutineAlone = nullptr;
+    if (nullptr != g_LongJmpRoutine1) {
+        delete g_LongJmpRoutine1;
+        g_LongJmpRoutine1 = nullptr;
+    }
+    if (nullptr != g_LongJmpRoutine2) {
+        delete g_LongJmpRoutine2;
+        g_LongJmpRoutine2 = nullptr;
+    }
+    if (nullptr != g_BoostContextRoutine) {
+        delete g_BoostContextRoutine;
+        g_BoostContextRoutine = nullptr;
+    }
+    if (nullptr != g_ScriptEnv) {
+        delete g_ScriptEnv;
+        g_ScriptEnv = nullptr;
     }
 }
