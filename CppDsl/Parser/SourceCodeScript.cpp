@@ -823,14 +823,14 @@ namespace DslParser
                 std::string arg;
                 for (; j < len && input[j] != '\n' && isWhiteSpace(input[j]); ++j);
                 if (j < len && input[j] != '\n') {
-                    bool isExpression = key == "define" || key.length() >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n');
+                    bool isExpression = key == "define" || (key.length() >= 2 && ((key[0] == 'i' && key[1] == 'f') || (key[0] == 'e' && key[1] == 'l') || (key[0] == 'e' && key[1] == 'n')));
                     char lc = '\0';
                     for (; j < len; ++j) {
                         SkipComments(input, len, j);
                         if (j >= len)
                             break;
                         char cc = input[j];
-                        if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
+                        if ((cc == '\r' && lc != '\\') || (cc == '\n' && lc != '\r' && lc != '\\')) {
                             if (cc == '\r')
                                 ++j;
                             arg = tokenBuilder.str();
@@ -862,7 +862,7 @@ namespace DslParser
                     }
                 }
                 TryEmitCloseCodeBlock(ss, endDelim, codeBlockNeedClose);
-                if (key.length() >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n')) {
+                if (key.length() >= 2 && ((key[0] == 'i' && key[1] == 'f') || (key[0] == 'e' && key[1] == 'l') || (key[0] == 'e' && key[1] == 'n'))) {
                     //语句块
                     if (key[0] == 'i' && key[1] == 'f') {
                         ss << "@@";
@@ -905,7 +905,7 @@ namespace DslParser
                     else
                         ss << key;
                     ss << '(';
-                    if (key == "define" && IsSimpleDefine(arg) || key == "undef") {
+                    if ((key == "define" && IsSimpleDefine(arg)) || key == "undef") {
                         ss << key;
                     }
                     else {
