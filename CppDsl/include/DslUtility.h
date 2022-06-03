@@ -674,7 +674,7 @@ namespace DslFileReadWrite
                             noIndent = FALSE;
                         }
                     }
-                    WriteComponent(fp, val, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE, delim);
+                    WriteComponent(fp, val, indent, (firstLineNoIndent && ix == 0) || noIndent, FALSE, delim);
                     lastFuncNoParam = TRUE;
                     lastFuncNoStatement = TRUE;
                 }
@@ -696,7 +696,7 @@ namespace DslFileReadWrite
                             noIndent = FALSE;
                         }
                     }
-                    WriteComponent(fp, func, indent, firstLineNoIndent && ix == 0 || noIndent, FALSE, delim);
+                    WriteComponent(fp, func, indent, (firstLineNoIndent && ix == 0) || noIndent, FALSE, delim);
                     lastFuncNoParam = funcNoParam;
                     lastFuncNoStatement = funcNoStatement;
                 }
