@@ -1,6 +1,8 @@
 #include "BraceCoroutine.h"
 #include "boost/context/fiber.hpp"
 #include <iostream>
+#include <unordered_map>
+#include <vector>
 
 namespace CoroutineWithBoostContext
 {
@@ -8,6 +10,102 @@ namespace CoroutineWithBoostContext
     
     namespace ctx = boost::context;
     using fiber = ctx::fiber;
+
+    struct my_fixedsize_stack_alloc_pool
+    {
+        struct my_fixedsize_stack_alloc_record
+        {
+            ctx::fixedsize_stack allocator;
+            std::vector<ctx::stack_context> contexts;
+
+            my_fixedsize_stack_alloc_record(std::size_t size) :allocator(size), contexts()
+            {
+            }
+        };
+
+        std::unordered_map<std::size_t, my_fixedsize_stack_alloc_record> fixedsize_stack_pool_{};
+
+        my_fixedsize_stack_alloc_record& get_or_new_alloc_record(std::size_t size)
+        {
+            auto it = fixedsize_stack_pool_.find(size);
+            if (it == fixedsize_stack_pool_.end()) {
+                my_fixedsize_stack_alloc_record record(size);
+                auto result = fixedsize_stack_pool_.insert(std::make_pair(std::move(size), std::move(record)));
+                it = result.first;
+                auto& rec = it->second;
+                return rec;
+            }
+            else {
+                return it->second;
+            }
+        }
+        ctx::stack_context alloc_stack(std::size_t size)
+        {
+            auto& rec = get_or_new_alloc_record(size);
+            if (rec.contexts.empty()) {
+                return rec.allocator.allocate();
+            }
+            else {
+                ctx::stack_context r{};
+                std::swap(r, rec.contexts.back());
+                rec.contexts.pop_back();
+                return r;
+            }
+
+        }
+        void recycle_stack(ctx::stack_context& ctx)
+        {
+            auto& rec = get_or_new_alloc_record(ctx.size);
+            return rec.contexts.push_back(ctx);
+        }
+        void free_pooled_stacks(void)
+        {
+            for (auto& pair : fixedsize_stack_pool_) {
+                auto& rec = pair.second;
+                auto& allocator = rec.allocator;
+                for (auto& context : rec.contexts) {
+                    allocator.deallocate(context);
+                }
+                rec.contexts.clear();
+            }
+        }
+        void cleanup_pool(void)
+        {
+            free_pooled_stacks();
+            fixedsize_stack_pool_.clear();
+        }
+    };
+
+    static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
+
+    void FreeStackMemory(void)
+    {
+        g_fixedsize_stack_alloc_pool.free_pooled_stacks();
+    }
+    void CleanupPool(void)
+    {
+        g_fixedsize_stack_alloc_pool.cleanup_pool();
+    }
+
+    struct my_fixedsize_stack
+    {
+        typedef ctx::stack_traits traits_type;
+
+        my_fixedsize_stack(std::size_t size = traits_type::default_size()) BOOST_NOEXCEPT_OR_NOTHROW :
+        size_(size)
+        {
+        }
+        ctx::stack_context allocate(void)
+        {
+            return g_fixedsize_stack_alloc_pool.alloc_stack(size_);
+        }
+        void deallocate(ctx::stack_context& sctx) BOOST_NOEXCEPT_OR_NOTHROW
+        {
+            g_fixedsize_stack_alloc_pool.recycle_stack(sctx);
+        }
+    private:
+        std::size_t size_;
+    };
     
     static inline void Error(const char* message)
     {
@@ -40,7 +138,7 @@ namespace CoroutineWithBoostContext
         }
         void BuildEnv(void)
         {
-            ctx::fixedsize_stack salloc(BufferSize);
+            my_fixedsize_stack salloc(BufferSize);
             ctx::stack_context sctx(salloc.allocate());
             void* sp = static_cast<char*>(sctx.sp);
             std::size_t size = sctx.size;

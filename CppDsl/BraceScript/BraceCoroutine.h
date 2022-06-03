@@ -30,4 +30,7 @@ namespace CoroutineWithBoostContext
     extern void Detach(void);
     extern Coroutine* CurrentCoroutine(void);
     extern Coroutine* MainCoroutine(void);
+
+    extern void FreeStackMemory(void);
+    extern void CleanupPool(void);
 }
