@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
             Brace::VarSetF64(*script.GlobalVariables(), funcExer.ArgInfo(1)->Type, funcExer.ArgInfo(1)->VarIndex, 3.14);
             funcExer.Run();
             int64_t v = Brace::VarGetI64(*script.GlobalVariables(), funcExer.ResultInfo()->Type, funcExer.ResultInfo()->VarIndex);
-            printf("FunctionExecutor result: %lld\n", v);
+            printf("FunctionExecutor result: %lld\n", static_cast<long long>(v));
         }
 
         printf("Enter script:");
@@ -240,6 +240,9 @@ public:
         m_pParsedFile = new DslParser::DslFile(*m_pBuffer);
         m_ScriptTxt = txt;
     }
+public:
+    ScriptEnv(void):m_pBuffer(nullptr), m_pBraceScript(nullptr), m_pDslFile(nullptr), m_pParsedFile(nullptr)
+    {}
     ~ScriptEnv(void)
     {
         if (nullptr != m_pBraceScript) {

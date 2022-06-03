@@ -1169,10 +1169,13 @@ namespace DslParser
             return m_pNullValueOrFunction;
         }
     public:
-        DslStringAndObjectBufferT(void) :m_SyntaxComponentNum(0), m_SyntaxComponentCommentsInfoNum(0), m_FunctionCommentsInfoNum(0),
+        DslStringAndObjectBufferT(void) :
             m_pStringBuffer(m_StringBuffer),
             m_pUnusedStringPtr(m_StringBuffer),
             m_pUnusedObjectPtr(m_StringBuffer + StringAndObjectBufferSize),
+            m_SyntaxComponentNum(0), 
+            m_SyntaxComponentCommentsInfoNum(0), 
+            m_FunctionCommentsInfoNum(0),
             m_NullSyntax(),
             m_NullFunction(*this),
             m_pNullFunction(&m_NullFunction),
@@ -1221,15 +1224,15 @@ namespace DslParser
         char* m_pStringBuffer;
         char* m_pUnusedStringPtr;
         char* m_pUnusedObjectPtr;
+        int m_SyntaxComponentNum;
+        int m_SyntaxComponentCommentsInfoNum;
+        int m_FunctionCommentsInfoNum;
     private:
         //语法组件指针、指针数组与空闲块共用一个buffer，语法组件指针与指针数组正向增长，空闲块反向增长，这里的数据通常是字对齐的，所以不考虑与字符串和对象buffer共用
         SyntaxComponentPtr m_SyntaxComponentPool[SyntaxComponentAndPtrArrayPoolSize];//语法组件指针数组，总数与一个dsl文件里的所有语法组件数量相当
             //指针数组缓冲区，主要用来分配语法组件指针数组，PtrPoolSize与一个dsl文件里的所有语法组件数量相当
         FreeLinkInfo* m_pPtrFreeLink;//低32位对应m_PtrPool的索引，高32位是下一个空闲块的索引。空闲块的数量，对dsl文件解析来说，这个值理论上应该很低，大约与（语法数组扩容的次数-新语法重用数组的次数）相当
         int m_FreeLinkNum;
-        int m_SyntaxComponentNum;
-        int m_SyntaxComponentCommentsInfoNum;
-        int m_FunctionCommentsInfoNum;
     private:
         int m_PtrFreeLinkHeader[PtrArrayPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置，这个数组的大小就是允许的各个语法组件数组的最大值，语句函数数量、参数数量、单文件DSL数量等受此限制
         int m_FreedFreeLinkHeader;//空闲的空闲块链表的头

@@ -129,8 +129,10 @@ namespace CoroutineWithShareStack
     }
     inline void Coroutine::Enter(void)
     {
-        if (nullptr == g_Current)
+        if (nullptr == g_Current) {
             Error("InitSequencing has not been called");
+            return;
+        }
         if (m_pData->Ready) { // find free block
             for (m_pData->MyTask = main_task.suc;
                 m_pData->MyTask != &main_task;
@@ -155,7 +157,7 @@ namespace CoroutineWithShareStack
         static Task* p;
         Task t{};
         // eat stack
-        if ((d = labs((char*)&t - (char*)m_pData->MyTask)) < m_pData->StackSize)
+        if ((d = labs(static_cast<long>((char*)&t - (char*)m_pData->MyTask))) < m_pData->StackSize)
             Eat();
         t.size = m_pData->MyTask->size - d; //set size
         m_pData->MyTask->size = d;
@@ -285,7 +287,7 @@ namespace CoroutineWithShareStack
     void InitSequencing(int main_StackSize)
     {
         Task tmp{};
-        tmp.size = ULONG_MAX;
+        tmp.size = INT_MAX;
         g_Main.m_pData->StackSize = main_StackSize;
         tmp.next = 0;
         g_Main.m_pData->MyTask = &tmp;
