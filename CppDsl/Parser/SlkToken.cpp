@@ -308,7 +308,7 @@ short SlkToken::getOperatorTokenValue(void)const
         else if (pOperator[1] && pOperator[2] && pOperator[3] == '=' && pOperator[4] == '\0') {
             val = OP_TOKEN_0_;
         }
-        else if (pOperator[0] == '=' && pOperator[1] == '>' && pOperator[2] == '\0' || pOperator[0] == '<' && pOperator[1] == '-' && pOperator[2] == '\0') {
+        else if ((pOperator[0] == '=' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '<' && pOperator[1] == '-' && pOperator[2] == '\0')) {
             val = OP_TOKEN_1_;
         }
         else if (pOperator[0] == ':' && pOperator[1] == '\0') {
@@ -317,7 +317,7 @@ short SlkToken::getOperatorTokenValue(void)const
         else if (pOperator[0] == '?' && pOperator[1] == '\0') {
             val = OP_TOKEN_QUESTION_;
         }
-        else if (pOperator[0] == '|' && pOperator[1] == '|' && pOperator[2] == '\0' || pOperator[0] == '?' && pOperator[1] == '?' && pOperator[2] == '\0') {
+        else if ((pOperator[0] == '|' && pOperator[1] == '|' && pOperator[2] == '\0') || (pOperator[0] == '?' && pOperator[1] == '?' && pOperator[2] == '\0')) {
             val = OP_TOKEN_3_;
         }
         else if (pOperator[0] == '&' && pOperator[1] == '&' && pOperator[2] == '\0') {
@@ -335,10 +335,10 @@ short SlkToken::getOperatorTokenValue(void)const
             else
                 val = OP_TOKEN_7_;
         }
-        else if ((pOperator[0] == '=' || pOperator[0] == '!') && pOperator[1] == '=' && pOperator[2] == '\0' || pOperator[0] == '<' && pOperator[1] == '=' && pOperator[2] == '>' && pOperator[3] == '\0') {
+        else if (((pOperator[0] == '=' || pOperator[0] == '!') && pOperator[1] == '=' && pOperator[2] == '\0') || (pOperator[0] == '<' && pOperator[1] == '=' && pOperator[2] == '>' && pOperator[3] == '\0')) {
             val = OP_TOKEN_8_;
         }
-        else if ((pOperator[0] == '<' || pOperator[0] == '>') && (pOperator[1] == '=' && pOperator[2] == '\0' || pOperator[1] == '\0')) {
+        else if ((pOperator[0] == '<' || pOperator[0] == '>') && ((pOperator[1] == '=' && pOperator[2] == '\0') || pOperator[1] == '\0')) {
             val = OP_TOKEN_9_;
         }
         else if ((pOperator[0] == '<' && pOperator[1] == '<' && pOperator[2] == '\0') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '>' && pOperator[3] == '\0')) {
@@ -362,7 +362,7 @@ short SlkToken::getOperatorTokenValue(void)const
         else if (pOperator[0] == '`') {
             val = OP_TOKEN_1_;
         }
-        else if (pOperator[0] == '-' && pOperator[1] == '>' && pOperator[2] == '\0' || pOperator[0] == '.' && pOperator[1] == '\0') {
+        else if ((pOperator[0] == '-' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '.' && pOperator[1] == '\0')) {
             val = OP_TOKEN_15_;
         }
         else {
@@ -490,7 +490,7 @@ short SlkToken::getImpl(void)
                 isSkip = TRUE;
             }
             //#引导的单行注释与C++风格的单行注释
-            if (curChar() == '#' || curChar() == '/' && nextChar() == '/') {
+            if (curChar() == '#' || (curChar() == '/' && nextChar() == '/')) {
                 newComment();
                 for (; curChar() != '\0' && curChar() != '\n'; ++mIterator) {
                     if (curChar() != '\r')
@@ -1104,7 +1104,7 @@ short SlkToken::getImpl(void)
                 pushTokenChar(curChar());
                 ++mIterator;
             }
-            for (; isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub) || !isSpecialChar(curChar()); ++mIterator) {
+            for (; (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || !isSpecialChar(curChar()); ++mIterator) {
                 if (curChar() == '#')
                     break;
                 else if (curChar() == '.') {
