@@ -4,14 +4,17 @@
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
+#ifndef __STDC_WANT_SECURE_LIB__
+#define __STDC_WANT_SECURE_LIB__ 1
+#endif
 
 #include <cassert>
-#include <cmath>
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
 #include <cstdint>
 #include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 
 #if defined(__WINDOWS__)
 
@@ -45,7 +48,7 @@
 
 #endif
 
-#ifdef __STDC_LIB_EXT1__
+#if defined(__STDC_LIB_EXT1__) || defined(__STDC_SECURE_LIB__)
 #else
 #define strcpy_s(d,n,s) strcpy(d,s)
 #endif
