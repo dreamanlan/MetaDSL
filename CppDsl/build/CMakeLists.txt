@@ -122,16 +122,21 @@ if (APPLE)
         )
 		set_xcode_property (CppDsl IPHONEOS_DEPLOYMENT_TARGET "7.0" "all")
     else ()
-        set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_64_BIT)")
-        if (NOT BUILD_AS_OSX_DYLIB)
+        #set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_64_BIT)")
+        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+        if (BUILD_AS_OSX_BUNDLE)
             add_library(CppDsl MODULE
                 ${CLIB_SRC}
             )
             set_target_properties ( CppDsl PROPERTIES BUNDLE TRUE )
             #set_target_properties ( CppDsl PROPERTIES FRAMEWORK TRUE )
             #set_target_properties ( CppDsl PROPERTIES MACOSX_RPATH TRUE )
-        else ()
+        elseif (BUILD_AS_OSX_DYLIB)
             add_library(CppDsl SHARED
+                ${CLIB_SRC}
+            )
+        else ()
+            add_executable(CppDsl
                 ${CLIB_SRC}
             )
         endif ()
