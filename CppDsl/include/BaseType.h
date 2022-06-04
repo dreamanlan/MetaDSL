@@ -1,6 +1,10 @@
 #ifndef __BASETYPE_H__
 #define __BASETYPE_H__
 
+#ifndef __STDC_WANT_LIB_EXT1__
+#define __STDC_WANT_LIB_EXT1__ 1
+#endif
+
 #include <cassert>
 #include <cmath>
 #include <cstring>
@@ -39,6 +43,11 @@
 #include <net/if.h>
 #include <limits.h>
 
+#endif
+
+#ifdef __STDC_LIB_EXT1__
+#else
+#define strcpy_s(d,n,s) strcpy(d,s)
 #endif
 
 #ifndef TRUE

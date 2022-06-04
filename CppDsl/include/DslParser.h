@@ -994,7 +994,7 @@ namespace DslParser
             int len = (int)strlen(src);
             char* p = AllocString(len);
             if (0 != p) {
-                strcpy(p, src);
+                strcpy_s(p, len + 1, src);
             }
             return p;
         }
