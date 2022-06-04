@@ -1323,7 +1323,7 @@ void SlkToken::endTokenWithEof(void)
     static const char* s_c_Eof = "<<eof>>";
     if (nullptr == mDslFile || mDslFile->GetUnusedStringLength() <= (int)strlen(s_c_Eof) + 1 || nullptr == mCurToken || nullptr == mDslFile->GetUnusedStringPtrRef())
         return;
-    strcpy(mCurToken, s_c_Eof);
+    strcpy_s(mCurToken, mDslFile->GetUnusedStringLength() - 1, s_c_Eof);
     mDslFile->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
 }
 
