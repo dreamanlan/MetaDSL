@@ -7,4 +7,4 @@ xcopy /Y/S Plugins\* ..\lib\*
 
 xcopy /Y/S ..\lib\* ..\..\..\..\UGit\ScriptableUnreal\CppDsl\lib\*
 
-xcopy /Y/S ..\lib\* ..\..\..\..\SVN\NB2_trunk\Source\NB\CppDsl\lib\*
+xcopy /Y/S ..\lib\* ..\..\..\..\SVN\CurBranch\Source\NB\CppDsl\lib\*
