@@ -789,29 +789,39 @@ namespace DslParser
                 return name;
             }
         }
-        else if (nullptr != data.GetId() && data.GetId()[0] == '-' && data.GetParamNum() == 1) {
+        else if (nullptr != data.GetId() && data.GetId()[0] == '-' && data.GetId()[1] == '\0' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = static_cast<ValueData&>(temp);
-                int size = (int)strlen(val.GetId()) + 1;
-                char* pBuf = mDataFile->AllocString(size);
-                tsnprintf(pBuf, size + 1, "-%s", val.GetId());
-                val.SetNumber(pBuf);
-                return val;
+                if (val.IsNum()) {
+                    int size = (int)strlen(val.GetId()) + 1;
+                    char* pBuf = mDataFile->AllocString(size);
+                    tsnprintf(pBuf, size + 1, "-%s", val.GetId());
+                    val.SetNumber(pBuf);
+                    return val;
+                }
+                else {
+                    return data;
+                }
             }
             else {
                 return data;
             }
         }
-        else if (nullptr != data.GetId() && data.GetId()[0] == '+' && data.GetParamNum() == 1) {
+        else if (nullptr != data.GetId() && data.GetId()[0] == '+' && data.GetId()[1] == '\0' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = static_cast<ValueData&>(temp);
-                int size = (int)strlen(val.GetId()) + 1;
-                char* pBuf = mDataFile->AllocString(size);
-                tsnprintf(pBuf, size + 1, "+%s", val.GetId());
-                val.SetNumber(pBuf);
-                return val;
+                if (val.IsNum()) {
+                    int size = (int)strlen(val.GetId()) + 1;
+                    char* pBuf = mDataFile->AllocString(size);
+                    tsnprintf(pBuf, size + 1, "+%s", val.GetId());
+                    val.SetNumber(pBuf);
+                    return val;
+                }
+                else {
+                    return data;
+                }
             }
             else {
                 return data;

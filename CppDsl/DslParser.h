@@ -1340,17 +1340,17 @@ namespace DslParser
     private:
         ActionForSourceCodeScript* m_Impl;
     };
-    typedef Delegation3<bool, char*, short, int> EnqueueTokenDelegation;
+    typedef Delegation<bool(char*, short, int)> EnqueueTokenDelegation;
     class IScriptSource;
     class DslFile final
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
     public:
-        typedef Delegation4<bool, const DslTokenApi&, char*&, short&, int&> GetTokenDelegation;
-        typedef Delegation2<bool, const DslActionApi&, StatementData*> BeforeAddFunctionDelegation;
-        typedef Delegation3<bool, const DslActionApi&, StatementData*, FunctionData*> AddFunctionDelegation;
-        typedef Delegation1<bool, const DslActionApi&> BeforeEndStatementDelegation;
-        typedef Delegation2<bool, const DslActionApi&, StatementData*&> EndStatementDelegation;
+        typedef Delegation<bool(const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeAddFunctionDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> AddFunctionDelegation;
+        typedef Delegation<bool(const DslActionApi&)> BeforeEndStatementDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*&)> EndStatementDelegation;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const

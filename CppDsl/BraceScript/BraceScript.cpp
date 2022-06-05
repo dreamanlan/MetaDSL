@@ -975,7 +975,7 @@ namespace Brace
     class UnaryArithLogicBaseExp : public AbstractBraceApi
     {
     public:
-        UnaryArithLogicBaseExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Op1(), m_LoadInfo1(), m_ResultInfo()
+        UnaryArithLogicBaseExp(BraceScript& interpreter, bool isAssignment) :AbstractBraceApi(interpreter), m_IsAssignment(isAssignment), m_Op1(), m_LoadInfo1(), m_ResultInfo()
         {
         }
     protected:
@@ -985,14 +985,20 @@ namespace Brace
             m_LoadInfo1 = argLoadInfos[0];
             int resultType = BRACE_DATA_TYPE_UNKNOWN;
             bool r = BuildExecutor(data, m_LoadInfo1.GetLoadTimeRealType(curProc), resultType, executor);
-            m_ResultInfo.Type = resultType;
-            m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+            if (m_IsAssignment) {
+                m_ResultInfo = m_LoadInfo1;
+            }
+            else {
+                m_ResultInfo.Type = resultType;
+                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+            }
             resultInfo = m_ResultInfo;
             return r;
         }
     protected:
         virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
+        bool m_IsAssignment;
         BraceApiExecutor m_Op1;
         BraceApiLoadInfo m_LoadInfo1;
         BraceApiLoadInfo m_ResultInfo;
@@ -1000,7 +1006,7 @@ namespace Brace
     class BinaryArithLogicBaseExp : public AbstractBraceApi
     {
     public:
-        BinaryArithLogicBaseExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Op1(), m_Op2(), m_LoadInfo1(), m_LoadInfo2(), m_ResultInfo()
+        BinaryArithLogicBaseExp(BraceScript& interpreter, bool isAssignment) :AbstractBraceApi(interpreter), m_IsAssignment(isAssignment), m_Op1(), m_Op2(), m_LoadInfo1(), m_LoadInfo2(), m_ResultInfo()
         {
         }
     protected:
@@ -1012,14 +1018,20 @@ namespace Brace
             m_LoadInfo2 = argLoadInfos[1];
             int resultType = BRACE_DATA_TYPE_UNKNOWN;
             bool r = BuildExecutor(data, m_LoadInfo1.GetLoadTimeRealType(curProc), m_LoadInfo2.GetLoadTimeRealType(curProc), resultType, executor);
-            m_ResultInfo.Type = resultType;
-            m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+            if (m_IsAssignment) {
+                m_ResultInfo = m_LoadInfo1;
+            }
+            else {
+                m_ResultInfo.Type = resultType;
+                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+            }
             resultInfo = m_ResultInfo;
             return r;
         }
     protected:
         virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, const DataTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
+        bool m_IsAssignment;
         BraceApiExecutor m_Op1;
         BraceApiExecutor m_Op2;
         BraceApiLoadInfo m_LoadInfo1;
@@ -1982,6 +1994,28 @@ namespace Brace
         m_RuntimeStack.pop();
     }
 
+    void BraceScript::AddSyntaxComponent(DslData::ISyntaxComponent* p)
+    {
+        m_AddedSyntaxComponents.push_back(p);
+    }
+    void BraceScript::AddApiInstance(IBraceApi* p)
+    {
+        m_ApiInstances.push_back(p);
+    }
+    IBraceApi* BraceScript::CreateApi(const std::string& name)
+    {
+        auto it = m_ApiFactories.find(name);
+        if (it != m_ApiFactories.end()) {
+            auto* p = it->second->Create(*this);
+            if (p)
+                AddApiInstance(p);
+            return p;
+        }
+        else {
+            return nullptr;
+        }
+    }
+
     void BraceScript::LogInfo(const std::string& info)
     {
         if (OnInfo)
@@ -1998,14 +2032,6 @@ namespace Brace
         m_HasError = true;
         if (OnError)
             OnError(error);
-    }
-    void BraceScript::AddSyntaxComponent(DslData::ISyntaxComponent* p)
-    {
-        m_AddedSyntaxComponents.push_back(p);
-    }
-    void BraceScript::AddApiInstance(IBraceApi* p)
-    {
-        m_ApiInstances.push_back(p);
     }
     int BraceScript::GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const
     {
@@ -2257,6 +2283,10 @@ namespace Brace
     }
     BraceApiExecutor BraceScript::Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo)
     {
+        BraceApiExecutor tempExecutor;
+        if (DoFilterLoad(syntaxUnit, resultInfo, tempExecutor)) {
+            return tempExecutor;
+        }
         switch (syntaxUnit.GetSyntaxType()) {
         case DslData::ISyntaxComponent::TYPE_VALUE:
             return LoadValue(static_cast<const DslData::ValueData&>(syntaxUnit), resultInfo);
@@ -2319,13 +2349,13 @@ namespace Brace
                 pGlobalGet->Load(data, resultInfo, executor);
                 return executor;
             }
-            else {
+            else if (!DoLoadValueFailed(data, resultInfo, executor)) {
                 //error
                 std::stringstream ss;
                 ss << "BraceScript error, var must start with '$' or '@', " << data.GetId() << " line " << data.GetLine();
                 LogError(ss.str());
-                return executor;
             }
+            return executor;
         }
         else {
             auto* pConstGet = new ConstGet(*this);
@@ -2370,8 +2400,6 @@ namespace Brace
                     p->Load(data, resultInfo, executor);
                     return executor;
                 }break;
-                default:
-                    return executor;
                 }
             }
             else if (!callData.HaveParam()) {
@@ -2381,13 +2409,23 @@ namespace Brace
             else {
                 int paramClass = callData.GetParamClassUnmasked();
                 auto& op = callData.GetId();
-                if (op == "=") {//assignment
+                if (callData.IsOperatorParamClass() && ((op.length() == 1 && op[0] == '=') ||
+                    (op.length() == 2 && op[0] == '+' && op[1] == '=') ||
+                    (op.length() == 2 && op[0] == '-' && op[1] == '=') ||
+                    (op.length() == 2 && op[0] == '*' && op[1] == '=') ||
+                    (op.length() == 2 && op[0] == '/' && op[1] == '=') ||
+                    (op.length() == 2 && op[0] == '%' && op[1] == '=') ||
+                    (op.length() == 2 && op[0] == '&' && op[1] == '=') ||
+                    (op.length() == 2 && op[0] == '|' && op[1] == '=') ||
+                    (op.length() == 3 && op[0] == '>' && op[1] == '>' && op[2] == '=') ||
+                    (op.length() == 3 && op[0] == '<' && op[1] == '<' && op[2] == '='))) {//assignment
                     DslData::FunctionData* pFunc = nullptr;
                     auto* pParam = callData.GetParam(0);
                     if (pParam && pParam->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
                         auto* innerCall = static_cast<DslData::FunctionData*>(pParam);
                         if (nullptr != innerCall) {
-                            //obj.property = val -> dotnetset(obj, property, val)
+                            //obj.property = val -> memberset(obj, property, val)
+                            //obj.property += val -> memberset(obj, property, memberget(obj, property) + val)
                             int innerParamClass = innerCall->GetParamClassUnmasked();
                             if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD ||
                                 innerParamClass == DslData::FunctionData::PARAM_CLASS_BRACKET ||
@@ -2405,55 +2443,81 @@ namespace Brace
                                     newCall->AddParamCopyFrom(innerCall->GetLowerOrderFunction());
                                     auto* p = newCall->AddParamCopyFrom(*innerCall->GetParam(0));
                                     ConvertMember(p, innerParamClass);
-                                    newCall->AddParamCopyFrom(*callData.GetParam(1));
+                                    if (op.length() == 1) {
+                                        newCall->AddParamCopyFrom(*callData.GetParam(1));
+                                    }
+                                    else {
+                                        auto* newCalc = newCall->AddFunctionParam();
+                                        newCalc->SetName(DslData::ValueData(op.substr(0, op.length() - 1), DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                        
+                                        auto* newGet = newCalc->AddFunctionParam();
+                                        if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD)
+                                            newGet->SetName(DslData::ValueData("memberget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                        else
+                                            newGet->SetName(DslData::ValueData("collectionget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                        newGet->AddParamCopyFrom(innerCall->GetLowerOrderFunction());
+                                        newGet->AddParamCopyFrom(*innerCall->GetParam(0));
+
+                                        newCalc->AddParamCopyFrom(*callData.GetParam(1));
+                                    }
                                 }
                                 else {
                                     newCall->AddParamCopyFrom(innerCall->GetName());
                                     auto* p = newCall->AddParamCopyFrom(*innerCall->GetParam(0));
                                     ConvertMember(p, innerParamClass);
-                                    newCall->AddParamCopyFrom(*callData.GetParam(1));
+                                    if (op.length() == 1) {
+                                        newCall->AddParamCopyFrom(*callData.GetParam(1));
+                                    }
+                                    else {
+                                        auto* newCalc = newCall->AddFunctionParam();
+                                        newCalc->SetName(DslData::ValueData(op.substr(0, op.length() - 1), DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                        
+                                        auto* newGet = newCalc->AddFunctionParam();
+                                        if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD)
+                                            newGet->SetName(DslData::ValueData("memberget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                        else
+                                            newGet->SetName(DslData::ValueData("collectionget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                        newGet->AddParamCopyFrom(innerCall->GetName());
+                                        newGet->AddParamCopyFrom(*innerCall->GetParam(0));
+
+                                        newCalc->AddParamCopyFrom(*callData.GetParam(1));
+                                    }
                                 }
 
                                 return Load(*newCall, resultInfo);
                             }
-                            else if (innerCall->GetId() == ":" && innerCall->GetParamNum() == 2) {
+                            else if (op.length() == 1 && innerCall->GetId() == ":" && innerCall->GetParamNum() == 2) {
                                 pFunc = innerCall;
-                            }
-                            else {
-                                //error
-                                std::stringstream ss;
-                                ss << "BraceScript assignment error, " << data.GetId() << " line " << data.GetLine();
-                                LogError(ss.str());
-                                return executor;
                             }
                         }
                     }
-                    IBraceApi* api0 = nullptr;
-                    const std::string& varId = pFunc ? pFunc->GetParamId(0) : callData.GetParamId(0);
-                    if (varId.length() > 0 && varId[0] == '$') {
-                        api0 = new LocalVarSet(*this);
-                        AddApiInstance(api0);
+                    if (op.length() == 1) {
+                        IBraceApi* api0 = nullptr;
+                        const std::string& varId = pFunc ? pFunc->GetParamId(0) : callData.GetParamId(0);
+                        if (varId.length() > 0 && varId[0] == '$') {
+                            api0 = new LocalVarSet(*this);
+                            AddApiInstance(api0);
+                        }
+                        else if (varId.length() > 0 && varId[0] == '@') {
+                            api0 = new GlobalVarSet(*this);
+                            AddApiInstance(api0);
+                        }
+                        if (nullptr != api0) {
+                            api0->Load(data, resultInfo, executor);
+                            return executor;
+                        }
                     }
-                    else if (varId.length() > 0 && varId[0] == '@') {
-                        api0 = new GlobalVarSet(*this);
-                        AddApiInstance(api0);
-                    }
-                    else {
-                        //error
-                        std::stringstream ss;
-                        ss << "BraceScript error, var must start with '$' or '@', " << data.GetId() << " line " << data.GetLine();
-                        LogError(ss.str());
-                        return executor;
-                    }
-                    if (nullptr != api0) {
-                        api0->Load(data, resultInfo, executor);
-                    }
-                    else {
-                        //error
-                        std::stringstream ss;
-                        ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
-                        LogError(ss.str());
-                    }
+                }
+                else if (op == "+" && callData.GetParamNum() == 1) {
+                    auto* p = new PositiveExp(*this, false);
+                    AddApiInstance(p);
+                    p->Load(callData, resultInfo, executor);
+                    return executor;
+                }
+                else if (op == "-" && callData.GetParamNum() == 1) {
+                    auto* p = new NegativeExp(*this, false);
+                    AddApiInstance(p);
+                    p->Load(callData, resultInfo, executor);
                     return executor;
                 }
                 else if (op == "<-") {
@@ -2480,7 +2544,7 @@ namespace Brace
                             innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACE ||
                             innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACKET ||
                             innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_PARENTHESIS)) {
-                            //obj.member(a,b,...) or obj[member](a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> dotnetcall(obj,member,a,b,...)
+                            //obj.member(a,b,...) or obj[member](a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> membercall(obj,member,a,b,...)
                             std::string apiName;
                             std::string member = innerCall.GetParamId(0);
                             if (member == "orderby" || member == "orderbydesc" || member == "where" || member == "top") {
@@ -2521,7 +2585,7 @@ namespace Brace
                         paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACE ||
                         paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACKET ||
                         paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD_PARENTHESIS) {
-                        //obj.property or obj[property] or obj.(property) or obj.[property] or obj.{property} -> dotnetget(obj,property)
+                        //obj.property or obj[property] or obj.(property) or obj.[property] or obj.{property} -> memberget(obj,property)
                         auto* newCall = new DslData::FunctionData();
                         AddSyntaxComponent(newCall);
                         if (paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD)
@@ -2560,7 +2624,7 @@ namespace Brace
         }
         IBraceApi* api = nullptr;
         const std::string& name = data.GetId();
-        if (!data.IsHighOrder() && m_Procs.find(name) != m_Procs.end()) {
+        if (m_Procs.find(name) != m_Procs.end()) {
             api = new FunctionExecutor(*this);
             AddApiInstance(api);
         }
@@ -2576,10 +2640,13 @@ namespace Brace
             }
         }
         else {
-            //error
-            std::stringstream ss;
-            ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
-            LogError(ss.str());
+            BraceApiExecutor executor;
+            if (!DoLoadFunctionFailed(data, resultInfo, executor)) {
+                //error
+                std::stringstream ss;
+                ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
+                LogError(ss.str());
+            }
         }
         return executor;
     }
@@ -2615,7 +2682,7 @@ namespace Brace
                 LogError(ss.str());
             }
         }
-        else {
+        else if (!DoLoadStatementFailed(data, resultInfo, executor)) {
             //error
             std::stringstream ss;
             ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
@@ -2623,42 +2690,69 @@ namespace Brace
         }
         return executor;
     }
-    IBraceApi* BraceScript::CreateApi(const std::string& name)
-    {
-        auto it = m_ApiFactories.find(name);
-        if (it != m_ApiFactories.end()) {
-            auto* p = it->second->Create(*this);
-            if (p)
-                AddApiInstance(p);
-            return p;
-        }
-        else {
-            return nullptr;
-        }
-    }
 
+    bool BraceScript::DoFilterLoad(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+    {
+        if (OnFilterLoad)
+            return OnFilterLoad(syntaxUnit, resultInfo, executor);
+        return false;
+    }
+    bool BraceScript::DoLoadValueFailed(const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+    {
+        if (OnLoadValueFailed)
+            return OnLoadValueFailed(data, resultInfo, executor);
+        return false;
+    }
+    bool BraceScript::DoLoadFunctionFailed(const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+    {
+        if (OnLoadFunctionFailed)
+            return OnLoadFunctionFailed(data, resultInfo, executor);
+        return false;
+    }
+    bool BraceScript::DoLoadStatementFailed(const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+    {
+        if (OnLoadStatementFailed)
+            return OnLoadStatementFailed(data, resultInfo, executor);
+        return false;
+    }
+    
     void BraceScript::RegisterInnerApis(void)
     {
-        RegisterApi("+", new BraceApiFactory<AddExp>());
-        RegisterApi("-", new BraceApiFactory<SubExp>());
-        RegisterApi("*", new BraceApiFactory<MulExp>());
-        RegisterApi("/", new BraceApiFactory<DivExp>());
-        RegisterApi("%", new BraceApiFactory<ModExp>());
-        RegisterApi("&", new BraceApiFactory<BitAndExp>());
-        RegisterApi("|", new BraceApiFactory<BitOrExp>());
-        RegisterApi("^", new BraceApiFactory<BitXorExp>());
-        RegisterApi("~", new BraceApiFactory<BitNotExp>());
-        RegisterApi("<<", new BraceApiFactory<LShiftExp>());
-        RegisterApi(">>", new BraceApiFactory<RShiftExp>());
-        RegisterApi(">", new BraceApiFactory<GreatExp>());
-        RegisterApi(">=", new BraceApiFactory<GreatEqualExp>());
-        RegisterApi("<", new BraceApiFactory<LessExp>());
-        RegisterApi("<=", new BraceApiFactory<LessEqualExp>());
-        RegisterApi("==", new BraceApiFactory<EqualExp>());
-        RegisterApi("!=", new BraceApiFactory<NotEqualExp>());
-        RegisterApi("&&", new BraceApiFactory<AndExp>());
-        RegisterApi("||", new BraceApiFactory<OrExp>());
-        RegisterApi("!", new BraceApiFactory<NotExp>());
+        RegisterApi("+", new BraceApiFactoryWithArgs<AddExp, bool>(false));
+        RegisterApi("-", new BraceApiFactoryWithArgs<SubExp, bool>(false));
+        RegisterApi("*", new BraceApiFactoryWithArgs<MulExp, bool>(false));
+        RegisterApi("/", new BraceApiFactoryWithArgs<DivExp, bool>(false));
+        RegisterApi("%", new BraceApiFactoryWithArgs<ModExp, bool>(false));
+        RegisterApi("&", new BraceApiFactoryWithArgs<BitAndExp, bool>(false));
+        RegisterApi("|", new BraceApiFactoryWithArgs<BitOrExp, bool>(false));
+        RegisterApi("^", new BraceApiFactoryWithArgs<BitXorExp, bool>(false));
+        RegisterApi("~", new BraceApiFactoryWithArgs<BitNotExp, bool>(false));
+        RegisterApi("<<", new BraceApiFactoryWithArgs<LShiftExp, bool>(false));
+        RegisterApi(">>", new BraceApiFactoryWithArgs<RShiftExp, bool>(false));
+
+        RegisterApi("+=", new BraceApiFactoryWithArgs<AddExp, bool>(true));
+        RegisterApi("-=", new BraceApiFactoryWithArgs<SubExp, bool>(true));
+        RegisterApi("*=", new BraceApiFactoryWithArgs<MulExp, bool>(true));
+        RegisterApi("/=", new BraceApiFactoryWithArgs<DivExp, bool>(true));
+        RegisterApi("%=", new BraceApiFactoryWithArgs<ModExp, bool>(true));
+        RegisterApi("&=", new BraceApiFactoryWithArgs<BitAndExp, bool>(true));
+        RegisterApi("|=", new BraceApiFactoryWithArgs<BitOrExp, bool>(true));
+        RegisterApi("^=", new BraceApiFactoryWithArgs<BitXorExp, bool>(true));
+        RegisterApi("<<=", new BraceApiFactoryWithArgs<LShiftExp, bool>(true));
+        RegisterApi(">>=", new BraceApiFactoryWithArgs<RShiftExp, bool>(true));
+
+        RegisterApi("++", new BraceApiFactoryWithArgs<IncExp, bool>(true));
+        RegisterApi("--", new BraceApiFactoryWithArgs<DecExp, bool>(true));
+
+        RegisterApi(">", new BraceApiFactoryWithArgs<GreatExp, bool>(false));
+        RegisterApi(">=", new BraceApiFactoryWithArgs<GreatEqualExp, bool>(false));
+        RegisterApi("<", new BraceApiFactoryWithArgs<LessExp, bool>(false));
+        RegisterApi("<=", new BraceApiFactoryWithArgs<LessEqualExp, bool>(false));
+        RegisterApi("==", new BraceApiFactoryWithArgs<EqualExp, bool>(false));
+        RegisterApi("!=", new BraceApiFactoryWithArgs<NotEqualExp, bool>(false));
+        RegisterApi("&&", new BraceApiFactoryWithArgs<AndExp, bool>(false));
+        RegisterApi("||", new BraceApiFactoryWithArgs<OrExp, bool>(false));
+        RegisterApi("!", new BraceApiFactoryWithArgs<NotExp, bool>(false));
         RegisterApi("?", new BraceApiFactory<CondExp>());
         RegisterApi("echo", new BraceApiFactory<EchoExp>());
         RegisterApi("if", new BraceApiFactory<IfExp>());

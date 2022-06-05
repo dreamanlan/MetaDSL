@@ -60,7 +60,11 @@ script(main)
     call("writeBinaryExp", "AndExp", "&&");
     call("writeBinaryExp", "OrExp", "||");
 
-    call("writeBitNotExp");
+    call("writeUnaryNumericExp", "BitNotExp", "~");
+    call("writeUnaryNumericExp", "IncExp", "++");
+    call("writeUnaryNumericExp", "DecExp", "--");
+    call("writeUnaryNumericExp", "PositiveExp", "+");
+    call("writeUnaryNumericExp", "NegativeExp", "-");
     call("writeNotExp");
 
     return(0);
@@ -339,6 +343,33 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
 {
     return(block
     {:
+        int ExecuteGG2G{% $postfix %}(void) const
+        {
+            if (!m_Op1.isNull())
+                m_Op1();
+            if (!m_Op2.isNull())
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteGL2G{% $postfix %}(void) const
+        {
+            if (!m_Op1.isNull())
+                m_Op1();
+            if (!m_Op2.isNull())
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars1 = *GlobalVariables();
+            auto& srcVars2 = vars;
+            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
         int ExecuteGG{% $postfix %}(void) const
         {
             if (!m_Op1.isNull())
@@ -398,6 +429,16 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
 {
     return(block
     {:    
+        int ExecuteG2G{% $postfix %}(void) const
+        {
+            if (!m_Op1.isNull())
+                m_Op1();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $varSet %}(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
         int ExecuteG{% $postfix %}(void) const
         {
             if (!m_Op1.isNull())
@@ -423,6 +464,33 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
 {
     return(block
     {:
+        int ExecuteGG2G{% $postfix %}(void) const
+        {
+            if (!m_Op1.isNull())
+                m_Op1();
+            if (!m_Op2.isNull())
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(srcVars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int ExecuteGL2G{% $postfix %}(void) const
+        {
+            if (!m_Op1.isNull())
+                m_Op1();
+            if (!m_Op2.isNull())
+                m_Op2();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars1 = *GlobalVariables();
+            auto& srcVars2 = vars;
+            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.VarIndex);
+            {% $varSet %}(srcVars1, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
         int ExecuteGG{% $postfix %}(void) const
         {
             if (!m_Op1.isNull())
@@ -482,6 +550,16 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
 {
     return(block
     {:    
+        int ExecuteG2G{% $postfix %}(void) const
+        {
+            if (!m_Op1.isNull())
+                m_Op1();
+            auto& vars = *CurRuntimeVariables();
+            auto& srcVars = *GlobalVariables();
+            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
+            {% $varSet %}(srcVars, m_ResultInfo.VarIndex, {% $opr %} v1);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
         int ExecuteG{% $postfix %}(void) const
         {
             if (!m_Op1.isNull())
@@ -507,7 +585,15 @@ script(getBinaryExecuteBuildCode)args($className, $postfix)
 {
     return(block
     {:
-                if(m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if(m_LoadInfo2.IsGlobal){
+                        executor.attach(this, &{% $className %}::ExecuteGG2G{% $postfix %});
+                    }
+                    else{
+                        executor.attach(this, &{% $className %}::ExecuteGL2G{% $postfix %});
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteGG{% $postfix %});
                 } else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteLL{% $postfix %});
@@ -522,7 +608,10 @@ script(getUnaryExecuteBuildCode)args($className, $postfix)
 {
     return(block
     {:
-                if(m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &{% $className %}::ExecuteG2G{% $postfix %});
+                }
+                else if(m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteG{% $postfix %});
                 } else {
                     executor.attach(this, &{% $className %}::ExecuteL{% $postfix %});
@@ -908,7 +997,7 @@ script(writeBinaryExp)args($className, $op)
     class {% $className %} final : public BinaryArithLogicBaseExp
     {
     public:
-        {% $className %}(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+        {% $className %}(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
         {
         }
     protected:
@@ -929,74 +1018,197 @@ script(writeBinaryExp)args($className, $op)
     };
     :};
 };
-script(writeBitNotExp)
+script(writeUnaryNumericExp)args($className, $op)
 {
+    if($op=="~"){
+        $maxType = "BRACE_DATA_TYPE_UINT64";
+        $buildArithExecutor = block
+        {:
+            else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_UINT64) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+{% getUnaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getUnaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getUnaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getUnaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getUnaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getUnaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                }
+            }
+            else if(IsUnsignedType(resultType)) {
+{% getUnaryExecuteBuildCode($className, "UInt"); %}
+            }
+            else {
+{% getUnaryExecuteBuildCode($className, "Int"); %}
+            }
+        :};
+
+        $executeCode = block
+        {:
+{% getUnaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", $op); %}
+{% getUnaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", $op); %}
+{% getUnaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", $op); %}
+{% getUnaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", $op); %}
+{% getUnaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", $op); %}
+{% getUnaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", $op); %}
+{% getUnaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", $op); %}
+{% getUnaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", $op); %}
+{% getUnaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", $op); %}
+{% getUnaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", $op); %}
+        :};
+    }
+    elseif ($op == "-") {
+        $maxType = "BRACE_DATA_TYPE_DOUBLE";
+        $buildArithExecutor = block
+        {:
+            else if (IsSignedType(m_LoadInfo1.Type) || IsFloatType(m_LoadInfo1.Type)) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+{% getUnaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getUnaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getUnaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+{% getUnaryExecuteBuildCode($className, "FloatBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getUnaryExecuteBuildCode($className, "DoubleBoth"); %}
+                    break;
+                }
+            }
+            else {
+{% getUnaryExecuteBuildCode($className, "Int"); %}
+            }
+        :};
+
+        $executeCode = block
+        {:
+{% getUnaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", $op); %}
+{% getUnaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", $op); %}
+{% getUnaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", $op); %}
+{% getUnaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", $op); %}
+{% getUnaryExecuteCodeBoth("FloatBoth", "float", "VarGetFloat", "VarSetFloat", $op); %}
+{% getUnaryExecuteCodeBoth("DoubleBoth", "double", "VarGetDouble", "VarSetDouble", $op); %}
+{% getUnaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", $op); %}
+{% getUnaryExecuteCode("Float", "double", "VarGetF64", "VarSetF64", $op); %}
+        :};
+    }
+    else{
+        $maxType = "BRACE_DATA_TYPE_DOUBLE";
+        $buildArithExecutor = block
+        {:
+            else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_DOUBLE) {
+                resultType = m_LoadInfo1.Type;
+                switch (m_LoadInfo1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+{% getUnaryExecuteBuildCode($className, "Int8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT16:
+{% getUnaryExecuteBuildCode($className, "Int16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT32:
+{% getUnaryExecuteBuildCode($className, "Int32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode($className, "Int64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+{% getUnaryExecuteBuildCode($className, "UInt8Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT16:
+{% getUnaryExecuteBuildCode($className, "UInt16Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT32:
+{% getUnaryExecuteBuildCode($className, "UInt32Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode($className, "UInt64Both"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+{% getUnaryExecuteBuildCode($className, "FloatBoth"); %}
+                    break;
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getUnaryExecuteBuildCode($className, "DoubleBoth"); %}
+                    break;
+                }
+            }
+            else if(IsFloatType(resultType)) {
+{% getUnaryExecuteBuildCode($className, "Float"); %}
+            }
+            else if(IsUnsignedType(resultType)) {
+{% getUnaryExecuteBuildCode($className, "UInt"); %}
+            }
+            else {
+{% getUnaryExecuteBuildCode($className, "Int"); %}
+            }
+        :};
+
+        $executeCode = block
+        {:
+{% getUnaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", $op); %}
+{% getUnaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", $op); %}
+{% getUnaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", $op); %}
+{% getUnaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", $op); %}
+{% getUnaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", $op); %}
+{% getUnaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", $op); %}
+{% getUnaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", $op); %}
+{% getUnaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", $op); %}
+{% getUnaryExecuteCodeBoth("FloatBoth", "float", "VarGetFloat", "VarSetFloat", $op); %}
+{% getUnaryExecuteCodeBoth("DoubleBoth", "double", "VarGetDouble", "VarSetDouble", $op); %}
+{% getUnaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", $op); %}
+{% getUnaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", $op); %}
+{% getUnaryExecuteCode("Float", "double", "VarGetF64", "VarSetF64", $op); %}
+        :};
+    };
     writeblock
     {:
-    class BitNotExp final : public UnaryArithLogicBaseExp
+    class {% $className %} final : public UnaryArithLogicBaseExp
     {
     public:
-        BitNotExp(BraceScript& interpreter) :UnaryArithLogicBaseExp(interpreter)
+        {% $className %}(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
         {
         }
     protected:
         virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = load1.Type;
-            if (resultType >= BRACE_DATA_TYPE_FLOAT) {
+            if (resultType >= {% $maxType %}) {
                 std::stringstream ss;
-                ss << "can't bit not type " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+                ss << "operator {% $op %}, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
                 LogError(ss.str());
                 return false;
             }
-            else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_UINT64) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
-                case BRACE_DATA_TYPE_INT8:
-{% getUnaryExecuteBuildCode("BitNotExp", "Int8Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_INT16:
-{% getUnaryExecuteBuildCode("BitNotExp", "Int16Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_INT32:
-{% getUnaryExecuteBuildCode("BitNotExp", "Int32Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_INT64:
-{% getUnaryExecuteBuildCode("BitNotExp", "Int64Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_UINT8:
-{% getUnaryExecuteBuildCode("BitNotExp", "UInt8Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_UINT16:
-{% getUnaryExecuteBuildCode("BitNotExp", "UInt16Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_UINT32:
-{% getUnaryExecuteBuildCode("BitNotExp", "UInt32Both"); %}
-                    break;
-                case BRACE_DATA_TYPE_UINT64:
-{% getUnaryExecuteBuildCode("BitNotExp", "UInt64Both"); %}
-                    break;
-                }
-            }
-            else if(IsUnsignedType(resultType)) {
-{% getUnaryExecuteBuildCode("BitNotExp", "UInt"); %}
-            }
-            else {
-{% getUnaryExecuteBuildCode("BitNotExp", "Int"); %}
-            }
+{% $buildArithExecutor %}
             return true;
         }
     private:
-{% getUnaryExecuteCodeBoth("Int8Both", "int8_t", "VarGetInt8", "VarSetInt8", "~"); %}
-{% getUnaryExecuteCodeBoth("Int16Both", "int16_t", "VarGetInt16", "VarSetInt16", "~"); %}
-{% getUnaryExecuteCodeBoth("Int32Both", "int32_t", "VarGetInt32", "VarSetInt32", "~"); %}
-{% getUnaryExecuteCodeBoth("Int64Both", "int64_t", "VarGetInt64", "VarSetInt64", "~"); %}
-{% getUnaryExecuteCodeBoth("UInt8Both", "uint8_t", "VarGetUInt8", "VarSetUInt8", "~"); %}
-{% getUnaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetUInt16", "~"); %}
-{% getUnaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetUInt32", "~"); %}
-{% getUnaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetUInt64", "~"); %}
-{% getUnaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", "~"); %}
-{% getUnaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", "~"); %}
+{% $executeCode %}
     };
     :};
 };
@@ -1007,7 +1219,7 @@ script(writeNotExp)
     class NotExp final : public UnaryArithLogicBaseExp
     {
     public:
-        NotExp(BraceScript& interpreter) :UnaryArithLogicBaseExp(interpreter)
+        NotExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
         {
         }
     protected:

@@ -245,6 +245,15 @@ namespace Brace
         }
         return false;
     }
+    static inline bool IsFloatType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_FLOAT:
+        case BRACE_DATA_TYPE_DOUBLE:
+            return true;
+        }
+        return false;
+    }
 
 
 #define DEFINE_VAR_GET_NUMERIC(POSTFIX, NAME, TYPE) \
@@ -319,7 +328,7 @@ namespace Brace
     /// We implement first one first.
     class BraceScript;
     //We only need a member function to run, not a virtual function
-    using BraceApiExecutor = Delegation0<int>;
+    using BraceApiExecutor = Delegation<int(void)>;
     class IBraceApi
     {
     public:
@@ -509,6 +518,64 @@ namespace Brace
             return new ApiT(interpreter);
         }
     };
+    template<typename ApiT, typename... Args>
+    class CtorBinder
+    {};
+    template<typename ApiT, typename A1>
+    class CtorBinder<ApiT, A1>
+    {
+    public:
+        CtorBinder(A1 a1) :m_A1(a1)
+        {}
+        IBraceApi* ctor(BraceScript& interpreter)
+        {
+            return new ApiT(interpreter, m_A1);
+        }
+    private:
+        A1 m_A1;
+    };
+    template<typename ApiT, typename A1, typename A2>
+    class CtorBinder<ApiT, A1, A2>
+    {
+    public:
+        CtorBinder(A1 a1, A2 a2) :m_A1(a1), m_A2(a2)
+        {}
+        IBraceApi* ctor(BraceScript& interpreter)
+        {
+            return new ApiT(interpreter, m_A1, m_A2);
+        }
+    private:
+        A1 m_A1;
+        A2 m_A2;
+    };
+    template<typename ApiT, typename A1, typename A2, typename A3>
+    class CtorBinder<ApiT, A1, A2, A3>
+    {
+    public:
+        CtorBinder(A1 a1, A2 a2, A3 a3) :m_A1(a1), m_A2(a2), m_A3(a3)
+        {}
+        IBraceApi* ctor(BraceScript& interpreter)
+        {
+            return new ApiT(interpreter, m_A1, m_A2, m_A3);
+        }
+    private:
+        A1 m_A1;
+        A2 m_A2;
+        A3 m_A3;
+    };
+    template<typename ApiT, typename... Args>
+    class BraceApiFactoryWithArgs final : public IBraceApiFactory
+    {
+    public:
+        BraceApiFactoryWithArgs(Args... args) :m_Binder(args...)
+        {}
+        virtual IBraceApi* Create(BraceScript& interpreter) override
+        {
+            return m_Binder.ctor(interpreter);
+        }
+    private:
+        CtorBinder<ApiT, Args...> m_Binder;
+    };
 
     typedef std::stack<ProcInfo*> ProcInfoStack;
     typedef std::stack<RuntimeStackInfo> RuntimeStack;
@@ -516,6 +583,10 @@ namespace Brace
     typedef std::function<int(const DslData::ISyntaxComponent&)> GetObjectTypeIdDelegation;
     typedef std::function<const char* (int)> GetObjectTypeNameDelegation;
     typedef std::function<bool(int,int)> ObjectAssignCheckDelegation;
+    typedef std::function<bool(const DslData::ISyntaxComponent&, BraceApiLoadInfo&, BraceApiExecutor&)> FilterLoadDelegation;
+    typedef std::function<bool(const DslData::ValueData&, BraceApiLoadInfo&, BraceApiExecutor&)> LoadValueFailedDelegation;
+    typedef std::function<bool(const DslData::FunctionData&, BraceApiLoadInfo&, BraceApiExecutor&)> LoadFunctionFailedDelegation;
+    typedef std::function<bool(const DslData::StatementData&, BraceApiLoadInfo&, BraceApiExecutor&)> LoadStatementFailedDelegation;
     class BraceScript final
     {
         friend class AbstractBraceApi;
@@ -537,6 +608,11 @@ namespace Brace
         GetObjectTypeIdDelegation OnGetObjectTypeId;
         GetObjectTypeNameDelegation OnGetObjectTypeName;
         ObjectAssignCheckDelegation OnObjectAssignCheck;
+    public:
+        FilterLoadDelegation OnFilterLoad;
+        LoadValueFailedDelegation OnLoadValueFailed;
+        LoadFunctionFailedDelegation OnLoadFunctionFailed;
+        LoadStatementFailedDelegation OnLoadStatementFailed;
     public:
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
         /// See ExternaAPiRef.txt
@@ -564,6 +640,10 @@ namespace Brace
         VariableInfo* GlobalVariables(void)const;
         bool HasWarn(void)const { return m_HasWarn; }
         bool HasError(void)const { return m_HasError; }
+    public:
+        void AddSyntaxComponent(DslData::ISyntaxComponent* p);
+        void AddApiInstance(IBraceApi* p); 
+        IBraceApi* CreateApi(const std::string& name);
     private:
         const ProcInfo* CurRuntimeProcInfo(void)const;
         VariableInfo* CurRuntimeVariables(void)const;
@@ -573,8 +653,6 @@ namespace Brace
         void LogInfo(const std::string& info);
         void LogWarn(const std::string& warn);
         void LogError(const std::string& error);
-        void AddSyntaxComponent(DslData::ISyntaxComponent* p);
-        void AddApiInstance(IBraceApi* p);
         int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
         const char* GetObjectTypeName(int objTypeId)const;
         bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId) const;
@@ -603,7 +681,10 @@ namespace Brace
         BraceApiExecutor LoadValue(const DslData::ValueData& data, BraceApiLoadInfo& resultInfo);
         BraceApiExecutor LoadFunction(const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo);
         BraceApiExecutor LoadStatement(const DslData::StatementData& data, BraceApiLoadInfo& resultInfo);
-        IBraceApi* CreateApi(const std::string& name);
+        bool DoFilterLoad(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor);
+        bool DoLoadValueFailed(const DslData::ValueData& syntaxUnit, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor);
+        bool DoLoadFunctionFailed(const DslData::FunctionData& syntaxUnit, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor);
+        bool DoLoadStatementFailed(const DslData::StatementData& syntaxUnit, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor);
         void RegisterInnerApis(void);
         void Init(void);
         void Release(void);

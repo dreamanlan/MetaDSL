@@ -28,4 +28,12 @@ foreach("one", "two", "three"){
 	echo("foreach: "+$$);
 };
 
+@ct+=2;
+echo("@ct:", @ct);
+
+echo("inc:", ++@ct);
+echo("dec:", --@ct);
+echo("positive:", +@ct);
+echo("negative:", -@ct);
+
 echo("done.");

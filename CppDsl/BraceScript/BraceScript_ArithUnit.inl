@@ -1,7 +1,7 @@
 class AddExp final : public BinaryArithLogicBaseExp
 {
 public:
-    AddExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    AddExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -18,7 +18,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -33,7 +41,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -48,7 +64,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -63,7 +87,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -78,7 +110,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -93,7 +133,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -108,7 +156,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -123,7 +179,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -138,7 +202,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -153,7 +225,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -168,7 +248,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -183,7 +271,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AddExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &AddExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AddExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -200,7 +296,15 @@ protected:
             }
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &AddExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &AddExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &AddExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -215,7 +319,15 @@ protected:
 
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &AddExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &AddExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &AddExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -230,7 +342,15 @@ protected:
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &AddExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &AddExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &AddExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -245,7 +365,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &AddExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &AddExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &AddExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -263,6 +391,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -317,6 +472,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -371,6 +553,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -425,6 +634,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -479,6 +715,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -533,6 +796,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -587,6 +877,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -641,6 +958,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -695,6 +1039,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -749,6 +1120,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -803,6 +1201,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -857,6 +1282,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetString(srcVars, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetString(srcVars1, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -911,6 +1363,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -965,6 +1444,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -1019,6 +1525,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -1073,6 +1606,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetStr(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetStr(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 + v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -1132,7 +1692,7 @@ private:
 class SubExp final : public BinaryArithLogicBaseExp
 {
 public:
-    SubExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    SubExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -1149,7 +1709,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1164,7 +1732,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1179,7 +1755,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1194,7 +1778,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1209,7 +1801,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1224,7 +1824,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1239,7 +1847,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1254,7 +1870,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1269,7 +1893,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1284,7 +1916,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &SubExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &SubExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &SubExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1301,7 +1941,15 @@ protected:
             }
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &SubExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &SubExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &SubExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1316,7 +1964,15 @@ protected:
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &SubExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &SubExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &SubExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1331,7 +1987,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &SubExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &SubExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &SubExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -1349,6 +2013,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1403,6 +2094,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1457,6 +2175,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1511,6 +2256,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1565,6 +2337,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1619,6 +2418,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1673,6 +2499,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1727,6 +2580,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -1781,6 +2661,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -1835,6 +2742,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars1, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -1889,6 +2823,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -1943,6 +2904,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -1997,6 +2985,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 - v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -2056,7 +3071,7 @@ private:
 class MulExp final : public BinaryArithLogicBaseExp
 {
 public:
-    MulExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    MulExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -2073,7 +3088,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2088,7 +3111,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2103,7 +3134,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2118,7 +3157,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2133,7 +3180,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2148,7 +3203,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2163,7 +3226,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2178,7 +3249,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2193,7 +3272,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2208,7 +3295,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &MulExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &MulExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &MulExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2225,7 +3320,15 @@ protected:
             }
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &MulExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &MulExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &MulExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2240,7 +3343,15 @@ protected:
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &MulExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &MulExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &MulExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2255,7 +3366,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &MulExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &MulExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &MulExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -2273,6 +3392,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2327,6 +3473,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2381,6 +3554,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2435,6 +3635,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2489,6 +3716,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2543,6 +3797,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2597,6 +3878,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2651,6 +3959,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -2705,6 +4040,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -2759,6 +4121,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars1, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -2813,6 +4202,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -2867,6 +4283,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -2921,6 +4364,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 * v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -2980,7 +4450,7 @@ private:
 class DivExp final : public BinaryArithLogicBaseExp
 {
 public:
-    DivExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    DivExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -2997,7 +4467,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3012,7 +4490,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3027,7 +4513,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3042,7 +4536,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3057,7 +4559,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3072,7 +4582,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3087,7 +4605,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3102,7 +4628,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3117,7 +4651,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3132,7 +4674,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &DivExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &DivExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &DivExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3149,7 +4699,15 @@ protected:
             }
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &DivExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &DivExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &DivExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3164,7 +4722,15 @@ protected:
 
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &DivExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &DivExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &DivExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3179,7 +4745,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &DivExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &DivExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &DivExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3197,6 +4771,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3251,6 +4852,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3305,6 +4933,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3359,6 +5014,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3413,6 +5095,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3467,6 +5176,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3521,6 +5257,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3575,6 +5338,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -3629,6 +5419,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetFloat(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -3683,6 +5500,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetDouble(srcVars1, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -3737,6 +5581,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -3791,6 +5662,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -3845,6 +5743,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetF64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 / v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -3904,7 +5829,7 @@ private:
 class ModExp final : public BinaryArithLogicBaseExp
 {
 public:
-    ModExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    ModExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -3921,7 +5846,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3936,7 +5869,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3951,7 +5892,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3966,7 +5915,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3981,7 +5938,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -3996,7 +5961,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4011,7 +5984,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4026,7 +6007,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &ModExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &ModExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &ModExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4043,7 +6032,15 @@ protected:
             }
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &ModExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &ModExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &ModExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4058,7 +6055,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &ModExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &ModExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &ModExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4076,6 +6081,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4130,6 +6162,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4184,6 +6243,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4238,6 +6324,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4292,6 +6405,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4346,6 +6486,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4400,6 +6567,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4454,6 +6648,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4508,6 +6729,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -4562,6 +6810,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 % v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -4621,7 +6896,7 @@ private:
 class LShiftExp final : public BinaryArithLogicBaseExp
 {
 public:
-    LShiftExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    LShiftExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -4638,7 +6913,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4653,7 +6936,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4668,7 +6959,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4683,7 +6982,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4698,7 +7005,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4713,7 +7028,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4728,7 +7051,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4743,7 +7074,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LShiftExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &LShiftExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LShiftExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4760,7 +7099,15 @@ protected:
             }
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LShiftExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &LShiftExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LShiftExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4775,7 +7122,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LShiftExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &LShiftExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LShiftExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -4793,6 +7148,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4847,6 +7229,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4901,6 +7310,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -4955,6 +7391,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5009,6 +7472,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5063,6 +7553,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5117,6 +7634,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5171,6 +7715,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5225,6 +7796,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -5279,6 +7877,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 << v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -5338,7 +7963,7 @@ private:
 class RShiftExp final : public BinaryArithLogicBaseExp
 {
 public:
-    RShiftExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    RShiftExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -5355,7 +7980,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5370,7 +8003,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5385,7 +8026,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5400,7 +8049,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5415,7 +8072,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5430,7 +8095,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5445,7 +8118,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5460,7 +8141,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &RShiftExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &RShiftExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &RShiftExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5477,7 +8166,15 @@ protected:
             }
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &RShiftExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &RShiftExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &RShiftExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5492,7 +8189,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &RShiftExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &RShiftExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &RShiftExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -5510,6 +8215,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5564,6 +8296,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5618,6 +8377,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5672,6 +8458,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5726,6 +8539,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5780,6 +8620,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5834,6 +8701,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5888,6 +8782,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -5942,6 +8863,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -5996,6 +8944,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >> v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -6055,7 +9030,7 @@ private:
 class BitAndExp final : public BinaryArithLogicBaseExp
 {
 public:
-    BitAndExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    BitAndExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -6072,7 +9047,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6087,7 +9070,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6102,7 +9093,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6117,7 +9116,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6132,7 +9139,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6147,7 +9162,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6162,7 +9185,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6177,7 +9208,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitAndExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &BitAndExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitAndExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6194,7 +9233,15 @@ protected:
             }
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &BitAndExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &BitAndExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &BitAndExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6209,7 +9256,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &BitAndExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &BitAndExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &BitAndExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6227,6 +9282,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6281,6 +9363,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6335,6 +9444,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6389,6 +9525,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6443,6 +9606,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6497,6 +9687,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6551,6 +9768,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6605,6 +9849,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6659,6 +9930,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -6713,6 +10011,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 & v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -6772,7 +10097,7 @@ private:
 class BitOrExp final : public BinaryArithLogicBaseExp
 {
 public:
-    BitOrExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    BitOrExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -6789,7 +10114,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6804,7 +10137,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6819,7 +10160,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6834,7 +10183,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6849,7 +10206,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6864,7 +10229,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6879,7 +10252,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6894,7 +10275,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitOrExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &BitOrExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitOrExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6911,7 +10300,15 @@ protected:
             }
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &BitOrExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &BitOrExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &BitOrExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6926,7 +10323,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &BitOrExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &BitOrExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &BitOrExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -6944,6 +10349,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -6998,6 +10430,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7052,6 +10511,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7106,6 +10592,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7160,6 +10673,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7214,6 +10754,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7268,6 +10835,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7322,6 +10916,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7376,6 +10997,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -7430,6 +11078,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 | v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -7489,7 +11164,7 @@ private:
 class BitXorExp final : public BinaryArithLogicBaseExp
 {
 public:
-    BitXorExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    BitXorExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -7506,7 +11181,15 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7521,7 +11204,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7536,7 +11227,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7551,7 +11250,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7566,7 +11273,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7581,7 +11296,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7596,7 +11319,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7611,7 +11342,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &BitXorExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &BitXorExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &BitXorExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7628,7 +11367,15 @@ protected:
             }
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &BitXorExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &BitXorExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &BitXorExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7643,7 +11390,15 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &BitXorExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &BitXorExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &BitXorExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -7661,6 +11416,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt8(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7715,6 +11497,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt16(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7769,6 +11578,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt32(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7823,6 +11659,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetInt64(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7877,6 +11740,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt8(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7931,6 +11821,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt16(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -7985,6 +11902,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt32(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8039,6 +11983,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetUInt64(srcVars1, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8093,6 +12064,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetI64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -8147,6 +12145,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetU64(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 ^ v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -8206,7 +12231,7 @@ private:
 class GreatExp final : public BinaryArithLogicBaseExp
 {
 public:
-    GreatExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    GreatExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -8223,7 +12248,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8238,7 +12271,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8253,7 +12294,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8268,7 +12317,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8283,7 +12340,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8298,7 +12363,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8313,7 +12386,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8328,7 +12409,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8343,7 +12432,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8358,7 +12455,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8373,7 +12478,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8388,7 +12501,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8406,7 +12527,15 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &GreatExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8422,7 +12551,15 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &GreatExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8438,7 +12575,15 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &GreatExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8454,7 +12599,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &GreatExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -8472,6 +12625,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -8526,6 +12706,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8580,6 +12787,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8634,6 +12868,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8688,6 +12949,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8742,6 +13030,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8796,6 +13111,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8850,6 +13192,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8904,6 +13273,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -8958,6 +13354,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -9012,6 +13435,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -9066,6 +13516,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -9120,6 +13597,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -9174,6 +13678,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -9228,6 +13759,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -9282,6 +13840,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 > v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -9341,7 +13926,7 @@ private:
 class GreatEqualExp final : public BinaryArithLogicBaseExp
 {
 public:
-    GreatEqualExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    GreatEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -9358,7 +13943,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9373,7 +13966,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9388,7 +13989,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9403,7 +14012,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9418,7 +14035,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9433,7 +14058,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9448,7 +14081,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9463,7 +14104,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9478,7 +14127,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9493,7 +14150,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9508,7 +14173,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9523,7 +14196,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &GreatEqualExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &GreatEqualExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &GreatEqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9541,7 +14222,15 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatEqualExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &GreatEqualExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatEqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9557,7 +14246,15 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatEqualExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &GreatEqualExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatEqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9573,7 +14270,15 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatEqualExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &GreatEqualExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatEqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9589,7 +14294,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &GreatEqualExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &GreatEqualExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &GreatEqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -9607,6 +14320,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -9661,6 +14401,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -9715,6 +14482,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -9769,6 +14563,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -9823,6 +14644,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -9877,6 +14725,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -9931,6 +14806,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -9985,6 +14887,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -10039,6 +14968,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -10093,6 +15049,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -10147,6 +15130,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -10201,6 +15211,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -10255,6 +15292,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -10309,6 +15373,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -10363,6 +15454,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -10417,6 +15535,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 >= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -10476,7 +15621,7 @@ private:
 class LessExp final : public BinaryArithLogicBaseExp
 {
 public:
-    LessExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    LessExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -10493,7 +15638,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10508,7 +15661,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10523,7 +15684,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10538,7 +15707,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10553,7 +15730,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10568,7 +15753,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10583,7 +15776,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10598,7 +15799,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10613,7 +15822,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10628,7 +15845,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10643,7 +15868,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10658,7 +15891,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10676,7 +15917,15 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &LessExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10692,7 +15941,15 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &LessExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10708,7 +15965,15 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &LessExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10724,7 +15989,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &LessExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -10742,6 +16015,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -10796,6 +16096,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -10850,6 +16177,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -10904,6 +16258,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -10958,6 +16339,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -11012,6 +16420,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -11066,6 +16501,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -11120,6 +16582,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -11174,6 +16663,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -11228,6 +16744,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -11282,6 +16825,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -11336,6 +16906,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -11390,6 +16987,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -11444,6 +17068,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -11498,6 +17149,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -11552,6 +17230,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 < v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -11611,7 +17316,7 @@ private:
 class LessEqualExp final : public BinaryArithLogicBaseExp
 {
 public:
-    LessEqualExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    LessEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -11628,7 +17333,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11643,7 +17356,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11658,7 +17379,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11673,7 +17402,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11688,7 +17425,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11703,7 +17448,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11718,7 +17471,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11733,7 +17494,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11748,7 +17517,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11763,7 +17540,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11778,7 +17563,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11793,7 +17586,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &LessEqualExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &LessEqualExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &LessEqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11811,7 +17612,15 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessEqualExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &LessEqualExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessEqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11827,7 +17636,15 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessEqualExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &LessEqualExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessEqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11843,7 +17660,15 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessEqualExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &LessEqualExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessEqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11859,7 +17684,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &LessEqualExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &LessEqualExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &LessEqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -11877,6 +17710,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -11931,6 +17791,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -11985,6 +17872,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12039,6 +17953,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12093,6 +18034,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12147,6 +18115,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12201,6 +18196,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12255,6 +18277,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12309,6 +18358,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -12363,6 +18439,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -12417,6 +18520,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -12471,6 +18601,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -12525,6 +18682,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -12579,6 +18763,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -12633,6 +18844,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -12687,6 +18925,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 <= v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -12746,7 +19011,7 @@ private:
 class EqualExp final : public BinaryArithLogicBaseExp
 {
 public:
-    EqualExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    EqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -12763,7 +19028,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12778,7 +19051,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12793,7 +19074,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12808,7 +19097,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12823,7 +19120,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12838,7 +19143,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12853,7 +19166,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12868,7 +19189,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12883,7 +19212,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12898,7 +19235,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12913,7 +19258,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12928,7 +19281,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &EqualExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &EqualExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &EqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12946,7 +19307,15 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &EqualExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &EqualExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &EqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12962,7 +19331,15 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &EqualExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &EqualExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &EqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12978,7 +19355,15 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &EqualExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &EqualExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &EqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -12994,7 +19379,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &EqualExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &EqualExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &EqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13012,6 +19405,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -13066,6 +19486,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13120,6 +19567,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13174,6 +19648,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13228,6 +19729,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13282,6 +19810,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13336,6 +19891,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13390,6 +19972,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13444,6 +20053,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -13498,6 +20134,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -13552,6 +20215,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -13606,6 +20296,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -13660,6 +20377,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -13714,6 +20458,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -13768,6 +20539,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -13822,6 +20620,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 == v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -13881,7 +20706,7 @@ private:
 class NotEqualExp final : public BinaryArithLogicBaseExp
 {
 public:
-    NotEqualExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    NotEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -13898,7 +20723,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13913,7 +20746,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13928,7 +20769,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13943,7 +20792,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13958,7 +20815,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13973,7 +20838,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -13988,7 +20861,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14003,7 +20884,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14018,7 +20907,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14033,7 +20930,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_FLOAT:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GFloatBoth);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GFloatBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGFloatBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14048,7 +20953,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_DOUBLE:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GDoubleBoth);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GDoubleBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGDoubleBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14063,7 +20976,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_STRING:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &NotEqualExp::ExecuteGG2GStringBoth);
+                    }
+                    else {
+                        executor.attach(this, &NotEqualExp::ExecuteGL2GStringBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &NotEqualExp::ExecuteGGStringBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14081,7 +21002,15 @@ protected:
         }
         else if (NeedStringArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &NotEqualExp::ExecuteGG2GString);
+                }
+                else {
+                    executor.attach(this, &NotEqualExp::ExecuteGL2GString);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &NotEqualExp::ExecuteGGString);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14097,7 +21026,15 @@ protected:
         }
         else if (NeedFloatArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &NotEqualExp::ExecuteGG2GFloat);
+                }
+                else {
+                    executor.attach(this, &NotEqualExp::ExecuteGL2GFloat);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &NotEqualExp::ExecuteGGFloat);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14113,7 +21050,15 @@ protected:
         }
         else if (NeedUnsignedArithUnit(load1.Type, load2.Type)) {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &NotEqualExp::ExecuteGG2GUInt);
+                }
+                else {
+                    executor.attach(this, &NotEqualExp::ExecuteGL2GUInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &NotEqualExp::ExecuteGGUInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14129,7 +21074,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &NotEqualExp::ExecuteGG2GInt);
+                }
+                else {
+                    executor.attach(this, &NotEqualExp::ExecuteGL2GInt);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &NotEqualExp::ExecuteGGInt);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -14147,6 +21100,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -14201,6 +21181,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14255,6 +21262,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14309,6 +21343,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14363,6 +21424,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14417,6 +21505,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14471,6 +21586,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14525,6 +21667,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14579,6 +21748,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -14633,6 +21829,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        float v1 = VarGetFloat(srcVars1, m_LoadInfo1.VarIndex);
+        float v2 = VarGetFloat(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloatBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -14687,6 +21910,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetDouble(srcVars1, m_LoadInfo1.VarIndex);
+        double v2 = VarGetDouble(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGDoubleBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -14741,6 +21991,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        const std::string& v1 = VarGetString(srcVars, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GStringBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        const std::string& v1 = VarGetString(srcVars1, m_LoadInfo1.VarIndex);
+        const std::string& v2 = VarGetString(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGStringBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -14795,6 +22072,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetI64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetI64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -14849,6 +22153,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetU64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetU64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -14903,6 +22234,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        double v1 = VarGetF64(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        double v2 = VarGetF64(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGFloat(void) const
     {
         if (!m_Op1.isNull())
@@ -14957,6 +22315,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        std::string v1 = VarGetStr(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GString(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        std::string v1 = VarGetStr(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        std::string v2 = VarGetStr(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 != v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGString(void) const
     {
         if (!m_Op1.isNull())
@@ -15016,7 +22401,7 @@ private:
 class AndExp final : public BinaryArithLogicBaseExp
 {
 public:
-    AndExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    AndExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -15033,7 +22418,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15048,7 +22441,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15063,7 +22464,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15078,7 +22487,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15093,7 +22510,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15108,7 +22533,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15123,7 +22556,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15138,7 +22579,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15153,7 +22602,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &AndExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &AndExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &AndExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15171,7 +22628,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &AndExp::ExecuteGG2GBool);
+                }
+                else {
+                    executor.attach(this, &AndExp::ExecuteGL2GBool);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &AndExp::ExecuteGGBool);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15189,6 +22654,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -15243,6 +22735,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15297,6 +22816,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15351,6 +22897,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15405,6 +22978,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15459,6 +23059,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15513,6 +23140,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15567,6 +23221,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15621,6 +23302,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -15675,6 +23383,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GBool(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBoolean(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBoolean(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBool(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBoolean(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBoolean(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 && v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBool(void) const
     {
         if (!m_Op1.isNull())
@@ -15734,7 +23469,7 @@ private:
 class OrExp final : public BinaryArithLogicBaseExp
 {
 public:
-    OrExp(BraceScript& interpreter) :BinaryArithLogicBaseExp(interpreter)
+    OrExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -15751,7 +23486,15 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GBoolBoth);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GBoolBoth);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGBoolBoth);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15766,7 +23509,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15781,7 +23532,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15796,7 +23555,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15811,7 +23578,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15826,7 +23601,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GUInt8Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GUInt8Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGUInt8Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15841,7 +23624,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GUInt16Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GUInt16Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGUInt16Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15856,7 +23647,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GUInt32Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GUInt32Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGUInt32Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15871,7 +23670,15 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    if (m_LoadInfo2.IsGlobal) {
+                        executor.attach(this, &OrExp::ExecuteGG2GUInt64Both);
+                    }
+                    else {
+                        executor.attach(this, &OrExp::ExecuteGL2GUInt64Both);
+                    }
+                }
+                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                     executor.attach(this, &OrExp::ExecuteGGUInt64Both);
                 }
                 else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15889,7 +23696,15 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_LoadInfo2.IsGlobal) {
+                    executor.attach(this, &OrExp::ExecuteGG2GBool);
+                }
+                else {
+                    executor.attach(this, &OrExp::ExecuteGL2GBool);
+                }
+            }
+            else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
                 executor.attach(this, &OrExp::ExecuteGGBool);
             }
             else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
@@ -15907,6 +23722,33 @@ protected:
         return true;
     }
 private:
+    int ExecuteGG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBool(srcVars1, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBool(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -15961,6 +23803,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int8_t v1 = VarGetInt8(srcVars1, m_LoadInfo1.VarIndex);
+        int8_t v2 = VarGetInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16015,6 +23884,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int16_t v1 = VarGetInt16(srcVars1, m_LoadInfo1.VarIndex);
+        int16_t v2 = VarGetInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16069,6 +23965,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int32_t v1 = VarGetInt32(srcVars1, m_LoadInfo1.VarIndex);
+        int32_t v2 = VarGetInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16123,6 +24046,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        int64_t v1 = VarGetInt64(srcVars1, m_LoadInfo1.VarIndex);
+        int64_t v2 = VarGetInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16177,6 +24127,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint8_t v1 = VarGetUInt8(srcVars1, m_LoadInfo1.VarIndex);
+        uint8_t v2 = VarGetUInt8(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16231,6 +24208,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint16_t v1 = VarGetUInt16(srcVars1, m_LoadInfo1.VarIndex);
+        uint16_t v2 = VarGetUInt16(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16285,6 +24289,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint32_t v1 = VarGetUInt32(srcVars1, m_LoadInfo1.VarIndex);
+        uint32_t v2 = VarGetUInt32(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16339,6 +24370,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        uint64_t v1 = VarGetUInt64(srcVars1, m_LoadInfo1.VarIndex);
+        uint64_t v2 = VarGetUInt64(srcVars2, m_LoadInfo2.VarIndex);
+        VarSetBool(srcVars1, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16393,6 +24451,33 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteGG2GBool(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBoolean(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBoolean(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGL2GBool(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        if (!m_Op2.isNull())
+            m_Op2();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars1 = *GlobalVariables();
+        auto& srcVars2 = vars;
+        bool v1 = VarGetBoolean(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        bool v2 = VarGetBoolean(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+        VarSetBoolean(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 || v2);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGGBool(void) const
     {
         if (!m_Op1.isNull())
@@ -16452,16 +24537,16 @@ private:
 class BitNotExp final : public UnaryArithLogicBaseExp
 {
 public:
-    BitNotExp(BraceScript& interpreter) :UnaryArithLogicBaseExp(interpreter)
+    BitNotExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
     virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
-        if (resultType >= BRACE_DATA_TYPE_FLOAT) {
+        if (resultType >= BRACE_DATA_TYPE_UINT64) {
             std::stringstream ss;
-            ss << "can't bit not type " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+            ss << "operator ~, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
             LogError(ss.str());
             return false;
         }
@@ -16469,7 +24554,10 @@ protected:
             resultType = m_LoadInfo1.Type;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGInt8Both);
                 }
                 else {
@@ -16478,7 +24566,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGInt16Both);
                 }
                 else {
@@ -16487,7 +24578,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGInt32Both);
                 }
                 else {
@@ -16496,7 +24590,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGInt64Both);
                 }
                 else {
@@ -16505,7 +24602,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GUInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGUInt8Both);
                 }
                 else {
@@ -16514,7 +24614,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GUInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGUInt16Both);
                 }
                 else {
@@ -16523,7 +24626,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GUInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGUInt32Both);
                 }
                 else {
@@ -16532,7 +24638,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &BitNotExp::ExecuteG2GUInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &BitNotExp::ExecuteGUInt64Both);
                 }
                 else {
@@ -16543,7 +24652,10 @@ protected:
             }
         }
         else if (IsUnsignedType(resultType)) {
-            if (m_LoadInfo1.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &BitNotExp::ExecuteG2GUInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
                 executor.attach(this, &BitNotExp::ExecuteGUInt);
             }
             else {
@@ -16552,7 +24664,10 @@ protected:
 
         }
         else {
-            if (m_LoadInfo1.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &BitNotExp::ExecuteG2GInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
                 executor.attach(this, &BitNotExp::ExecuteGInt);
             }
             else {
@@ -16560,9 +24675,20 @@ protected:
             }
 
         }
+
         return true;
     }
 private:
+    int ExecuteG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16583,6 +24709,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16603,6 +24739,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16623,6 +24769,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16643,6 +24799,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16663,6 +24829,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16683,6 +24859,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16703,6 +24889,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16723,6 +24919,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt(void) const
     {
         if (!m_Op1.isNull())
@@ -16743,6 +24949,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ~v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt(void) const
     {
         if (!m_Op1.isNull())
@@ -16763,11 +24979,2082 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+
+};
+class IncExp final : public UnaryArithLogicBaseExp
+{
+public:
+    IncExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    {
+    }
+protected:
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    {
+        resultType = load1.Type;
+        if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
+            std::stringstream ss;
+            ss << "operator ++, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+            LogError(ss.str());
+            return false;
+        }
+        else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_DOUBLE) {
+            resultType = m_LoadInfo1.Type;
+            switch (m_LoadInfo1.Type) {
+            case BRACE_DATA_TYPE_INT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGInt8Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGInt16Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGInt32Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGInt64Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GUInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGUInt8Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLUInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GUInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGUInt16Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLUInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GUInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGUInt32Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLUInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GUInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGUInt64Both);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLUInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_FLOAT:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GFloatBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGFloatBoth);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLFloatBoth);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_DOUBLE:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteG2GDoubleBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &IncExp::ExecuteGDoubleBoth);
+                }
+                else {
+                    executor.attach(this, &IncExp::ExecuteLDoubleBoth);
+                }
+
+                break;
+            }
+        }
+        else if (IsFloatType(resultType)) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &IncExp::ExecuteG2GFloat);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &IncExp::ExecuteGFloat);
+            }
+            else {
+                executor.attach(this, &IncExp::ExecuteLFloat);
+            }
+
+        }
+        else if (IsUnsignedType(resultType)) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &IncExp::ExecuteG2GUInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &IncExp::ExecuteGUInt);
+            }
+            else {
+                executor.attach(this, &IncExp::ExecuteLUInt);
+            }
+
+        }
+        else {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &IncExp::ExecuteG2GInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &IncExp::ExecuteGInt);
+            }
+            else {
+                executor.attach(this, &IncExp::ExecuteLInt);
+            }
+
+        }
+
+        return true;
+    }
+private:
+    int ExecuteG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, ++v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+
+};
+class DecExp final : public UnaryArithLogicBaseExp
+{
+public:
+    DecExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    {
+    }
+protected:
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    {
+        resultType = load1.Type;
+        if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
+            std::stringstream ss;
+            ss << "operator --, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+            LogError(ss.str());
+            return false;
+        }
+        else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_DOUBLE) {
+            resultType = m_LoadInfo1.Type;
+            switch (m_LoadInfo1.Type) {
+            case BRACE_DATA_TYPE_INT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGInt8Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGInt16Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGInt32Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGInt64Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GUInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGUInt8Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLUInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GUInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGUInt16Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLUInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GUInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGUInt32Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLUInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GUInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGUInt64Both);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLUInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_FLOAT:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GFloatBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGFloatBoth);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLFloatBoth);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_DOUBLE:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteG2GDoubleBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &DecExp::ExecuteGDoubleBoth);
+                }
+                else {
+                    executor.attach(this, &DecExp::ExecuteLDoubleBoth);
+                }
+
+                break;
+            }
+        }
+        else if (IsFloatType(resultType)) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &DecExp::ExecuteG2GFloat);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &DecExp::ExecuteGFloat);
+            }
+            else {
+                executor.attach(this, &DecExp::ExecuteLFloat);
+            }
+
+        }
+        else if (IsUnsignedType(resultType)) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &DecExp::ExecuteG2GUInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &DecExp::ExecuteGUInt);
+            }
+            else {
+                executor.attach(this, &DecExp::ExecuteLUInt);
+            }
+
+        }
+        else {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &DecExp::ExecuteG2GInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &DecExp::ExecuteGInt);
+            }
+            else {
+                executor.attach(this, &DecExp::ExecuteLInt);
+            }
+
+        }
+
+        return true;
+    }
+private:
+    int ExecuteG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, --v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+
+};
+class PositiveExp final : public UnaryArithLogicBaseExp
+{
+public:
+    PositiveExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    {
+    }
+protected:
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    {
+        resultType = load1.Type;
+        if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
+            std::stringstream ss;
+            ss << "operator +, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+            LogError(ss.str());
+            return false;
+        }
+        else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_DOUBLE) {
+            resultType = m_LoadInfo1.Type;
+            switch (m_LoadInfo1.Type) {
+            case BRACE_DATA_TYPE_INT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGInt8Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGInt16Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGInt32Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGInt64Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GUInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGUInt8Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLUInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GUInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGUInt16Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLUInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GUInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGUInt32Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLUInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_UINT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GUInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGUInt64Both);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLUInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_FLOAT:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GFloatBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGFloatBoth);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLFloatBoth);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_DOUBLE:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteG2GDoubleBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &PositiveExp::ExecuteGDoubleBoth);
+                }
+                else {
+                    executor.attach(this, &PositiveExp::ExecuteLDoubleBoth);
+                }
+
+                break;
+            }
+        }
+        else if (IsFloatType(resultType)) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &PositiveExp::ExecuteG2GFloat);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &PositiveExp::ExecuteGFloat);
+            }
+            else {
+                executor.attach(this, &PositiveExp::ExecuteLFloat);
+            }
+
+        }
+        else if (IsUnsignedType(resultType)) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &PositiveExp::ExecuteG2GUInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &PositiveExp::ExecuteGUInt);
+            }
+            else {
+                executor.attach(this, &PositiveExp::ExecuteLUInt);
+            }
+
+        }
+        else {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &PositiveExp::ExecuteG2GInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &PositiveExp::ExecuteGInt);
+            }
+            else {
+                executor.attach(this, &PositiveExp::ExecuteLInt);
+            }
+
+        }
+
+        return true;
+    }
+private:
+    int ExecuteG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint8_t v1 = VarGetUInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt8(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint16_t v1 = VarGetUInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt16(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint32_t v1 = VarGetUInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt32(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint64_t v1 = VarGetUInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetUInt64(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetU64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLUInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        uint64_t v1 = VarGetU64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, +v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+
+};
+class NegativeExp final : public UnaryArithLogicBaseExp
+{
+public:
+    NegativeExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    {
+    }
+protected:
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    {
+        resultType = load1.Type;
+        if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
+            std::stringstream ss;
+            ss << "operator -, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+            LogError(ss.str());
+            return false;
+        }
+        else if (IsSignedType(m_LoadInfo1.Type) || IsFloatType(m_LoadInfo1.Type)) {
+            resultType = m_LoadInfo1.Type;
+            switch (m_LoadInfo1.Type) {
+            case BRACE_DATA_TYPE_INT8:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteG2GInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteGInt8Both);
+                }
+                else {
+                    executor.attach(this, &NegativeExp::ExecuteLInt8Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT16:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteG2GInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteGInt16Both);
+                }
+                else {
+                    executor.attach(this, &NegativeExp::ExecuteLInt16Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT32:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteG2GInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteGInt32Both);
+                }
+                else {
+                    executor.attach(this, &NegativeExp::ExecuteLInt32Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_INT64:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteG2GInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteGInt64Both);
+                }
+                else {
+                    executor.attach(this, &NegativeExp::ExecuteLInt64Both);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_FLOAT:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteG2GFloatBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteGFloatBoth);
+                }
+                else {
+                    executor.attach(this, &NegativeExp::ExecuteLFloatBoth);
+                }
+
+                break;
+            case BRACE_DATA_TYPE_DOUBLE:
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteG2GDoubleBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NegativeExp::ExecuteGDoubleBoth);
+                }
+                else {
+                    executor.attach(this, &NegativeExp::ExecuteLDoubleBoth);
+                }
+
+                break;
+            }
+        }
+        else {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &NegativeExp::ExecuteG2GInt);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &NegativeExp::ExecuteGInt);
+            }
+            else {
+                executor.attach(this, &NegativeExp::ExecuteLInt);
+            }
+
+        }
+
+        return true;
+    }
+private:
+    int ExecuteG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(srcVars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int8_t v1 = VarGetInt8(vars, m_LoadInfo1.VarIndex);
+        VarSetInt8(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(srcVars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int16_t v1 = VarGetInt16(vars, m_LoadInfo1.VarIndex);
+        VarSetInt16(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(srcVars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int32_t v1 = VarGetInt32(vars, m_LoadInfo1.VarIndex);
+        VarSetInt32(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(srcVars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetInt64(vars, m_LoadInfo1.VarIndex);
+        VarSetInt64(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(srcVars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        float v1 = VarGetFloat(srcVars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloatBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        float v1 = VarGetFloat(vars, m_LoadInfo1.VarIndex);
+        VarSetFloat(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(srcVars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetDouble(srcVars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLDoubleBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetDouble(vars, m_LoadInfo1.VarIndex);
+        VarSetDouble(vars, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetI64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLInt(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        int64_t v1 = VarGetI64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+    int ExecuteG2GFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteGFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        double v1 = VarGetF64(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+    int ExecuteLFloat(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        double v1 = VarGetF64(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, -v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
+
+
 };
 class NotExp final : public UnaryArithLogicBaseExp
 {
 public:
-    NotExp(BraceScript& interpreter) :UnaryArithLogicBaseExp(interpreter)
+    NotExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -16784,7 +27071,10 @@ protected:
             resultType = BRACE_DATA_TYPE_BOOL;
             switch (m_LoadInfo1.Type) {
             case BRACE_DATA_TYPE_BOOL:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GBoolBoth);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGBoolBoth);
                 }
                 else {
@@ -16793,7 +27083,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT8:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGInt8Both);
                 }
                 else {
@@ -16802,7 +27095,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT16:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGInt16Both);
                 }
                 else {
@@ -16811,7 +27107,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT32:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGInt32Both);
                 }
                 else {
@@ -16820,7 +27119,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_INT64:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGInt64Both);
                 }
                 else {
@@ -16829,7 +27131,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT8:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GUInt8Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGUInt8Both);
                 }
                 else {
@@ -16838,7 +27143,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT16:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GUInt16Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGUInt16Both);
                 }
                 else {
@@ -16847,7 +27155,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT32:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GUInt32Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGUInt32Both);
                 }
                 else {
@@ -16856,7 +27167,10 @@ protected:
 
                 break;
             case BRACE_DATA_TYPE_UINT64:
-                if (m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                    executor.attach(this, &NotExp::ExecuteG2GUInt64Both);
+                }
+                else if (m_LoadInfo1.IsGlobal) {
                     executor.attach(this, &NotExp::ExecuteGUInt64Both);
                 }
                 else {
@@ -16868,7 +27182,10 @@ protected:
         }
         else {
             resultType = BRACE_DATA_TYPE_BOOL;
-            if (m_LoadInfo1.IsGlobal) {
+            if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                executor.attach(this, &NotExp::ExecuteG2GBool);
+            }
+            else if (m_LoadInfo1.IsGlobal) {
                 executor.attach(this, &NotExp::ExecuteGBool);
             }
             else {
@@ -16879,6 +27196,16 @@ protected:
         return true;
     }
 private:
+    int ExecuteG2GBoolBoth(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBool(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGBoolBoth(void) const
     {
         if (!m_Op1.isNull())
@@ -16899,6 +27226,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int8_t v1 = VarGetInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16919,6 +27256,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int16_t v1 = VarGetInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16939,6 +27286,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int32_t v1 = VarGetInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16959,6 +27316,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        int64_t v1 = VarGetInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16979,6 +27346,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt8Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint8_t v1 = VarGetUInt8(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt8Both(void) const
     {
         if (!m_Op1.isNull())
@@ -16999,6 +27376,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt16Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint16_t v1 = VarGetUInt16(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt16Both(void) const
     {
         if (!m_Op1.isNull())
@@ -17019,6 +27406,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt32Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint32_t v1 = VarGetUInt32(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt32Both(void) const
     {
         if (!m_Op1.isNull())
@@ -17039,6 +27436,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GUInt64Both(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        uint64_t v1 = VarGetUInt64(srcVars, m_LoadInfo1.VarIndex);
+        VarSetBool(srcVars, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGUInt64Both(void) const
     {
         if (!m_Op1.isNull())
@@ -17059,6 +27466,16 @@ private:
         return BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    int ExecuteG2GBool(void) const
+    {
+        if (!m_Op1.isNull())
+            m_Op1();
+        auto& vars = *CurRuntimeVariables();
+        auto& srcVars = *GlobalVariables();
+        bool v1 = VarGetBoolean(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+        VarSetBoolean(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, !v1);
+        return BRACE_FLOW_CONTROL_NORMAL;
+    }
     int ExecuteGBool(void) const
     {
         if (!m_Op1.isNull())
