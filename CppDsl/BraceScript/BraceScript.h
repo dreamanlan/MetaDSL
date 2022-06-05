@@ -254,7 +254,22 @@ namespace Brace
         }
         return false;
     }
-
+    static inline bool IsBoolType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_BOOL:
+            return true;
+        }
+        return false;
+    }
+    static inline bool IsStringType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_STRING:
+            return true;
+        }
+        return false;
+    }
 
 #define DEFINE_VAR_GET_NUMERIC(POSTFIX, NAME, TYPE) \
     static inline TYPE VarGet##POSTFIX(VariableInfo& info, int index)\
@@ -501,12 +516,13 @@ namespace Brace
             resultInfo = Brace::BraceApiLoadInfo();
             return true;
         }
-        virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiLoadInfo>& argInfos)const = 0;
+        virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo)const = 0;
     private:
         int ExecuteImpl(void)const;
     private:
         std::vector<Brace::BraceApiExecutor> m_Args;
         std::vector<Brace::BraceApiLoadInfo> m_ArgLoadInfos;
+        Brace::BraceApiLoadInfo m_ResultInfo;
     };
 
     template<typename ApiT>

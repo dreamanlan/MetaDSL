@@ -208,7 +208,7 @@ protected:
         resultInfo = Brace::BraceApiLoadInfo();
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
     {
         auto sv = std::chrono::system_clock::now();
 

@@ -360,7 +360,7 @@ namespace Brace
         return r;
     }
 
-    SimpleBraceApiBase::SimpleBraceApiBase(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Args(), m_ArgLoadInfos()
+    SimpleBraceApiBase::SimpleBraceApiBase(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Args(), m_ArgLoadInfos(), m_ResultInfo()
     {
     }
     bool SimpleBraceApiBase::LoadCall(const ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>&& args, std::vector<BraceApiLoadInfo>&& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
@@ -368,8 +368,10 @@ namespace Brace
         std::swap(m_Args, args);
         std::swap(m_ArgLoadInfos, argLoadInfos);
         bool r = TypeInference(proc, data, m_ArgLoadInfos, resultInfo);
-        if (r)
+        if (r) {
+            m_ResultInfo = resultInfo;
             executor.attach(this, &SimpleBraceApiBase::ExecuteImpl);
+        }
         return r;
     }
     int SimpleBraceApiBase::ExecuteImpl(void)const
@@ -380,7 +382,7 @@ namespace Brace
             if (!op.isNull())
                 op();
         }
-        Execute(gvars, lvars, m_ArgLoadInfos);
+        Execute(gvars, lvars, m_ArgLoadInfos, m_ResultInfo);
         return Brace::BRACE_FLOW_CONTROL_NORMAL;
     }
 
