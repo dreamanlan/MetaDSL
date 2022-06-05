@@ -2642,7 +2642,6 @@ namespace Brace
             }
         }
         else {
-            BraceApiExecutor executor;
             if (!DoLoadFunctionFailed(data, resultInfo, executor)) {
                 //error
                 std::stringstream ss;
