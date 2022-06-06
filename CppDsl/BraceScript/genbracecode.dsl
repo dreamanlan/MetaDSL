@@ -994,10 +994,10 @@ script(writeBinaryExp)args($className, $op)
 
     writeblock
     {:
-    class {% $className %} final : public BinaryArithLogicBaseExp
+    class {% $className %} final : public BinaryOperatorBaseExp
     {
     public:
-        {% $className %}(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+        {% $className %}(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
         {
         }
     protected:
@@ -1188,10 +1188,10 @@ script(writeUnaryNumericExp)args($className, $op)
     };
     writeblock
     {:
-    class {% $className %} final : public UnaryArithLogicBaseExp
+    class {% $className %} final : public UnaryOperatorBaseExp
     {
     public:
-        {% $className %}(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+        {% $className %}(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
         {
         }
     protected:
@@ -1216,10 +1216,10 @@ script(writeNotExp)
 {
     writeblock
     {:
-    class NotExp final : public UnaryArithLogicBaseExp
+    class NotExp final : public UnaryOperatorBaseExp
     {
     public:
-        NotExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+        NotExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
         {
         }
     protected:

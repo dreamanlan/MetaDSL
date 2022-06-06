@@ -1,7 +1,7 @@
-class AddExp final : public BinaryArithLogicBaseExp
+class AddExp final : public BinaryOperatorBaseExp
 {
 public:
-    AddExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    AddExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -1689,10 +1689,10 @@ private:
 
 
 };
-class SubExp final : public BinaryArithLogicBaseExp
+class SubExp final : public BinaryOperatorBaseExp
 {
 public:
-    SubExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    SubExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -3068,10 +3068,10 @@ private:
 
 
 };
-class MulExp final : public BinaryArithLogicBaseExp
+class MulExp final : public BinaryOperatorBaseExp
 {
 public:
-    MulExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    MulExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -4447,10 +4447,10 @@ private:
 
 
 };
-class DivExp final : public BinaryArithLogicBaseExp
+class DivExp final : public BinaryOperatorBaseExp
 {
 public:
-    DivExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    DivExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -5826,10 +5826,10 @@ private:
 
 
 };
-class ModExp final : public BinaryArithLogicBaseExp
+class ModExp final : public BinaryOperatorBaseExp
 {
 public:
-    ModExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    ModExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -6893,10 +6893,10 @@ private:
 
 
 };
-class LShiftExp final : public BinaryArithLogicBaseExp
+class LShiftExp final : public BinaryOperatorBaseExp
 {
 public:
-    LShiftExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    LShiftExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -7960,10 +7960,10 @@ private:
 
 
 };
-class RShiftExp final : public BinaryArithLogicBaseExp
+class RShiftExp final : public BinaryOperatorBaseExp
 {
 public:
-    RShiftExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    RShiftExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -9027,10 +9027,10 @@ private:
 
 
 };
-class BitAndExp final : public BinaryArithLogicBaseExp
+class BitAndExp final : public BinaryOperatorBaseExp
 {
 public:
-    BitAndExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    BitAndExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -10094,10 +10094,10 @@ private:
 
 
 };
-class BitOrExp final : public BinaryArithLogicBaseExp
+class BitOrExp final : public BinaryOperatorBaseExp
 {
 public:
-    BitOrExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    BitOrExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -11161,10 +11161,10 @@ private:
 
 
 };
-class BitXorExp final : public BinaryArithLogicBaseExp
+class BitXorExp final : public BinaryOperatorBaseExp
 {
 public:
-    BitXorExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    BitXorExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -12228,10 +12228,10 @@ private:
 
 
 };
-class GreatExp final : public BinaryArithLogicBaseExp
+class GreatExp final : public BinaryOperatorBaseExp
 {
 public:
-    GreatExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    GreatExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -13923,10 +13923,10 @@ private:
 
 
 };
-class GreatEqualExp final : public BinaryArithLogicBaseExp
+class GreatEqualExp final : public BinaryOperatorBaseExp
 {
 public:
-    GreatEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    GreatEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -15618,10 +15618,10 @@ private:
 
 
 };
-class LessExp final : public BinaryArithLogicBaseExp
+class LessExp final : public BinaryOperatorBaseExp
 {
 public:
-    LessExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    LessExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -17313,10 +17313,10 @@ private:
 
 
 };
-class LessEqualExp final : public BinaryArithLogicBaseExp
+class LessEqualExp final : public BinaryOperatorBaseExp
 {
 public:
-    LessEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    LessEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -19008,10 +19008,10 @@ private:
 
 
 };
-class EqualExp final : public BinaryArithLogicBaseExp
+class EqualExp final : public BinaryOperatorBaseExp
 {
 public:
-    EqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    EqualExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -20703,10 +20703,10 @@ private:
 
 
 };
-class NotEqualExp final : public BinaryArithLogicBaseExp
+class NotEqualExp final : public BinaryOperatorBaseExp
 {
 public:
-    NotEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    NotEqualExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -22398,10 +22398,10 @@ private:
 
 
 };
-class AndExp final : public BinaryArithLogicBaseExp
+class AndExp final : public BinaryOperatorBaseExp
 {
 public:
-    AndExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    AndExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -23466,10 +23466,10 @@ private:
 
 
 };
-class OrExp final : public BinaryArithLogicBaseExp
+class OrExp final : public BinaryOperatorBaseExp
 {
 public:
-    OrExp(BraceScript& interpreter, bool isAssignment) :BinaryArithLogicBaseExp(interpreter, isAssignment)
+    OrExp(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -24534,10 +24534,10 @@ private:
 
 
 };
-class BitNotExp final : public UnaryArithLogicBaseExp
+class BitNotExp final : public UnaryOperatorBaseExp
 {
 public:
-    BitNotExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    BitNotExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -24981,10 +24981,10 @@ private:
 
 
 };
-class IncExp final : public UnaryArithLogicBaseExp
+class IncExp final : public UnaryOperatorBaseExp
 {
 public:
-    IncExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    IncExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -25554,10 +25554,10 @@ private:
 
 
 };
-class DecExp final : public UnaryArithLogicBaseExp
+class DecExp final : public UnaryOperatorBaseExp
 {
 public:
-    DecExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    DecExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -26127,10 +26127,10 @@ private:
 
 
 };
-class PositiveExp final : public UnaryArithLogicBaseExp
+class PositiveExp final : public UnaryOperatorBaseExp
 {
 public:
-    PositiveExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    PositiveExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -26700,10 +26700,10 @@ private:
 
 
 };
-class NegativeExp final : public UnaryArithLogicBaseExp
+class NegativeExp final : public UnaryOperatorBaseExp
 {
 public:
-    NegativeExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    NegativeExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
@@ -27051,10 +27051,10 @@ private:
 
 
 };
-class NotExp final : public UnaryArithLogicBaseExp
+class NotExp final : public UnaryOperatorBaseExp
 {
 public:
-    NotExp(BraceScript& interpreter, bool isAssignment) :UnaryArithLogicBaseExp(interpreter, isAssignment)
+    NotExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
     {
     }
 protected:
