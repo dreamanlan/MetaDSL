@@ -435,7 +435,7 @@ namespace Brace
             m_Exp = LoadHelper(*param2, argLoadInfo);
             auto realArgType = argLoadInfo.GetLoadTimeRealType(curProc);
             int varType = BRACE_DATA_TYPE_UNKNOWN;
-            int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             DslData::FunctionData* pFunc = nullptr;
             if (param1->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
                 pFunc = static_cast<DslData::FunctionData*>(param1);
@@ -561,7 +561,7 @@ namespace Brace
             m_Exp = LoadHelper(*param2, argLoadInfo);
             auto realArgType = argLoadInfo.GetLoadTimeRealType(curProc);
             int varType = BRACE_DATA_TYPE_UNKNOWN;
-            int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             DslData::FunctionData* pFunc = nullptr;
             if (param1->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
                 pFunc = static_cast<DslData::FunctionData*>(param1);
@@ -873,7 +873,7 @@ namespace Brace
                                 }
                                 auto& typeName = nullptr != typeFunc ? typeFunc->GetParamId(0) : pf->GetParamId(1);
                                 int type = GetDataType(typeName);
-                                int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+                                int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                                 if (type == BRACE_DATA_TYPE_OBJECT) {
                                     objTypeId = GetObjectTypeId(nullptr != typeFunc ? *typeFunc->GetParam(0) : *pf->GetParam(1));
                                 }
@@ -933,7 +933,7 @@ namespace Brace
                                 }
                                 auto& typeName = nullptr != typeFunc ? typeFunc->GetParamId(0) : pf->GetParamId(1);
                                 int type = GetDataType(typeName);
-                                int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+                                int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                                 if (type == BRACE_DATA_TYPE_OBJECT) {
                                     objTypeId = GetObjectTypeId(nullptr != typeFunc ? *typeFunc->GetParam(0) : *pf->GetParam(1));
                                 }
@@ -955,7 +955,7 @@ namespace Brace
                     if (f3->IsHighOrder() && f3->GetLowerOrderFunction().GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON) {
                         auto& typeName = f3->GetId();
                         int type = GetDataType(typeName);
-                        int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+                        int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                         if (type == BRACE_DATA_TYPE_OBJECT) {
                             objTypeId = GetObjectTypeId(f3->GetLowerOrderFunction());
                         }
@@ -966,7 +966,7 @@ namespace Brace
                     else if (!f3->IsHighOrder()) {
                         auto& typeName = f3->GetId();
                         int type = GetDataType(typeName);
-                        int objTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+                        int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                         if (type == BRACE_DATA_TYPE_OBJECT) {
                             objTypeId = GetObjectTypeId(f3->GetName());
                         }
@@ -2044,7 +2044,7 @@ namespace Brace
     {
         if (OnGetObjectTypeId)
             return OnGetObjectTypeId(typeSyntax);
-        return BRACE_PREDEFINED_OBJECT_TYPE_UNKNOWN;
+        return PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
     }
     const char* BraceScript::GetObjectTypeName(int objTypeId)const
     {
@@ -2055,7 +2055,7 @@ namespace Brace
     bool BraceScript::CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId) const
     {
         if (destType == BRACE_DATA_TYPE_OBJECT && srcType == BRACE_DATA_TYPE_OBJECT) {
-            if (destObjTypeId == srcObjTypeId || srcObjTypeId == BRACE_PREDEFINED_OBJECT_TYPE_NULL) {
+            if (destObjTypeId == srcObjTypeId || srcObjTypeId == PREDEFINED_BRACE_OBJECT_TYPE_NULL) {
                 return true;
             }
             else if(OnObjectAssignCheck) {
@@ -2143,7 +2143,7 @@ namespace Brace
     }
     int BraceScript::AllocGlobalVariable(const std::string& name, int type)
     {
-        return AllocGlobalVariable(name, type, BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ);
+        return AllocGlobalVariable(name, type, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
     }
     int BraceScript::AllocGlobalVariable(const std::string& name, int type, int objTypeId)
     {
@@ -2177,7 +2177,7 @@ namespace Brace
     }
     int BraceScript::AllocVariable(const std::string& name, int type)
     {
-        return AllocVariable(name, type, BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ);
+        return AllocVariable(name, type, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
     }
     int BraceScript::AllocVariable(const std::string& name, int type, int objTypeId)
     {
@@ -2278,9 +2278,9 @@ namespace Brace
             }
             if (type != BRACE_DATA_TYPE_UNKNOWN) {
                 if(type==BRACE_DATA_TYPE_OBJECT)
-                    curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, BRACE_PREDEFINED_OBJECT_TYPE_NULL, index, true)));
+                    curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, PREDEFINED_BRACE_OBJECT_TYPE_NULL, index, true)));
                 else
-                    curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ, index, true)));
+                    curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(value, type, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ, index, true)));
             }
             return index;
         }

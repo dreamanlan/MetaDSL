@@ -40,13 +40,13 @@ namespace Brace
         BRACE_DATA_TYPE_REF,
         BRACE_DATA_TYPE_NUM
     };
-    enum BraceObjectTypeIdEnum
+    enum PredefinedBraceObjectTypeIdEnum
     {
-        BRACE_PREDEFINED_OBJECT_TYPE_UNKNOWN = -1,
-        BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ = 0,
-        BRACE_PREDEFINED_OBJECT_TYPE_NULL,
-        BRACE_PREDEFINED_OBJECT_TYPE_CONTEXT,
-        BRACE_PREDEFINED_OBJECT_TYPE_NUM
+        PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN = -1,
+        PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ = 0,
+        PREDEFINED_BRACE_OBJECT_TYPE_NULL,
+        PREDEFINED_BRACE_OBJECT_TYPE_CONTEXT,
+        PREDEFINED_BRACE_OBJECT_TYPE_NUM
     };
 
     class IBraceObject
@@ -94,7 +94,7 @@ namespace Brace
         VarInfo(void) :Name()
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
-            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
             IsGlobal = false;
         }
@@ -121,13 +121,13 @@ namespace Brace
         ParamRetInfo(void) :Name(), IsRef(false)
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
-            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
         }
         ParamRetInfo(const std::string& name, int type, int objTypeId, int index) :Name(name), IsRef(false)
         {
             Type = type;
-            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = index;
         }
         ParamRetInfo(const std::string& name, int type, int objTypeId, int index, bool isRef) :Name(name), IsRef(isRef)
@@ -146,7 +146,7 @@ namespace Brace
         BraceApiLoadInfo(void) :IsTempVar(true)
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
-            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
             IsGlobal = false;
         }
@@ -161,13 +161,13 @@ namespace Brace
         ReferenceInfo(void):Vars(nullptr)
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
-            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
         }
         ReferenceInfo(int type, int index, VariableInfo* vars) :Vars(vars)
         {
             Type = type;
-            ObjectTypeId = BRACE_PREDEFINED_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = index;
         }
         ReferenceInfo(int type, int objTypeId, int index, VariableInfo* vars) :Vars(vars)
@@ -667,7 +667,7 @@ namespace Brace
         LoadStatementFailedDelegation OnLoadStatementFailed;
     public:
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
-        /// See ExternaAPiRef.txt
+        /// See ExternalAPiRef.txt
         /// -----------------------------------------------------------------------------------------------------------
         /// RegisterApi("membercall", new BraceApiFactory<MemberCallExp>());
         /// RegisterApi("memberset", new BraceApiFactory<MemberSetExp>());
