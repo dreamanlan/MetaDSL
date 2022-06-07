@@ -172,17 +172,9 @@ namespace Brace
     {
         GetInterpreter().PopBlock();
     }
-    int AbstractBraceApi::AllocGlobalVariable(const std::string& name, int type)const
-    {
-        return GetInterpreter().AllocGlobalVariable(name, type);
-    }
     int AbstractBraceApi::AllocGlobalVariable(const std::string& name, int type, int objTypeId)const
     {
         return GetInterpreter().AllocGlobalVariable(name, type, objTypeId);
-    }
-    int AbstractBraceApi::AllocVariable(const std::string& name, int type)const
-    {
-        return GetInterpreter().AllocVariable(name, type);
     }
     int AbstractBraceApi::AllocVariable(const std::string& name, int type, int objTypeId)const
     {
@@ -340,7 +332,8 @@ namespace Brace
             };
         }
         m_ResultInfo.Type = m_Func->RetValue.Type;
-        m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+        m_ResultInfo.ObjectTypeId = m_Func->RetValue.ObjectTypeId;
+        m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
         m_ResultAssign = GetVarAssignPtr(m_ResultInfo.Type, false, m_Func->RetValue.Type, false);
         resultInfo = m_ResultInfo;
         executor.attach(this, &FunctionExecutor::Execute);
@@ -532,6 +525,7 @@ namespace Brace
             auto* info = GetGlobalVarInfo(varId);
             if (nullptr != info) {
                 resultInfo.Type = info->Type;
+                resultInfo.ObjectTypeId = info->ObjectTypeId;
                 resultInfo.VarIndex = info->VarIndex;
                 resultInfo.IsGlobal = info->IsGlobal;
                 resultInfo.IsTempVar = false;
@@ -658,6 +652,7 @@ namespace Brace
             auto* info = GetVarInfo(varId);
             if (nullptr != info) {
                 resultInfo.Type = info->Type;
+                resultInfo.ObjectTypeId = info->ObjectTypeId;
                 resultInfo.VarIndex = info->VarIndex;
                 resultInfo.IsGlobal = info->IsGlobal;
                 resultInfo.IsTempVar = false;
@@ -682,6 +677,7 @@ namespace Brace
             auto* info = GetConstInfo(varId);
             if (nullptr != info) {
                 resultInfo.Type = info->Type;
+                resultInfo.ObjectTypeId = info->ObjectTypeId;
                 resultInfo.VarIndex = info->VarIndex;
                 resultInfo.IsGlobal = info->IsGlobal;
             }
@@ -742,6 +738,7 @@ namespace Brace
         {
             //return(...); or return <- expression;
             m_ResultInfo.Type = curProc.RetValue.Type;
+            m_ResultInfo.ObjectTypeId = curProc.RetValue.ObjectTypeId;
             m_ResultInfo.VarIndex = curProc.RetValue.VarIndex;
             if (!data.IsHighOrder()) {
                 if (data.IsOperatorParamClass() && data.GetParamNum() == 2) {
@@ -768,6 +765,7 @@ namespace Brace
         {
             //return symbol;
             m_ResultInfo.Type = curProc.RetValue.Type;
+            m_ResultInfo.ObjectTypeId = curProc.RetValue.ObjectTypeId;
             m_ResultInfo.VarIndex = curProc.RetValue.VarIndex;
             if (data.GetFunctionNum() == 2) {
                 auto* f1 = data.GetFirst()->AsValue();
@@ -878,7 +876,7 @@ namespace Brace
                                     objTypeId = GetObjectTypeId(nullptr != typeFunc ? *typeFunc->GetParam(0) : *pf->GetParam(1));
                                 }
                                 if (nullptr != typeFunc) {
-                                    int varIndex = AllocVariable(name, BRACE_DATA_TYPE_REF);
+                                    int varIndex = AllocVariable(name, BRACE_DATA_TYPE_REF, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
                                     newProc->VarInitInfo.ReferenceVars[varIndex] = ReferenceInfo(type, objTypeId, INVALID_INDEX, nullptr);
                                     newProc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, true));
                                 }
@@ -938,7 +936,7 @@ namespace Brace
                                     objTypeId = GetObjectTypeId(nullptr != typeFunc ? *typeFunc->GetParam(0) : *pf->GetParam(1));
                                 }
                                 if (nullptr != typeFunc) {
-                                    int varIndex = AllocVariable(name, BRACE_DATA_TYPE_REF);
+                                    int varIndex = AllocVariable(name, BRACE_DATA_TYPE_REF, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
                                     newProc->VarInitInfo.ReferenceVars[varIndex] = ReferenceInfo(type, objTypeId, INVALID_INDEX, nullptr);
                                     newProc->Params.push_back(ParamRetInfo(name, type, objTypeId, varIndex, true));
                                 }
@@ -1019,7 +1017,8 @@ namespace Brace
         }
         else {
             m_ResultInfo.Type = resultType;
-            m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+            m_ResultInfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
         }
         resultInfo = m_ResultInfo;
         return r;
@@ -1040,7 +1039,8 @@ namespace Brace
         }
         else {
             m_ResultInfo.Type = resultType;
-            m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+            m_ResultInfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
         }
         resultInfo = m_ResultInfo;
         return r;
@@ -1066,6 +1066,11 @@ namespace Brace
                 auto realType1 = m_LoadInfo1.GetLoadTimeRealType(curProc);
                 auto realType2 = m_LoadInfo2.GetLoadTimeRealType(curProc);
                 auto realType3 = m_LoadInfo3.GetLoadTimeRealType(curProc);
+                m_ResultInfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+                if (realType2.Type == BRACE_DATA_TYPE_OBJECT && realType2.Type == realType3.Type && realType2.ObjectTypeId == realType3.ObjectTypeId) {
+                    m_ResultInfo.Type = realType2.Type;
+                    m_ResultInfo.ObjectTypeId = realType2.ObjectTypeId;
+                }
                 if (realType2.Type == BRACE_DATA_TYPE_STRING || realType3.Type == BRACE_DATA_TYPE_STRING) {
                     m_ResultInfo.Type = BRACE_DATA_TYPE_STRING;
                     executor.attach(this, &CondExp::ExecuteString);
@@ -1086,7 +1091,7 @@ namespace Brace
                     m_ResultInfo.Type = GetMaxType(realType2.Type, realType3.Type);
                     executor.attach(this, &CondExp::ExecuteInt);
                 }
-                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
             }
             else {
                 //error
@@ -1529,7 +1534,7 @@ namespace Brace
                 auto* count = funcData.GetLowerOrderFunction().GetParam(0);
                 m_Count = LoadHelper(*count, m_LoadInfo);
                 PushBlock();
-                m_IteratorIndex = AllocVariable("$$", m_LoadInfo.Type);
+                m_IteratorIndex = AllocVariable("$$", m_LoadInfo.Type, m_LoadInfo.ObjectTypeId);
                 for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
                     BraceApiLoadInfo argLoadInfo;
                     auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
@@ -1561,7 +1566,7 @@ namespace Brace
                     if (first->GetParamNum() > 0) {
                         auto* exp = first->GetParam(0);
                         m_Count = LoadHelper(*exp, m_LoadInfo);
-                        m_IteratorIndex = AllocVariable("$$", m_LoadInfo.Type);
+                        m_IteratorIndex = AllocVariable("$$", m_LoadInfo.Type, m_LoadInfo.ObjectTypeId);
                     }
                     else {
                         //error
@@ -1621,19 +1626,22 @@ namespace Brace
         virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& funcData, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
         {
             int iteratorType = BRACE_DATA_TYPE_UNKNOWN;
+            int iteratorObjTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             if (funcData.IsHighOrder()) {
                 auto& callData = funcData.GetLowerOrderFunction();
                 int num = callData.GetParamNum();
                 bool typeMatch = true;
                 int type = BRACE_DATA_TYPE_UNKNOWN;
+                int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                 for (int ix = 0; ix < num; ++ix) {
                     auto* exp = callData.GetParam(ix); BraceApiLoadInfo elemLoadInfo;
                     auto e = LoadHelper(*exp, elemLoadInfo);
                     if (elemLoadInfo.Type != BRACE_DATA_TYPE_UNKNOWN) {
                         if (type == BRACE_DATA_TYPE_UNKNOWN) {
                             type = elemLoadInfo.Type;
+                            objTypeId = elemLoadInfo.ObjectTypeId;
                         }
-                        else if (type != elemLoadInfo.Type) {
+                        else if (type != elemLoadInfo.Type || objTypeId != elemLoadInfo.ObjectTypeId) {
                             typeMatch = false;
                         }
                     }
@@ -1644,6 +1652,7 @@ namespace Brace
                     m_ElementLoadInfos.push_back(std::move(elemLoadInfo));
                 }
                 iteratorType = type;
+                iteratorObjTypeId = objTypeId;
                 if (!typeMatch) {
                     std::stringstream ss;
                     ss << "BraceScript error, foreach list type dismatch, " << callData.GetId() << " line " << callData.GetLine();
@@ -1652,7 +1661,7 @@ namespace Brace
             }
             PushBlock();
             m_IteratorIsUnsigned = IsUnsignedType(iteratorType);
-            m_IteratorIndex = AllocVariable("$$", iteratorType);
+            m_IteratorIndex = AllocVariable("$$", iteratorType, iteratorObjTypeId);
             if (funcData.HaveStatement()) {
                 int fnum = funcData.GetParamNum();
                 for (int ix = 0; ix < fnum; ++ix) {
@@ -1681,6 +1690,7 @@ namespace Brace
                     if (num > 0) {
                         bool typeMatch = true;
                         int type = BRACE_DATA_TYPE_UNKNOWN;
+                        int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                         for (int ix = 0; ix < num; ++ix) {
                             auto* exp = first->GetParam(ix);
                             BraceApiLoadInfo elemLoadInfo;
@@ -1688,8 +1698,9 @@ namespace Brace
                             if (elemLoadInfo.Type != BRACE_DATA_TYPE_UNKNOWN) {
                                 if (type == BRACE_DATA_TYPE_UNKNOWN) {
                                     type = elemLoadInfo.Type;
+                                    objTypeId = elemLoadInfo.ObjectTypeId;
                                 }
-                                else if (type != elemLoadInfo.Type) {
+                                else if (type != elemLoadInfo.Type || objTypeId != elemLoadInfo.ObjectTypeId) {
                                     typeMatch = false;
                                 }
                             }
@@ -1699,7 +1710,7 @@ namespace Brace
                             m_Elements.push_back(std::move(e));
                             m_ElementLoadInfos.push_back(std::move(elemLoadInfo));
                         }
-                        m_IteratorIndex = AllocVariable("$$", type);
+                        m_IteratorIndex = AllocVariable("$$", type, objTypeId);
                         if (!typeMatch) {
                             std::stringstream ss;
                             ss << "BraceScript error, foreach list type dismatch, " << first->GetId() << " line " << first->GetLine();
@@ -1798,7 +1809,7 @@ namespace Brace
                 m_ResultInfo = lastLoadInfo;
                 m_ResultInfo.Type = lastRealType.Type;
                 m_ResultInfo.ObjectTypeId = lastRealType.ObjectTypeId;
-                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type);
+                m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
                 resultInfo = m_ResultInfo;
             }
             executor.attach(this, &ParenthesisExp::Execute);
@@ -2141,10 +2152,6 @@ namespace Brace
         std::string key = "\"" + value + "\"";
         return key;
     }
-    int BraceScript::AllocGlobalVariable(const std::string& name, int type)
-    {
-        return AllocGlobalVariable(name, type, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
-    }
     int BraceScript::AllocGlobalVariable(const std::string& name, int type, int objTypeId)
     {
         auto it = m_GlobalProc->VarTypeInfos.find(name);
@@ -2174,10 +2181,6 @@ namespace Brace
                 fkey = CalcVarKey(name, 0);
         }
         return it;
-    }
-    int BraceScript::AllocVariable(const std::string& name, int type)
-    {
-        return AllocVariable(name, type, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
     }
     int BraceScript::AllocVariable(const std::string& name, int type, int objTypeId)
     {

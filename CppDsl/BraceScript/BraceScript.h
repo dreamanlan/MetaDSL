@@ -164,12 +164,6 @@ namespace Brace
             ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
         }
-        ReferenceInfo(int type, int index, VariableInfo* vars) :Vars(vars)
-        {
-            Type = type;
-            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-            VarIndex = index;
-        }
         ReferenceInfo(int type, int objTypeId, int index, VariableInfo* vars) :Vars(vars)
         {
             Type = type;
@@ -441,9 +435,7 @@ namespace Brace
         std::vector<int>& CurBlockObjVars(void)const;
         void PushBlock(void)const;
         void PopBlock(void)const;
-        int AllocGlobalVariable(const std::string& name, int type)const;
         int AllocGlobalVariable(const std::string& name, int type, int objTypeId)const;
-        int AllocVariable(const std::string& name, int type)const;
         int AllocVariable(const std::string& name, int type, int objTypeId)const;
         int AllocConst(int tok_type, const std::string& value, int& type)const;
         void LogInfo(const std::string& msg)const;
@@ -724,10 +716,8 @@ namespace Brace
         void PopBlock(void);
         std::string CalcVarKey(const std::string& name, int level)const;
         std::string CalcConstKey(const std::string& name)const;
-        int AllocGlobalVariable(const std::string& name, int type);
         int AllocGlobalVariable(const std::string& name, int type, int objTypeId);
         auto FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level)const -> decltype(proc->VarTypeInfos.end());
-        int AllocVariable(const std::string& name, int type);
         int AllocVariable(const std::string& name, int type, int objTypeId);
         int AllocConst(int tok_type, const std::string& value, int& type);
         BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo);
