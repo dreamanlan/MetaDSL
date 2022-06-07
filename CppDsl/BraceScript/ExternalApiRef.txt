@@ -55,97 +55,94 @@
 		std::unordered_map<KeyT, ValT> m_Hashtable;
 	};
 
-	class MemberCallExp final : public Brace::SimpleBraceApiBase
+	class MemberCallExp final : public Brace::AbstractBraceApi
 	{
 	public:
-		MemberCallExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		MemberCallExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
 		{
 		}
 	protected:
-		virtual bool TypeInference(const Brace::ProcInfo& proc, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
-			return false;
-		}
-		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
-		{
+			executor = nullptr;
+			return true;
 		}
 	};
-	class MemberSetExp final : public Brace::SimpleBraceApiBase
+	class MemberSetExp final : public Brace::AbstractBraceApi
 	{
 	public:
-		MemberSetExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		MemberSetExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
 		{
 		}
 	protected:
-		virtual bool TypeInference(const Brace::ProcInfo& proc, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
-			return false;
-		}
-		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
-		{
+			executor = nullptr;
+			return true;
 		}
 	};
-	class MemberGetExp final : public Brace::SimpleBraceApiBase
+	class MemberGetExp final : public Brace::AbstractBraceApi
 	{
 	public:
-		MemberGetExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		MemberGetExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter), m_Obj(), m_Member(), m_ResultInfo()
 		{
 		}
 	protected:
-		virtual bool TypeInference(const Brace::ProcInfo& proc, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
-			if (argInfos.size() != 2)
+			if (data.GetParamNum() != 2)
 				return false;
-			auto& arr = argInfos[0];
-			auto& ix = argInfos[1];
-			if (arr.Type != Brace::BRACE_DATA_TYPE_OBJECT || (arr.ObjectTypeId != CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY && arr.ObjectTypeId != CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY)) {
+			m_Obj = LoadHelper(*data.GetParam(0), m_ObjInfo);
+			m_Member = data.GetParamId(1);
+			if (m_ObjInfo.Type != Brace::BRACE_DATA_TYPE_OBJECT || (m_ObjInfo.ObjectTypeId != CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY && m_ObjInfo.ObjectTypeId != CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY)) {
 				std::stringstream ss;
 				ss << "only support int/string array. ! line: " << data.GetLine();
 				LogError(ss.str());
 				return false;
 			}
-			if (ix.Type != Brace::BRACE_DATA_TYPE_STRING) {
-				std::stringstream ss;
-				ss << "array's member name must be string ! line: " << data.GetLine();
-				LogError(ss.str());
-				return false;
-			}
-			const std::string& mname = proc.VarInitInfo.StringVars[ix.VarIndex];
-			if (mname == "length") {
-				resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
-				return true;
-			}
-			else {
+			if (m_Member != "length") {
 				std::stringstream ss;
 				ss << "only support array.length now ! line: " << data.GetLine();
 				LogError(ss.str());
 				return false;
 			}
+			m_ResultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
+			m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+			resultInfo = m_ResultInfo;
+			executor.attach(this, &MemberGetExp::Execute);
+			return true;
 		}
-		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
+	private:
+		int Execute(void)const
 		{
-			auto& arr = argInfos[0];
-			auto& ix = argInfos[1];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
-			int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
-			if (arr.ObjectTypeId == CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY) {
+			if (!m_Obj.isNull())
+				m_Obj();
+			auto& gvars = *GlobalVariables();
+			auto& lvars = *CurRuntimeVariables();
+			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
+			if (m_ObjInfo.ObjectTypeId == CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY) {
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
 					auto* pArr = static_cast<ArrayObjT<int, CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY>*>(ptr);
 					size_t v = pArr->GetImpl().size();
-					Brace::VarSetInt32((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, static_cast<int32_t>(v));
+					Brace::VarSetInt32((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, static_cast<int32_t>(v));
 				}
 			}
-			else if (arr.ObjectTypeId == CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY) {
+			else if (m_ObjInfo.ObjectTypeId == CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY) {
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
 					auto* pArr = static_cast<ArrayObjT<std::string, CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY>*>(ptr);
 					size_t v = pArr->GetImpl().size();
-					Brace::VarSetInt32((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, static_cast<int32_t>(v));
+					Brace::VarSetInt32((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, static_cast<int32_t>(v));
 				}
 			}
+			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
+	private:
+		Brace::BraceApiExecutor m_Obj;
+		Brace::BraceApiLoadInfo m_ObjInfo;
+		std::string m_Member;
+		Brace::BraceApiLoadInfo m_ResultInfo;
 	};
 	class CollectionCallExp final : public Brace::SimpleBraceApiBase
 	{
@@ -286,7 +283,7 @@
 		{
 		}
 	protected:
-		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& loadInfo, Brace::BraceApiExecutor& executor) override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
 			//(args) => {...}; or (args)int => {...}; or [...](args) => {...}; or [...](args)int => {...};
 			bool hasError = false;
@@ -305,7 +302,7 @@
 		{
 		}
 	protected:
-		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& loadInfo, Brace::BraceApiExecutor& executor) override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
 			executor = nullptr;
 			return true;
@@ -431,7 +428,7 @@
 		{
 		}
 	protected:
-		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& loadInfo, Brace::BraceApiExecutor& executor) override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
 			executor = nullptr;
 			return true;
@@ -444,7 +441,7 @@
 		{
 		}
 	protected:
-		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& funcData, Brace::BraceApiLoadInfo& loadInfo, Brace::BraceApiExecutor& executor) override
+		virtual bool LoadFunction(const Brace::ProcInfo& proc, const DslData::FunctionData& funcData, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
 			if (funcData.IsHighOrder()) {
 				auto* list = funcData.GetLowerOrderFunction().GetParam(0);
@@ -474,7 +471,7 @@
 			}
 			return true;
 		}
-		virtual bool LoadStatement(const Brace::ProcInfo& proc, const DslData::StatementData& statementData, Brace::BraceApiLoadInfo& loadInfo, Brace::BraceApiExecutor& executor) override
+		virtual bool LoadStatement(const Brace::ProcInfo& proc, const DslData::StatementData& statementData, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 		{
 			//looplist(exp) func(args);
 			if (statementData.GetFunctionNum() == 2) {
