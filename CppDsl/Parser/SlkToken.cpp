@@ -377,7 +377,7 @@ int SlkToken::isNotIdentifierAndEndParenthesis(char c)const
     if (0 == c)
         return FALSE;
     else
-        return (0 == strchr(mEndParentheses, c) && !::isalnum(c) && c != '_') ? TRUE : FALSE;
+        return (0 == strchr(mEndParentheses, c) && !::isalnum(c) && c != '_' && c != '@' && c != '$') ? TRUE : FALSE;
 }
 
 int SlkToken::isWhiteSpace(char c) const

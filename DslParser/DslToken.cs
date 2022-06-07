@@ -989,7 +989,7 @@ namespace Dsl.Common
             if (0 == c)
                 return false;
             else
-                return mEndParentheses.IndexOf(c) < 0 && !char.IsLetterOrDigit(c) && c != '_';
+                return mEndParentheses.IndexOf(c) < 0 && !char.IsLetterOrDigit(c) && c != '_' && c != '@' && c != '$';
         }
         public bool isWhiteSpace(char c)
         {
