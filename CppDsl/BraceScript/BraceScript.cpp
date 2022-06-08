@@ -1495,6 +1495,8 @@ namespace Brace
                 if (VarGetBoolean(clause.LoadInfo.IsGlobal ? gvars : vars, clause.LoadInfo.Type, clause.LoadInfo.VarIndex)) {
                     for (auto& statement : clause.Statements) {
                         int v = statement();
+                        if (IsForceQuit())
+                            break;
                         if (v != BRACE_FLOW_CONTROL_NORMAL) {
                             FreeObjVars(vars, clause.ObjVars);
                             return v;
