@@ -445,6 +445,7 @@ namespace Brace
         void AddApiInstance(IBraceApi* p)const;
         BraceApiExecutor LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo)const;
     protected:
+        bool IsForceQuit(void)const;
         ProcInfo* GlobalProcInfo(void)const;
         VariableInfo* GlobalVariables(void)const;
         const ProcInfo* CurRuntimeProcInfo(void)const;
@@ -686,6 +687,8 @@ namespace Brace
         VariableInfo* GlobalVariables(void)const;
         bool HasWarn(void)const { return m_HasWarn; }
         bool HasError(void)const { return m_HasError; }
+        bool IsForceQuit(void)const { return m_ForceQuit; }
+        void SetForceQuit(bool forceQuit) { m_ForceQuit = forceQuit; }
     public:
         void AddSyntaxComponent(DslData::ISyntaxComponent* p);
         void AddApiInstance(IBraceApi* p); 
@@ -743,6 +746,7 @@ namespace Brace
         std::vector<IBraceApi*> m_ApiInstances;
         std::unordered_map<std::string, ProcInfo> m_Procs;
 
+        bool m_ForceQuit;
         bool m_HasWarn;
         bool m_HasError;
         ProcInfoStack m_ProcInfoStack;

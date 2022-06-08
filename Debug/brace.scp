@@ -1,4 +1,4 @@
-func(main)args($a:&int32, $b:float)float
+func(main)params($a:&int32, $b:float)float
 {
 	$t = $a;
 	$a = 456;
@@ -35,5 +35,9 @@ echo("inc:", ++@ct);
 echo("dec:", --@ct);
 echo("positive:", +@ct);
 echo("negative:", -@ct);
+
+@abc : int32;
+@abc = 123;
+echo("@abc:", @abc);
 
 echo("done.");

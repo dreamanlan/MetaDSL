@@ -209,6 +209,10 @@ namespace Brace
         return GetInterpreter().Load(syntaxUnit, resultInfo);
     }
 
+    bool AbstractBraceApi::IsForceQuit(void)const
+    {
+        return GetInterpreter().IsForceQuit();
+    }
     ProcInfo* AbstractBraceApi::GlobalProcInfo(void)const
     {
         return GetInterpreter().GlobalProcInfo();
@@ -366,6 +370,8 @@ namespace Brace
         }
         for (auto& p : m_Func->Codes) {
             r = p();
+            if (IsForceQuit())
+                return r;
             switch (r) {
             case BRACE_FLOW_CONTROL_RETURN:
                 r = BRACE_FLOW_CONTROL_NORMAL;
@@ -410,6 +416,92 @@ namespace Brace
         return Brace::BRACE_FLOW_CONTROL_NORMAL;
     }
 
+    class GlobalVarDecl final : public AbstractBraceApi
+    {
+    public:
+        GlobalVarDecl(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
+        {
+            //@var : type; or @var : objType<: type params :>;
+            DslData::ISyntaxComponent* param1 = data.GetParam(0);
+            DslData::ISyntaxComponent* param2 = data.GetParam(1);
+            if (!param1 || !param2)
+                return false;
+            const std::string& varId = param1->GetId();
+            int varType = BRACE_DATA_TYPE_UNKNOWN;
+            int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            const std::string& typeName = param2->GetId();
+            varType = GetDataType(typeName);
+            if (varType == BRACE_DATA_TYPE_OBJECT)
+                objTypeId = GetObjectTypeId(*param2);
+
+            auto* varInfo = GetVarInfo(varId);
+            if (nullptr != varInfo) {
+                //type check
+                std::stringstream ss;
+                ss << "local var redefine " << varId << " line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else {
+                //decl var
+                if (varType == BRACE_DATA_TYPE_UNKNOWN) {
+                    std::stringstream ss;
+                    ss << "unknown type " << typeName << " line " << data.GetLine();
+                    LogError(ss.str());
+                    return false;
+                }
+            }
+            AllocGlobalVariable(varId, varType, objTypeId);
+            return true;
+        }
+    };
+    class LocalVarDecl final : public AbstractBraceApi
+    {
+    public:
+        LocalVarDecl(BraceScript& interpreter) :AbstractBraceApi(interpreter)
+        {
+        }
+    protected:
+        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
+        {
+            //$var : type; or $var : objType<: type params :>;
+            DslData::ISyntaxComponent* param1 = data.GetParam(0);
+            DslData::ISyntaxComponent* param2 = data.GetParam(1);
+            if (!param1 || !param2)
+                return false;
+            const std::string& varId = param1->GetId();
+            int varType = BRACE_DATA_TYPE_UNKNOWN;
+            int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            const std::string& typeName = param2->GetId();
+            varType = GetDataType(typeName);
+            if (varType == BRACE_DATA_TYPE_OBJECT)
+                objTypeId = GetObjectTypeId(*param2);
+
+            auto* varInfo = GetVarInfo(varId);
+            if (nullptr != varInfo) {
+                //type check
+                std::stringstream ss;
+                ss << "local var redefine " << varId << " line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            else {
+                //decl var
+                if (varType == BRACE_DATA_TYPE_UNKNOWN) {
+                    std::stringstream ss;
+                    ss << "unknown type " << typeName << " line " << data.GetLine();
+                    LogError(ss.str());
+                    return false;
+                }
+            }
+            AllocVariable(varId, varType, objTypeId);
+            return true;
+        }
+    };
     class GlobalVarSet final : public AbstractBraceApi
     {
     public:
@@ -447,6 +539,7 @@ namespace Brace
                 std::stringstream ss;
                 ss << "Fatal Error, can't find Environment ! name " << data.GetId() << " line " << data.GetLine();
                 LogError(ss.str());
+                return false;
             }
             else {
                 auto* varInfo = GetGlobalVarInfo(varId);
@@ -459,6 +552,7 @@ namespace Brace
                         std::stringstream ss;
                         ss << "Can't assign " << GetTypeName(argLoadInfo.Type) << " to " << GetTypeName(varInfo->Type) << " line " << data.GetLine();
                         LogError(ss.str());
+                        return false;
                     }
                 }
                 else {
@@ -472,11 +566,11 @@ namespace Brace
                         std::stringstream ss;
                         ss << "Can't assign " << GetTypeName(argLoadInfo.Type) << " to " << GetTypeName(varType) << " line " << data.GetLine();
                         LogError(ss.str());
+                        return false;
                     }
                     m_VarIndex = AllocGlobalVariable(varId, varType, objTypeId);
                 }
             }
-
             m_Fptr = GetVarAssignPtr(varType, false, realArgType.Type, srcIsRef);
             if (argLoadInfo.IsGlobal)
                 executor.attach(this, &GlobalVarSet::ExecuteFromGlobal);
@@ -531,7 +625,10 @@ namespace Brace
                 resultInfo.IsTempVar = false;
             }
             else {
-                resultInfo = BraceApiLoadInfo();
+                std::stringstream ss;
+                ss << "undefined global var " << data.GetId() << " line " << data.GetLine();
+                LogError(ss.str());
+                return false;
             }
             executor = nullptr;
             return true;
@@ -587,6 +684,7 @@ namespace Brace
                     std::stringstream ss;
                     ss << "Can't assign " << GetTypeName(argLoadInfo.Type) << " to " << GetTypeName(varInfo->Type) << " line " << data.GetLine();
                     LogError(ss.str());
+                    return false;
                 }
             }
             else {
@@ -600,6 +698,7 @@ namespace Brace
                     std::stringstream ss;
                     ss << "Can't assign " << GetTypeName(argLoadInfo.Type) << " to " << GetTypeName(varType) << " line " << data.GetLine();
                     LogError(ss.str());
+                    return false;
                 }
                 m_VarIndex = AllocVariable(varId, varType, objTypeId);
             }
@@ -658,7 +757,10 @@ namespace Brace
                 resultInfo.IsTempVar = false;
             }
             else {
-                resultInfo = BraceApiLoadInfo();
+                std::stringstream ss;
+                ss << "undefined local var " << data.GetId() << " line " << data.GetLine();
+                LogError(ss.str());
+                return false;
             }
             executor = nullptr;
             return true;
@@ -848,7 +950,7 @@ namespace Brace
         }
         virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            //func(name)args($a:int32,$b:int8,...)int{...}; or func(name)args($a:int32,$b:int8,...){...};
+            //func(name)params($a:int32,$b:int8,...)int{...}; or func(name)params($a:int32,$b:int8,...){...};
             bool hasError = false;
             if (data.GetFunctionNum() == 2) {
                 auto* f1 = data.GetFirst()->AsFunction();
@@ -1092,14 +1194,15 @@ namespace Brace
                     executor.attach(this, &CondExp::ExecuteInt);
                 }
                 m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
+                return true;
             }
             else {
                 //error
                 std::stringstream ss;
                 ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
                 LogError(ss.str());
+                return false;
             }
-            return true;
         }
     private:
         int ExecuteInt(void) const
@@ -1403,6 +1506,8 @@ namespace Brace
                 else if (ix == ct - 1) {
                     for (auto& statement : clause.Statements) {
                         int v = statement();
+                        if (IsForceQuit())
+                            break;
                         if (v != BRACE_FLOW_CONTROL_NORMAL) {
                             FreeObjVars(vars, clause.ObjVars);
                             return v;
@@ -1497,6 +1602,8 @@ namespace Brace
                 if (VarGetBoolean(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex)) {
                     for (auto& statement : m_Statements) {
                         int v = statement();
+                        if (IsForceQuit())
+                            return v;
                         if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                             break;
                         }
@@ -1595,6 +1702,8 @@ namespace Brace
                 VarSetI64(vars, m_LoadInfo.Type, m_IteratorIndex, i);
                 for (auto& statement : m_Statements) {
                     int v = statement();
+                    if (IsForceQuit())
+                        return v;
                     if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                         break;
                     }
@@ -1770,6 +1879,8 @@ namespace Brace
                 }
                 for (auto& statement : m_Statements) {
                     int v = statement();
+                    if (IsForceQuit())
+                        return v;
                     if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                         break;
                     }
@@ -2544,6 +2655,30 @@ namespace Brace
                     p->Load(callData, resultInfo, executor);
                     return executor;
                 }
+                else if (op == ":") {
+                    //decl expression
+                    if (callData.GetParamNum() == 2) {
+                        auto* p1 = callData.GetParam(0);
+                        auto* p2 = callData.GetParam(1);
+                        if (p1->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE &&
+                            (p2->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE ||
+                                (p2->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION && static_cast<DslData::FunctionData*>(p2)->GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON))) {
+                            const std::string& id = p1->GetId();
+                            if (id.length() > 0 && id[0] == '$') {
+                                auto* pLocalDecl = new LocalVarDecl(*this);
+                                AddApiInstance(pLocalDecl);
+                                pLocalDecl->Load(data, resultInfo, executor);
+                                return executor;
+                            }
+                            else if (id.length() > 0 && id[0] == '@') {
+                                auto* pGlobalDecl = new GlobalVarDecl(*this);
+                                AddApiInstance(pGlobalDecl);
+                                pGlobalDecl->Load(data, resultInfo, executor);
+                                return executor;
+                            }
+                        }
+                    }
+                }
                 else {
                     if (callData.IsHighOrder()) {
                         auto& innerCall = callData.GetLowerOrderFunction();
@@ -2788,6 +2923,7 @@ namespace Brace
     }
     void BraceScript::Init(void)
     {
+        m_ForceQuit = false;
         m_HasWarn = false;
         m_HasError = false;
         m_NextUniqueId = 0;
@@ -2820,7 +2956,7 @@ namespace Brace
         m_AddedSyntaxComponents.clear();
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr), m_FailbackApi(nullptr), m_ContextObject(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalProc(nullptr), m_GlobalVariables(nullptr), m_FailbackApi(nullptr), m_ContextObject(nullptr)
     {
         RegisterInnerApis();
         Init();
@@ -2887,6 +3023,8 @@ namespace Brace
         auto* curProc = m_GlobalProc;
         for (auto& p : curProc->Codes) {
             int r = p();
+            if (IsForceQuit())
+                goto EXIT;
             switch (r) {
             case BRACE_FLOW_CONTROL_RETURN:
                 r = BRACE_FLOW_CONTROL_NORMAL;
