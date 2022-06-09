@@ -1,4 +1,4 @@
-﻿
+
 #include "BraceScript.h"
 #include <stdexcept>
 #include <sstream>
@@ -1505,7 +1505,7 @@ namespace Brace
                     FreeObjVars(vars, clause.ObjVars);
                     break;
                 }
-                else if (ix == ct - 1) {
+                else if (ix == ct - 1 && clause.LoadInfo.Type == BRACE_DATA_TYPE_UNKNOWN) {
                     for (auto& statement : clause.Statements) {
                         int v = statement();
                         if (IsForceQuit())
