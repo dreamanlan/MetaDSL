@@ -653,8 +653,10 @@ namespace Brace
             auto realArgType = argLoadInfo.GetLoadTimeRealType(curProc);
             int varType = BRACE_DATA_TYPE_UNKNOWN;
             int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            bool addNew = false;
             DslData::FunctionData* pFunc = nullptr;
             if (param1->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                addNew = true;
                 pFunc = static_cast<DslData::FunctionData*>(param1);
                 const std::string& typeName = pFunc->GetParamId(1);
                 varType = GetDataType(typeName);
@@ -669,22 +671,30 @@ namespace Brace
             bool isRef = false;
             auto* varInfo = GetVarInfo(varId);
             if (nullptr != varInfo) {
-                varType = varInfo->Type;
-                m_VarIndex = varInfo->VarIndex;
-                DataTypeInfo realVarType(varType, varInfo->ObjectTypeId);
-                if (varType == BRACE_DATA_TYPE_REF) {
-                    auto& ri = curProc.VarInitInfo.ReferenceVars[m_VarIndex];
-                    realVarType = DataTypeInfo(ri.Type, ri.ObjectTypeId);
-                    isRef = true;
-                    varType = realVarType.Type;
-                    objTypeId = realVarType.ObjectTypeId;
-                }
-                //type check
-                if (!CanAssign(realVarType.Type, realVarType.ObjectTypeId, realArgType.Type, realArgType.ObjectTypeId)) {
+                if (addNew) {
                     std::stringstream ss;
-                    ss << "Can't assign " << GetTypeName(argLoadInfo.Type) << " to " << GetTypeName(varInfo->Type) << " line " << data.GetLine();
+                    ss << "duplicated var define " << varId << " type " << GetTypeName(varInfo->Type) << " line " << data.GetLine();
                     LogError(ss.str());
                     return false;
+                }
+                else {
+                    varType = varInfo->Type;
+                    m_VarIndex = varInfo->VarIndex;
+                    DataTypeInfo realVarType(varType, varInfo->ObjectTypeId);
+                    if (varType == BRACE_DATA_TYPE_REF) {
+                        auto& ri = curProc.VarInitInfo.ReferenceVars[m_VarIndex];
+                        realVarType = DataTypeInfo(ri.Type, ri.ObjectTypeId);
+                        isRef = true;
+                        varType = realVarType.Type;
+                        objTypeId = realVarType.ObjectTypeId;
+                    }
+                    //type check
+                    if (!CanAssign(realVarType.Type, realVarType.ObjectTypeId, realArgType.Type, realArgType.ObjectTypeId)) {
+                        std::stringstream ss;
+                        ss << "Can't assign " << GetTypeName(argLoadInfo.Type) << " to " << GetTypeName(varInfo->Type) << " line " << data.GetLine();
+                        LogError(ss.str());
+                        return false;
+                    }
                 }
             }
             else {
@@ -2298,9 +2308,8 @@ namespace Brace
     int BraceScript::AllocVariable(const std::string& name, int type, int objTypeId)
     {
         auto* curProc = CurProcInfo();
-        std::string key;
-        int level;
-        auto it = FindVariable(curProc, name, key, level);
+        std::string key = CalcVarKey(name, CurBlockId());
+        auto it = curProc->VarTypeInfos.find(key);
         if (it == curProc->VarTypeInfos.end()) {
             int index = curProc->VarInitInfo.AllocVariable(type);
             curProc->VarTypeInfos.insert(std::make_pair(key, VarInfo(name, type, objTypeId, index)));
@@ -2311,7 +2320,10 @@ namespace Brace
             return index;
         }
         else {
-            return it->second.VarIndex;
+            std::stringstream ss;
+            ss << "INTERNAL BraceScript error, duplicated var: " << name << " type: " << GetDataTypeName(type) << " obj type id: " << GetObjectTypeName(objTypeId) << " exists var index: " << it->second.VarIndex;
+            LogError(ss.str());
+            return -1;
         }
     }
     int BraceScript::AllocConst(int tok_type, const std::string& value, int& type)
