@@ -195,7 +195,7 @@ public:
     {
     }
 protected:
-    virtual bool TypeInference(const Brace::ProcInfo& proc, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
     {
         for (auto& ali : argInfos) {
             if (ali.Type != Brace::BRACE_DATA_TYPE_INT32) {

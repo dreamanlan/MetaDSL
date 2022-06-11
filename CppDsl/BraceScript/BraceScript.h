@@ -75,6 +75,14 @@ namespace Brace
         DataTypeInfo(int type, int objTypeId) :Type(type), ObjectTypeId(objTypeId)
         {}
     };
+    struct ParamTypeInfo final : public DataTypeInfo
+    {
+        bool IsRef;
+
+        ParamTypeInfo(void) = default;
+        ParamTypeInfo(int type, int objTypeId, bool isRef) :DataTypeInfo(type, objTypeId), IsRef(isRef)
+        {}
+    };
     struct RegisterInfo : public DataTypeInfo
     {
         int VarIndex;
@@ -138,7 +146,7 @@ namespace Brace
         }
     };
     struct VariableInfo;
-    struct ProcInfo;
+    struct FuncInfo;
     struct BraceApiLoadInfo final : public GlobalLocalRegisterInfo
     {
         bool IsTempVar;
@@ -151,7 +159,7 @@ namespace Brace
             IsGlobal = false;
         }
 
-        DataTypeInfo GetLoadTimeRealType(const ProcInfo& proc) const;
+        DataTypeInfo GetLoadTimeRealType(const FuncInfo& func) const;
         DataTypeInfo GetLoadTimeRealType(const VariableInfo& vars) const;
     };
     struct ReferenceInfo final : public RegisterInfo
@@ -199,7 +207,7 @@ namespace Brace
     typedef void (*VarAssignPtr)(VariableInfo&, int, VariableInfo&, int);
     extern VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIsRef);
     extern const char* GetDataTypeName(int type);
-    extern int GetDataType(const std::string& typeName);
+    extern int GetDataType(const std::string& typeName); 
 
     extern bool VarGetBoolean(VariableInfo& info, int type, int index);
     extern int64_t VarGetI64(VariableInfo& info, int type, int index);
@@ -353,7 +361,12 @@ namespace Brace
         IBraceApi& operator=(IBraceApi&&) noexcept = delete;
     };
 
-    struct ProcInfo final
+    struct FuncApiTypeInfo final
+    {
+        std::vector<ParamTypeInfo> Params;
+        DataTypeInfo RetValue;
+    };
+    struct FuncInfo final
     {
         std::string Name;
         std::vector<ParamRetInfo> Params;
@@ -366,13 +379,13 @@ namespace Brace
         void RecycleVariableInfo(VariableInfo* p)const;
         void ShrinkPool(int max_num)const;
 
-        ProcInfo(void);
-        ProcInfo(const ProcInfo& other);
-        ProcInfo(ProcInfo&& other) noexcept;
-        ~ProcInfo(void);
+        FuncInfo(void);
+        FuncInfo(const FuncInfo& other);
+        FuncInfo(FuncInfo&& other) noexcept;
+        ~FuncInfo(void);
     private:
-        /// Members of ProcInfo are immutable at run time, except for VaraibleInfoPool & VariableInfoStore, which uses Pointers 
-        /// to preserve the const semantics of ProcInfo. 
+        /// Members of FuncInfo are immutable at run time, except for VaraibleInfoPool & VariableInfoStore, which uses Pointers 
+        /// to preserve the const semantics of FuncInfo. 
         /// Stack operations are used to use recently used memory for better locality, while deques are used to shrink memory.
         std::deque<VariableInfo*>* VariableInfoPool;
         std::vector<VariableInfo*>* VariableInfoStore;
@@ -380,7 +393,7 @@ namespace Brace
 
     struct RuntimeStackInfo final
     {
-        const ProcInfo* Proc;
+        const FuncInfo* Func;
         VariableInfo* Variables;
     };
 
@@ -398,38 +411,40 @@ namespace Brace
     public:
         virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool LoadValue(const ProcInfo& curProc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadFunction(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadStatement(const ProcInfo& curProc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
-        virtual bool LoadHighOrderCall(const ProcInfo& curProc, const DslData::FunctionData& data, BraceApiExecutor& lowerFunc, BraceApiLoadInfo& lowerFuncInfo)
+        virtual bool LoadHighOrderCall(const FuncInfo& curFunc, const DslData::FunctionData& data, BraceApiExecutor& lowerFunc, BraceApiLoadInfo& lowerFuncInfo)
         {
             return false;
         }
-        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
         {
             return false;
         }
     protected:
         const char* GetTypeName(int type)const { return GetDataTypeName(type); }
         std::string GenTempVarName(void)const;
-        ProcInfo* GetProcInfo(const std::string& name)const;
+        FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name)const;
+        FuncInfo* GetFuncInfo(const std::string& name)const;
         VarInfo* GetGlobalVarInfo(const std::string& name)const;
         VarInfo* GetVarInfo(const std::string& name)const;
         VarInfo* GetConstInfo(const std::string& name)const;
         int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
         const char* GetObjectTypeName(int objTypeId)const;
+        ParamTypeInfo ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const;
         bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId)const;
-        ProcInfo* PushNewProcInfo(const std::string& name)const;
-        void PopProcInfo(void)const;
+        FuncInfo* PushNewFuncInfo(const std::string& name)const;
+        void PopFuncInfo(void)const;
         int GenNextUniqueId(void)const;
         int CurBlockId(void)const;
         std::vector<int>& CurBlockObjVars(void)const;
@@ -446,17 +461,17 @@ namespace Brace
         BraceApiExecutor LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo)const;
     protected:
         bool IsForceQuit(void)const;
-        ProcInfo* GlobalProcInfo(void)const;
+        FuncInfo* GlobalFuncInfo(void)const;
         VariableInfo* GlobalVariables(void)const;
-        const ProcInfo* CurRuntimeProcInfo(void)const;
+        const FuncInfo* CurRuntimeFuncInfo(void)const;
         VariableInfo* CurRuntimeVariables(void)const;
-        void PushRuntimeStack(const ProcInfo* procInfo)const;
+        void PushRuntimeStack(const FuncInfo* funcInfo)const;
         void PopRuntimeStack(void)const;
     protected:
         AbstractBraceApi(BraceScript& interpreter) :m_Interpreter(interpreter)
         {}
     private:
-        ProcInfo* CurProcInfo(void)const;
+        FuncInfo* CurFuncInfo(void)const;
         AbstractBraceApi* GetFailbackApi(void)const;
     private:
         AbstractBraceApi(const AbstractBraceApi&) = delete;
@@ -477,19 +492,19 @@ namespace Brace
         FunctionExecutor(BraceScript& interpreter);
     public:
         void Reset(void);
-        void Build(const std::string& func) { Build(*CurProcInfo(), func); }
-        void Build(const ProcInfo& callerProc, const std::string& func);
+        void Build(const std::string& func) { Build(*CurFuncInfo(), func); }
+        void Build(const FuncInfo& callerFunc, const std::string& func);
         bool IsValid(void)const;
         int Run(void)const;
         int GetArgCount(void)const;
         const BraceApiLoadInfo* ArgInfo(int ix) const;
         const BraceApiLoadInfo* ResultInfo(void) const;
     protected:
-        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
+        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     private:
         int Execute(void)const;
     private:
-        const ProcInfo* m_Func;
+        const FuncInfo* m_Func;
         std::vector<BraceApiExecutor> m_Args;
         std::vector<BraceApiLoadInfo> m_ArgLoadInfos;
         std::vector<VarAssignPtr> m_ArgAssigns;
@@ -504,7 +519,7 @@ namespace Brace
     public:
         UnaryOperatorBaseExp(BraceScript& interpreter, bool isAssignment);
     protected:
-        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
+        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
         virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
@@ -518,7 +533,7 @@ namespace Brace
     public:
         BinaryOperatorBaseExp(BraceScript& interpreter, bool isAssignment);
     protected:
-        virtual bool LoadCall(const ProcInfo& curProc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
+        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
         virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, const DataTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
@@ -538,13 +553,9 @@ namespace Brace
     public:
         SimpleBraceApiBase(BraceScript& interpreter);
     protected:
-        virtual bool LoadCall(const ProcInfo& proc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
+        virtual bool LoadCall(const FuncInfo& func, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool TypeInference(const ProcInfo& proc, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const
-        {
-            resultInfo = Brace::BraceApiLoadInfo();
-            return true;
-        }
+        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const;
         virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo)const = 0;
     private:
         int ExecuteImpl(void)const;
@@ -622,7 +633,7 @@ namespace Brace
         CtorBinder<ApiT, Args...> m_Binder;
     };
 
-    typedef std::stack<ProcInfo*> ProcInfoStack;
+    typedef std::stack<FuncInfo*> FuncInfoStack;
     typedef std::stack<RuntimeStackInfo> RuntimeStack;
     typedef std::function<void(const std::string&)> LogDelegation;
     typedef std::function<int(const DslData::ISyntaxComponent&)> GetObjectTypeIdDelegation;
@@ -681,9 +692,12 @@ namespace Brace
         void SetContextObject(IBraceObject* pContext);
         IBraceObject* GetContextObject(void)const;
         void Reset(void);
+        void LoadFuncApiTypeInfo(const DslData::DslFile& dslInfos);
+        void AddFuncApiTypeInfo(const std::string& name, const FuncApiTypeInfo& info);
+        void AddFuncApiTypeInfo(std::string&& name, FuncApiTypeInfo&& info);
         void LoadScript(const DslData::DslFile& file);
         void Run(void);
-        ProcInfo* GlobalProcInfo(void)const;
+        FuncInfo* GlobalFuncInfo(void)const;
         VariableInfo* GlobalVariables(void)const;
         bool HasWarn(void)const { return m_HasWarn; }
         bool HasError(void)const { return m_HasError; }
@@ -694,9 +708,9 @@ namespace Brace
         void AddApiInstance(IBraceApi* p); 
         IBraceApi* CreateApi(const std::string& name);
     private:
-        const ProcInfo* CurRuntimeProcInfo(void)const;
+        const FuncInfo* CurRuntimeFuncInfo(void)const;
         VariableInfo* CurRuntimeVariables(void)const;
-        void PushRuntimeStack(const ProcInfo* procInfo);
+        void PushRuntimeStack(const FuncInfo* funcInfo);
         void PopRuntimeStack(void);
     private:
         void LogInfo(const std::string& info);
@@ -704,13 +718,16 @@ namespace Brace
         void LogError(const std::string& error);
         int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
         const char* GetObjectTypeName(int objTypeId)const;
+        ParamTypeInfo ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const;
         bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId) const;
-        const ProcInfo* GetProcInfo(const std::string& name)const;
-        ProcInfo* GetProcInfo(const std::string& name);
-        const ProcInfo* CurProcInfo(void)const;
-        ProcInfo* CurProcInfo(void);
-        ProcInfo* PushNewProcInfo(const std::string& name);
-        void PopProcInfo(void);
+        const FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name)const;
+        FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name);
+        const FuncInfo* GetFuncInfo(const std::string& name)const;
+        FuncInfo* GetFuncInfo(const std::string& name);
+        const FuncInfo* CurFuncInfo(void)const;
+        FuncInfo* CurFuncInfo(void);
+        FuncInfo* PushNewFuncInfo(const std::string& name);
+        void PopFuncInfo(void);
         int GenNextUniqueId(void) { return m_NextUniqueId++; }
         int CurBlockId(void)const;
         const std::vector<int>& CurBlockObjVars(void)const;
@@ -720,7 +737,7 @@ namespace Brace
         std::string CalcVarKey(const std::string& name, int level)const;
         std::string CalcConstKey(const std::string& name)const;
         int AllocGlobalVariable(const std::string& name, int type, int objTypeId);
-        auto FindVariable(ProcInfo* proc, const std::string& name, std::string& key, int& level)const -> decltype(proc->VarTypeInfos.end());
+        auto FindVariable(FuncInfo* func, const std::string& name, std::string& key, int& level)const -> decltype(func->VarTypeInfos.end());
         int AllocVariable(const std::string& name, int type, int objTypeId);
         int AllocConst(int tok_type, const std::string& value, int& type);
         BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo);
@@ -744,16 +761,17 @@ namespace Brace
         std::unordered_map<std::string, IBraceApiFactory*> m_ApiFactories;
         std::vector<DslData::ISyntaxComponent*> m_AddedSyntaxComponents;
         std::vector<IBraceApi*> m_ApiInstances;
-        std::unordered_map<std::string, ProcInfo> m_Procs;
+        std::unordered_map<std::string, FuncApiTypeInfo> m_FuncApiTypeInfos;
+        std::unordered_map<std::string, FuncInfo> m_Funcs;
 
         bool m_ForceQuit;
         bool m_HasWarn;
         bool m_HasError;
-        ProcInfoStack m_ProcInfoStack;
+        FuncInfoStack m_FuncInfoStack;
         int m_NextUniqueId;
         int m_LastBlockId;
         std::vector<BlockInfo> m_LexicalScopeStack;
-        ProcInfo* m_GlobalProc;
+        FuncInfo* m_GlobalFunc;
         VariableInfo* m_GlobalVariables;
         RuntimeStack m_RuntimeStack;
 
