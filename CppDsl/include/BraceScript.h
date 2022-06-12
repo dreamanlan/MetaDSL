@@ -45,6 +45,8 @@ namespace Brace
         PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN = -1,
         PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ = 0,
         PREDEFINED_BRACE_OBJECT_TYPE_NULL,
+        PREDEFINED_BRACE_OBJECT_TYPE_DISPATCH,
+        PREDEFINED_BRACE_OBJECT_TYPE_COLLECTION,
         PREDEFINED_BRACE_OBJECT_TYPE_CONTEXT,
         PREDEFINED_BRACE_OBJECT_TYPE_NUM
     };
@@ -631,6 +633,30 @@ namespace Brace
         }
     private:
         CtorBinder<ApiT, Args...> m_Binder;
+    };
+
+    /// <summary>
+    /// Runtime type checking objects, no inheritance, all objects share the same object type id, and the result must be simple or runtime type checking object.
+    /// </summary>
+    class IObjectDispatch : public Brace::IBraceObject
+    {
+    public:
+        virtual int GetObjectTypeId(void)const override { return PREDEFINED_BRACE_OBJECT_TYPE_DISPATCH; }
+    public:
+        virtual int GetDispId(const std::string& id) const = 0;
+        virtual bool Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo) = 0;
+        virtual bool GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const Brace::BraceApiLoadInfo& resultInfo) const = 0;
+        virtual bool SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const Brace::BraceApiLoadInfo& argInfo) = 0;
+    };
+    class ICollection : public Brace::IBraceObject
+    {
+    public:
+        virtual int GetObjectTypeId(void)const override { return PREDEFINED_BRACE_OBJECT_TYPE_COLLECTION; }
+    public:
+        virtual int GetLength(void) const = 0;
+        virtual bool Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo) = 0;
+        virtual bool GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const Brace::BraceApiLoadInfo& resultInfo) const = 0;
+        virtual bool SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const Brace::BraceApiLoadInfo& argInfo) = 0;
     };
 
     typedef std::stack<FuncInfo*> FuncInfoStack;
