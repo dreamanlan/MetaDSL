@@ -45,8 +45,6 @@ namespace Brace
         PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN = -1,
         PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ = 0,
         PREDEFINED_BRACE_OBJECT_TYPE_NULL,
-        PREDEFINED_BRACE_OBJECT_TYPE_DISPATCH,
-        PREDEFINED_BRACE_OBJECT_TYPE_COLLECTION,
         PREDEFINED_BRACE_OBJECT_TYPE_CONTEXT,
         PREDEFINED_BRACE_OBJECT_TYPE_NUM
     };
@@ -636,27 +634,25 @@ namespace Brace
     };
 
     /// <summary>
-    /// Runtime type checking objects, no inheritance, all objects share the same object type id, and the result must be simple or runtime type checking object.
+    /// General custom object/collection interface, implemented by c++, not brace script.
     /// </summary>
-    class IObjectDispatch : public Brace::IBraceObject
+    class ICustomObject : public Brace::IBraceObject
     {
-    public:
-        virtual int GetObjectTypeId(void)const override { return PREDEFINED_BRACE_OBJECT_TYPE_DISPATCH; }
     public:
         virtual int GetDispId(const std::string& id) const = 0;
-        virtual bool Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo) = 0;
-        virtual bool GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const Brace::BraceApiLoadInfo& resultInfo) const = 0;
-        virtual bool SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const Brace::BraceApiLoadInfo& argInfo) = 0;
+        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const = 0;
+        virtual int Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
+        virtual int GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) const = 0;
+        virtual int SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
     };
-    class ICollection : public Brace::IBraceObject
+    class ICustomCollection : public Brace::IBraceObject
     {
     public:
-        virtual int GetObjectTypeId(void)const override { return PREDEFINED_BRACE_OBJECT_TYPE_COLLECTION; }
-    public:
         virtual int GetLength(void) const = 0;
-        virtual bool Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo) = 0;
-        virtual bool GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const Brace::BraceApiLoadInfo& resultInfo) const = 0;
-        virtual bool SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const Brace::BraceApiLoadInfo& argInfo) = 0;
+        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const = 0;
+        virtual int Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
+        virtual int GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) const = 0;
+        virtual int SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
     };
 
     typedef std::stack<FuncInfo*> FuncInfoStack;
