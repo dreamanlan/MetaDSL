@@ -633,28 +633,6 @@ namespace Brace
         CtorBinder<ApiT, Args...> m_Binder;
     };
 
-    /// <summary>
-    /// General custom object/collection interface, implemented by c++, not brace script.
-    /// </summary>
-    class ICustomObject : public Brace::IBraceObject
-    {
-    public:
-        virtual int GetDispId(const std::string& id) const = 0;
-        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const = 0;
-        virtual int Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
-        virtual int GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) const = 0;
-        virtual int SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, int dispId, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
-    };
-    class ICustomCollection : public Brace::IBraceObject
-    {
-    public:
-        virtual int GetLength(void) const = 0;
-        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const = 0;
-        virtual int Invoke(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
-        virtual int GetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) const = 0;
-        virtual int SetProperty(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiLoadInfo& memberInfo, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo) = 0;
-    };
-
     typedef std::stack<FuncInfo*> FuncInfoStack;
     typedef std::stack<RuntimeStackInfo> RuntimeStack;
     typedef std::function<void(const std::string&)> LogDelegation;
