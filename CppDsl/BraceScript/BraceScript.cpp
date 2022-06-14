@@ -122,14 +122,14 @@ namespace Brace
         }
         return nullptr;
     }
-    VarInfo* AbstractBraceApi::GetConstInfo(const std::string& name)const
+    VarInfo* AbstractBraceApi::GetConstInfo(int tok_type, const std::string& name)const
     {
         auto& interpreter = GetInterpreter();
         auto* info = interpreter.GlobalFuncInfo();
         if (nullptr == info)
             return nullptr;
         auto& varInfos = info->VarTypeInfos;
-        std::string key = interpreter.CalcConstKey(name);
+        std::string key = interpreter.CalcConstKey(tok_type, name);
         auto it = varInfos.find(key);
         if (it != varInfos.end()) {
             return &(it->second);
@@ -839,7 +839,7 @@ namespace Brace
         virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override
         {
             const std::string& varId = data.GetId();
-            auto* info = GetConstInfo(varId);
+            auto* info = GetConstInfo(data.GetIdType(), varId);
             if (nullptr != info) {
                 resultInfo.Type = info->Type;
                 resultInfo.ObjectTypeId = info->ObjectTypeId;
@@ -2355,10 +2355,14 @@ namespace Brace
         std::string key = name + "__" + std::to_string(blockId);
         return key;
     }
-    std::string BraceScript::CalcConstKey(const std::string& value)const
+    std::string BraceScript::CalcConstKey(int tok_type, const std::string& value)const
     {
-        std::string key = "\"" + value + "\"";
-        return key;
+        if (tok_type == DslData::ValueData::VALUE_TYPE_STRING) {
+            return "\"" + value + "\"";
+        }
+        else {
+            return "[" + value + "]";
+        }
     }
     int BraceScript::AllocGlobalVariable(const std::string& name, int type, int objTypeId)
     {
@@ -2413,7 +2417,7 @@ namespace Brace
     }
     int BraceScript::AllocConst(int tok_type, const std::string& value, int& type)
     {
-        std::string key = CalcConstKey(value);
+        std::string key = CalcConstKey(tok_type, value);
         auto* curFunc = GlobalFuncInfo();
         auto it = curFunc->VarTypeInfos.find(key);
         if (it == curFunc->VarTypeInfos.end()) {

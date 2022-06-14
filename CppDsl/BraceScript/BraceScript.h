@@ -438,7 +438,7 @@ namespace Brace
         FuncInfo* GetFuncInfo(const std::string& name)const;
         VarInfo* GetGlobalVarInfo(const std::string& name)const;
         VarInfo* GetVarInfo(const std::string& name)const;
-        VarInfo* GetConstInfo(const std::string& name)const;
+        VarInfo* GetConstInfo(int tok_type, const std::string& name)const;
         int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
         const char* GetObjectTypeName(int objTypeId)const;
         ParamTypeInfo ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const;
@@ -735,7 +735,7 @@ namespace Brace
         void PushBlock(void);
         void PopBlock(void);
         std::string CalcVarKey(const std::string& name, int level)const;
-        std::string CalcConstKey(const std::string& name)const;
+        std::string CalcConstKey(int tok_type, const std::string& name)const;
         int AllocGlobalVariable(const std::string& name, int type, int objTypeId);
         auto FindVariable(FuncInfo* func, const std::string& name, std::string& key, int& level)const -> decltype(func->VarTypeInfos.end());
         int AllocVariable(const std::string& name, int type, int objTypeId);
