@@ -237,6 +237,8 @@ private:
 	int m_ObjectTypeId;
 };
 
+/// Internally fixed collection objects use switch-case rather than virtual-function-dispatch, simply because switch-case may require less code.
+/// and virtual-function-dispatch must define one class for each API, and dozens may be required.
 class MemberCallExp final : public Brace::AbstractBraceApi
 {
 public:
@@ -441,7 +443,32 @@ protected:
 					}
 				}
 				else if (isHashtable) {
-					if (m_Member == "add") {
+					if (m_Member == "contains") {
+						bool good = false;
+						if (m_ArgInfos.size() == 1) {
+							auto& argInfo = m_ArgInfos[0];
+							if ((isIntKey && argInfo.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo.Type <= Brace::BRACE_DATA_TYPE_UINT64) ||
+								(!isIntKey && argInfo.Type == Brace::BRACE_DATA_TYPE_STRING)) {
+								good = true;
+							}
+						}
+						if (good) {
+							m_ResultInfo.Type = Brace::BRACE_DATA_TYPE_BOOL;
+							m_ResultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+							m_ResultInfo.VarIndex = AllocVariable(GenTempVarName(), m_ResultInfo.Type, m_ResultInfo.ObjectTypeId);
+							resultInfo = m_ResultInfo;
+							executor.attach(this, &MemberCallExp::ExecuteHashtableContains);
+							return true;
+						}
+						else {
+							std::stringstream ss;
+							ss << "Hashtable.contains's param dismatch, line: " << data.GetLine();
+							LogError(ss.str());
+							executor = nullptr;
+							return false;
+						}
+					}
+					else if (m_Member == "add") {
 						bool good = false;
 						if (m_ArgInfos.size() == 2) {
 							auto& keyArgInfo = m_ArgInfos[0];
@@ -849,6 +876,118 @@ private:
 		}
 		return Brace::BRACE_FLOW_CONTROL_NORMAL;
 	}
+	int ExecuteHashtableContains(void)const
+	{
+		if (!m_Obj.isNull())
+			m_Obj();
+		for (auto& arg : m_Args) {
+			if (!arg.isNull())
+				arg();
+		}
+		auto& hash = m_ObjInfo;
+		auto& ix = m_ArgInfos[0];
+		auto& gvars = *GlobalVariables();
+		auto& lvars = *CurRuntimeVariables();
+		const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
+		switch (hash.ObjectTypeId) {
+		case CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<std::string, std::string, CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<std::string, std::string, CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<std::string, double, CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_STR_BOOL_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<std::string, bool, CUSTOM_BRACE_OBJECT_TYPE_STR_BOOL_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<int64_t, std::string, CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<int64_t, int64_t, CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<int64_t, double, CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		case CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE: {
+			auto* ptr = p.get();
+			if (nullptr != ptr) {
+				int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+				auto* pHashtable = static_cast<HashtableObjT<int64_t, bool, CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE>*>(ptr);
+				bool v = HashtableContains(pHashtable->GetImpl(), vix);
+				Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+			}
+		}break;
+		default: {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(hash.ObjectTypeId);
+			if (nullptr != pInfo) {
+				if (pInfo->ObjectCategory == BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE) {
+					auto* ptr = p.get();
+					if (nullptr != ptr) {
+						int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+						auto* pHashtable = static_cast<IntObjHashtable*>(ptr);
+						bool v = HashtableContains(pHashtable->GetImpl(), vix);
+						Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+					}
+				}
+				else if (pInfo->ObjectCategory == BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE) {
+					auto* ptr = p.get();
+					if (nullptr != ptr) {
+						std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+						auto* pHashtable = static_cast<StrObjHashtable*>(ptr);
+						bool v = HashtableContains(pHashtable->GetImpl(), vix);
+						Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
+					}
+				}
+			}
+		}break;
+		}
+		return Brace::BRACE_FLOW_CONTROL_NORMAL;
+	}
 	int ExecuteHashtableAdd(void)const
 	{
 		if (!m_Obj.isNull())
@@ -1186,6 +1325,12 @@ private:
 		std::advance(it, pos);
 		if (it != vr.end())
 			vr.erase(it);
+	}
+	template<typename HashtableT, typename ValT>
+	static inline bool HashtableContains(const HashtableT& hash, const ValT& val)
+	{
+		auto it = hash.find(val);
+		return it != hash.end();
 	}
 };
 class MemberSetExp final : public Brace::AbstractBraceApi
@@ -3756,6 +3901,7 @@ private:
 	std::vector<Brace::BraceApiExecutor> m_Statements;
 	std::vector<int> m_ObjVars;
 };
+
 
 /*
 *   ========== in BraceScript init code, some callback must be implemented. ==========
