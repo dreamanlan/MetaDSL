@@ -152,9 +152,9 @@ namespace Brace
     {
         return GetInterpreter().CanAssign(destType, destObjTypeId, srcType, srcObjTypeId);
     }
-    FuncInfo* AbstractBraceApi::PushNewFuncInfo(const std::string& name)const
+    FuncInfo* AbstractBraceApi::PushFuncInfo(const std::string& name)const
     {
-        return GetInterpreter().PushNewFuncInfo(name);
+        return GetInterpreter().PushFuncInfo(name);
     }
     void AbstractBraceApi::PopFuncInfo(void)const
     {
@@ -990,7 +990,7 @@ namespace Brace
             //func(name){...};
             if (data.IsHighOrder()) {
                 const std::string& func = data.GetLowerOrderFunction().GetParamId(0);
-                auto* curFunc = PushNewFuncInfo(func);
+                auto* curFunc = PushFuncInfo(func);
                 int num = data.GetParamNum();
                 for (int ix = 0; ix < num; ++ix) {
                     auto* exp = data.GetParam(ix);
@@ -1020,7 +1020,7 @@ namespace Brace
                 auto* f2 = data.GetSecond()->AsFunction();
                 if (f1 && !f1->IsHighOrder() && f1->HaveParam() && f2 && f2->IsHighOrder() && f2->HaveStatement()) {
                     const std::string& func = f1->GetParamId(0);
-                    auto* newFunc = PushNewFuncInfo(func);
+                    auto* newFunc = PushFuncInfo(func);
                     auto& callData = f2->GetLowerOrderFunction();
                     for (int ix = 0; ix < callData.GetParamNum(); ++ix) {
                         auto* p = callData.GetParam(ix);
@@ -1071,7 +1071,7 @@ namespace Brace
                     f2 && !f2->IsHighOrder() && f2->HaveParam() &&
                     f3 && f3->HaveStatement()) {
                     const std::string& func = f1->GetParamId(0);
-                    auto* newFunc = PushNewFuncInfo(func);
+                    auto* newFunc = PushFuncInfo(func);
                     auto& callData = *f2;
                     for (int ix = 0; ix < callData.GetParamNum(); ++ix) {
                         auto* p = callData.GetParam(ix);
@@ -2314,11 +2314,9 @@ namespace Brace
             return m_GlobalFunc;
         return m_FuncInfoStack.top();
     }
-    FuncInfo* BraceScript::PushNewFuncInfo(const std::string& name)
+    FuncInfo* BraceScript::PushFuncInfo(const std::string& name)
     {
-        auto pair = m_Funcs.insert(std::make_pair(name, FuncInfo()));
-        auto* p = &(pair.first->second);
-        p->Name = name;
+        FuncInfo* p = GetOrAddFuncInfo(name);
         m_FuncInfoStack.push(p);
         PushBlock();
         return p;
@@ -3167,6 +3165,20 @@ namespace Brace
         if (it == m_FuncApiTypeInfos.end()) {
             m_FuncApiTypeInfos.insert(std::make_pair(std::move(name), std::move(info)));
         }
+    }
+    FuncInfo* BraceScript::GetOrAddFuncInfo(const std::string& name)
+    {
+        FuncInfo* p;
+        auto it = m_Funcs.find(name);
+        if (it == m_Funcs.end()) {
+            auto pair = m_Funcs.insert(std::make_pair(name, FuncInfo()));
+            p = &(pair.first->second);
+            p->Name = name;
+        }
+        else {
+            p = &(it->second);
+        }
+        return p;
     }
     void BraceScript::LoadScript(const DslData::DslFile& file)
     {
