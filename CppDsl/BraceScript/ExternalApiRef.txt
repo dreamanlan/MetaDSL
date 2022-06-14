@@ -3904,7 +3904,7 @@ private:
 
 
 /*
-*   ========== in BraceScript init code, some callback must be implemented. ==========
+*   ========== in BraceScript init code, some callbacks must be implemented. ==========
 * 
 	m_pBraceScript = new Brace::BraceScript();
 	m_pBraceScript->OnInfo = [](auto& str) { printf("[brace info]:%s", str.c_str()); };
