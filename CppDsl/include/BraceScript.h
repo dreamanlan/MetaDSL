@@ -443,7 +443,7 @@ namespace Brace
         const char* GetObjectTypeName(int objTypeId)const;
         ParamTypeInfo ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const;
         bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId)const;
-        FuncInfo* PushNewFuncInfo(const std::string& name)const;
+        FuncInfo* PushFuncInfo(const std::string& name)const;
         void PopFuncInfo(void)const;
         int GenNextUniqueId(void)const;
         int CurBlockId(void)const;
@@ -695,6 +695,7 @@ namespace Brace
         void LoadFuncApiTypeInfo(const DslData::DslFile& dslInfos);
         void AddFuncApiTypeInfo(const std::string& name, const FuncApiTypeInfo& info);
         void AddFuncApiTypeInfo(std::string&& name, FuncApiTypeInfo&& info);
+        FuncInfo* GetOrAddFuncInfo(const std::string& name);
         void LoadScript(const DslData::DslFile& file);
         void Run(void);
         FuncInfo* GlobalFuncInfo(void)const;
@@ -726,7 +727,7 @@ namespace Brace
         FuncInfo* GetFuncInfo(const std::string& name);
         const FuncInfo* CurFuncInfo(void)const;
         FuncInfo* CurFuncInfo(void);
-        FuncInfo* PushNewFuncInfo(const std::string& name);
+        FuncInfo* PushFuncInfo(const std::string& name);
         void PopFuncInfo(void);
         int GenNextUniqueId(void) { return m_NextUniqueId++; }
         int CurBlockId(void)const;
