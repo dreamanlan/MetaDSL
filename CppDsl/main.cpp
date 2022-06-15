@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
         Terminate();
         CoroutineWithBoostContext::TryRelease();
         std::size_t count = 0;
-        std::size_t size = CoroutineWithBoostContext::StateMemory(count);
+        std::size_t size = CoroutineWithBoostContext::StatMemory(count);
         printf("\nmemory: %u size: %u\n", count, size);
     }
     delete[] pbuf;

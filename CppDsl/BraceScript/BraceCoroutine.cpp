@@ -99,7 +99,7 @@ namespace CoroutineWithBoostContext
     {
         g_fixedsize_stack_alloc_pool.cleanup_pool();
     }
-    std::size_t StateMemory(std::size_t& count)
+    std::size_t StatMemory(std::size_t& count)
     {
         return g_fixedsize_stack_alloc_pool.stat_memory(count);
     }
