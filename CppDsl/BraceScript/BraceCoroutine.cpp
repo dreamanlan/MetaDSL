@@ -74,6 +74,19 @@ namespace CoroutineWithBoostContext
             free_pooled_stacks();
             fixedsize_stack_pool_.clear();
         }
+        std::size_t stat_memory(std::size_t& count)
+        {
+            std::size_t size = 0;
+            count = 0;
+            for (auto& pair : fixedsize_stack_pool_) {
+                auto& rec = pair.second;
+                count += rec.contexts.size();
+                for (auto& context : rec.contexts) {
+                    size += context.size;
+                }
+            }
+            return size;
+        }
     };
 
     static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
@@ -85,6 +98,10 @@ namespace CoroutineWithBoostContext
     void CleanupPool(void)
     {
         g_fixedsize_stack_alloc_pool.cleanup_pool();
+    }
+    std::size_t StateMemory(std::size_t& count)
+    {
+        return g_fixedsize_stack_alloc_pool.stat_memory(count);
     }
 
     struct my_fixedsize_stack
@@ -132,6 +149,7 @@ namespace CoroutineWithBoostContext
         }
         ~CoroutineData(void)
         {
+            Environment.~fiber();
             Callee = Caller = nullptr;
             ResumeFrom = nullptr;
             Current = nullptr;
@@ -170,12 +188,18 @@ namespace CoroutineWithBoostContext
 
     static CoroutineMain g_Main;
 
-    Coroutine::Coroutine(int stackSize)
+    Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize)
     {
         m_pData = new CoroutineData(this, stackSize);
     }
     Coroutine::~Coroutine(void)
     {
+        Release();
+    }
+    void Coroutine::Release(void)
+    {
+        if (nullptr == m_pData)
+            return;
         delete m_pData;
         m_pData = nullptr;
     }
@@ -188,6 +212,9 @@ namespace CoroutineWithBoostContext
         if (this == g_Current) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
+        }
+        if (nullptr == m_pData) {
+            m_pData = new CoroutineData(this, m_StackSize);
         }
         if (nullptr != m_pData->Callee) {
             m_pData->Callee->m_pData->Caller = m_pData->Caller;
@@ -279,6 +306,10 @@ namespace CoroutineWithBoostContext
             }
         }
         next->Enter();
+    }
+    void Release(void)
+    {
+        g_Main.Release();
     }
     Coroutine* CurrentCoroutine(void)
     {
