@@ -379,7 +379,7 @@ namespace Brace
         for (auto& p : m_Func->Codes) {
             r = p();
             if (IsForceQuit())
-                return r;
+                goto EXIT;
             switch (r) {
             case BRACE_FLOW_CONTROL_RETURN:
                 r = BRACE_FLOW_CONTROL_NORMAL;
@@ -393,6 +393,9 @@ namespace Brace
     EXIT:
         if (m_ResultAssign) {
             (*m_ResultAssign)(lastVars, m_ResultInfo.VarIndex, vars, m_Func->RetValue.VarIndex);
+        }
+        for (auto& sptr : vars.ObjectVars) {
+            sptr = nullptr;
         }
         PopRuntimeStack();
         return r;
@@ -1649,8 +1652,10 @@ namespace Brace
                 if (VarGetBoolean(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex)) {
                     for (auto& statement : m_Statements) {
                         int v = statement();
-                        if (IsForceQuit())
+                        if (IsForceQuit()) {
+                            FreeObjVars(vars, m_ObjVars);
                             return v;
+                        }
                         if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                             break;
                         }
@@ -1749,8 +1754,10 @@ namespace Brace
                 VarSetI64(vars, m_LoadInfo.Type, m_IteratorIndex, i);
                 for (auto& statement : m_Statements) {
                     int v = statement();
-                    if (IsForceQuit())
+                    if (IsForceQuit()) {
+                        FreeObjVars(vars, m_ObjVars);
                         return v;
+                    }
                     if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                         break;
                     }
@@ -1926,8 +1933,10 @@ namespace Brace
                 }
                 for (auto& statement : m_Statements) {
                     int v = statement();
-                    if (IsForceQuit())
+                    if (IsForceQuit()) {
+                        FreeObjVars(vars, m_ObjVars);
                         return v;
+                    }
                     if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                         break;
                     }

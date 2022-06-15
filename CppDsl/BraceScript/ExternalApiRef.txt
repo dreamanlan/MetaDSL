@@ -3433,6 +3433,10 @@ private:
 					Brace::VarSetBool(vars, m_IteratorIndex, val);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3464,6 +3468,10 @@ private:
 					Brace::VarSetInt64(vars, m_IteratorIndex, val);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3495,6 +3503,10 @@ private:
 					Brace::VarSetDouble(vars, m_IteratorIndex, val);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3526,6 +3538,10 @@ private:
 					Brace::VarSetString(vars, m_IteratorIndex, val);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3557,6 +3573,10 @@ private:
 					Brace::VarSetObject(vars, m_IteratorIndex, val);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3589,6 +3609,10 @@ private:
 					Brace::VarSetBool(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3621,6 +3645,10 @@ private:
 					Brace::VarSetInt64(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3653,6 +3681,10 @@ private:
 					Brace::VarSetInt64(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3685,6 +3717,10 @@ private:
 					Brace::VarSetString(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3717,6 +3753,10 @@ private:
 					Brace::VarSetObject(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3749,6 +3789,10 @@ private:
 					Brace::VarSetBool(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3781,6 +3825,10 @@ private:
 					Brace::VarSetInt64(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3813,6 +3861,10 @@ private:
 					Brace::VarSetDouble(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3845,6 +3897,10 @@ private:
 					Brace::VarSetString(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
@@ -3877,6 +3933,10 @@ private:
 					Brace::VarSetObject(vars, m_IteratorIndexV, val.second);
 					for (auto& statement : m_Statements) {
 						int v = statement();
+						if (IsForceQuit()) {
+							FreeObjVars(vars, m_ObjVars);
+							return v;
+						}
 						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
 							break;
 						}
