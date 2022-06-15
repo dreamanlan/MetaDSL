@@ -188,13 +188,19 @@ namespace CoroutineWithBoostContext
 
     static CoroutineMain g_Main;
 
-    Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize)
+    Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize), m_pData(nullptr)
     {
-        m_pData = new CoroutineData(this, stackSize);
+        Init();
     }
     Coroutine::~Coroutine(void)
     {
         Release();
+    }
+    void Coroutine::Init(void)
+    {
+        if (nullptr == m_pData) {
+            m_pData = new CoroutineData(this, m_StackSize);
+        }
     }
     void Coroutine::Release(void)
     {
@@ -212,9 +218,6 @@ namespace CoroutineWithBoostContext
         if (this == g_Current) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
-        }
-        if (nullptr == m_pData) {
-            m_pData = new CoroutineData(this, m_StackSize);
         }
         if (nullptr != m_pData->Callee) {
             m_pData->Callee->m_pData->Caller = m_pData->Caller;
@@ -307,7 +310,11 @@ namespace CoroutineWithBoostContext
         }
         next->Enter();
     }
-    void Release(void)
+    void TryInit(void)
+    {
+        g_Main.Init();
+    }
+    void TryRelease(void)
     {
         g_Main.Release();
     }

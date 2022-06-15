@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 #endif
         }
         Terminate();
-        CoroutineWithBoostContext::Release();
+        CoroutineWithBoostContext::TryRelease();
         std::size_t count = 0;
         std::size_t size = CoroutineWithBoostContext::StateMemory(count);
         printf("\nmemory: %u size: %u\n", count, size);
