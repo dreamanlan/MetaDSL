@@ -2153,30 +2153,34 @@ namespace Brace
     }
     const FuncInfo* BraceScript::CurRuntimeFuncInfo(void)const
     {
-        if (m_RuntimeStack.empty()) {
+        auto& runtimeStack = GetRuntimeStack();
+        if (runtimeStack.empty()) {
             return m_GlobalFunc;
         }
-        return m_RuntimeStack.top().Func;
+        return runtimeStack.top().Func;
     }
     VariableInfo* BraceScript::CurRuntimeVariables(void)const
     {
-        if (m_RuntimeStack.empty()) {
+        auto& runtimeStack = GetRuntimeStack();
+        if (runtimeStack.empty()) {
             return m_GlobalVariables;
         }
-        return m_RuntimeStack.top().Variables;
+        return runtimeStack.top().Variables;
     }
     void BraceScript::PushRuntimeStack(const FuncInfo* funcInfo)
     {
+        auto& runtimeStack = GetRuntimeStack();
         RuntimeStackInfo rsi{};
         rsi.Func = funcInfo;
         rsi.Variables = funcInfo->AllocVariableInfo();
-        m_RuntimeStack.push(std::move(rsi));
+        runtimeStack.push(std::move(rsi));
     }
     void BraceScript::PopRuntimeStack(void)
     {
-        RuntimeStackInfo& info = m_RuntimeStack.top();
+        auto& runtimeStack = GetRuntimeStack();
+        RuntimeStackInfo& info = runtimeStack.top();
         info.Func->RecycleVariableInfo(info.Variables);
-        m_RuntimeStack.pop();
+        runtimeStack.pop();
     }
 
     void BraceScript::AddSyntaxComponent(DslData::ISyntaxComponent* p)
@@ -3065,6 +3069,28 @@ namespace Brace
         }
         m_AddedSyntaxComponents.clear();
         m_FuncApiTypeInfos.clear();
+    }
+    const RuntimeStack& BraceScript::GetRuntimeStack(void)const
+    {
+        RuntimeStack* p = nullptr;
+        if (OnGetRuntimeStack) {
+            p = OnGetRuntimeStack();
+        }
+        if (nullptr != p)
+            return *p;
+        else
+            return m_RuntimeStack;
+    }
+    RuntimeStack& BraceScript::GetRuntimeStack(void)
+    {
+        RuntimeStack* p = nullptr;
+        if (OnGetRuntimeStack) {
+            p = OnGetRuntimeStack();
+        }
+        if (nullptr != p)
+            return *p;
+        else
+            return m_RuntimeStack;
     }
 
     BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_FailbackApi(nullptr), m_ContextObject(nullptr)

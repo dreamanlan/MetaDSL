@@ -643,6 +643,7 @@ namespace Brace
     typedef std::function<bool(const DslData::ValueData&, BraceApiLoadInfo&, BraceApiExecutor&)> LoadValueFailedDelegation;
     typedef std::function<bool(const DslData::FunctionData&, BraceApiLoadInfo&, BraceApiExecutor&)> LoadFunctionFailedDelegation;
     typedef std::function<bool(const DslData::StatementData&, BraceApiLoadInfo&, BraceApiExecutor&)> LoadStatementFailedDelegation;
+    typedef std::function<RuntimeStack*(void)> GetRuntimeStackDelegation;
     class BraceScript final
     {
         friend class AbstractBraceApi;
@@ -669,6 +670,11 @@ namespace Brace
         LoadValueFailedDelegation OnLoadValueFailed;
         LoadFunctionFailedDelegation OnLoadFunctionFailed;
         LoadStatementFailedDelegation OnLoadStatementFailed;
+    public:
+        /// <summary>
+        /// This delegate is used to implement coroutines
+        /// </summary>
+        GetRuntimeStackDelegation OnGetRuntimeStack;
     public:
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
         /// See ExternalAPiRef.txt
@@ -753,6 +759,8 @@ namespace Brace
         void RegisterInnerApis(void);
         void Init(void);
         void Release(void);
+        const RuntimeStack& GetRuntimeStack(void)const;
+        RuntimeStack& GetRuntimeStack(void);
     private:
         BraceScript(const BraceScript&) = delete;
         BraceScript& operator=(const BraceScript&) = delete;

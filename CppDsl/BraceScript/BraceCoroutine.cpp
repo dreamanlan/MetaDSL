@@ -23,7 +23,11 @@ namespace CoroutineWithBoostContext
             }
         };
 
-        std::unordered_map<std::size_t, my_fixedsize_stack_alloc_record> fixedsize_stack_pool_{};
+        std::unordered_map<std::size_t, my_fixedsize_stack_alloc_record> fixedsize_stack_pool_;
+        std::size_t total_alloced_size_;
+
+        my_fixedsize_stack_alloc_pool(void) :fixedsize_stack_pool_(), total_alloced_size_(0)
+        {}
 
         my_fixedsize_stack_alloc_record& get_or_new_alloc_record(std::size_t size)
         {
@@ -41,6 +45,8 @@ namespace CoroutineWithBoostContext
         }
         ctx::stack_context alloc_stack(std::size_t size)
         {
+            total_alloced_size_ += size;
+
             auto& rec = get_or_new_alloc_record(size);
             if (rec.contexts.empty()) {
                 return rec.allocator.allocate();
@@ -55,6 +61,8 @@ namespace CoroutineWithBoostContext
         }
         void recycle_stack(ctx::stack_context& ctx)
         {
+            total_alloced_size_ -= ctx.size;
+
             auto& rec = get_or_new_alloc_record(ctx.size);
             return rec.contexts.push_back(ctx);
         }
@@ -74,10 +82,11 @@ namespace CoroutineWithBoostContext
             free_pooled_stacks();
             fixedsize_stack_pool_.clear();
         }
-        std::size_t stat_memory(std::size_t& count)
+        std::size_t stat_memory(std::size_t& count, std::size_t& alloced_size)
         {
             std::size_t size = 0;
             count = 0;
+            alloced_size = total_alloced_size_;
             for (auto& pair : fixedsize_stack_pool_) {
                 auto& rec = pair.second;
                 count += rec.contexts.size();
@@ -89,7 +98,7 @@ namespace CoroutineWithBoostContext
         }
     };
 
-    static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
+    thread_local static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
 
     void FreeStackMemory(void)
     {
@@ -99,9 +108,9 @@ namespace CoroutineWithBoostContext
     {
         g_fixedsize_stack_alloc_pool.cleanup_pool();
     }
-    std::size_t StatMemory(std::size_t& count)
+    std::size_t StatMemory(std::size_t& count, std::size_t& alloced_size)
     {
-        return g_fixedsize_stack_alloc_pool.stat_memory(count);
+        return g_fixedsize_stack_alloc_pool.stat_memory(count, alloced_size);
     }
 
     struct my_fixedsize_stack
@@ -130,7 +139,7 @@ namespace CoroutineWithBoostContext
         //exit(0);
     }
 
-    static Coroutine* g_Current = nullptr;
+    thread_local static Coroutine* g_Current = nullptr;
 
     struct CoroutineData final
     {
@@ -186,7 +195,7 @@ namespace CoroutineWithBoostContext
         }
     };
 
-    static CoroutineMain g_Main;
+    thread_local static CoroutineMain g_Main;
 
     Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize), m_pData(nullptr)
     {

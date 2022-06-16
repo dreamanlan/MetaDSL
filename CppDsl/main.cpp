@@ -182,8 +182,9 @@ int main(int argc, char* argv[])
         Terminate();
         CoroutineWithBoostContext::TryRelease();
         std::size_t count = 0;
-        std::size_t size = CoroutineWithBoostContext::StatMemory(count);
-        printf("\nmemory: %u size: %u\n", count, size);
+        std::size_t alloced_size = 0;
+        std::size_t pooled_size = CoroutineWithBoostContext::StatMemory(count, alloced_size);
+        printf("\nmemory: %u pooled size: %u alloced size: %u\n", count, pooled_size, alloced_size);
     }
     delete[] pbuf;
     delete[] pbuf2;
