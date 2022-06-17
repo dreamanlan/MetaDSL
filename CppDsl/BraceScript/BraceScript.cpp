@@ -3228,26 +3228,42 @@ namespace Brace
     }
     void BraceScript::Run(void)
     {
-        if (nullptr == m_GlobalFunc)
+        Run(0);
+    }
+    void BraceScript::Run(int start)
+    {
+        if (nullptr == m_GlobalFunc || start < 0)
             return;
         auto* curFunc = m_GlobalFunc;
-        for (auto& p : curFunc->Codes) {
+        auto& codes = curFunc->Codes;
+        int num = static_cast<int>(codes.size());
+        for (int ix = start; ix < num; ++ix) {
+            auto& p = codes[ix];
             int r = p();
             if (IsForceQuit())
-                goto EXIT;
+                break;
             switch (r) {
             case BRACE_FLOW_CONTROL_RETURN:
                 r = BRACE_FLOW_CONTROL_NORMAL;
-                goto EXIT;
+                break;
             case BRACE_FLOW_CONTROL_EXCEPTION:
                 break;
             case BRACE_FLOW_CONTROL_EFFECT:
                 break;
             }
         }
-    EXIT:
+        /// for REPL, global vars aren't free here, call Reset or Destructor to free explicitly
+        /*
         for (auto& sptr : m_GlobalVariables->ObjectVars) {
             sptr = nullptr;
         }
+        */
+    }
+    int BraceScript::GetGlobalCodeNum(void)const
+    {
+        if (nullptr == m_GlobalFunc)
+            return INVALID_INDEX;
+        auto* curFunc = m_GlobalFunc;
+        return static_cast<int>(curFunc->Codes.size());
     }
 }

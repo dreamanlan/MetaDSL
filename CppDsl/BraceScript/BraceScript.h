@@ -704,6 +704,8 @@ namespace Brace
         FuncInfo* GetOrAddFuncInfo(const std::string& name);
         void LoadScript(const DslData::DslFile& file);
         void Run(void);
+        void Run(int start);
+        int GetGlobalCodeNum(void)const;
         FuncInfo* GlobalFuncInfo(void)const;
         VariableInfo* GlobalVariables(void)const;
         bool HasWarn(void)const { return m_HasWarn; }
