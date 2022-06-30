@@ -11,11 +11,15 @@
 #include <sstream>
 #include <chrono>
 
+static std::chrono::time_point<std::chrono::high_resolution_clock> g_start_time_point;
+
 void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt);
 void Tick(void);
 void Terminate(void);
 int main(int argc, char* argv[])
 {
+    g_start_time_point = std::chrono::high_resolution_clock::now();
+
     char* pbuf = new char[1024 * 1024 + 1];
     char* pbuf2 = new char[1024 * 1024 + 1];
     FILE* fp = fopen("test.txt", "rb");
@@ -169,7 +173,8 @@ int main(int argc, char* argv[])
         std::string scp;
         std::getline(std::cin, scp);
         InitScript(pDslBuffer, scp);
-
+        Tick();
+        /*
         for (int i = 0; i < 100; ++i) {
             printf("Tick %d", i);
             Tick();
@@ -179,6 +184,7 @@ int main(int argc, char* argv[])
             ::Sleep(100);
 #endif
         }
+        */
         Terminate();
         CoroutineWithBoostContext::TryRelease();
         std::size_t count = 0;
@@ -234,6 +240,28 @@ protected:
         }
     }
 };
+class TimeExp final : public Brace::SimpleBraceApiBase
+{
+public:
+    TimeExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+    {
+    }
+protected:
+    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+    {
+        resultInfo.Type = Brace::BRACE_DATA_TYPE_UINT64;
+        resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+        resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+        return true;
+    }
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
+    {
+        auto cv = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diff = cv - g_start_time_point;
+        auto tv = static_cast<uint64_t>(diff.count() * 1000'000);
+        Brace::VarSetUInt64((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, tv);
+    }
+};
 
 class ScriptEnv final
 {
@@ -279,6 +307,7 @@ public:
             Dsl::Transform(*m_pParsedFile, *m_pDslFile);
             m_pBraceScript->Reset();
             m_pBraceScript->RegisterApi("wait", new Brace::BraceApiFactory<WaitExp>());
+            m_pBraceScript->RegisterApi("time", new Brace::BraceApiFactory<TimeExp>());
             m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
             m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", str.c_str()); };
             m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };

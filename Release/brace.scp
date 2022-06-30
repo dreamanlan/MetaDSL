@@ -1,0 +1,43 @@
+func(main)params($a:&int32, $b:float)float
+{
+	$t = $a;
+	$a = 456;
+	echo($t, $a);
+	return <- $a * $b + 123;
+};
+
+@ra = 12345;
+@r = main(@ra,1.23);
+echo("r:" + @r + " ra:" + @ra);
+
+if(@r>0){
+	echo("yes");
+};
+
+@ct = 10;
+while(@ct>0){
+	echo("while: "+@ct);
+	@ct = @ct - 1;
+};
+
+loop(100){
+	echo("loop: "+$$);
+};
+
+foreach("one", "two", "three"){
+	echo("foreach: "+$$);
+};
+
+@ct+=2;
+echo("@ct:", @ct);
+
+echo("inc:", ++@ct);
+echo("dec:", --@ct);
+echo("positive:", +@ct);
+echo("negative:", -@ct);
+
+@abc : int32;
+@abc = 123;
+echo("@abc:", @abc);
+
+echo("done.");
