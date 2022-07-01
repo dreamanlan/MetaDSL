@@ -343,84 +343,70 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
 {
     return(block
     {:
-        int ExecuteGG2G{% $postfix %}(void) const
+        int ExecuteGG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-            {% $varSet %}(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL2G{% $postfix %}(void) const
+        int ExecuteGL2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars1 = *GlobalVariables();
-            auto& srcVars2 = vars;
-            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-            {% $varSet %}(srcVars1, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGG{% $postfix %}(void) const
+        int ExecuteGG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLL{% $postfix %}(void) const
+        int ExecuteLL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL{% $postfix %}(void) const
+        int ExecuteGL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars1 = *GlobalVariables();
-            auto& srcVars2 = vars;
-            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLG{% $postfix %}(void) const
+        int ExecuteLG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars1 = vars;
-            auto& srcVars2 = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     :});
@@ -429,33 +415,28 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
 {
     return(block
     {:    
-        int ExecuteG2G{% $postfix %}(void) const
+        int ExecuteG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $varSet %}(srcVars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
+                m_Op1(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteG{% $postfix %}(void) const
+        int ExecuteG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
+                m_Op1(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteL{% $postfix %}(void) const
+        int ExecuteL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
-            auto& vars = *CurRuntimeVariables();
-            {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
+                m_Op1(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     :});
@@ -464,84 +445,70 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
 {
     return(block
     {:
-        int ExecuteGG2G{% $postfix %}(void) const
+        int ExecuteGG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.VarIndex);
-            {% $varSet %}(srcVars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(gvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL2G{% $postfix %}(void) const
+        int ExecuteGL2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars1 = *GlobalVariables();
-            auto& srcVars2 = vars;
-            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.VarIndex);
-            {% $varSet %}(srcVars1, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(gvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGG{% $postfix %}(void) const
+        int ExecuteGG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLL{% $postfix %}(void) const
+        int ExecuteLL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(vars, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL{% $postfix %}(void) const
+        int ExecuteGL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars1 = *GlobalVariables();
-            auto& srcVars2 = vars;
-            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLG{% $postfix %}(void) const
+        int ExecuteLG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
+                m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars1 = vars;
-            auto& srcVars2 = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars1, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(srcVars2, m_LoadInfo2.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
+                m_Op2(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     :});
@@ -550,33 +517,28 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
 {
     return(block
     {:    
-        int ExecuteG2G{% $postfix %}(void) const
+        int ExecuteG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
-            {% $varSet %}(srcVars, m_ResultInfo.VarIndex, {% $opr %} v1);
+                m_Op1(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $varSet %}(gvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteG{% $postfix %}(void) const
+        int ExecuteG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
-            auto& vars = *CurRuntimeVariables();
-            auto& srcVars = *GlobalVariables();
-            {% $operandType %} v1 = {% $varGet %}(srcVars, m_LoadInfo1.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.VarIndex, {% $opr %} v1);
+                m_Op1(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteL{% $postfix %}(void) const
+        int ExecuteL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1();
-            auto& vars = *CurRuntimeVariables();
-            {% $operandType %} v1 = {% $varGet %}(vars, m_LoadInfo1.VarIndex);
-            {% $varSet %}(vars, m_ResultInfo.VarIndex, {% $opr %} v1);
+                m_Op1(gvars, lvars);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.VarIndex);
+            {% $varSet %}(lvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     :});

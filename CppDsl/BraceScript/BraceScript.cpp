@@ -286,10 +286,10 @@ namespace Brace
     {
         return !m_CodeExecutor.isNull();
     }
-    int FunctionExecutor::Run(void)const
+    int FunctionExecutor::Run(VariableInfo& gvars, VariableInfo& lvars)const
     {
         if (!m_CodeExecutor.isNull())
-            return m_CodeExecutor();
+            return m_CodeExecutor(gvars, lvars);
         return BRACE_FLOW_CONTROL_NORMAL;
     }
     int FunctionExecutor::GetArgCount(void)const
@@ -351,18 +351,17 @@ namespace Brace
         executor.attach(this, &FunctionExecutor::Execute);
         return true;
     }
-    int FunctionExecutor::Execute(void)const
+    int FunctionExecutor::Execute(VariableInfo& gvars, VariableInfo& lvars)const
     {
         //push args
-        auto& lastVars = *CurRuntimeVariables();
+        auto& lastVars = lvars;
         for (auto& arg : m_Args) {
             if (!arg.isNull())
-                arg();
+                arg(gvars, lvars);
         }
         //run curFunc
         int r = BRACE_FLOW_CONTROL_NORMAL;
         PushRuntimeStack(m_Func);
-        auto& gvars = *GlobalVariables();
         auto& vars = *CurRuntimeVariables();
         for (int ix = 0; ix < static_cast<int>(m_ArgLoadInfos.size()) && ix < static_cast<int>(m_ArgAssigns.size()); ++ix) {
             auto& destInfo = m_Func->Params[ix];
@@ -377,7 +376,7 @@ namespace Brace
                 (*ptr)(vars, destInfo.VarIndex, lastVars, srcInfo.VarIndex);
         }
         for (auto& p : m_Func->Codes) {
-            r = p();
+            r = p(gvars, vars);
             if (IsForceQuit())
                 goto EXIT;
             switch (r) {
@@ -460,13 +459,11 @@ namespace Brace
             return false;
         }
     }
-    int SimpleBraceApiBase::ExecuteImpl(void)const
+    int SimpleBraceApiBase::ExecuteImpl(VariableInfo& gvars, VariableInfo& lvars)const
     {
-        auto& gvars = *GlobalVariables();
-        auto& lvars = *CurRuntimeVariables();
         for (auto& op : m_Args) {
             if (!op.isNull())
-                op();
+                op(gvars, lvars);
         }
         Execute(gvars, lvars, m_ArgLoadInfos, m_ResultInfo);
         return Brace::BRACE_FLOW_CONTROL_NORMAL;
@@ -635,24 +632,21 @@ namespace Brace
             return true;
         }
     private:
-        int ExecuteFromGlobal(void) const
+        int ExecuteFromGlobal(VariableInfo& gvars, VariableInfo& lvars) const
         {
             if (!m_Exp.isNull())
-                m_Exp();
+                m_Exp(gvars, lvars);
             if (m_Fptr) {
-                auto& vars = *GlobalVariables();
-                (*m_Fptr)(vars, m_VarIndex, vars, m_SrcVarIndex);
+                (*m_Fptr)(gvars, m_VarIndex, gvars, m_SrcVarIndex);
             }
             return 0;
         }
-        int ExecuteFromLocal(void) const
+        int ExecuteFromLocal(VariableInfo& gvars, VariableInfo& lvars) const
         {
             if (!m_Exp.isNull())
-                m_Exp();
+                m_Exp(gvars, lvars);
             if (m_Fptr) {
-                auto& vars = *GlobalVariables();
-                auto& srcVars = *CurRuntimeVariables();
-                (*m_Fptr)(vars, m_VarIndex, srcVars, m_SrcVarIndex);
+                (*m_Fptr)(gvars, m_VarIndex, lvars, m_SrcVarIndex);
             }
             return 0;
         }
@@ -777,24 +771,21 @@ namespace Brace
             return true;
         }
     private:
-        int ExecuteFromGlobal(void) const
+        int ExecuteFromGlobal(VariableInfo& gvars, VariableInfo& lvars) const
         {
             if (!m_Exp.isNull())
-                m_Exp();
+                m_Exp(gvars, lvars);
             if (m_Fptr) {
-                auto& vars = *CurRuntimeVariables();
-                auto& srcVars = *GlobalVariables();
-                (*m_Fptr)(vars, m_VarIndex, srcVars, m_SrcVarIndex);
+                (*m_Fptr)(lvars, m_VarIndex, gvars, m_SrcVarIndex);
             }
             return 0;
         }
-        int ExecuteFromLocal(void) const
+        int ExecuteFromLocal(VariableInfo& gvars, VariableInfo& lvars) const
         {
             if (!m_Exp.isNull())
-                m_Exp();
+                m_Exp(gvars, lvars);
             if (m_Fptr) {
-                auto& vars = *CurRuntimeVariables();
-                (*m_Fptr)(vars, m_VarIndex, vars, m_SrcVarIndex);
+                (*m_Fptr)(lvars, m_VarIndex, lvars, m_SrcVarIndex);
             }
             return 0;
         }
@@ -871,7 +862,7 @@ namespace Brace
             return false;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
             return BRACE_FLOW_CONTROL_BREAK;
         }
@@ -890,7 +881,7 @@ namespace Brace
             return false;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
             return BRACE_FLOW_CONTROL_CONTINUE;
         }
@@ -954,24 +945,21 @@ namespace Brace
             return false;
         }
     private:
-        int ExecuteG(void) const
+        int ExecuteG(VariableInfo& gvars, VariableInfo& lvars) const
         {
             if (!m_Arg.isNull())
-                m_Arg();
+                m_Arg(gvars, lvars);
             if (m_Assign) {
-                auto& vars = *CurRuntimeVariables();
-                auto& srcVars = *GlobalVariables();
-                (*m_Assign)(vars, m_ResultInfo.VarIndex, srcVars, m_LoadInfo.VarIndex);
+                (*m_Assign)(lvars, m_ResultInfo.VarIndex, gvars, m_LoadInfo.VarIndex);
             }
             return BRACE_FLOW_CONTROL_RETURN;
         }
-        int ExecuteL(void) const
+        int ExecuteL(VariableInfo& gvars, VariableInfo& lvars) const
         {
             if (!m_Arg.isNull())
-                m_Arg();
+                m_Arg(gvars, lvars);
             if (m_Assign) {
-                auto& vars = *CurRuntimeVariables();
-                (*m_Assign)(vars, m_ResultInfo.VarIndex, vars, m_LoadInfo.VarIndex);
+                (*m_Assign)(lvars, m_ResultInfo.VarIndex, lvars, m_LoadInfo.VarIndex);
             }
             return BRACE_FLOW_CONTROL_RETURN;
         }
@@ -1253,108 +1241,98 @@ namespace Brace
             }
         }
     private:
-        int ExecuteInt(void) const
+        int ExecuteInt(VariableInfo& gvars, VariableInfo& lvars) const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             if (!m_Op1.isNull())
-                m_Op1();
-            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+                m_Op1(gvars, lvars);
+            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
                 if (!m_Op2.isNull())
-                    m_Op2();
-                int64_t val = VarGetI64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-                VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op2(gvars, lvars);
+                int64_t val = VarGetI64(m_LoadInfo2.IsGlobal ? gvars : lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+                VarSetI64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
                 if (!m_Op3.isNull())
-                    m_Op3();
-                int64_t val = VarGetI64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
-                VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op3(gvars, lvars);
+                int64_t val = VarGetI64(m_LoadInfo3.IsGlobal ? gvars : lvars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
+                VarSetI64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteUInt(void) const
+        int ExecuteUInt(VariableInfo& gvars, VariableInfo& lvars) const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             if (!m_Op1.isNull())
-                m_Op1();
-            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+                m_Op1(gvars, lvars);
+            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
                 if (!m_Op2.isNull())
-                    m_Op2();
-                uint64_t val = VarGetU64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-                VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op2(gvars, lvars);
+                uint64_t val = VarGetU64(m_LoadInfo2.IsGlobal ? gvars : lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+                VarSetU64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
                 if (!m_Op3.isNull())
-                    m_Op3();
-                uint64_t val = VarGetU64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
-                VarSetU64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op3(gvars, lvars);
+                uint64_t val = VarGetU64(m_LoadInfo3.IsGlobal ? gvars : lvars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
+                VarSetU64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteFloat(void) const
+        int ExecuteFloat(VariableInfo& gvars, VariableInfo& lvars) const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             if (!m_Op1.isNull())
-                m_Op1();
-            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+                m_Op1(gvars, lvars);
+            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
                 if (!m_Op2.isNull())
-                    m_Op2();
-                double val = VarGetF64(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-                VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op2(gvars, lvars);
+                double val = VarGetF64(m_LoadInfo2.IsGlobal ? gvars : lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+                VarSetF64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
                 if (!m_Op3.isNull())
-                    m_Op3();
-                double val = VarGetF64(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
-                VarSetF64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op3(gvars, lvars);
+                double val = VarGetF64(m_LoadInfo3.IsGlobal ? gvars : lvars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
+                VarSetF64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteString(void) const
+        int ExecuteString(VariableInfo& gvars, VariableInfo& lvars) const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             if (!m_Op1.isNull())
-                m_Op1();
-            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+                m_Op1(gvars, lvars);
+            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
                 if (!m_Op2.isNull())
-                    m_Op2();
-                std::string val = VarGetStr(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-                VarSetStr(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op2(gvars, lvars);
+                std::string val = VarGetStr(m_LoadInfo2.IsGlobal ? gvars : lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+                VarSetStr(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
                 if (!m_Op3.isNull())
-                    m_Op3();
-                std::string val = VarGetStr(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
-                VarSetStr(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op3(gvars, lvars);
+                std::string val = VarGetStr(m_LoadInfo3.IsGlobal ? gvars : lvars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
+                VarSetStr(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteBool(void) const
+        int ExecuteBool(VariableInfo& gvars, VariableInfo& lvars) const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             if (!m_Op1.isNull())
-                m_Op1();
-            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : vars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+                m_Op1(gvars, lvars);
+            bool v = VarGetBoolean(m_LoadInfo1.IsGlobal ? gvars : lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
             if (v) {
                 if (!m_Op2.isNull())
-                    m_Op2();
-                bool val = VarGetBoolean(m_LoadInfo2.IsGlobal ? gvars : vars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
-                VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op2(gvars, lvars);
+                bool val = VarGetBoolean(m_LoadInfo2.IsGlobal ? gvars : lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+                VarSetBoolean(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             else {
                 if (!m_Op3.isNull())
-                    m_Op3();
-                bool val = VarGetBoolean(m_LoadInfo3.IsGlobal ? gvars : vars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
-                VarSetBoolean(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
+                    m_Op3(gvars, lvars);
+                bool val = VarGetBoolean(m_LoadInfo3.IsGlobal ? gvars : lvars, m_LoadInfo3.Type, m_LoadInfo3.VarIndex);
+                VarSetBoolean(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, val);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -1383,21 +1361,19 @@ namespace Brace
             return true;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
             for (auto& p : m_Args) {
                 if (!p.isNull())
-                    p();
+                    p(gvars, lvars);
             }
             std::stringstream ss;
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             for (auto& info : m_ArgLoadInfos) {
                 if (info.Type != BRACE_DATA_TYPE_UNKNOWN) {
                     if (info.IsGlobal)
                         ss << VarGetStr(gvars, info.Type, info.VarIndex);
                     else
-                        ss << VarGetStr(vars, info.Type, info.VarIndex);
+                        ss << VarGetStr(lvars, info.Type, info.VarIndex);
                 }
             }
             LogInfo(ss.str());
@@ -1531,39 +1507,37 @@ namespace Brace
             return true;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             int ct = static_cast<int>(m_Clauses.size());
             for (int ix = 0; ix < ct; ++ix) {
                 auto& clause = m_Clauses[ix];
                 if (!clause.Condition.isNull())
-                    clause.Condition();
-                if (VarGetBoolean(clause.LoadInfo.IsGlobal ? gvars : vars, clause.LoadInfo.Type, clause.LoadInfo.VarIndex)) {
+                    clause.Condition(gvars, lvars);
+                if (VarGetBoolean(clause.LoadInfo.IsGlobal ? gvars : lvars, clause.LoadInfo.Type, clause.LoadInfo.VarIndex)) {
                     for (auto& statement : clause.Statements) {
-                        int v = statement();
+                        int v = statement(gvars, lvars);
                         if (IsForceQuit())
                             break;
                         if (v != BRACE_FLOW_CONTROL_NORMAL) {
-                            FreeObjVars(vars, clause.ObjVars);
+                            FreeObjVars(lvars, clause.ObjVars);
                             return v;
                         }
                     }
-                    FreeObjVars(vars, clause.ObjVars);
+                    FreeObjVars(lvars, clause.ObjVars);
                     break;
                 }
                 else if (ix == ct - 1 && clause.LoadInfo.Type == BRACE_DATA_TYPE_UNKNOWN) {
                     for (auto& statement : clause.Statements) {
-                        int v = statement();
+                        int v = statement(gvars, lvars);
                         if (IsForceQuit())
                             break;
                         if (v != BRACE_FLOW_CONTROL_NORMAL) {
-                            FreeObjVars(vars, clause.ObjVars);
+                            FreeObjVars(lvars, clause.ObjVars);
                             return v;
                         }
                     }
-                    FreeObjVars(vars, clause.ObjVars);
+                    FreeObjVars(lvars, clause.ObjVars);
                     break;
                 }
             }
@@ -1642,25 +1616,23 @@ namespace Brace
             return false;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             for (; ; ) {
                 if (!m_Condition.isNull())
-                    m_Condition();
-                if (VarGetBoolean(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex)) {
+                    m_Condition(gvars, lvars);
+                if (VarGetBoolean(m_LoadInfo.IsGlobal ? gvars : lvars, m_LoadInfo.Type, m_LoadInfo.VarIndex)) {
                     for (auto& statement : m_Statements) {
-                        int v = statement();
+                        int v = statement(gvars, lvars);
                         if (IsForceQuit()) {
-                            FreeObjVars(vars, m_ObjVars);
+                            FreeObjVars(lvars, m_ObjVars);
                             return v;
                         }
                         if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                             break;
                         }
                         else if (v != BRACE_FLOW_CONTROL_NORMAL) {
-                            FreeObjVars(vars, m_ObjVars);
+                            FreeObjVars(lvars, m_ObjVars);
                             if (v == BRACE_FLOW_CONTROL_BREAK)
                                 return BRACE_FLOW_CONTROL_NORMAL;
                             return v;
@@ -1671,7 +1643,7 @@ namespace Brace
                     break;
                 }
             }
-            FreeObjVars(vars, m_ObjVars);
+            FreeObjVars(lvars, m_ObjVars);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     private:
@@ -1743,33 +1715,31 @@ namespace Brace
             return false;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             if (!m_Count.isNull())
-                m_Count();
-            long ct = static_cast<long>(VarGetI64(m_LoadInfo.IsGlobal ? gvars : vars, m_LoadInfo.Type, m_LoadInfo.VarIndex));
+                m_Count(gvars, lvars);
+            long ct = static_cast<long>(VarGetI64(m_LoadInfo.IsGlobal ? gvars : lvars, m_LoadInfo.Type, m_LoadInfo.VarIndex));
             for (int i = 0; i < ct; ++i) {
-                VarSetI64(vars, m_LoadInfo.Type, m_IteratorIndex, i);
+                VarSetI64(lvars, m_LoadInfo.Type, m_IteratorIndex, i);
                 for (auto& statement : m_Statements) {
-                    int v = statement();
+                    int v = statement(gvars, lvars);
                     if (IsForceQuit()) {
-                        FreeObjVars(vars, m_ObjVars);
+                        FreeObjVars(lvars, m_ObjVars);
                         return v;
                     }
                     if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                         break;
                     }
                     else if (v != BRACE_FLOW_CONTROL_NORMAL) {
-                        FreeObjVars(vars, m_ObjVars);
+                        FreeObjVars(lvars, m_ObjVars);
                         if (v == BRACE_FLOW_CONTROL_BREAK)
                             return BRACE_FLOW_CONTROL_NORMAL;
                         return v;
                     }
                 }
             }
-            FreeObjVars(vars, m_ObjVars);
+            FreeObjVars(lvars, m_ObjVars);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     private:
@@ -1897,58 +1867,56 @@ namespace Brace
             return false;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             for (int ix = 0; ix < static_cast<int>(m_Elements.size()); ++ix) {
                 auto& elem = m_Elements[ix];
                 if (!elem.isNull())
-                    elem();
+                    elem(gvars, lvars);
             }
             for (int ix = 0; ix < static_cast<int>(m_ElementLoadInfos.size()); ++ix) {
                 auto& info = m_ElementLoadInfos[ix];
-                auto* pvars = &vars;
+                auto* pvars = &lvars;
                 if (info.IsGlobal)
                     pvars = &gvars;
                 switch (info.Type) {
                 case BRACE_DATA_TYPE_OBJECT: {
                     auto& v = VarGetObject(*pvars, info.VarIndex);
-                    VarSetObject(vars, m_IteratorIndex, v);
+                    VarSetObject(lvars, m_IteratorIndex, v);
                 }break;
                 case BRACE_DATA_TYPE_STRING: {
                     auto& v = VarGetString(*pvars, info.VarIndex);
-                    VarSetString(vars, m_IteratorIndex, v);
+                    VarSetString(lvars, m_IteratorIndex, v);
                 }break;
                 default: {
                     if (m_IteratorIsUnsigned) {
                         auto v = VarGetU64(*pvars, info.Type, info.VarIndex);
-                        VarSetU64(vars, info.Type, m_IteratorIndex, v);
+                        VarSetU64(lvars, info.Type, m_IteratorIndex, v);
                     }
                     else {
                         auto v = VarGetI64(*pvars, info.Type, info.VarIndex);
-                        VarSetI64(vars, info.Type, m_IteratorIndex, v);
+                        VarSetI64(lvars, info.Type, m_IteratorIndex, v);
                     }
                 }break;
                 }
                 for (auto& statement : m_Statements) {
-                    int v = statement();
+                    int v = statement(gvars, lvars);
                     if (IsForceQuit()) {
-                        FreeObjVars(vars, m_ObjVars);
+                        FreeObjVars(lvars, m_ObjVars);
                         return v;
                     }
                     if (v == BRACE_FLOW_CONTROL_CONTINUE) {
                         break;
                     }
                     else if (v != BRACE_FLOW_CONTROL_NORMAL) {
-                        FreeObjVars(vars, m_ObjVars);
+                        FreeObjVars(lvars, m_ObjVars);
                         if (v == BRACE_FLOW_CONTROL_BREAK)
                             return BRACE_FLOW_CONTROL_NORMAL;
                         return v;
                     }
                 }
             }
-            FreeObjVars(vars, m_ObjVars);
+            FreeObjVars(lvars, m_ObjVars);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
     private:
@@ -1983,18 +1951,16 @@ namespace Brace
             return true;
         }
     private:
-        int Execute(void)const
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            auto& gvars = *GlobalVariables();
-            auto& vars = *CurRuntimeVariables();
             for (auto& op : m_Args) {
                 if (!op.isNull())
-                    op();
+                    op(gvars, lvars);
             }
             if (m_ArgLoadInfos.size() > 0) {
                 auto& info = m_ArgLoadInfos[m_ArgLoadInfos.size() - 1];
-                int64_t v = VarGetI64(info.IsGlobal ? gvars : vars, info.Type, info.VarIndex);
-                VarSetI64(vars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v);
+                int64_t v = VarGetI64(info.IsGlobal ? gvars : lvars, info.Type, info.VarIndex);
+                VarSetI64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v);
             }
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -3239,7 +3205,7 @@ namespace Brace
         int num = static_cast<int>(codes.size());
         for (int ix = start; ix < num; ++ix) {
             auto& p = codes[ix];
-            int r = p();
+            int r = p(*m_GlobalVariables, *m_GlobalVariables);
             if (IsForceQuit())
                 break;
             switch (r) {

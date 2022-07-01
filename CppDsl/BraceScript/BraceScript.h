@@ -345,7 +345,7 @@ namespace Brace
     /// We implement first one first.
     class BraceScript;
     //We only need a member function to run, not a virtual function
-    using BraceApiExecutor = Delegation<int(void)>;
+    using BraceApiExecutor = Delegation<int(VariableInfo&,VariableInfo&)>;
     class IBraceApi
     {
     public:
@@ -495,14 +495,14 @@ namespace Brace
         void Build(const std::string& func) { Build(*CurFuncInfo(), func); }
         void Build(const FuncInfo& callerFunc, const std::string& func);
         bool IsValid(void)const;
-        int Run(void)const;
+        int Run(VariableInfo& gvars, VariableInfo& lvars)const;
         int GetArgCount(void)const;
         const BraceApiLoadInfo* ArgInfo(int ix) const;
         const BraceApiLoadInfo* ResultInfo(void) const;
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     private:
-        int Execute(void)const;
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const;
     private:
         const FuncInfo* m_Func;
         std::vector<BraceApiExecutor> m_Args;
@@ -558,7 +558,7 @@ namespace Brace
         virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const;
         virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo)const = 0;
     private:
-        int ExecuteImpl(void)const;
+        int ExecuteImpl(VariableInfo& gvars, VariableInfo& lvars)const;
     private:
         std::vector<Brace::BraceApiExecutor> m_Args;
         std::vector<Brace::BraceApiLoadInfo> m_ArgLoadInfos;
