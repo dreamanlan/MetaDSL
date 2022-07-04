@@ -16,6 +16,7 @@ pg/Release
 pg/x64/Debug
 pg/x64/Release
 *.obj
+*.iobj
 *.tlog
 *.sdf
 *.suo
