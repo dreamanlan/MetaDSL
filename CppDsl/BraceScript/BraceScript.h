@@ -388,13 +388,16 @@ namespace Brace
     };
     struct Instruction final
     {
-        uint64_t Opcode : 6;
+        uint64_t Opcode : 7;
+        uint64_t ResultIsGlobal : 1;
+        uint64_t ResultType : 4;
         uint64_t FirstIsGlobal : 1;
         uint64_t FirstType : 4;
         uint64_t SecondIsGlobal : 1;
         uint64_t SecondType : 4;
-        uint64_t FirstVarIndex : 24;
-        uint64_t SecondVarIndex : 24;
+        uint64_t ResultVarIndex : 14;
+        uint64_t FirstVarIndex : 14;
+        uint64_t SecondVarIndex : 14;
     };
     struct FuncInfo final
     {
