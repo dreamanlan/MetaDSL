@@ -85,7 +85,11 @@ namespace Brace
     {
         bool IsRef;
 
-        ParamTypeInfo(void) = default;
+        ParamTypeInfo(void) :IsRef(false)
+        {
+            Type = BRACE_DATA_TYPE_UNKNOWN;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+        }
         ParamTypeInfo(int type, int objTypeId, bool isRef) :DataTypeInfo(type, objTypeId), IsRef(isRef)
         {}
     };
@@ -93,7 +97,11 @@ namespace Brace
     {
         bool IsGlobal;
 
-        VarTypeInfo(void) = default;
+        VarTypeInfo(void) :IsGlobal(false)
+        {
+            Type = BRACE_DATA_TYPE_UNKNOWN;
+            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+        }
         VarTypeInfo(int type, int objTypeId, bool isGlobal) :DataTypeInfo(type, objTypeId), IsGlobal(isGlobal)
         {}
     };
@@ -168,7 +176,8 @@ namespace Brace
         int8_t IsGlobal;
         int32_t VarIndex;
 
-        BraceApiRuntimeInfo(void) = default;
+        BraceApiRuntimeInfo(void):Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX)
+        {}
         BraceApiRuntimeInfo(int type, int varIndex, bool isGlobal) :Type(type), VarIndex(varIndex), IsGlobal(isGlobal ? 1 : 0)
         {}
         BraceApiRuntimeInfo(const BraceApiLoadInfo& loadInfo):Type(loadInfo.Type), VarIndex(loadInfo.VarIndex), IsGlobal(loadInfo.IsGlobal ? 1 : 0)
