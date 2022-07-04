@@ -1,6 +1,14 @@
-﻿  正在生成代码
-  0 of 6348 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+﻿  BraceScript.cpp
+  main.cpp
+D:\GitHub\MetaDSL\CppDsl\main.cpp(210,16): warning C4477: “printf”: 格式字符串“%u”需要类型“unsigned int”的参数，但可变参数 1 拥有了类型“size_t”
+D:\GitHub\MetaDSL\CppDsl\main.cpp(210,16): message : 请考虑在格式字符串中使用“%zu”
+D:\GitHub\MetaDSL\CppDsl\main.cpp(210,16): warning C4477: “printf”: 格式字符串“%u”需要类型“unsigned int”的参数，但可变参数 2 拥有了类型“size_t”
+D:\GitHub\MetaDSL\CppDsl\main.cpp(210,16): message : 请考虑在格式字符串中使用“%zu”
+D:\GitHub\MetaDSL\CppDsl\main.cpp(210,16): warning C4477: “printf”: 格式字符串“%u”需要类型“unsigned int”的参数，但可变参数 3 拥有了类型“size_t”
+D:\GitHub\MetaDSL\CppDsl\main.cpp(210,16): message : 请考虑在格式字符串中使用“%zu”
+  正在生成代码
+  16 of 6350 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    6 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   CppDsl.vcxproj -> D:\GitHub\MetaDSL\x64\Release\CppDsl.exe
