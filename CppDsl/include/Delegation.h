@@ -27,13 +27,7 @@ public:
     }
     inline bool isNull(void) const
     {
-        if (obj != nullptr)
-            return false;
-        for (int i = 0; i < PTR_BUFFER_NUM; ++i) {
-            if (ptrBuffer[i] != nullptr)
-                return false;
-        }
-        return true;
+        return obj == nullptr;
     }
     inline void clear(void)
     {

@@ -75,6 +75,12 @@ namespace Brace
         DataTypeInfo(int type, int objTypeId) :Type(type), ObjectTypeId(objTypeId)
         {}
     };
+    struct RegisterInfo : public DataTypeInfo
+    {
+        int VarIndex;
+
+        RegisterInfo(void) = default;
+    };
     struct ParamTypeInfo final : public DataTypeInfo
     {
         bool IsRef;
@@ -83,48 +89,42 @@ namespace Brace
         ParamTypeInfo(int type, int objTypeId, bool isRef) :DataTypeInfo(type, objTypeId), IsRef(isRef)
         {}
     };
-    struct RegisterInfo : public DataTypeInfo
-    {
-        int VarIndex;
-
-        RegisterInfo(void) = default;
-    };
-    struct GlobalLocalRegisterInfo : public RegisterInfo
+    struct VarTypeInfo final : public DataTypeInfo
     {
         bool IsGlobal;
 
-        GlobalLocalRegisterInfo(void) = default;
+        VarTypeInfo(void) = default;
+        VarTypeInfo(int type, int objTypeId, bool isGlobal) :DataTypeInfo(type, objTypeId), IsGlobal(isGlobal)
+        {}
     };
-    struct VarInfo final : public GlobalLocalRegisterInfo
+    struct VarInfo final : public RegisterInfo
     {
+        bool IsGlobal;
         std::string Name;
 
-        VarInfo(void) :Name()
+        VarInfo(void) :Name(), IsGlobal(false)
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
             ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
-            IsGlobal = false;
         }
-        VarInfo(const std::string& name, int type, int objTypeId, int index) :Name(name)
+        VarInfo(const std::string& name, int type, int objTypeId, int index) :Name(name), IsGlobal(false)
         {
             Type = type;
             ObjectTypeId = objTypeId;
             VarIndex = index;
-            IsGlobal = false;
         }
-        VarInfo(const std::string& name, int type, int objTypeId, int index, bool isGlobal) :Name(name)
+        VarInfo(const std::string& name, int type, int objTypeId, int index, bool isGlobal) :Name(name), IsGlobal(isGlobal)
         {
             Type = type;
             ObjectTypeId = objTypeId;
             VarIndex = index;
-            IsGlobal = isGlobal;
         }
     };
     struct ParamRetInfo final : public RegisterInfo
     {
-        std::string Name;
         bool IsRef;
+        std::string Name;
 
         ParamRetInfo(void) :Name(), IsRef(false)
         {
@@ -147,20 +147,39 @@ namespace Brace
     };
     struct VariableInfo;
     struct FuncInfo;
-    struct BraceApiLoadInfo final : public GlobalLocalRegisterInfo
+    struct BraceApiLoadInfo final : public RegisterInfo
     {
+        bool IsGlobal;
         bool IsTempVar;
 
-        BraceApiLoadInfo(void) :IsTempVar(true)
+        BraceApiLoadInfo(void) :IsGlobal(false), IsTempVar(true)
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
             ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
-            IsGlobal = false;
         }
 
-        DataTypeInfo GetLoadTimeRealType(const FuncInfo& func) const;
-        DataTypeInfo GetLoadTimeRealType(const VariableInfo& vars) const;
+        VarTypeInfo GetLoadTimeRealType(const FuncInfo& func) const;
+        VarTypeInfo GetLoadTimeRealType(const VariableInfo& vars) const;
+    };
+    struct BraceApiRuntimeInfo final
+    {
+        int8_t Type;
+        int8_t IsGlobal;
+        int32_t VarIndex;
+
+        BraceApiRuntimeInfo(void) = default;
+        BraceApiRuntimeInfo(int type, int varIndex, bool isGlobal) :Type(type), VarIndex(varIndex), IsGlobal(isGlobal ? 1 : 0)
+        {}
+        BraceApiRuntimeInfo(const BraceApiLoadInfo& loadInfo):Type(loadInfo.Type), VarIndex(loadInfo.VarIndex), IsGlobal(loadInfo.IsGlobal ? 1 : 0)
+        {}
+        BraceApiRuntimeInfo& operator=(const BraceApiLoadInfo& loadInfo)
+        {
+            Type = loadInfo.Type;
+            VarIndex = loadInfo.VarIndex;
+            IsGlobal = loadInfo.IsGlobal ? 1 : 0;
+            return *this;
+        }
     };
     struct ReferenceInfo final : public RegisterInfo
     {
@@ -178,6 +197,7 @@ namespace Brace
             ObjectTypeId = objTypeId;
             VarIndex = index;
         }
+        static ReferenceInfo BuildFromRuntimeInfo(const BraceApiRuntimeInfo& runtimeInfo, VariableInfo* vars);
     };
 
     union NumericValue final
@@ -345,7 +365,7 @@ namespace Brace
     /// We implement first one first.
     class BraceScript;
     //We only need a member function to run, not a virtual function
-    using BraceApiExecutor = Delegation<int(void)>;
+    using BraceApiExecutor = Delegation<int(VariableInfo&,VariableInfo&)>;
     class IBraceApi
     {
     public:
@@ -365,6 +385,19 @@ namespace Brace
     {
         std::vector<ParamTypeInfo> Params;
         DataTypeInfo RetValue;
+    };
+    struct Instruction final
+    {
+        uint64_t Opcode : 7;
+        uint64_t ResultIsGlobal : 1;
+        uint64_t ResultType : 4;
+        uint64_t FirstIsGlobal : 1;
+        uint64_t FirstType : 4;
+        uint64_t SecondIsGlobal : 1;
+        uint64_t SecondType : 4;
+        uint64_t ResultVarIndex : 14;
+        uint64_t FirstVarIndex : 14;
+        uint64_t SecondVarIndex : 14;
     };
     struct FuncInfo final
     {
@@ -448,6 +481,7 @@ namespace Brace
         int GenNextUniqueId(void)const;
         int CurBlockId(void)const;
         std::vector<int>& CurBlockObjVars(void)const;
+        std::vector<Instruction>& CurBasicBlock(void)const;
         void PushBlock(void)const;
         void PopBlock(void)const;
         int AllocGlobalVariable(const std::string& name, int type, int objTypeId)const;
@@ -495,20 +529,20 @@ namespace Brace
         void Build(const std::string& func) { Build(*CurFuncInfo(), func); }
         void Build(const FuncInfo& callerFunc, const std::string& func);
         bool IsValid(void)const;
-        int Run(void)const;
+        int Run(VariableInfo& gvars, VariableInfo& lvars)const;
         int GetArgCount(void)const;
-        const BraceApiLoadInfo* ArgInfo(int ix) const;
-        const BraceApiLoadInfo* ResultInfo(void) const;
+        const BraceApiRuntimeInfo* ArgInfo(int ix) const;
+        const BraceApiRuntimeInfo* ResultInfo(void) const;
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     private:
-        int Execute(void)const;
+        int Execute(VariableInfo& gvars, VariableInfo& lvars)const;
     private:
         const FuncInfo* m_Func;
         std::vector<BraceApiExecutor> m_Args;
-        std::vector<BraceApiLoadInfo> m_ArgLoadInfos;
+        std::vector<BraceApiRuntimeInfo> m_ArgInfos;
         std::vector<VarAssignPtr> m_ArgAssigns;
-        BraceApiLoadInfo m_ResultInfo;
+        BraceApiRuntimeInfo m_ResultInfo;
         VarAssignPtr m_ResultAssign;
 
         BraceApiExecutor m_CodeExecutor;
@@ -521,12 +555,12 @@ namespace Brace
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const = 0;
+        virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
         bool m_IsAssignment;
         BraceApiExecutor m_Op1;
-        BraceApiLoadInfo m_LoadInfo1;
-        BraceApiLoadInfo m_ResultInfo;
+        BraceApiRuntimeInfo m_ArgInfo1;
+        BraceApiRuntimeInfo m_ResultInfo;
     };
     class BinaryOperatorBaseExp : public AbstractBraceApi
     {
@@ -535,14 +569,14 @@ namespace Brace
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, const DataTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const = 0;
+        virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
         bool m_IsAssignment;
         BraceApiExecutor m_Op1;
         BraceApiExecutor m_Op2;
-        BraceApiLoadInfo m_LoadInfo1;
-        BraceApiLoadInfo m_LoadInfo2;
-        BraceApiLoadInfo m_ResultInfo;
+        BraceApiRuntimeInfo m_ArgInfo1;
+        BraceApiRuntimeInfo m_ArgInfo2;
+        BraceApiRuntimeInfo m_ResultInfo;
     };
 
     /// <summary>
@@ -556,13 +590,13 @@ namespace Brace
         virtual bool LoadCall(const FuncInfo& func, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
         virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const;
-        virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiLoadInfo>& argInfos, const BraceApiLoadInfo& resultInfo)const = 0;
+        virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiRuntimeInfo>& argInfos, const BraceApiRuntimeInfo& resultInfo)const = 0;
     private:
-        int ExecuteImpl(void)const;
+        int ExecuteImpl(VariableInfo& gvars, VariableInfo& lvars)const;
     private:
         std::vector<Brace::BraceApiExecutor> m_Args;
-        std::vector<Brace::BraceApiLoadInfo> m_ArgLoadInfos;
-        Brace::BraceApiLoadInfo m_ResultInfo;
+        std::vector<Brace::BraceApiRuntimeInfo> m_ArgInfos;
+        Brace::BraceApiRuntimeInfo m_ResultInfo;
     };
 
     template<typename ApiT>
@@ -651,8 +685,10 @@ namespace Brace
         {
             int BlockId;
             std::vector<int> ObjVars;
+            //Standby for simple VM and DAG optimization implementations, Each basic block is implemented as a BraceApiExecutor
+            std::vector<Instruction> BasicBlock;
 
-            BlockInfo(int blockId) :BlockId(blockId), ObjVars()
+            BlockInfo(int blockId) :BlockId(blockId), ObjVars(), BasicBlock()
             {}
         };
     public:
@@ -741,6 +777,8 @@ namespace Brace
         int CurBlockId(void)const;
         const std::vector<int>& CurBlockObjVars(void)const;
         std::vector<int>& CurBlockObjVars(void);
+        const std::vector<Instruction>& CurBasicBlock(void)const;
+        std::vector<Instruction>& CurBasicBlock(void);
         void PushBlock(void);
         void PopBlock(void);
         std::string CalcVarKey(const std::string& name, int level)const;
