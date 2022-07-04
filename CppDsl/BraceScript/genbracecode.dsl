@@ -349,8 +349,8 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -360,8 +360,8 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -371,8 +371,8 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -382,8 +382,8 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -393,8 +393,8 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -404,8 +404,8 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.Type, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -419,7 +419,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         {
             if (!m_Op1.isNull())
                 m_Op1(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -427,7 +427,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         {
             if (!m_Op1.isNull())
                 m_Op1(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -435,7 +435,7 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
         {
             if (!m_Op1.isNull())
                 m_Op1(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.Type, m_LoadInfo1.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -451,8 +451,8 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -462,8 +462,8 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -473,8 +473,8 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -484,8 +484,8 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -495,8 +495,8 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(lvars, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -506,8 +506,8 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
                 m_Op1(gvars, lvars);
             if (!m_Op2.isNull())
                 m_Op2(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.VarIndex);
-            {% $operandType %} v2 = {% $varGet %}(gvars, m_LoadInfo2.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.VarIndex);
+            {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -521,7 +521,7 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
         {
             if (!m_Op1.isNull())
                 m_Op1(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -529,7 +529,7 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
         {
             if (!m_Op1.isNull())
                 m_Op1(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(gvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -537,7 +537,7 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
         {
             if (!m_Op1.isNull())
                 m_Op1(gvars, lvars);
-            {% $operandType %} v1 = {% $varGet %}(lvars, m_LoadInfo1.VarIndex);
+            {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
@@ -547,21 +547,21 @@ script(getBinaryExecuteBuildCode)args($className, $postfix)
 {
     return(block
     {:
-                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
-                    if(m_LoadInfo2.IsGlobal){
+                if (m_IsAssignment && load1.IsGlobal) {
+                    if(load2.IsGlobal){
                         executor.attach(this, &{% $className %}::ExecuteGG2G{% $postfix %});
                     }
                     else{
                         executor.attach(this, &{% $className %}::ExecuteGL2G{% $postfix %});
                     }
                 }
-                else if (m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                else if (load1.IsGlobal && load2.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteGG{% $postfix %});
-                } else if (!m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
+                } else if (!load1.IsGlobal && !load2.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteLL{% $postfix %});
-                } else if (m_LoadInfo1.IsGlobal && !m_LoadInfo2.IsGlobal) {
+                } else if (load1.IsGlobal && !load2.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteGL{% $postfix %});
-                } else if (!m_LoadInfo1.IsGlobal && m_LoadInfo2.IsGlobal) {
+                } else if (!load1.IsGlobal && load2.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteLG{% $postfix %});
                 }
     :});
@@ -570,10 +570,10 @@ script(getUnaryExecuteBuildCode)args($className, $postfix)
 {
     return(block
     {:
-                if (m_IsAssignment && m_LoadInfo1.IsGlobal) {
+                if (m_IsAssignment && load1.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteG2G{% $postfix %});
                 }
-                else if(m_LoadInfo1.IsGlobal) {
+                else if(load1.IsGlobal) {
                     executor.attach(this, &{% $className %}::ExecuteG{% $postfix %});
                 } else {
                     executor.attach(this, &{% $className %}::ExecuteL{% $postfix %});
@@ -622,9 +622,9 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_STRING";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type == m_LoadInfo2.Type) {
+            else if (load1.Type == load2.Type) {
                 resultType = BRACE_DATA_TYPE_BOOL;
-                switch (m_LoadInfo1.Type) {
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
 {% getBinaryExecuteBuildCode($className, "BoolBoth"); %}
                     break;
@@ -704,9 +704,9 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_STRING";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type == m_LoadInfo2.Type) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
+            else if (load1.Type == load2.Type) {
+                resultType = load1.Type;
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
 {% getBinaryExecuteBuildCode($className, "BoolBoth"); %}
                     break;
@@ -782,9 +782,9 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_DOUBLE";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type == m_LoadInfo2.Type && m_LoadInfo1.Type != BRACE_DATA_TYPE_BOOL) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
+            else if (load1.Type == load2.Type && load1.Type != BRACE_DATA_TYPE_BOOL) {
+                resultType = load1.Type;
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getBinaryExecuteBuildCode($className, "Int8Both"); %}
                     break;
@@ -848,9 +848,9 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type == m_LoadInfo2.Type) {
+            else if (load1.Type == load2.Type) {
                 resultType = BRACE_DATA_TYPE_BOOL;
-                switch (m_LoadInfo1.Type) {
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
 {% getBinaryExecuteBuildCode($className, "BoolBoth"); %}
                     break;
@@ -903,9 +903,9 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type == m_LoadInfo2.Type && m_LoadInfo1.Type != BRACE_DATA_TYPE_BOOL) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
+            else if (load1.Type == load2.Type && load1.Type != BRACE_DATA_TYPE_BOOL) {
+                resultType = load1.Type;
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getBinaryExecuteBuildCode($className, "Int8Both"); %}
                     break;
@@ -963,7 +963,7 @@ script(writeBinaryExp)args($className, $op)
         {
         }
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, const DataTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = GetMaxType(load1.Type, load2.Type);
             if (resultType > {% $maxType %}) {
@@ -986,9 +986,9 @@ script(writeUnaryNumericExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_UINT64) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
+            else if (load1.Type >= BRACE_DATA_TYPE_INT8 && load1.Type <= BRACE_DATA_TYPE_UINT64) {
+                resultType = load1.Type;
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getUnaryExecuteBuildCode($className, "Int8Both"); %}
                     break;
@@ -1041,9 +1041,9 @@ script(writeUnaryNumericExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_DOUBLE";
         $buildArithExecutor = block
         {:
-            else if (IsSignedType(m_LoadInfo1.Type) || IsFloatType(m_LoadInfo1.Type)) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
+            else if (IsSignedType(load1.Type) || IsFloatType(load1.Type)) {
+                resultType = load1.Type;
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getUnaryExecuteBuildCode($className, "Int8Both"); %}
                     break;
@@ -1085,9 +1085,9 @@ script(writeUnaryNumericExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_DOUBLE";
         $buildArithExecutor = block
         {:
-            else if (m_LoadInfo1.Type >= BRACE_DATA_TYPE_INT8 && m_LoadInfo1.Type <= BRACE_DATA_TYPE_DOUBLE) {
-                resultType = m_LoadInfo1.Type;
-                switch (m_LoadInfo1.Type) {
+            else if (load1.Type >= BRACE_DATA_TYPE_INT8 && load1.Type <= BRACE_DATA_TYPE_DOUBLE) {
+                resultType = load1.Type;
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getUnaryExecuteBuildCode($className, "Int8Both"); %}
                     break;
@@ -1157,12 +1157,12 @@ script(writeUnaryNumericExp)args($className, $op)
         {
         }
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = load1.Type;
             if (resultType >= {% $maxType %}) {
                 std::stringstream ss;
-                ss << "operator {% $op %}, operand type dismatch, " << GetDataTypeName(m_LoadInfo1.Type) << ", line " << data.GetLine();
+                ss << "operator {% $op %}, operand type dismatch, " << GetDataTypeName(load1.Type) << ", line " << data.GetLine();
                 LogError(ss.str());
                 return false;
             }
@@ -1185,7 +1185,7 @@ script(writeNotExp)
         {
         }
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const DataTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = load1.Type;
             if (resultType >= BRACE_DATA_TYPE_FLOAT) {
@@ -1194,9 +1194,9 @@ script(writeNotExp)
                 LogError(ss.str());
                 return false;
             }
-            else if (m_LoadInfo1.Type <= BRACE_DATA_TYPE_UINT64) {
+            else if (load1.Type <= BRACE_DATA_TYPE_UINT64) {
                 resultType = BRACE_DATA_TYPE_BOOL;
-                switch (m_LoadInfo1.Type) {
+                switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
 {% getUnaryExecuteBuildCode("NotExp", "BoolBoth"); %}
                     break;

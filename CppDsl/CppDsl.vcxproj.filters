@@ -112,7 +112,5 @@
     <None Include="Parser\ByteCode.inl">
       <Filter>Parser</Filter>
     </None>
-    <None Include="BraceScript\BraceScript_ArithUnit.inl" />
-    <None Include="BraceScript\BraceScript_Assignment.inl" />
   </ItemGroup>
 </Project>

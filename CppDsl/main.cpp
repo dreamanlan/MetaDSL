@@ -168,7 +168,24 @@ int main(int argc, char* argv[])
             int64_t v = Brace::VarGetI64(*script.GlobalVariables(), funcExer.ResultInfo()->Type, funcExer.ResultInfo()->VarIndex);
             printf("FunctionExecutor result: %lld\n", static_cast<long long>(v));
         }
+        //------
+        std::cout << "DataTypeInfo:" << sizeof(Brace::DataTypeInfo) << std::endl;
+        std::cout << "RegisterInfo:" << sizeof(Brace::RegisterInfo) << std::endl;
+        std::cout << "ParamTypeInfo:" << sizeof(Brace::ParamTypeInfo) << std::endl;
+        std::cout << "VarTypeInfo:" << sizeof(Brace::VarTypeInfo) << std::endl;
+        std::cout << "VarInfo:" << sizeof(Brace::VarInfo) << std::endl;
+        std::cout << "ParamRetInfo:" << sizeof(Brace::ParamRetInfo) << std::endl;
+        std::cout << "BraceApiLoadInfo:" << sizeof(Brace::BraceApiLoadInfo) << std::endl;
+        std::cout << "BraceApiRuntimeInfo:" << sizeof(Brace::BraceApiRuntimeInfo) << std::endl;
+        std::cout << "ReferenceInfo:" << sizeof(Brace::ReferenceInfo) << std::endl;
+        std::cout << "NumericValue:" << sizeof(Brace::NumericValue) << std::endl;
+        std::cout << "VariableInfo:" << sizeof(Brace::VariableInfo) << std::endl;
+        std::cout << "FuncApiTypeInfo:" << sizeof(Brace::FuncApiTypeInfo) << std::endl;
+        std::cout << "Instruction:" << sizeof(Brace::Instruction) << std::endl;
+        std::cout << "FuncInfo:" << sizeof(Brace::FuncInfo) << std::endl;
+        std::cout << "RuntimeStackInfo:" << sizeof(Brace::RuntimeStackInfo) << std::endl;
 
+        //------
         printf("Enter script:");
         std::string scp;
         std::getline(std::cin, scp);
@@ -219,7 +236,7 @@ protected:
         resultInfo = Brace::BraceApiLoadInfo();
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
     {
         auto sv = std::chrono::system_clock::now();
 
@@ -254,7 +271,7 @@ protected:
         resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiLoadInfo>& argInfos, const Brace::BraceApiLoadInfo& resultInfo)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
     {
         auto cv = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = cv - g_start_time_point;

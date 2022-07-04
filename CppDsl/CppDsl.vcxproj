@@ -211,8 +211,6 @@
     <ClInclude Include="Parser\SourceCodeScript.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="BraceScript\BraceScript_ArithUnit.inl" />
-    <None Include="BraceScript\BraceScript_Assignment.inl" />
     <None Include="Parser\ByteCode.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
