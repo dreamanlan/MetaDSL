@@ -110,19 +110,19 @@ namespace Brace
         bool IsGlobal;
         std::string Name;
 
-        VarInfo(void) :Name(), IsGlobal(false)
+        VarInfo(void) :IsGlobal(false), Name()
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
             ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
         }
-        VarInfo(const std::string& name, int type, int objTypeId, int index) :Name(name), IsGlobal(false)
+        VarInfo(const std::string& name, int type, int objTypeId, int index) :IsGlobal(false), Name(name)
         {
             Type = type;
             ObjectTypeId = objTypeId;
             VarIndex = index;
         }
-        VarInfo(const std::string& name, int type, int objTypeId, int index, bool isGlobal) :Name(name), IsGlobal(isGlobal)
+        VarInfo(const std::string& name, int type, int objTypeId, int index, bool isGlobal) :IsGlobal(isGlobal), Name(name)
         {
             Type = type;
             ObjectTypeId = objTypeId;
@@ -134,19 +134,19 @@ namespace Brace
         bool IsRef;
         std::string Name;
 
-        ParamRetInfo(void) :Name(), IsRef(false)
+        ParamRetInfo(void) :IsRef(false), Name()
         {
             Type = BRACE_DATA_TYPE_UNKNOWN;
             ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = INVALID_INDEX;
         }
-        ParamRetInfo(const std::string& name, int type, int objTypeId, int index) :Name(name), IsRef(false)
+        ParamRetInfo(const std::string& name, int type, int objTypeId, int index) :IsRef(false), Name(name)
         {
             Type = type;
             ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             VarIndex = index;
         }
-        ParamRetInfo(const std::string& name, int type, int objTypeId, int index, bool isRef) :Name(name), IsRef(isRef)
+        ParamRetInfo(const std::string& name, int type, int objTypeId, int index, bool isRef) :IsRef(isRef), Name(name)
         {
             Type = type;
             ObjectTypeId = objTypeId;
@@ -178,15 +178,15 @@ namespace Brace
 
         BraceApiRuntimeInfo(void):Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX)
         {}
-        BraceApiRuntimeInfo(int type, int varIndex, bool isGlobal) :Type(type), VarIndex(varIndex), IsGlobal(isGlobal ? 1 : 0)
+        BraceApiRuntimeInfo(int type, int varIndex, bool isGlobal) :Type(type), IsGlobal(isGlobal ? 1 : 0), VarIndex(varIndex)
         {}
-        BraceApiRuntimeInfo(const BraceApiLoadInfo& loadInfo):Type(loadInfo.Type), VarIndex(loadInfo.VarIndex), IsGlobal(loadInfo.IsGlobal ? 1 : 0)
+        BraceApiRuntimeInfo(const BraceApiLoadInfo& loadInfo):Type(loadInfo.Type), IsGlobal(loadInfo.IsGlobal ? 1 : 0), VarIndex(loadInfo.VarIndex)
         {}
         BraceApiRuntimeInfo& operator=(const BraceApiLoadInfo& loadInfo)
         {
             Type = loadInfo.Type;
-            VarIndex = loadInfo.VarIndex;
             IsGlobal = loadInfo.IsGlobal ? 1 : 0;
+            VarIndex = loadInfo.VarIndex;
             return *this;
         }
     };
