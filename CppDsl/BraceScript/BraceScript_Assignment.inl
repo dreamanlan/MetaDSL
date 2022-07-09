@@ -4100,7 +4100,7 @@ void VarSetStr(VariableInfo& info, int type, int index, std::string&& val)
     }
 }
 
-static inline bool NeedStringArithUnit(int type1, int type2)
+static constexpr inline bool NeedStringArithUnit(int type1, int type2)
 {
     int type = GetMaxType(type1, type2);
     if (type >= BRACE_DATA_TYPE_STRING)
@@ -4108,7 +4108,7 @@ static inline bool NeedStringArithUnit(int type1, int type2)
     else
         return false;
 }
-static inline bool NeedFloatArithUnit(int type1, int type2)
+static constexpr inline bool NeedFloatArithUnit(int type1, int type2)
 {
     int type = GetMaxType(type1, type2);
     if (type >= BRACE_DATA_TYPE_FLOAT)
@@ -4116,7 +4116,7 @@ static inline bool NeedFloatArithUnit(int type1, int type2)
     else
         return false;
 }
-static inline bool NeedUnsignedArithUnit(int type1, int type2)
+static constexpr inline bool NeedUnsignedArithUnit(int type1, int type2)
 {
     int type = GetMaxType(type1, type2);
     if (type >= BRACE_DATA_TYPE_UINT64) {
@@ -4127,7 +4127,7 @@ static inline bool NeedUnsignedArithUnit(int type1, int type2)
     }
     return false;
 }
-static inline bool CanAssign(int destType, int srcType)
+static constexpr inline bool CanAssign(int destType, int srcType)
 {
     switch (destType) {
     case BRACE_DATA_TYPE_BOOL: {
