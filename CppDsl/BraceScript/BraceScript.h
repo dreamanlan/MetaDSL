@@ -250,11 +250,11 @@ namespace Brace
     extern void VarSetStr(VariableInfo& info, int type, int index, const std::string& val);
     extern void VarSetStr(VariableInfo& info, int type, int index, std::string&& val);
 
-    static inline int GetMaxType(int type1, int type2)
+    static inline constexpr int GetMaxType(int type1, int type2)
     {
         return type1 < type2 ? type2 : type1;
     }
-    static inline bool IsSignedType(int type)
+    static inline constexpr bool IsSignedType(int type)
     {
         switch (type) {
         case BRACE_DATA_TYPE_INT8:
@@ -265,7 +265,7 @@ namespace Brace
         }
         return false;
     }
-    static inline bool IsUnsignedType(int type)
+    static inline constexpr bool IsUnsignedType(int type)
     {
         switch (type) {
         case BRACE_DATA_TYPE_UINT8:
@@ -276,7 +276,7 @@ namespace Brace
         }
         return false;
     }
-    static inline bool IsFloatType(int type)
+    static inline constexpr bool IsFloatType(int type)
     {
         switch (type) {
         case BRACE_DATA_TYPE_FLOAT:
@@ -285,7 +285,7 @@ namespace Brace
         }
         return false;
     }
-    static inline bool IsBoolType(int type)
+    static inline constexpr bool IsBoolType(int type)
     {
         switch (type) {
         case BRACE_DATA_TYPE_BOOL:
@@ -293,10 +293,26 @@ namespace Brace
         }
         return false;
     }
-    static inline bool IsStringType(int type)
+    static inline constexpr bool IsStringType(int type)
     {
         switch (type) {
         case BRACE_DATA_TYPE_STRING:
+            return true;
+        }
+        return false;
+    }
+    static inline constexpr bool IsObjectType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_OBJECT:
+            return true;
+        }
+        return false;
+    }
+    static inline constexpr bool IsReferenceType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_REF:
             return true;
         }
         return false;
