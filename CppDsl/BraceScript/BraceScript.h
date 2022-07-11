@@ -466,6 +466,8 @@ namespace Brace
     class AbstractBraceApi;
     class BraceApiImplHelper
     {
+    public:
+        virtual ~BraceApiImplHelper(void) {}
     protected:
         const char* GetTypeName(int type)const { return GetDataTypeName(type); }
         std::string GenTempVarName(void)const;
