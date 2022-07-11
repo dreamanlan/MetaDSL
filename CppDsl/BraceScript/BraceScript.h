@@ -463,32 +463,9 @@ namespace Brace
         virtual ~IBraceApiFactory(void) {}
     };
 
-    class AbstractBraceApi : public IBraceApi
+    class AbstractBraceApi;
+    class BraceApiImplHelper
     {
-        friend class FunctionExecutor;
-    public:
-        virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
-    protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
-        {
-            return false;
-        }
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
-        {
-            return false;
-        }
-        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
-        {
-            return false;
-        }
-        virtual bool LoadHighOrderCall(const FuncInfo& curFunc, const DslData::FunctionData& data, BraceApiExecutor& lowerFunc, BraceApiLoadInfo& lowerFuncInfo)
-        {
-            return false;
-        }
-        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
-        {
-            return false;
-        }
     protected:
         const char* GetTypeName(int type)const { return GetDataTypeName(type); }
         std::string GenTempVarName(void)const;
@@ -527,22 +504,58 @@ namespace Brace
         void PushRuntimeStack(const FuncInfo* funcInfo)const;
         void PopRuntimeStack(void)const;
     protected:
-        AbstractBraceApi(BraceScript& interpreter) :m_Interpreter(interpreter)
-        {}
-    private:
         FuncInfo* CurFuncInfo(void)const;
         AbstractBraceApi* GetFailbackApi(void)const;
+    protected:
+        BraceApiImplHelper(BraceScript& interpreter) :m_Interpreter(interpreter)
+        {}
     private:
-        AbstractBraceApi(const AbstractBraceApi&) = delete;
-        AbstractBraceApi& operator=(const AbstractBraceApi&) = delete;
-        AbstractBraceApi(AbstractBraceApi&&) noexcept = delete;
-        AbstractBraceApi& operator=(AbstractBraceApi&&) noexcept = delete;
+        BraceApiImplHelper(const BraceApiImplHelper&) = delete;
+        BraceApiImplHelper& operator=(const BraceApiImplHelper&) = delete;
+        BraceApiImplHelper(BraceApiImplHelper&&) noexcept = delete;
+        BraceApiImplHelper& operator=(BraceApiImplHelper&&) noexcept = delete;
     private:
         BraceScript& GetInterpreter(void)const { return m_Interpreter; }
     private:
         BraceScript& m_Interpreter;
     protected:
         static void FreeObjVars(VariableInfo& vars, const std::vector<int>& objVars);
+    };
+
+    class AbstractBraceApi : public IBraceApi, public BraceApiImplHelper
+    {
+        friend class FunctionExecutor;
+    public:
+        virtual bool Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
+    protected:
+        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        {
+            return false;
+        }
+        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        {
+            return false;
+        }
+        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        {
+            return false;
+        }
+        virtual bool LoadHighOrderCall(const FuncInfo& curFunc, const DslData::FunctionData& data, BraceApiExecutor& lowerFunc, BraceApiLoadInfo& lowerFuncInfo)
+        {
+            return false;
+        }
+        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<BraceApiExecutor>& args, std::vector<BraceApiLoadInfo>& argLoadInfos, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
+        {
+            return false;
+        }
+    protected:
+        AbstractBraceApi(BraceScript& interpreter) :BraceApiImplHelper(interpreter)
+        {}
+    private:
+        AbstractBraceApi(const AbstractBraceApi&) = delete;
+        AbstractBraceApi& operator=(const AbstractBraceApi&) = delete;
+        AbstractBraceApi(AbstractBraceApi&&) noexcept = delete;
+        AbstractBraceApi& operator=(AbstractBraceApi&&) noexcept = delete;
     };
 
     class FunctionExecutor final : public AbstractBraceApi
@@ -705,7 +718,7 @@ namespace Brace
     typedef std::function<RuntimeStack*(void)> GetRuntimeStackDelegation;
     class BraceScript final
     {
-        friend class AbstractBraceApi;
+        friend class BraceApiImplHelper;
         struct BlockInfo final
         {
             int BlockId;

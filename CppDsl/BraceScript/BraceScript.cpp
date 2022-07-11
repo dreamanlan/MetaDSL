@@ -9,14 +9,181 @@ namespace Brace
 {
 #include "BraceScript_Assignment.inl"
 
-    FuncInfo* AbstractBraceApi::CurFuncInfo(void)const
+    std::string BraceApiImplHelper::GenTempVarName(void)const
+    {
+        return std::string("_t_") + std::to_string(GenNextUniqueId());
+    }
+    FuncApiTypeInfo* BraceApiImplHelper::GetFuncApiTypeInfo(const std::string& name)const
+    {
+        return GetInterpreter().GetFuncApiTypeInfo(name);
+    }
+    FuncInfo* BraceApiImplHelper::GetFuncInfo(const std::string& name)const
+    {
+        return GetInterpreter().GetFuncInfo(name);
+    }
+    VarInfo* BraceApiImplHelper::GetGlobalVarInfo(const std::string& name)const
+    {
+        auto* info = GetInterpreter().GlobalFuncInfo();
+        if (nullptr == info)
+            return nullptr;
+        auto& varInfos = info->VarTypeInfos;
+        auto it = varInfos.find(name);
+        if (it != varInfos.end()) {
+            return &(it->second);
+        }
+        return nullptr;
+    }
+    VarInfo* BraceApiImplHelper::GetVarInfo(const std::string& name)const
+    {
+        auto& interpreter = GetInterpreter();
+        auto* info = interpreter.CurFuncInfo();
+        if (nullptr == info)
+            return nullptr;
+        std::string key;
+        int level;
+        auto it = interpreter.FindVariable(info, name, key, level);
+        if (it != info->VarTypeInfos.end()) {
+            return &(it->second);
+        }
+        return nullptr;
+    }
+    VarInfo* BraceApiImplHelper::GetConstInfo(int tok_type, const std::string& name)const
+    {
+        auto& interpreter = GetInterpreter();
+        auto* info = interpreter.GlobalFuncInfo();
+        if (nullptr == info)
+            return nullptr;
+        auto& varInfos = info->VarTypeInfos;
+        std::string key = interpreter.CalcConstKey(tok_type, name);
+        auto it = varInfos.find(key);
+        if (it != varInfos.end()) {
+            return &(it->second);
+        }
+        return nullptr;
+    }
+    int BraceApiImplHelper::GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const
+    {
+        return GetInterpreter().GetObjectTypeId(typeSyntax);
+    }
+    const char* BraceApiImplHelper::GetObjectTypeName(int objTypeId)const
+    {
+        return GetInterpreter().GetObjectTypeName(objTypeId);
+    }
+    ParamTypeInfo BraceApiImplHelper::ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const
+    {
+        return GetInterpreter().ParseParamTypeInfo(syntax);
+    }
+    bool BraceApiImplHelper::CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId)const
+    {
+        return GetInterpreter().CanAssign(destType, destObjTypeId, srcType, srcObjTypeId);
+    }
+    FuncInfo* BraceApiImplHelper::PushFuncInfo(const std::string& name)const
+    {
+        return GetInterpreter().PushFuncInfo(name);
+    }
+    void BraceApiImplHelper::PopFuncInfo(void)const
+    {
+        GetInterpreter().PopFuncInfo();
+    }
+    int BraceApiImplHelper::GenNextUniqueId(void)const
+    {
+        return GetInterpreter().GenNextUniqueId();
+    }
+    int BraceApiImplHelper::CurBlockId(void)const
+    {
+        return GetInterpreter().CurBlockId();
+    }
+    std::vector<int>& BraceApiImplHelper::CurBlockObjVars(void)const
+    {
+        return GetInterpreter().CurBlockObjVars();
+    }
+    std::vector<Instruction>& BraceApiImplHelper::CurBasicBlock(void)const
+    {
+        return GetInterpreter().CurBasicBlock();
+    }
+    void BraceApiImplHelper::PushBlock(void)const
+    {
+        GetInterpreter().PushBlock();
+    }
+    void BraceApiImplHelper::PopBlock(void)const
+    {
+        GetInterpreter().PopBlock();
+    }
+    int BraceApiImplHelper::AllocGlobalVariable(const std::string& name, int type, int objTypeId)const
+    {
+        return GetInterpreter().AllocGlobalVariable(name, type, objTypeId);
+    }
+    int BraceApiImplHelper::AllocVariable(const std::string& name, int type, int objTypeId)const
+    {
+        return GetInterpreter().AllocVariable(name, type, objTypeId);
+    }
+    int BraceApiImplHelper::AllocConst(int tok_type, const std::string& value, int& type)const
+    {
+        return GetInterpreter().AllocConst(tok_type, value, type);
+    }
+    void BraceApiImplHelper::LogInfo(const std::string& msg)const
+    {
+        GetInterpreter().LogInfo(msg);
+    }
+    void BraceApiImplHelper::LogWarn(const std::string& msg)const
+    {
+        GetInterpreter().LogWarn(msg);
+    }
+    void BraceApiImplHelper::LogError(const std::string& msg)const
+    {
+        GetInterpreter().LogError(msg);
+    }
+    void BraceApiImplHelper::AddSyntaxComponent(DslData::ISyntaxComponent* p)const
+    {
+        GetInterpreter().AddSyntaxComponent(p);
+    }
+    void BraceApiImplHelper::AddApiInstance(IBraceApi* p)const
+    {
+        GetInterpreter().AddApiInstance(p);
+    }
+    BraceApiExecutor BraceApiImplHelper::LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo)const
+    {
+        return GetInterpreter().Load(syntaxUnit, resultInfo);
+    }
+
+    bool BraceApiImplHelper::IsForceQuit(void)const
+    {
+        return GetInterpreter().IsForceQuit();
+    }
+    FuncInfo* BraceApiImplHelper::GlobalFuncInfo(void)const
+    {
+        return GetInterpreter().GlobalFuncInfo();
+    }
+    VariableInfo* BraceApiImplHelper::GlobalVariables(void)const
+    {
+        return GetInterpreter().GlobalVariables();
+    }
+    const FuncInfo* BraceApiImplHelper::CurRuntimeFuncInfo(void)const
+    {
+        return GetInterpreter().CurRuntimeFuncInfo();
+    }
+    VariableInfo* BraceApiImplHelper::CurRuntimeVariables(void)const
+    {
+        return GetInterpreter().CurRuntimeVariables();
+    }
+    void BraceApiImplHelper::PushRuntimeStack(const FuncInfo* funcInfo)const
+    {
+        GetInterpreter().PushRuntimeStack(funcInfo);
+    }
+    void BraceApiImplHelper::PopRuntimeStack(void)const
+    {
+        GetInterpreter().PopRuntimeStack();
+    }
+
+    FuncInfo* BraceApiImplHelper::CurFuncInfo(void)const
     {
         return GetInterpreter().CurFuncInfo();
     }
-    AbstractBraceApi* AbstractBraceApi::GetFailbackApi(void)const
+    AbstractBraceApi* BraceApiImplHelper::GetFailbackApi(void)const
     {
         return GetInterpreter().GetFailbackApi();
     }
+
     bool AbstractBraceApi::Load(const DslData::ISyntaxComponent& syntax, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor)
     {
         bool ret = false;
@@ -77,177 +244,11 @@ namespace Brace
         }
         return ret;
     }
-    void AbstractBraceApi::FreeObjVars(VariableInfo& vars, const std::vector<int>& objVars)
+    void BraceApiImplHelper::FreeObjVars(VariableInfo& vars, const std::vector<int>& objVars)
     {
         for (auto ix : objVars) {
             VarSetObject(vars, ix, nullptr);
         }
-    }
-
-    std::string AbstractBraceApi::GenTempVarName(void)const
-    {
-        return std::string("_t_") + std::to_string(GenNextUniqueId());
-    }
-    FuncApiTypeInfo* AbstractBraceApi::GetFuncApiTypeInfo(const std::string& name)const
-    {
-        return GetInterpreter().GetFuncApiTypeInfo(name);
-    }
-    FuncInfo* AbstractBraceApi::GetFuncInfo(const std::string& name)const
-    {
-        return GetInterpreter().GetFuncInfo(name);
-    }
-    VarInfo* AbstractBraceApi::GetGlobalVarInfo(const std::string& name)const
-    {
-        auto* info = GetInterpreter().GlobalFuncInfo();
-        if (nullptr == info)
-            return nullptr;
-        auto& varInfos = info->VarTypeInfos;
-        auto it = varInfos.find(name);
-        if (it != varInfos.end()) {
-            return &(it->second);
-        }
-        return nullptr;
-    }
-    VarInfo* AbstractBraceApi::GetVarInfo(const std::string& name)const
-    {
-        auto& interpreter = GetInterpreter();
-        auto* info = interpreter.CurFuncInfo();
-        if (nullptr == info)
-            return nullptr;
-        std::string key;
-        int level;
-        auto it = interpreter.FindVariable(info, name, key, level);
-        if (it != info->VarTypeInfos.end()) {
-            return &(it->second);
-        }
-        return nullptr;
-    }
-    VarInfo* AbstractBraceApi::GetConstInfo(int tok_type, const std::string& name)const
-    {
-        auto& interpreter = GetInterpreter();
-        auto* info = interpreter.GlobalFuncInfo();
-        if (nullptr == info)
-            return nullptr;
-        auto& varInfos = info->VarTypeInfos;
-        std::string key = interpreter.CalcConstKey(tok_type, name);
-        auto it = varInfos.find(key);
-        if (it != varInfos.end()) {
-            return &(it->second);
-        }
-        return nullptr;
-    }
-    int AbstractBraceApi::GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const
-    {
-        return GetInterpreter().GetObjectTypeId(typeSyntax);
-    }
-    const char* AbstractBraceApi::GetObjectTypeName(int objTypeId)const
-    {
-        return GetInterpreter().GetObjectTypeName(objTypeId);
-    }
-    ParamTypeInfo AbstractBraceApi::ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const
-    {
-        return GetInterpreter().ParseParamTypeInfo(syntax);
-    }
-    bool AbstractBraceApi::CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId)const
-    {
-        return GetInterpreter().CanAssign(destType, destObjTypeId, srcType, srcObjTypeId);
-    }
-    FuncInfo* AbstractBraceApi::PushFuncInfo(const std::string& name)const
-    {
-        return GetInterpreter().PushFuncInfo(name);
-    }
-    void AbstractBraceApi::PopFuncInfo(void)const
-    {
-        GetInterpreter().PopFuncInfo();
-    }
-    int AbstractBraceApi::GenNextUniqueId(void)const
-    {
-        return GetInterpreter().GenNextUniqueId();
-    }
-    int AbstractBraceApi::CurBlockId(void)const
-    {
-        return GetInterpreter().CurBlockId();
-    }
-    std::vector<int>& AbstractBraceApi::CurBlockObjVars(void)const
-    {
-        return GetInterpreter().CurBlockObjVars();
-    }
-    std::vector<Instruction>& AbstractBraceApi::CurBasicBlock(void)const
-    {
-        return GetInterpreter().CurBasicBlock();
-    }
-    void AbstractBraceApi::PushBlock(void)const
-    {
-        GetInterpreter().PushBlock();
-    }
-    void AbstractBraceApi::PopBlock(void)const
-    {
-        GetInterpreter().PopBlock();
-    }
-    int AbstractBraceApi::AllocGlobalVariable(const std::string& name, int type, int objTypeId)const
-    {
-        return GetInterpreter().AllocGlobalVariable(name, type, objTypeId);
-    }
-    int AbstractBraceApi::AllocVariable(const std::string& name, int type, int objTypeId)const
-    {
-        return GetInterpreter().AllocVariable(name, type, objTypeId);
-    }
-    int AbstractBraceApi::AllocConst(int tok_type, const std::string& value, int& type)const
-    {
-        return GetInterpreter().AllocConst(tok_type, value, type);
-    }
-    void AbstractBraceApi::LogInfo(const std::string& msg)const
-    {
-        GetInterpreter().LogInfo(msg);
-    }
-    void AbstractBraceApi::LogWarn(const std::string& msg)const
-    {
-        GetInterpreter().LogWarn(msg);
-    }
-    void AbstractBraceApi::LogError(const std::string& msg)const
-    {
-        GetInterpreter().LogError(msg);
-    }
-    void AbstractBraceApi::AddSyntaxComponent(DslData::ISyntaxComponent* p)const
-    {
-        GetInterpreter().AddSyntaxComponent(p);
-    }
-    void AbstractBraceApi::AddApiInstance(IBraceApi* p)const
-    {
-        GetInterpreter().AddApiInstance(p);
-    }
-    BraceApiExecutor AbstractBraceApi::LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, BraceApiLoadInfo& resultInfo)const
-    {
-        return GetInterpreter().Load(syntaxUnit, resultInfo);
-    }
-
-    bool AbstractBraceApi::IsForceQuit(void)const
-    {
-        return GetInterpreter().IsForceQuit();
-    }
-    FuncInfo* AbstractBraceApi::GlobalFuncInfo(void)const
-    {
-        return GetInterpreter().GlobalFuncInfo();
-    }
-    VariableInfo* AbstractBraceApi::GlobalVariables(void)const
-    {
-        return GetInterpreter().GlobalVariables();
-    }
-    const FuncInfo* AbstractBraceApi::CurRuntimeFuncInfo(void)const
-    {
-        return GetInterpreter().CurRuntimeFuncInfo();
-    }
-    VariableInfo* AbstractBraceApi::CurRuntimeVariables(void)const
-    {
-        return GetInterpreter().CurRuntimeVariables();
-    }
-    void AbstractBraceApi::PushRuntimeStack(const FuncInfo* funcInfo)const
-    {
-        GetInterpreter().PushRuntimeStack(funcInfo);
-    }
-    void AbstractBraceApi::PopRuntimeStack(void)const
-    {
-        GetInterpreter().PopRuntimeStack();
     }
 
     FunctionExecutor::FunctionExecutor(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Func(nullptr), m_Args(), m_ArgInfos(), m_ArgAssigns(), m_ResultInfo(), m_ResultAssign(nullptr), m_CodeExecutor(nullptr)
