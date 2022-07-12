@@ -387,7 +387,8 @@ protected:
 					else if (m_Member == "pop") {
 						resultInfo.Type = dataType;
 						resultInfo.ObjectTypeId = objTypeId;
-						resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+						resultInfo.Name = GenTempVarName();
+						resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 						m_ResultInfo = resultInfo;
 						executor.attach(this, &MemberCallExp::ExecuteArrayPop);
 						return true;
@@ -459,7 +460,8 @@ protected:
 						if (good) {
 							resultInfo.Type = Brace::BRACE_DATA_TYPE_BOOL;
 							resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-							resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+							resultInfo.Name = GenTempVarName();
+							resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 							m_ResultInfo = resultInfo;
 							executor.attach(this, &MemberCallExp::ExecuteHashtableContains);
 							return true;
@@ -1390,7 +1392,8 @@ protected:
 				if (isArray) {
 					if (m_Member == "length") {
 						resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
-						resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+						resultInfo.Name = GenTempVarName();
+						resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
 						m_ResultInfo = resultInfo;
 						executor.attach(this, &MemberGetExp::ExecuteArrayLength);
 						return true;
@@ -1399,7 +1402,8 @@ protected:
 				else if (isHashtable) {
 					if (m_Member == "count") {
 						resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
-						resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+						resultInfo.Name = GenTempVarName();
+						resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
 						m_ResultInfo = resultInfo;
 						executor.attach(this, &MemberGetExp::ExecuteHashtableCount);
 						return true;
@@ -1989,7 +1993,8 @@ protected:
 					}
 					resultInfo.Type = dataType;
 					resultInfo.ObjectTypeId = objTypeId;
-					resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 					return true;
 				}
 				else if (isHashtable) {
@@ -2011,7 +2016,8 @@ protected:
 					}
 					resultInfo.Type = dataType;
 					resultInfo.ObjectTypeId = objTypeId;
-					resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 					return true;
 				}
 				else {
@@ -2298,7 +2304,8 @@ protected:
 				SetArgInfos(argLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &ArrayExp::ExecuteBool);
 				return true;
@@ -2319,7 +2326,8 @@ protected:
 				SetArgInfos(argLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &ArrayExp::ExecuteInt);
 				return true;
@@ -2340,7 +2348,8 @@ protected:
 				SetArgInfos(argLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_FLOAT_ARRAY;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &ArrayExp::ExecuteFloat);
 				return true;
@@ -2361,7 +2370,8 @@ protected:
 				SetArgInfos(argLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &ArrayExp::ExecuteString);
 				return true;
@@ -2394,7 +2404,8 @@ protected:
 					SetArgInfos(argLoadInfos);
 					resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 					resultInfo.ObjectTypeId = m_ObjectTypeId;
-					resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayExp::ExecuteObject);
 					return true;
@@ -2661,7 +2672,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteIntBool);
 				return true;
@@ -2692,7 +2704,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteIntInt);
 				return true;
@@ -2723,7 +2736,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteIntFloat);
 				return true;
@@ -2754,7 +2768,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteIntStr);
 				return true;
@@ -2799,7 +2814,8 @@ protected:
 					SetArgValInfos(argValLoadInfos);
 					resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 					resultInfo.ObjectTypeId = m_ObjectTypeId;
-					resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &HashtableExp::ExecuteIntObj);
 					return true;
@@ -2831,7 +2847,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_STR_BOOL_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteStrBool);
 				return true;
@@ -2862,7 +2879,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteStrInt);
 				return true;
@@ -2893,7 +2911,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteStrFloat);
 				return true;
@@ -2924,7 +2943,8 @@ protected:
 				SetArgValInfos(argValLoadInfos);
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 				resultInfo.ObjectTypeId = CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE;
-				resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &HashtableExp::ExecuteStrStr);
 				return true;
@@ -2969,7 +2989,8 @@ protected:
 					SetArgValInfos(argValLoadInfos);
 					resultInfo.Type = Brace::BRACE_DATA_TYPE_OBJECT;
 					resultInfo.ObjectTypeId = m_ObjectTypeId;
-					resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &HashtableExp::ExecuteStrObj);
 					return true;

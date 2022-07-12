@@ -268,7 +268,8 @@ protected:
     {
         resultInfo.Type = Brace::BRACE_DATA_TYPE_UINT64;
         resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-        resultInfo.VarIndex = AllocVariable(GenTempVarName(), resultInfo.Type, resultInfo.ObjectTypeId);
+        resultInfo.Name = GenTempVarName();
+        resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
         return true;
     }
     virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
