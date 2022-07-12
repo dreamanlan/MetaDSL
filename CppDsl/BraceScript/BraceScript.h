@@ -74,6 +74,11 @@ namespace Brace
         DataTypeInfo(void) = default;
         DataTypeInfo(int type, int objTypeId) :Type(type), ObjectTypeId(objTypeId)
         {}
+
+        static inline bool IsSameType(const DataTypeInfo& a, const DataTypeInfo& b)
+        {
+            return a.Type == b.Type && a.ObjectTypeId == b.ObjectTypeId;
+        }
     };
     struct RegisterInfo : public DataTypeInfo
     {
@@ -170,6 +175,11 @@ namespace Brace
 
         VarTypeInfo GetLoadTimeRealType(const FuncInfo& func) const;
         VarTypeInfo GetLoadTimeRealType(const VariableInfo& vars) const;
+
+        static inline bool IsSameVar(const BraceApiLoadInfo& a, const BraceApiLoadInfo& b)
+        {
+            return a.Type == b.Type && a.ObjectTypeId == b.ObjectTypeId && a.VarIndex == b.VarIndex && a.IsGlobal == b.IsGlobal;
+        }
     };
     struct BraceApiRuntimeInfo final
     {
@@ -255,6 +265,14 @@ namespace Brace
     {
         return type1 < type2 ? type2 : type1;
     }
+    static inline constexpr bool IsUnknownType(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_UNKNOWN:
+            return true;
+        }
+        return false;
+    }
     static inline constexpr bool IsSignedType(int type)
     {
         switch (type) {
@@ -317,6 +335,23 @@ namespace Brace
             return true;
         }
         return false;
+    }
+
+    static inline constexpr bool IsUnknownObject(int objTypeId)
+    {
+        return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+    }
+    static inline constexpr bool IsNotObject(int objTypeId)
+    {
+        return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+    }
+    static inline constexpr bool IsNullObject(int objTypeId)
+    {
+        return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_NULL;
+    }
+    static inline constexpr bool IsContextObject(int objTypeId)
+    {
+        return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_CONTEXT;
     }
 
 #define DEFINE_VAR_GET_NUMERIC(POSTFIX, NAME, TYPE) \

@@ -641,7 +641,7 @@ namespace Brace
                 m_VarIndex = AllocGlobalVariable(varId, varType, objTypeId);
             }
             //we pass varInfo to the operand, if operand saves the result to var, no assignment is required
-            if (argLoadInfo.VarIndex != m_VarIndex || argLoadInfo.Type != varType || argLoadInfo.ObjectTypeId != objTypeId) {
+            if (!argLoadInfo.IsGlobal || argLoadInfo.VarIndex != m_VarIndex || argLoadInfo.Type != varType || argLoadInfo.ObjectTypeId != objTypeId) {
                 m_Fptr = GetVarAssignPtr(varType, false, realArgType.Type, srcIsRef);
                 if (argLoadInfo.IsGlobal)
                     executor.attach(this, &GlobalVarSet::ExecuteFromGlobal);
@@ -796,7 +796,7 @@ namespace Brace
                 m_VarIndex = AllocVariable(varId, varType, objTypeId);
             }
             //we pass varInfo to the operand, if operand saves the result to var, no assignment is required
-            if (argLoadInfo.VarIndex != m_VarIndex || argLoadInfo.Type != varType || argLoadInfo.ObjectTypeId != objTypeId) {
+            if (argLoadInfo.IsGlobal || argLoadInfo.VarIndex != m_VarIndex || argLoadInfo.Type != varType || argLoadInfo.ObjectTypeId != objTypeId) {
                 m_Fptr = GetVarAssignPtr(varType, isRef, realArgType.Type, srcIsRef);
                 if (argLoadInfo.IsGlobal)
                     executor.attach(this, &LocalVarSet::ExecuteFromGlobal);
