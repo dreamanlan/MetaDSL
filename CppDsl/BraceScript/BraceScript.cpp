@@ -428,7 +428,7 @@ namespace Brace
         }
         return r;
     }
-    bool SimpleBraceApiBase::TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const
+    bool SimpleBraceApiBase::TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)
     {
         const std::string apiName = data.GetId();
         auto* p = GetFuncApiTypeInfo(apiName);
