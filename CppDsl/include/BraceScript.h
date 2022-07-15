@@ -547,13 +547,12 @@ namespace Brace
     protected:
         BraceApiImplHelper(BraceScript& interpreter) :m_Interpreter(interpreter)
         {}
+        BraceScript& GetInterpreter(void)const { return m_Interpreter; }
     private:
         BraceApiImplHelper(const BraceApiImplHelper&) = delete;
         BraceApiImplHelper& operator=(const BraceApiImplHelper&) = delete;
         BraceApiImplHelper(BraceApiImplHelper&&) noexcept = delete;
         BraceApiImplHelper& operator=(BraceApiImplHelper&&) noexcept = delete;
-    private:
-        BraceScript& GetInterpreter(void)const { return m_Interpreter; }
     private:
         BraceScript& m_Interpreter;
     protected:
@@ -662,7 +661,7 @@ namespace Brace
     protected:
         virtual bool LoadCall(const FuncInfo& func, const DslData::FunctionData& data, std::vector<BraceApiLoadInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, BraceApiLoadInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo)const;
+        virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<BraceApiLoadInfo>& argInfos, BraceApiLoadInfo& resultInfo);
         virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<BraceApiRuntimeInfo>& argInfos, const BraceApiRuntimeInfo& resultInfo)const = 0;
     private:
         int ExecuteImpl(VariableInfo& gvars, VariableInfo& lvars)const;
