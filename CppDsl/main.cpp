@@ -172,11 +172,11 @@ int main(int argc, char* argv[])
         std::cout << "DataTypeInfo:" << sizeof(Brace::DataTypeInfo) << std::endl;
         std::cout << "RegisterInfo:" << sizeof(Brace::RegisterInfo) << std::endl;
         std::cout << "ParamTypeInfo:" << sizeof(Brace::ParamTypeInfo) << std::endl;
-        std::cout << "VarTypeInfo:" << sizeof(Brace::VarTypeInfo) << std::endl;
+        std::cout << "OperandTypeInfo:" << sizeof(Brace::OperandTypeInfo) << std::endl;
         std::cout << "VarInfo:" << sizeof(Brace::VarInfo) << std::endl;
         std::cout << "ParamRetInfo:" << sizeof(Brace::ParamRetInfo) << std::endl;
-        std::cout << "BraceApiLoadInfo:" << sizeof(Brace::BraceApiLoadInfo) << std::endl;
-        std::cout << "BraceApiRuntimeInfo:" << sizeof(Brace::BraceApiRuntimeInfo) << std::endl;
+        std::cout << "OperandLoadtimeInfo:" << sizeof(Brace::OperandLoadtimeInfo) << std::endl;
+        std::cout << "OperandRuntimeInfo:" << sizeof(Brace::OperandRuntimeInfo) << std::endl;
         std::cout << "ReferenceInfo:" << sizeof(Brace::ReferenceInfo) << std::endl;
         std::cout << "NumericValue:" << sizeof(Brace::NumericValue) << std::endl;
         std::cout << "VariableInfo:" << sizeof(Brace::VariableInfo) << std::endl;
@@ -223,7 +223,7 @@ public:
     {
     }
 protected:
-    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) override
+    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
         for (auto& ali : argInfos) {
             if (ali.Type != Brace::BRACE_DATA_TYPE_INT32) {
@@ -233,10 +233,10 @@ protected:
                 return false;
             }
         }
-        resultInfo = Brace::BraceApiLoadInfo();
+        resultInfo = Brace::OperandLoadtimeInfo();
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
     {
         auto sv = std::chrono::system_clock::now();
 
@@ -264,7 +264,7 @@ public:
     {
     }
 protected:
-    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) override
+    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
         resultInfo.Type = Brace::BRACE_DATA_TYPE_UINT64;
         resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
@@ -272,7 +272,7 @@ protected:
         resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
     {
         auto cv = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = cv - g_start_time_point;

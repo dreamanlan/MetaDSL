@@ -71,7 +71,7 @@ class AbstractMemberCallApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class MemberCallExp;
 protected:
-	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::BraceApiLoadInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
 protected:
 	AbstractMemberCallApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -80,7 +80,7 @@ class AbstractMemberSetApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class MemberSetExp;
 protected:
-	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
 protected:
 	AbstractMemberSetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -89,7 +89,7 @@ class AbstractMemberGetApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class MemberGetExp;
 protected:
-	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
 protected:
 	AbstractMemberGetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -98,8 +98,8 @@ class AbstractCollectionCallApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class CollectionCallExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const = 0;
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo) const = 0;
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
 protected:
 	AbstractCollectionCallApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -108,8 +108,8 @@ class AbstractCollectionSetApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class CollectionSetExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::BraceApiLoadInfo& arr, const Brace::BraceApiLoadInfo& ix, const Brace::BraceApiLoadInfo& val, Brace::BraceApiLoadInfo& resultInfo) const = 0;
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiRuntimeInfo& arr, const Brace::BraceApiRuntimeInfo& ix, const Brace::BraceApiRuntimeInfo& val, const Brace::BraceApiRuntimeInfo& resultInfo) const = 0;
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, const Brace::OperandLoadtimeInfo& val, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& val, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
 protected:
 	AbstractCollectionSetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -118,8 +118,8 @@ class AbstractCollectionGetApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class CollectionGetExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::BraceApiLoadInfo& arr, const Brace::BraceApiLoadInfo& ix, Brace::BraceApiLoadInfo& resultInfo) const = 0;
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiRuntimeInfo& arr, const Brace::BraceApiRuntimeInfo& ix, const Brace::BraceApiRuntimeInfo& resultInfo) const = 0;
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
 protected:
 	AbstractCollectionGetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -128,8 +128,8 @@ class AbstractLoopListApiProvider : public Brace::BraceApiImplHelper
 {
 	friend class LoopListExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::BraceApiLoadInfo& listInfo, Brace::BraceApiExecutor& executor) = 0;
-	virtual void StoreRuntimeInfo(Brace::BraceApiRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) = 0;
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor) = 0;
+	virtual void StoreRuntimeInfo(Brace::OperandRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) = 0;
 protected:
 	AbstractLoopListApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
 	{}
@@ -228,7 +228,7 @@ class UObjectMemberCallProvider final : public AbstractMemberCallApiProvider
 {
 	friend class MemberCallExp;
 protected:
-	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::BraceApiLoadInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -240,7 +240,7 @@ class UObjectMemberSetProvider final : public AbstractMemberSetApiProvider
 {
 	friend class MemberSetExp;
 protected:
-	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -252,7 +252,7 @@ class UObjectMemberGetProvider final : public AbstractMemberGetApiProvider
 {
 	friend class MemberGetExp;
 protected:
-	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -265,7 +265,7 @@ class AActorMemberCallProvider final : public AbstractMemberCallApiProvider
 {
 	friend class MemberCallExp;
 protected:
-	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::BraceApiLoadInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -277,7 +277,7 @@ class AActorMemberSetProvider final : public AbstractMemberSetApiProvider
 {
 	friend class MemberSetExp;
 protected:
-	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -289,7 +289,7 @@ class AActorMemberGetProvider final : public AbstractMemberGetApiProvider
 {
 	friend class MemberGetExp;
 protected:
-	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -392,7 +392,7 @@ class ArrayHashtableMemberCallProvider final : public AbstractMemberCallApiProvi
 {
 	friend class MemberCallExp;
 protected:
-	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::BraceApiLoadInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		int num = data.GetParamNum();
 		if (num < 2)
@@ -401,7 +401,7 @@ protected:
 		m_ObjInfo = objInfo;
 		std::swap(m_Member, member);
 		std::swap(m_Args, args);
-		Brace::BraceApiLoadInfo firstArgInfo;
+		Brace::OperandLoadtimeInfo firstArgInfo;
 		bool first = true;
 		for(auto& argInfo : argInfos) {
 			m_ArgInfos.push_back(argInfo);
@@ -492,7 +492,7 @@ protected:
 					}
 				}
 				if (good) {
-					resultInfo = Brace::BraceApiLoadInfo();
+					resultInfo = Brace::OperandLoadtimeInfo();
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteArrayResize);
 					return true;
@@ -513,7 +513,7 @@ protected:
 					}
 				}
 				if (good) {
-					resultInfo = Brace::BraceApiLoadInfo();
+					resultInfo = Brace::OperandLoadtimeInfo();
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteArrayPush);
 					return true;
@@ -547,7 +547,7 @@ protected:
 					}
 				}
 				if (good) {
-					resultInfo = Brace::BraceApiLoadInfo();
+					resultInfo = Brace::OperandLoadtimeInfo();
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteArrayInsert);
 					return true;
@@ -569,7 +569,7 @@ protected:
 					}
 				}
 				if (good) {
-					resultInfo = Brace::BraceApiLoadInfo();
+					resultInfo = Brace::OperandLoadtimeInfo();
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteArrayRemove);
 					return true;
@@ -583,7 +583,7 @@ protected:
 				}
 			}
 			else if (m_Member == "clear") {
-				resultInfo = Brace::BraceApiLoadInfo();
+				resultInfo = Brace::OperandLoadtimeInfo();
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteArrayClear);
 				return true;
@@ -629,7 +629,7 @@ protected:
 					}
 				}
 				if (good) {
-					resultInfo = Brace::BraceApiLoadInfo();
+					resultInfo = Brace::OperandLoadtimeInfo();
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteHashtableAdd);
 					return true;
@@ -652,7 +652,7 @@ protected:
 					}
 				}
 				if (good) {
-					resultInfo = Brace::BraceApiLoadInfo();
+					resultInfo = Brace::OperandLoadtimeInfo();
 					m_ResultInfo = resultInfo;
 					executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteHashtableRemove);
 					return true;
@@ -666,7 +666,7 @@ protected:
 				}
 			}
 			else if (m_Member == "clear") {
-				resultInfo = Brace::BraceApiLoadInfo();
+				resultInfo = Brace::OperandLoadtimeInfo();
 				m_ResultInfo = resultInfo;
 				executor.attach(this, &ArrayHashtableMemberCallProvider::ExecuteHashtableClear);
 				return true;
@@ -1421,11 +1421,11 @@ private:
 	}
 private:
 	Brace::BraceApiExecutor m_Obj;
-	Brace::BraceApiRuntimeInfo m_ObjInfo;
+	Brace::OperandRuntimeInfo m_ObjInfo;
 	std::string m_Member;
 	std::vector<Brace::BraceApiExecutor> m_Args;
-	std::vector<Brace::BraceApiRuntimeInfo> m_ArgInfos;
-	Brace::BraceApiRuntimeInfo m_ResultInfo;
+	std::vector<Brace::OperandRuntimeInfo> m_ArgInfos;
+	Brace::OperandRuntimeInfo m_ResultInfo;
 private:
 	template<typename VectorT, typename ValT>
 	static inline void VectorInsert(VectorT& vr, int64_t pos, const ValT& val)
@@ -1466,7 +1466,7 @@ class ArrayHashtableMemberSetProvider final : public AbstractMemberSetApiProvide
 {
 	friend class MemberSetExp;
 protected:
-	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
 	{
 		return false;
 	}
@@ -1479,7 +1479,7 @@ class ArrayHashtableMemberGetProvider final : public AbstractMemberGetApiProvide
 {
 	friend class MemberGetExp;
 protected:
-	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::BraceApiLoadInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		if (data.GetParamNum() != 2)
 			return false;
@@ -1691,19 +1691,19 @@ private:
 	}
 private:
 	Brace::BraceApiExecutor m_Obj;
-	Brace::BraceApiRuntimeInfo m_ObjInfo;
+	Brace::OperandRuntimeInfo m_ObjInfo;
 	std::string m_Member;
-	Brace::BraceApiRuntimeInfo m_ResultInfo;
+	Brace::OperandRuntimeInfo m_ResultInfo;
 };
 class ArrayHashtableCollectionCallProvider final : public AbstractCollectionCallApiProvider
 {
 	friend class CollectionCallExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) const override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) const override
 	{
 		return false;
 	}
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo) const override
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo) const override
 	{
 	}
 private:
@@ -1714,7 +1714,7 @@ class ArrayHashtableCollectionSetProvider final : public AbstractCollectionSetAp
 {
 	friend class CollectionSetExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::BraceApiLoadInfo& arr, const Brace::BraceApiLoadInfo& ix, const Brace::BraceApiLoadInfo& val, Brace::BraceApiLoadInfo& resultInfo) const override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, const Brace::OperandLoadtimeInfo& val, Brace::OperandLoadtimeInfo& resultInfo) const override
 	{
 		bool isArray = false;
 		bool isHashtable = false;
@@ -1832,7 +1832,7 @@ protected:
 		}
 		return false;
 	}
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiRuntimeInfo& arr, const Brace::BraceApiRuntimeInfo& ix, const Brace::BraceApiRuntimeInfo& val, const Brace::BraceApiRuntimeInfo& resultInfo) const override
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& val, const Brace::OperandRuntimeInfo& resultInfo) const override
 	{
 		const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 		int objTypeId = p->GetObjectTypeId();
@@ -1987,7 +1987,7 @@ class ArrayHashtableCollectionGetProvider final : public AbstractCollectionGetAp
 {
 	friend class CollectionGetExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::BraceApiLoadInfo& arr, const Brace::BraceApiLoadInfo& ix, Brace::BraceApiLoadInfo& resultInfo) const override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, Brace::OperandLoadtimeInfo& resultInfo) const override
 	{
 		bool isArray = false;
 		bool isHashtable = false;
@@ -2099,7 +2099,7 @@ protected:
 		}
 		return false;
 	}
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::BraceApiRuntimeInfo& arr, const Brace::BraceApiRuntimeInfo& ix, const Brace::BraceApiRuntimeInfo& resultInfo) const override
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& resultInfo) const override
 	{
 		const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 		int objTypeId = p->GetObjectTypeId();
@@ -2250,11 +2250,11 @@ class ArrayHashtableLoopListProvider final : public AbstractLoopListApiProvider
 {
 	friend class LoopListExp;
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::BraceApiLoadInfo& listInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor) override
 	{		
 		return TypeInference(listInfo, executor);
 	}
-	virtual void StoreRuntimeInfo(Brace::BraceApiRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) override
+	virtual void StoreRuntimeInfo(Brace::OperandRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) override
 	{
 		std::swap(m_ListInfo, listInfo);
 		std::swap(m_List, list);
@@ -2265,7 +2265,7 @@ private:
 	ArrayHashtableLoopListProvider(Brace::BraceScript& interpreter) :AbstractLoopListApiProvider(interpreter), m_IteratorIndex(INVALID_INDEX), m_IteratorIndexV(INVALID_INDEX), m_List(), m_ListInfo(), m_Statements(), m_ObjVars()
 	{}
 private:
-	bool TypeInference(const Brace::BraceApiLoadInfo& listInfo, Brace::BraceApiExecutor& executor)
+	bool TypeInference(const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor)
 	{
 		if (listInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
 			if (listInfo.ObjectTypeId == CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY) {
@@ -2871,7 +2871,7 @@ private:
 	int m_IteratorIndex;
 	int m_IteratorIndexV;
 	Brace::BraceApiExecutor m_List;
-	Brace::BraceApiRuntimeInfo m_ListInfo;
+	Brace::OperandRuntimeInfo m_ListInfo;
 	std::vector<Brace::BraceApiExecutor> m_Statements;
 	std::vector<int> m_ObjVars;
 };
@@ -2883,22 +2883,22 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		int num = data.GetParamNum();
 		if (num < 2)
 			return false;
-		Brace::BraceApiLoadInfo loadInfo;
+		Brace::OperandLoadtimeInfo loadInfo;
 		auto obj = LoadHelper(*data.GetParam(0), loadInfo);
 		auto& objInfo = loadInfo;
 		auto& m = data.GetParamId(1);
 		auto member = m;
-		std::vector<Brace::BraceApiLoadInfo> argInfos;
+		std::vector<Brace::OperandLoadtimeInfo> argInfos;
 		std::vector<Brace::BraceApiExecutor> args;
-		Brace::BraceApiLoadInfo firstArgInfo;
+		Brace::OperandLoadtimeInfo firstArgInfo;
 		for (int ix = 2; ix < num; ++ix) {
 			auto* param = data.GetParam(ix);
-			Brace::BraceApiLoadInfo argLoadInfo;
+			Brace::OperandLoadtimeInfo argLoadInfo;
 			auto p = LoadHelper(*param, argLoadInfo);
 			args.push_back(std::move(p));
 			argInfos.push_back(argLoadInfo);
@@ -2942,17 +2942,17 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		if (data.GetParamNum() != 3)
 			return false;
-		Brace::BraceApiLoadInfo loadInfo;
+		Brace::OperandLoadtimeInfo loadInfo;
 		auto obj = LoadHelper(*data.GetParam(0), loadInfo);
 		auto& objInfo = loadInfo;
 		auto& m = data.GetParamId(1);
 		auto member = m;
 		auto* param = data.GetParam(2);
-		Brace::BraceApiLoadInfo argLoadInfo;
+		Brace::OperandLoadtimeInfo argLoadInfo;
 		auto p = LoadHelper(*param, argLoadInfo);
 		if (objInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
 			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(loadInfo.ObjectTypeId);
@@ -2988,11 +2988,11 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		if (data.GetParamNum() != 2)
 			return false;
-		Brace::BraceApiLoadInfo loadInfo;
+		Brace::OperandLoadtimeInfo loadInfo;
 		auto obj = LoadHelper(*data.GetParam(0), loadInfo);
 		auto& objInfo = loadInfo;
 		auto& m = data.GetParamId(1);
@@ -3033,7 +3033,7 @@ public:
 	{
 	}
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
 	{
 		/// how to interpret this, f = obj[m] and f(args) or obj[m](obj, args) ?
 		if (argInfos.size() < 2)
@@ -3058,7 +3058,7 @@ protected:
 		}
 		return false;
 	}
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
 	{
 		/// how to interpret this, f = obj[m] and f(args) or obj[m](obj, args) ?
 		m_ApiProvider->Execute(gvars, lvars, argInfos, resultInfo);
@@ -3073,7 +3073,7 @@ public:
 	{
 	}
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
 	{
 		if (argInfos.size() != 3)
 			return false;
@@ -3102,7 +3102,7 @@ protected:
 		LogError(ss.str());
 		return false;
 	}
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
 	{
 		auto& arr = argInfos[0];
 		auto& ix = argInfos[1];
@@ -3119,7 +3119,7 @@ public:
 	{
 	}
 protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::BraceApiLoadInfo>& argInfos, Brace::BraceApiLoadInfo& resultInfo) override
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
 	{
 		if (argInfos.size() != 2)
 			return false;
@@ -3147,7 +3147,7 @@ protected:
 		LogError(ss.str());
 		return false;
 	}
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::BraceApiRuntimeInfo>& argInfos, const Brace::BraceApiRuntimeInfo& resultInfo)const override
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
 	{
 		auto& arr = argInfos[0];
 		auto& ix = argInfos[1];
@@ -3163,7 +3163,7 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		//(args) => {...}; or (args)int => {...}; or [...](args) => {...}; or [...](args)int => {...};
 		bool hasError = true;
@@ -3182,7 +3182,7 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		//linq(collection).select(fields).where(condition).groupby(fields).orderby(fields);
 		bool hasError = true;
@@ -3210,14 +3210,14 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& curFunc, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor)
+	virtual bool LoadFunction(const Brace::FuncInfo& curFunc, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)
 	{
 		std::vector<Brace::BraceApiExecutor> args;
-		std::vector<Brace::BraceApiLoadInfo> argLoadInfos;
+		std::vector<Brace::OperandLoadtimeInfo> argLoadInfos;
 		int num = data.GetParamNum();
 		for (int ix = 0; ix < num; ++ix) {
 			auto* param = data.GetParam(ix);
-			Brace::BraceApiLoadInfo argLoadInfo;
+			Brace::OperandLoadtimeInfo argLoadInfo;
 			auto p = LoadHelper(*param, argLoadInfo);
 			args.push_back(std::move(p));
 			argLoadInfos.push_back(std::move(argLoadInfo));
@@ -3397,7 +3397,7 @@ protected:
 		return false;
     }
 private:
-    void SetArgInfos(std::vector<Brace::BraceApiLoadInfo> argLoadInfos)
+    void SetArgInfos(std::vector<Brace::OperandLoadtimeInfo> argLoadInfos)
     {
         for (auto& info : argLoadInfos) {
             m_ArgInfos.push_back(info);
@@ -3481,8 +3481,8 @@ private:
 private:
 	int m_ObjectTypeId;
 	std::vector<Brace::BraceApiExecutor> m_Args;
-	std::vector<Brace::BraceApiRuntimeInfo> m_ArgInfos;
-	Brace::BraceApiRuntimeInfo m_ResultInfo;
+	std::vector<Brace::OperandRuntimeInfo> m_ArgInfos;
+	Brace::OperandRuntimeInfo m_ResultInfo;
 };
 class HashtableExp final : public Brace::AbstractBraceApi
 {
@@ -3505,12 +3505,12 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		std::vector<Brace::BraceApiExecutor> argKeys;
 		std::vector<Brace::BraceApiExecutor> argVals;
-		std::vector<Brace::BraceApiLoadInfo> argKeyLoadInfos;
-		std::vector<Brace::BraceApiLoadInfo> argValLoadInfos;
+		std::vector<Brace::OperandLoadtimeInfo> argKeyLoadInfos;
+		std::vector<Brace::OperandLoadtimeInfo> argValLoadInfos;
 		int num = data.GetParamNum();
 		for (int ix = 0; ix < num; ++ix) {
 			auto* param = data.GetParam(ix);
@@ -3527,8 +3527,8 @@ protected:
 				LogError(ss.str());
 				return false;
 			}
-			Brace::BraceApiLoadInfo argKeyLoadInfo;
-			Brace::BraceApiLoadInfo argValLoadInfo;
+			Brace::OperandLoadtimeInfo argKeyLoadInfo;
+			Brace::OperandLoadtimeInfo argValLoadInfo;
 			auto p_key = LoadHelper(*funcData->GetParam(0), argKeyLoadInfo);
 			auto p_val = LoadHelper(*funcData->GetParam(1), argValLoadInfo);
 			argKeys.push_back(std::move(p_key));
@@ -3982,13 +3982,13 @@ protected:
 		return false;
 	}
 private:
-	void SetArgKeyInfos(std::vector<Brace::BraceApiLoadInfo> argKeyLoadInfos)
+	void SetArgKeyInfos(std::vector<Brace::OperandLoadtimeInfo> argKeyLoadInfos)
 	{
 		for (auto& info : argKeyLoadInfos) {
 			m_ArgKeyInfos.push_back(info);
 		}
 	}
-	void SetArgValInfos(std::vector<Brace::BraceApiLoadInfo> argValLoadInfos)
+	void SetArgValInfos(std::vector<Brace::OperandLoadtimeInfo> argValLoadInfos)
 	{
 		for (auto& info : argValLoadInfos) {
 			m_ArgValInfos.push_back(info);
@@ -4216,10 +4216,10 @@ private:
 private:
 	int m_ObjectTypeId;
 	std::vector<Brace::BraceApiExecutor> m_ArgKeys;
-	std::vector<Brace::BraceApiRuntimeInfo> m_ArgKeyInfos;
+	std::vector<Brace::OperandRuntimeInfo> m_ArgKeyInfos;
 	std::vector<Brace::BraceApiExecutor> m_ArgVals;
-	std::vector<Brace::BraceApiRuntimeInfo> m_ArgValInfos;
-	Brace::BraceApiRuntimeInfo m_ResultInfo;
+	std::vector<Brace::OperandRuntimeInfo> m_ArgValInfos;
+	Brace::OperandRuntimeInfo m_ResultInfo;
 };
 class LoopListExp final : public Brace::AbstractBraceApi
 {
@@ -4228,12 +4228,12 @@ public:
 	{
 	}
 protected:
-	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& funcData, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& funcData, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		if (funcData.IsHighOrder()) {
 			bool ret = false;
 			auto* p = funcData.GetLowerOrderFunction().GetParam(0);
-			Brace::BraceApiLoadInfo loadInfo;
+			Brace::OperandLoadtimeInfo loadInfo;
 			auto list = LoadHelper(*p, loadInfo);
 			auto& listInfo = loadInfo;
 			PushBlock();
@@ -4260,7 +4260,7 @@ protected:
 						else {
 							std::vector<Brace::BraceApiExecutor> statements{};
 							for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
-								Brace::BraceApiLoadInfo argLoadInfo;
+								Brace::OperandLoadtimeInfo argLoadInfo;
 								auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
 								if (!statement.isNull())
 									statements.push_back(std::move(statement));
@@ -4282,7 +4282,7 @@ protected:
 		}
 		return false;
 	}
-	virtual bool LoadStatement(const Brace::FuncInfo& func, const DslData::StatementData& statementData, Brace::BraceApiLoadInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadStatement(const Brace::FuncInfo& func, const DslData::StatementData& statementData, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		//looplist(exp) func(args);
 		if (statementData.GetFunctionNum() == 2) {
@@ -4295,7 +4295,7 @@ protected:
 				if (first->GetParamNum() > 0) {
 					bool ret = false;
 					auto* exp = first->GetParam(0);
-					Brace::BraceApiLoadInfo loadInfo;
+					Brace::OperandLoadtimeInfo loadInfo;
 					auto list = LoadHelper(*exp, loadInfo);
                     auto& listInfo = loadInfo;
 					if (listInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
@@ -4319,7 +4319,7 @@ protected:
 									ret = false;
 								}
 								else {
-									Brace::BraceApiLoadInfo argLoadInfo;
+									Brace::OperandLoadtimeInfo argLoadInfo;
 									std::vector<Brace::BraceApiExecutor> statements{};
 									auto statement = LoadHelper(*second, argLoadInfo);
 									if (!statement.isNull())

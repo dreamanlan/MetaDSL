@@ -6,7 +6,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -1473,7 +1473,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_DOUBLE) {
@@ -2670,7 +2670,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_DOUBLE) {
@@ -3867,7 +3867,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_DOUBLE) {
@@ -5064,7 +5064,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -5991,7 +5991,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -6918,7 +6918,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -7845,7 +7845,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -8772,7 +8772,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -9699,7 +9699,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -10626,7 +10626,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -12097,7 +12097,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -13568,7 +13568,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -15039,7 +15039,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -16510,7 +16510,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -17981,7 +17981,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_STRING) {
@@ -19452,7 +19452,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -20380,7 +20380,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, const VarTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = GetMaxType(load1.Type, load2.Type);
         if (resultType > BRACE_DATA_TYPE_UINT64) {
@@ -21308,7 +21308,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
         if (resultType >= BRACE_DATA_TYPE_UINT64) {
@@ -21705,7 +21705,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
         if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
@@ -22213,7 +22213,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
         if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
@@ -22721,7 +22721,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
         if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
@@ -23229,7 +23229,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
         if (resultType >= BRACE_DATA_TYPE_DOUBLE) {
@@ -23540,7 +23540,7 @@ public:
     {
     }
 protected:
-    virtual bool BuildExecutor(const DslData::FunctionData& data, const VarTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+    virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
     {
         resultType = load1.Type;
         if (resultType >= BRACE_DATA_TYPE_FLOAT) {
