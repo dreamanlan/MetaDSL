@@ -2533,7 +2533,7 @@ namespace Brace
         if (it == curFunc->VarTypeInfos.end()) {
             int index = curFunc->VarInitInfo.AllocVariable(type);
             curFunc->VarTypeInfos.insert(std::make_pair(key, VarInfo(name, type, objTypeId, index)));
-            if (type == BRACE_DATA_TYPE_OBJECT) {
+            if (type == BRACE_DATA_TYPE_OBJECT && !m_LexicalScopeStack.empty()) {
                 auto& bi = m_LexicalScopeStack.back();
                 bi.ObjVars.push_back(index);
             }
