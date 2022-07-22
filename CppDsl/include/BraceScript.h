@@ -49,21 +49,13 @@ namespace Brace
         PREDEFINED_BRACE_OBJECT_TYPE_NUM
     };
 
+    /// <summary>
+    /// use std::shared_ptr<IBraceObject> rather than std::shared_ptr<void> to allow std::shared_ptr to delete object correctly
+    /// </summary>
     class IBraceObject
     {
     public:
-        virtual int GetObjectTypeId(void)const = 0;
-    public:
         virtual ~IBraceObject(void) {}
-    };
-
-    template<int kObjTypeId>
-    class BraceObjectBaseT : public IBraceObject
-    {
-    public:
-        static const int ObjTypeId = kObjTypeId;
-    public:
-        virtual int GetObjectTypeId(void)const override { return ObjTypeId; }
     };
 
     struct DataTypeInfo
@@ -71,7 +63,7 @@ namespace Brace
         int Type;
         int ObjectTypeId;
 
-        DataTypeInfo(void) = default;
+        DataTypeInfo(void) :Type(BRACE_DATA_TYPE_UNKNOWN), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {}
         DataTypeInfo(int type, int objTypeId) :Type(type), ObjectTypeId(objTypeId)
         {}
 
@@ -84,7 +76,7 @@ namespace Brace
     {
         int VarIndex;
 
-        RegisterInfo(void) = default;
+        RegisterInfo(void) :VarIndex(INVALID_INDEX) {}
     };
     struct ParamTypeInfo final : public DataTypeInfo
     {
@@ -179,19 +171,21 @@ namespace Brace
     {
         int8_t Type;
         int8_t IsGlobal;
-        int32_t VarIndex;
+        int16_t VarIndex;
+        int32_t ObjectTypeId;
 
-        OperandRuntimeInfo(void):Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX)
+        OperandRuntimeInfo(void):Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN)
         {}
-        OperandRuntimeInfo(int type, int varIndex, bool isGlobal) :Type(type), IsGlobal(isGlobal ? 1 : 0), VarIndex(varIndex)
+        OperandRuntimeInfo(int type, int objTypeId, int varIndex, bool isGlobal) :Type(type), IsGlobal(isGlobal ? 1 : 0), VarIndex(varIndex), ObjectTypeId(objTypeId)
         {}
-        OperandRuntimeInfo(const OperandLoadtimeInfo& loadInfo):Type(loadInfo.Type), IsGlobal(loadInfo.IsGlobal ? 1 : 0), VarIndex(loadInfo.VarIndex)
+        OperandRuntimeInfo(const OperandLoadtimeInfo& loadInfo):Type(loadInfo.Type), IsGlobal(loadInfo.IsGlobal ? 1 : 0), VarIndex(loadInfo.VarIndex), ObjectTypeId(loadInfo.ObjectTypeId)
         {}
         OperandRuntimeInfo& operator=(const OperandLoadtimeInfo& loadInfo)
         {
             Type = loadInfo.Type;
             IsGlobal = loadInfo.IsGlobal ? 1 : 0;
             VarIndex = loadInfo.VarIndex;
+            ObjectTypeId = loadInfo.ObjectTypeId;
             return *this;
         }
     };
@@ -255,6 +249,34 @@ namespace Brace
     extern void VarSetStr(VariableInfo& info, int type, int index, const std::string& val);
     extern void VarSetStr(VariableInfo& info, int type, int index, std::string&& val);
 
+    static inline constexpr int GetDataTypeSize(int type)
+    {
+        switch (type) {
+        case BRACE_DATA_TYPE_BOOL:
+            return 1;
+        case BRACE_DATA_TYPE_INT8:
+        case BRACE_DATA_TYPE_UINT8:
+            return 1;
+        case BRACE_DATA_TYPE_INT16:
+        case BRACE_DATA_TYPE_UINT16:
+            return 2;
+        case BRACE_DATA_TYPE_INT32:
+        case BRACE_DATA_TYPE_UINT32:
+        case BRACE_DATA_TYPE_FLOAT:
+            return 4;
+        case BRACE_DATA_TYPE_INT64:
+        case BRACE_DATA_TYPE_UINT64:
+        case BRACE_DATA_TYPE_DOUBLE:
+            return 8;
+        case BRACE_DATA_TYPE_OBJECT:
+        case BRACE_DATA_TYPE_REF:
+            return static_cast<int>(sizeof(void*));
+        case BRACE_DATA_TYPE_STRING:
+            return static_cast<int>(sizeof(void*));
+        default:
+            return 0;
+        }
+    }
     static inline constexpr int GetMaxType(int type1, int type2)
     {
         return type1 < type2 ? type2 : type1;

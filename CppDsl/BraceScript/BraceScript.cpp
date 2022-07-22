@@ -2128,9 +2128,7 @@ namespace Brace
     ReferenceInfo ReferenceInfo::BuildFromRuntimeInfo(const OperandRuntimeInfo& runtimeInfo, VariableInfo* vars)
     {
         if (runtimeInfo.Type == BRACE_DATA_TYPE_OBJECT) {
-            auto& obj = vars->ObjectVars[runtimeInfo.VarIndex];
-            int objTypeId = obj->GetObjectTypeId();
-            return ReferenceInfo(runtimeInfo.Type, objTypeId, runtimeInfo.VarIndex, vars);
+            return ReferenceInfo(runtimeInfo.Type, runtimeInfo.ObjectTypeId, runtimeInfo.VarIndex, vars);
         }
         else {
             return ReferenceInfo(runtimeInfo.Type, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ, runtimeInfo.VarIndex, vars);
