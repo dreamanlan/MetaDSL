@@ -272,7 +272,7 @@ namespace Brace
         case BRACE_DATA_TYPE_REF:
             return static_cast<int>(sizeof(void*));
         case BRACE_DATA_TYPE_STRING:
-            return static_cast<int>(sizeof(void*));
+            return 0;
         default:
             return 0;
         }
