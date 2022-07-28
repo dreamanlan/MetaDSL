@@ -2360,7 +2360,10 @@ namespace Brace
                 }
                 else if (pTypeDesc->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
                     tinfo.Type = GetDataType(pTypeDesc->GetId());
-                    tinfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+                    if (IsObjectType(tinfo.Type))
+                        tinfo.ObjectTypeId = GetObjectTypeId(*pTypeDesc);
+                    else
+                        tinfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
                 }
             }
             else if (funcData.GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON) {
@@ -2371,7 +2374,10 @@ namespace Brace
         }
         else if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
             tinfo.Type = GetDataType(syntax.GetId());
-            tinfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            if (IsObjectType(tinfo.Type))
+                tinfo.ObjectTypeId = GetObjectTypeId(syntax);
+            else
+                tinfo.ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             tinfo.IsRef = false;
         }
         return tinfo;

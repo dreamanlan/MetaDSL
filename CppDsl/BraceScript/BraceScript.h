@@ -63,7 +63,7 @@ namespace Brace
         int Type;
         int ObjectTypeId;
 
-        DataTypeInfo(void) :Type(BRACE_DATA_TYPE_UNKNOWN), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {}
+        DataTypeInfo(void) :Type(BRACE_DATA_TYPE_UNKNOWN), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ) {}
         DataTypeInfo(int type, int objTypeId) :Type(type), ObjectTypeId(objTypeId)
         {}
 
@@ -174,7 +174,7 @@ namespace Brace
         int16_t VarIndex;
         int32_t ObjectTypeId;
 
-        OperandRuntimeInfo(void):Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN)
+        OperandRuntimeInfo(void):Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ)
         {}
         OperandRuntimeInfo(int type, int objTypeId, int varIndex, bool isGlobal) :Type(type), IsGlobal(isGlobal ? 1 : 0), VarIndex(varIndex), ObjectTypeId(objTypeId)
         {}
