@@ -1,228 +1,257 @@
 
-enum BraceObjectCategoryEnum
-{
-	/// <summary>
-	/// Internal objects, no inheritance, handled specifically in the MemberCall/MemberSet/MemberGet/CollectionCall/CollectionSet/CollectionGet/LoopList APIs.
-	/// </summary>
-	BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT = 0,
-	/// <summary>
-	/// Internal special objects, handled specifically in the MemberCall/MemberSet/MemberGet/CollectionCall/CollectionSet/CollectionGet/LoopList APIs.
-	/// </summary>
-	BRACE_OBJECT_CATEGORY_OBJ_ARRAY,
-	BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE,
-	BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE,
-	/// <summary>
-	/// Custom structs, we will use a class to handle member/collection operations for this category.
-	/// </summary>
-	BRACE_OBECT_CATEGORY_STRUCT,
-	/// <summary>
-	/// Custom objects, has inheritance, we will use a class to handle member/collection operations for this category.
-	/// </summary>
-	BRACE_OBJECT_CATEGORY_CUSTOM,
-	/// <summary>
-	/// Custom objects, inherit from UObject, can be used in UE api, we will use a class to handle member/collection operations for this category.
-	/// </summary>
-	BRACE_OBJECT_CATEGORY_UOBJECT,
-	/// <summary>
-	/// Custom objects, inherit from AActor, can be used in UE api, we will use a class to handle member/collection operations for this category.
-	/// </summary>
-	BRACE_OBJECT_CATEGORY_ACTOR,
-	/// <summary>
-	/// Custom objects, inherit from UActorComponent, can be used in UE api, we will use a class to handle member/collection operations for this category.
-	/// </summary>
-	BRACE_OBJECT_CATEGORY_ACTOR_COMPONENT,
-	BRACE_OBJECT_CATEGORY_NUM
-};
-enum CustomBraceObjectTypeIdEnum
-{
-	CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NUM,
-	CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY,
-	CUSTOM_BRACE_OBJECT_TYPE_FLOAT_ARRAY,
-	CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY,
-	CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_STR_BOOL_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE,
-	CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE,
-	BRACE_INNER_FIXED_OBJECT_TYPE_NUM
-};
 
-struct BraceObjectInfo final
-{
-	std::string TypeName;
-	int ObjectTypeId;
-	int ObjectCategory;
-	std::vector<int> TypeParams;
-	int method_info_will_be_designed;
-	int field_info_will_be_designed;
-};
+    enum BraceObjectCategoryEnum
+    {
+        /// <summary>
+        /// Internal objects, no inheritance, handled specifically in the MemberCall/MemberSet/MemberGet/CollectionCall/CollectionSet/CollectionGet/LoopList APIs.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT = 0,
+        /// <summary>
+        /// Internal special objects, handled specifically in the MemberCall/MemberSet/MemberGet/CollectionCall/CollectionSet/CollectionGet/LoopList APIs.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_OBJ_ARRAY,
+        BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE,
+        BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE,
+        /// <summary>
+        /// Custom structs, we will use a class to handle member/collection operations for this category.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_STRUCT,
+        /// <summary>
+        /// Custom objects, has inheritance, we will use a class to handle member/collection operations for this category.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_CUSTOM,
+        /// <summary>
+        /// Custom objects, inherit from UObject, can be used in UE api, we will use a class to handle member/collection operations for this category.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_UOBJECT,
+        /// <summary>
+        /// Custom objects, inherit from AActor, can be used in UE api, we will use a class to handle member/collection operations for this category.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_ACTOR,
+        /// <summary>
+        /// Custom objects, inherit from UActorComponent, can be used in UE api, we will use a class to handle member/collection operations for this category.
+        /// </summary>
+        BRACE_OBJECT_CATEGORY_ACTOR_COMPONENT,
+        BRACE_OBJECT_CATEGORY_NUM
+    };
+    enum CustomBraceObjectTypeIdEnum
+    {
+        CUSTOM_BRACE_OBJECT_TYPE_STRING = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NUM,
+        CUSTOM_BRACE_OBJECT_TYPE_STR_ARRAY,
+        CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY,
+        CUSTOM_BRACE_OBJECT_TYPE_FLOAT_ARRAY,
+        CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY,
+        CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_STR_BOOL_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE,
+        CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT,
+        CUSTOM_BRACE_OBJECT_TYPE_CPP_ACTOR,
+        BRACE_INNER_FIXED_OBJECT_TYPE_NUM
+    };
 
-class MemberCallExp;
-class MemberSetExp;
-class MemberGetExp;
-class CollectionCallExp;
-class CollectionSetExp;
-class CollectionGetExp;
-class LoopListExp;
-class AbstractMemberCallApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class MemberCallExp;
-protected:
-	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
-protected:
-	AbstractMemberCallApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-class AbstractMemberSetApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class MemberSetExp;
-protected:
-	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
-protected:
-	AbstractMemberSetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-class AbstractMemberGetApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class MemberGetExp;
-protected:
-	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
-protected:
-	AbstractMemberGetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-class AbstractCollectionCallApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class CollectionCallExp;
-protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
-protected:
-	AbstractCollectionCallApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-class AbstractCollectionSetApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class CollectionSetExp;
-protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, const Brace::OperandLoadtimeInfo& val, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& val, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
-protected:
-	AbstractCollectionSetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-class AbstractCollectionGetApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class CollectionGetExp;
-protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
-	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
-protected:
-	AbstractCollectionGetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-class AbstractLoopListApiProvider : public Brace::BraceApiImplHelper
-{
-	friend class LoopListExp;
-protected:
-	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor) = 0;
-	virtual void StoreRuntimeInfo(Brace::OperandRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) = 0;
-protected:
-	AbstractLoopListApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
-	{}
-};
-/// <summary>
-/// We make a objtypeid -> BraceObjectInfo map, which allows object category info to process class by category, 
-/// Such as DispatchObject, CustomObject, UObject etc.
-/// </summary>
-class BraceObjectInfoManager final
-{
-public:
-	int GetObjectTypeId(const std::string& key)const
-	{
-		auto it = m_ObjTypeIdMap.find(key);
-		if (it != m_ObjTypeIdMap.end())
-			return it->second;
-		return INVALID_ID;
-	}
-	int AddNewObjectTypeId(const std::string& key)
-	{
-		int newId = GenNextObjectTypeId();
-		m_ObjTypeIdMap.insert(std::make_pair(key, newId));
-		return newId;
-	}
-	BraceObjectInfo* AddBraceObjectInfo(int objTypeId, int objCategory, const std::string& typeName)
-	{
-		std::string name = typeName;
-		return AddBraceObjectInfo(objTypeId, objCategory, std::move(name));
-	}
-	BraceObjectInfo* AddBraceObjectInfo(int objTypeId, int objCategory, std::string&& typeName)
-	{
-		auto it = m_ObjTypeIdMap.find(typeName);
-		if (it == m_ObjTypeIdMap.end()) {
-			m_ObjTypeIdMap.insert(std::make_pair(typeName, objTypeId));
-		}
-		BraceObjectInfo info{};
-		info.TypeName = std::move(typeName);
-		info.ObjectCategory = objCategory;
-		info.ObjectTypeId = objTypeId;
-		auto pair = m_ObjInfoMap.insert(std::make_pair(objTypeId, std::move(info)));
-		return pair.second ? &(pair.first->second) : nullptr;
-	}
-	const BraceObjectInfo* GetBraceObjectInfo(int objTypeId)const
-	{
-		auto it = m_ObjInfoMap.find(objTypeId);
-		if (it != m_ObjInfoMap.end())
-			return &(it->second);
-		return nullptr;
-	}
-	BraceObjectInfo* GetBraceObjectInfo(int objTypeId)
-	{
-		auto it = m_ObjInfoMap.find(objTypeId);
-		if (it != m_ObjInfoMap.end())
-			return &(it->second);
-		return nullptr;
-	}
-public:
-	BraceObjectInfoManager(void) :m_ObjTypeIdMap(), m_ObjInfoMap(), m_NextObjectTypeId(BRACE_INNER_FIXED_OBJECT_TYPE_NUM)
-	{}
-private:
-	int GenNextObjectTypeId(void)
-	{
-		return m_NextObjectTypeId++;
-	}
-private:
-	std::unordered_map<std::string, int> m_ObjTypeIdMap;
-	std::unordered_map<int, BraceObjectInfo> m_ObjInfoMap;
-	int m_NextObjectTypeId;
-public:
-	static void CalcObjTypeKey(const DslData::ISyntaxComponent& syntax, std::stringstream& ss)
-	{
-		if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
-			ss << syntax.GetId();
-			ss << "<:";
-			auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
-			for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
-				auto& p = *funcData.GetParam(ix);
-				CalcObjTypeKey(p, ss);
-			}
-			ss << ":>";
-		}
-		else if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
-			ss << syntax.GetId();
-		}
-	}
-	static std::string CalcObjTypeKey(const DslData::ISyntaxComponent& syntax)
-	{
-		std::stringstream ss;
-		CalcObjTypeKey(syntax, ss);
-		return ss.str();
-	}
-};
-static BraceObjectInfoManager g_ObjectInfoMgr;
+    struct MethodInfo final
+    {
+        Brace::DataTypeInfo ReturnType;
+        std::vector<Brace::ParamTypeInfo> ParamTypes;
+        std::string Name;
+    };
+    struct BraceObjectInfo;
+    struct FieldInfo final
+    {
+        Brace::DataTypeInfo Type;
+        int Offset;
+        int Size;
+        bool IsPtr;
+        std::string Name;
+        const BraceObjectInfo* BraceObjInfo;
+    };
+    struct MethodTableInfo final
+    {
+        std::vector<MethodInfo> Methods;
+    };
+    struct FieldTableInfo final
+    {
+        int Size;
+        std::vector<FieldInfo> Fields;
+    };
+    struct BraceObjectInfo final
+    {
+        std::string TypeName;
+        int ObjectTypeId;
+        int ObjectCategory;
+        std::vector<int> TypeParams;
+        MethodTableInfo MethodTable;
+        FieldTableInfo FieldTable;
+    };
+
+    class MemberCallExp;
+    class MemberSetExp;
+    class MemberGetExp;
+    class CollectionCallExp;
+    class CollectionSetExp;
+    class CollectionGetExp;
+    class LoopListExp;
+    class AbstractMemberCallApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class MemberCallExp;
+    protected:
+        virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+    protected:
+        AbstractMemberCallApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    class AbstractMemberSetApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class MemberSetExp;
+    protected:
+        virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+    protected:
+        AbstractMemberSetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    class AbstractMemberGetApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class MemberGetExp;
+    protected:
+        virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+    protected:
+        AbstractMemberGetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    class AbstractCollectionCallApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class CollectionCallExp;
+    protected:
+        virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
+        virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
+    protected:
+        AbstractCollectionCallApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    class AbstractCollectionSetApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class CollectionSetExp;
+    protected:
+        virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, const Brace::OperandLoadtimeInfo& val, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
+        virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& val, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
+    protected:
+        AbstractCollectionSetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    class AbstractCollectionGetApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class CollectionGetExp;
+    protected:
+        virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, Brace::OperandLoadtimeInfo& resultInfo) const = 0;
+        virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& resultInfo) const = 0;
+    protected:
+        AbstractCollectionGetApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    class AbstractLoopListApiProvider : public Brace::BraceApiImplHelper
+    {
+        friend class LoopListExp;
+    protected:
+        virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor) = 0;
+        virtual void StoreRuntimeInfo(Brace::OperandRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) = 0;
+    protected:
+        AbstractLoopListApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
+        {}
+    };
+    /// <summary>
+    /// We make a objtypeid -> BraceObjectInfo map, which allows object category info to process class by category, 
+    /// Such as DispatchObject, CustomObject, UObject etc.
+    /// </summary>
+    class BraceObjectInfoManager final
+    {
+    public:
+        int GetObjectTypeId(const std::string& key)const
+        {
+            auto it = m_ObjTypeIdMap.find(key);
+            if (it != m_ObjTypeIdMap.end())
+                return it->second;
+            return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+        }
+        int AddNewObjectTypeId(const std::string& key)
+        {
+            int newId = GenNextObjectTypeId();
+            m_ObjTypeIdMap.insert(std::make_pair(key, newId));
+            return newId;
+        }
+        BraceObjectInfo* AddBraceObjectInfo(int objTypeId, int objCategory, const std::string& typeName)
+        {
+            std::string name = typeName;
+            return AddBraceObjectInfo(objTypeId, objCategory, std::move(name));
+        }
+        BraceObjectInfo* AddBraceObjectInfo(int objTypeId, int objCategory, std::string&& typeName)
+        {
+            auto it = m_ObjTypeIdMap.find(typeName);
+            if (it == m_ObjTypeIdMap.end()) {
+                m_ObjTypeIdMap.insert(std::make_pair(typeName, objTypeId));
+            }
+            BraceObjectInfo info{};
+            info.TypeName = std::move(typeName);
+            info.ObjectCategory = objCategory;
+            info.ObjectTypeId = objTypeId;
+            auto pair = m_ObjInfoMap.insert(std::make_pair(objTypeId, std::move(info)));
+            return pair.second ? &(pair.first->second) : nullptr;
+        }
+        const BraceObjectInfo* GetBraceObjectInfo(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end())
+                return &(it->second);
+            return nullptr;
+        }
+        BraceObjectInfo* GetBraceObjectInfo(int objTypeId)
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end())
+                return &(it->second);
+            return nullptr;
+        }
+    public:
+        BraceObjectInfoManager(void) :m_ObjTypeIdMap(), m_ObjInfoMap(), m_NextObjectTypeId(BRACE_INNER_FIXED_OBJECT_TYPE_NUM)
+        {}
+    private:
+        int GenNextObjectTypeId(void)
+        {
+            return m_NextObjectTypeId++;
+        }
+    private:
+        std::unordered_map<std::string, int> m_ObjTypeIdMap;
+        std::unordered_map<int, BraceObjectInfo> m_ObjInfoMap;
+        int m_NextObjectTypeId;
+    public:
+        static void CalcObjTypeKey(const DslData::ISyntaxComponent& syntax, std::stringstream& ss)
+        {
+            if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                ss << syntax.GetId();
+                ss << "<:";
+                auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
+                for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
+                    auto& p = *funcData.GetParam(ix);
+                    CalcObjTypeKey(p, ss);
+                }
+                ss << ":>";
+            }
+            else if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
+                ss << syntax.GetId();
+            }
+        }
+        static std::string CalcObjTypeKey(const DslData::ISyntaxComponent& syntax)
+        {
+            std::stringstream ss;
+            CalcObjTypeKey(syntax, ss);
+            return ss.str();
+        }
+    };
+    static BraceObjectInfoManager g_ObjectInfoMgr;
 
 class UObjectMemberCallProvider final : public AbstractMemberCallApiProvider
 {
@@ -1788,7 +1817,7 @@ protected:
 			}
 			if (!CanAssign(dataType, objTypeId, val.Type, val.ObjectTypeId)) {
 				std::stringstream ss;
-				ss << "Array type and val type dismatch ! line: " << data.GetLine();
+				ss << "Array element's type and val type dismatch ! line: " << data.GetLine();
 				LogError(ss.str());
 				return false;
 			}
@@ -2867,6 +2896,237 @@ private:
 	std::vector<int> m_ObjVars;
 };
 
+class StringMemberCallProvider final : public AbstractMemberCallApiProvider
+{
+	friend class MemberCallExp;
+protected:
+	virtual bool LoadMemberCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	{
+		std::swap(m_Obj, obj);
+		m_ObjInfo = objInfo;
+		std::swap(m_Member, member);
+		std::swap(m_Args, args);
+		for (auto& argInfo : argInfos) {
+			m_ArgInfos.push_back(argInfo);
+		}
+		auto& m = m_Member;
+		if (m == "ReplaceAll") {
+			if (argInfos.size() == 2) {
+				auto& argInfo = argInfos[0];
+				auto& argInfo2 = argInfos[1];
+				if (Brace::IsStringType(argInfo.Type) && Brace::IsStringType(argInfo2.Type)) {
+					resultInfo = objInfo;
+					executor.attach(this, &StringMemberCallProvider::ExecuteReplaceAll);
+					return true;
+				}
+			}
+			std::stringstream ss;
+			ss << "expected String.ReplaceAll(string, string) ! line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		return false;
+	}
+private:
+	int ExecuteReplaceAll(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
+	{
+		if (!m_Obj.isNull())
+			m_Obj(gvars, lvars);
+		for (auto& _arg : m_Args) {
+			if (!_arg.isNull())
+				_arg(gvars, lvars);
+		}
+		auto& strInfo = m_ObjInfo;
+		auto& strInfo1 = m_ArgInfos[0];
+		auto& strInfo2 = m_ArgInfos[1];
+		std::string& str = Brace::VarGetString((strInfo.IsGlobal ? gvars : lvars), strInfo.VarIndex);
+		const std::string& what = Brace::VarGetString((strInfo1.IsGlobal ? gvars : lvars), strInfo1.VarIndex);
+		const std::string& with = Brace::VarGetString((strInfo2.IsGlobal ? gvars : lvars), strInfo2.VarIndex);
+		for (std::string::size_type pos{}; str.npos != (pos = str.find(what.data(), pos, what.length())); pos += with.length()) {
+			str.replace(pos, what.length(), with.data(), with.length());
+		}
+		return Brace::BRACE_FLOW_CONTROL_NORMAL;
+	}
+private:
+	StringMemberCallProvider(Brace::BraceScript& interpreter) :AbstractMemberCallApiProvider(interpreter), m_Obj(), m_ObjInfo(), m_Member(), m_Args(), m_ArgInfos(), m_ResultInfo()
+	{
+	}
+private:
+	Brace::BraceApiExecutor m_Obj;
+	Brace::OperandRuntimeInfo m_ObjInfo;
+	std::string m_Member;
+	std::vector<Brace::BraceApiExecutor> m_Args;
+	std::vector<Brace::OperandRuntimeInfo> m_ArgInfos;
+	Brace::OperandRuntimeInfo m_ResultInfo;
+};
+class StringMemberSetProvider final : public AbstractMemberSetApiProvider
+{
+	friend class MemberSetExp;
+protected:
+	virtual bool LoadMemberSet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	{
+		return false;
+	}
+private:
+	StringMemberSetProvider(Brace::BraceScript& interpreter) :AbstractMemberSetApiProvider(interpreter)
+	{}
+};
+class StringMemberGetProvider final : public AbstractMemberGetApiProvider
+{
+	friend class MemberGetExp;
+protected:
+	virtual bool LoadMemberGet(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& objInfo, Brace::BraceApiExecutor&& obj, std::string&& member, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor)override
+	{
+		return false;
+	}
+private:
+	StringMemberGetProvider(Brace::BraceScript& interpreter) :AbstractMemberGetApiProvider(interpreter)
+	{}
+};
+class StringCollectionCallProvider final : public AbstractCollectionCallApiProvider
+{
+	friend class CollectionCallExp;
+protected:
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) const override
+	{
+		return false;
+	}
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo) const override
+	{
+	}
+private:
+	StringCollectionCallProvider(Brace::BraceScript& interpreter) :AbstractCollectionCallApiProvider(interpreter)
+	{}
+};
+class StringCollectionSetProvider final : public AbstractCollectionSetApiProvider
+{
+	friend class CollectionSetExp;
+protected:
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, const Brace::OperandLoadtimeInfo& val, Brace::OperandLoadtimeInfo& resultInfo) const override
+	{
+		if (!(ix.Type >= Brace::BRACE_DATA_TYPE_INT8 && ix.Type <= Brace::BRACE_DATA_TYPE_UINT64)) {
+			std::stringstream ss;
+			ss << "String's index must be integer ! line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		if (!CanAssign(Brace::BRACE_DATA_TYPE_UINT8, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ, val.Type, val.ObjectTypeId)) {
+			std::stringstream ss;
+			ss << "String element's type and val type dismatch ! line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		resultInfo = val;
+		return true;
+	}
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& val, const Brace::OperandRuntimeInfo& resultInfo) const override
+    {
+		std::string& str = Brace::VarGetString((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+        int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+		uint64_t v = Brace::VarGetU64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+		if (vix >= 0 && vix < static_cast<int64_t>(str.length())) {
+			str.replace(static_cast<size_t>(vix), 1, 1, static_cast<char>(static_cast<uint8_t>(v)));
+		}
+	}
+private:
+	StringCollectionSetProvider(Brace::BraceScript& interpreter) :AbstractCollectionSetApiProvider(interpreter)
+	{}
+};
+class StringCollectionGetProvider final : public AbstractCollectionGetApiProvider
+{
+	friend class CollectionGetExp;
+protected:
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& arr, const Brace::OperandLoadtimeInfo& ix, Brace::OperandLoadtimeInfo& resultInfo) const override
+	{
+		if (!(ix.Type >= Brace::BRACE_DATA_TYPE_INT8 && ix.Type <= Brace::BRACE_DATA_TYPE_UINT64)) {
+			std::stringstream ss;
+			ss << "String's index must be integer ! line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		resultInfo.Type = Brace::BRACE_DATA_TYPE_UINT8;
+		resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+		resultInfo.Name = GenTempVarName();
+		resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+		return true;
+	}
+	virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& resultInfo) const override
+	{
+		const std::string& str = Brace::VarGetString((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+		int64_t vix = Brace::VarGetI64((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
+		char v = 0;
+		if (vix >= 0 && vix < static_cast<int64_t>(str.length())) {
+			v = str[vix];
+		}
+		Brace::VarSetUInt8((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, static_cast<uint8_t>(v));
+	}
+private:
+	StringCollectionGetProvider(Brace::BraceScript& interpreter) :AbstractCollectionGetApiProvider(interpreter)
+	{}
+};
+class StringLoopListProvider final : public AbstractLoopListApiProvider
+{
+	friend class LoopListExp;
+protected:
+	virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::ISyntaxComponent& data, const BraceObjectInfo& braceObjInfo, const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor) override
+	{
+		return TypeInference(listInfo, executor);
+	}
+	virtual void StoreRuntimeInfo(Brace::OperandRuntimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::vector<Brace::BraceApiExecutor>&& statements, std::vector<int>&& objVars) override
+	{
+		std::swap(m_ListInfo, listInfo);
+		std::swap(m_List, list);
+		std::swap(m_Statements, statements);
+		std::swap(m_ObjVars, objVars);
+	}
+private:
+	StringLoopListProvider(Brace::BraceScript& interpreter) :AbstractLoopListApiProvider(interpreter), m_IteratorIndex(INVALID_INDEX), m_List(), m_ListInfo(), m_Statements(), m_ObjVars()
+	{}
+private:
+	bool TypeInference(const Brace::OperandLoadtimeInfo& listInfo, Brace::BraceApiExecutor& executor)
+	{
+		if (listInfo.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			m_IteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_UINT8, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+			executor.attach(this, &StringLoopListProvider::Execute);
+			return true;
+		}
+		return false;
+	}
+	int Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
+	{
+		if (!m_List.isNull())
+			m_List(gvars, lvars);
+		auto& str = Brace::VarGetString((m_ListInfo.IsGlobal ? gvars : lvars), m_ListInfo.VarIndex);
+        for (char val : str) {
+            Brace::VarSetUInt8(lvars, m_IteratorIndex, static_cast<uint8_t>(val));
+            for (auto& statement : m_Statements) {
+                int v = statement(gvars, lvars);
+                if (IsForceQuit()) {
+                    FreeObjVars(lvars, m_ObjVars);
+                    return v;
+                }
+                if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
+                    break;
+                }
+                else if (v != Brace::BRACE_FLOW_CONTROL_NORMAL) {
+                    FreeObjVars(lvars, m_ObjVars);
+                    if (v == Brace::BRACE_FLOW_CONTROL_BREAK)
+                        return Brace::BRACE_FLOW_CONTROL_NORMAL;
+                    return v;
+                }
+            }
+        }
+		FreeObjVars(lvars, m_ObjVars);
+		return Brace::BRACE_FLOW_CONTROL_NORMAL;
+	}
+private:
+	int m_IteratorIndex;
+	Brace::BraceApiExecutor m_List;
+	Brace::OperandRuntimeInfo m_ListInfo;
+	std::vector<Brace::BraceApiExecutor> m_Statements;
+	std::vector<int> m_ObjVars;
+};
+
 class MemberCallExp final : public Brace::AbstractBraceApi
 {
 public:
@@ -2907,6 +3167,9 @@ protected:
 				case BRACE_OBJECT_CATEGORY_ACTOR:
 					pProvider = new AActorMemberCallProvider(GetInterpreter());
 					break;
+				case BRACE_OBJECT_CATEGORY_STRUCT:
+					pProvider = new StructMemberCallProvider(GetInterpreter());
+					break;
 				default:
 					pProvider = new ArrayHashtableMemberCallProvider(GetInterpreter());
 					break;
@@ -2916,6 +3179,16 @@ protected:
 					return pProvider->LoadMemberCall(func, data, *pInfo, std::move(objInfo), std::move(obj), std::move(member), std::move(argInfos), std::move(args), resultInfo, executor);
 				}
 			}			
+		}
+		else if (objInfo.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+			if (nullptr != pInfo) {
+				AbstractMemberCallApiProvider* pProvider = new StringMemberCallProvider(GetInterpreter());
+				if (pProvider) {
+					m_ApiProvider.reset(pProvider);
+					return pProvider->LoadMemberCall(func, data, *pInfo, std::move(objInfo), std::move(obj), std::move(member), std::move(argInfos), std::move(args), resultInfo, executor);
+				}
+			}
 		}
 		std::stringstream ss;
 		ss << "Unknown member " << m << " line: " << data.GetLine();
@@ -2956,10 +3229,23 @@ protected:
 				case BRACE_OBJECT_CATEGORY_ACTOR:
 					pProvider = new AActorMemberSetProvider(GetInterpreter());
 					break;
+				case BRACE_OBJECT_CATEGORY_STRUCT:
+					pProvider = new StructMemberSetProvider(GetInterpreter());
+					break;
 				default:
 					pProvider = new ArrayHashtableMemberSetProvider(GetInterpreter());
 					break;
 				}
+				if (pProvider) {
+					m_ApiProvider.reset(pProvider);
+					return pProvider->LoadMemberSet(func, data, *pInfo, std::move(objInfo), std::move(obj), std::move(member), std::move(argLoadInfo), std::move(p), resultInfo, executor);
+				}
+			}
+		}
+		else if (objInfo.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+			if (nullptr != pInfo) {
+				AbstractMemberSetApiProvider* pProvider = new StringMemberSetProvider(GetInterpreter());
 				if (pProvider) {
 					m_ApiProvider.reset(pProvider);
 					return pProvider->LoadMemberSet(func, data, *pInfo, std::move(objInfo), std::move(obj), std::move(member), std::move(argLoadInfo), std::move(p), resultInfo, executor);
@@ -2999,10 +3285,23 @@ protected:
 				case BRACE_OBJECT_CATEGORY_ACTOR:
 					pProvider = new AActorMemberGetProvider(GetInterpreter());
 					break;
+				case BRACE_OBJECT_CATEGORY_STRUCT:
+					pProvider = new StructMemberGetProvider(GetInterpreter());
+					break;
 				default:
 					pProvider = new ArrayHashtableMemberGetProvider(GetInterpreter());
 					break;
 				}
+				if (pProvider) {
+					m_ApiProvider.reset(pProvider);
+					return pProvider->LoadMemberGet(func, data, *pInfo, std::move(objInfo), std::move(obj), std::move(member), resultInfo, executor);
+				}
+			}
+		}
+		else if (objInfo.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+			if (nullptr != pInfo) {
+				AbstractMemberGetApiProvider* pProvider = new StringMemberGetProvider(GetInterpreter());
 				if (pProvider) {
 					m_ApiProvider.reset(pProvider);
 					return pProvider->LoadMemberGet(func, data, *pInfo, std::move(objInfo), std::move(obj), std::move(member), resultInfo, executor);
@@ -3041,6 +3340,16 @@ protected:
 					pProvider = new ArrayHashtableCollectionCallProvider(GetInterpreter());
 					break;
 				}
+				if (pProvider) {
+					m_ApiProvider.reset(pProvider);
+					return pProvider->TypeInference(func, data, *pInfo, argInfos, resultInfo);
+				}
+			}
+		}
+		else if (arr.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+			if (nullptr != pInfo) {
+				AbstractCollectionCallApiProvider* pProvider = new StringCollectionCallProvider(GetInterpreter());
 				if (pProvider) {
 					m_ApiProvider.reset(pProvider);
 					return pProvider->TypeInference(func, data, *pInfo, argInfos, resultInfo);
@@ -3088,6 +3397,16 @@ protected:
 				}
 			}
 		}
+		else if (arr.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+			if (nullptr != pInfo) {
+				AbstractCollectionSetApiProvider* pProvider = new StringCollectionSetProvider(GetInterpreter());
+				if (pProvider) {
+					m_ApiProvider.reset(pProvider);
+					return pProvider->TypeInference(func, data, *pInfo, arr, ix, val, resultInfo);
+				}
+			}
+		}
 		std::stringstream ss;
 		ss << "Unknown collection type ! line: " << data.GetLine();
 		LogError(ss.str());
@@ -3127,6 +3446,16 @@ protected:
 					pProvider = new ArrayHashtableCollectionGetProvider(GetInterpreter());
 					break;
 				}
+				if (pProvider) {
+					m_ApiProvider.reset(pProvider);
+					return pProvider->TypeInference(func, data, *pInfo, arr, ix, resultInfo);
+				}
+			}
+		}
+		else if (arr.Type == Brace::BRACE_DATA_TYPE_STRING) {
+			auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+			if (nullptr != pInfo) {
+				AbstractCollectionGetApiProvider* pProvider = new StringCollectionGetProvider(GetInterpreter());
 				if (pProvider) {
 					m_ApiProvider.reset(pProvider);
 					return pProvider->TypeInference(func, data, *pInfo, arr, ix, resultInfo);
@@ -3359,7 +3688,7 @@ protected:
 			if (good) {
 				std::string typeKey = std::string("array<:") + GetObjectTypeName(objTypeId) + ":>";
 				m_ObjectTypeId = g_ObjectInfoMgr.GetObjectTypeId(typeKey);
-				if (m_ObjectTypeId < 0) {
+				if (m_ObjectTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
 					m_ObjectTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(typeKey);
 				}
 				auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(m_ObjectTypeId);
@@ -3765,7 +4094,7 @@ protected:
 			if (good) {
 				std::string typeKey = std::string("array<:") + GetObjectTypeName(valObjTypeId) + ":>";
 				int objectTypeId = g_ObjectInfoMgr.GetObjectTypeId(typeKey);
-				if (objectTypeId < 0) {
+				if (objectTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
 					objectTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(typeKey);
 				}
 				auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objectTypeId);
@@ -3940,7 +4269,7 @@ protected:
 			if (good) {
 				std::string typeKey = std::string("array<:") + GetObjectTypeName(valObjTypeId) + ":>";
 				int objectTypeId = g_ObjectInfoMgr.GetObjectTypeId(typeKey);
-				if (objectTypeId < 0) {
+				if (objectTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
 					objectTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(typeKey);
 				}
 				auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objectTypeId);
@@ -4226,11 +4555,12 @@ protected:
 			Brace::OperandLoadtimeInfo loadInfo;
 			auto list = LoadHelper(*p, loadInfo);
 			auto& listInfo = loadInfo;
-			PushBlock();
+            PushBlock();
+			BraceObjectInfo* pInfo = nullptr;
+            AbstractLoopListApiProvider* pProvider = nullptr;
 			if (listInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
-				auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(listInfo.ObjectTypeId);
+				pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(listInfo.ObjectTypeId);
 				if (nullptr != pInfo) {
-					AbstractLoopListApiProvider* pProvider = nullptr;
 					switch (pInfo->ObjectCategory) {
 					case BRACE_OBJECT_CATEGORY_UOBJECT:
 					case BRACE_OBJECT_CATEGORY_ACTOR:
@@ -4238,27 +4568,33 @@ protected:
 						pProvider = new ArrayHashtableLoopListProvider(GetInterpreter());
 						break;
 					}
-					if (pProvider) {
-						ret = true;
-						m_ApiProvider.reset(pProvider);
-						if (!pProvider->TypeInference(func, funcData, *pInfo, listInfo, executor)) {
-							std::stringstream ss;
-							ss << "BraceScript error, " << funcData.GetId() << " line " << funcData.GetLine();
-							LogError(ss.str());
-							ret = false;
-						}
-						else {
-							std::vector<Brace::BraceApiExecutor> statements{};
-							for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
-								Brace::OperandLoadtimeInfo argLoadInfo;
-								auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
-								if (!statement.isNull())
-									statements.push_back(std::move(statement));
-							}
-							auto& objVars = CurBlockObjVars();
-							pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), std::move(objVars));
-						}
+				}
+			}
+			else if (listInfo.Type == Brace::BRACE_DATA_TYPE_STRING) {
+				pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING);
+				if (nullptr != pInfo) {
+					pProvider = new StringLoopListProvider(GetInterpreter());
+				}
+			}
+			if (pProvider) {
+				ret = true;
+				m_ApiProvider.reset(pProvider);
+				if (!pProvider->TypeInference(func, funcData, *pInfo, listInfo, executor)) {
+					std::stringstream ss;
+					ss << "BraceScript error, " << funcData.GetId() << " line " << funcData.GetLine();
+					LogError(ss.str());
+					ret = false;
+				}
+				else {
+					std::vector<Brace::BraceApiExecutor> statements{};
+					for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
+						Brace::OperandLoadtimeInfo argLoadInfo;
+						auto statement = LoadHelper(*funcData.GetParam(ix), argLoadInfo);
+						if (!statement.isNull())
+							statements.push_back(std::move(statement));
 					}
+					auto& objVars = CurBlockObjVars();
+					pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), std::move(objVars));
 				}
 			}
 			PopBlock();
@@ -4376,6 +4712,7 @@ private:
 	m_pBraceScript->RegisterApi("looplist", new Brace::BraceApiFactory<LoopListExp>());
 
 	//add fixed map, obj table id <-> obj category
+    	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "string");  //fake obj info for string 
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "array<:bool:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "array<:int64:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_FLOAT_ARRAY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "array<:double:>");
@@ -4388,4 +4725,6 @@ private:
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,int64:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,double:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,string:>");
+    	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT, BRACE_OBJECT_CATEGORY_UOBJECT, "uobject");
+    	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_CPP_ACTOR, BRACE_OBJECT_CATEGORY_ACTOR, "actor");
 */
