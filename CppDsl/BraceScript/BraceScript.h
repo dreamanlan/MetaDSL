@@ -405,9 +405,9 @@ namespace Brace
     DEFINE_VAR_GET_NUMERIC(UInt64, UInt64Val, uint64_t);
     DEFINE_VAR_GET_NUMERIC(Float, FloatVal, float);
     DEFINE_VAR_GET_NUMERIC(Double, DoubleVal, double);
-    DEFINE_VAR_GET(String, StringVars, const std::string&);
-    DEFINE_VAR_GET(Object, ObjectVars, const std::shared_ptr<IBraceObject>&);
-    DEFINE_VAR_GET(Ref, ReferenceVars, const ReferenceInfo&);
+    DEFINE_VAR_GET(String, StringVars, std::string&);
+    DEFINE_VAR_GET(Object, ObjectVars, std::shared_ptr<IBraceObject>&);
+    DEFINE_VAR_GET(Ref, ReferenceVars, ReferenceInfo&);
 
     DEFINE_VAR_SET_NUMERIC(Bool, BoolVal, bool);
     DEFINE_VAR_SET_NUMERIC(Int8, Int8Val, int8_t);
