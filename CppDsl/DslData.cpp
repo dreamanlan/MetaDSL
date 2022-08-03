@@ -51,20 +51,26 @@ namespace DslData
     }
     void ValueData::CopyFrom(const ValueData& other)
     {
-        m_Type = other.m_Type;
-        m_StringVal = other.m_StringVal;
-        m_Line = other.m_Line;
-        if (nullptr != other.m_FunctionVal) {
-            m_FunctionVal->CopyFrom(*other.m_FunctionVal);
+        if (other.m_Type == VALUE_TYPE_FUNCTION) {
+            if (nullptr != other.m_FunctionVal) {
+                SetFunctionCopyFrom(*other.m_FunctionVal);
+            }
+            else {
+                SetFunction();
+            }
         }
+        else {
+            m_Type = other.m_Type;
+            m_StringVal = other.m_StringVal;
+        }
+        m_Line = other.m_Line;
     }
     FunctionData* ValueData::SetFunction(void)
     {
         m_Type = VALUE_TYPE_FUNCTION;
         if (nullptr == m_FunctionVal)
             m_FunctionVal = new FunctionData();
-        else
-            m_StringVal.clear();
+        m_StringVal.clear();
         return m_FunctionVal;
     }
     FunctionData* ValueData::SetFunctionCopyFrom(const FunctionData& other)

@@ -810,6 +810,7 @@ namespace Brace
         /// RegisterApi("collectionset", new BraceApiFactory<CollectionSetExp>());
         /// RegisterApi("collectionget", new BraceApiFactory<CollectionGetExp>());
         /// RegisterApi("linq", new BraceApiFactory<LinqExp>());
+        /// RegisterApi("select", new Brace::BraceApiFactory<SelectExp>());
         /// RegisterApi("lambda", new BraceApiFactory<LambdaExp>());
         /// RegisterApi("array", new BraceApiFactory<ArrayExp>());
         /// RegisterApi("hashtable", new BraceApiFactory<HashtableExp>());

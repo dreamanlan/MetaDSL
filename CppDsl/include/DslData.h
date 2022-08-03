@@ -238,34 +238,10 @@ namespace DslData
         {
             return GetSyntaxType() == ISyntaxComponent::TYPE_FUNCTION;
         }
-        const ValueData* AsValue(void)const
-        {
-            if (IsValue())
-                return reinterpret_cast<const ValueData*>(this);
-            else
-                return nullptr;
-        }
-        ValueData* AsValue(void)
-        {
-            if (IsValue())
-                return reinterpret_cast<ValueData*>(this);
-            else
-                return nullptr;
-        }
-        const FunctionData* AsFunction(void)const
-        {
-            if (IsFunction())
-                return reinterpret_cast<const FunctionData*>(this);
-            else
-                return nullptr;
-        }
-        FunctionData* AsFunction(void)
-        {
-            if (IsFunction())
-                return reinterpret_cast<FunctionData*>(this);
-            else
-                return nullptr;
-        }
+        inline const ValueData* AsValue(void)const;
+        inline ValueData* AsValue(void);
+        inline const FunctionData* AsFunction(void)const;
+        inline FunctionData* AsFunction(void);
     };
 
     class ValueData final : public ValueOrFunctionData
@@ -666,6 +642,35 @@ namespace DslData
     private:
         FunctionCommentsInfo* m_pCommentsInfo;
     };
+
+    inline const ValueData* ValueOrFunctionData::AsValue(void)const
+    {
+        if (IsValue())
+            return static_cast<const ValueData*>(this);
+        else
+            return nullptr;
+    }
+    inline ValueData* ValueOrFunctionData::AsValue(void)
+    {
+        if (IsValue())
+            return static_cast<ValueData*>(this);
+        else
+            return nullptr;
+    }
+    inline const FunctionData* ValueOrFunctionData::AsFunction(void)const
+    {
+        if (IsFunction())
+            return static_cast<const FunctionData*>(this);
+        else
+            return nullptr;
+    }
+    inline FunctionData* ValueOrFunctionData::AsFunction(void)
+    {
+        if (IsFunction())
+            return static_cast<FunctionData*>(this);
+        else
+            return nullptr;
+    }
 
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
      * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
