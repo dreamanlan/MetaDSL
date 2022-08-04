@@ -2965,7 +2965,7 @@ private:
 				switch (m_Operation) {
 				case OPERATION_ORDERBY:
 				case OPERATION_ORDERBYDESC:
-                    ExecuteOrderBy(gvars, lvars, pArr, pNewArr, m_Operation == OPERATION_ORDERBY, m_ResultInfo.VarIndex);
+                    			ExecuteOrderBy(gvars, lvars, pArr, pNewArr, m_Operation == OPERATION_ORDERBY);
 					break;
 				case OPERATION_TOP:
 					ExecuteTop(gvars, lvars, pArr, pNewArr);
@@ -2978,7 +2978,7 @@ private:
 		}
 		return Brace::BRACE_FLOW_CONTROL_NORMAL;
 	}
-	void ExecuteOrderBy(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr, bool asc, int resultIndex)const
+	void ExecuteOrderBy(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr, bool asc)const
 	{
 		for (auto& val : pArr->GetImpl()) {
 			pNewArr->GetImpl().push_back(val);
@@ -4522,7 +4522,6 @@ protected:
 		}
 		DslData::FunctionData* pHavingCallData = nullptr;
 		std::vector<Brace::DataTypeInfo> selectItTypes;
-		std::vector<int> selectStats;
 		for (int fix = 0; fix < fnum; ++fix) {
 			DslData::FunctionData* pFuncData = statementData.GetFunction(fix)->AsFunction();
 			if (nullptr != pFuncData) {
@@ -4569,16 +4568,18 @@ protected:
 						}
 						Brace::OperandLoadtimeInfo argLoadInfo;
 						auto p = LoadHelper(*param, argLoadInfo);
-						if (stat == AbstractSelectApiProvider::STAT_METHOD_NONE) {
+						switch(stat){
+						case AbstractSelectApiProvider::STAT_METHOD_COUNT:
+							selectItTypes.push_back(Brace::DataTypeInfo(Brace::BRACE_DATA_TYPE_INT32, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ));
+							break;
+						case AbstractSelectApiProvider::STAT_METHOD_NONE:
+						default:
 							selectItTypes.push_back(argLoadInfo);
-						}
-						else {
-							selectItTypes.push_back(Brace::DataTypeInfo(Brace::BRACE_DATA_TYPE_DOUBLE, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ));
+							break;
 						}
 						argInfos.push_back(std::move(argLoadInfo));
 						args.push_back(std::move(p));
 						stats.push_back(stat);
-						selectStats.push_back(stat);
 					}
 					auto objVars = CurBlockObjVars();
 					PopBlock();
@@ -4674,29 +4675,12 @@ protected:
 					PushBlock();
 					for (int i = 0; i < selectItTypes.size(); ++i) {
 						auto& dt = selectItTypes[i];
-						int stat = selectStats[i];
 						Brace::OperandLoadtimeInfo itInfo;
-						if (stat == AbstractSelectApiProvider::STAT_METHOD_NONE) {
-							itInfo.Type = dt.Type;
-							itInfo.ObjectTypeId = dt.ObjectTypeId;
-						}
-						else if (Brace::IsStringType(itInfo.Type) || Brace::IsStringType(itInfo.Type)) {
-							if (stat == AbstractSelectApiProvider::STAT_METHOD_COUNT) {
-								itInfo.Type = Brace::BRACE_DATA_TYPE_DOUBLE;
-								itInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-							}
-							else {
-								itInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
-								itInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-							}
-						}
-						else {
-							itInfo.Type = Brace::BRACE_DATA_TYPE_DOUBLE;
-							itInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-						}
+						itInfo.Type = dt.Type;
+						itInfo.ObjectTypeId = dt.ObjectTypeId;
 						itInfo.Name = std::string("$") + std::to_string(i);
 						itInfo.VarIndex = AllocVariable(itInfo.Name, itInfo.Type, itInfo.ObjectTypeId);
-						iterators.push_back(itInfo);
+						iterators.push_back(std::move(itInfo));
 					}
 					bool ret = true;
 					if (nullptr != pHavingCallData) {
