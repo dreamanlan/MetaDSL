@@ -168,7 +168,7 @@
     {
         friend class LinqExp;
     protected:
-        virtual bool LoadLinqCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, const std::vector<int>& objVars, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
+        virtual bool LoadLinqCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& objVars, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
     protected:
         AbstractLinqApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
         {}
@@ -188,16 +188,16 @@
             MAX_STAT_METHOD_NUM
         };
     protected:
-        virtual bool LoadSelect(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& statMethods, const std::vector<int>& objVars) = 0;
-        virtual bool LoadTop(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, const std::vector<int>& objVars) = 0;
+        virtual bool LoadSelect(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& statMethods, std::vector<int>&& objVars) = 0;
+        virtual bool LoadTop(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, std::vector<int>&& objVars) = 0;
         virtual bool LoadFromList(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg) = 0;
         virtual bool LoadFromType(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, const std::string& type) = 0;
-        virtual bool LoadWhere(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, const std::vector<int>& objVars) = 0;
-        virtual bool LoadOrderBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<bool>&& ascOrDescs, const std::vector<int>& objVars) = 0;
-        virtual bool LoadGroupBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, const std::vector<int>& objVars) = 0;
+        virtual bool LoadWhere(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, std::vector<int>&& objVars) = 0;
+        virtual bool LoadOrderBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<bool>&& ascOrDescs, std::vector<int>&& objVars) = 0;
+        virtual bool LoadGroupBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& objVars) = 0;
         virtual bool LoadHaving(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg) = 0;
         virtual bool LoadStatements(const Brace::FuncInfo& func, const DslData::FunctionData& data, std::vector<Brace::BraceApiExecutor>&& statements, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) = 0;
-        virtual void LoadResultIterator(const std::vector<Brace::OperandLoadtimeInfo>& iterators, const std::vector<int>& objVars) = 0;
+        virtual void LoadResultIterator(std::vector<Brace::OperandLoadtimeInfo>&& iterators, std::vector<int>&& objVars) = 0;
     protected:
         AbstractSelectApiProvider(Brace::BraceScript& interpreter) :Brace::BraceApiImplHelper(interpreter)
         {}
@@ -2915,7 +2915,7 @@ class ArrayHashtableLinqProvider final : public AbstractLinqApiProvider
 		std::string StrVal;
 	};
 protected:
-	virtual bool LoadLinqCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, const std::vector<int>& objVars, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+	virtual bool LoadLinqCall(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& listInfo, Brace::BraceApiExecutor&& list, std::string&& member, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& objVars, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
 	{
 		if (member == "orderby") {
 			m_Operation = OPERATION_ORDERBY;
@@ -2942,7 +2942,7 @@ protected:
 		resultInfo.Name = GenTempVarName();
 		resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
 		m_ResultInfo = resultInfo;
-		m_ObjVars = objVars;
+		std::swap(m_ObjVars, objVars);
 		executor.attach(this, &ArrayHashtableLinqProvider::ExecuteObjectArray);
 		return true;
 	}
@@ -2964,103 +2964,115 @@ private:
 				auto* pArr = static_cast<ObjectArray*>(ptr);
 				switch (m_Operation) {
 				case OPERATION_ORDERBY:
-				case OPERATION_ORDERBYDESC: {
-					for (auto& val : pArr->GetImpl()) {
-						pNewArr->GetImpl().push_back(val);
-					}
-					std::vector<CmpVal> sortVals{};
-					std::sort(pNewArr->GetImpl().begin(), pNewArr->GetImpl().end(), [&](auto& e1, auto& e2) {
-						Brace::VarSetObject(lvars, m_IteratorIndex, e1);
-						for (auto& arg : m_Args) {
-							if (!arg.isNull())
-								arg(gvars, lvars);
-						}
-						sortVals.clear();
-						for (auto& argInfo : m_ArgInfos) {
-							CmpVal cv;
-							if (Brace::IsStringType(argInfo.Type))
-								cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-							else
-								cv.NumVal = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-							sortVals.push_back(cv);
-						}
-						Brace::VarSetObject(lvars, m_IteratorIndex, e2);
-						for (auto& arg : m_Args) {
-							if (!arg.isNull())
-								arg(gvars, lvars);
-						}
-						int ix = 0;
-						for (auto& argInfo : m_ArgInfos) {
-							const CmpVal& cv = sortVals[ix++];
-							if (Brace::IsStringType(argInfo.Type)) {
-								const std::string& v2 = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-								if (m_Operation == OPERATION_ORDERBY) {
-									if (cv.StrVal < v2)
-										return true;
-									else if (cv.StrVal > v2)
-										return false;
-								}
-								else {
-									if (cv.StrVal > v2)
-										return true;
-									else if (cv.StrVal < v2)
-										return false;
-								}
-							}
-							else {
-								double v2 = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-								if (m_Operation == OPERATION_ORDERBY) {
-									if (cv.NumVal < v2)
-										return true;
-									else if (cv.NumVal > v2)
-										return false;
-								}
-								else {
-									if (cv.NumVal > v2)
-										return true;
-									else if (cv.NumVal < v2)
-										return false;
-								}
-							}
-						}
-						return true;
-					});
-					FreeObjVars(lvars, m_ObjVars);
-				}break;
-				case OPERATION_TOP: {
-					for (auto& arg : m_Args) {
-						if (!arg.isNull())
-							arg(gvars, lvars);
-					}
-					auto& argInfo = m_ArgInfos[0];
-					int64_t n = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-					int64_t ct = 0;
-					for (auto& val : pArr->GetImpl()) {
-						pNewArr->GetImpl().push_back(val);
-						++ct;
-						if (ct >= n)
-							break;
-					}
-					FreeObjVars(lvars, m_ObjVars);
-				}break;
-				case OPERATION_WHERE: {
-					for (auto& val : pArr->GetImpl()) {
-						Brace::VarSetObject(lvars, m_IteratorIndex, val);
-						for (auto& arg : m_Args) {
-							if (!arg.isNull())
-								arg(gvars, lvars);
-						}
-						auto& argInfo = m_ArgInfos[0];
-						bool v = Brace::VarGetBoolean((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-						if (v)
-							pNewArr->GetImpl().push_back(val);
-					}
-					FreeObjVars(lvars, m_ObjVars);
-				}break;
+				case OPERATION_ORDERBYDESC:
+                    ExecuteOrderBy(gvars, lvars, pArr, pNewArr, m_Operation == OPERATION_ORDERBY, m_ResultInfo.VarIndex);
+					break;
+				case OPERATION_TOP:
+					ExecuteTop(gvars, lvars, pArr, pNewArr);
+					break;
+				case OPERATION_WHERE:
+					ExecuteWhere(gvars, lvars, pArr, pNewArr);
+					break;
 				}
 			}
 		}
 		return Brace::BRACE_FLOW_CONTROL_NORMAL;
+	}
+	void ExecuteOrderBy(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr, bool asc, int resultIndex)const
+	{
+		for (auto& val : pArr->GetImpl()) {
+			pNewArr->GetImpl().push_back(val);
+		}
+		std::vector<CmpVal> sortVals{};
+		std::sort(pNewArr->GetImpl().begin(), pNewArr->GetImpl().end(), [&](auto& e1, auto& e2) {
+			Brace::VarSetObject(lvars, m_IteratorIndex, e1);
+			for (auto& arg : m_Args) {
+				if (!arg.isNull())
+					arg(gvars, lvars);
+			}
+			sortVals.clear();
+			for (auto& argInfo : m_ArgInfos) {
+				CmpVal cv;
+				if (Brace::IsStringType(argInfo.Type))
+					cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+				else
+					cv.NumVal = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+				sortVals.push_back(cv);
+			}
+			Brace::VarSetObject(lvars, m_IteratorIndex, e2);
+			for (auto& arg : m_Args) {
+				if (!arg.isNull())
+					arg(gvars, lvars);
+			}
+			int ix = 0;
+			for (auto& argInfo : m_ArgInfos) {
+				const CmpVal& cv = sortVals[ix++];
+				if (Brace::IsStringType(argInfo.Type)) {
+					const std::string& v2 = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+					if (asc) {
+						if (cv.StrVal < v2)
+							return true;
+						else if (cv.StrVal > v2)
+							return false;
+					}
+					else {
+						if (cv.StrVal > v2)
+							return true;
+						else if (cv.StrVal < v2)
+							return false;
+					}
+				}
+				else {
+					double v2 = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+					if (asc) {
+						if (cv.NumVal < v2)
+							return true;
+						else if (cv.NumVal > v2)
+							return false;
+					}
+					else {
+						if (cv.NumVal > v2)
+							return true;
+						else if (cv.NumVal < v2)
+							return false;
+					}
+				}
+			}
+			return true;
+		});
+		FreeObjVars(lvars, m_ObjVars);
+	}
+	void ExecuteTop(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr)const
+	{
+		for (auto& arg : m_Args) {
+			if (!arg.isNull())
+				arg(gvars, lvars);
+		}
+		auto& argInfo = m_ArgInfos[0];
+		int64_t n = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+		int64_t ct = 0;
+		for (auto& val : pArr->GetImpl()) {
+			pNewArr->GetImpl().push_back(val);
+			++ct;
+			if (ct >= n)
+				break;
+		}
+		FreeObjVars(lvars, m_ObjVars);
+	}
+	void ExecuteWhere(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr)const
+	{
+		for (auto& val : pArr->GetImpl()) {
+			Brace::VarSetObject(lvars, m_IteratorIndex, val);
+			for (auto& arg : m_Args) {
+				if (!arg.isNull())
+					arg(gvars, lvars);
+			}
+			auto& argInfo = m_ArgInfos[0];
+			bool v = Brace::VarGetBoolean((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+			if (v)
+				pNewArr->GetImpl().push_back(val);
+		}
+		FreeObjVars(lvars, m_ObjVars);
 	}
 private:
 	OperationType m_Operation;
@@ -3084,7 +3096,7 @@ class ArrayHashtableSelectProvider final : public AbstractSelectApiProvider
 		std::string NewStrVal;
 	};
 protected:
-	virtual bool LoadSelect(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& statMethods, const std::vector<int>& objVars) override
+	virtual bool LoadSelect(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& statMethods, std::vector<int>&& objVars) override
 	{
 		m_SelectIteratorIndex = iteratorIndex;
 		for (auto& argInfo : argInfos) {
@@ -3092,14 +3104,14 @@ protected:
 		}
 		std::swap(m_SelectArgs, args);
 		std::swap(m_SelectStats, statMethods);
-		m_SelectObjVars = objVars;
+		std::swap(m_SelectObjVars, objVars);
 		return true;
 	}
-	virtual bool LoadTop(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, const std::vector<int>& objVars) override
+	virtual bool LoadTop(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, std::vector<int>&& objVars) override
 	{
 		m_TopArgInfo = argInfo;
 		std::swap(m_TopArg, arg);
-		m_TopObjVars = objVars;
+		std::swap(m_TopObjVars, objVars);
 		return true;
 	}
 	virtual bool LoadFromList(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg) override
@@ -3113,15 +3125,15 @@ protected:
 		m_Type = type;
 		return true;
 	}
-	virtual bool LoadWhere(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, const std::vector<int>& objVars) override
+	virtual bool LoadWhere(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg, std::vector<int>&& objVars) override
 	{
 		m_WhereIteratorIndex = iteratorIndex;
 		m_WhereArgInfo = argInfo;
 		std::swap(m_WhereArg, arg);
-		m_WhereObjVars = objVars;
+		std::swap(m_WhereObjVars, objVars);
 		return true;
 	}
-	virtual bool LoadOrderBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<bool>&& ascOrDescs, const std::vector<int>& objVars) override
+	virtual bool LoadOrderBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<bool>&& ascOrDescs, std::vector<int>&& objVars) override
 	{
 		m_OrderIteratorIndex = iteratorIndex;
 		for (auto& argInfo : argInfos) {
@@ -3129,17 +3141,17 @@ protected:
 		}
 		std::swap(m_OrderArgs, args);
 		std::swap(m_OrderAscs, ascOrDescs);
-		m_OrderObjVars = objVars;
+		std::swap(m_OrderObjVars, objVars);
 		return true;
 	}
-	virtual bool LoadGroupBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, const std::vector<int>& objVars) override
+	virtual bool LoadGroupBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& objVars) override
 	{
 		m_GroupIteratorIndex = iteratorIndex;
 		for (auto& argInfo : argInfos) {
 			m_GroupArgInfos.push_back(argInfo);
 		}
 		std::swap(m_GroupArgs, args);
-		m_GroupObjVars = objVars;
+		std::swap(m_GroupObjVars, objVars);
 		return true;
 	}
 	virtual bool LoadHaving(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo&& argInfo, Brace::BraceApiExecutor&& arg) override
@@ -3154,13 +3166,13 @@ protected:
 		executor.attach(this, &ArrayHashtableSelectProvider::ExecuteObjectArray);
 		return true;
 	}
-	virtual void LoadResultIterator(const std::vector<Brace::OperandLoadtimeInfo>& iterators, const std::vector<int>& objVars) override
+	virtual void LoadResultIterator(std::vector<Brace::OperandLoadtimeInfo>&& iterators, std::vector<int>&& objVars) override
 	{
 		for (auto& itInfo : iterators) {
 			m_Iterators.push_back(itInfo);
 			m_IteratorAssigns.push_back(Brace::GetVarAssignPtr(itInfo.Type, false, itInfo.Type, false));
 		}
-		m_ObjVars = objVars;
+		std::swap(m_ObjVars, objVars);
 	}
 private:
 	ArrayHashtableSelectProvider(Brace::BraceScript& interpreter) :AbstractSelectApiProvider(interpreter)
@@ -3218,6 +3230,36 @@ private:
 		auto* pNewArr = new ObjectArray();
 		std::shared_ptr<Brace::IBraceObject> newArr(pNewArr);
 		// where
+		ExecuteWhere(gvars, lvars, pArr, pNewArr);
+		// orderby
+		ExecuteOrderBy(gvars, lvars, pNewArr);
+		// groupby
+		if (m_GroupIteratorIndex != INVALID_INDEX) {
+			std::vector<ObjectArray> groups{};
+			ExecuteGroupBy(gvars, lvars, pNewArr, groups);
+			return ExecuteGroupSelect(gvars, lvars, groups);
+		}
+		else {
+			return ExecuteSelect(gvars, lvars, pNewArr);
+		}
+	}
+	ObjectArray* BuildObjectArray(const std::string& className)const
+	{
+		UClass* pClass = FindObject<UClass>(ANY_PACKAGE, UTF8_TO_TCHAR(className.c_str()));
+		if (nullptr != pClass) {
+			TArray<UObject*> results;
+			GetObjectsOfClass(pClass, results);
+			auto* p = new ObjectArray();
+			for (auto* pObj : results) {
+				std::shared_ptr<Brace::IBraceObject> ptr(new UObjectBraceObject(pObj));
+				p->GetImpl().push_back(ptr);
+			}
+			return p;
+		}
+		return nullptr;
+	}
+	void ExecuteWhere(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr)const
+	{
 		if (m_WhereIteratorIndex != INVALID_INDEX) {
 			for (auto& val : pArr->GetImpl()) {
 				Brace::VarSetObject(lvars, m_WhereIteratorIndex, val);
@@ -3234,7 +3276,9 @@ private:
 				pNewArr->GetImpl().push_back(val);
 			}
 		}
-		// orderby
+	}
+	void ExecuteOrderBy(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, ObjectArray* pNewArr)const
+	{
 		if (m_OrderIteratorIndex != INVALID_INDEX) {
 			std::vector<CmpVal> sortVals{};
 			std::sort(pNewArr->GetImpl().begin(), pNewArr->GetImpl().end(), [&](auto& e1, auto& e2) {
@@ -3296,619 +3340,440 @@ private:
 			});
 			FreeObjVars(lvars, m_OrderObjVars);
 		}
-		// groupby
-		if (m_GroupIteratorIndex != INVALID_INDEX) {
-			std::vector<ObjectArray> groups{};
-			std::vector<CmpVal> groupVals{};
-			auto& arr = pNewArr->GetImpl();
-			for (auto& optr : arr) {
-				Brace::VarSetObject(lvars, m_GroupIteratorIndex, optr);
-				for (auto& arg : m_GroupArgs) {
-					if (!arg.isNull())
-						arg(gvars, lvars);
-				}
-				bool newGroup = false;
-				if (groupVals.empty()) {
-					newGroup = true;
-					for (auto& argInfo : m_GroupArgInfos) {
-						CmpVal cv;
-						if (Brace::IsStringType(argInfo.Type))
-							cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-						else
-							cv.NumVal = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-						groupVals.push_back(cv);
-					}
-				}
-				else {
-					int ix = 0;
-					for (auto& argInfo : m_GroupArgInfos) {
-						CmpVal& cv = groupVals[ix++];
-						if (Brace::IsStringType(argInfo.Type)) {
-							const std::string& v2 = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-							if (cv.StrVal != v2) {
-								newGroup = true;
-								cv.StrVal = v2;
-							}
-						}
-						else {
-							double v2 = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-							if (cv.NumVal < v2 - DBL_EPSILON || cv.NumVal > v2 + DBL_EPSILON) {
-								newGroup = true;
-								cv.NumVal = v2;
-							}
-						}
-					}
-				}
-				if (newGroup) {
-					ObjectArray ng;
-					ng.GetImpl().push_back(optr);
-					groups.push_back(std::move(ng));
-				}
-				else {
-					groups.back().GetImpl().push_back(optr);
+	}
+	void ExecuteGroupBy(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, ObjectArray* pNewArr, std::vector<ObjectArray>& groups)const
+	{
+		std::vector<CmpVal> groupVals{};
+		auto& arr = pNewArr->GetImpl();
+		for (auto& optr : arr) {
+			Brace::VarSetObject(lvars, m_GroupIteratorIndex, optr);
+			for (auto& arg : m_GroupArgs) {
+				if (!arg.isNull())
+					arg(gvars, lvars);
+			}
+			bool newGroup = false;
+			if (groupVals.empty()) {
+				newGroup = true;
+				for (auto& argInfo : m_GroupArgInfos) {
+					CmpVal cv;
+					if (Brace::IsStringType(argInfo.Type))
+						cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+					else
+						cv.NumVal = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+					groupVals.push_back(cv);
 				}
 			}
-			FreeObjVars(lvars, m_GroupObjVars);
-			// top
-			int64_t topn = -1;
-			if (m_TopArgInfo.VarIndex != INVALID_INDEX) {
-				if (!m_TopArg.isNull())
-					m_TopArg(gvars, lvars);
-				topn = Brace::VarGetI64((m_TopArgInfo.IsGlobal ? gvars : lvars), m_TopArgInfo.Type, m_TopArgInfo.VarIndex);
-				FreeObjVars(lvars, m_TopObjVars);
+			else {
+				int ix = 0;
+				for (auto& argInfo : m_GroupArgInfos) {
+					CmpVal& cv = groupVals[ix++];
+					if (Brace::IsStringType(argInfo.Type)) {
+						const std::string& v2 = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+						if (cv.StrVal != v2) {
+							newGroup = true;
+							cv.StrVal = v2;
+						}
+					}
+					else {
+						double v2 = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+						if (cv.NumVal < v2 - DBL_EPSILON || cv.NumVal > v2 + DBL_EPSILON) {
+							newGroup = true;
+							cv.NumVal = v2;
+						}
+					}
+				}
 			}
-			// select and having
-			if (m_SelectIteratorIndex != INVALID_INDEX) {
-				if (m_Statements.size() > 0) {
-					std::vector<CmpVal> selectVals{};
-					int64_t resultCount = 0;
-					for (auto& group : groups) {
-						std::stringstream ss;
-						selectVals.clear();
-						bool first = true;
-						for (auto& optr : group.GetImpl()) {
-							Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-							for (auto& arg : m_SelectArgs) {
-								if (!arg.isNull())
-									arg(gvars, lvars);
-							}
-							bool update = false;
-							int six = 0;
-							for (auto& argInfo : m_SelectArgInfos) {
-								int stat = m_SelectStats[six];
-								bool isStr = false;
-								std::string str;
-								double val;
-								if (Brace::IsObjectType(argInfo.Type)) {
-									auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-									switch (argInfo.ObjectTypeId) {
-									case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
-										auto* p = static_cast<UObjectBraceObject*>(ptr.get());
-										if (p && p->GetImpl()) {
-											UObject* pObj = p->GetImpl();
-											str = TCHAR_TO_UTF8(*pObj->GetFullName());
-										}
-									}break;
-									}
-									isStr = true;
-								}
-								else if (Brace::IsStringType(argInfo.Type)) {
-									str = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-									isStr = true;
-								}
-								else {
-									val = VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-								}
-								if (first) {
-									CmpVal cv;
-									cv.IsStr = isStr;
-									if (isStr) {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.StrVal = str;
-											break;
-										case STAT_METHOD_MAX:
-											cv.StrVal = str;
-											break;
-										case STAT_METHOD_MIN:
-											cv.StrVal = str;
-											break;
-										case STAT_METHOD_AVG:
-											break;
-										case STAT_METHOD_SUM:
-											break;
-										case STAT_METHOD_COUNT:
-											cv.IsStr = false;
-											cv.NumVal = 1;
-											break;
-										}
-									}
-									else {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_MAX:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_MIN:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_AVG:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_SUM:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_COUNT:
-											cv.NumVal = 1;
-											break;
-										}
-									}
-									selectVals.push_back(std::move(cv));
-								}
-								else {
-									CmpVal& cv = selectVals[six];
-									if (isStr) {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.NewStrVal = str;
-											break;
-										case STAT_METHOD_MAX:
-											if (cv.StrVal < str) {
-												cv.StrVal = str;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_MIN:
-											if (cv.StrVal > str) {
-												cv.StrVal = str;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_AVG:
-											break;
-										case STAT_METHOD_SUM:
-											break;
-										case STAT_METHOD_COUNT:
-											cv.NumVal = cv.NumVal + 1;
-											break;
-										}
-									}
-									else {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.NewNumVal = val;
-											break;
-										case STAT_METHOD_MAX:
-											if (cv.NumVal < val) {
-												cv.NumVal = val;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_MIN:
-											if (cv.NumVal > val) {
-												cv.NumVal = val;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_AVG:
-											cv.NumVal = cv.NumVal + val;
-											break;
-										case STAT_METHOD_SUM:
-											cv.NumVal = cv.NumVal + val;
-											break;
-										case STAT_METHOD_COUNT:
-											cv.NumVal = cv.NumVal + 1;
-											break;
-										}
-									}
-								}
-								++six;
-							}
-							if (update) {
-								six = 0;
-								for (auto& cv : selectVals) {
-									int stat = m_SelectStats[six++];
-									if (stat == STAT_METHOD_NONE) {
-										if (cv.IsStr)
-											cv.StrVal = cv.NewStrVal;
-										else
-											cv.NumVal = cv.NewNumVal;
-									}
-								}
-							}
-							first = false;
-						}
-						int vix = 0;
-						for (auto& cv : selectVals) {
-							int stat = m_SelectStats[vix];
-							auto& itInfo = m_Iterators[vix++];
-							if (stat == STAT_METHOD_AVG) {
-								cv.NumVal /= group.GetImpl().size();
-							}
-							if (Brace::IsStringType(itInfo.Type))
-								Brace::VarSetString(lvars, itInfo.VarIndex, cv.StrVal);
-							else
-								Brace::VarSetF64(lvars, itInfo.Type, itInfo.VarIndex, cv.NumVal);
-						}
-						if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
-							if (!m_HavingArg.isNull())
-								m_HavingArg(gvars, lvars);
-							bool v = Brace::VarGetBoolean((m_HavingArgInfo.IsGlobal ? gvars : lvars), m_HavingArgInfo.Type, m_HavingArgInfo.VarIndex);
-							if (!v) {
-								FreeObjVars(lvars, m_SelectObjVars);
-								continue;
-							}
-						}
-						for (auto& statement : m_Statements) {
-							int v = statement(gvars, lvars);
-							if (IsForceQuit()) {
-								FreeObjVars(lvars, m_ObjVars);
-								return v;
-							}
-							if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
-								break;
-							}
-							else if (v != Brace::BRACE_FLOW_CONTROL_NORMAL) {
-								FreeObjVars(lvars, m_ObjVars);
-								if (v == Brace::BRACE_FLOW_CONTROL_BREAK)
-									return Brace::BRACE_FLOW_CONTROL_NORMAL;
-								return v;
-							}
-						}
-						FreeObjVars(lvars, m_SelectObjVars);
-						FreeObjVars(lvars, m_ObjVars);
-						++resultCount;
-						if (topn > 0 && resultCount >= topn)
-							break;
-					}
-				}
-				else {
-					//same as csvecho
-					std::vector<CmpVal> selectVals{};
-					int64_t resultCount = 0;
-					for (auto& group : groups) {
-						std::stringstream ss;
-						selectVals.clear();
-						bool first = true;
-						for (auto& optr : group.GetImpl()) {
-							Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-							for (auto& arg : m_SelectArgs) {
-								if (!arg.isNull())
-									arg(gvars, lvars);
-							}
-							bool update = false;
-							int six = 0;
-							for (auto& argInfo : m_SelectArgInfos) {
-								int stat = m_SelectStats[six];
-								bool isStr = false;
-								std::string str;
-								double val;
-								if (Brace::IsObjectType(argInfo.Type)) {
-									auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-									switch (argInfo.ObjectTypeId) {
-									case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
-										auto* p = static_cast<UObjectBraceObject*>(ptr.get());
-										if (p && p->GetImpl()) {
-											UObject* pObj = p->GetImpl();
-											str = TCHAR_TO_UTF8(*pObj->GetFullName());
-										}
-									}break;
-									}
-									isStr = true;
-								}
-								else if (Brace::IsStringType(argInfo.Type)) {
-									str = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-									isStr = true;
-								}
-								else {
-									val = VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-								}
-								if (first) {
-									CmpVal cv;
-									cv.IsStr = isStr;
-									if (isStr) {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.StrVal = str;
-											break;
-										case STAT_METHOD_MAX:
-											cv.StrVal = str;
-											break;
-										case STAT_METHOD_MIN:
-											cv.StrVal = str;
-											break;
-										case STAT_METHOD_AVG:
-											break;
-										case STAT_METHOD_SUM:
-											break;
-										case STAT_METHOD_COUNT:
-											cv.IsStr = false;
-											cv.NumVal = 1;
-											break;
-										}
-									}
-									else {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_MAX:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_MIN:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_AVG:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_SUM:
-											cv.NumVal = val;
-											break;
-										case STAT_METHOD_COUNT:
-											cv.NumVal = 1;
-											break;
-										}
-									}
-									selectVals.push_back(std::move(cv));
-								}
-								else {
-									CmpVal& cv = selectVals[six];
-									if (isStr) {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.NewStrVal = str;
-											break;
-										case STAT_METHOD_MAX:
-											if (cv.StrVal < str) {
-												cv.StrVal = str;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_MIN:
-											if (cv.StrVal > str) {
-												cv.StrVal = str;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_AVG:
-											break;
-										case STAT_METHOD_SUM:
-											break;
-										case STAT_METHOD_COUNT:
-											cv.NumVal = cv.NumVal + 1;
-											break;
-										}
-									}
-									else {
-										switch (stat) {
-										case STAT_METHOD_NONE:
-											cv.NewNumVal = val;
-											break;
-										case STAT_METHOD_MAX:
-											if (cv.NumVal < val) {
-												cv.NumVal = val;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_MIN:
-											if (cv.NumVal > val) {
-												cv.NumVal = val;
-												update = true;
-											}
-											break;
-										case STAT_METHOD_AVG:
-											cv.NumVal = cv.NumVal + val;
-											break;
-										case STAT_METHOD_SUM:
-											cv.NumVal = cv.NumVal + val;
-											break;
-										case STAT_METHOD_COUNT:
-											cv.NumVal = cv.NumVal + 1;
-											break;
-										}
-									}
-								}
-								++six;
-							}
-							if (update) {
-								six = 0;
-								for (auto& cv : selectVals) {
-									int stat = m_SelectStats[six++];
-									if (stat == STAT_METHOD_NONE) {
-										if (cv.IsStr)
-											cv.StrVal = cv.NewStrVal;
-										else
-											cv.NumVal = cv.NewNumVal;
-									}
-								}
-							}
-							first = false;
-						}
-						int vix = 0;
-						for (auto& cv : selectVals) {
-							int stat = m_SelectStats[vix++];
-							if (stat == STAT_METHOD_AVG) {
-								cv.NumVal /= group.GetImpl().size();
-							}
-						}
-						if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
-							vix = 0;
-							for (auto& cv : selectVals) {
-								auto& itInfo = m_Iterators[vix++];
-								if (Brace::IsStringType(itInfo.Type))
-									Brace::VarSetString(lvars, itInfo.VarIndex, cv.StrVal);
-								else
-									Brace::VarSetF64(lvars, itInfo.Type, itInfo.VarIndex, cv.NumVal);
-							}
-							if (!m_HavingArg.isNull())
-								m_HavingArg(gvars, lvars);
-							bool v = Brace::VarGetBoolean((m_HavingArgInfo.IsGlobal ? gvars : lvars), m_HavingArgInfo.Type, m_HavingArgInfo.VarIndex);
-							if (!v) {
-								FreeObjVars(lvars, m_SelectObjVars);
-								continue;
-							}
-						}
-						first = true;
-						for (auto& cv : selectVals) {
-							bool needQuote = false;
-							if (cv.IsStr && cv.StrVal.length() > 0 && cv.StrVal[0] != '"' && cv.StrVal[0] != '\'') {
-								for (auto c : cv.StrVal) {
-									if (c == ' ' || c == '\t') {
-										needQuote = true;
-										break;
-									}
-								}
-							}
-							if (first) {
-								first = false;
-							}
-							else {
-								ss << ", ";
-							}
-							if (needQuote)
-								ss << '"' << cv.StrVal << '"';
-							else if (cv.IsStr)
-								ss << cv.StrVal;
-							else
-								ss << cv.NumVal;
-						}
-						LogInfo(ss.str());
-						FreeObjVars(lvars, m_SelectObjVars);
-						if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
-							FreeObjVars(lvars, m_ObjVars);
-						}
-						++resultCount;
-						if (topn > 0 && resultCount >= topn)
-							break;
-					}
-				}
+			if (newGroup) {
+				ObjectArray ng;
+				ng.GetImpl().push_back(optr);
+				groups.push_back(std::move(ng));
+			}
+			else {
+				groups.back().GetImpl().push_back(optr);
 			}
 		}
-		else {
-			// top
-			if (m_TopArgInfo.VarIndex != INVALID_INDEX) {
-				if (!m_TopArg.isNull())
-					m_TopArg(gvars, lvars);
-				int64_t n = Brace::VarGetI64((m_TopArgInfo.IsGlobal ? gvars : lvars), m_TopArgInfo.Type, m_TopArgInfo.VarIndex);
-				auto& arr = pNewArr->GetImpl();
-				if (static_cast<int64_t>(arr.size()) > n) {
-					auto it = arr.begin();
-					std::advance(it, n);
-					arr.erase(it, arr.end());
+		FreeObjVars(lvars, m_GroupObjVars);
+	}
+	int ExecuteGroupSelect(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<ObjectArray>& groups)const
+	{
+		// top
+		int64_t topn = -1;
+		if (m_TopArgInfo.VarIndex != INVALID_INDEX) {
+			if (!m_TopArg.isNull())
+				m_TopArg(gvars, lvars);
+			topn = Brace::VarGetI64((m_TopArgInfo.IsGlobal ? gvars : lvars), m_TopArgInfo.Type, m_TopArgInfo.VarIndex);
+			FreeObjVars(lvars, m_TopObjVars);
+		}
+		// select and having
+		if (m_SelectIteratorIndex != INVALID_INDEX) {
+			if (m_Statements.size() > 0) {
+				std::vector<CmpVal> selectVals{};
+				int64_t resultCount = 0;
+				for (auto& group : groups) {
+					if (!ExecuteGroupStatAndHaving(gvars, lvars, group, selectVals)) {
+						continue;
+					}
+					for (auto& statement : m_Statements) {
+						int v = statement(gvars, lvars);
+						if (IsForceQuit()) {
+							FreeObjVars(lvars, m_ObjVars);
+							return v;
+						}
+						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
+							break;
+						}
+						else if (v != Brace::BRACE_FLOW_CONTROL_NORMAL) {
+							FreeObjVars(lvars, m_ObjVars);
+							if (v == Brace::BRACE_FLOW_CONTROL_BREAK)
+								return Brace::BRACE_FLOW_CONTROL_NORMAL;
+							return v;
+						}
+					}
+					FreeObjVars(lvars, m_SelectObjVars);
+					FreeObjVars(lvars, m_ObjVars);
+					++resultCount;
+					if (topn > 0 && resultCount >= topn)
+						break;
 				}
-				FreeObjVars(lvars, m_TopObjVars);
 			}
-			// select
-			if (m_SelectIteratorIndex != INVALID_INDEX) {
-				if (m_Statements.size() > 0) {
-					auto& arr = pNewArr->GetImpl();
-					for (auto& optr : arr) {
-						Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-						for (auto& arg : m_SelectArgs) {
-							if (!arg.isNull())
-								arg(gvars, lvars);
-						}
-						int itIndex = 0;
-						for (auto& argInfo : m_SelectArgInfos) {
-							int vix = m_Iterators[itIndex].VarIndex;
-							auto* fptr = m_IteratorAssigns[itIndex++];
-							(*fptr)(lvars, vix, lvars, argInfo.VarIndex);
-						}
-						for (auto& statement : m_Statements) {
-							int v = statement(gvars, lvars);
-							if (IsForceQuit()) {
-								FreeObjVars(lvars, m_ObjVars);
-								return v;
-							}
-							if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
-								break;
-							}
-							else if (v != Brace::BRACE_FLOW_CONTROL_NORMAL) {
-								FreeObjVars(lvars, m_ObjVars);
-								if (v == Brace::BRACE_FLOW_CONTROL_BREAK)
-									return Brace::BRACE_FLOW_CONTROL_NORMAL;
-								return v;
+			else {
+				//same as csvecho
+				std::vector<CmpVal> selectVals{};
+				std::stringstream ss;
+				int64_t resultCount = 0;
+				for (auto& group : groups) {
+					if (!ExecuteGroupStatAndHaving(gvars, lvars, group, selectVals)) {
+						continue;
+					}
+					ss.str(std::string());
+					bool first = true;
+					for (auto& cv : selectVals) {
+						bool needQuote = false;
+						if (cv.IsStr && cv.StrVal.length() > 0 && cv.StrVal[0] != '"' && cv.StrVal[0] != '\'') {
+							for (auto c : cv.StrVal) {
+								if (c == ' ' || c == '\t') {
+									needQuote = true;
+									break;
+								}
 							}
 						}
-						FreeObjVars(lvars, m_SelectObjVars);
+						if (first) {
+							first = false;
+						}
+						else {
+							ss << ", ";
+						}
+						if (needQuote)
+							ss << '"' << cv.StrVal << '"';
+						else if (cv.IsStr)
+							ss << cv.StrVal;
+						else
+							ss << cv.NumVal;
+					}
+					LogInfo(ss.str());
+					FreeObjVars(lvars, m_SelectObjVars);
+					if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
 						FreeObjVars(lvars, m_ObjVars);
 					}
-				}
-				else {
-					//same as csvecho
-					auto& arr = pNewArr->GetImpl();
-					for (auto& optr : arr) {
-						Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-						for (auto& arg : m_SelectArgs) {
-							if (!arg.isNull())
-								arg(gvars, lvars);
-						}
-						std::stringstream ss;
-						bool first = true;
-						for (auto& argInfo : m_SelectArgInfos) {
-							std::string str;
-							if (Brace::IsObjectType(argInfo.Type)) {
-								auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
-								switch (argInfo.ObjectTypeId) {
-								case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
-									auto* p = static_cast<UObjectBraceObject*>(ptr.get());
-									if (p && p->GetImpl()) {
-										UObject* pObj = p->GetImpl();
-										str = TCHAR_TO_UTF8(*pObj->GetFullName());
-									}
-								}break;
-								}
-							}
-							else {
-								if (argInfo.IsGlobal)
-									str = VarGetStr(gvars, argInfo.Type, argInfo.VarIndex);
-								else
-									str = VarGetStr(lvars, argInfo.Type, argInfo.VarIndex);
-							}
-							bool needQuote = false;
-							if (str.length() > 0 && str[0] != '"' && str[0] != '\'') {
-								for (auto c : str) {
-									if (c == ' ' || c == '\t') {
-										needQuote = true;
-										break;
-									}
-								}
-							}
-							if (first) {
-								first = false;
-							}
-							else {
-								ss << ", ";
-							}
-							if (needQuote)
-								ss << '"' << str << '"';
-							else
-								ss << str;
-						}
-						LogInfo(ss.str());
-						FreeObjVars(lvars, m_SelectObjVars);
-					}
+					++resultCount;
+					if (topn > 0 && resultCount >= topn)
+						break;
 				}
 			}
 		}
 		return Brace::BRACE_FLOW_CONTROL_NORMAL;
 	}
-	ObjectArray* BuildObjectArray(const std::string& className)const
+	bool ExecuteGroupStatAndHaving(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray& group, std::vector<CmpVal>& selectVals)const
 	{
-		UClass* pClass = FindObject<UClass>(ANY_PACKAGE, UTF8_TO_TCHAR(className.c_str()));
-		if (nullptr != pClass) {
-			TArray<UObject*> results;
-			GetObjectsOfClass(pClass, results);
-			auto* p = new ObjectArray();
-			for (auto* pObj : results) {
-				std::shared_ptr<Brace::IBraceObject> ptr(new UObjectBraceObject(pObj));
-				p->GetImpl().push_back(ptr);
+		selectVals.clear();
+		bool first = true;
+		for (auto& optr : group.GetImpl()) {
+			Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
+			for (auto& arg : m_SelectArgs) {
+				if (!arg.isNull())
+					arg(gvars, lvars);
 			}
-			return p;
+			bool update = false;
+			int six = 0;
+			for (auto& argInfo : m_SelectArgInfos) {
+				int stat = m_SelectStats[six];
+				bool isStr = false;
+				std::string str;
+				double val;
+				if (Brace::IsObjectType(argInfo.Type)) {
+					auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+					switch (argInfo.ObjectTypeId) {
+					case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
+						auto* p = static_cast<UObjectBraceObject*>(ptr.get());
+						if (p && p->GetImpl()) {
+							UObject* pObj = p->GetImpl();
+							str = TCHAR_TO_UTF8(*pObj->GetFullName());
+						}
+					}break;
+					}
+					isStr = true;
+				}
+				else if (Brace::IsStringType(argInfo.Type)) {
+					str = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+					isStr = true;
+				}
+				else {
+					val = VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+				}
+				if (first) {
+					CmpVal cv;
+					cv.IsStr = isStr;
+					if (isStr) {
+						switch (stat) {
+						case STAT_METHOD_NONE:
+							cv.StrVal = str;
+							break;
+						case STAT_METHOD_MAX:
+							cv.StrVal = str;
+							break;
+						case STAT_METHOD_MIN:
+							cv.StrVal = str;
+							break;
+						case STAT_METHOD_AVG:
+							break;
+						case STAT_METHOD_SUM:
+							break;
+						case STAT_METHOD_COUNT:
+							cv.IsStr = false;
+							cv.NumVal = 1;
+							break;
+						}
+					}
+					else {
+						switch (stat) {
+						case STAT_METHOD_NONE:
+							cv.NumVal = val;
+							break;
+						case STAT_METHOD_MAX:
+							cv.NumVal = val;
+							break;
+						case STAT_METHOD_MIN:
+							cv.NumVal = val;
+							break;
+						case STAT_METHOD_AVG:
+							cv.NumVal = val;
+							break;
+						case STAT_METHOD_SUM:
+							cv.NumVal = val;
+							break;
+						case STAT_METHOD_COUNT:
+							cv.NumVal = 1;
+							break;
+						}
+					}
+					selectVals.push_back(std::move(cv));
+				}
+				else {
+					CmpVal& cv = selectVals[six];
+					if (isStr) {
+						switch (stat) {
+						case STAT_METHOD_NONE:
+							cv.NewStrVal = str;
+							break;
+						case STAT_METHOD_MAX:
+							if (cv.StrVal < str) {
+								cv.StrVal = str;
+								update = true;
+							}
+							break;
+						case STAT_METHOD_MIN:
+							if (cv.StrVal > str) {
+								cv.StrVal = str;
+								update = true;
+							}
+							break;
+						case STAT_METHOD_AVG:
+							break;
+						case STAT_METHOD_SUM:
+							break;
+						case STAT_METHOD_COUNT:
+							cv.NumVal = cv.NumVal + 1;
+							break;
+						}
+					}
+					else {
+						switch (stat) {
+						case STAT_METHOD_NONE:
+							cv.NewNumVal = val;
+							break;
+						case STAT_METHOD_MAX:
+							if (cv.NumVal < val) {
+								cv.NumVal = val;
+								update = true;
+							}
+							break;
+						case STAT_METHOD_MIN:
+							if (cv.NumVal > val) {
+								cv.NumVal = val;
+								update = true;
+							}
+							break;
+						case STAT_METHOD_AVG:
+							cv.NumVal = cv.NumVal + val;
+							break;
+						case STAT_METHOD_SUM:
+							cv.NumVal = cv.NumVal + val;
+							break;
+						case STAT_METHOD_COUNT:
+							cv.NumVal = cv.NumVal + 1;
+							break;
+						}
+					}
+				}
+				++six;
+			}
+			if (update) {
+				six = 0;
+				for (auto& cv : selectVals) {
+					int stat = m_SelectStats[six++];
+					if (stat == STAT_METHOD_NONE) {
+						if (cv.IsStr)
+							cv.StrVal = cv.NewStrVal;
+						else
+							cv.NumVal = cv.NewNumVal;
+					}
+				}
+			}
+			first = false;
 		}
-		return nullptr;
+		int vix = 0;
+		for (auto& cv : selectVals) {
+			int stat = m_SelectStats[vix];
+			auto& itInfo = m_Iterators[vix++];
+			if (stat == STAT_METHOD_AVG) {
+				cv.NumVal /= group.GetImpl().size();
+			}
+			if (Brace::IsStringType(itInfo.Type))
+				Brace::VarSetString(lvars, itInfo.VarIndex, cv.StrVal);
+			else
+				Brace::VarSetF64(lvars, itInfo.Type, itInfo.VarIndex, cv.NumVal);
+		}
+		if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
+			if (!m_HavingArg.isNull())
+				m_HavingArg(gvars, lvars);
+			bool v = Brace::VarGetBoolean((m_HavingArgInfo.IsGlobal ? gvars : lvars), m_HavingArgInfo.Type, m_HavingArgInfo.VarIndex);
+			if (!v) {
+				FreeObjVars(lvars, m_SelectObjVars);
+				return false;
+			}
+		}
+		return true;
+	}
+	int ExecuteSelect(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, ObjectArray* pNewArr)const
+	{
+		// top
+		if (m_TopArgInfo.VarIndex != INVALID_INDEX) {
+			if (!m_TopArg.isNull())
+				m_TopArg(gvars, lvars);
+			int64_t n = Brace::VarGetI64((m_TopArgInfo.IsGlobal ? gvars : lvars), m_TopArgInfo.Type, m_TopArgInfo.VarIndex);
+			auto& arr = pNewArr->GetImpl();
+			if (static_cast<int64_t>(arr.size()) > n) {
+				auto it = arr.begin();
+				std::advance(it, n);
+				arr.erase(it, arr.end());
+			}
+			FreeObjVars(lvars, m_TopObjVars);
+		}
+		// select
+		if (m_SelectIteratorIndex != INVALID_INDEX) {
+			if (m_Statements.size() > 0) {
+				auto& arr = pNewArr->GetImpl();
+				for (auto& optr : arr) {
+					Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
+					for (auto& arg : m_SelectArgs) {
+						if (!arg.isNull())
+							arg(gvars, lvars);
+					}
+					int itIndex = 0;
+					for (auto& argInfo : m_SelectArgInfos) {
+						int vix = m_Iterators[itIndex].VarIndex;
+						auto* fptr = m_IteratorAssigns[itIndex++];
+						(*fptr)(lvars, vix, lvars, argInfo.VarIndex);
+					}
+					for (auto& statement : m_Statements) {
+						int v = statement(gvars, lvars);
+						if (IsForceQuit()) {
+							FreeObjVars(lvars, m_SelectObjVars);
+							FreeObjVars(lvars, m_ObjVars);
+							return v;
+						}
+						if (v == Brace::BRACE_FLOW_CONTROL_CONTINUE) {
+							break;
+						}
+						else if (v != Brace::BRACE_FLOW_CONTROL_NORMAL) {
+							FreeObjVars(lvars, m_SelectObjVars);
+							FreeObjVars(lvars, m_ObjVars);
+							if (v == Brace::BRACE_FLOW_CONTROL_BREAK)
+								return Brace::BRACE_FLOW_CONTROL_NORMAL;
+							return v;
+						}
+					}
+					FreeObjVars(lvars, m_SelectObjVars);
+					FreeObjVars(lvars, m_ObjVars);
+				}
+			}
+			else {
+				//same as csvecho
+				auto& arr = pNewArr->GetImpl();
+				for (auto& optr : arr) {
+					Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
+					for (auto& arg : m_SelectArgs) {
+						if (!arg.isNull())
+							arg(gvars, lvars);
+					}
+					std::stringstream ss;
+					bool first = true;
+					for (auto& argInfo : m_SelectArgInfos) {
+						std::string str;
+						if (Brace::IsObjectType(argInfo.Type)) {
+							auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
+							switch (argInfo.ObjectTypeId) {
+							case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
+								auto* p = static_cast<UObjectBraceObject*>(ptr.get());
+								if (p && p->GetImpl()) {
+									UObject* pObj = p->GetImpl();
+									str = TCHAR_TO_UTF8(*pObj->GetFullName());
+								}
+							}break;
+							}
+						}
+						else {
+							if (argInfo.IsGlobal)
+								str = VarGetStr(gvars, argInfo.Type, argInfo.VarIndex);
+							else
+								str = VarGetStr(lvars, argInfo.Type, argInfo.VarIndex);
+						}
+						bool needQuote = false;
+						if (str.length() > 0 && str[0] != '"' && str[0] != '\'') {
+							for (auto c : str) {
+								if (c == ' ' || c == '\t') {
+									needQuote = true;
+									break;
+								}
+							}
+						}
+						if (first) {
+							first = false;
+						}
+						else {
+							ss << ", ";
+						}
+						if (needQuote)
+							ss << '"' << str << '"';
+						else
+							ss << str;
+					}
+					LogInfo(ss.str());
+					FreeObjVars(lvars, m_SelectObjVars);
+				}
+			}
+		}
+		return Brace::BRACE_FLOW_CONTROL_NORMAL;
 	}
 private:
 	std::string m_Type;
@@ -4567,32 +4432,32 @@ protected:
 					pProvider = new ArrayHashtableLinqProvider(GetInterpreter());
 				}
 			}
-			PushBlock();
-			int iteratorIndex = INVALID_INDEX;
-			if (mid != "top") {
-				iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->TypeParams.back());
-			}
-			std::vector<Brace::OperandLoadtimeInfo> argInfos;
-			std::vector<Brace::BraceApiExecutor> args;
-			for (int ix = 2; ix < pnum; ++ix) {
-				auto* param = data.GetParam(ix);
-				Brace::OperandLoadtimeInfo argLoadInfo;
-				auto p = LoadHelper(*param, argLoadInfo);
-				argInfos.push_back(std::move(argLoadInfo));
-				args.push_back(std::move(p));
-			}
-			auto& objVars = CurBlockObjVars();
-			PopBlock();
-			if (nullptr != pProvider) {
-				return pProvider->LoadLinqCall(func, data, *pInfo, iteratorIndex, std::move(listInfo), std::move(list), std::move(mid), std::move(argInfos), std::move(args), objVars, resultInfo, executor);
+			if (nullptr != pInfo && nullptr != pProvider) {
+				PushBlock();
+				int iteratorIndex = INVALID_INDEX;
+				if (mid != "top") {
+					iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->TypeParams.back());
+				}
+				std::vector<Brace::OperandLoadtimeInfo> argInfos;
+				std::vector<Brace::BraceApiExecutor> args;
+				for (int ix = 2; ix < pnum; ++ix) {
+					auto* param = data.GetParam(ix);
+					Brace::OperandLoadtimeInfo argLoadInfo;
+					auto p = LoadHelper(*param, argLoadInfo);
+					argInfos.push_back(std::move(argLoadInfo));
+					args.push_back(std::move(p));
+				}
+                auto objVars = CurBlockObjVars();
+                PopBlock();
+                if (nullptr != pProvider) {
+                    bool ret = pProvider->LoadLinqCall(func, data, *pInfo, iteratorIndex, std::move(listInfo), std::move(list), std::move(mid), std::move(argInfos), std::move(args), std::move(objVars), resultInfo, executor);
+                    return ret;
+                }
 			}
 		}
-		bool hasError = true;
-		if (hasError) {
-			std::stringstream ss;
-			ss << "linq syntax error, line " << data.GetLine();
-			LogError(ss.str());
-		}
+		std::stringstream ss;
+		ss << "linq syntax error, line " << data.GetLine();
+		LogError(ss.str());
 		return false;
 	}
 private:
@@ -4715,10 +4580,11 @@ protected:
 						stats.push_back(stat);
 						selectStats.push_back(stat);
 					}
-					auto& objVars = CurBlockObjVars();
+					auto objVars = CurBlockObjVars();
 					PopBlock();
-
-					pProvider->LoadSelect(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfos), std::move(args), std::move(stats), objVars);
+					bool ret = pProvider->LoadSelect(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfos), std::move(args), std::move(stats), std::move(objVars));
+					if (!ret)
+						return false;
 				}
 				else if (fid == "top") {
 					PushBlock();
@@ -4727,10 +4593,11 @@ protected:
 					int pnum = pCallData->GetParamNum();
 					auto* param = pCallData->GetParam(0);
 					arg = LoadHelper(*param, argInfo);
-					auto& objVars = CurBlockObjVars();
+					auto objVars = CurBlockObjVars();
 					PopBlock();
-
-					pProvider->LoadTop(func, *pCallData, std::move(argInfo), std::move(arg), objVars);
+					bool ret = pProvider->LoadTop(func, *pCallData, std::move(argInfo), std::move(arg), std::move(objVars));
+					if (!ret)
+						return false;
 				}
 				else if (fid == "from") {
 
@@ -4743,10 +4610,11 @@ protected:
 					int pnum = pCallData->GetParamNum();
 					auto* param = pCallData->GetParam(0);
 					arg = LoadHelper(*param, argInfo);
-					auto& objVars = CurBlockObjVars();
+					auto objVars = CurBlockObjVars();
 					PopBlock();
-
-					pProvider->LoadWhere(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfo), std::move(arg), objVars);
+					bool ret = pProvider->LoadWhere(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfo), std::move(arg), std::move(objVars));
+					if (!ret)
+						return false;
 				}
 				else if (fid == "orderby") {
 					PushBlock();
@@ -4769,10 +4637,11 @@ protected:
 						args.push_back(std::move(p));
 						ascOrDescs.push_back(asc);
 					}
-					auto& objVars = CurBlockObjVars();
+					auto objVars = CurBlockObjVars();
 					PopBlock();
-
-					pProvider->LoadOrderBy(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfos), std::move(args), std::move(ascOrDescs), objVars);
+					bool ret = pProvider->LoadOrderBy(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfos), std::move(args), std::move(ascOrDescs), std::move(objVars));
+					if (!ret)
+						return false;
 				}
 				else if (fid == "groupby") {
 					PushBlock();
@@ -4787,10 +4656,11 @@ protected:
 						argInfos.push_back(std::move(argLoadInfo));
 						args.push_back(std::move(p));
 					}
-					auto& objVars = CurBlockObjVars();
+					auto objVars = CurBlockObjVars();
 					PopBlock();
-
-					pProvider->LoadGroupBy(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfos), std::move(args), objVars);
+					bool ret = pProvider->LoadGroupBy(func, *pCallData, *pInfo, iteratorIndex, std::move(argInfos), std::move(args), std::move(objVars));
+					if (!ret)
+						return false;
 				}
 				else if (fid == "having") {
 					pHavingCallData = pCallData;
@@ -4828,12 +4698,13 @@ protected:
 						itInfo.VarIndex = AllocVariable(itInfo.Name, itInfo.Type, itInfo.ObjectTypeId);
 						iterators.push_back(itInfo);
 					}
+					bool ret = true;
 					if (nullptr != pHavingCallData) {
 						Brace::OperandLoadtimeInfo argInfo;
 						Brace::BraceApiExecutor arg;
 						auto* param = pHavingCallData->GetParam(0);
 						arg = LoadHelper(*param, argInfo);
-						pProvider->LoadHaving(func, *pHavingCallData, std::move(argInfo), std::move(arg));
+						ret = pProvider->LoadHaving(func, *pHavingCallData, std::move(argInfo), std::move(arg));
 					}
 					if (pFuncData->IsHighOrder()) {
 						std::vector<Brace::OperandLoadtimeInfo> argInfos;
@@ -4846,10 +4717,12 @@ protected:
 							statements.push_back(std::move(p));
 						}
 					}
-					pProvider->LoadStatements(func, *pFuncData, std::move(statements), resultInfo, executor);
-					auto& objVars = CurBlockObjVars();
-					pProvider->LoadResultIterator(iterators, objVars);
+					auto objVars = CurBlockObjVars();
 					PopBlock();
+					ret = pProvider->LoadStatements(func, *pFuncData, std::move(statements), resultInfo, executor) && ret;
+					pProvider->LoadResultIterator(std::move(iterators), std::move(objVars));
+					if (!ret)
+						return false;
 				}
 			}
 		}
