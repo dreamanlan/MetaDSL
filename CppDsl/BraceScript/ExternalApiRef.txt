@@ -3227,6 +3227,8 @@ private:
 				}
 			}
 		}
+		if (nullptr == pArr)
+			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		auto* pNewArr = new ObjectArray();
 		std::shared_ptr<Brace::IBraceObject> newArr(pNewArr);
 		// where
