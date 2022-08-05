@@ -3038,7 +3038,7 @@ private:
 					}
 				}
 			}
-			return true;
+			return false;
 		});
 		FreeObjVars(lvars, m_ObjVars);
 	}
@@ -3336,7 +3336,7 @@ private:
 						}
 					}
 				}
-				return true;
+				return false;
 			});
 			FreeObjVars(lvars, m_OrderObjVars);
 		}
