@@ -4700,7 +4700,8 @@ protected:
 							auto* param = pFuncData->GetParam(pix);
 							Brace::OperandLoadtimeInfo argLoadInfo;
 							auto p = LoadHelper(*param, argLoadInfo);
-							statements.push_back(std::move(p));
+                            				if (!p.isNull())
+                                				statements.push_back(std::move(p));
 						}
 					}
 					auto objVars = CurBlockObjVars();
