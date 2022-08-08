@@ -3473,6 +3473,8 @@ private:
 							ss << cv.NumVal;
 					}
 					LogInfo(ss.str());
+					if (GEngine)
+						GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Yellow, ANSI_TO_TCHAR(ss.str().c_str()));
 					FreeObjVars(lvars, m_SelectObjVars);
 					if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
 						FreeObjVars(lvars, m_ObjVars);
@@ -3771,6 +3773,8 @@ private:
 							ss << str;
 					}
 					LogInfo(ss.str());
+					if (GEngine)
+						GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Yellow, ANSI_TO_TCHAR(ss.str().c_str()));
 					FreeObjVars(lvars, m_SelectObjVars);
 				}
 			}
