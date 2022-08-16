@@ -3470,7 +3470,7 @@ private:
 						else if (cv.IsStr)
 							ss << cv.StrVal;
 						else
-							ss << cv.NumVal;
+							ss << std::fixed << std::setprecision(3) << cv.NumVal;
 					}
 					LogInfo(ss.str());
 					if (GEngine)
@@ -3522,7 +3522,7 @@ private:
 					isStr = true;
 				}
 				else {
-					val = VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+					val = Brace::VarGetF64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
 				}
 				if (first) {
 					CmpVal cv;
@@ -3746,11 +3746,21 @@ private:
 							}break;
 							}
 						}
+						else if (Brace::IsFloatType(argInfo.Type)) {
+							double dv;
+							if (argInfo.IsGlobal)
+								dv = Brace::VarGetF64(gvars, argInfo.Type, argInfo.VarIndex);
+							else
+								dv = Brace::VarGetF64(lvars, argInfo.Type, argInfo.VarIndex);
+							std::stringstream tss;
+							tss << std::fixed << std::setprecision(3) << dv;
+							str = tss.str();
+						}
 						else {
 							if (argInfo.IsGlobal)
-								str = VarGetStr(gvars, argInfo.Type, argInfo.VarIndex);
+								str = Brace::VarGetStr(gvars, argInfo.Type, argInfo.VarIndex);
 							else
-								str = VarGetStr(lvars, argInfo.Type, argInfo.VarIndex);
+								str = Brace::VarGetStr(lvars, argInfo.Type, argInfo.VarIndex);
 						}
 						bool needQuote = false;
 						if (str.length() > 0 && str[0] != '"' && str[0] != '\'') {
@@ -4941,7 +4951,7 @@ private:
 		using BoolArrayObj = ArrayObjT<bool>;
 		auto* p = new BoolArrayObj();
 		for (auto& ai : m_ArgInfos) {
-			bool v = VarGetBoolean((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
+			bool v = Brace::VarGetBoolean((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 			p->GetImpl().push_back(v);
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -4956,7 +4966,7 @@ private:
 		using IntArrayObj = ArrayObjT<int64_t>;
 		auto* p = new IntArrayObj();
 		for (auto& ai : m_ArgInfos) {
-			int64_t v = VarGetI64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
+			int64_t v = Brace::VarGetI64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 			p->GetImpl().push_back(v);
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -4971,7 +4981,7 @@ private:
 		using FloatArrayObj = ArrayObjT<double>;
 		auto* p = new FloatArrayObj();
 		for (auto& ai : m_ArgInfos) {
-			double v = VarGetF64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
+			double v = Brace::VarGetF64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 			p->GetImpl().push_back(v);
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -4986,7 +4996,7 @@ private:
 		using StrArrayObj = ArrayObjT<std::string>;
 		auto* p = new StrArrayObj();
 		for (auto& ai : m_ArgInfos) {
-			const std::string& v = VarGetString((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
+			const std::string& v = Brace::VarGetString((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
 			p->GetImpl().push_back(v);
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5000,7 +5010,7 @@ private:
 		}
 		auto* p = new ObjectArray();
 		for (auto& ai : m_ArgInfos) {
-			auto& v = VarGetObject((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
+			auto& v = Brace::VarGetObject((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
 			p->GetImpl().push_back(v);
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5538,8 +5548,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			int64_t k = VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			std::string v = VarGetStr((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			int64_t k = Brace::VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			std::string v = Brace::VarGetStr((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(k, std::move(v)));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5560,8 +5570,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			int64_t k = VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			int64_t v = VarGetI64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			int64_t k = Brace::VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			int64_t v = Brace::VarGetI64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(k, v));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5582,8 +5592,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			int64_t k = VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			double v = VarGetF64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			int64_t k = Brace::VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			double v = Brace::VarGetF64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(k, v));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5604,8 +5614,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			int64_t k = VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			bool v = VarGetBoolean((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			int64_t k = Brace::VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			bool v = Brace::VarGetBoolean((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(k, v));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5625,8 +5635,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			int64_t k = VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			auto v = VarGetObject((val.IsGlobal ? gvars : lvars), val.VarIndex);
+			int64_t k = Brace::VarGetI64((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			auto v = Brace::VarGetObject((val.IsGlobal ? gvars : lvars), val.VarIndex);
 			p->GetImpl().insert(std::make_pair(k, std::move(v)));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5647,8 +5657,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			std::string k = VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			std::string v = VarGetStr((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			std::string k = Brace::VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			std::string v = Brace::VarGetStr((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(std::move(k), std::move(v)));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5669,8 +5679,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			std::string k = VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			int64_t v = VarGetI64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			std::string k = Brace::VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			int64_t v = Brace::VarGetI64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(std::move(k), v));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5691,8 +5701,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			std::string k = VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			double v = VarGetF64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			std::string k = Brace::VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			double v = Brace::VarGetF64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(std::move(k), v));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5713,8 +5723,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			std::string k = VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			bool v = VarGetBoolean((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
+			std::string k = Brace::VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			bool v = Brace::VarGetBoolean((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 			p->GetImpl().insert(std::make_pair(std::move(k), v));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
@@ -5734,8 +5744,8 @@ private:
 		for (int ix = 0; ix < static_cast<int>(m_ArgKeyInfos.size()) && ix < static_cast<int>(m_ArgValInfos.size()); ++ix) {
 			auto& key = m_ArgKeyInfos[ix];
 			auto& val = m_ArgValInfos[ix];
-			std::string k = VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
-			auto v = VarGetObject((val.IsGlobal ? gvars : lvars), val.VarIndex);
+			std::string k = Brace::VarGetStr((key.IsGlobal ? gvars : lvars), key.Type, key.VarIndex);
+			auto v = Brace::VarGetObject((val.IsGlobal ? gvars : lvars), val.VarIndex);
 			p->GetImpl().insert(std::make_pair(std::move(k), std::move(v)));
 		}
 		Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
