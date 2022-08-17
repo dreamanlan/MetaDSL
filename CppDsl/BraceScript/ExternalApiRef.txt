@@ -3474,7 +3474,7 @@ private:
 					}
 					LogInfo(ss.str());
 					if (GEngine)
-						GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Yellow, ANSI_TO_TCHAR(ss.str().c_str()));
+						GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Yellow, UTF8_TO_TCHAR(ss.str().c_str()));
 					FreeObjVars(lvars, m_SelectObjVars);
 					if (m_HavingArgInfo.VarIndex != INVALID_INDEX) {
 						FreeObjVars(lvars, m_ObjVars);
@@ -3502,8 +3502,8 @@ private:
 			for (auto& argInfo : m_SelectArgInfos) {
 				int stat = m_SelectStats[six];
 				bool isStr = false;
-				std::string str;
-				double val;
+				std::string str{};
+				double val{};
 				if (Brace::IsObjectType(argInfo.Type)) {
 					auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
 					switch (argInfo.ObjectTypeId) {
@@ -3784,7 +3784,7 @@ private:
 					}
 					LogInfo(ss.str());
 					if (GEngine)
-						GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Yellow, ANSI_TO_TCHAR(ss.str().c_str()));
+						GEngine->AddOnScreenDebugMessage(-1, 12.0f, FColor::Yellow, UTF8_TO_TCHAR(ss.str().c_str()));
 					FreeObjVars(lvars, m_SelectObjVars);
 				}
 			}
