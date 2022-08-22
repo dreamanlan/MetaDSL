@@ -390,18 +390,18 @@ namespace Brace
         for (auto& p : m_Func->Codes) {
             r = p(gvars, vars);
             if (IsForceQuit())
-                goto EXIT;
+                goto L_EXIT;
             switch (r) {
             case BRACE_FLOW_CONTROL_RETURN:
                 r = BRACE_FLOW_CONTROL_NORMAL;
-                goto EXIT;
+                goto L_EXIT;
             case BRACE_FLOW_CONTROL_EXCEPTION:
                 break;
             case BRACE_FLOW_CONTROL_EFFECT:
                 break;
             }
         }
-    EXIT:
+    L_EXIT:
         if (m_ResultAssign) {
             (*m_ResultAssign)((m_ResultInfo.IsGlobal ? gvars : lastVars), m_ResultInfo.VarIndex, vars, m_Func->RetValue.VarIndex);
         }
