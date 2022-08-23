@@ -333,6 +333,8 @@ template<typename T>
 class ArrayObjT final : public Brace::IBraceObject
 {
 public:
+	using ArrayType = std::vector<T>;
+public:
 	ArrayObjT(void) :m_Array()
 	{}
 	virtual ~ArrayObjT(void) override
@@ -347,7 +349,7 @@ private:
 class ObjectArray final : public Brace::IBraceObject
 {
 public:
-	using ObjArrayType = std::vector<std::shared_ptr<Brace::IBraceObject>>;
+	using ArrayType = std::vector<std::shared_ptr<Brace::IBraceObject>>;
 public:
 	ObjectArray(void) :m_Array()
 	{}
@@ -355,15 +357,17 @@ public:
 	{
 	}
 public:
-	const ObjArrayType& GetImpl(void)const { return m_Array; }
-	ObjArrayType& GetImpl(void) { return m_Array; }
+	const ArrayType& GetImpl(void)const { return m_Array; }
+	ArrayType& GetImpl(void) { return m_Array; }
 private:
-	ObjArrayType m_Array;
+	ArrayType m_Array;
 };
 
 template<typename KeyT, typename ValT>
 class HashtableObjT final : public Brace::IBraceObject
 {
+public:
+	using HashType = std::unordered_map<KeyT, ValT>;
 public:
 	HashtableObjT(void) :m_Hashtable()
 	{}
@@ -380,17 +384,17 @@ private:
 class StrObjHashtable final : public Brace::IBraceObject
 {
 public:
-	using StrObjHashtableType = std::unordered_map<std::string, std::shared_ptr<Brace::IBraceObject>>;
+	using HashType = std::unordered_map<std::string, std::shared_ptr<Brace::IBraceObject>>;
 public:
 	StrObjHashtable(void) :m_Hashtable()
 	{}
 	virtual ~StrObjHashtable(void) override
 	{}
 public:
-	const StrObjHashtableType& GetImpl(void)const { return m_Hashtable; }
-	StrObjHashtableType& GetImpl(void) { return m_Hashtable; }
+	const HashType& GetImpl(void)const { return m_Hashtable; }
+	HashType& GetImpl(void) { return m_Hashtable; }
 private:
-	StrObjHashtableType m_Hashtable;
+	HashType m_Hashtable;
 };
 class IntObjHashtable final : public Brace::IBraceObject
 {
