@@ -5838,7 +5838,7 @@ protected:
 			auto* second = statementData.GetSecond()->AsFunction();
 			const std::string& firstId = first->GetId();
 			const std::string& secondId = second->GetId();
-			if (firstId == "looplist" && !first->HaveStatement() && !first->HaveExternScript() &&
+			if (!first->HaveStatement() && !first->HaveExternScript() &&
 				!secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
 				if (first->GetParamNum() > 0) {
 					bool ret = false;
