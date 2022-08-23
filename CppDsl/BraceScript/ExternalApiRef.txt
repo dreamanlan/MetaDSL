@@ -5928,14 +5928,15 @@ private:
 	m_pBraceScript->RegisterApi("collectionset", new Brace::BraceApiFactory<CollectionSetExp>());
 	m_pBraceScript->RegisterApi("collectionget", new Brace::BraceApiFactory<CollectionGetExp>());
 	m_pBraceScript->RegisterApi("linq", new Brace::BraceApiFactory<LinqExp>());
-    m_pBraceScript->RegisterApi("select", new Brace::BraceApiFactory<SelectExp>());
+    	m_pBraceScript->RegisterApi("select", new Brace::BraceApiFactory<SelectExp>());
 	m_pBraceScript->RegisterApi("lambda", new Brace::BraceApiFactory<LambdaExp>());
 	m_pBraceScript->RegisterApi("array", new Brace::BraceApiFactory<ArrayExp>());
 	m_pBraceScript->RegisterApi("hashtable", new Brace::BraceApiFactory<HashtableExp>());
 	m_pBraceScript->RegisterApi("looplist", new Brace::BraceApiFactory<LoopListExp>());
 
 	//add fixed map, obj table id <-> obj category
-    g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "string");  //fake obj info for string 
+        g_ObjectInfoMgr.AddBraceObjectInfo(Brace::PREDEFINED_BRACE_OBJECT_TYPE_ANY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "any");  //fake obj info for any
+    	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STRING, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "string");  //fake obj info for string 
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "array<:bool:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "array<:int64:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_FLOAT_ARRAY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "array<:double:>");
@@ -5948,5 +5949,5 @@ private:
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,int64:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,double:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,string:>");
-    g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT, BRACE_OBJECT_CATEGORY_UOBJECT, "uobject");
+    	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT, BRACE_OBJECT_CATEGORY_UOBJECT, "uobject");
 */
