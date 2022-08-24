@@ -1,6 +1,4 @@
 #pragma once
-//Modified from Ogre::Any
-
 #include "BraceScript.h"
 
 namespace Brace
@@ -16,7 +14,7 @@ namespace Brace
         {
         }
         template<typename ValueType>
-        Any(const ValueType& value)
+        inline Any(const ValueType& value)
             : m_Content(new(holder<ValueType>)(value))
         {
         }
@@ -40,7 +38,7 @@ namespace Brace
             return *this;
         }
         template<typename ValueType>
-        Any& operator=(const ValueType& rhs)
+        inline Any& operator=(const ValueType& rhs)
         {
             Any(rhs).swap(*this);
             return *this;
@@ -60,16 +58,17 @@ namespace Brace
         {
             return m_Content != nullptr;
         }
-        const std::type_info& type(void) const
-        {
-            return m_Content ? m_Content->getType() : typeid(void);
-        }
         void reset(void)
         {
             delete m_Content;
             m_Content = nullptr;
         }
-    protected:
+        template<typename ValueType>
+        inline ValueType* cast(void)const
+        {
+            return holder<ValueType>::DoCast(m_Content);
+        }
+    private:
         class placeholder
         {
         public:
@@ -77,7 +76,7 @@ namespace Brace
             {
             }
         public:
-            virtual const std::type_info& getType(void) const = 0;
+            virtual const void* typetag(void) const = 0;
             virtual placeholder* clone(void) const = 0;
         };
 
@@ -90,9 +89,9 @@ namespace Brace
             {
             }
         public:
-            virtual const std::type_info& getType(void) const override
+            virtual const void* typetag(void) const override
             {
-                return typeid(ValueType);
+                return &DoCast;
             }
             virtual placeholder* clone(void) const override
             {
@@ -100,25 +99,27 @@ namespace Brace
             }
         public:
             ValueType held;
+        public:
+            static ValueType* DoCast(placeholder* p)
+            {
+                return p && (p->typetag() == &DoCast)
+                    ? &static_cast<holder<ValueType>*>(p)->held
+                    : 0;
+            }
         };
-    protected:
+    private:
         placeholder* m_Content;
-
-        template<typename ValueType>
-        friend ValueType* AnyCast(Any*);
     };
 
     template<typename ValueType>
-    ValueType* AnyCast(Any* operand)
+    inline ValueType* AnyCast(Any* operand)
     {
-        return operand && (operand->type() == typeid(ValueType))
-            ? &static_cast<Any::holder<ValueType>*>(operand->m_Content)->held
-            : 0;
+        return operand->cast<ValueType>();
     }
 
     template<typename ValueType>
-    const ValueType* AnyCast(const Any* operand)
+    inline const ValueType* AnyCast(const Any* operand)
     {
-        return AnyCast<ValueType>(const_cast<Any*>(operand));
+        return operand->cast<ValueType>();
     }
 }
