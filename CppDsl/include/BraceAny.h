@@ -76,8 +76,8 @@ namespace Brace
             {
             }
         public:
-            virtual const void* typetag(void) const = 0;
             virtual placeholder* clone(void) const = 0;
+            virtual const void* typetag(void) const = 0;
         };
 
         template<typename ValueType>
@@ -89,13 +89,13 @@ namespace Brace
             {
             }
         public:
-            virtual const void* typetag(void) const override
-            {
-                return reinterpret_cast<const void*>(&DoCast);
-            }
             virtual placeholder* clone(void) const override
             {
                 return new holder(held);
+            }
+            virtual const void* typetag(void) const override
+            {
+                return reinterpret_cast<const void*>(&DoCast);
             }
         public:
             ValueType held;
