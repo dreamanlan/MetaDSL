@@ -15,7 +15,7 @@ namespace Brace
         }
         template<typename ValueType>
         inline Any(const ValueType& value)
-            : m_Content(new(holder<ValueType>)(value))
+            : m_Content(new holder<ValueType>(value))
         {
         }
         Any(const Any& other)
@@ -91,7 +91,7 @@ namespace Brace
         public:
             virtual const void* typetag(void) const override
             {
-                return &DoCast;
+                return reinterpret_cast<const void*>(&DoCast);
             }
             virtual placeholder* clone(void) const override
             {
@@ -102,7 +102,7 @@ namespace Brace
         public:
             static ValueType* DoCast(placeholder* p)
             {
-                return p && (p->typetag() == &DoCast)
+                return p && (p->typetag() == reinterpret_cast<const void*>(&DoCast))
                     ? &static_cast<holder<ValueType>*>(p)->held
                     : 0;
             }
