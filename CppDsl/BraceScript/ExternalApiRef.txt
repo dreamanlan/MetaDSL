@@ -511,13 +511,21 @@
     private:
         IntObjHashtableType m_Hashtable;
     };
-	
+
     template<typename ValueTypeT>
     struct Str2Type
     {
         static inline ValueTypeT Do(const FString& src)
         {
             return ValueTypeT{};
+        }
+    };
+    template<>
+    struct Str2Type<std::string>
+    {
+        static inline std::string Do(const FString& src)
+        {
+            return std::string(TCHAR_TO_UTF8(*src));
         }
     };
     template<>
