@@ -281,6 +281,8 @@
                 ss << "<:";
                 auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
                 for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
+                    if (ix > 0)
+                        ss << ",";
                     auto& p = *funcData.GetParam(ix);
                     CalcObjTypeKey(p, ss);
                 }
