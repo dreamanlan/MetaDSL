@@ -511,6 +511,39 @@
     private:
         IntObjHashtableType m_Hashtable;
     };
+	
+    template<typename ValueTypeT>
+    struct Str2Type
+    {
+        static inline ValueTypeT Do(const FString& src)
+        {
+            return ValueTypeT{};
+        }
+    };
+    template<>
+    struct Str2Type<int64_t>
+    {
+        static inline int64_t Do(const FString& src)
+        {
+            return FCString::Atoi64(*src);
+        }
+    };
+    template<>
+    struct Str2Type<double>
+    {
+        static inline double Do(const FString& src)
+        {
+            return FCString::Atod(*src);
+        }
+    };
+    template<>
+    struct Str2Type<bool>
+    {
+        static inline bool Do(const FString& src)
+        {
+            return src == TEXT("true");
+        }
+    };
 
     static BraceObjectInfoManager g_ObjectInfoMgr;
 
@@ -704,7 +737,7 @@
 				}
 			}
 			std::stringstream ss;
-			ss << "Illegal cast, line: " << data.GetLine();
+			ss << "expected cast(exp, type), line: " << data.GetLine();
 			LogError(ss.str());
 			executor = nullptr;
 			return false;
@@ -722,6 +755,320 @@
 		Brace::OperandRuntimeInfo m_ExpInfo;
 		Brace::BraceApiExecutor m_Exp;
 		Brace::OperandRuntimeInfo m_ResultInfo;
+	};
+	class TypeInfoExp final : public Brace::AbstractBraceApi
+	{
+	public:
+		TypeInfoExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
+		{
+		}
+	protected:
+		virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+		{
+			//typeinfo(type)
+			if (data.GetParamNum() != 1) {
+				std::stringstream ss;
+				ss << "expected typeinfo(type), line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			auto* type = data.GetParam(0);
+			auto typeInfo = ParseParamTypeInfo(*type);
+
+			resultInfo.Type = typeInfo.Type;
+			resultInfo.ObjectTypeId = typeInfo.ObjectTypeId;
+			resultInfo.Name = "loadtimevar";
+			resultInfo.VarIndex = INVALID_INDEX;
+
+			executor = nullptr;
+			return true;
+		}
+	};
+	class TypeIdExp final : public Brace::AbstractBraceApi
+	{
+	public:
+		TypeIdExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
+		{
+		}
+	protected:
+		virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+		{
+			//typeid(type) or typeid(exp)
+			if (data.GetParamNum() != 1) {
+				std::stringstream ss;
+				ss << "expected typeid(type) or typeid(exp), line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			int type = Brace::BRACE_DATA_TYPE_UNKNOWN;
+			auto* typeOrExp = data.GetParam(0);
+			auto typeInfo = ParseParamTypeInfo(*typeOrExp);
+			if (typeInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT && typeInfo.ObjectTypeId <= 0) {
+				Brace::OperandLoadtimeInfo loadInfo;
+				LoadHelper(*typeOrExp, loadInfo);
+				type = loadInfo.Type;
+			}
+			else {
+				type = typeInfo.Type;
+			}
+
+			std::string varId = std::to_string(type);
+			auto* info = GetConstInfo(DslData::ValueData::VALUE_TYPE_NUM, varId);
+			if (nullptr != info) {
+				resultInfo.Type = info->Type;
+				resultInfo.ObjectTypeId = info->ObjectTypeId;
+				resultInfo.VarIndex = info->VarIndex;
+				resultInfo.IsGlobal = true;
+				resultInfo.IsTempVar = false;
+				resultInfo.IsConst = true;
+				resultInfo.Name = varId;
+			}
+			else {
+				resultInfo.VarIndex = AllocConst(DslData::ValueData::VALUE_TYPE_NUM, varId, resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.IsGlobal = true;
+				resultInfo.IsTempVar = false;
+				resultInfo.IsConst = true;
+				resultInfo.Name = varId;
+			}
+			executor = nullptr;
+			return true;
+		}
+	};
+	class ObjTypeIdExp final : public Brace::AbstractBraceApi
+	{
+	public:
+		ObjTypeIdExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
+		{
+		}
+	protected:
+		virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+		{
+			//objtypeid(type) or objtypeid(exp)
+			if (data.GetParamNum() != 1) {
+				std::stringstream ss;
+				ss << "expected objtypeid(type) or objtypeid(exp), line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			int type = Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+			auto* typeOrExp = data.GetParam(0);
+			auto typeInfo = ParseParamTypeInfo(*typeOrExp);
+			if (typeInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT && typeInfo.ObjectTypeId <= Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ) {
+				Brace::OperandLoadtimeInfo loadInfo;
+				LoadHelper(*typeOrExp, loadInfo);
+				type = loadInfo.ObjectTypeId;
+			}
+			else {
+				type = typeInfo.ObjectTypeId;
+			}
+
+			std::string varId = std::to_string(type);
+			auto* info = GetConstInfo(DslData::ValueData::VALUE_TYPE_NUM, varId);
+			if (nullptr != info) {
+				resultInfo.Type = info->Type;
+				resultInfo.ObjectTypeId = info->ObjectTypeId;
+				resultInfo.VarIndex = info->VarIndex;
+				resultInfo.IsGlobal = true;
+				resultInfo.IsTempVar = false;
+				resultInfo.IsConst = true;
+				resultInfo.Name = varId;
+			}
+			else {
+				resultInfo.VarIndex = AllocConst(DslData::ValueData::VALUE_TYPE_NUM, varId, resultInfo.Type, resultInfo.ObjectTypeId);
+				resultInfo.IsGlobal = true;
+				resultInfo.IsTempVar = false;
+				resultInfo.IsConst = true;
+				resultInfo.Name = varId;
+			}
+			executor = nullptr;
+			return true;
+		}
+	};
+	class SwapExp final : public Brace::AbstractBraceApi
+	{
+	public:
+		SwapExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter), m_Var1Info(), m_Var2Info()
+		{
+		}
+	protected:
+		virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
+		{
+			//swap(var1, var2)
+			if (data.GetParamNum() != 2) {
+				std::stringstream ss;
+				ss << "expected swap(var1, var2), line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			DslData::ISyntaxComponent* param1 = data.GetParam(0);
+			DslData::ISyntaxComponent* param2 = data.GetParam(1);
+			if (param1->GetSyntaxType() != DslData::ISyntaxComponent::TYPE_VALUE || param2->GetSyntaxType() != DslData::ISyntaxComponent::TYPE_VALUE) {
+				std::stringstream ss;
+				ss << "expected swap(var1, var2), var1 and var2 must be local var or global var, line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			const std::string& varId1 = param1->GetId();
+			const std::string& varId2 = param2->GetId();
+			bool var1IsGlobal = varId1.length() > 0 && varId1[0] == '@';
+			bool var2IsGlobal = varId2.length() > 0 && varId2[0] == '@';
+			Brace::VarInfo* varInfo1 = nullptr;
+            Brace::VarInfo* varInfo2 = nullptr;
+            if (var1IsGlobal)
+                varInfo1 = GetGlobalVarInfo(varId1);
+            else
+                varInfo1 = GetVarInfo(varId1);
+			if (var2IsGlobal)
+				varInfo2 = GetGlobalVarInfo(varId2);
+			else
+				varInfo2 = GetVarInfo(varId2);
+			if (nullptr == varInfo1) {
+				std::stringstream ss;
+				ss << "can't find var " << varId1 << ", line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			if (nullptr == varInfo2) {
+				std::stringstream ss;
+				ss << "can't find var " << varId2 << ", line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			if (varInfo1->Type != varInfo2->Type || varInfo1->ObjectTypeId != varInfo2->ObjectTypeId) {
+				std::stringstream ss;
+				ss << varId1 << " and " << varId2 << " must be same type, line: " << data.GetLine();
+				LogError(ss.str());
+				return false;
+			}
+			if (varInfo1->Type == Brace::BRACE_DATA_TYPE_REF) {
+				auto& ref1 = func.VarInitInfo.ReferenceVars[varInfo1->VarIndex];
+				auto& ref2 = func.VarInitInfo.ReferenceVars[varInfo2->VarIndex];
+				if (ref1.Type != ref2.Type || ref1.ObjectTypeId != ref2.ObjectTypeId) {
+					std::stringstream ss;
+					ss << varId1 << " and " << varId2 << " must be same type, line: " << data.GetLine();
+					LogError(ss.str());
+					return false;
+				}
+			}
+			m_Var1Info.Type = varInfo1->Type;
+			m_Var1Info.ObjectTypeId = varInfo1->ObjectTypeId;
+			m_Var1Info.VarIndex = varInfo1->VarIndex;
+			m_Var1Info.IsGlobal = var1IsGlobal;
+
+			m_Var2Info.Type = varInfo2->Type;
+			m_Var2Info.ObjectTypeId = varInfo2->ObjectTypeId;
+			m_Var2Info.VarIndex = varInfo2->VarIndex;
+			m_Var2Info.IsGlobal = var2IsGlobal;
+
+			executor.attach(this, &SwapExp::Execute);
+			return true;
+		}
+	private:
+		int Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
+		{
+			//todo:split by tuple (var, global/local vars, type) for performance, maybe 104 functions, a lot of work..
+			auto& vars1 = (m_Var1Info.IsGlobal ? gvars : lvars);
+			auto& vars2 = (m_Var2Info.IsGlobal ? gvars : lvars);
+			int index1 = m_Var1Info.VarIndex;
+			int index2 = m_Var2Info.VarIndex;
+			int type = m_Var1Info.Type;
+
+			DoSwap(type, vars1, vars2, index1, index2);
+			return Brace::BRACE_FLOW_CONTROL_NORMAL;
+		}
+	private:
+		void DoSwap(int type, Brace::VariableInfo& vars1, Brace::VariableInfo& vars2, int index1, int index2)const
+		{
+			switch (type) {
+			case Brace::BRACE_DATA_TYPE_BOOL: {
+				bool v1 = Brace::VarGetBool(vars1, index1);
+				bool v2 = Brace::VarGetBool(vars2, index2);
+				Brace::VarSetBool(vars1, index1, v2);
+				Brace::VarSetBool(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_INT8: {
+				int8_t v1 = Brace::VarGetInt8(vars1, index1);
+				int8_t v2 = Brace::VarGetInt8(vars2, index2);
+				Brace::VarSetInt8(vars1, index1, v2);
+				Brace::VarSetInt8(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_UINT8: {
+				uint8_t v1 = Brace::VarGetUInt8(vars1, index1);
+				uint8_t v2 = Brace::VarGetUInt8(vars2, index2);
+				Brace::VarSetUInt8(vars1, index1, v2);
+				Brace::VarSetUInt8(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_INT16: {
+				int16_t v1 = Brace::VarGetInt16(vars1, index1);
+				int16_t v2 = Brace::VarGetInt16(vars2, index2);
+				Brace::VarSetInt16(vars1, index1, v2);
+				Brace::VarSetInt16(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_UINT16: {
+				uint16_t v1 = Brace::VarGetUInt16(vars1, index1);
+				uint16_t v2 = Brace::VarGetUInt16(vars2, index2);
+				Brace::VarSetUInt16(vars1, index1, v2);
+				Brace::VarSetUInt16(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_INT32: {
+				int32_t v1 = Brace::VarGetInt32(vars1, index1);
+				int32_t v2 = Brace::VarGetInt32(vars2, index2);
+				Brace::VarSetInt32(vars1, index1, v2);
+				Brace::VarSetInt32(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_UINT32: {
+				uint32_t v1 = Brace::VarGetUInt32(vars1, index1);
+				uint32_t v2 = Brace::VarGetUInt32(vars2, index2);
+				Brace::VarSetUInt32(vars1, index1, v2);
+				Brace::VarSetUInt32(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_INT64: {
+				int64_t v1 = Brace::VarGetInt64(vars1, index1);
+				int64_t v2 = Brace::VarGetInt64(vars2, index2);
+				Brace::VarSetInt64(vars1, index1, v2);
+				Brace::VarSetInt64(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_UINT64: {
+				uint64_t v1 = Brace::VarGetUInt64(vars1, index1);
+				uint64_t v2 = Brace::VarGetUInt64(vars2, index2);
+				Brace::VarSetUInt64(vars1, index1, v2);
+				Brace::VarSetUInt64(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_FLOAT: {
+				float v1 = Brace::VarGetFloat(vars1, index1);
+				float v2 = Brace::VarGetFloat(vars2, index2);
+				Brace::VarSetFloat(vars1, index1, v2);
+				Brace::VarSetFloat(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_DOUBLE: {
+				double v1 = Brace::VarGetDouble(vars1, index1);
+				double v2 = Brace::VarGetDouble(vars2, index2);
+				Brace::VarSetDouble(vars1, index1, v2);
+				Brace::VarSetDouble(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_STRING: {
+				std::string v1 = Brace::VarGetString(vars1, index1);
+				const std::string& v2 = Brace::VarGetString(vars2, index2);
+				Brace::VarSetString(vars1, index1, v2);
+				Brace::VarSetString(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_OBJECT: {
+				auto v1 = Brace::VarGetObject(vars1, index1);
+				auto& v2 = Brace::VarGetObject(vars2, index2);
+				Brace::VarSetObject(vars1, index1, v2);
+				Brace::VarSetObject(vars2, index2, v1);
+			}break;
+			case Brace::BRACE_DATA_TYPE_REF: {
+				auto& ref1 = Brace::VarGetRef(vars1, index1);
+				auto& ref2 = Brace::VarGetRef(vars2, index2);
+
+				DoSwap(ref1.Type, *ref1.Vars, *ref2.Vars, ref1.VarIndex, ref2.VarIndex);
+			}break;
+			}
+		}
+	private:
+		Brace::OperandRuntimeInfo m_Var1Info;
+		Brace::OperandRuntimeInfo m_Var2Info;
 	};
 
 	class UObjectMemberCallProvider final : public AbstractMemberCallApiProvider
@@ -8113,18 +8460,26 @@
 	};
 
 	/// missing language features
-	m_pBraceScript->RegisterApi("membercall", new Brace::BraceApiFactory<MemberCallExp>());
-	m_pBraceScript->RegisterApi("memberset", new Brace::BraceApiFactory<MemberSetExp>());
-	m_pBraceScript->RegisterApi("memberget", new Brace::BraceApiFactory<MemberGetExp>());
-	m_pBraceScript->RegisterApi("collectioncall", new Brace::BraceApiFactory<CollectionCallExp>());
-	m_pBraceScript->RegisterApi("collectionset", new Brace::BraceApiFactory<CollectionSetExp>());
-	m_pBraceScript->RegisterApi("collectionget", new Brace::BraceApiFactory<CollectionGetExp>());
-	m_pBraceScript->RegisterApi("linq", new Brace::BraceApiFactory<LinqExp>());
-    	m_pBraceScript->RegisterApi("select", new Brace::BraceApiFactory<SelectExp>());
-	m_pBraceScript->RegisterApi("lambda", new Brace::BraceApiFactory<LambdaExp>());
-	m_pBraceScript->RegisterApi("array", new Brace::BraceApiFactory<ArrayExp>());
-	m_pBraceScript->RegisterApi("hashtable", new Brace::BraceApiFactory<HashtableExp>());
-	m_pBraceScript->RegisterApi("looplist", new Brace::BraceApiFactory<LoopListExp>());
+        m_pBraceScript->RegisterApi("membercall", new Brace::BraceApiFactory<MemberCallExp>());
+        m_pBraceScript->RegisterApi("memberset", new Brace::BraceApiFactory<MemberSetExp>());
+        m_pBraceScript->RegisterApi("memberget", new Brace::BraceApiFactory<MemberGetExp>());
+        m_pBraceScript->RegisterApi("collectioncall", new Brace::BraceApiFactory<CollectionCallExp>());
+        m_pBraceScript->RegisterApi("collectionset", new Brace::BraceApiFactory<CollectionSetExp>());
+        m_pBraceScript->RegisterApi("collectionget", new Brace::BraceApiFactory<CollectionGetExp>());
+        m_pBraceScript->RegisterApi("linq", new Brace::BraceApiFactory<LinqExp>());
+        m_pBraceScript->RegisterApi("select", new Brace::BraceApiFactory<SelectExp>());
+        m_pBraceScript->RegisterApi("lambda", new Brace::BraceApiFactory<LambdaExp>());
+        m_pBraceScript->RegisterApi("array", new Brace::BraceApiFactory<ArrayExp>());
+        m_pBraceScript->RegisterApi("hashtable", new Brace::BraceApiFactory<HashtableExp>());
+        m_pBraceScript->RegisterApi("looplist", new Brace::BraceApiFactory<LoopListExp>());
+        m_pBraceScript->RegisterApi("cast", new Brace::BraceApiFactory<CastExp>());
+        m_pBraceScript->RegisterApi("typeinfo", new Brace::BraceApiFactory<TypeInfoExp>());
+        m_pBraceScript->RegisterApi("typeid", new Brace::BraceApiFactory<TypeIdExp>());
+        m_pBraceScript->RegisterApi("objtypeid", new Brace::BraceApiFactory<ObjTypeIdExp>());
+        m_pBraceScript->RegisterApi("swap", new Brace::BraceApiFactory<SwapExp>());
+        m_pBraceScript->RegisterApi("struct", new Brace::BraceApiFactory<StructExp>());
+        m_pBraceScript->RegisterApi("newstruct", new Brace::BraceApiFactory<NewStructExp>());
+        m_pBraceScript->RegisterApi("reinterpretas", new Brace::BraceApiFactory<ReInterpretAsExp>());
 
 	//add fixed map, obj table id <-> obj category
         g_ObjectInfoMgr.AddBraceObjectInfo(Brace::PREDEFINED_BRACE_OBJECT_TYPE_ANY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "any");  //fake obj info for any
