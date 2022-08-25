@@ -1827,21 +1827,22 @@ namespace Brace
                         OperandLoadtimeInfo loadInfo;
                         m_Count = LoadHelper(*exp, loadInfo);
                         m_CountInfo = loadInfo;
+                        PushBlock();
                         m_IteratorIndex = AllocVariable("$$", loadInfo.Type, loadInfo.ObjectTypeId);
+                        OperandLoadtimeInfo argLoadInfo;
+                        auto statement = LoadHelper(*second, argLoadInfo);
+                        if (!statement.isNull())
+                            m_Statements.push_back(std::move(statement));
+                        m_ObjVars = CurBlockObjVars();
+                        PopBlock();
+                        executor.attach(this, &LoopExp::Execute);
+                        return true;
                     }
-                    else {
-                        //error
-                        std::stringstream ss;
-                        ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
-                    }
-                    OperandLoadtimeInfo argLoadInfo;
-                    auto statement = LoadHelper(*second, argLoadInfo);
-                    if (!statement.isNull())
-                        m_Statements.push_back(std::move(statement));
-                    executor.attach(this, &LoopExp::Execute);
-                    return true;
                 }
             }
+            //error
+            std::stringstream ss;
+            ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
             return false;
         }
     private:
@@ -1920,6 +1921,7 @@ namespace Brace
                     std::stringstream ss;
                     ss << "BraceScript error, foreach list type dismatch, " << callData.GetId() << " line " << callData.GetLine();
                     LogError(ss.str());
+                    return false;
                 }
             }
             PushBlock();
@@ -1973,27 +1975,29 @@ namespace Brace
                             m_Elements.push_back(std::move(e));
                             m_ElementInfos.push_back(elemLoadInfo);
                         }
-                        m_IteratorIndex = AllocVariable("$$", type, objTypeId);
                         if (!typeMatch) {
                             std::stringstream ss;
                             ss << "BraceScript error, foreach list type dismatch, " << first->GetId() << " line " << first->GetLine();
                             LogError(ss.str());
+                            return false;
                         }
+                        PushBlock();
+                        m_IteratorIndex = AllocVariable("$$", type, objTypeId);
+                        OperandLoadtimeInfo argLoadInfo;
+                        auto statement = LoadHelper(*second, argLoadInfo);
+                        if (!statement.isNull())
+                            m_Statements.push_back(std::move(statement));
+                        m_ObjVars = CurBlockObjVars();
+                        PopBlock();
+                        executor.attach(this, &ForeachExp::Execute);
+                        return true;
                     }
-                    else {
-                        //error
-                        std::stringstream ss;
-                        ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
-                        LogError(ss.str());
-                    }
-                    OperandLoadtimeInfo argLoadInfo;
-                    auto statement = LoadHelper(*second, argLoadInfo);
-                    if (!statement.isNull())
-                        m_Statements.push_back(std::move(statement));
-                    executor.attach(this, &ForeachExp::Execute);
-                    return true;
                 }
             }
+            //error
+            std::stringstream ss;
+            ss << "BraceScript error, " << data.GetId() << " line " << data.GetLine();
+            LogError(ss.str());
             return false;
         }
     private:
