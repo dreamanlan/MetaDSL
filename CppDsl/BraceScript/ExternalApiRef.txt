@@ -508,17 +508,17 @@
     class IntObjHashtable final : public Brace::IBraceObject
     {
     public:
-        using IntObjHashtableType = std::unordered_map<int64_t, std::shared_ptr<Brace::IBraceObject>>;
+        using HashType = std::unordered_map<int64_t, std::shared_ptr<Brace::IBraceObject>>;
     public:
         IntObjHashtable(void) :m_Hashtable()
         {}
         virtual ~IntObjHashtable(void) override
         {}
     public:
-        const IntObjHashtableType& GetImpl(void)const { return m_Hashtable; }
-        IntObjHashtableType& GetImpl(void) { return m_Hashtable; }
+        const HashType& GetImpl(void)const { return m_Hashtable; }
+        HashType& GetImpl(void) { return m_Hashtable; }
     private:
-        IntObjHashtableType m_Hashtable;
+        HashType m_Hashtable;
     };
 
     template<typename ValueTypeT>
