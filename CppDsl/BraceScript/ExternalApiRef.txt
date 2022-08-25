@@ -240,6 +240,13 @@
             auto pair = m_ObjInfoMap.insert(std::make_pair(objTypeId, std::move(info)));
             return pair.second ? &(pair.first->second) : nullptr;
         }
+        void AddBraceObjectAlias(int objTypeId, std::string&& typeNameAlias)
+        {
+            auto it = m_ObjTypeIdMap.find(typeNameAlias);
+            if (it == m_ObjTypeIdMap.end()) {
+                m_ObjTypeIdMap.insert(std::make_pair(typeNameAlias, objTypeId));
+            }
+        }
         const BraceObjectInfo* GetBraceObjectInfo(int objTypeId)const
         {
             auto it = m_ObjInfoMap.find(objTypeId);
@@ -513,7 +520,7 @@
     };
 
     template<typename ValueTypeT>
-    struct Str2Type
+    struct FStr2Type
     {
         static inline ValueTypeT Do(const FString& src)
         {
@@ -521,15 +528,15 @@
         }
     };
     template<>
-    struct Str2Type<std::string>
+    struct FStr2Type<std::string>
     {
         static inline std::string Do(const FString& src)
         {
-            return std::string(TCHAR_TO_UTF8(*src));
+            return TCHAR_TO_UTF8(*src);
         }
     };
     template<>
-    struct Str2Type<int64_t>
+    struct FStr2Type<int64_t>
     {
         static inline int64_t Do(const FString& src)
         {
@@ -537,7 +544,7 @@
         }
     };
     template<>
-    struct Str2Type<double>
+    struct FStr2Type<double>
     {
         static inline double Do(const FString& src)
         {
@@ -545,11 +552,52 @@
         }
     };
     template<>
-    struct Str2Type<bool>
+    struct FStr2Type<bool>
     {
         static inline bool Do(const FString& src)
         {
             return src == TEXT("true");
+        }
+    };
+
+    template<typename ValueTypeT>
+    struct Type2FStr
+    {
+        static inline FString Do(const ValueTypeT& src)
+        {
+            return FString{};
+        }
+    };
+    template<>
+    struct Type2FStr<std::string>
+    {
+        static inline FString Do(const std::string& src)
+        {
+            return TCHAR_TO_UTF8(src.c_str());
+        }
+    };
+    template<>
+    struct Type2FStr<int64_t>
+    {
+        static inline FString Do(int64_t src)
+        {
+            return UTF8_TO_TCHAR(std::to_string(src).c_str());
+        }
+    };
+    template<>
+    struct Type2FStr<double>
+    {
+        static inline FString Do(double src)
+        {
+            return UTF8_TO_TCHAR(std::to_string(src).c_str());
+        }
+    };
+    template<>
+    struct Type2FStr<bool>
+    {
+        static inline FString Do(bool src)
+        {
+            return src ? TEXT("true") : TEXT("false");
         }
     };
 
@@ -764,10 +812,10 @@
 		Brace::BraceApiExecutor m_Exp;
 		Brace::OperandRuntimeInfo m_ResultInfo;
 	};
-	class TypeInfoExp final : public Brace::AbstractBraceApi
+	class TypeTagExp final : public Brace::AbstractBraceApi
 	{
 	public:
-		TypeInfoExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
+		TypeTagExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter)
 		{
 		}
 	protected:
@@ -776,7 +824,7 @@
 			//typeinfo(type)
 			if (data.GetParamNum() != 1) {
 				std::stringstream ss;
-				ss << "expected typeinfo(type), line: " << data.GetLine();
+				ss << "expected typetag(type), line: " << data.GetLine();
 				LogError(ss.str());
 				return false;
 			}
@@ -7861,10 +7909,18 @@
 					}
 				}
 				if (good) {
-					std::string typeKey = std::string("array<:") + GetObjectTypeName(valObjTypeId) + ":>";
+					std::string tname = GetObjectTypeName(valObjTypeId);
+					std::string typeKey = std::string("hashtable<:int64,") + tname + ":>";
 					int objectTypeId = g_ObjectInfoMgr.GetObjectTypeId(typeKey);
 					if (objectTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
 						objectTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(typeKey);
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:int8," + tname + ":>");
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:int16," + tname + ":>");
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:int32," + tname + ":>");
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:uint8," + tname + ":>");
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:uint16," + tname + ":>");
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:uint32," + tname + ":>");
+						g_ObjectInfoMgr.AddBraceObjectAlias(objectTypeId, "hashtable<:uint64," + tname + ":>");
 					}
 					auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objectTypeId);
 					if (nullptr == pInfo) {
@@ -8442,7 +8498,6 @@
 		std::unique_ptr<AbstractLoopListApiProvider> m_ApiProvider;
 	};
 
-
 /*
 *   ========== in BraceScript init code, some callbacks must be implemented. ==========
 * 
@@ -8481,7 +8536,7 @@
         m_pBraceScript->RegisterApi("hashtable", new Brace::BraceApiFactory<HashtableExp>());
         m_pBraceScript->RegisterApi("looplist", new Brace::BraceApiFactory<LoopListExp>());
         m_pBraceScript->RegisterApi("cast", new Brace::BraceApiFactory<CastExp>());
-        m_pBraceScript->RegisterApi("typeinfo", new Brace::BraceApiFactory<TypeInfoExp>());
+        m_pBraceScript->RegisterApi("typetag", new Brace::BraceApiFactory<TypeTagExp>());
         m_pBraceScript->RegisterApi("typeid", new Brace::BraceApiFactory<TypeIdExp>());
         m_pBraceScript->RegisterApi("objtypeid", new Brace::BraceApiFactory<ObjTypeIdExp>());
         m_pBraceScript->RegisterApi("swap", new Brace::BraceApiFactory<SwapExp>());
@@ -8505,4 +8560,219 @@
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,double:>");
 	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "hashtable<:string,string:>");
     	g_ObjectInfoMgr.AddBraceObjectInfo(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT, BRACE_OBJECT_CATEGORY_UOBJECT, "uobject");
+        //----------------
+        {
+            std::string uobjArrayKey = "array<:uobject:>";
+            int objTypeId = g_ObjectInfoMgr.GetObjectTypeId(uobjArrayKey);
+            if (Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN == objTypeId) {
+                objTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(uobjArrayKey);
+            }
+            auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+            if (nullptr == pInfo) {
+                pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_OBJ_ARRAY, std::move(uobjArrayKey));
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
+                pInfo->TypeParams.push_back(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+            }
+        }
+        //----------------
+        {
+            std::string anyArrayKey = "array<:any:>";
+            int objTypeId = g_ObjectInfoMgr.GetObjectTypeId(anyArrayKey);
+            if (Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN == objTypeId) {
+                objTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(anyArrayKey);
+            }
+            auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+            if (nullptr == pInfo) {
+                pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_OBJ_ARRAY, std::move(anyArrayKey));
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_ANY);
+            }
+        }
+        //----------------
+        {
+            std::string strObjHashKey = "hashtable<:string,uobject:>";
+            int objTypeId = g_ObjectInfoMgr.GetObjectTypeId(strObjHashKey);
+            if (Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN == objTypeId) {
+                objTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(strObjHashKey);
+            }
+            auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+            if (nullptr == pInfo) {
+                pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE, std::move(strObjHashKey));
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_STRING);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
+                pInfo->TypeParams.push_back(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+            }
+        }
+        //----------------
+        {
+            std::string intObjHashKey = "hashtable<:int64,uobject:>";
+            int objTypeId = g_ObjectInfoMgr.GetObjectTypeId(intObjHashKey);
+            if (Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN == objTypeId) {
+                objTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(intObjHashKey);
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:int8,uobject:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:int16,uobject:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:int32,uobject:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint8,uobject:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint16,uobject:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint32,uobject:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint64,uobject:>");
+            }
+            auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+            if (nullptr == pInfo) {
+                pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE, std::move(intObjHashKey));
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_INT64);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
+                pInfo->TypeParams.push_back(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+            }
+        }
+        //----------------
+        {
+            std::string strAnyHashKey = "hashtable<:string,any:>";
+            int objTypeId = g_ObjectInfoMgr.GetObjectTypeId(strAnyHashKey);
+            if (Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN == objTypeId) {
+                objTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(strAnyHashKey);
+            }
+            auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+            if (nullptr == pInfo) {
+                pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE, std::move(strAnyHashKey));
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_STRING);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_ANY);
+            }
+        }
+        //----------------
+        {
+            std::string intAnyHashKey = "hashtable<:int64,any:>";
+            int objTypeId = g_ObjectInfoMgr.GetObjectTypeId(intAnyHashKey);
+            if (Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN == objTypeId) {
+                objTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(intAnyHashKey);
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:int8,any:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:int16,any:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:int32,any:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint8,any:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint16,any:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint32,any:>");
+                g_ObjectInfoMgr.AddBraceObjectAlias(objTypeId, "hashtable<:uint64,any:>");
+            }
+            auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+            if (nullptr == pInfo) {
+                pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE, std::move(intAnyHashKey));
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_INT64);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                pInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
+                pInfo->TypeParams.push_back(Brace::PREDEFINED_BRACE_OBJECT_TYPE_ANY);
+            }
+        }
+        //----------------
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_ARRAY, "array<:uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_FLOAT_ARRAY, "array<:float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:int8,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int8,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:int8,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:int16,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int16,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:int16,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:int32,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int32,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:int32,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:uint8,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint8,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:uint8,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:uint16,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint16,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:uint16,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:uint32,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint32,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:uint32,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE, "hashtable<:uint64,bool:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,int64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint64,double:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_STR_HASHTABLE, "hashtable<:uint64,string:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE, "hashtable<:string,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_STR_FLOAT_HASHTABLE, "hashtable<:string,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int8,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int16,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int32,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:int64,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint8,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint16,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint32,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_FLOAT_HASHTABLE, "hashtable<:uint64,float:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,int8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,int16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,int32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,uint8:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,uint16:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,uint32:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int8,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int16,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int32,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:int64,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint8,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,uint64:>");
+        g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,uint64:>");
 */

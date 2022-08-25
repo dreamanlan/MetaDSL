@@ -3228,7 +3228,7 @@ namespace Brace
             return m_RuntimeStack;
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_FailbackApi(nullptr), m_ContextObject(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_FailbackApi(nullptr)
     {
         RegisterInnerApis();
         Init();
@@ -3236,8 +3236,6 @@ namespace Brace
     BraceScript::~BraceScript(void)
     {
         Release();
-
-        m_ContextObject = nullptr;
 
         for (auto& pair : m_ApiFactories) {
             delete pair.second;
@@ -3263,14 +3261,6 @@ namespace Brace
     AbstractBraceApi* BraceScript::GetFailbackApi(void)const
     {
         return m_FailbackApi;
-    }
-    void BraceScript::SetContextObject(IBraceObject* pContext)
-    {
-        m_ContextObject = pContext;
-    }
-    IBraceObject* BraceScript::GetContextObject(void)const
-    {
-        return m_ContextObject;
     }
     void BraceScript::Reset(void)
     {
