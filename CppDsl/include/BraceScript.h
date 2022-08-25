@@ -45,7 +45,6 @@ namespace Brace
         PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN = -1,
         PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ = 0,
         PREDEFINED_BRACE_OBJECT_TYPE_NULL,
-        PREDEFINED_BRACE_OBJECT_TYPE_CONTEXT,
         PREDEFINED_BRACE_OBJECT_TYPE_ANY,
         PREDEFINED_BRACE_OBJECT_TYPE_NUM
     };
@@ -366,9 +365,9 @@ namespace Brace
     {
         return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_NULL;
     }
-    static inline constexpr bool IsContextObject(int objTypeId)
+    static inline constexpr bool IsAnyObject(int objTypeId)
     {
-        return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_CONTEXT;
+        return objTypeId == PREDEFINED_BRACE_OBJECT_TYPE_ANY;
     }
 
 #define DEFINE_VAR_GET_NUMERIC(POSTFIX, NAME, TYPE) \
@@ -915,6 +914,5 @@ namespace Brace
         RuntimeStack m_RuntimeStack;
 
         AbstractBraceApi* m_FailbackApi;
-        IBraceObject* m_ContextObject;
     };
 }
