@@ -1144,15 +1144,12 @@
 				return true;
 			}
 			else if (member == "CalcMemInfo") {
-				if (argInfos.size() > 1) {
+				if (argInfos.size() > 0) {
 					std::stringstream ss;
-					ss << "expected uobject.CalcMemInfo() or uobject.CalcMemInfo(exp), line: " << data.GetLine();
+					ss << "expected uobject.CalcMemInfo(), line: " << data.GetLine();
 					LogError(ss.str());
 					executor = nullptr;
 					return false;
-				}
-				else if (argInfos.size() == 1) {
-					m_ArgIteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
 				}
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
 				resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
@@ -1164,17 +1161,6 @@
 
 				m_ObjInfo = objInfo;
 				std::swap(m_Obj, obj);
-				for (auto& argInfo : argInfos) {
-					m_ArgInfos.push_back(argInfo);
-					if (Brace::IsObjectType(argInfo.Type)) {
-						auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(argInfo.ObjectTypeId);
-						m_ArgObjInfos.push_back(pInfo);
-					}
-					else {
-						m_ArgObjInfos.push_back(nullptr);
-					}
-				}
-				std::swap(m_Args, args);
 				std::swap(m_Member, member);
 				return true;
 			}
@@ -1210,7 +1196,7 @@
 
 				m_ObjInfo = objInfo;
 				std::swap(m_Obj, obj);
-				for (auto& argInfo : argInfos) {
+				for (auto&& argInfo : argInfos) {
 					m_ArgInfos.push_back(argInfo);
 					if (Brace::IsObjectType(argInfo.Type)) {
 						auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(argInfo.ObjectTypeId);
@@ -1276,29 +1262,18 @@
 				UObject* pObj = scpObj->GetImpl();
 				if (nullptr != pObj) {
 					auto* pMemSize = scpObj->GetOrCalcMemorySize();
-					if (m_ArgInfos.size() > 0 && m_Args.size() > 0) {
-						Brace::VarSetObject(lvars, m_ArgIteratorIndex, ptr);
-						auto& arg = m_Args[0];
-						auto& argInfo = m_ArgInfos[0];
-						if (!arg.isNull())
-							arg(gvars, lvars);
-						std::string str = Brace::VarGetStr((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
-						Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, str);
-					}
-					else {
-						std::string fname = TCHAR_TO_UTF8(*pObj->GetFullGroupName(false));
-						uint64_t numMem = pMemSize->GetNum();
-						uint64_t maxMem = pMemSize->GetMax();
-						uint64_t sysRes = pMemSize->GetSysRes();
-						uint64_t videoRes = pMemSize->GetVideoRes();
-						uint64_t sysShared = pMemSize->GetSysSharedRes();
-						uint64_t videoShared = pMemSize->GetVideoSharedRes();
-						uint64_t unknownRes = pMemSize->GetUnknownRes();
-						uint64_t totalRes = pMemSize->GetTotalRes();
-						std::stringstream ss;
-						ss << fname << "," << numMem << "," << maxMem << "," << sysRes << "," << videoRes << "," << sysShared << "," << videoShared << "," << unknownRes << "," << totalRes;
-						Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, ss.str());
-					}
+					std::string fname = TCHAR_TO_UTF8(*pObj->GetFullGroupName(false));
+					uint64_t numMem = pMemSize->GetNum();
+					uint64_t maxMem = pMemSize->GetMax();
+					uint64_t sysRes = pMemSize->GetSysRes();
+					uint64_t videoRes = pMemSize->GetVideoRes();
+					uint64_t sysShared = pMemSize->GetSysSharedRes();
+					uint64_t videoShared = pMemSize->GetVideoSharedRes();
+					uint64_t unknownRes = pMemSize->GetUnknownRes();
+					uint64_t totalRes = pMemSize->GetTotalRes();
+					std::stringstream ss;
+					ss << fname << "," << numMem << "," << maxMem << "," << sysRes << "," << videoRes << "," << sysShared << "," << videoShared << "," << unknownRes << "," << totalRes;
+					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, ss.str());
 				}
 			}
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
@@ -1323,7 +1298,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -3308,7 +3283,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -3363,7 +3338,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -3473,7 +3448,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -3534,7 +3509,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -3634,7 +3609,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -3745,7 +3720,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -3857,7 +3832,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -4998,7 +4973,7 @@
 					auto* pArr = static_cast<ArrayObjT<bool>*>(ptr);
 					for (auto val : pArr->GetImpl()) {
 						Brace::VarSetBool(lvars, m_IteratorIndex, val);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5031,7 +5006,7 @@
 					auto* pArr = static_cast<ArrayObjT<int64_t>*>(ptr);
 					for (auto val : pArr->GetImpl()) {
 						Brace::VarSetInt64(lvars, m_IteratorIndex, val);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5064,7 +5039,7 @@
 					auto* pArr = static_cast<ArrayObjT<double>*>(ptr);
 					for (auto val : pArr->GetImpl()) {
 						Brace::VarSetDouble(lvars, m_IteratorIndex, val);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5095,9 +5070,9 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pArr = static_cast<ArrayObjT<std::string>*>(ptr);
-					for (auto& val : pArr->GetImpl()) {
+					for (auto&& val : pArr->GetImpl()) {
 						Brace::VarSetString(lvars, m_IteratorIndex, val);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5128,9 +5103,9 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pArr = static_cast<ObjectArray*>(ptr);
-					for (auto& val : pArr->GetImpl()) {
+					for (auto&& val : pArr->GetImpl()) {
 						Brace::VarSetObject(lvars, m_IteratorIndex, val);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5161,10 +5136,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<int64_t, bool>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetInt64(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetBool(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5195,10 +5170,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<int64_t, int64_t>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetInt64(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetInt64(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5229,10 +5204,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<int64_t, double>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetInt64(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetInt64(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5263,10 +5238,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<int64_t, std::string>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetInt64(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetString(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5297,10 +5272,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<IntObjHashtable*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetInt64(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetObject(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5331,10 +5306,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<std::string, bool>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetString(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetBool(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5365,10 +5340,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<std::string, int64_t>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetString(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetInt64(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5399,10 +5374,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<std::string, double>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetString(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetDouble(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5433,10 +5408,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<HashtableObjT<std::string, std::string>*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetString(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetString(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5467,10 +5442,10 @@
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pHashtable = static_cast<StrObjHashtable*>(ptr);
-					for (auto& val : pHashtable->GetImpl()) {
+					for (auto&& val : pHashtable->GetImpl()) {
 						Brace::VarSetString(lvars, m_IteratorIndex, val.first);
 						Brace::VarSetObject(lvars, m_IteratorIndexV, val.second);
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -5536,7 +5511,7 @@
 			m_IteratorIndex = iteratorIndex;
 			m_ListInfo = listInfo;
 			std::swap(m_List, list);
-			for (auto& argInfo : argInfos) {
+			for (auto&& argInfo : argInfos) {
 				m_ArgInfos.push_back(argInfo);
 			}
 			std::swap(m_Args, args);
@@ -5583,18 +5558,18 @@
 		}
 		void ExecuteOrderBy(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr, bool asc)const
 		{
-			for (auto& val : pArr->GetImpl()) {
+			for (auto&& val : pArr->GetImpl()) {
 				pNewArr->GetImpl().push_back(val);
 			}
 			std::vector<CmpVal> sortVals{};
 			std::sort(pNewArr->GetImpl().begin(), pNewArr->GetImpl().end(), [&](auto& e1, auto& e2) {
 				Brace::VarSetObject(lvars, m_IteratorIndex, e1);
-				for (auto& arg : m_Args) {
+				for (auto&& arg : m_Args) {
 					if (!arg.isNull())
 						arg(gvars, lvars);
 				}
 				sortVals.clear();
-				for (auto& argInfo : m_ArgInfos) {
+				for (auto&& argInfo : m_ArgInfos) {
 					CmpVal cv;
 					if (Brace::IsStringType(argInfo.Type))
 						cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
@@ -5603,12 +5578,12 @@
 					sortVals.push_back(cv);
 				}
 				Brace::VarSetObject(lvars, m_IteratorIndex, e2);
-				for (auto& arg : m_Args) {
+				for (auto&& arg : m_Args) {
 					if (!arg.isNull())
 						arg(gvars, lvars);
 				}
 				int ix = 0;
-				for (auto& argInfo : m_ArgInfos) {
+				for (auto&& argInfo : m_ArgInfos) {
 					const CmpVal& cv = sortVals[ix++];
 					if (Brace::IsStringType(argInfo.Type)) {
 						const std::string& v2 = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
@@ -5647,14 +5622,14 @@
 		}
 		void ExecuteTop(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr)const
 		{
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
 			auto& argInfo = m_ArgInfos[0];
 			int64_t n = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
 			int64_t ct = 0;
-			for (auto& val : pArr->GetImpl()) {
+			for (auto&& val : pArr->GetImpl()) {
 				pNewArr->GetImpl().push_back(val);
 				++ct;
 				if (ct >= n)
@@ -5664,9 +5639,9 @@
 		}
 		void ExecuteWhere(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr)const
 		{
-			for (auto& val : pArr->GetImpl()) {
+			for (auto&& val : pArr->GetImpl()) {
 				Brace::VarSetObject(lvars, m_IteratorIndex, val);
-				for (auto& arg : m_Args) {
+				for (auto&& arg : m_Args) {
 					if (!arg.isNull())
 						arg(gvars, lvars);
 				}
@@ -5702,7 +5677,7 @@
 		virtual bool LoadSelect(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& statMethods, std::vector<int>&& objVars) override
 		{
 			m_SelectIteratorIndex = iteratorIndex;
-			for (auto& argInfo : argInfos) {
+			for (auto&& argInfo : argInfos) {
 				m_SelectArgInfos.push_back(argInfo);
 			}
 			std::swap(m_SelectArgs, args);
@@ -5739,7 +5714,7 @@
 		virtual bool LoadOrderBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<bool>&& ascOrDescs, std::vector<int>&& objVars) override
 		{
 			m_OrderIteratorIndex = iteratorIndex;
-			for (auto& argInfo : argInfos) {
+			for (auto&& argInfo : argInfos) {
 				m_OrderArgInfos.push_back(argInfo);
 			}
 			std::swap(m_OrderArgs, args);
@@ -5750,7 +5725,7 @@
 		virtual bool LoadGroupBy(const Brace::FuncInfo& func, const DslData::FunctionData& data, const BraceObjectInfo& braceObjInfo, int iteratorIndex, std::vector<Brace::OperandLoadtimeInfo>&& argInfos, std::vector<Brace::BraceApiExecutor>&& args, std::vector<int>&& objVars) override
 		{
 			m_GroupIteratorIndex = iteratorIndex;
-			for (auto& argInfo : argInfos) {
+			for (auto&& argInfo : argInfos) {
 				m_GroupArgInfos.push_back(argInfo);
 			}
 			std::swap(m_GroupArgs, args);
@@ -5771,7 +5746,7 @@
 		}
 		virtual void LoadResultIterator(std::vector<Brace::OperandLoadtimeInfo>&& iterators, std::vector<int>&& objVars) override
 		{
-			for (auto& itInfo : iterators) {
+			for (auto&& itInfo : iterators) {
 				m_Iterators.push_back(itInfo);
 				m_IteratorAssigns.push_back(Brace::GetVarAssignPtr(itInfo.Type, false, itInfo.Type, false));
 			}
@@ -5866,7 +5841,7 @@
 		void ExecuteWhere(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const ObjectArray* pArr, ObjectArray* pNewArr)const
 		{
 			if (m_WhereIteratorIndex != INVALID_INDEX) {
-				for (auto& val : pArr->GetImpl()) {
+				for (auto&& val : pArr->GetImpl()) {
 					Brace::VarSetObject(lvars, m_WhereIteratorIndex, val);
 					if (!m_WhereArg.isNull())
 						m_WhereArg(gvars, lvars);
@@ -5877,7 +5852,7 @@
 				FreeObjVars(lvars, m_WhereObjVars);
 			}
 			else {
-				for (auto& val : pArr->GetImpl()) {
+				for (auto&& val : pArr->GetImpl()) {
 					pNewArr->GetImpl().push_back(val);
 				}
 			}
@@ -5888,12 +5863,12 @@
 				std::vector<CmpVal> sortVals{};
 				std::sort(pNewArr->GetImpl().begin(), pNewArr->GetImpl().end(), [&](auto& e1, auto& e2) {
 					Brace::VarSetObject(lvars, m_OrderIteratorIndex, e1);
-					for (auto& arg : m_OrderArgs) {
+					for (auto&& arg : m_OrderArgs) {
 						if (!arg.isNull())
 							arg(gvars, lvars);
 					}
 					sortVals.clear();
-					for (auto& argInfo : m_OrderArgInfos) {
+					for (auto&& argInfo : m_OrderArgInfos) {
 						CmpVal cv;
 						if (Brace::IsStringType(argInfo.Type))
 							cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
@@ -5902,12 +5877,12 @@
 						sortVals.push_back(cv);
 					}
 					Brace::VarSetObject(lvars, m_OrderIteratorIndex, e2);
-					for (auto& arg : m_OrderArgs) {
+					for (auto&& arg : m_OrderArgs) {
 						if (!arg.isNull())
 							arg(gvars, lvars);
 					}
 					int ix = 0;
-					for (auto& argInfo : m_OrderArgInfos) {
+					for (auto&& argInfo : m_OrderArgInfos) {
 						bool asc = m_OrderAscs[ix];
 						const CmpVal& cv = sortVals[ix++];
 						if (Brace::IsStringType(argInfo.Type)) {
@@ -5950,16 +5925,16 @@
 		{
 			std::vector<CmpVal> groupVals{};
 			auto& arr = pNewArr->GetImpl();
-			for (auto& optr : arr) {
+			for (auto&& optr : arr) {
 				Brace::VarSetObject(lvars, m_GroupIteratorIndex, optr);
-				for (auto& arg : m_GroupArgs) {
+				for (auto&& arg : m_GroupArgs) {
 					if (!arg.isNull())
 						arg(gvars, lvars);
 				}
 				bool newGroup = false;
 				if (groupVals.empty()) {
 					newGroup = true;
-					for (auto& argInfo : m_GroupArgInfos) {
+					for (auto&& argInfo : m_GroupArgInfos) {
 						CmpVal cv;
 						if (Brace::IsStringType(argInfo.Type))
 							cv.StrVal = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
@@ -5970,7 +5945,7 @@
 				}
 				else {
 					int ix = 0;
-					for (auto& argInfo : m_GroupArgInfos) {
+					for (auto&& argInfo : m_GroupArgInfos) {
 						CmpVal& cv = groupVals[ix++];
 						if (Brace::IsStringType(argInfo.Type)) {
 							const std::string& v2 = Brace::VarGetString((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
@@ -6014,11 +5989,11 @@
 				if (m_Statements.size() > 0) {
 					std::vector<CmpVal> selectVals{};
 					int64_t resultCount = 0;
-					for (auto& group : groups) {
+					for (auto&& group : groups) {
 						if (!ExecuteGroupStatAndHaving(gvars, lvars, group, selectVals)) {
 							continue;
 						}
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_ObjVars);
@@ -6046,13 +6021,13 @@
 					std::vector<CmpVal> selectVals{};
 					std::stringstream ss;
 					int64_t resultCount = 0;
-					for (auto& group : groups) {
+					for (auto&& group : groups) {
 						if (!ExecuteGroupStatAndHaving(gvars, lvars, group, selectVals)) {
 							continue;
 						}
 						ss.str(std::string());
 						bool first = true;
-						for (auto& cv : selectVals) {
+						for (auto&& cv : selectVals) {
 							bool needQuote = false;
 							if (cv.IsStr && cv.StrVal.length() > 0 && cv.StrVal[0] != '"' && cv.StrVal[0] != '\'') {
 								for (auto c : cv.StrVal) {
@@ -6093,15 +6068,15 @@
 		{
 			selectVals.clear();
 			bool first = true;
-			for (auto& optr : group.GetImpl()) {
+			for (auto&& optr : group.GetImpl()) {
 				Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-				for (auto& arg : m_SelectArgs) {
+				for (auto&& arg : m_SelectArgs) {
 					if (!arg.isNull())
 						arg(gvars, lvars);
 				}
 				bool update = false;
 				int six = 0;
-				for (auto& argInfo : m_SelectArgInfos) {
+				for (auto&& argInfo : m_SelectArgInfos) {
 					int stat = m_SelectStats[six];
 					bool isStr = false;
 					std::string str{};
@@ -6235,7 +6210,7 @@
 				}
 				if (update) {
 					six = 0;
-					for (auto& cv : selectVals) {
+					for (auto&& cv : selectVals) {
 						int stat = m_SelectStats[six++];
 						if (stat == STAT_METHOD_NONE) {
 							if (cv.IsStr)
@@ -6248,7 +6223,7 @@
 				first = false;
 			}
 			int vix = 0;
-			for (auto& cv : selectVals) {
+			for (auto&& cv : selectVals) {
 				int stat = m_SelectStats[vix];
 				auto& itInfo = m_Iterators[vix++];
 				if (stat == STAT_METHOD_AVG) {
@@ -6289,19 +6264,19 @@
 			if (m_SelectIteratorIndex != INVALID_INDEX) {
 				if (m_Statements.size() > 0) {
 					auto& arr = pNewArr->GetImpl();
-					for (auto& optr : arr) {
+					for (auto&& optr : arr) {
 						Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-						for (auto& arg : m_SelectArgs) {
+						for (auto&& arg : m_SelectArgs) {
 							if (!arg.isNull())
 								arg(gvars, lvars);
 						}
 						int itIndex = 0;
-						for (auto& argInfo : m_SelectArgInfos) {
+						for (auto&& argInfo : m_SelectArgInfos) {
 							int vix = m_Iterators[itIndex].VarIndex;
 							auto* fptr = m_IteratorAssigns[itIndex++];
 							(*fptr)(lvars, vix, lvars, argInfo.VarIndex);
 						}
-						for (auto& statement : m_Statements) {
+						for (auto&& statement : m_Statements) {
 							int v = statement(gvars, lvars);
 							if (IsForceQuit()) {
 								FreeObjVars(lvars, m_SelectObjVars);
@@ -6326,15 +6301,15 @@
 				else {
 					//same as csvecho
 					auto& arr = pNewArr->GetImpl();
-					for (auto& optr : arr) {
+					for (auto&& optr : arr) {
 						Brace::VarSetObject(lvars, m_SelectIteratorIndex, optr);
-						for (auto& arg : m_SelectArgs) {
+						for (auto&& arg : m_SelectArgs) {
 							if (!arg.isNull())
 								arg(gvars, lvars);
 						}
 						std::stringstream ss;
 						bool first = true;
-						for (auto& argInfo : m_SelectArgInfos) {
+						for (auto&& argInfo : m_SelectArgInfos) {
 							std::string str;
 							if (Brace::IsObjectType(argInfo.Type)) {
 								auto& ptr = Brace::VarGetObject((argInfo.IsGlobal ? gvars : lvars), argInfo.VarIndex);
@@ -6443,7 +6418,7 @@
 			m_ObjInfo = objInfo;
 			std::swap(m_Member, member);
 			std::swap(m_Args, args);
-			for (auto& argInfo : argInfos) {
+			for (auto&& argInfo : argInfos) {
 				m_ArgInfos.push_back(argInfo);
 			}
 			auto& m = m_Member;
@@ -6469,7 +6444,7 @@
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			for (auto& _arg : m_Args) {
+			for (auto&& _arg : m_Args) {
 				if (!_arg.isNull())
 					_arg(gvars, lvars);
 			}
@@ -6636,7 +6611,7 @@
 			auto& str = Brace::VarGetString((m_ListInfo.IsGlobal ? gvars : lvars), m_ListInfo.VarIndex);
 			for (char val : str) {
 				Brace::VarSetUInt8(lvars, m_IteratorIndex, static_cast<uint8_t>(val));
-				for (auto& statement : m_Statements) {
+				for (auto&& statement : m_Statements) {
 					int v = statement(gvars, lvars);
 					if (IsForceQuit()) {
 						FreeObjVars(lvars, m_ObjVars);
@@ -7408,7 +7383,7 @@
 			switch (arrayCategory) {
 			case ARRAY_BOOL: {
 				bool good = true;
-				for (auto& ai : argLoadInfos) {
+				for (auto&& ai : argLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_BOOL && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7430,7 +7405,7 @@
 			}break;
 			case ARRAY_INT: {
 				bool good = true;
-				for (auto& ai : argLoadInfos) {
+				for (auto&& ai : argLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7452,7 +7427,7 @@
 			}break;
 			case ARRAY_FLOAT: {
 				bool good = true;
-				for (auto& ai : argLoadInfos) {
+				for (auto&& ai : argLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_DOUBLE) {
 					}
 					else {
@@ -7474,7 +7449,7 @@
 			}break;
 			case ARRAY_STRING: {
 				bool good = true;
-				for (auto& ai : argLoadInfos) {
+				for (auto&& ai : argLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -7496,7 +7471,7 @@
 			}break;
 			case ARRAY_OBJ: {
 				bool good = true;
-				for (auto& ai : argLoadInfos) {
+				for (auto&& ai : argLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_OBJECT && ai.ObjectTypeId == objTypeId) {
 					}
 					else {
@@ -7538,20 +7513,20 @@
 	private:
 		void SetArgInfos(std::vector<Brace::OperandLoadtimeInfo> argLoadInfos)
 		{
-			for (auto& info : argLoadInfos) {
+			for (auto&& info : argLoadInfos) {
 				m_ArgInfos.push_back(info);
 			}
 		}
 	private:
 		int ExecuteBool(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
 			using BoolArrayObj = ArrayObjT<bool>;
 			auto* p = new BoolArrayObj();
-			for (auto& ai : m_ArgInfos) {
+			for (auto&& ai : m_ArgInfos) {
 				bool v = Brace::VarGetBoolean((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
@@ -7560,13 +7535,13 @@
 		}
 		int ExecuteInt(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
 			using IntArrayObj = ArrayObjT<int64_t>;
 			auto* p = new IntArrayObj();
-			for (auto& ai : m_ArgInfos) {
+			for (auto&& ai : m_ArgInfos) {
 				int64_t v = Brace::VarGetI64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
@@ -7575,13 +7550,13 @@
 		}
 		int ExecuteFloat(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
 			using FloatArrayObj = ArrayObjT<double>;
 			auto* p = new FloatArrayObj();
-			for (auto& ai : m_ArgInfos) {
+			for (auto&& ai : m_ArgInfos) {
 				double v = Brace::VarGetF64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
@@ -7590,13 +7565,13 @@
 		}
 		int ExecuteString(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
 			using StrArrayObj = ArrayObjT<std::string>;
 			auto* p = new StrArrayObj();
-			for (auto& ai : m_ArgInfos) {
+			for (auto&& ai : m_ArgInfos) {
 				const std::string& v = Brace::VarGetString((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
@@ -7605,12 +7580,12 @@
 		}
 		int ExecuteObject(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_Args) {
+			for (auto&& arg : m_Args) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
 			auto* p = new ObjectArray();
-			for (auto& ai : m_ArgInfos) {
+			for (auto&& ai : m_ArgInfos) {
 				auto& v = Brace::VarGetObject((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
@@ -7766,7 +7741,7 @@
 			switch (hashtableCategory) {
 			case HASHTABLE_INT_BOOL: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7774,7 +7749,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_BOOL && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7798,7 +7773,7 @@
 			}break;
 			case HASHTABLE_INT_INT: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7806,7 +7781,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7830,7 +7805,7 @@
 			}break;
 			case HASHTABLE_INT_FLOAT: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7838,7 +7813,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_DOUBLE) {
 					}
 					else {
@@ -7862,7 +7837,7 @@
 			}break;
 			case HASHTABLE_INT_STR: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7870,7 +7845,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -7894,7 +7869,7 @@
 			}break;
 			case HASHTABLE_INT_OBJ: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7902,7 +7877,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_OBJECT && ai.ObjectTypeId == valObjTypeId) {
 					}
 					else {
@@ -7949,7 +7924,7 @@
 			}break;
 			case HASHTABLE_STR_BOOL: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -7957,7 +7932,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_BOOL && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -7981,7 +7956,7 @@
 			}break;
 			case HASHTABLE_STR_INT: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -7989,7 +7964,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
 					}
 					else {
@@ -8013,7 +7988,7 @@
 			}break;
 			case HASHTABLE_STR_FLOAT: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -8021,7 +7996,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type >= Brace::BRACE_DATA_TYPE_INT8 && ai.Type <= Brace::BRACE_DATA_TYPE_DOUBLE) {
 					}
 					else {
@@ -8045,7 +8020,7 @@
 			}break;
 			case HASHTABLE_STR_STR: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -8053,7 +8028,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -8077,7 +8052,7 @@
 			}break;
 			case HASHTABLE_STR_OBJ: {
 				bool good = true;
-				for (auto& ai : argKeyLoadInfos) {
+				for (auto&& ai : argKeyLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_STRING) {
 					}
 					else {
@@ -8085,7 +8060,7 @@
 						break;
 					}
 				}
-				for (auto& ai : argValLoadInfos) {
+				for (auto&& ai : argValLoadInfos) {
 					if (ai.Type == Brace::BRACE_DATA_TYPE_OBJECT && ai.ObjectTypeId == valObjTypeId) {
 					}
 					else {
@@ -8131,24 +8106,24 @@
 	private:
 		void SetArgKeyInfos(std::vector<Brace::OperandLoadtimeInfo> argKeyLoadInfos)
 		{
-			for (auto& info : argKeyLoadInfos) {
+			for (auto&& info : argKeyLoadInfos) {
 				m_ArgKeyInfos.push_back(info);
 			}
 		}
 		void SetArgValInfos(std::vector<Brace::OperandLoadtimeInfo> argValLoadInfos)
 		{
-			for (auto& info : argValLoadInfos) {
+			for (auto&& info : argValLoadInfos) {
 				m_ArgValInfos.push_back(info);
 			}
 		}
 	private:
 		int ExecuteIntStr(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8166,11 +8141,11 @@
 		}
 		int ExecuteIntInt(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8188,11 +8163,11 @@
 		}
 		int ExecuteIntFloat(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8210,11 +8185,11 @@
 		}
 		int ExecuteIntBool(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8232,11 +8207,11 @@
 		}
 		int ExecuteIntObj(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8253,11 +8228,11 @@
 		}
 		int ExecuteStrStr(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8275,11 +8250,11 @@
 		}
 		int ExecuteStrInt(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8297,11 +8272,11 @@
 		}
 		int ExecuteStrFloat(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8319,11 +8294,11 @@
 		}
 		int ExecuteStrBool(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8341,11 +8316,11 @@
 		}
 		int ExecuteStrObj(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
 		{
-			for (auto& arg : m_ArgKeys) {
+			for (auto&& arg : m_ArgKeys) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
-			for (auto& arg : m_ArgVals) {
+			for (auto&& arg : m_ArgVals) {
 				if (!arg.isNull())
 					arg(gvars, lvars);
 			}
@@ -8404,15 +8379,8 @@
 					}
 				}
 				if (pProvider) {
-					ret = true;
 					m_ApiProvider.reset(pProvider);
-					if (!pProvider->TypeInference(func, funcData, *pInfo, listInfo, executor)) {
-						std::stringstream ss;
-						ss << "BraceScript error, " << funcData.GetId() << " line " << funcData.GetLine();
-						LogError(ss.str());
-						ret = false;
-					}
-					else {
+					if (pProvider->TypeInference(func, funcData, *pInfo, listInfo, executor)) {
 						std::vector<Brace::BraceApiExecutor> statements{};
 						for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
 							Brace::OperandLoadtimeInfo argLoadInfo;
@@ -8422,17 +8390,17 @@
 						}
 						auto& objVars = CurBlockObjVars();
 						pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), objVars);
+						ret = true;
 					}
 				}
 				PopBlock();
-				return ret;
-			}
-			else {
-				//error
-				std::stringstream ss;
-				ss << "BraceScript error, " << funcData.GetId() << " line " << funcData.GetLine();
-				LogError(ss.str());
-			}
+				if (ret)
+					return true;
+            }
+            //error
+            std::stringstream ss;
+            ss << "BraceScript error, " << funcData.GetId() << " line " << funcData.GetLine();
+            LogError(ss.str());
 			return false;
 		}
 		virtual bool LoadStatement(const Brace::FuncInfo& func, const DslData::StatementData& statementData, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
@@ -8451,6 +8419,7 @@
 						Brace::OperandLoadtimeInfo loadInfo;
 						auto list = LoadHelper(*exp, loadInfo);
 						auto& listInfo = loadInfo;
+						PushBlock();
 						if (listInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
 							auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(listInfo.ObjectTypeId);
 							if (nullptr != pInfo) {
@@ -8463,38 +8432,31 @@
 									break;
 								}
 								if (pProvider) {
-									ret = true;
 									m_ApiProvider.reset(pProvider);
-									if (!pProvider->TypeInference(func, statementData, *pInfo, listInfo, executor)) {
-										std::stringstream ss;
-										ss << "BraceScript error, " << statementData.GetId() << " line " << statementData.GetLine();
-										LogError(ss.str());
-										ret = false;
-									}
-									else {
+									if (pProvider->TypeInference(func, statementData, *pInfo, listInfo, executor)) {
 										Brace::OperandLoadtimeInfo argLoadInfo;
 										std::vector<Brace::BraceApiExecutor> statements{};
 										auto statement = LoadHelper(*second, argLoadInfo);
 										if (!statement.isNull())
 											statements.push_back(std::move(statement));
-										pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), std::vector<int>());
+										auto& objVars = CurBlockObjVars();
+										pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), objVars);
+										ret = true;
 									}
 								}
 							}
 						}
-						return ret;
+						PopBlock();
+						if (ret)
+							return true;
 					}
-					else {
-						//error
-						std::stringstream ss;
-						ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
-						LogError(ss.str());
-						return false;
-					}
-					return true;
 				}
-			}
-			return false;
+            }
+            //error
+            std::stringstream ss;
+            ss << "BraceScript error, " << statementData.GetId() << " line " << statementData.GetLine();
+            LogError(ss.str());
+            return false;
 		}
 	private:
 		std::unique_ptr<AbstractLoopListApiProvider> m_ApiProvider;

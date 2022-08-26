@@ -68,10 +68,10 @@ namespace CoroutineWithBoostContext
         }
         void free_pooled_stacks(void)
         {
-            for (auto& pair : fixedsize_stack_pool_) {
+            for (auto&& pair : fixedsize_stack_pool_) {
                 auto& rec = pair.second;
                 auto& allocator = rec.allocator;
-                for (auto& context : rec.contexts) {
+                for (auto&& context : rec.contexts) {
                     allocator.deallocate(context);
                 }
                 rec.contexts.clear();
@@ -87,10 +87,10 @@ namespace CoroutineWithBoostContext
             std::size_t size = 0;
             count = 0;
             alloced_size = total_alloced_size_;
-            for (auto& pair : fixedsize_stack_pool_) {
+            for (auto&& pair : fixedsize_stack_pool_) {
                 auto& rec = pair.second;
                 count += rec.contexts.size();
-                for (auto& context : rec.contexts) {
+                for (auto&& context : rec.contexts) {
                     size += context.size;
                 }
             }

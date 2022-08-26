@@ -204,7 +204,7 @@ namespace DslData
             ClearLastComments();
             ClearComments();
             CopyComments(other);
-            for (auto& str : other.m_pCommentsInfo->m_Comments) {
+            for (auto&& str : other.m_pCommentsInfo->m_Comments) {
                 m_pCommentsInfo->m_Comments.push_back(str);
             }
         }

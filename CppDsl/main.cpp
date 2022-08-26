@@ -225,7 +225,7 @@ public:
 protected:
     virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
-        for (auto& ali : argInfos) {
+        for (auto&& ali : argInfos) {
             if (ali.Type != Brace::BRACE_DATA_TYPE_INT32) {
                 std::stringstream ss;
                 ss << "wait's param must be int32 ! line: " << data.GetLine();
@@ -240,7 +240,7 @@ protected:
     {
         auto sv = std::chrono::system_clock::now();
 
-        for (auto& argInfo : argInfos) {
+        for (auto&& argInfo : argInfos) {
             if (argInfo.Type == Brace::BRACE_DATA_TYPE_INT32) {
                 int v = (argInfo.IsGlobal ? gvars : lvars).NumericVars[argInfo.VarIndex].Int32Val;
                 if (v <= 60000) {

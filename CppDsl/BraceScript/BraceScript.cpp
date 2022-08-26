@@ -311,7 +311,7 @@ namespace Brace
             return false;
         }
         std::swap(m_Args, args);
-        for (auto& argInfo : argLoadInfos) {
+        for (auto&& argInfo : argLoadInfos) {
             m_ArgInfos.push_back(argInfo);
         }
 
@@ -364,7 +364,7 @@ namespace Brace
     {
         //push args
         auto& lastVars = lvars;
-        for (auto& arg : m_Args) {
+        for (auto&& arg : m_Args) {
             if (!arg.isNull())
                 arg(gvars, lvars);
         }
@@ -387,7 +387,7 @@ namespace Brace
             auto ptr = m_ArgAssigns[ix];
             (*ptr)(vars, destInfo.VarIndex, (srcInfo.IsGlobal ? gvars : lastVars), srcInfo.VarIndex);
         }
-        for (auto& p : m_Func->Codes) {
+        for (auto&& p : m_Func->Codes) {
             r = p(gvars, vars);
             if (IsForceQuit())
                 goto L_EXIT;
@@ -405,7 +405,7 @@ namespace Brace
         if (m_ResultAssign) {
             (*m_ResultAssign)((m_ResultInfo.IsGlobal ? gvars : lastVars), m_ResultInfo.VarIndex, vars, m_Func->RetValue.VarIndex);
         }
-        for (auto& sptr : vars.ObjectVars) {
+        for (auto&& sptr : vars.ObjectVars) {
             sptr = nullptr;
         }
         PopRuntimeStack();
@@ -420,7 +420,7 @@ namespace Brace
         std::swap(m_Args, args);
         bool r = TypeInference(func, data, argLoadInfos, resultInfo);
         if (r) {
-            for (auto& argInfo : argLoadInfos) {
+            for (auto&& argInfo : argLoadInfos) {
                 m_ArgInfos.push_back(argInfo);
             }
             m_ResultInfo = resultInfo;
@@ -476,7 +476,7 @@ namespace Brace
     }
     int SimpleBraceApiBase::ExecuteImpl(VariableInfo& gvars, VariableInfo& lvars)const
     {
-        for (auto& op : m_Args) {
+        for (auto&& op : m_Args) {
             if (!op.isNull())
                 op(gvars, lvars);
         }
@@ -1469,7 +1469,7 @@ namespace Brace
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
             std::swap(m_Args, args);
-            for (auto& argInfo : argLoadInfos) {
+            for (auto&& argInfo : argLoadInfos) {
                 m_ArgInfos.push_back(argInfo);
             }
             resultInfo = OperandLoadtimeInfo();
@@ -1479,12 +1479,12 @@ namespace Brace
     private:
         int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            for (auto& p : m_Args) {
+            for (auto&& p : m_Args) {
                 if (!p.isNull())
                     p(gvars, lvars);
             }
             std::stringstream ss;
-            for (auto& info : m_ArgInfos) {
+            for (auto&& info : m_ArgInfos) {
                 if (info.Type != BRACE_DATA_TYPE_UNKNOWN) {
                     if (info.IsGlobal)
                         ss << VarGetStr(gvars, info.Type, info.VarIndex);
@@ -1637,7 +1637,7 @@ namespace Brace
                 if (!clause.Condition.isNull())
                     clause.Condition(gvars, lvars);
                 if (VarGetBoolean(clause.ConditionInfo.IsGlobal ? gvars : lvars, clause.ConditionInfo.Type, clause.ConditionInfo.VarIndex)) {
-                    for (auto& statement : clause.Statements) {
+                    for (auto&& statement : clause.Statements) {
                         int v = statement(gvars, lvars);
                         if (IsForceQuit())
                             break;
@@ -1650,7 +1650,7 @@ namespace Brace
                     break;
                 }
                 else if (ix == ct - 1 && clause.ConditionInfo.Type == BRACE_DATA_TYPE_UNKNOWN) {
-                    for (auto& statement : clause.Statements) {
+                    for (auto&& statement : clause.Statements) {
                         int v = statement(gvars, lvars);
                         if (IsForceQuit())
                             break;
@@ -1748,7 +1748,7 @@ namespace Brace
                 if (!m_Condition.isNull())
                     m_Condition(gvars, lvars);
                 if (VarGetBoolean(m_ConditionInfo.IsGlobal ? gvars : lvars, m_ConditionInfo.Type, m_ConditionInfo.VarIndex)) {
-                    for (auto& statement : m_Statements) {
+                    for (auto&& statement : m_Statements) {
                         int v = statement(gvars, lvars);
                         if (IsForceQuit()) {
                             FreeObjVars(lvars, m_ObjVars);
@@ -1853,7 +1853,7 @@ namespace Brace
             long ct = static_cast<long>(VarGetI64(m_CountInfo.IsGlobal ? gvars : lvars, m_CountInfo.Type, m_CountInfo.VarIndex));
             for (int i = 0; i < ct; ++i) {
                 VarSetI64(lvars, m_CountInfo.Type, m_IteratorIndex, i);
-                for (auto& statement : m_Statements) {
+                for (auto&& statement : m_Statements) {
                     int v = statement(gvars, lvars);
                     if (IsForceQuit()) {
                         FreeObjVars(lvars, m_ObjVars);
@@ -2033,7 +2033,7 @@ namespace Brace
                     }
                 }break;
                 }
-                for (auto& statement : m_Statements) {
+                for (auto&& statement : m_Statements) {
                     int v = statement(gvars, lvars);
                     if (IsForceQuit()) {
                         FreeObjVars(lvars, m_ObjVars);
@@ -2081,7 +2081,7 @@ namespace Brace
                 m_ResultInfo = resultInfo;
             }
             std::swap(m_Args, args);
-            for (auto& argInfo : argLoadInfos) {
+            for (auto&& argInfo : argLoadInfos) {
                 m_ArgInfos.push_back(argInfo);
             }
             executor.attach(this, &ParenthesisExp::Execute);
@@ -2090,7 +2090,7 @@ namespace Brace
     private:
         int Execute(VariableInfo& gvars, VariableInfo& lvars)const
         {
-            for (auto& op : m_Args) {
+            for (auto&& op : m_Args) {
                 if (!op.isNull())
                     op(gvars, lvars);
             }
@@ -3241,7 +3241,7 @@ namespace Brace
     {
         Release();
 
-        for (auto& pair : m_ApiFactories) {
+        for (auto&& pair : m_ApiFactories) {
             delete pair.second;
         }
         m_ApiFactories.clear();
@@ -3383,7 +3383,7 @@ namespace Brace
         }
         /// for REPL, global vars aren't free here, call Reset or Destructor to free explicitly
         /*
-        for (auto& sptr : m_GlobalVariables->ObjectVars) {
+        for (auto&& sptr : m_GlobalVariables->ObjectVars) {
             sptr = nullptr;
         }
         */
