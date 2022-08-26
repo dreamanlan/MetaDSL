@@ -80,6 +80,56 @@
     };
     struct BraceObjectInfo final
     {
+        int GetTypeParamCount(void)const
+        {
+            auto& ps = TypeParams;
+            return static_cast<int>(ps.size()) / 2;
+        }
+        int GetTypeParamType(int ix)const
+        {
+            auto& ps = TypeParams;
+            int index = ix * 2;
+            if (index >= 0 && index < static_cast<int>(ps.size())) {
+                return ps[index];
+            }
+            return Brace::BRACE_DATA_TYPE_UNKNOWN;
+        }
+        int GetTypeParamObjTypeId(int ix)const
+        {
+            auto& ps = TypeParams;
+            int index = ix * 2 + 1;
+            if (index >= 0 && index < static_cast<int>(ps.size())) {
+                return ps[index];
+            }
+            return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+        }
+        int FirstTypeParamType(void)const
+        {
+            return GetTypeParamType(0);
+        }
+        int FirstTypeParamObjTypeId(void)const
+        {
+            return GetTypeParamObjTypeId(0);
+        }
+        int SecondTypeParamType(void)const
+        {
+            return GetTypeParamType(1);
+        }
+        int SecondTypeParamObjTypeId(void)const
+        {
+            return GetTypeParamObjTypeId(1);
+        }
+        int LastTypeParamType(void)const
+        {
+            int ct = GetTypeParamCount();            
+            return GetTypeParamType(ct - 1);
+        }
+        int LastTypeParamObjTypeId(void)const
+        {
+            int ct = GetTypeParamCount();
+            return GetTypeParamObjTypeId(ct - 1);
+        }
+
         std::string TypeName;
         int ObjectTypeId;
         int ObjectCategory;
@@ -247,6 +297,132 @@
                 m_ObjTypeIdMap.insert(std::make_pair(typeNameAlias, objTypeId));
             }
         }
+        void SetBraceObjectTypeParams(int objTypeId, int param1Type, int param1ObjTypeId)
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                auto& ps = it->second.TypeParams;
+                ps.clear();
+                ps.push_back(param1Type);
+                ps.push_back(param1ObjTypeId);
+            }
+        }
+        void SetBraceObjectTypeParams(int objTypeId, int param1Type, int param1ObjTypeId, int param2Type, int param2ObjTypeId)
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                auto& ps = it->second.TypeParams;
+                ps.clear();
+                ps.push_back(param1Type);
+                ps.push_back(param1ObjTypeId);
+                ps.push_back(param2Type);
+                ps.push_back(param2ObjTypeId);
+            }
+        }
+        void ClearBraceObjectTypeParams(int objTypeId)
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                it->second.TypeParams.clear();
+            }
+        }
+        void AddBraceObjectTypeParam(int objTypeId, int paramType, int paramObjTypeId)
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                auto& ps = it->second.TypeParams;
+                ps.push_back(paramType);
+                ps.push_back(paramObjTypeId);
+            }
+        }
+        const std::string& GetBraceObjectTypeName(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.TypeName;
+            }
+            return EmptyString();
+        }
+        int GetBraceObjectCategory(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.ObjectCategory;
+            }
+            return INVALID_ID;
+        }
+        int GetBraceObjectTypeParamCount(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.GetTypeParamCount();
+            }
+            return 0;
+        }
+        int GetBraceObjectTypeParamType(int objTypeId, int ix)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.GetTypeParamType(ix);
+            }
+            return Brace::BRACE_DATA_TYPE_UNKNOWN;
+        }
+        int GetBraceObjectTypeParamObjTypeId(int objTypeId, int ix)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.GetTypeParamObjTypeId(ix);
+            }
+            return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+        }
+        int BraceObjectFirstTypeParamType(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.FirstTypeParamType();
+            }
+            return Brace::BRACE_DATA_TYPE_UNKNOWN;
+        }
+        int BraceObjectFirstTypeParamObjTypeId(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.FirstTypeParamType();
+            }
+            return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+        }
+        int BraceObjectSecondTypeParamType(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.SecondTypeParamType();
+            }
+            return Brace::BRACE_DATA_TYPE_UNKNOWN;
+        }
+        int BraceObjectSecondTypeParamObjTypeId(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.SecondTypeParamType();
+            }
+            return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+        }
+        int BraceObjectLastTypeParamType(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.LastTypeParamType();
+            }
+            return Brace::BRACE_DATA_TYPE_UNKNOWN;
+        }
+        int BraceObjectLastTypeParamObjTypeId(int objTypeId)const
+        {
+            auto it = m_ObjInfoMap.find(objTypeId);
+            if (it != m_ObjInfoMap.end()) {
+                return it->second.LastTypeParamType();
+            }
+            return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
+        }
         const BraceObjectInfo* GetBraceObjectInfo(int objTypeId)const
         {
             auto it = m_ObjInfoMap.find(objTypeId);
@@ -297,6 +473,11 @@
             std::stringstream ss;
             CalcObjTypeKey(syntax, ss);
             return ss.str();
+        }
+        static const std::string& EmptyString(void)
+        {
+            static std::string s_Empty{};
+            return s_Empty;
         }
     };
 
@@ -3072,7 +3253,7 @@
 			switch (braceObjInfo.ObjectCategory) {
 			case BRACE_OBJECT_CATEGORY_OBJ_ARRAY:
 				isArray = true;
-				objTypeId = braceObjInfo.TypeParams.back();
+				objTypeId = braceObjInfo.GetTypeParamObjTypeId(0);
 				break;
 			case BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE:
 				isHashtable = true;
@@ -4378,7 +4559,7 @@
 			switch (braceObjInfo.ObjectCategory) {
 			case BRACE_OBJECT_CATEGORY_OBJ_ARRAY:
 				isArray = true;
-				objTypeId = braceObjInfo.TypeParams.back();
+				objTypeId = braceObjInfo.GetTypeParamObjTypeId(0);
 				break;
 			case BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE:
 				isHashtable = true;
@@ -4651,7 +4832,7 @@
 			switch (braceObjInfo.ObjectCategory) {
 			case BRACE_OBJECT_CATEGORY_OBJ_ARRAY:
 				isArray = true;
-				objTypeId = braceObjInfo.TypeParams.back();
+				objTypeId = braceObjInfo.GetTypeParamObjTypeId(0);
 				break;
 			case BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE:
 				isHashtable = true;
@@ -4940,19 +5121,19 @@
 					auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(listInfo.ObjectTypeId);
 					if (nullptr != pInfo) {
 						if (pInfo->ObjectCategory == BRACE_OBJECT_CATEGORY_OBJ_ARRAY) {
-							m_IteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->TypeParams.back());
+							m_IteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->GetTypeParamObjTypeId(0));
 							executor.attach(this, &ArrayHashtableLoopListProvider::ExecuteObjectArray);
 							return true;
 						}
 						else if (pInfo->ObjectCategory == BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE) {
 							m_IteratorIndex = AllocVariable("$$k", Brace::BRACE_DATA_TYPE_INT64, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
-							m_IteratorIndexV = AllocVariable("$$v", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->TypeParams.back());
+							m_IteratorIndexV = AllocVariable("$$v", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->GetTypeParamObjTypeId(1));
 							executor.attach(this, &ArrayHashtableLoopListProvider::ExecuteIntObjHashtable);
 							return true;
 						}
 						else if (pInfo->ObjectCategory == BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE) {
 							m_IteratorIndex = AllocVariable("$$k", Brace::BRACE_DATA_TYPE_STRING, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
-							m_IteratorIndexV = AllocVariable("$$v", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->TypeParams.back());
+							m_IteratorIndexV = AllocVariable("$$v", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->GetTypeParamObjTypeId(1));
 							executor.attach(this, &ArrayHashtableLoopListProvider::ExecuteStrObjHashtable);
 							return true;
 						}
@@ -7028,7 +7209,7 @@
 					PushBlock();
 					int iteratorIndex = INVALID_INDEX;
 					if (mid != "top") {
-						iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->TypeParams.back());
+						iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, pInfo->GetTypeParamObjTypeId(0));
 					}
 					std::vector<Brace::OperandLoadtimeInfo> argInfos;
 					std::vector<Brace::BraceApiExecutor> args;
@@ -7067,15 +7248,6 @@
 			//select(fields)top(10)from(objlist)where(exp)oderby(exps)groupby(exps)having(exp){statements;};
 			std::string uobjArrKey = "array<:uobject:>";
 			int uobjArrTypeId = g_ObjectInfoMgr.GetObjectTypeId(uobjArrKey);
-			if (uobjArrTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
-				uobjArrTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(uobjArrKey);
-			}
-			auto* pNewInfo = g_ObjectInfoMgr.GetBraceObjectInfo(uobjArrTypeId);
-			if (nullptr == pNewInfo) {
-				pNewInfo = g_ObjectInfoMgr.AddBraceObjectInfo(uobjArrTypeId, BRACE_OBJECT_CATEGORY_OBJ_ARRAY, uobjArrKey);
-				pNewInfo->TypeParams.push_back(Brace::BRACE_DATA_TYPE_OBJECT);
-				pNewInfo->TypeParams.push_back(CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
-			}
 
 			int fnum = statementData.GetFunctionNum();
 			BraceObjectInfo* pInfo = nullptr;
@@ -7126,7 +7298,7 @@
 					}
 					if (fid == "select") {
 						PushBlock();
-						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->TypeParams.back() : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->GetTypeParamObjTypeId(0) : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
 						std::vector<Brace::OperandLoadtimeInfo> argInfos;
 						std::vector<Brace::BraceApiExecutor> args;
 						std::vector<int> stats;
@@ -7197,7 +7369,7 @@
 					}
 					else if (fid == "where") {
 						PushBlock();
-						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->TypeParams.back() : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->GetTypeParamObjTypeId(0) : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
 						Brace::OperandLoadtimeInfo argInfo;
 						Brace::BraceApiExecutor arg;
 						int pnum = pCallData->GetParamNum();
@@ -7211,7 +7383,7 @@
 					}
 					else if (fid == "orderby") {
 						PushBlock();
-						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->TypeParams.back() : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->GetTypeParamObjTypeId(0) : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
 						std::vector<Brace::OperandLoadtimeInfo> argInfos;
 						std::vector<Brace::BraceApiExecutor> args;
 						std::vector<bool> ascOrDescs;
@@ -7238,7 +7410,7 @@
 					}
 					else if (fid == "groupby") {
 						PushBlock();
-						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->TypeParams.back() : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
+						int iteratorIndex = AllocVariable("$$", Brace::BRACE_DATA_TYPE_OBJECT, nullptr != pInfo ? pInfo->GetTypeParamObjTypeId(0) : CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT);
 						std::vector<Brace::OperandLoadtimeInfo> argInfos;
 						std::vector<Brace::BraceApiExecutor> args;
 						int pnum = pCallData->GetParamNum();
@@ -7488,8 +7660,7 @@
 					auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(m_ObjectTypeId);
 					if (nullptr == pInfo) {
 						pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(m_ObjectTypeId, BRACE_OBJECT_CATEGORY_OBJ_ARRAY, std::move(typeKey));
-						pInfo->TypeParams.push_back(dataType);
-						pInfo->TypeParams.push_back(objTypeId);
+						g_ObjectInfoMgr.SetBraceObjectTypeParams(m_ObjectTypeId, dataType, objTypeId);
 					}
 					if (nullptr != pInfo) {
 						std::swap(m_Args, args);
@@ -7902,10 +8073,7 @@
 					auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objectTypeId);
 					if (nullptr == pInfo) {
 						pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objectTypeId, BRACE_OBJECT_CATEGORY_INT_OBJ_HASHTABLE, std::move(typeKey));
-						pInfo->TypeParams.push_back(keyDataType);
-						pInfo->TypeParams.push_back(keyObjTypeId);
-						pInfo->TypeParams.push_back(valDataType);
-						pInfo->TypeParams.push_back(valObjTypeId);
+						g_ObjectInfoMgr.SetBraceObjectTypeParams(objectTypeId, keyDataType, keyObjTypeId, valDataType, valObjTypeId);
 					}
 					if (nullptr != pInfo) {
 						std::swap(m_ArgKeys, argKeys);
@@ -8077,10 +8245,7 @@
 					auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objectTypeId);
 					if (nullptr == pInfo) {
 						pInfo = g_ObjectInfoMgr.AddBraceObjectInfo(objectTypeId, BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE, std::move(typeKey));
-						pInfo->TypeParams.push_back(keyDataType);
-						pInfo->TypeParams.push_back(keyObjTypeId);
-						pInfo->TypeParams.push_back(valDataType);
-						pInfo->TypeParams.push_back(valObjTypeId);
+						g_ObjectInfoMgr.SetBraceObjectTypeParams(objectTypeId, keyDataType, keyObjTypeId, valDataType, valObjTypeId);
 					}
 					if (nullptr != pInfo) {
 						std::swap(m_ArgKeys, argKeys);
