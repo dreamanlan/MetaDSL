@@ -2833,6 +2833,9 @@ namespace Brace
                                         newGet->AddParamCopyFrom(*innerCall->GetParam(0));
 
                                         newCalc->AddParamCopyFrom(*callData.GetParam(1));
+
+                                        newGet->GetName().SetLine(callData.GetLine());
+                                        newCalc->GetName().SetLine(callData.GetLine());
                                     }
                                 }
                                 else {
@@ -2855,9 +2858,13 @@ namespace Brace
                                         newGet->AddParamCopyFrom(*innerCall->GetParam(0));
 
                                         newCalc->AddParamCopyFrom(*callData.GetParam(1));
+
+                                        newGet->GetName().SetLine(callData.GetLine());
+                                        newCalc->GetName().SetLine(callData.GetLine());
                                     }
                                 }
 
+                                newCall->GetName().SetLine(callData.GetLine());
                                 return Load(*newCall, resultInfo);
                             }
                             else if (op.length() == 1 && innerCall->GetId() == ":" && innerCall->GetParamNum() == 2) {
@@ -2975,6 +2982,7 @@ namespace Brace
                                 }
                             }
 
+                            newCall->GetName().SetLine(callData.GetLine());
                             return Load(*newCall, resultInfo);
                         }
                     }
@@ -3002,6 +3010,7 @@ namespace Brace
                             ConvertMember(callData.GetParam(0), callData.GetParamClassUnmasked());
                         }
 
+                        newCall->GetName().SetLine(callData.GetLine());
                         return Load(*newCall, resultInfo);
                     }
                 }
