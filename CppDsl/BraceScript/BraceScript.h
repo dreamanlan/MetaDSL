@@ -758,7 +758,8 @@ namespace Brace
     typedef std::stack<FuncInfo*> FuncInfoStack;
     typedef std::stack<RuntimeStackInfo> RuntimeStack;
     typedef std::function<void(const std::string&)> LogDelegation;
-    typedef std::function<int(const DslData::ISyntaxComponent&)> GetObjectTypeIdDelegation;
+    typedef std::function<bool(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&)> LoadTypeInfoDelegation;
+    typedef std::function<int(const DslData::ISyntaxComponent&, const LoadTypeInfoDelegation&)> GetObjectTypeIdDelegation;
     typedef std::function<const char* (int)> GetObjectTypeNameDelegation;
     typedef std::function<bool(int,int)> ObjectAssignCheckDelegation;
     typedef std::function<bool(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&, BraceApiExecutor&)> FilterLoadDelegation;
@@ -888,6 +889,7 @@ namespace Brace
         void RegisterInnerApis(void);
         void Init(void);
         void Release(void);
+        bool DoLoadTypeInfo(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&);
         const RuntimeStack& GetRuntimeStack(void)const;
         RuntimeStack& GetRuntimeStack(void);
     private:
@@ -913,6 +915,7 @@ namespace Brace
         VariableInfo* m_GlobalVariables;
         RuntimeStack m_RuntimeStack;
 
+        LoadTypeInfoDelegation m_LoadTypeInfo;
         AbstractBraceApi* m_FailbackApi;
     };
 }

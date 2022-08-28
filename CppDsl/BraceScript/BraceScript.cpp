@@ -2337,7 +2337,7 @@ namespace Brace
     int BraceScript::GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const
     {
         if (OnGetObjectTypeId)
-            return OnGetObjectTypeId(typeSyntax);
+            return OnGetObjectTypeId(typeSyntax, m_LoadTypeInfo);
         return PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
     }
     const char* BraceScript::GetObjectTypeName(int objTypeId)const
@@ -3218,6 +3218,13 @@ namespace Brace
         m_AddedSyntaxComponents.clear();
         m_FuncApiTypeInfos.clear();
     }
+    bool BraceScript::DoLoadTypeInfo(const DslData::ISyntaxComponent& syntaxComp, OperandLoadtimeInfo& loadInfo)
+    {
+        Load(syntaxComp, loadInfo);
+        if (loadInfo.Type != Brace::BRACE_DATA_TYPE_UNKNOWN && loadInfo.ObjectTypeId != Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN)
+            return true;
+        return false;
+    }
     const RuntimeStack& BraceScript::GetRuntimeStack(void)const
     {
         RuntimeStack* p = nullptr;
@@ -3241,8 +3248,9 @@ namespace Brace
             return m_RuntimeStack;
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_FailbackApi(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_LoadTypeInfo(nullptr), m_FailbackApi(nullptr)
     {
+        m_LoadTypeInfo = std::bind(&BraceScript::DoLoadTypeInfo, this, std::placeholders::_1, std::placeholders::_2);
         RegisterInnerApis();
         Init();
     }
