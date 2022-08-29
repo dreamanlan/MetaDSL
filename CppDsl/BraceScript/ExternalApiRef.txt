@@ -8914,11 +8914,11 @@ namespace BraceScriptInterpreter
 	m_pBraceScript->OnWarn = [](auto& str) { printf("[brace warn]:%s", str.c_str()); };
 	m_pBraceScript->OnError = [](auto& str) { printf("[brace error]:%s", str.c_str()); };
 
-	m_pBraceScript->OnGetObjectTypeId = [](const DslData::ISyntaxComponent& syntax) {
+        m_pBraceScript->OnGetObjectTypeId = [](const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo) {
             int objTypeId;
-            g_ObjectInfoMgr.TryGetOrAddBraceObjectInfo(syntax, objTypeId);
+            g_ObjectInfoMgr.TryGetOrAddBraceObjectInfo(syntax, doLoadTypeInfo, objTypeId);
             return objTypeId;
-	};
+        };
 	m_pBraceScript->OnGetObjectTypeName = [](int objTypeId) {
 		auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
 		if (nullptr != pInfo)
