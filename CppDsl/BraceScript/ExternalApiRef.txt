@@ -453,19 +453,27 @@ namespace BraceScriptInterpreter
             return nullptr;
         }
     public:
-        bool TryGetOrAddBraceObjectInfo(const DslData::ISyntaxComponent& syntax, int& objTypeId)
+        bool TryGetOrAddBraceObjectInfo(const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo, int& objTypeId)
         {
             bool ret = false;
-            std::string key = CalcObjTypeKey(syntax);
+            std::string key = CalcObjTypeKey(syntax, doLoadTypeInfo);
             objTypeId = GetObjectTypeId(key);
             if (objTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
                 if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
                     auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
                     const std::string& id = syntax.GetId();
-                    if (id == "array") {
+                    if (id == "decltype") {
+                        auto& p = *funcData.GetParam(0);
+                        Brace::OperandLoadtimeInfo loadInfo;
+                        if (doLoadTypeInfo(p, loadInfo)) {
+                            objTypeId = loadInfo.ObjectTypeId;
+                            ret = true;
+                        }
+                    }
+                    else if (id == "array") {
                         auto* p0 = funcData.GetParam(0);
                         int ot;
-                        if (TryGetOrAddBraceObjectInfo(*p0, ot)) {
+                        if (TryGetOrAddBraceObjectInfo(*p0, doLoadTypeInfo, ot)) {
                             objTypeId = AddNewObjectTypeId(key);
                             AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_OBJ_ARRAY, std::move(key));
                             SetBraceObjectTypeParams(objTypeId, Brace::BRACE_DATA_TYPE_OBJECT, ot);
@@ -477,7 +485,7 @@ namespace BraceScriptInterpreter
                         int kt = Brace::GetDataType(keyType);
                         auto* p1 = funcData.GetParam(1);
                         int ot;
-                        if (TryGetOrAddBraceObjectInfo(*p1, ot)) {
+                        if (TryGetOrAddBraceObjectInfo(*p1, doLoadTypeInfo, ot)) {
                             objTypeId = AddNewObjectTypeId(key);
                             if (kt == Brace::BRACE_DATA_TYPE_STRING) {
                                 AddBraceObjectInfo(objTypeId, BRACE_OBJECT_CATEGORY_STR_OBJ_HASHTABLE, std::move(key));
@@ -502,6 +510,65 @@ namespace BraceScriptInterpreter
         BraceObjectInfoManager(void) :m_ObjTypeIdMap(), m_ObjInfoMap(), m_NextObjectTypeId(BRACE_INNER_FIXED_OBJECT_TYPE_NUM)
         {}
     private:
+        void CalcObjTypeKey(const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo, std::stringstream& ss)
+        {
+            if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
+                if (syntax.GetId() == "decltype") {
+                    auto& p = *funcData.GetParam(0);
+                    Brace::OperandLoadtimeInfo loadInfo;
+                    if (doLoadTypeInfo(p, loadInfo)) {
+                        CalcTypeInfoKey(loadInfo.Type, loadInfo.ObjectTypeId, ss);
+                    }
+                }
+                else {
+                    ss << syntax.GetId();
+                    ss << "<:";
+                    for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
+                        if (ix > 0)
+                            ss << ",";
+                        auto& p = *funcData.GetParam(ix);
+                        CalcObjTypeKey(p, doLoadTypeInfo, ss);
+                    }
+                    ss << ":>";
+                }
+            }
+            else if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
+                ss << syntax.GetId();
+            }
+        }
+        void CalcTypeInfoKey(int type, int objTypeId, std::stringstream& ss)
+        {
+            if (type == Brace::BRACE_DATA_TYPE_OBJECT) {
+                ss << Brace::GetDataTypeName(type);
+            }
+            else {
+                auto* pInfo = GetBraceObjectInfo(objTypeId);
+                if (nullptr != pInfo) {
+                    ss << pInfo->TypeName;
+                    int size = static_cast<int>(pInfo->TypeParams.size());
+                    if (size > 0) {
+                        ss << "<:";
+                        for (int i = 0; i + 1 < size; i += 2) {
+                            int ty = pInfo->TypeParams[i];
+                            int ot = pInfo->TypeParams[i + 1];
+                            CalcTypeInfoKey(ty, ot, ss);
+                        }
+                        ss << ":>";
+                    }
+                }
+                else {
+                    ss << "[error]";
+                }
+            }
+        }
+        std::string CalcObjTypeKey(const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo)
+        {
+            std::stringstream ss;
+            CalcObjTypeKey(syntax, doLoadTypeInfo, ss);
+            return ss.str();
+        }
+    private:
         int GenNextObjectTypeId(void)
         {
             return m_NextObjectTypeId++;
@@ -511,30 +578,6 @@ namespace BraceScriptInterpreter
         std::unordered_map<int, BraceObjectInfo> m_ObjInfoMap;
         int m_NextObjectTypeId;
     public:
-        static void CalcObjTypeKey(const DslData::ISyntaxComponent& syntax, std::stringstream& ss)
-        {
-            if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
-                ss << syntax.GetId();
-                ss << "<:";
-                auto& funcData = static_cast<const DslData::FunctionData&>(syntax);
-                for (int ix = 0; ix < funcData.GetParamNum(); ++ix) {
-                    if (ix > 0)
-                        ss << ",";
-                    auto& p = *funcData.GetParam(ix);
-                    CalcObjTypeKey(p, ss);
-                }
-                ss << ":>";
-            }
-            else if (syntax.GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
-                ss << syntax.GetId();
-            }
-        }
-        static std::string CalcObjTypeKey(const DslData::ISyntaxComponent& syntax)
-        {
-            std::stringstream ss;
-            CalcObjTypeKey(syntax, ss);
-            return ss.str();
-        }
         static const std::string& EmptyString(void)
         {
             static std::string s_Empty{};
@@ -1188,6 +1231,172 @@ namespace BraceScriptInterpreter
 			}
 			executor = nullptr;
 			return true;
+		}
+	};
+	class GetObjTypeNameExp final : public Brace::SimpleBraceApiBase
+	{
+	public:
+		GetObjTypeNameExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		{
+		}
+	protected:
+		virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+		{
+			if (argInfos.size() == 1) {
+				auto& argInfo = argInfos[0];
+				if (argInfo.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
+					resultInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
+					resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+					return true;
+				}
+			}
+			std::stringstream ss;
+			ss << "expected objtypename(objtypeid), line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+		{
+			auto& argInfo = argInfos[0];
+			int64_t objTypeId = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+			const std::string& v = g_ObjectInfoMgr.GetBraceObjectTypeName(objTypeId);
+			Brace::VarSetString((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, v);
+		}
+	};
+	class GetObjCategoryExp final : public Brace::SimpleBraceApiBase
+	{
+	public:
+		GetObjCategoryExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		{
+		}
+	protected:
+		virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+		{
+			if (argInfos.size() == 1) {
+				auto& argInfo = argInfos[0];
+				if (argInfo.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
+					resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
+					resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+					return true;
+				}
+			}
+			std::stringstream ss;
+			ss << "expected objcategory(objtypeid), line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+		{
+			auto& argInfo = argInfos[0];
+			int64_t objTypeId = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+			int v = g_ObjectInfoMgr.GetBraceObjectCategory(objTypeId);
+			Brace::VarSetInt32((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, v);
+		}
+	};
+	class GetTypeParamCountExp final : public Brace::SimpleBraceApiBase
+	{
+	public:
+		GetTypeParamCountExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		{
+		}
+	protected:
+		virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+		{
+			if (argInfos.size() == 1) {
+				auto& argInfo = argInfos[0];
+				if (argInfo.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
+					resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
+					resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+					return true;
+				}
+			}
+			std::stringstream ss;
+			ss << "expected typeparamcount(objtypeid), line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+		{
+			auto& argInfo = argInfos[0];
+			int64_t objTypeId = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+			int v = g_ObjectInfoMgr.GetBraceObjectTypeParamCount(objTypeId);
+			Brace::VarSetInt32((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, v);
+		}
+	};
+	class GetTypeParamTypeExp final : public Brace::SimpleBraceApiBase
+	{
+	public:
+		GetTypeParamTypeExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		{
+		}
+	protected:
+		virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+		{
+			if (argInfos.size() == 2) {
+				auto& argInfo = argInfos[0];
+				auto& argInfo2 = argInfos[1];
+				if (argInfo.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo.Type <= Brace::BRACE_DATA_TYPE_UINT64 && argInfo2.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo2.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
+					resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
+					resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+					return true;
+				}
+			}
+			std::stringstream ss;
+			ss << "expected typeparamtype(objtypeid, index), line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+		{
+			auto& argInfo = argInfos[0];
+			auto& argInfo2 = argInfos[1];
+			int64_t objTypeId = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+			int64_t index = Brace::VarGetI64((argInfo2.IsGlobal ? gvars : lvars), argInfo2.Type, argInfo2.VarIndex);
+			int v = g_ObjectInfoMgr.GetBraceObjectTypeParamType(objTypeId, index);
+			Brace::VarSetInt32((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, v);
+		}
+	};
+	class GetTypeParamObjTypeIdExp final : public Brace::SimpleBraceApiBase
+	{
+	public:
+		GetTypeParamObjTypeIdExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+		{
+		}
+	protected:
+		virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+		{
+			if (argInfos.size() == 2) {
+				auto& argInfo = argInfos[0];
+				auto& argInfo2 = argInfos[1];
+				if (argInfo.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo.Type <= Brace::BRACE_DATA_TYPE_UINT64 && argInfo2.Type >= Brace::BRACE_DATA_TYPE_INT8 && argInfo2.Type <= Brace::BRACE_DATA_TYPE_UINT64) {
+					resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
+					resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+					resultInfo.Name = GenTempVarName();
+					resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+					return true;
+				}
+			}
+			std::stringstream ss;
+			ss << "expected typeparamobjtypeid(objtypeid, index), line: " << data.GetLine();
+			LogError(ss.str());
+			return false;
+		}
+		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+		{
+			auto& argInfo = argInfos[0];
+			auto& argInfo2 = argInfos[1];
+			int64_t objTypeId = Brace::VarGetI64((argInfo.IsGlobal ? gvars : lvars), argInfo.Type, argInfo.VarIndex);
+			int64_t index = Brace::VarGetI64((argInfo2.IsGlobal ? gvars : lvars), argInfo2.Type, argInfo2.VarIndex);
+			int v = g_ObjectInfoMgr.GetBraceObjectTypeParamObjTypeId(objTypeId, index);
+			Brace::VarSetInt32((resultInfo.IsGlobal ? gvars : lvars), resultInfo.VarIndex, v);
 		}
 	};
 	class SwapExp final : public Brace::AbstractBraceApi
@@ -8739,6 +8948,11 @@ namespace BraceScriptInterpreter
         m_pBraceScript->RegisterApi("typetag", new Brace::BraceApiFactory<TypeTagExp>());
         m_pBraceScript->RegisterApi("typeid", new Brace::BraceApiFactory<TypeIdExp>());
         m_pBraceScript->RegisterApi("objtypeid", new Brace::BraceApiFactory<ObjTypeIdExp>());
+        m_pBraceScript->RegisterApi("getobjtypename", new Brace::BraceApiFactory<GetObjTypeNameExp>());
+        m_pBraceScript->RegisterApi("getobjcategory", new Brace::BraceApiFactory<GetObjCategoryExp>());
+        m_pBraceScript->RegisterApi("gettypeparamcount", new Brace::BraceApiFactory<GetTypeParamCountExp>());
+        m_pBraceScript->RegisterApi("gettypeparamtype", new Brace::BraceApiFactory<GetTypeParamTypeExp>());
+        m_pBraceScript->RegisterApi("gettypeparamobjtypeid", new Brace::BraceApiFactory<GetTypeParamObjTypeIdExp>());
         m_pBraceScript->RegisterApi("swap", new Brace::BraceApiFactory<SwapExp>());
         m_pBraceScript->RegisterApi("struct", new Brace::BraceApiFactory<StructExp>());
         m_pBraceScript->RegisterApi("newstruct", new Brace::BraceApiFactory<NewStructExp>());

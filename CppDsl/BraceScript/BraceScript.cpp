@@ -2361,6 +2361,11 @@ namespace Brace
                         tinfo.Type = GetDataType(tfuncData.GetId());
                         tinfo.ObjectTypeId = GetObjectTypeId(tfuncData);
                     }
+                    else {
+                        //decltype(exp)
+                        tinfo.Type = BRACE_DATA_TYPE_OBJECT;
+                        tinfo.ObjectTypeId = GetObjectTypeId(tfuncData);
+                    }
                 }
                 else if (pTypeDesc->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
                     tinfo.Type = GetDataType(pTypeDesc->GetId());
@@ -2372,6 +2377,12 @@ namespace Brace
             }
             else if (funcData.GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON) {
                 tinfo.Type = GetDataType(funcData.GetId());
+                tinfo.ObjectTypeId = GetObjectTypeId(funcData);
+                tinfo.IsRef = false;
+            }
+            else {
+                //decltype(exp)
+                tinfo.Type = BRACE_DATA_TYPE_OBJECT;
                 tinfo.ObjectTypeId = GetObjectTypeId(funcData);
                 tinfo.IsRef = false;
             }
