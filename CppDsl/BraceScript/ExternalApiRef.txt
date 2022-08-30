@@ -4090,7 +4090,7 @@ namespace BraceScriptInterpreter
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
 					std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
-					auto* pHashtable = static_cast<HashtableObjT<std::string, std::string>*>(ptr);
+					auto* pHashtable = static_cast<HashtableObjT<std::string, int64_t>*>(ptr);
 					bool v = HashtableContains(pHashtable->GetImpl(), vix);
 					Brace::VarSetBool((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, v);
 				}
@@ -4203,7 +4203,7 @@ namespace BraceScriptInterpreter
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
 					std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
-					auto* pHashtable = static_cast<HashtableObjT<std::string, std::string>*>(ptr);
+					auto* pHashtable = static_cast<HashtableObjT<std::string, int64_t>*>(ptr);
 					pHashtable->GetImpl()[vix] = v;
 				}
 			}break;
@@ -4312,7 +4312,7 @@ namespace BraceScriptInterpreter
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
 					std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
-					auto* pHashtable = static_cast<HashtableObjT<std::string, std::string>*>(ptr);
+					auto* pHashtable = static_cast<HashtableObjT<std::string, int64_t>*>(ptr);
 					pHashtable->GetImpl().erase(vix);
 				}
 			}break;
@@ -4406,7 +4406,7 @@ namespace BraceScriptInterpreter
 			case CUSTOM_BRACE_OBJECT_TYPE_STR_INT_HASHTABLE: {
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
-					auto* pHashtable = static_cast<HashtableObjT<std::string, std::string>*>(ptr);
+					auto* pHashtable = static_cast<HashtableObjT<std::string, int64_t>*>(ptr);
 					pHashtable->GetImpl().clear();
 				}
 			}break;
@@ -4948,7 +4948,7 @@ namespace BraceScriptInterpreter
 				auto* ptr = p.get();
 				if (nullptr != ptr) {
 					std::string vix = Brace::VarGetStr((ix.IsGlobal ? gvars : lvars), ix.Type, ix.VarIndex);
-					auto* pHashtable = static_cast<HashtableObjT<std::string, std::string>*>(ptr);
+					auto* pHashtable = static_cast<HashtableObjT<std::string, int64_t>*>(ptr);
 					pHashtable->GetImpl()[vix] = v;
 				}
 			}break;
