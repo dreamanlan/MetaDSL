@@ -2308,6 +2308,20 @@ namespace BraceScriptInterpreter
 				m_ResultInfo = resultInfo;
 				return true;
 			}
+			else if (member == "ActorLabel") {
+				resultInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
+				resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+				resultInfo.IsGlobal = false;
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+
+				executor.attach(this, &UObjectMemberGetProvider::ExecuteGetActorLabel);
+
+				m_ObjInfo = objInfo;
+				std::swap(m_Obj, obj);
+				m_ResultInfo = resultInfo;
+				return true;
+			}
 			else if (member == "AssetId") {
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
 				resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
@@ -2630,6 +2644,25 @@ namespace BraceScriptInterpreter
 				AActor* pActor = Cast<AActor>(pObj);
 				if (nullptr != pActor) {
 					std::string fname = TCHAR_TO_UTF8(*pActor->GetFolderPath().ToString());
+					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
+				}
+				else {
+					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::string());
+				}
+			}
+			return Brace::BRACE_FLOW_CONTROL_NORMAL;
+		}
+		int ExecuteGetActorLabel(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)
+		{
+			if (!m_Obj.isNull())
+				m_Obj(gvars, lvars);
+			auto& ptr = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
+			auto* scpObj = static_cast<UObjectBraceObject*>(ptr.get());
+			if (nullptr != scpObj) {
+				UObject* pObj = scpObj->GetImpl();
+				AActor* pActor = Cast<AActor>(pObj);
+				if (nullptr != pActor) {
+					std::string fname = TCHAR_TO_UTF8(*pActor->GetActorLabel());
 					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
 				}
 				else {
