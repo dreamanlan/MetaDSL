@@ -2294,6 +2294,20 @@ namespace BraceScriptInterpreter
 				m_ResultInfo = resultInfo;
 				return true;
 			}
+			else if (member == "FolderName") {
+				resultInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
+				resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+				resultInfo.IsGlobal = false;
+				resultInfo.Name = GenTempVarName();
+				resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
+
+				executor.attach(this, &UObjectMemberGetProvider::ExecuteGetFolderName);
+
+				m_ObjInfo = objInfo;
+				std::swap(m_Obj, obj);
+				m_ResultInfo = resultInfo;
+				return true;
+			}
 			else if (member == "AssetId") {
 				resultInfo.Type = Brace::BRACE_DATA_TYPE_STRING;
 				resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
@@ -2602,6 +2616,25 @@ namespace BraceScriptInterpreter
 				UObject* pObj = scpObj->GetImpl();
 				std::string fname = TCHAR_TO_UTF8(*pObj->GetPathName());
 				Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
+			}
+			return Brace::BRACE_FLOW_CONTROL_NORMAL;
+		}
+		int ExecuteGetFolderName(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)
+		{
+			if (!m_Obj.isNull())
+				m_Obj(gvars, lvars);
+			auto& ptr = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
+			auto* scpObj = static_cast<UObjectBraceObject*>(ptr.get());
+			if (nullptr != scpObj) {
+				UObject* pObj = scpObj->GetImpl();
+				AActor* pActor = Cast<AActor>(pObj);
+				if (nullptr != pActor) {
+					std::string fname = TCHAR_TO_UTF8(*pActor->GetFolderPath().ToString());
+					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
+				}
+				else {
+					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::string());
+				}
 			}
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
@@ -8516,7 +8549,7 @@ namespace BraceScriptInterpreter
 					}
 				}
 				if (good) {
-					std::string typeKey = std::string("hashtable<:std::string,") + GetObjectTypeName(valObjTypeId) + ":>";
+					std::string typeKey = std::string("hashtable<:string,") + GetObjectTypeName(valObjTypeId) + ":>";
 					int objectTypeId = g_ObjectInfoMgr.GetObjectTypeId(typeKey);
 					if (objectTypeId == Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN) {
 						objectTypeId = g_ObjectInfoMgr.AddNewObjectTypeId(typeKey);
