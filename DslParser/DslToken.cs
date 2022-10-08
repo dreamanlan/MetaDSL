@@ -558,6 +558,7 @@ namespace Dsl.Common
                     bool isHex = false;
                     bool includeEPart = false;
                     bool includeAddSub = false;
+                    bool waitFinish = false;
                     int dotCt = 0;
                     if (CurChar == '0' && NextChar == 'x') {
                         isHex = true;
@@ -566,15 +567,15 @@ namespace Dsl.Common
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator) {
+                    for (int charCt = 0; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator, ++charCt) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '.') {
-                            if (!isNum || isHex) {
+                            if (!isNum) {
                                 break;
                             }
                             else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                if (NextChar != 0 && NextChar != 'b' && NextChar != 'B' && NextChar != 'f' && NextChar != 'F' && NextChar != 'l' && NextChar != 'L' && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
                                     break;
                                 }
                             }
@@ -582,18 +583,40 @@ namespace Dsl.Common
                             if (dotCt > 1)
                                 break;
                         }
-                        else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
-                            isNum = false;
+                        else if (CurChar == '\'') {
+                            if (!isNum) {
+                                break;
+                            }
+                            else {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                    break;
+                                }
+                                ++mIterator;
+                            }
+                        }
+                        else if (isNum) {
+                            if (dotCt > 0 && (CurChar == 'b' || CurChar == 'B' || CurChar == 'f' || CurChar == 'F' || CurChar == 'l' || CurChar == 'L')) {
+                            }
+                            else if (dotCt == 0 && charCt > 0 && (CurChar == 'l' || CurChar == 'L' || CurChar == 'u' || CurChar == 'U' || CurChar == 'z' || CurChar == 'Z')) {
+                            }
+                            else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
+                                isNum = false;
+                            }
+                        }
+                        if (isNum && !waitFinish) {
+                            if (includeEPart && (!isHex && (CurChar == 'e' || CurChar == 'E')) || (isHex && (CurChar == 'p' || CurChar == 'P'))) {
+                                includeEPart = false;
+                                includeAddSub = true;
+                            }
+                            else if (includeAddSub) {
+                                includeAddSub = false;
+                                waitFinish = true;
+                            }
+                            else {
+                                includeEPart = true;
+                            }
                         }
                         mTokenBuilder.Append(CurChar);
-                        includeEPart = true;
-                        if (includeEPart && (CurChar == 'e' || CurChar == 'E')) {
-                            includeEPart = false;
-                            includeAddSub = true;
-                        }
-                        else if (includeAddSub) {
-                            includeAddSub = false;
-                        }
                     }
                     mCurToken = mTokenBuilder.ToString();
                     if (isNum) {
@@ -1090,7 +1113,11 @@ namespace Dsl.Common
         {
             bool ret = false;
             if (isHex) {
-                if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
+                if (includeEPart && (c == 'P' || c == 'p'))
+                    ret = true;
+                else if (includeAddSub && (c == '+' || c == '-'))
+                    ret = true; 
+                else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
                     ret = true;
                 else
                     ret = false;

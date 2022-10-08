@@ -319,7 +319,7 @@ namespace Dsl.Parser
                                 if (myisdigit(NextChar, true)) {
                                     ++mIterator;
                                     char h2 = CurChar;
-                                    char nc = (char)(mychar2int(h1) * 16 + mychar2int(h2));
+                                    char nc = (char)((mychar2int(h1) << 4) + mychar2int(h2));
                                     mTokenBuilder.Append(nc);
                                 }
                                 else {
@@ -336,11 +336,11 @@ namespace Dsl.Parser
                                     if (myisdigit(NextChar, false)) {
                                         ++mIterator;
                                         char o3 = CurChar;
-                                        char nc = (char)(mychar2int(o1) * 64 + mychar2int(o2) * 8 + mychar2int(o3));
+                                        char nc = (char)((mychar2int(o1) << 6) + (mychar2int(o2) * 3) + mychar2int(o3));
                                         mTokenBuilder.Append(nc);
                                     }
                                     else {
-                                        char nc = (char)(mychar2int(o1) * 8 + mychar2int(o2));
+                                        char nc = (char)((mychar2int(o1) << 3) + mychar2int(o2));
                                         mTokenBuilder.Append(nc);
                                     }
                                 }
@@ -371,6 +371,7 @@ namespace Dsl.Parser
                     bool isHex = false;
                     bool includeEPart = false;
                     bool includeAddSub = false;
+                    bool waitFinish = false;
                     int dotCt = 0;
                     if (CurChar == '0' && NextChar == 'x') {
                         isHex = true;
@@ -379,7 +380,7 @@ namespace Dsl.Parser
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator) {
+                    for (int charCt = 0; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator, ++charCt) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '.') {
@@ -387,7 +388,7 @@ namespace Dsl.Parser
                                 break;
                             }
                             else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                if (NextChar != 0 && NextChar != 'b' && NextChar != 'B' && NextChar != 'f' && NextChar != 'F' && NextChar != 'l' && NextChar != 'L' && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
                                     break;
                                 }
                             }
@@ -395,18 +396,42 @@ namespace Dsl.Parser
                             if (dotCt > 1)
                                 break;
                         }
-                        else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
-                            isNum = false;
+                        else if (CurChar == '\'') {
+                            if (!isNum) {
+                                break;
+                            }
+                            else {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                    break;
+                                }
+                                ++mIterator;
+                            }
+                        }
+                        else if (isNum) {
+                            if (dotCt > 0 && (CurChar == 'b' || CurChar == 'B' || CurChar == 'f' || CurChar == 'F' || CurChar == 'l' || CurChar == 'L')) {
+
+                            }
+                            else if (dotCt == 0 && charCt > 0 && (CurChar == 'l' || CurChar == 'L' || CurChar == 'u' || CurChar == 'U' || CurChar == 'z' || CurChar == 'Z')) {
+
+                            }
+                            else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
+                                isNum = false;
+                            }
+                        }
+                        if (isNum && !waitFinish) {
+                            if (includeEPart && (!isHex && (CurChar == 'e' || CurChar == 'E')) || (isHex && (CurChar == 'p' || CurChar == 'P'))) {
+                                includeEPart = false;
+                                includeAddSub = true;
+                            }
+                            else if (includeAddSub) {
+                                includeAddSub = false;
+                                waitFinish = true;
+                            }
+                            else {
+                                includeEPart = true;
+                            }
                         }
                         mTokenBuilder.Append(CurChar);
-                        includeEPart = true;
-                        if (includeEPart && (CurChar == 'e' || CurChar == 'E')) {
-                            includeEPart = false;
-                            includeAddSub = true;
-                        }
-                        else if (includeAddSub) {
-                            includeAddSub = false;
-                        }
                     }
                     mCurToken = mTokenBuilder.ToString();
                     if (isNum) {
@@ -706,7 +731,11 @@ namespace Dsl.Parser
         {
             bool ret = false;
             if (isHex) {
-                if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
+                if (includeEPart && (c == 'P' || c == 'p'))
+                    ret = true;
+                else if (includeAddSub && (c == '+' || c == '-'))
+                    ret = true; 
+                else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
                     ret = true;
                 else
                     ret = false;

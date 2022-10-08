@@ -14,7 +14,11 @@ static inline int myisdigit(char c, int isHex, int includeEPart, int includeAddS
 {
     int ret = FALSE;
     if (TRUE == isHex) {
-        if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
+        if (TRUE == includeEPart && (c == 'P' || c == 'p'))
+            ret = TRUE;
+        else if (TRUE == includeAddSub && (c == '+' || c == '-'))
+            ret = TRUE;
+        else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
             ret = TRUE;
         else
             ret = FALSE;
@@ -1096,6 +1100,7 @@ short SlkToken::getImpl(void)
             int isHex = FALSE;
             int includeEPart = FALSE;
             int includeAddSub = FALSE;
+            int waitFinish = FALSE;
             int dotCt = 0;
             if (curChar() == '0' && nextChar() == 'x') {
                 isHex = TRUE;
@@ -1104,7 +1109,7 @@ short SlkToken::getImpl(void)
                 pushTokenChar(curChar());
                 ++mIterator;
             }
-            for (; (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || !isSpecialChar(curChar()); ++mIterator) {
+            for (int charCt = 0; (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || !isSpecialChar(curChar()); ++mIterator, ++charCt) {
                 if (curChar() == '#')
                     break;
                 else if (curChar() == '.') {
@@ -1121,19 +1126,42 @@ short SlkToken::getImpl(void)
                     if (dotCt > 1)
                         break;
                 }
-                else if (FALSE == myisdigit(curChar(), isHex, includeEPart, includeAddSub)) {
-                    isNum = FALSE;
+                else if (curChar() == '\'') {
+                    if (!isNum) {
+                        break;
+                    }
+                    else {
+                        if (nextChar() != 0 && !myisdigit(nextChar(), isHex, includeEPart, includeAddSub)) {
+                            break;
+                        }
+                        ++mIterator;
+                    }
                 }
+                else if (isNum) {
+                    if (dotCt > 0 && (curChar() == 'b' || curChar() == 'B' || curChar() == 'f' || curChar() == 'F' || curChar() == 'l' || curChar() == 'L')) {
 
+                    }
+                    else if (dotCt == 0 && charCt > 0 && (curChar() == 'l' || curChar() == 'L' || curChar() == 'u' || curChar() == 'U' || curChar() == 'z' || curChar() == 'Z')) {
+
+                    }
+                    else if (FALSE == myisdigit(curChar(), isHex, includeEPart, includeAddSub)) {
+                        isNum = FALSE;
+                    }
+                }
+                if (isNum && !waitFinish) {
+                    if (includeEPart && ((!isHex && (curChar() == 'e' || curChar() == 'E')) || (isHex && (curChar() == 'p' || curChar() == 'P')))) {
+                        includeEPart = FALSE;
+                        includeAddSub = TRUE;
+                    }
+                    else if (includeAddSub) {
+                        includeAddSub = FALSE;
+                        waitFinish = TRUE;
+                    }
+                    else {
+                        includeEPart = TRUE;
+                    }
+                }
                 pushTokenChar(curChar());
-                includeEPart = TRUE;
-                if (includeEPart && (curChar() == 'e' || curChar() == 'E')) {
-                    includeEPart = FALSE;
-                    includeAddSub = TRUE;
-                }
-                else if (includeAddSub) {
-                    includeAddSub = FALSE;
-                }
             }
             if (isNum) {
                 endToken();
