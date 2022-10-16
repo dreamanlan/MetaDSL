@@ -560,6 +560,7 @@ namespace Brace
     protected:
         FuncInfo* CurFuncInfo(void)const;
         AbstractBraceApi* GetFailbackApi(void)const;
+        IBraceObject* GetContextObject(void)const;
     protected:
         BraceApiImplHelper(BraceScript& interpreter) :m_Interpreter(interpreter)
         {}
@@ -917,5 +918,6 @@ namespace Brace
 
         LoadTypeInfoDelegation m_LoadTypeInfo;
         AbstractBraceApi* m_FailbackApi;
+        IBraceObject* m_ContextObj;
     };
 }

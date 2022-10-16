@@ -183,6 +183,10 @@ namespace Brace
     {
         return GetInterpreter().GetFailbackApi();
     }
+    IBraceObject* BraceApiImplHelper::GetContextObject(void)const
+    {
+        return GetInterpreter().GetContextObject();
+    }
 
     bool AbstractBraceApi::Load(const DslData::ISyntaxComponent& syntax, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
     {
@@ -3259,7 +3263,7 @@ namespace Brace
             return m_RuntimeStack;
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_LoadTypeInfo(nullptr), m_FailbackApi(nullptr)
+    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_LoadTypeInfo(nullptr), m_FailbackApi(nullptr), m_ContextObj(nullptr)
     {
         m_LoadTypeInfo = std::bind(&BraceScript::DoLoadTypeInfo, this, std::placeholders::_1, std::placeholders::_2);
         RegisterInnerApis();
@@ -3293,6 +3297,14 @@ namespace Brace
     AbstractBraceApi* BraceScript::GetFailbackApi(void)const
     {
         return m_FailbackApi;
+    }
+    void BraceScript::SetContextObject(IBraceObject* pContext)
+    {
+        m_ContextObj = pContext;
+    }
+    IBraceObject* BraceScript::GetContextObject(void)const
+    {
+        return m_ContextObj;
     }
     void BraceScript::Reset(void)
     {
