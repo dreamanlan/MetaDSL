@@ -888,7 +888,7 @@ namespace BraceScriptInterpreter
         }
     };
 
-    static BraceObjectInfoManager g_ObjectInfoMgr;
+    thread_local static BraceObjectInfoManager g_ObjectInfoMgr;
 
 	template<typename... TReturns, typename... TArgs>
 	static inline void InvokeFunction(UClass* objClass, UObject* obj, UFunction* func, TTuple<TReturns...>& outParams, TArgs&&... args)
@@ -2643,7 +2643,11 @@ namespace BraceScriptInterpreter
 				UObject* pObj = scpObj->GetImpl();
 				AActor* pActor = Cast<AActor>(pObj);
 				if (nullptr != pActor) {
+#if UE_BUILD_DEVELOPMENT
 					std::string fname = TCHAR_TO_UTF8(*pActor->GetFolderPath().ToString());
+#else
+					std::string fname;
+#endif
 					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
 				}
 				else {
@@ -2662,7 +2666,11 @@ namespace BraceScriptInterpreter
 				UObject* pObj = scpObj->GetImpl();
 				AActor* pActor = Cast<AActor>(pObj);
 				if (nullptr != pActor) {
+#if UE_BUILD_DEVELOPMENT
 					std::string fname = TCHAR_TO_UTF8(*pActor->GetActorLabel());
+#else
+					std::string fname;
+#endif
 					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
 				}
 				else {
