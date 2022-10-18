@@ -2643,10 +2643,10 @@ namespace BraceScriptInterpreter
 				UObject* pObj = scpObj->GetImpl();
 				AActor* pActor = Cast<AActor>(pObj);
 				if (nullptr != pActor) {
-#if UE_BUILD_DEVELOPMENT
+#if UE_EDITOR
 					std::string fname = TCHAR_TO_UTF8(*pActor->GetFolderPath().ToString());
 #else
-					std::string fname;
+					std::string fname = "GetFolderName only be used in Editor";
 #endif
 					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
 				}
@@ -2666,10 +2666,10 @@ namespace BraceScriptInterpreter
 				UObject* pObj = scpObj->GetImpl();
 				AActor* pActor = Cast<AActor>(pObj);
 				if (nullptr != pActor) {
-#if UE_BUILD_DEVELOPMENT
+#if UE_EDITOR
 					std::string fname = TCHAR_TO_UTF8(*pActor->GetActorLabel());
 #else
-					std::string fname;
+					std::string fname = "GetActorLabel only be used in Editor";
 #endif
 					Brace::VarSetString((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::move(fname));
 				}
