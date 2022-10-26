@@ -22,6 +22,8 @@ while(@ct>0){
 
 loop(100){
 	echo("loop: "+$$);
+	if($$>10)
+		break;
 };
 
 foreach("one", "two", "three"){

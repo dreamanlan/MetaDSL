@@ -8926,47 +8926,49 @@ namespace BraceScriptInterpreter
 			//looplist(exp) func(args);
 			if (statementData.GetFunctionNum() == 2) {
 				auto* first = statementData.GetFirst()->AsFunction();
-				auto* second = statementData.GetSecond()->AsFunction();
 				const std::string& firstId = first->GetId();
-				const std::string& secondId = second->GetId();
-				if (!first->HaveStatement() && !first->HaveExternScript() &&
-					!secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
-					if (first->GetParamNum() > 0) {
-						bool ret = false;
-						auto* exp = first->GetParam(0);
-						Brace::OperandLoadtimeInfo loadInfo;
-						auto list = LoadHelper(*exp, loadInfo);
-						auto& listInfo = loadInfo;
-						PushBlock();
-						if (listInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
-							auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(listInfo.ObjectTypeId);
-							if (nullptr != pInfo) {
-								AbstractLoopListApiProvider* pProvider = nullptr;
-								switch (pInfo->ObjectCategory) {
-								case BRACE_OBJECT_CATEGORY_UOBJECT:
-								case BRACE_OBJECT_CATEGORY_ACTOR:
-								default:
-									pProvider = new ArrayHashtableLoopListProvider(GetInterpreter());
-									break;
-								}
-								if (pProvider) {
-									m_ApiProvider.reset(pProvider);
-									if (pProvider->TypeInference(func, statementData, *pInfo, listInfo, executor)) {
-										Brace::OperandLoadtimeInfo argLoadInfo;
-										std::vector<Brace::BraceApiExecutor> statements{};
-										auto statement = LoadHelper(*second, argLoadInfo);
-										if (!statement.isNull())
-											statements.push_back(std::move(statement));
-										auto& objVars = CurBlockObjVars();
-										pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), objVars);
-										ret = true;
+				if (!first->HaveStatement() && !first->HaveExternScript()) {
+					auto* second = statementData.GetSecond();
+					auto* secondVal = second->AsValue();
+					auto* secondFunc = second->AsFunction();
+					if (nullptr != secondVal || (nullptr != secondFunc && secondFunc->HaveId() && !secondFunc->HaveStatement() && !secondFunc->HaveExternScript())) {
+						if (first->GetParamNum() > 0) {
+							bool ret = false;
+							auto* exp = first->GetParam(0);
+							Brace::OperandLoadtimeInfo loadInfo;
+							auto list = LoadHelper(*exp, loadInfo);
+							auto& listInfo = loadInfo;
+							PushBlock();
+							if (listInfo.Type == Brace::BRACE_DATA_TYPE_OBJECT) {
+								auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(listInfo.ObjectTypeId);
+								if (nullptr != pInfo) {
+									AbstractLoopListApiProvider* pProvider = nullptr;
+									switch (pInfo->ObjectCategory) {
+									case BRACE_OBJECT_CATEGORY_UOBJECT:
+									case BRACE_OBJECT_CATEGORY_ACTOR:
+									default:
+										pProvider = new ArrayHashtableLoopListProvider(GetInterpreter());
+										break;
+									}
+									if (pProvider) {
+										m_ApiProvider.reset(pProvider);
+										if (pProvider->TypeInference(func, statementData, *pInfo, listInfo, executor)) {
+											Brace::OperandLoadtimeInfo argLoadInfo;
+											std::vector<Brace::BraceApiExecutor> statements{};
+											auto statement = LoadHelper(*second, argLoadInfo);
+											if (!statement.isNull())
+												statements.push_back(std::move(statement));
+											auto& objVars = CurBlockObjVars();
+											pProvider->StoreRuntimeInfo(std::move(listInfo), std::move(list), std::move(statements), objVars);
+											ret = true;
+										}
 									}
 								}
 							}
+							PopBlock();
+							if (ret)
+								return true;
 						}
-						PopBlock();
-						if (ret)
-							return true;
 					}
 				}
             }

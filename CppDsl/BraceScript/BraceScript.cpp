@@ -1545,31 +1545,33 @@ namespace Brace
             int funcNum = data.GetFunctionNum();
             if (funcNum == 2) {
                 auto* first = data.GetFirst()->AsFunction();
-                auto* second = data.GetSecond()->AsFunction();
                 const std::string& firstId = first->GetId();
-                const std::string& secondId = second->GetId();
-                if (firstId == "if" && !first->HaveStatement() && !first->HaveExternScript() &&
-                    !secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
-                    Clause item;
-                    if (first->GetParamNum() > 0) {
-                        auto* cond = first->GetParam(0);
-                        OperandLoadtimeInfo loadInfo;
-                        item.Condition = LoadHelper(*cond, loadInfo);
-                        item.ConditionInfo = loadInfo;
+                if (!first->HaveStatement() && !first->HaveExternScript()) {
+                    auto* second = data.GetSecond();
+                    auto* secondVal = second->AsValue();
+                    auto* secondFunc = second->AsFunction();
+                    if (nullptr != secondVal || (nullptr != secondFunc && secondFunc->HaveId() && !secondFunc->HaveStatement() && !secondFunc->HaveExternScript())) {
+                        Clause item;
+                        if (first->GetParamNum() > 0) {
+                            auto* cond = first->GetParam(0);
+                            OperandLoadtimeInfo loadInfo;
+                            item.Condition = LoadHelper(*cond, loadInfo);
+                            item.ConditionInfo = loadInfo;
+                        }
+                        else {
+                            //error
+                            std::stringstream ss;
+                            ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
+                            LogError(ss.str());
+                        }
+                        OperandLoadtimeInfo argLoadInfo;
+                        auto statement = LoadHelper(*second, argLoadInfo);
+                        if (!statement.isNull())
+                            item.Statements.push_back(std::move(statement));
+                        m_Clauses.push_back(std::move(item));
+                        executor.attach(this, &IfExp::Execute);
+                        return true;
                     }
-                    else {
-                        //error
-                        std::stringstream ss;
-                        ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
-                        LogError(ss.str());
-                    }
-                    OperandLoadtimeInfo argLoadInfo;
-                    auto statement = LoadHelper(*second, argLoadInfo);
-                    if (!statement.isNull())
-                        item.Statements.push_back(std::move(statement));
-                    m_Clauses.push_back(std::move(item));
-                    executor.attach(this, &IfExp::Execute);
-                    return true;
                 }
             }
             //standard if
@@ -1718,29 +1720,31 @@ namespace Brace
             //while(exp) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
-                auto* second = data.GetSecond()->AsFunction();
                 const std::string& firstId = first->GetId();
-                const std::string& secondId = second->GetId();
-                if (firstId == "while" && !first->HaveStatement() && !first->HaveExternScript() &&
-                    !secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
-                    if (first->GetParamNum() > 0) {
-                        auto* cond = first->GetParam(0);
-                        OperandLoadtimeInfo loadInfo;
-                        m_Condition = LoadHelper(*cond, loadInfo);
-                        m_ConditionInfo = loadInfo;
+                if (!first->HaveStatement() && !first->HaveExternScript()) {
+                    auto* second = data.GetSecond();
+                    auto* secondVal = second->AsValue();
+                    auto* secondFunc = second->AsFunction();
+                    if (nullptr != secondVal || (nullptr != secondFunc && secondFunc->HaveId() && !secondFunc->HaveStatement() && !secondFunc->HaveExternScript())) {
+                        if (first->GetParamNum() > 0) {
+                            auto* cond = first->GetParam(0);
+                            OperandLoadtimeInfo loadInfo;
+                            m_Condition = LoadHelper(*cond, loadInfo);
+                            m_ConditionInfo = loadInfo;
+                        }
+                        else {
+                            //error
+                            std::stringstream ss;
+                            ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
+                            LogError(ss.str());
+                        }
+                        OperandLoadtimeInfo argLoadInfo;
+                        auto statement = LoadHelper(*second, argLoadInfo);
+                        if (!statement.isNull())
+                            m_Statements.push_back(std::move(statement));
+                        executor.attach(this, &WhileExp::Execute);
+                        return true;
                     }
-                    else {
-                        //error
-                        std::stringstream ss;
-                        ss << "BraceScript error, " << first->GetId() << " line " << first->GetLine();
-                        LogError(ss.str());
-                    }
-                    OperandLoadtimeInfo argLoadInfo;
-                    auto statement = LoadHelper(*second, argLoadInfo);
-                    if (!statement.isNull())
-                        m_Statements.push_back(std::move(statement));
-                    executor.attach(this, &WhileExp::Execute);
-                    return true;
                 }
             }
             return false;
@@ -1821,26 +1825,28 @@ namespace Brace
             //loop(exp) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
-                auto* second = data.GetSecond()->AsFunction();
                 const std::string& firstId = first->GetId();
-                const std::string& secondId = second->GetId();
-                if (firstId == "loop" && !first->HaveStatement() && !first->HaveExternScript() &&
-                    !secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
-                    if (first->GetParamNum() > 0) {
-                        auto* exp = first->GetParam(0);
-                        OperandLoadtimeInfo loadInfo;
-                        m_Count = LoadHelper(*exp, loadInfo);
-                        m_CountInfo = loadInfo;
-                        PushBlock();
-                        m_IteratorIndex = AllocVariable("$$", loadInfo.Type, loadInfo.ObjectTypeId);
-                        OperandLoadtimeInfo argLoadInfo;
-                        auto statement = LoadHelper(*second, argLoadInfo);
-                        if (!statement.isNull())
-                            m_Statements.push_back(std::move(statement));
-                        m_ObjVars = CurBlockObjVars();
-                        PopBlock();
-                        executor.attach(this, &LoopExp::Execute);
-                        return true;
+                if (!first->HaveStatement() && !first->HaveExternScript()) {
+                    auto* second = data.GetSecond();
+                    auto* secondVal = second->AsValue();
+                    auto* secondFunc = second->AsFunction();
+                    if (nullptr != secondVal || (nullptr != secondFunc && secondFunc->HaveId() && !secondFunc->HaveStatement() && !secondFunc->HaveExternScript())) {
+                        if (first->GetParamNum() > 0) {
+                            auto* exp = first->GetParam(0);
+                            OperandLoadtimeInfo loadInfo;
+                            m_Count = LoadHelper(*exp, loadInfo);
+                            m_CountInfo = loadInfo;
+                            PushBlock();
+                            m_IteratorIndex = AllocVariable("$$", loadInfo.Type, loadInfo.ObjectTypeId);
+                            OperandLoadtimeInfo argLoadInfo;
+                            auto statement = LoadHelper(*second, argLoadInfo);
+                            if (!statement.isNull())
+                                m_Statements.push_back(std::move(statement));
+                            m_ObjVars = CurBlockObjVars();
+                            PopBlock();
+                            executor.attach(this, &LoopExp::Execute);
+                            return true;
+                        }
                     }
                 }
             }
@@ -1950,51 +1956,53 @@ namespace Brace
             //foreach(exp1,exp2,...) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
-                auto* second = data.GetSecond()->AsFunction();
                 const std::string& firstId = first->GetId();
-                const std::string& secondId = second->GetId();
-                if (firstId == "foreach" && !first->HaveStatement() && !first->HaveExternScript() &&
-                    !secondId.empty() && !second->HaveStatement() && !second->HaveExternScript()) {
-                    int num = first->GetParamNum();
-                    if (num > 0) {
-                        bool typeMatch = true;
-                        int type = BRACE_DATA_TYPE_UNKNOWN;
-                        int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
-                        for (int ix = 0; ix < num; ++ix) {
-                            auto* exp = first->GetParam(ix);
-                            OperandLoadtimeInfo elemLoadInfo;
-                            auto e = LoadHelper(*exp, elemLoadInfo);
-                            if (elemLoadInfo.Type != BRACE_DATA_TYPE_UNKNOWN) {
-                                if (type == BRACE_DATA_TYPE_UNKNOWN) {
-                                    type = elemLoadInfo.Type;
-                                    objTypeId = elemLoadInfo.ObjectTypeId;
+                if (!first->HaveStatement() && !first->HaveExternScript()) {
+                    auto* second = data.GetSecond();
+                    auto* secondVal = second->AsValue();
+                    auto* secondFunc = second->AsFunction();
+                    if (nullptr != secondVal || (nullptr != secondFunc && secondFunc->HaveId() && !secondFunc->HaveStatement() && !secondFunc->HaveExternScript())) {
+                        int num = first->GetParamNum();
+                        if (num > 0) {
+                            bool typeMatch = true;
+                            int type = BRACE_DATA_TYPE_UNKNOWN;
+                            int objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+                            for (int ix = 0; ix < num; ++ix) {
+                                auto* exp = first->GetParam(ix);
+                                OperandLoadtimeInfo elemLoadInfo;
+                                auto e = LoadHelper(*exp, elemLoadInfo);
+                                if (elemLoadInfo.Type != BRACE_DATA_TYPE_UNKNOWN) {
+                                    if (type == BRACE_DATA_TYPE_UNKNOWN) {
+                                        type = elemLoadInfo.Type;
+                                        objTypeId = elemLoadInfo.ObjectTypeId;
+                                    }
+                                    else if (type != elemLoadInfo.Type || objTypeId != elemLoadInfo.ObjectTypeId) {
+                                        typeMatch = false;
+                                    }
                                 }
-                                else if (type != elemLoadInfo.Type || objTypeId != elemLoadInfo.ObjectTypeId) {
+                                else {
                                     typeMatch = false;
                                 }
+                                m_Elements.push_back(std::move(e));
+                                m_ElementInfos.push_back(elemLoadInfo);
                             }
-                            else {
-                                typeMatch = false;
+                            if (!typeMatch) {
+                                std::stringstream ss;
+                                ss << "BraceScript error, foreach list type dismatch, " << first->GetId() << " line " << first->GetLine();
+                                LogError(ss.str());
+                                return false;
                             }
-                            m_Elements.push_back(std::move(e));
-                            m_ElementInfos.push_back(elemLoadInfo);
+                            PushBlock();
+                            m_IteratorIndex = AllocVariable("$$", type, objTypeId);
+                            OperandLoadtimeInfo argLoadInfo;
+                            auto statement = LoadHelper(*second, argLoadInfo);
+                            if (!statement.isNull())
+                                m_Statements.push_back(std::move(statement));
+                            m_ObjVars = CurBlockObjVars();
+                            PopBlock();
+                            executor.attach(this, &ForeachExp::Execute);
+                            return true;
                         }
-                        if (!typeMatch) {
-                            std::stringstream ss;
-                            ss << "BraceScript error, foreach list type dismatch, " << first->GetId() << " line " << first->GetLine();
-                            LogError(ss.str());
-                            return false;
-                        }
-                        PushBlock();
-                        m_IteratorIndex = AllocVariable("$$", type, objTypeId);
-                        OperandLoadtimeInfo argLoadInfo;
-                        auto statement = LoadHelper(*second, argLoadInfo);
-                        if (!statement.isNull())
-                            m_Statements.push_back(std::move(statement));
-                        m_ObjVars = CurBlockObjVars();
-                        PopBlock();
-                        executor.attach(this, &ForeachExp::Execute);
-                        return true;
                     }
                 }
             }
