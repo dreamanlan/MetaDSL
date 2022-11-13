@@ -439,8 +439,14 @@ namespace Dsl
                 return m_Name.GetLine();
             else if (null != m_LowerOrderFunction)
                 return m_LowerOrderFunction.GetLine();
-            else
+            else {
+                foreach(var p in m_Params) {
+                    int line = p.GetLine();
+                    if (line >= 0)
+                        return line;
+                }
                 return -1;
+            }
         }
         public override string ToScriptString(bool includeComment)
         {
@@ -839,8 +845,14 @@ namespace Dsl
         {
             if (m_ValueOrFunctions.Count <= 0)
                 return -1;
-            else
-                return m_ValueOrFunctions[0].GetLine();
+            else {
+                foreach (var item in m_ValueOrFunctions) {
+                    int line = item.GetLine();
+                    if (line >= 0)
+                        return line;
+                }
+                return -1;
+            }
         }
         public override string ToScriptString(bool includeComment)
         {

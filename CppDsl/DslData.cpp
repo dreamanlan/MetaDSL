@@ -210,6 +210,23 @@ namespace DslData
         }
     }
 
+    int FunctionData::GetLine(void)const
+    {
+        if (HaveId())
+            return m_Name.GetLine();
+        else {
+            for (int ix = 0; ix < GetParamNum(); ++ix) {
+                auto* p = GetParam(ix);
+                if (nullptr != p) {
+                    int line = p->GetLine();
+                    if (line >= 0)
+                        return line;
+                }
+            }
+            return -1;
+        }
+    }
+
     void FunctionData::InitParamsCapacity(int v)
     {
         if (v >= 0)
@@ -332,6 +349,19 @@ namespace DslData
             ClearLastComments();
             CopyComments(other);
         }
+    }
+
+    int StatementData::GetLine(void)const
+    {
+        for (int ix = 0; ix < GetFunctionNum(); ++ix) {
+            auto* p = GetFunction(ix);
+            if (nullptr != p) {
+                int line = p->GetLine();
+                if (line >= 0)
+                    return line;
+            }
+        }
+        return -1;
     }
 
     void StatementData::InitFunctionsCapacity(int v)

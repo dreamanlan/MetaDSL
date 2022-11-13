@@ -394,7 +394,7 @@ namespace DslData
         }
         virtual int GetIdType(void)const override { return m_Name.GetIdType(); }
         virtual const std::string& GetId(void)const override { return m_Name.GetId(); }
-        virtual int GetLine(void)const override { return m_Name.GetLine(); }
+        virtual int GetLine(void)const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual bool HaveId(void)const override { return m_Name.HaveId(); }
     public:
@@ -701,14 +701,7 @@ namespace DslData
             }
             return ISyntaxComponent::EmptyString();
         }
-        virtual int GetLine(void)const override
-        {
-            int line = 0;
-            if (IsValid()) {
-                line = m_ValueOrFunctions[0]->GetLine();
-            }
-            return line;
-        }
+        virtual int GetLine(void)const;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual bool HaveId(void) const override
         {

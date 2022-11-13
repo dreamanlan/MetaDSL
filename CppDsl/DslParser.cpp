@@ -204,6 +204,23 @@ namespace DslParser
         ReleaseLastComments(&m_Buffer, m_pCommentsInfo);
     }
 
+    int FunctionData::GetLine(void)const
+    {
+        if(HaveId())
+            return m_Name.GetLine();
+        else {
+            for (int ix = 0; ix < GetParamNum(); ++ix) {
+                auto* p = GetParam(ix);
+                if (nullptr != p) {
+                    int line = p->GetLine();
+                    if (line >= 0)
+                        return line;
+                }
+            }
+            return -1;
+        }
+    }
+
     NullSyntax* FunctionData::GetNullSyntaxPtr(void)const
     {
         return m_Buffer.GetNullSyntaxPtr();
@@ -321,6 +338,19 @@ namespace DslParser
     ValueOrFunctionData*& StatementData::GetNullValueOrFunctionPtrRef(void)const
     {
         return m_Buffer.GetNullValueOrFunctionPtrRef();
+    }
+
+    int StatementData::GetLine(void)const
+    {
+        for (int ix = 0; ix < GetFunctionNum(); ++ix) {
+            auto* p = GetFunction(ix);
+            if (nullptr != p) {
+                int line = p->GetLine();
+                if (line >= 0)
+                    return line;
+            }
+        }
+        return -1;
     }
 
     void StatementData::InitFunctionsCapacity(int c)

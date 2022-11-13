@@ -504,7 +504,7 @@ namespace DslParser
         }
         virtual int GetIdType(void)const override { return m_Name.GetIdType(); }
         virtual const char* GetId(void)const override { return m_Name.GetId(); }
-        virtual int GetLine(void)const override { return m_Name.GetLine(); }
+        virtual int GetLine(void)const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual int HaveId(void)const override { return m_Name.HaveId(); }
     public:
@@ -803,14 +803,7 @@ namespace DslParser
             }
             return str;
         }
-        virtual int GetLine(void)const override
-        {
-            int line = 0;
-            if (IsValid()) {
-                line = m_ValueOrFunctions[0]->GetLine();
-            }
-            return line;
-        }
+        virtual int GetLine(void)const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual int HaveId(void) const override
         {
