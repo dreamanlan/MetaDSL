@@ -1117,9 +1117,12 @@ short SlkToken::getImpl(void)
                         break;
                     }
                     else {
-                        IScriptSource::Iterator next = mIterator + 1;
-                        if (FALSE == myisdigit(*next, isHex, includeEPart, includeAddSub)) {
-                            break;
+                        if (nextChar() == 'b' || nextChar() == 'B' || nextChar() == 'f' || nextChar() == 'F' || nextChar() == 'l' || nextChar() == 'L') {
+                        }
+                        else if (nextChar() != 0 && !myisdigit(nextChar(), isHex, includeEPart, includeAddSub)) {
+                            char c = peekNextValidChar(1);
+                            if (!isSpecialChar(c))
+                                break;
                         }
                     }
                     ++dotCt;
@@ -1139,10 +1142,8 @@ short SlkToken::getImpl(void)
                 }
                 else if (isNum) {
                     if (dotCt > 0 && (curChar() == 'b' || curChar() == 'B' || curChar() == 'f' || curChar() == 'F' || curChar() == 'l' || curChar() == 'L')) {
-
                     }
                     else if (dotCt == 0 && charCt > 0 && (curChar() == 'l' || curChar() == 'L' || curChar() == 'u' || curChar() == 'U' || curChar() == 'z' || curChar() == 'Z')) {
-
                     }
                     else if (FALSE == myisdigit(curChar(), isHex, includeEPart, includeAddSub)) {
                         isNum = FALSE;

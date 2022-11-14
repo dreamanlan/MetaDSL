@@ -571,12 +571,16 @@ namespace Dsl.Common
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '.') {
-                            if (!isNum) {
+                            if (!isNum || isHex) {
                                 break;
                             }
                             else {
-                                if (NextChar != 0 && NextChar != 'b' && NextChar != 'B' && NextChar != 'f' && NextChar != 'F' && NextChar != 'l' && NextChar != 'L' && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
-                                    break;
+                                if(NextChar == 'b' || NextChar == 'B' || NextChar == 'f' || NextChar == 'F' || NextChar == 'l' || NextChar == 'L') {
+                                }
+                                else if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                    char c = PeekNextValidChar(1);
+                                    if (!isSpecialChar(c))
+                                        break;
                                 }
                             }
                             ++dotCt;

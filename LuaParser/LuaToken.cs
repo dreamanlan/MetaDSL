@@ -388,8 +388,12 @@ namespace Dsl.Parser
                                 break;
                             }
                             else {
-                                if (NextChar != 0 && NextChar != 'b' && NextChar != 'B' && NextChar != 'f' && NextChar != 'F' && NextChar != 'l' && NextChar != 'L' && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
-                                    break;
+                                if (NextChar == 'b' || NextChar == 'B' || NextChar == 'f' || NextChar == 'F' || NextChar == 'l' || NextChar == 'L') {
+                                }
+                                else if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                    char c = PeekNextValidChar(1);
+                                    if (!isSpecialChar(c))
+                                        break;
                                 }
                             }
                             ++dotCt;
@@ -721,6 +725,27 @@ namespace Dsl.Parser
             if (ix >= 0 && mIterator + ix < mInput.Length)
                 c = mInput[mIterator + ix];
             return c;
+        }
+        private char PeekNextValidChar(int beginIndex)
+        {
+            int _;
+            return PeekNextValidChar(beginIndex, out _);
+        }
+        private char PeekNextValidChar(int beginIndex, out int index)
+        {
+            char nextChar = '\0';
+            index = -1;
+            for (int start = mIterator + beginIndex; start < mInput.Length; ++start) {
+                if (mWhiteSpaces.IndexOf(mInput[start]) >= 0) {
+                    continue;
+                }
+                else {
+                    nextChar = mInput[start];
+                    index = start - mIterator;
+                    break;
+                }
+            }
+            return nextChar;
         }
 
         private static bool myisdigit(char c, bool isHex)
