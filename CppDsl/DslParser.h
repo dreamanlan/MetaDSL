@@ -1333,7 +1333,6 @@ namespace DslParser
     private:
         ActionForSourceCodeScript* m_Impl;
     };
-    typedef Delegation<bool(char*, short, int)> EnqueueTokenDelegation;
     class IScriptSource;
     class DslFile final
     {

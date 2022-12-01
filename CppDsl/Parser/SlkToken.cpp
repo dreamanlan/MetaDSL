@@ -1387,6 +1387,4 @@ SlkToken::SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile
     setCanFinish(FALSE);
     setStringDelimiter("", "");
     setScriptDelimiter("", "");
-
-    mOnEnqueueToken.attach(this, &SlkToken::enqueueToken);
 }

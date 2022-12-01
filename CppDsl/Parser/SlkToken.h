@@ -148,8 +148,6 @@ private:
     int mStringEndDelimiterLength;
     int mScriptBeginDelimiterLength;
     int mScriptEndDelimiterLength;
-
-    DslParser::EnqueueTokenDelegation mOnEnqueueToken;
 };
 
 #endif
