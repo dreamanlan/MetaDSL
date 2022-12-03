@@ -36,6 +36,7 @@ copy /y DslLib\bin\Debug\Dsl.pdb ..\GameDemo\GameLibrary\ExternLibrary\Dsl.pdb
 copy /y DslLib\bin\Debug\Dsl.dll ..\BatchCommandApp\Assets\Plugins\Dsl.dll
 copy /y DslLib\bin\Debug\Dsl.dll ..\CSharpGameFramework\Unity3d\Assets\Plugins\Dsl.dll
 copy /y DslLib\bin\Debug\Dsl.dll ..\GameDemo\Unity3dProject\Assets\Plugins\game\Dsl.dll
+copy /y DslLib\bin\Debug\Dsl.dll ..\UnityProjForProfiler\Assets\Plugins\Dsl.dll
 
 rem copy /y DslLib\bin\Debug\Dsl.dll ..\TerrainGenByDsl\Assets\Plugins\Dsl.dll
 
