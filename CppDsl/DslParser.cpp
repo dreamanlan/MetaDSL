@@ -17,7 +17,7 @@ Dsl.cpp
 
 namespace DslParser
 {
-    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType)
+    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType), m_Separator(IDslSyntaxCommon::SEPARATOR_NOTHING)
     {
     }
     ISyntaxComponent::~ISyntaxComponent(void)
@@ -25,6 +25,7 @@ namespace DslParser
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
     {
+        m_Separator = other.m_Separator;
         auto pBuffer = GetBuffer();
         if (0 != pBuffer && 0 != GetCommentsInfo() && 0 != other.GetCommentsInfo()) {
             GetCommentsInfo()->m_FirstCommentNum = other.GetCommentsInfo()->m_FirstCommentNum;

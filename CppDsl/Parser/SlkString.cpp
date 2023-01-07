@@ -164,6 +164,7 @@ static const char * Terminal_name[] ={"0"
 
 static const char * Action_name[] ={"0"
 
+,"_action_markSeparator"
 ,"_action_endStatement"
 ,"_action_pushId"
 ,"_action_buildOperator"
@@ -204,6 +205,8 @@ static const char * Action_name[] ={"0"
 ,"_action_markPointerStarParam"
 ,"_action_pushStr"
 ,"_action_pushNum"
+,"_action_pushComma"
+,"_action_pushSemiColon"
 };
 
 static const char * Production_name[] ={"0"
@@ -289,9 +292,9 @@ static const char * Production_name[] ={"0"
 ,"FUNCTION_ID --> IDENTIFIER _action_pushId"
 ,"FUNCTION_ID --> STRING _action_pushStr"
 ,"FUNCTION_ID --> NUMBER _action_pushNum"
-,"SEP --> ,"
-,"SEP --> ;"
-,"SEP_STATEMENT_* --> SEP STATEMENT SEP_STATEMENT_*"
+,"SEP --> , _action_pushComma"
+,"SEP --> ; _action_pushSemiColon"
+,"SEP_STATEMENT_* --> SEP _action_markSeparator STATEMENT SEP_STATEMENT_*"
 ,"SEP_STATEMENT_* -->"
 ,"OP_TOKEN_0_OPERATOR_STATEMENT_1_* --> OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 OP_TOKEN_0_OPERATOR_STATEMENT_1_*"
 ,"OP_TOKEN_0_OPERATOR_STATEMENT_1_* -->"
@@ -381,7 +384,7 @@ static const char * Production_name[] ={"0"
 
 #define START_SYMBOL 56
 #define START_ACTION 152
-#define END_ACTION 192
+#define END_ACTION 195
 #define GET_NONTERMINAL_NAME(symbol) (Nonterminal_name [symbol - 55])
 #define GET_TERMINAL_NAME(symbol) (Terminal_name [symbol])
 #define GET_ACTION_NAME(symbol) (Action_name [symbol-(START_ACTION-1)])

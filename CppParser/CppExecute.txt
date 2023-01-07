@@ -6,18 +6,21 @@
 public void execute  ( int  number )
 {
   switch ( number ) {
-    case 1:  endStatement();  break;
-    case 2:  beginStatement();  break;
-    case 3:  cppOnFunctionBegin();  break;
-    case 4:  addFunction();  break;
-    case 5:  cppOnFunctionEnd();  break;
-    case 6:  setFunctionId();  break;
-    case 7:  markParenthesisParam();  break;
-    case 8:  buildHighOrderFunction();  break;
-    case 9:  markBracketParam();  break;
-    case 10:  markStatement();  break;
-    case 11:  pushId();  break;
-    case 12:  pushStr();  break;
-    case 13:  pushNum();  break;
+    case 1:  markSeparator();  break;
+    case 2:  endStatement();  break;
+    case 3:  beginStatement();  break;
+    case 4:  cppOnFunctionBegin();  break;
+    case 5:  addFunction();  break;
+    case 6:  cppOnFunctionEnd();  break;
+    case 7:  setFunctionId();  break;
+    case 8:  markParenthesisParam();  break;
+    case 9:  buildHighOrderFunction();  break;
+    case 10:  markBracketParam();  break;
+    case 11:  markStatement();  break;
+    case 12:  pushId();  break;
+    case 13:  pushStr();  break;
+    case 14:  pushNum();  break;
+    case 15:  pushComma();  break;
+    case 16:  pushSemiColon();  break;
   }
 }

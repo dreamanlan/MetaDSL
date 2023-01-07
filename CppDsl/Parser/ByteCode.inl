@@ -153,7 +153,52 @@ namespace DslParser
             }
         }
     }
-    //--------------------------------------------------------------------------------------	
+    //--------------------------------------------------------------------------------------
+    static inline int calcSeparator(const char* tok)
+    {
+        if(nullptr==tok)
+            return IDslSyntaxCommon::SEPARATOR_NOTHING;
+        else if (tok[0] == ',' && tok[1] == '\0')
+            return IDslSyntaxCommon::SEPARATOR_COMMA;
+        else if (tok[0] == ';' && tok[1] == '\0')
+            return IDslSyntaxCommon::SEPARATOR_SEMICOLON;
+        else
+            return IDslSyntaxCommon::SEPARATOR_NOTHING;
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markSeparator(void)
+    {
+        if (!preconditionCheck())return;
+
+        RuntimeBuilderData::TokenInfo tokenInfo = mData.pop();
+        if (TRUE != tokenInfo.IsValid())return;
+
+        if (mDataFile->IsDebugInfoEnable()) {
+            PRINT_FUNCTION_SCRIPT_DEBUG_INFO("sep:%s\n", tokenInfo.mString);
+        }
+
+        if (mData.isSemanticStackEmpty()) {
+            int dslNum = mDataFile->GetDslInfoNum();
+            if (dslNum > 0) {
+                auto* pDslInfo = mDataFile->GetDslInfo(dslNum - 1);
+                if (nullptr != pDslInfo) {
+                    pDslInfo->SetSeparator(calcSeparator(tokenInfo.mString));
+                }
+            }
+        }
+        else {
+            auto* pFunc = mData.getLastFunction();
+            if (nullptr != pFunc) {
+                int paramNum = pFunc->GetParamNum();
+                if (paramNum > 0) {
+                    auto* pParam = pFunc->GetParam(paramNum - 1);
+                    if (nullptr != pParam) {
+                        pParam->SetSeparator(calcSeparator(tokenInfo.mString));
+                    }
+                }
+            }
+        }
+    }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::beginStatement(void)
     {

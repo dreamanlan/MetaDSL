@@ -2,7 +2,7 @@ PROGRAM:
 	STATEMENTS
 
 STATEMENTS:
-	STATEMENT { SEP STATEMENT }
+	STATEMENT { SEP _action_markSeparator STATEMENT }
 	
 STATEMENT:
 	OPERATOR_STATEMENT_DESC_0 _action_endStatement	
@@ -184,5 +184,5 @@ FUNCTION_ID:
 	NUMBER _action_pushNum
 	
 SEP:
-	,
-	;
+	, _action_pushComma
+	; _action_pushSemiColon

@@ -345,7 +345,7 @@ namespace DslFileReadWrite
             haveComments = TRUE;
         }
         if (haveComments && !newLine) {
-            //ÐÐÊ××¢ÊÍ±ØÐëÒª»»ÐÐ£¬·ñÔò¿ÉÄÜ»á°Ñ´úÂë×¢ÊÍµô
+            //è¡Œé¦–æ³¨é‡Šå¿…é¡»è¦æ¢è¡Œï¼Œå¦åˆ™å¯èƒ½ä¼šæŠŠä»£ç æ³¨é‡ŠæŽ‰
             fwrite("\n", 1, 1, fp);
         }
 #endif
@@ -388,7 +388,7 @@ namespace DslFileReadWrite
             WriteId(fp, StrPolicy::ToCStr(data.GetId()), firstLineNoIndent ? 0 : indent);
         }
         if (isLastOfStatement) {
-            fwrite(";", 1, 1, fp);
+            fwrite(data.GetSepChar(), 1, 1, fp);
         }
         WriteLastCommentsToFile(fp, indent, isLastOfStatement, data);
 #endif
@@ -535,11 +535,14 @@ namespace DslFileReadWrite
                     fwrite("->*", 3, 1, fp);
                     break;
                 }
+                const char* sep = "";
                 for (int ix = 0; ix < data.GetParamNum(); ++ix) {
                     if (ix > 0) {
-                        fwrite(", ", 2, 1, fp);
+                        fwrite(sep, 1, 1, fp);
+                        fwrite(" ", 1, 1, fp);
                     }
                     auto& component = *data.GetParam(ix);
+                    sep = component.GetSepChar();
                     WriteComponent(fp, component, indent, TRUE, FALSE, delim);
                 }
                 switch (paramClass) {
@@ -703,7 +706,7 @@ namespace DslFileReadWrite
             }
         }
         if (isLastOfStatement) {
-            fwrite(";", 1, 1, fp);
+            fwrite(data.GetSepChar(), 1, 1, fp);
         }
         WriteLastCommentsToFile(fp, indent, isLastOfStatement, data);
 #endif
@@ -731,6 +734,15 @@ namespace DslFileReadWrite
     }
     //---------------------------------------------------------------------------------------------
 #if FULL_VERSION
+    static inline char getBinaryEndCode(char endCode, int sep)
+    {
+        if (sep >= IDslSyntaxCommon::SEPARATOR_NOTHING && sep <= IDslSyntaxCommon::SEPARATOR_SEMICOLON) {
+            return endCode + sep - IDslSyntaxCommon::SEPARATOR_NOTHING;
+        }
+        else {
+            return endCode;
+        }
+    }
     template<typename StrT, typename DslTypeT>
     static inline void writeBinarySyntax(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data);
     template<typename StrT, typename DslTypeT>
@@ -741,7 +753,7 @@ namespace DslFileReadWrite
         StrPolicy::Push(identifiers, data.GetId()); 
         idCount++;
         write7BitEncodedInt(s, pos, data.GetLine());
-        s.push_back(0); s[pos++] = (char)BinCode_EndValue;
+        s.push_back(0); s[pos++] = getBinaryEndCode((char)BinCode_EndValue, data.GetSeparator());
     }
     template<typename StrT, typename DslTypeT>
     static inline void writeBinaryFunction(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
@@ -763,7 +775,7 @@ namespace DslFileReadWrite
             auto* syntaxData = data.GetParam(i);
             writeBinarySyntax(s, pos, identifiers, idCount, *syntaxData);
         }
-        s.push_back(0); s[pos++] = (char)BinCode_EndFunction;
+        s.push_back(0); s[pos++] = getBinaryEndCode((char)BinCode_EndFunction, data.GetSeparator());
     }
     template<typename StrT, typename DslTypeT>
     static inline void writeBinaryStatement(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
@@ -781,7 +793,7 @@ namespace DslFileReadWrite
                 writeBinaryFunction(s, pos, identifiers, idCount, *funcData);
             }
         }
-        s.push_back(0); s[pos++] = (char)BinCode_EndStatement;
+        s.push_back(0); s[pos++] = getBinaryEndCode((char)BinCode_EndStatement, data.GetSeparator());
     }
     template<typename StrT, typename DslTypeT>
     static inline void writeBinarySyntax(std::vector<char>& s, int& pos, std::vector<StrT>& identifiers, int& idCount, const DslTypeT& data)
@@ -883,6 +895,19 @@ namespace DslFileReadWrite
     }
 #endif
     //------------------------------------------------------------------------------------------------------------------------------------
+    static bool isBinaryEndCode(byte endCodeStart, byte code, int& sep)
+    {
+        bool ret;
+        if (code >= endCodeStart && code <= endCodeStart + IDslSyntaxCommon::SEPARATOR_SEMICOLON - IDslSyntaxCommon::SEPARATOR_NOTHING) {
+            sep = code - endCodeStart + IDslSyntaxCommon::SEPARATOR_NOTHING;
+            ret = true;
+        }
+        else {
+            sep = 0;
+            ret = false;
+        }
+        return ret;
+    }
     template<typename DslFileT, typename StrT, typename DslTypeT>
     static inline IDslSyntaxCommon* readBinaryParam(DslFileT& file, const char* bytes, int size, int start, int& curCodeIndex, StrT* identifiers, int idCount, int& curIdIndex, DslTypeT& data);
     template<typename DslFileT, typename StrT, typename DslTypeT>
@@ -900,7 +925,9 @@ namespace DslFileReadWrite
                 curCodeIndex += byteCount;
             }
             code = readByte(bytes, size, start + curCodeIndex);
-            if (code == (char)BinCode_EndValue) {
+            int sep;
+            if (isBinaryEndCode((char)BinCode_EndValue, code, sep)) {
+                data.SetSeparator(sep);
                 ++curCodeIndex;
             }
         }
@@ -933,7 +960,9 @@ namespace DslFileReadWrite
             }
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
-                if (code == (char)BinCode_EndFunction) {
+                int sep;
+                if (isBinaryEndCode((char)BinCode_EndFunction, code, sep)) {
+                    data.SetSeparator(sep);
                     ++curCodeIndex;
                     break;
                 }
@@ -957,6 +986,7 @@ namespace DslFileReadWrite
             data.InitFunctionsCapacity(v);
             for (; ; ) {
                 code = readByte(bytes, size, start + curCodeIndex);
+                int sep;
                 if (code == (char)BinCode_BeginValue) {
                     auto* p = DslPolicy::AddValue(file, data);
                     readBinaryValue(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
@@ -967,7 +997,8 @@ namespace DslFileReadWrite
                     readBinaryFunction(file, bytes, size, start, curCodeIndex, identifiers, idCount, curIdIndex, *p);
                     DslPolicy::CompleteAddValurOrFunction(file, data, p);
                 }
-                else if (code == (char)BinCode_EndStatement) {
+                else if (isBinaryEndCode((char)BinCode_EndStatement, code, sep)) {
+                    data.SetSeparator(sep);
                     ++curCodeIndex;
                     break;
                 }

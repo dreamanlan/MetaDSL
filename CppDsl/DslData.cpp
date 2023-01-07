@@ -14,7 +14,7 @@ DslData.cpp
 
 namespace DslData
 {
-    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType)
+    ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType), m_Separator(IDslSyntaxCommon::SEPARATOR_NOTHING)
     {
     }
     ISyntaxComponent::~ISyntaxComponent(void)
@@ -22,6 +22,7 @@ namespace DslData
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
     {
+        m_Separator = other.m_Separator;
         CopyFirstComments(other);
         CopyLastComments(other);
     }

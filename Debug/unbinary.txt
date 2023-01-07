@@ -36,7 +36,7 @@ skill(kkk)
 	b :: [abcd];
 	c :: 
 	{
-		abcd;
+		abcd 
 	};
 	{%abcd%};
 	[%abcd%];

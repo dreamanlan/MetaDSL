@@ -22,6 +22,7 @@ namespace DslParser
             MyAssert(mThis);
         }
     public:
+        inline void    markSeparator(void);
         inline void    endStatement(void);
         inline void    buildOperator(void);
         inline void    buildFirstTernaryOperator(void);

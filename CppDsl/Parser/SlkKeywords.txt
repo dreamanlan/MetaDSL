@@ -10,7 +10,7 @@
 
 typedef struct _Slk_keyword { 
     slk_size_t  token;
-    char  *name;
+    const char  *name;
 }  Slk_keyword_t};
 
 static Slk_keyword_t Slk_keyword [] = { 

@@ -166,6 +166,7 @@ private static string[] Terminal_name ={"0"
 
 private static string[] Action_name ={"0"
 
+,"_action_markSeparator"
 ,"_action_endStatement"
 ,"_action_pushId"
 ,"_action_buildOperator"
@@ -206,6 +207,8 @@ private static string[] Action_name ={"0"
 ,"_action_markPointerStarParam"
 ,"_action_pushStr"
 ,"_action_pushNum"
+,"_action_pushComma"
+,"_action_pushSemiColon"
 };
 
 private static string[] Production_name ={"0"
@@ -291,9 +294,9 @@ private static string[] Production_name ={"0"
 ,"FUNCTION_ID --> IDENTIFIER _action_pushId"
 ,"FUNCTION_ID --> STRING _action_pushStr"
 ,"FUNCTION_ID --> NUMBER _action_pushNum"
-,"SEP --> ,"
-,"SEP --> ;"
-,"SEP_STATEMENT_* --> SEP STATEMENT SEP_STATEMENT_*"
+,"SEP --> , _action_pushComma"
+,"SEP --> ; _action_pushSemiColon"
+,"SEP_STATEMENT_* --> SEP _action_markSeparator STATEMENT SEP_STATEMENT_*"
 ,"SEP_STATEMENT_* -->"
 ,"OP_TOKEN_0_OPERATOR_STATEMENT_1_* --> OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 OP_TOKEN_0_OPERATOR_STATEMENT_1_*"
 ,"OP_TOKEN_0_OPERATOR_STATEMENT_1_* -->"
@@ -383,7 +386,7 @@ private static string[] Production_name ={"0"
 
 private const short   START_SYMBOL = 56;
 private const short   START_ACTION = 152;
-private const short   END_ACTION = 192;
+private const short   END_ACTION = 195;
 
 public static string  GetSymbolName ( short symbol )
 {

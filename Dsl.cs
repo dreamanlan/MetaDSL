@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Dsl
@@ -10,10 +11,16 @@ namespace Dsl
     {
         BeginStatement = 1,
         EndStatement,
+        EndStatementWithComma,
+        EndStatementWithSemiColon,
         BeginFunction,
         EndFunction,
+        EndFunctionWithComma,
+        EndFunctionWithSemiColon,
         BeginValue,
         EndValue,
+        EndValueWithComma,
+        EndValueWithSemiColon,
         ValueTypeBegin,
         ValueTypeEnd = ValueTypeBegin + ValueData.MAX_TYPE,
         ParamOrExternClassBegin
@@ -45,6 +52,10 @@ namespace Dsl
         string ToScriptString(bool includeComment);
         bool HaveId();
 
+        void SetSeparator(int sep);
+        int GetSeparator();
+        char GetSepChar();
+
         string CalcFirstComment();
         string CalcLastComment();
         void CopyComments(ISyntaxComponent other);
@@ -63,12 +74,36 @@ namespace Dsl
         public const int STRING_TOKEN = 2;
         public const int MAX_TYPE = 2;
 
+        public const int SEPARATOR_NOTHING = 0;
+        public const int SEPARATOR_COMMA = 1;
+        public const int SEPARATOR_SEMICOLON = 2;
+
         public abstract bool IsValid();
         public abstract string GetId();
         public abstract int GetIdType();
         public abstract int GetLine();
         public abstract string ToScriptString(bool includeComment);
         public abstract bool HaveId();
+
+        public void SetSeparator(int sep)
+        {
+            m_Separator = sep;
+        }
+        public int GetSeparator()
+        {
+            return m_Separator;
+        }
+        public char GetSepChar()
+        {
+            switch(m_Separator) {
+                case SEPARATOR_COMMA:
+                    return ',';
+                case SEPARATOR_SEMICOLON:
+                    return ';';
+                default:
+                    return ' ';
+            }
+        }
 
         public string CalcFirstComment()
         {
@@ -189,6 +224,8 @@ namespace Dsl
         {
             return null;
         }
+
+        private int m_Separator = AbstractSyntaxComponent.SEPARATOR_NOTHING;
     }
     public abstract class ValueOrFunctionData : AbstractSyntaxComponent
     {
@@ -1850,7 +1887,7 @@ namespace Dsl
             writeFirstComments(stream, data, indent, firstLineNoIndent);
             writeText(stream, data.ToScriptString(false), firstLineNoIndent ? 0 : indent);
             if (isLastOfStatement)
-                stream.Append(';');
+                stream.Append(data.GetSepChar());
             writeLastComments(stream, data, indent, isLastOfStatement);
 #endif
         }
@@ -2028,10 +2065,14 @@ namespace Dsl
                         }
                         stream.Append(lbracket);
                         int ct = data.GetParamNum();
+                        char sep = ' ';
                         for (int i = 0; i < ct; ++i) {
-                            if (i > 0)
-                                stream.Append(", ");
+                            if (i > 0) {
+                                stream.Append(sep);
+                                stream.Append(' ');
+                            }
                             ISyntaxComponent param = data.GetParam(i);
+                            sep = param.GetSepChar();
                             if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
@@ -2056,7 +2097,7 @@ namespace Dsl
                 }
             }
             if (isLastOfStatement)
-                stream.Append(';');
+                stream.Append(data.GetSepChar());
             foreach (string cmt in data.Comments) {
                 writeText(stream, cmt, 1);
             }
@@ -2138,7 +2179,7 @@ namespace Dsl
                 }
             }
             if (isLastOfStatement)
-                stream.Append(';');
+                stream.Append(data.GetSepChar());
             writeLastComments(stream, data, indent, isLastOfStatement);
 #endif
         }
@@ -2518,6 +2559,19 @@ namespace Dsl
             else
                 return string.Empty;
         }
+        private static bool isBinaryEndCode(byte endCodeStart, byte code, out int sep)
+        {
+            bool ret;
+            if (code >= endCodeStart && code <= endCodeStart + (byte)AbstractSyntaxComponent.SEPARATOR_SEMICOLON - (byte)AbstractSyntaxComponent.SEPARATOR_NOTHING) {
+                sep = code - endCodeStart + AbstractSyntaxComponent.SEPARATOR_NOTHING;
+                ret = true;
+            }
+            else {
+                sep = 0;
+                ret = false;
+            }
+            return ret;
+        }
         internal static List<ISyntaxComponent> readBinary(byte[] bytes, int start, int count, List<string> identifiers)
         {
             List<ISyntaxComponent> infos = new List<ISyntaxComponent>();
@@ -2575,7 +2629,9 @@ namespace Dsl
                     curCodeIndex += byteCount;
                 }
                 code = readByte(bytes, start + curCodeIndex);
-                if (code == (byte)DslBinaryCode.EndValue) {
+                int sep;
+                if (isBinaryEndCode((byte)DslBinaryCode.EndValue, code, out sep)) {
+                    data.SetSeparator(sep);
                     ++curCodeIndex;
                 }
             }
@@ -2608,7 +2664,9 @@ namespace Dsl
                 }
                 for (; ; ) {
                     code = readByte(bytes, start + curCodeIndex);
-                    if (code == (byte)DslBinaryCode.EndFunction) {
+                    int sep;
+                    if (isBinaryEndCode((byte)DslBinaryCode.EndFunction, code, out sep)) {
+                        data.SetSeparator(sep);
                         ++curCodeIndex;
                         break;
                     }
@@ -2634,6 +2692,7 @@ namespace Dsl
                 data.Functions.Capacity = v;
                 for (; ; ) {
                     code = readByte(bytes, start + curCodeIndex);
+                    int sep;
                     if (code == (byte)DslBinaryCode.BeginValue) {
                         ValueData valData = new ValueData();
                         readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, valData);
@@ -2644,7 +2703,8 @@ namespace Dsl
                         readBinary(bytes, start, ref curCodeIndex, identifiers, ref curIdIndex, funcData);
                         data.Functions.Add(funcData);
                     }
-                    else if (code == (byte)DslBinaryCode.EndStatement) {
+                    else if (isBinaryEndCode((byte)DslBinaryCode.EndStatement, code, out sep)) {
+                        data.SetSeparator(sep);
                         ++curCodeIndex;
                         break;
                     }
@@ -2656,6 +2716,15 @@ namespace Dsl
         }
         //---------------------------------------------------------------------------------------------
 #if FULL_VERSION
+        private static byte getBinaryEndCode(byte endCode, int sep)
+        {
+            if (sep >= AbstractSyntaxComponent.SEPARATOR_NOTHING && sep <= AbstractSyntaxComponent.SEPARATOR_SEMICOLON) {
+                return (byte)(endCode + sep - AbstractSyntaxComponent.SEPARATOR_NOTHING);
+            }
+            else {
+                return endCode;
+            }
+        }
         internal static void writeBinary(MemoryStream stream, List<string> identifiers, ISyntaxComponent data)
         {
             ValueData val = data as ValueData;
@@ -2681,7 +2750,7 @@ namespace Dsl
                 identifiers.Add(data.GetId());
                 write7BitEncodedInt(stream, data.GetLine());
             }
-            stream.WriteByte((byte)DslBinaryCode.EndValue);
+            stream.WriteByte(getBinaryEndCode((byte)DslBinaryCode.EndValue, data.GetSeparator()));
         }
         internal static void writeBinary(MemoryStream stream, List<string> identifiers, FunctionData data)
         {
@@ -2701,7 +2770,7 @@ namespace Dsl
                     writeBinary(stream, identifiers, syntaxData);
                 }
             }
-            stream.WriteByte((byte)DslBinaryCode.EndFunction);
+            stream.WriteByte(getBinaryEndCode((byte)DslBinaryCode.EndFunction, data.GetSeparator()));
         }
         internal static void writeBinary(MemoryStream stream, List<string> identifiers, StatementData data)
         {
@@ -2717,7 +2786,7 @@ namespace Dsl
                     writeBinary(stream, identifiers, func);
                 }
             }
-            stream.WriteByte((byte)DslBinaryCode.EndStatement);
+            stream.WriteByte(getBinaryEndCode((byte)DslBinaryCode.EndStatement, data.GetSeparator()));
         }
 #endif
     }

@@ -153,46 +153,49 @@ namespace Dsl.Common
         private void executeDsl(int number)
         {
             switch (number) {
-                case 1: endStatement(); break;
-                case 2: pushId(); break;
-                case 3: buildOperator(); break;
-                case 4: buildFirstTernaryOperator(); break;
-                case 5: buildSecondTernaryOperator(); break;
-                case 6: beginStatement(); break;
-                case 7: addFunction(); break;
-                case 8: setFunctionId(); break;
-                case 9: markParenthesisParam(); break;
-                case 10: buildHighOrderFunction(); break;
-                case 11: markBracketParam(); break;
-                case 12: markQuestionParenthesisParam(); break;
-                case 13: markQuestionBracketParam(); break;
-                case 14: markQuestionBraceParam(); break;
-                case 15: markStatement(); break;
-                case 16: markExternScript(); break;
-                case 17: setExternScript(); break;
-                case 18: markBracketColonParam(); break;
-                case 19: markParenthesisColonParam(); break;
-                case 20: markAngleBracketColonParam(); break;
-                case 21: markBracePercentParam(); break;
-                case 22: markBracketPercentParam(); break;
-                case 23: markParenthesisPercentParam(); break;
-                case 24: markAngleBracketPercentParam(); break;
-                case 25: markColonColonParam(); break;
-                case 26: setMemberId(); break;
-                case 27: markColonColonParenthesisParam(); break;
-                case 28: markColonColonBracketParam(); break;
-                case 29: markColonColonBraceParam(); break;
-                case 30: markPeriodParam(); break;
-                case 31: markPeriodParenthesisParam(); break;
-                case 32: markPeriodBracketParam(); break;
-                case 33: markPeriodBraceParam(); break;
-                case 34: markQuestionPeriodParam(); break;
-                case 35: markPointerParam(); break;
-                case 36: markPeriodStarParam(); break;
-                case 37: markQuestionPeriodStarParam(); break;
-                case 38: markPointerStarParam(); break;
-                case 39: pushStr(); break;
-                case 40: pushNum(); break;
+                case 1: markSeparator(); break;
+                case 2: endStatement(); break;
+                case 3: pushId(); break;
+                case 4: buildOperator(); break;
+                case 5: buildFirstTernaryOperator(); break;
+                case 6: buildSecondTernaryOperator(); break;
+                case 7: beginStatement(); break;
+                case 8: addFunction(); break;
+                case 9: setFunctionId(); break;
+                case 10: markParenthesisParam(); break;
+                case 11: buildHighOrderFunction(); break;
+                case 12: markBracketParam(); break;
+                case 13: markQuestionParenthesisParam(); break;
+                case 14: markQuestionBracketParam(); break;
+                case 15: markQuestionBraceParam(); break;
+                case 16: markStatement(); break;
+                case 17: markExternScript(); break;
+                case 18: setExternScript(); break;
+                case 19: markBracketColonParam(); break;
+                case 20: markParenthesisColonParam(); break;
+                case 21: markAngleBracketColonParam(); break;
+                case 22: markBracePercentParam(); break;
+                case 23: markBracketPercentParam(); break;
+                case 24: markParenthesisPercentParam(); break;
+                case 25: markAngleBracketPercentParam(); break;
+                case 26: markColonColonParam(); break;
+                case 27: setMemberId(); break;
+                case 28: markColonColonParenthesisParam(); break;
+                case 29: markColonColonBracketParam(); break;
+                case 30: markColonColonBraceParam(); break;
+                case 31: markPeriodParam(); break;
+                case 32: markPeriodParenthesisParam(); break;
+                case 33: markPeriodBracketParam(); break;
+                case 34: markPeriodBraceParam(); break;
+                case 35: markQuestionPeriodParam(); break;
+                case 36: markPointerParam(); break;
+                case 37: markPeriodStarParam(); break;
+                case 38: markQuestionPeriodStarParam(); break;
+                case 39: markPointerStarParam(); break;
+                case 40: pushStr(); break;
+                case 41: pushNum(); break;
+                case 42: pushComma(); break;
+                case 43: pushSemiColon(); break;
             }
         }
         private void executeLua(int number)
@@ -204,7 +207,7 @@ namespace Dsl.Common
                 case 4: setFunctionId(); break;
                 case 5: markStatement(); break;
                 case 6: markParenthesisParam(); break;
-                case 7: endStatement(); break;
+                case 7: endStatementLua(); break;
                 case 8: pushLuaList(); break;
                 case 9: checkLuaList(); break;
                 case 10: pushAssignWith(); break;
@@ -232,22 +235,210 @@ namespace Dsl.Common
         private void executeCpp(int number)
         {
             switch (number) {
-                case 1: endStatement(); break;
-                case 2: beginStatement(); break;
-                case 3: cppOnFunctionBegin(); break;
-                case 4: addFunction(); break;
-                case 5: cppOnFunctionEnd(); break;
-                case 6: setFunctionId(); break;
-                case 7: markParenthesisParam(); break;
-                case 8: buildHighOrderFunction(); break;
-                case 9: markBracketParam(); break;
-                case 10: markStatement(); break;
-                case 11: pushId(); break;
-                case 12: pushStr(); break;
-                case 13: pushNum(); break;
+                case 1: markSeparator(); break;
+                case 2: endStatement(); break;
+                case 3: beginStatement(); break;
+                case 4: cppOnFunctionBegin(); break;
+                case 5: addFunction(); break;
+                case 6: cppOnFunctionEnd(); break;
+                case 7: setFunctionId(); break;
+                case 8: markParenthesisParam(); break;
+                case 9: buildHighOrderFunction(); break;
+                case 10: markBracketParam(); break;
+                case 11: markStatement(); break;
+                case 12: pushId(); break;
+                case 13: pushStr(); break;
+                case 14: pushNum(); break;
+                case 15: pushComma(); break;
+                case 16: pushSemiColon(); break;
             }
         }
 
+        private void endStatementImpl(bool addSep)
+        {
+            if (null != mOnBeforeEndStatement) {
+                mOnBeforeEndStatement(ref this);
+            }
+            StatementData statement = popStatement();
+            if (null != mOnEndStatement) {
+                mOnEndStatement(ref this, ref statement);
+            }
+            FunctionData call = statement.First.AsFunction;
+            if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.Functions.Count == 1 && null != call && call.GetId() == "@@delimiter" && (call.GetParamNum() == 1 || call.GetParamNum() == 3) && !call.IsHighOrder) {
+                string type = call.GetParamId(0);
+                if (call.GetParamNum() == 3) {
+                    string begin = call.GetParamId(1);
+                    string end = call.GetParamId(2);
+                    if (type == "string") {
+                        setStringDelimiter(begin, end);
+                    }
+                    else if (type == "script") {
+                        setScriptDelimiter(begin, end);
+                    }
+                    else {
+                        //invalid
+                    }
+                }
+                else {
+                    if (type == "string") {
+                        setStringDelimiter(string.Empty, string.Empty);
+                    }
+                    else if (type == "script") {
+                        setScriptDelimiter(string.Empty, string.Empty);
+                    }
+                    else {
+                        //invalid
+                    }
+                }
+                return;
+            }
+
+            bool commentOnNewLine;
+            IList<string> cmts = GetComments(out commentOnNewLine);
+            if (cmts.Count > 0) {
+                if (statement.LastComments.Count <= 0) {
+                    statement.LastCommentOnNewLine = commentOnNewLine;
+                }
+                statement.LastComments.AddRange(cmts);
+            }
+
+            if (mStatementSemanticStack.Count == 0) {
+                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
+                ValueData vdSyntax = statementSyntax as ValueData;
+                if (!statementSyntax.IsValid()) {
+                    //_epsilon_表达式无语句语义
+                    if (mScriptDatas.Count > 0) {
+                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statementSyntax.FirstComments);
+                        last.LastComments.AddRange(statementSyntax.LastComments);
+                    }
+                    return;
+                }
+                else if (null != vdSyntax) {
+                    //如果语句是普通值，注释挪到上一语句
+                    if (mScriptDatas.Count > 0) {
+                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statement.FirstComments);
+                        last.LastComments.AddRange(statement.LastComments);
+                    }
+                }
+                else {
+                    //上一行语句的注释挪到上一行语句
+                    if (mScriptDatas.Count > 0 && !statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
+                        string cmt = statementSyntax.FirstComments[0];
+                        statementSyntax.FirstComments.RemoveAt(0);
+                        statementSyntax.FirstCommentOnNewLine = true;
+                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = false;
+                        }
+                        last.LastComments.Add(cmt);
+                    }
+                }
+                //顶层元素结束
+                if (mScriptDatas.Count > 0) {
+                    var lastStm = mScriptDatas[mScriptDatas.Count - 1];
+                    lastStm.SetSeparator(AbstractSyntaxComponent.SEPARATOR_SEMICOLON);
+                }
+                mScriptDatas.Add(statementSyntax);
+            }
+            else {
+                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
+                ValueData vdSyntax = statementSyntax as ValueData;
+                FunctionData func = getLastFunction();
+                if (func.HaveParam()) {
+                    //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
+                    if (!statementSyntax.IsValid())
+                        return;
+                }
+                else if (!statement.IsValid()) {
+                    //_epsilon_表达式无语句语义
+                    if (func.Params.Count > 0 && statementSyntax.FirstComments.Count > 0) {
+                        AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statementSyntax.FirstComments);
+                        last.LastComments.AddRange(statementSyntax.LastComments);
+                    }
+                    return;
+                }
+                else if (null != vdSyntax) {
+                    //如果语句是普通值，注释挪到上一语句
+                    if (func.Params.Count > 0) {
+                        AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
+                        if (last.LastComments.Count <= 0) {
+                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
+                        }
+                        last.LastComments.AddRange(statement.FirstComments);
+                        last.LastComments.AddRange(statement.LastComments);
+                    }
+                    else {
+                        func.Comments.AddRange(statement.FirstComments);
+                        func.Comments.AddRange(statement.LastComments);
+                    }
+                }
+                else {
+                    //上一行语句的注释挪到上一行语句或外层函数头或外层函数
+                    if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
+                        string cmt = statementSyntax.FirstComments[0];
+                        statementSyntax.FirstComments.RemoveAt(0);
+                        statementSyntax.FirstCommentOnNewLine = true;
+                        if (func.Params.Count > 0) {
+                            AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
+                            if (last.LastComments.Count <= 0) {
+                                last.LastCommentOnNewLine = false;
+                            }
+                            last.LastComments.Add(cmt);
+                        }
+                        else if (func.IsHighOrder) {
+                            func.LowerOrderFunction.Comments.Add(cmt);
+                        }
+                        else {
+                            func.Comments.Add(cmt);
+                        }
+                    }
+                }
+
+                if (func.GetParamNum() > 0) {
+                    var lastParam = func.GetParam(func.GetParamNum()-1);
+                    lastParam.SetSeparator(func.GetParamClassUnmasked() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT ? AbstractSyntaxComponent.SEPARATOR_SEMICOLON : AbstractSyntaxComponent.SEPARATOR_COMMA);
+                }
+                func.AddParam(statementSyntax);
+            }
+        }
+        private void endStatementLua()
+        {
+            endStatementImpl(true);
+        }
+
+        public void markSeparator()
+        {
+            int type;
+            string name = pop(out type);
+
+            if (mStatementSemanticStack.Count == 0) {
+                if (mScriptDatas.Count > 0) {
+                    var dslInfo = mScriptDatas[mScriptDatas.Count - 1];
+                    dslInfo.SetSeparator(CalcSeparator(name));
+                }
+            }
+            else {
+                var lastFunc = getLastFunction();
+                if (lastFunc.GetParamNum() > 0) {
+                    var lastParam = lastFunc.GetParam(lastFunc.GetParamNum() - 1);
+                    lastParam.SetSeparator(CalcSeparator(name));
+                }
+            }
+        }
         public void buildOperator()
         {
             int type;
@@ -358,155 +549,7 @@ namespace Dsl.Common
         }
         public void endStatement()
         {
-            if (null != mOnBeforeEndStatement) {
-                mOnBeforeEndStatement(ref this);
-            }
-            StatementData statement = popStatement();
-            if (null != mOnEndStatement) {
-                mOnEndStatement(ref this, ref statement);
-            }
-            FunctionData call = statement.First.AsFunction;
-            if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.Functions.Count == 1 && null != call && call.GetId() == "@@delimiter" && (call.GetParamNum() == 1 || call.GetParamNum() == 3) && !call.IsHighOrder) {
-                string type = call.GetParamId(0);
-                if (call.GetParamNum() == 3) {
-                    string begin = call.GetParamId(1);
-                    string end = call.GetParamId(2);
-                    if (type == "string") {
-                        setStringDelimiter(begin, end);
-                    }
-                    else if (type == "script") {
-                        setScriptDelimiter(begin, end);
-                    }
-                    else {
-                        //invalid
-                    }
-                }
-                else {
-                    if (type == "string") {
-                        setStringDelimiter(string.Empty, string.Empty);
-                    }
-                    else if (type == "script") {
-                        setScriptDelimiter(string.Empty, string.Empty);
-                    }
-                    else {
-                        //invalid
-                    }
-                }
-                return;
-            }
-
-            bool commentOnNewLine;
-            IList<string> cmts = GetComments(out commentOnNewLine);
-            if (cmts.Count > 0) {
-                if (statement.LastComments.Count <= 0) {
-                    statement.LastCommentOnNewLine = commentOnNewLine;
-                }
-                statement.LastComments.AddRange(cmts);
-            }
-
-            if (mStatementSemanticStack.Count == 0) {
-                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
-                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
-                ValueData vdSyntax = statementSyntax as ValueData;
-                if (!statementSyntax.IsValid()) {
-                    //_epsilon_表达式无语句语义
-                    if (mScriptDatas.Count > 0) {
-                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
-                        if (last.LastComments.Count <= 0) {
-                            last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
-                        }
-                        last.LastComments.AddRange(statementSyntax.FirstComments);
-                        last.LastComments.AddRange(statementSyntax.LastComments);
-                    }
-                    return;
-                }
-                else if (null != vdSyntax) {
-                    //如果语句是普通值，注释挪到上一语句
-                    if (mScriptDatas.Count > 0) {
-                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
-                        if (last.LastComments.Count <= 0) {
-                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
-                        }
-                        last.LastComments.AddRange(statement.FirstComments);
-                        last.LastComments.AddRange(statement.LastComments);
-                    }
-                }
-                else {
-                    //上一行语句的注释挪到上一行语句
-                    if (mScriptDatas.Count > 0 && !statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
-                        string cmt = statementSyntax.FirstComments[0];
-                        statementSyntax.FirstComments.RemoveAt(0);
-                        statementSyntax.FirstCommentOnNewLine = true;
-                        ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
-                        if (last.LastComments.Count <= 0) {
-                            last.LastCommentOnNewLine = false;
-                        }
-                        last.LastComments.Add(cmt);
-                    }
-                }
-                //顶层元素结束
-                mScriptDatas.Add(statementSyntax);
-            }
-            else {
-                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
-                AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
-                ValueData vdSyntax = statementSyntax as ValueData;
-                FunctionData func = getLastFunction();
-                if (func.HaveParam()) {
-                    //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
-                    if (!statementSyntax.IsValid())
-                        return;
-                }
-                else if (!statement.IsValid()) {
-                    //_epsilon_表达式无语句语义
-                    if (func.Params.Count > 0 && statementSyntax.FirstComments.Count > 0) {
-                        AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
-                        if (last.LastComments.Count <= 0) {
-                            last.LastCommentOnNewLine = statementSyntax.FirstCommentOnNewLine;
-                        }
-                        last.LastComments.AddRange(statementSyntax.FirstComments);
-                        last.LastComments.AddRange(statementSyntax.LastComments);
-                    }
-                    return;
-                }
-                else if (null != vdSyntax) {
-                    //如果语句是普通值，注释挪到上一语句
-                    if (func.Params.Count > 0) {
-                        AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
-                        if (last.LastComments.Count <= 0) {
-                            last.LastCommentOnNewLine = statement.FirstCommentOnNewLine;
-                        }
-                        last.LastComments.AddRange(statement.FirstComments);
-                        last.LastComments.AddRange(statement.LastComments);
-                    }
-                    else {
-                        func.Comments.AddRange(statement.FirstComments);
-                        func.Comments.AddRange(statement.LastComments);
-                    }
-                }
-                else {
-                    //上一行语句的注释挪到上一行语句或外层函数头或外层函数
-                    if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
-                        string cmt = statementSyntax.FirstComments[0];
-                        statementSyntax.FirstComments.RemoveAt(0);
-                        statementSyntax.FirstCommentOnNewLine = true;
-                        if (func.Params.Count > 0) {
-                            AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
-                            if (last.LastComments.Count <= 0) {
-                                last.LastCommentOnNewLine = false;
-                            }
-                            last.LastComments.Add(cmt);
-                        }
-                        else if (func.IsHighOrder) {
-                            func.LowerOrderFunction.Comments.Add(cmt);
-                        }
-                        else {
-                            func.Comments.Add(cmt);
-                        }
-                    }
-                }
-                func.AddParam(statementSyntax);
-            }
+            endStatementImpl(false);
         }
         public void addFunction()
         {
@@ -724,6 +767,14 @@ namespace Dsl.Common
         private void pushStr()
         {
             push(getLastToken(), FunctionData.STRING_TOKEN);
+        }
+        private void pushComma()
+        {
+            push(",", FunctionData.STRING_TOKEN);
+        }
+        private void pushSemiColon()
+        {
+            push(";", FunctionData.STRING_TOKEN);
         }
         /// ---------------------------------------------------------------
         /// 用于特定语法的语义行为，dsl目前提供lua精确语法与cpp类语言模糊语法的解析
@@ -1128,6 +1179,16 @@ namespace Dsl.Common
         private Stack<StatementData> mStatementSemanticStack;
 
         private static List<string> s_EmptyList = new List<string>();
+
+        private int CalcSeparator(string tok)
+        {
+            if (tok == ",")
+                return AbstractSyntaxComponent.SEPARATOR_COMMA;
+            else if (tok == ";")
+                return AbstractSyntaxComponent.SEPARATOR_SEMICOLON;
+            else
+                return AbstractSyntaxComponent.SEPARATOR_NOTHING;
+        }
     }
     internal interface IVisitor
     {

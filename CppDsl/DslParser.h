@@ -151,6 +151,19 @@ namespace DslParser
         virtual int HaveId(void) const = 0;
     public:
         int GetSyntaxType(void) const { return m_SyntaxType; }
+        void SetSeparator(int sep) { m_Separator = sep; }
+        int GetSeparator(void) const { return m_Separator; }
+        const char* GetSepChar(void) const
+        {
+            switch (m_Separator) {
+            case SEPARATOR_COMMA:
+                return ",";
+            case SEPARATOR_SEMICOLON:
+                return ";";
+            default:
+                return " ";
+            }
+        }
         void AddFirstComment(const char* cmt)
         {
             if (0 == GetCommentsInfo())
@@ -299,6 +312,7 @@ namespace DslParser
         void PrepareLastComments(void);
     private:
         int m_SyntaxType;
+        int m_Separator;
     };
 
     class FunctionData;
@@ -1280,6 +1294,7 @@ namespace DslParser
     class DslActionApi
     {
     public:
+        void markSeparator(void)const;
         void endStatement(void)const;
         void buildOperator(void)const;
         void buildFirstTernaryOperator(void)const;
