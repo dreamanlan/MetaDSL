@@ -19,6 +19,7 @@ namespace Dsl
             //DslFile.DontLoadComments = true;
             List<string> keyBuffer = new List<string>();
             List<string> idBuffer = new List<string>();
+            ///*
             DslFile file0 = new DslFile();
             string gppSrc;
             file0.LoadGpp("test.h", logCallback, "={:=", "=:}=", out gppSrc);
@@ -35,6 +36,7 @@ namespace Dsl
 #if FULL_VERSION
             file1.Save("copy.lua");
 #endif
+            //*/
             DslFile file = new DslFile();
             //return语句修改为return <-句式，保证return在语义数据的浅层，方便后续处理
             file.onGetToken = (ref Dsl.Common.DslToken dslToken, ref string tok, ref short val, ref int line) => {
@@ -58,6 +60,7 @@ namespace Dsl
             file.Save("copy.txt");
             file.SaveBinaryFile("binary.txt");
 #endif
+            
             file.DslInfos.Clear();
             var code = File.ReadAllBytes("binary.txt");
             file.LoadBinaryCode(code, keyBuffer, idBuffer);
@@ -70,6 +73,7 @@ namespace Dsl
             }
             long t2 = GetLocalMilliseconds();
             Console.WriteLine("time:{0}", t2 - t1);
+            
         }
 
         public static long GetLocalMilliseconds()

@@ -343,7 +343,7 @@ namespace Dsl.Common
                     }
                 }
                 //顶层元素结束
-                if (mScriptDatas.Count > 0) {
+                if (addSep && mScriptDatas.Count > 0) {
                     var lastStm = mScriptDatas[mScriptDatas.Count - 1];
                     lastStm.SetSeparator(AbstractSyntaxComponent.SEPARATOR_SEMICOLON);
                 }
@@ -408,7 +408,7 @@ namespace Dsl.Common
                     }
                 }
 
-                if (func.GetParamNum() > 0) {
+                if (addSep && func.GetParamNum() > 0) {
                     var lastParam = func.GetParam(func.GetParamNum()-1);
                     lastParam.SetSeparator(func.GetParamClassUnmasked() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT ? AbstractSyntaxComponent.SEPARATOR_SEMICOLON : AbstractSyntaxComponent.SEPARATOR_COMMA);
                 }
