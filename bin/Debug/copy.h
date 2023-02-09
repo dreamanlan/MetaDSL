@@ -8,7 +8,7 @@
 		unsigned int len;
 	};
 	typedef struct index_st index_t;
-	int x;
+	int x,
 	y;
 	x "=" offsetof(struct index_st, len);
 	y "=" offsetof(index_t, num);

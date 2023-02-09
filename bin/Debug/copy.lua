@@ -1,4 +1,4 @@
-collectgarbage("setpause", 50);
+collectgarbage("setpause", 50) 
 collectgarbage("setstepmul", 200);
 function(dummycall)
 luaargs()
@@ -401,8 +401,8 @@ luaargs()
 	local(lualist(results)assignwith(
 	{
 		jit.status() 
-	}));
-	Utility.AppendFormat(infos, "jit status count {0}",  # results);
+	})) 
+	Utility.AppendFormat(infos, "jit status count {0}",  # results) 
 	infos->AppendLine();
 	for(i, v)
 	in(ipairs(results))
@@ -414,13 +414,13 @@ luaargs()
 		else
 		{
 			Utility.AppendFormat(infos, " {0}", v) 
-		};
+		} 
 		infos->AppendLine() 
-	};
+	} 
 	UnityEngine.Debug.Log__Object(infos->ToString()) 
-};
-jit.off();
-jit.flush();
+} 
+jit.off() 
+jit.flush() 
 printJitStatus();
 if( not package.loading)
 {
@@ -526,25 +526,25 @@ luaargs(class)
 		__index = function()
 		luaargs(tb, key)
 		{
-			setmetatable(class, nil);
+			setmetatable(class, nil) 
 			class.__define_class();
 			return(tb[key]) 
 		};
 		__newindex = function()
 		luaargs(tb, key, val)
 		{
-			setmetatable(class, nil);
+			setmetatable(class, nil) 
 			class.__define_class();
 			lualist(tb[key])assignwith(val) 
 		};
 		__call = function()
 		luaargs(...)
 		{
-			setmetatable(class, nil);
+			setmetatable(class, nil) 
 			class.__define_class();
 			return(class(...)) 
 		} 
-	});
+	}) 
 	rawset(class, "__cs2lua_predefined", true) 
 };
 function(lualog)
@@ -573,7 +573,7 @@ function(luapcall_geterror)
 luaargs(e)
 {
 	local(lualist(err)assignwith(tostring(e)));
-	local(lualist(trace)assignwith(debug.traceback(err)));
+	local(lualist(trace)assignwith(debug.traceback(err))) 
 	UnityEngine.Debug.LogError__Object(err .. ", " .. trace);
 	return(err) 
 };
@@ -593,7 +593,7 @@ function(luatry_geterror)
 luaargs(e)
 {
 	local(lualist(err)assignwith(tostring(e)));
-	local(lualist(trace)assignwith(debug.traceback(err)));
+	local(lualist(trace)assignwith(debug.traceback(err))) 
 	UnityEngine.Debug.LogError__Object(err .. ", " .. trace);
 	return(
 	{
@@ -690,7 +690,7 @@ luaargs(elementType, elementTypeKind, callerClass, class, name, argCount, ...)
 function(getexterninstanceindexer)
 luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, ...)
 {
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	local(index);
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(meta)
@@ -747,7 +747,7 @@ luaargs(elementType, elementTypeKind, callerClass, class, name, argCount, ...)
 function(setexterninstanceindexer)
 luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, ...)
 {
-	local(lualist(arg1, arg2, arg3)assignwith(...));
+	local(lualist(arg1  arg2  arg3)assignwith(...));
 	local(index);
 	lualist(index)assignwith(__unwrap_if_string(arg1));
 	lualist(val)assignwith(arg2);
@@ -831,7 +831,7 @@ luaargs(funcInfo, class, obj)
 function(invokeexternoperatorreturnstructimpl)
 luaargs(funcInfo, rettype, class, method, ...)
 {
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	local(lualist(marg1)assignwith(arg1 and getmetatable(arg1)));
 	local(lualist(marg2)assignwith(arg2 and getmetatable(arg2)));
 	if(rettype == System.Boolean and class == System.Type)
@@ -888,7 +888,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 		{
 			if(t == "Vector3")
 			{
-				local(lualist(v4)assignwith(UnityEngine.Vector4.New(arg1.x, arg1.y, arg1.z)));
+				local(lualist(v4)assignwith(UnityEngine.Vector4.New(arg1.x, arg1.y, arg1.z))) 
 				table.insert(funcInfo.v4_list, v4);
 				return(v4) 
 			}
@@ -896,13 +896,13 @@ luaargs(funcInfo, rettype, class, method, ...)
 			{
 				if(rettype == UnityEngine.Vector3)
 				{
-					local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg1.x, arg1.y, arg1.z)));
+					local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg1.x, arg1.y, arg1.z))) 
 					table.insert(funcInfo.v3_list, v3);
 					return(v3) 
 				}
 				else
 				{
-					local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x, arg1.y)));
+					local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x, arg1.y))) 
 					table.insert(funcInfo.v2_list, v2);
 					return(v2) 
 				} 
@@ -912,13 +912,13 @@ luaargs(funcInfo, rettype, class, method, ...)
 		{
 			if(t == "Vector3")
 			{
-				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x, arg1.y)));
+				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x, arg1.y))) 
 				table.insert(funcInfo.v2_list, v2);
 				return(v2) 
 			}
 			else
 			{
-				local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg1.x, arg1.y, 0)));
+				local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg1.x, arg1.y, 0))) 
 				table.insert(funcInfo.v3_list, v3);
 				return(v3) 
 			} 
@@ -927,13 +927,13 @@ luaargs(funcInfo, rettype, class, method, ...)
 		{
 			if(t == "Color32")
 			{
-				local(lualist(c)assignwith(UnityEngine.Color.New(arg1.r / 255.0, arg1.g / 255.0, arg1.b / 255.0, arg1.a / 255.0)));
+				local(lualist(c)assignwith(UnityEngine.Color.New(arg1.r / 255.0, arg1.g / 255.0, arg1.b / 255.0, arg1.a / 255.0))) 
 				table.insert(funcInfo.c_list, c);
 				return(c) 
 			}
 			else
 			{
-				local(lualist(c32)assignwith(Color32Pool.Alloc()));
+				local(lualist(c32)assignwith(Color32Pool.Alloc())) 
 				table.insert(funcInfo.c32_list, c32);
 				lualist(c32.x)assignwith(arg1.r * 255);
 				lualist(c32.y)assignwith(arg1.g * 255);
@@ -967,67 +967,67 @@ luaargs(funcInfo, rettype, class, method, ...)
 			};
 			if(t1 == "Vector2" and type(arg2) == "number")
 			{
-				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x * arg2, arg1.y * arg2)));
+				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x * arg2, arg1.y * arg2))) 
 				table.insert(funcInfo.v2_list, v2);
 				return(v2) 
 			}
 			elseif(type(arg1) == "number" and t2 == "Vector2")
 			{
-				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg2.x * arg1, arg2.y * arg1)));
+				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg2.x * arg1, arg2.y * arg1))) 
 				table.insert(funcInfo.v2_list, v2);
 				return(v2) 
 			}
 			elseif(t1 == "Vector2" and type(arg2) == "Vector2")
 			{
-				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x * arg2.x, arg1.y * arg2.y)));
+				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x * arg2.x, arg1.y * arg2.y))) 
 				table.insert(funcInfo.v2_list, v2);
 				return(v2) 
 			}
 			elseif(t1 == "Vector3" and type(arg2) == "number")
 			{
-				local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg1.x * arg2, arg1.y * arg2, arg1.z * arg2)));
+				local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg1.x * arg2, arg1.y * arg2, arg1.z * arg2))) 
 				table.insert(funcInfo.v3_list, v3);
 				return(v3) 
 			}
 			elseif(type(arg1) == "number" and t2 == "Vector3")
 			{
-				local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg2.x * arg1, arg2.y * arg1, arg2.z * arg1)));
+				local(lualist(v3)assignwith(UnityEngine.Vector3.New(arg2.x * arg1, arg2.y * arg1, arg2.z * arg1))) 
 				table.insert(funcInfo.v3_list, v3);
 				return(v3) 
 			}
 			elseif(t1 == "Vector4" and type(arg2) == "number")
 			{
-				local(lualist(v4)assignwith(UnityEngine.Vector4.New(arg1.x * arg2, arg1.y * arg2, arg1.z * arg2, arg1.w * arg2)));
+				local(lualist(v4)assignwith(UnityEngine.Vector4.New(arg1.x * arg2, arg1.y * arg2, arg1.z * arg2, arg1.w * arg2))) 
 				table.insert(funcInfo.v4_list, v4);
 				return(v4) 
 			}
 			elseif(type(arg1) == "number" and t2 == "Vector4")
 			{
-				local(lualist(v4)assignwith(UnityEngine.Vector4.New(arg2.x * arg1, arg2.y * arg1, arg2.z * arg1, arg2.w * arg1)));
+				local(lualist(v4)assignwith(UnityEngine.Vector4.New(arg2.x * arg1, arg2.y * arg1, arg2.z * arg1, arg2.w * arg1))) 
 				table.insert(funcInfo.v4_list, v4);
 				return(v4) 
 			}
 			elseif(t1 == "Color" and type(arg2) == "number")
 			{
-				local(lualist(c)assignwith(UnityEngine.Color.New(arg1.r * arg2, arg1.g * arg2, arg1.b * arg2, arg1.a * arg2)));
+				local(lualist(c)assignwith(UnityEngine.Color.New(arg1.r * arg2, arg1.g * arg2, arg1.b * arg2, arg1.a * arg2))) 
 				table.insert(funcInfo.c_list, c);
 				return(c) 
 			}
 			elseif(type(arg1) == "number" and t2 == "Color")
 			{
-				local(lualist(c)assignwith(UnityEngine.Color.New(arg2.r * arg1, arg2.g * arg1, arg2.b * arg1, arg2.a * arg1)));
+				local(lualist(c)assignwith(UnityEngine.Color.New(arg2.r * arg1, arg2.g * arg1, arg2.b * arg1, arg2.a * arg1))) 
 				table.insert(funcInfo.c_list, c);
 				return(c) 
 			}
 			elseif(t1 == "Vector2" and t2 == "Vector2")
 			{
-				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x * arg2.x, arg1.y * arg2.y)));
+				local(lualist(v2)assignwith(UnityEngine.Vector2.New(arg1.x * arg2.x, arg1.y * arg2.y))) 
 				table.insert(funcInfo.v2_list, v2);
 				return(v2) 
 			}
 			else
 			{
-				local(lualist(re)assignwith(class[method](...)));
+				local(lualist(re)assignwith(class[method](...))) 
 				addtofuncinfostructlist(funcInfo, rettype, re);
 				return(re) 
 			} 
@@ -1040,7 +1040,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			}
 			else
 			{
-				local(lualist(re)assignwith(class[method](...)));
+				local(lualist(re)assignwith(class[method](...))) 
 				addtofuncinfostructlist(funcInfo, rettype, re);
 				return(re) 
 			} 
@@ -1062,7 +1062,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			};
 			if(t1 == "Vector2" and type(arg2) == "number")
 			{
-				local(lualist(v2)assignwith(Vector2Pool.Alloc()));
+				local(lualist(v2)assignwith(Vector2Pool.Alloc())) 
 				table.insert(funcInfo.v2_list, v2);
 				lualist(v2.x)assignwith(arg1.x / arg2);
 				lualist(v2.y)assignwith(arg1.y / arg2);
@@ -1070,7 +1070,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			}
 			elseif(t1 == "Vector3" and type(arg2) == "number")
 			{
-				local(lualist(v3)assignwith(Vector3Pool.Alloc()));
+				local(lualist(v3)assignwith(Vector3Pool.Alloc())) 
 				table.insert(funcInfo.v3_list, v3);
 				lualist(v3.x)assignwith(arg1.x / arg2);
 				lualist(v3.y)assignwith(arg1.y / arg2);
@@ -1079,7 +1079,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			}
 			elseif(t1 == "Vector4" and type(arg2) == "number")
 			{
-				local(lualist(v4)assignwith(Vector4Pool.Alloc()));
+				local(lualist(v4)assignwith(Vector4Pool.Alloc())) 
 				table.insert(funcInfo.v4_list, v4);
 				lualist(v4.x)assignwith(arg1.x / arg2);
 				lualist(v4.y)assignwith(arg1.y / arg2);
@@ -1089,7 +1089,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			}
 			elseif(t1 == "Color" and type(arg2) == "number")
 			{
-				local(lualist(c)assignwith(ColorPool.Alloc()));
+				local(lualist(c)assignwith(ColorPool.Alloc())) 
 				table.insert(funcInfo.c_list, c);
 				lualist(c.x)assignwith(arg1.r / arg2);
 				lualist(c.y)assignwith(arg1.g / arg2);
@@ -1099,7 +1099,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			}
 			else
 			{
-				local(lualist(re)assignwith(class[method](...)));
+				local(lualist(re)assignwith(class[method](...))) 
 				addtofuncinfostructlist(funcInfo, rettype, re);
 				return(re) 
 			} 
@@ -1112,7 +1112,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 			}
 			else
 			{
-				local(lualist(re)assignwith(class[method](...)));
+				local(lualist(re)assignwith(class[method](...))) 
 				addtofuncinfostructlist(funcInfo, rettype, re);
 				return(re) 
 			} 
@@ -1120,13 +1120,13 @@ luaargs(funcInfo, rettype, class, method, ...)
 	}
 	elseif(method == "op_Addition" or method == "op_Subtraction" or 1 == string.find(method, "op_Addition__", 1, true) or 1 == string.find(method, "op_Subtraction__", 1, true))
 	{
-		local(lualist(re)assignwith(class[method](...)));
+		local(lualist(re)assignwith(class[method](...))) 
 		addtofuncinfostructlist(funcInfo, rettype, re);
 		return(re) 
 	};
 	if(method)
 	{
-		local(lualist(re)assignwith(class[method](...)));
+		local(lualist(re)assignwith(class[method](...))) 
 		addtofuncinfostructlist(funcInfo, rettype, re);
 		return(re) 
 	}
@@ -1149,7 +1149,7 @@ luaargs(rettype, class, method, ...)
 function(invokeexternoperator)
 luaargs(rettype, class, method, ...)
 {
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	if(rettype == System.Boolean and class == System.Type)
 	{
 		if(method == "op_Equality")
@@ -1237,7 +1237,7 @@ luaargs(rettype, class, method, ...)
 local(function(_get_first_untable_from_pack_args)
 luaargs(...)
 {
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	if(arg1 or arg2)
 	{
 		if(type(arg1) == "table")
@@ -1253,7 +1253,7 @@ luaargs(...)
 function(callbasicvalue)
 luaargs(obj, isEnum, class, method, ...)
 {
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(isEnum and obj and (method == "ToString" or 1 == string.find(method, "ToString__")))
 	{
@@ -1345,7 +1345,7 @@ luaargs(obj, isEnum, class, method, ...)
 		}
 		elseif(method == "Split" or 1 == string.find(method, "Split__"))
 		{
-			local(lualist(result1, result2)assignwith(_get_first_untable_from_pack_args(...)));
+			local(lualist(result1  result2)assignwith(_get_first_untable_from_pack_args(...)));
 			if(type(result1) == "number")
 			{
 				lualist(result1)assignwith(Utility.CharToString(result1)) 
@@ -1431,7 +1431,7 @@ luaargs(firstArray, secondArray, method, ...)
 {
 	if(nil ~= firstArray and nil ~= method)
 	{
-		local(lualist(arg1, arg2)assignwith(...));
+		local(lualist(arg1  arg2)assignwith(...));
 		local(lualist(meta)assignwith(getmetatable(firstArray)));
 		if(meta and rawget(meta, "__cs2lua_defined"))
 		{
@@ -1447,7 +1447,7 @@ luaargs(firstArray, secondArray, method, ...)
 		}
 		elseif(method == "IndexOf" or 1 == string.find(method, "IndexOf__", 1, true))
 		{
-			local(lualist(arr, val, start, count)assignwith(...));
+			local(lualist(arr  val  start  count)assignwith(...));
 			if( not start)
 			{
 				lualist(start)assignwith(0) 
@@ -1620,8 +1620,8 @@ luaargs(tag, newFunc)
 		{
 			if(rawequal(v, data))
 			{
-				lualist(exists)assignwith(true);
-				lualog("pool.Recycle {0}:{1} duplicate !", tag, __get_obj_string(data));
+				lualist(exists)assignwith(true) 
+				lualog("pool.Recycle {0}:{1} duplicate !", tag, __get_obj_string(data)) 
 				printStack();
 				break 
 			} 
@@ -1854,7 +1854,7 @@ luaargs(symKind, obj, class, member)
 		{
 			return(nil ~= obj) 
 		} 
-	};
+	} 
 	translationlog("need add handler for getexterninstancestructmember {0}.{1}", getclasstypename(class), member);
 	return(obj[member]) 
 };
@@ -1890,7 +1890,7 @@ luaargs(isExtern, elementType, callerClass, class, name, argCount, ...)
 function(getinstanceindexerstructimpl)
 luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 {
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	local(index);
 	local(lualist(meta)assignwith(getmetatable(obj)));
 	if(meta)
@@ -1965,7 +1965,7 @@ luaargs(isExtern, elementType, callerClass, class, name, argCount, ...)
 function(setinstanceindexerstructimpl)
 luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 {
-	local(lualist(arg1, arg2, arg3)assignwith(...));
+	local(lualist(arg1  arg2  arg3)assignwith(...));
 	local(index);
 	lualist(index)assignwith(__unwrap_if_string(arg1));
 	lualist(val)assignwith(arg2);
@@ -2083,7 +2083,7 @@ luaargs(isExtern, arrSymKind, elementType, arr, argCount, ...)
 function(arraysetstruct)
 luaargs(isExtern, arrSymKind, elementType, arr, argCount, ...)
 {
-	translationlog("need add handler for arraysetstruct {0}[]", getclasstypename(elementType));
+	translationlog("need add handler for arraysetstruct {0}[]", getclasstypename(elementType)) 
 	arraysetstructimpl(isExtern, arrSymKind, elementType, arr, argCount, ...) 
 };
 function(recycleandkeepstructvalue)
@@ -2110,7 +2110,7 @@ luaargs(fieldType, oldVal, newVal)
 {
 	if(rawequal(oldVal, newVal))
 	{
-		lualog("[recycleandkeepstructvalue] oldVal==newVal");
+		lualog("[recycleandkeepstructvalue] oldVal==newVal") 
 		printStack() 
 	} 
 };
@@ -2145,7 +2145,7 @@ luaargs()
 function(luainitialize)
 luaargs()
 {
-	local(lualist(info)assignwith(g_FuncInfoPool.Alloc()));
+	local(lualist(info)assignwith(g_FuncInfoPool.Alloc())) 
 	table.insert(g_FuncInfoStack, info);
 	return(info) 
 };
@@ -2247,7 +2247,7 @@ luaargs(funcInfo)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.rt_list[i])assignwith(nil) 
-		};
+		} 
 		g_FuncInfoPool.Recycle(funcInfo) 
 	};
 	return(nil) 
@@ -2266,7 +2266,7 @@ lualist(Cs2LuaCustomData)assignwith(
 		printMemDiff("Cs2LuaCustomData::__define_class begin");
 		local(lualist(class)assignwith(Cs2LuaCustomData));
 		local(lualist(obj_methods)assignwith(nil));
-		local(lualist(__defineclass_return)assignwith(defineclass(UnityEngine.Object, "Cs2LuaCustomData", "Cs2LuaCustomData", class, obj_methods, false, true)));
+		local(lualist(__defineclass_return)assignwith(defineclass(UnityEngine.Object, "Cs2LuaCustomData", "Cs2LuaCustomData", class, obj_methods, false, true))) 
 		printMemDiff("Cs2LuaCustomData::__define_class end");
 		return(__defineclass_return) 
 	};
@@ -2274,7 +2274,7 @@ lualist(Cs2LuaCustomData)assignwith(
 	{
 		CustomData = true 
 	} 
-});
+}) 
 settempmetatable(Cs2LuaCustomData);
 function(luatoobject)
 luaargs(symKind, isStatic, symName, arg1, ...)
@@ -2332,9 +2332,9 @@ luaargs(obj)
 {
 	if(type(obj) == "table")
 	{
-		local(lualist(oldTblMeta)assignwith(getmetatable(obj)));
+		local(lualist(oldTblMeta)assignwith(getmetatable(obj))) 
 		setmetatable(obj, nil);
-		local(lualist(s)assignwith(tostring(obj)));
+		local(lualist(s)assignwith(tostring(obj))) 
 		setmetatable(obj, oldTblMeta);
 		return(s) 
 	}
@@ -2382,7 +2382,7 @@ luaargs()
 	for(k, v)
 	in(pairs(__cs2lua_delegations))
 	{
-		print(k);
+		print(k) 
 		print(v) 
 	} 
 };
@@ -2499,7 +2499,7 @@ luaargs(isstatic, t, k, symKind, handler)
 		luarange(1, n)
 		{
 			table.remove(v) 
-		};
+		} 
 		table.insert(v, handler);
 		return(v) 
 	} 
@@ -2655,7 +2655,7 @@ luaargs(tb)
 	if(meta and meta.__cs2lua_data)
 	{
 		return(meta.__cs2lua_data) 
-	};
+	} 
 	error("can\'t find metatable or __cs2lua_data !") 
 };
 function(__set_table_count)
@@ -2818,8 +2818,8 @@ lualist(__mt_index_of_array_table)assignwith(
 	Add = function()
 	luaargs(obj, v)
 	{
-		lualist(v)assignwith(__unwrap_if_string(v));
-		table.insert(obj, v);
+		lualist(v)assignwith(__unwrap_if_string(v)) 
+		table.insert(obj, v) 
 		__inc_array_count(obj) 
 	};
 	Remove = function()
@@ -2851,11 +2851,11 @@ lualist(__mt_index_of_array_table)assignwith(
 				for(j)
 				luarange(pos + 1, ct, 1)
 				{
-					local(lualist(vj)assignwith(rawget(obj, j)));
+					local(lualist(vj)assignwith(rawget(obj, j))) 
 					rawset(obj, j - 1, vj) 
-				};
+				} 
 				rawset(obj, ct, nil) 
-			};
+			} 
 			__dec_array_count(obj) 
 		};
 		return(ret) 
@@ -2873,7 +2873,7 @@ lualist(__mt_index_of_array_table)assignwith(
 			for(j)
 			luarange(ix + 2, ct, 1)
 			{
-				local(lualist(vj)assignwith(rawget(obj, j)));
+				local(lualist(vj)assignwith(rawget(obj, j))) 
 				rawset(obj, j - 1, vj) 
 			};
 			if(ix + 1 <= ct)
@@ -2904,7 +2904,7 @@ lualist(__mt_index_of_array_table)assignwith(
 		for(i, v)
 		in(ipairs(deletes))
 		{
-			rawset(obj, i, nil);
+			rawset(obj, i, nil) 
 			__dec_array_count(obj) 
 		} 
 	};
@@ -2915,17 +2915,17 @@ lualist(__mt_index_of_array_table)assignwith(
 		for(v)
 		in(getiterator(iter))
 		{
-			lualist(v)assignwith(__unwrap_if_string(v));
-			table.insert(obj, v);
+			lualist(v)assignwith(__unwrap_if_string(v)) 
+			table.insert(obj, v) 
 			__inc_array_count(obj) 
-		};
+		} 
 		recycleiterator(nil, iter) 
 	};
 	Insert = function()
 	luaargs(obj, ix, p)
 	{
-		lualist(p)assignwith(__unwrap_if_string(p));
-		table.insert(obj, ix + 1, p);
+		lualist(p)assignwith(__unwrap_if_string(p)) 
+		table.insert(obj, ix + 1, p) 
 		__inc_array_count(obj) 
 	};
 	InsertRange = function()
@@ -2935,7 +2935,7 @@ lualist(__mt_index_of_array_table)assignwith(
 		local(lualist(enumer)assignwith(coll->GetEnumerator()));
 		while(enumer->MoveNext())
 		{
-			table.insert(obj, ix + 1 + ct, enumer.Current);
+			table.insert(obj, ix + 1 + ct, enumer.Current) 
 			__inc_array_count(obj);
 			lualist(ct)assignwith(ct + 1) 
 		} 
@@ -2956,7 +2956,7 @@ lualist(__mt_index_of_array_table)assignwith(
 				for(j)
 				luarange(ix + 2, curCount, 1)
 				{
-					local(lualist(vj)assignwith(rawget(obj, j)));
+					local(lualist(vj)assignwith(rawget(obj, j))) 
 					rawset(obj, j - 1, vj) 
 				} 
 			};
@@ -3085,30 +3085,30 @@ lualist(__mt_index_of_array_table)assignwith(
 	Enqueue = function()
 	luaargs(obj, v)
 	{
-		table.insert(obj, 1, v);
+		table.insert(obj, 1, v) 
 		__inc_array_count(obj) 
 	};
 	Dequeue = function()
 	luaargs(obj)
 	{
 		local(lualist(ct)assignwith(__get_array_count(obj)));
-		local(lualist(v)assignwith(rawget(obj, ct)));
-		rawset(obj, ct, nil);
+		local(lualist(v)assignwith(rawget(obj, ct))) 
+		rawset(obj, ct, nil) 
 		__dec_array_count(obj);
 		return(v) 
 	};
 	Push = function()
 	luaargs(obj, v)
 	{
-		table.insert(obj, v);
+		table.insert(obj, v) 
 		__inc_array_count(obj) 
 	};
 	Pop = function()
 	luaargs(obj)
 	{
 		local(lualist(ct)assignwith(__get_array_count(obj)));
-		local(lualist(v)assignwith(rawget(obj, ct)));
-		rawset(obj, ct, nil);
+		local(lualist(v)assignwith(rawget(obj, ct))) 
+		rawset(obj, ct, nil) 
 		__dec_array_count(obj);
 		return(v) 
 	};
@@ -3144,7 +3144,7 @@ lualist(__mt_index_of_array_table)assignwith(
 		luarange(ct, 1, -1)
 		{
 			rawset(obj, i, nil) 
-		};
+		} 
 		__set_array_count(obj, 0) 
 	};
 	GetEnumerator = function()
@@ -3165,12 +3165,12 @@ lualist(__mt_index_of_array_table)assignwith(
 				for(j)
 				luarange(i + 1, ct, 1)
 				{
-					local(lualist(vj)assignwith(rawget(obj, j)));
+					local(lualist(vj)assignwith(rawget(obj, j))) 
 					rawset(obj, j - 1, vj) 
-				};
+				} 
 				rawset(obj, ct, nil) 
 			} 
-		};
+		} 
 		table.sort(obj, function()
 		luaargs(a, b)
 		{
@@ -3183,28 +3183,28 @@ lualist(__mt_index_of_array_table)assignwith(
 		local(lualist(meta)assignwith(getmetatable(obj)));
 		return(meta.__class) 
 	} 
-});
-rawset(__mt_index_of_array_table, "BinarySearch__T", rawget(__mt_index_of_array_table, "BinarySearch"));
-rawset(__mt_index_of_array_table, "BinarySearch__T__IComparer_1_T", rawget(__mt_index_of_array_table, "BinarySearch"));
-rawset(__mt_index_of_array_table, "BinarySearch__Int32__Int32__T__IComparer_1_T", rawget(__mt_index_of_array_table, "BinarySearch"));
-rawset(__mt_index_of_array_table, "CopyTo__A_T", rawget(__mt_index_of_array_table, "CopyTo"));
-rawset(__mt_index_of_array_table, "CopyTo__A_T__Int32", rawget(__mt_index_of_array_table, "CopyTo"));
-rawset(__mt_index_of_array_table, "CopyTo__Int32__A_T__Int32__Int32", rawget(__mt_index_of_array_table, "CopyTo"));
-rawset(__mt_index_of_array_table, "FindIndex__Predicate_1_T", rawget(__mt_index_of_array_table, "FindIndex"));
-rawset(__mt_index_of_array_table, "FindIndex__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindIndex"));
-rawset(__mt_index_of_array_table, "FindIndex__Int32__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindIndex"));
-rawset(__mt_index_of_array_table, "FindLastIndex__Predicate_1_T", rawget(__mt_index_of_array_table, "FindLastIndex"));
-rawset(__mt_index_of_array_table, "FindLastIndex__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindLastIndex"));
-rawset(__mt_index_of_array_table, "FindLastIndex__Int32__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindLastIndex"));
-rawset(__mt_index_of_array_table, "IndexOf__T", rawget(__mt_index_of_array_table, "IndexOf"));
-rawset(__mt_index_of_array_table, "IndexOf__T__Int32", rawget(__mt_index_of_array_table, "IndexOf"));
-rawset(__mt_index_of_array_table, "IndexOf__T__Int32__Int32", rawget(__mt_index_of_array_table, "IndexOf"));
-rawset(__mt_index_of_array_table, "LastIndexOf__T", rawget(__mt_index_of_array_table, "LastIndexOf"));
-rawset(__mt_index_of_array_table, "LastIndexOf__T__Int32", rawget(__mt_index_of_array_table, "LastIndexOf"));
-rawset(__mt_index_of_array_table, "LastIndexOf__T__Int32__Int32", rawget(__mt_index_of_array_table, "LastIndexOf"));
-rawset(__mt_index_of_array_table, "Reverse__Int32__Int32", rawget(__mt_index_of_array_table, "Reverse"));
-rawset(__mt_index_of_array_table, "Sort__IComparer_1_T", rawget(__mt_index_of_array_table, "Sort"));
-rawset(__mt_index_of_array_table, "Sort__Comparison_1_T", rawget(__mt_index_of_array_table, "Sort"));
+}) 
+rawset(__mt_index_of_array_table, "BinarySearch__T", rawget(__mt_index_of_array_table, "BinarySearch")) 
+rawset(__mt_index_of_array_table, "BinarySearch__T__IComparer_1_T", rawget(__mt_index_of_array_table, "BinarySearch")) 
+rawset(__mt_index_of_array_table, "BinarySearch__Int32__Int32__T__IComparer_1_T", rawget(__mt_index_of_array_table, "BinarySearch")) 
+rawset(__mt_index_of_array_table, "CopyTo__A_T", rawget(__mt_index_of_array_table, "CopyTo")) 
+rawset(__mt_index_of_array_table, "CopyTo__A_T__Int32", rawget(__mt_index_of_array_table, "CopyTo")) 
+rawset(__mt_index_of_array_table, "CopyTo__Int32__A_T__Int32__Int32", rawget(__mt_index_of_array_table, "CopyTo")) 
+rawset(__mt_index_of_array_table, "FindIndex__Predicate_1_T", rawget(__mt_index_of_array_table, "FindIndex")) 
+rawset(__mt_index_of_array_table, "FindIndex__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindIndex")) 
+rawset(__mt_index_of_array_table, "FindIndex__Int32__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindIndex")) 
+rawset(__mt_index_of_array_table, "FindLastIndex__Predicate_1_T", rawget(__mt_index_of_array_table, "FindLastIndex")) 
+rawset(__mt_index_of_array_table, "FindLastIndex__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindLastIndex")) 
+rawset(__mt_index_of_array_table, "FindLastIndex__Int32__Int32__Predicate_1_T", rawget(__mt_index_of_array_table, "FindLastIndex")) 
+rawset(__mt_index_of_array_table, "IndexOf__T", rawget(__mt_index_of_array_table, "IndexOf")) 
+rawset(__mt_index_of_array_table, "IndexOf__T__Int32", rawget(__mt_index_of_array_table, "IndexOf")) 
+rawset(__mt_index_of_array_table, "IndexOf__T__Int32__Int32", rawget(__mt_index_of_array_table, "IndexOf")) 
+rawset(__mt_index_of_array_table, "LastIndexOf__T", rawget(__mt_index_of_array_table, "LastIndexOf")) 
+rawset(__mt_index_of_array_table, "LastIndexOf__T__Int32", rawget(__mt_index_of_array_table, "LastIndexOf")) 
+rawset(__mt_index_of_array_table, "LastIndexOf__T__Int32__Int32", rawget(__mt_index_of_array_table, "LastIndexOf")) 
+rawset(__mt_index_of_array_table, "Reverse__Int32__Int32", rawget(__mt_index_of_array_table, "Reverse")) 
+rawset(__mt_index_of_array_table, "Sort__IComparer_1_T", rawget(__mt_index_of_array_table, "Sort")) 
+rawset(__mt_index_of_array_table, "Sort__Comparison_1_T", rawget(__mt_index_of_array_table, "Sort")) 
 rawset(__mt_index_of_array_table, "Sort__Int32__Int32__IComparer_1_T", rawget(__mt_index_of_array_table, "Sort"));
 for(k, v)
 in(pairs(__mt_index_of_array_table))
@@ -3234,12 +3234,12 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 	luaargs(obj, p1, p2)
 	{
 		lualist(up1)assignwith(__unwrap_if_string(p1));
-		local(lualist(data)assignwith(__get_table_data(obj)));
+		local(lualist(data)assignwith(__get_table_data(obj))) 
 		rawset(data, up1, 
 		{
 			Key = p1;
 			Value = p2 
-		});
+		}) 
 		__inc_table_count(obj);
 		return(p2) 
 	};
@@ -3252,9 +3252,9 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 		local(lualist(ret)assignwith(nil));
 		if(v)
 		{
-			lualist(ret)assignwith(v.Value);
+			lualist(ret)assignwith(v.Value) 
 			rawset(data, up, nil) 
-		};
+		} 
 		__dec_table_count(obj);
 		return(ret) 
 	};
@@ -3333,7 +3333,7 @@ lualist(__mt_index_of_dictionary_table)assignwith(
 		local(lualist(meta)assignwith(getmetatable(obj)));
 		return(meta.__class) 
 	} 
-});
+}) 
 rawset(__mt_index_of_dictionary_table, "Remove__TKey", rawget(__mt_index_of_dictionary_table, "Remove"));
 for(k, v)
 in(pairs(__mt_index_of_dictionary_table))
@@ -3397,7 +3397,7 @@ luaargs(t, k, val)
 		{
 			Key = k;
 			Value = val 
-		});
+		}) 
 		__inc_table_count(t) 
 	}
 	else
@@ -3416,8 +3416,8 @@ lualist(__mt_index_of_hashset_table)assignwith(
 	luaargs(obj, p)
 	{
 		lualist(up)assignwith(__unwrap_if_string(p));
-		local(lualist(data)assignwith(__get_table_data(obj)));
-		rawset(data, up, true);
+		local(lualist(data)assignwith(__get_table_data(obj))) 
+		rawset(data, up, true) 
 		__inc_table_count(obj);
 		return(true) 
 	};
@@ -3430,10 +3430,10 @@ lualist(__mt_index_of_hashset_table)assignwith(
 		in(getiterator(iter))
 		{
 			lualist(v)assignwith(__unwrap_if_string(v));
-			lualist(v)assignwith(__get_hash_code_if_integer64(v));
-			rawset(data, v, true);
+			lualist(v)assignwith(__get_hash_code_if_integer64(v)) 
+			rawset(data, v, true) 
 			__inc_array_count(obj) 
-		};
+		} 
 		recycleiterator(nil, iter) 
 	};
 	Remove = function()
@@ -3445,7 +3445,7 @@ lualist(__mt_index_of_hashset_table)assignwith(
 		if(ret)
 		{
 			rawset(data, up, nil) 
-		};
+		} 
 		__dec_table_count(obj);
 		return(ret) 
 	};
@@ -3467,7 +3467,7 @@ lualist(__mt_index_of_hashset_table)assignwith(
 		for(k, v)
 		in(pairs(data))
 		{
-			table.insert(arr, k);
+			table.insert(arr, k) 
 			__inc_array_count(arr) 
 		} 
 	};
@@ -3487,9 +3487,9 @@ lualist(__mt_index_of_hashset_table)assignwith(
 		local(lualist(meta)assignwith(getmetatable(obj)));
 		return(meta.__class) 
 	} 
-});
-rawset(__mt_index_of_hashset_table, "CopyTo__A_T", rawget(__mt_index_of_hashset_table, "CopyTo"));
-rawset(__mt_index_of_hashset_table, "CopyTo__A_T__Int32", rawget(__mt_index_of_hashset_table, "CopyTo"));
+}) 
+rawset(__mt_index_of_hashset_table, "CopyTo__A_T", rawget(__mt_index_of_hashset_table, "CopyTo")) 
+rawset(__mt_index_of_hashset_table, "CopyTo__A_T__Int32", rawget(__mt_index_of_hashset_table, "CopyTo")) 
 rawset(__mt_index_of_hashset_table, "CopyTo__A_T__Int32__Int32", rawget(__mt_index_of_hashset_table, "CopyTo"));
 for(k, v)
 in(pairs(__mt_index_of_hashset_table))
@@ -3518,7 +3518,7 @@ lualist(__mt_index_of_keycollection_table)assignwith(
 		for(k, v)
 		in(pairs(data))
 		{
-			table.insert(arr, k);
+			table.insert(arr, k) 
 			__inc_array_count(arr) 
 		} 
 	};
@@ -3562,7 +3562,7 @@ lualist(__mt_index_of_valuecollection_table)assignwith(
 		for(k, v)
 		in(pairs(data))
 		{
-			table.insert(arr, v.Value);
+			table.insert(arr, v.Value) 
 			__inc_array_count(arr) 
 		} 
 	};
@@ -3865,7 +3865,7 @@ luaargs(funcInfo, exp)
 	{
 		if(meta.cachedIters and meta.cachedIters[exp] and  # (meta.cachedIters[exp]) > 0)
 		{
-			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1)));
+			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1))) 
 			iterInfo[2]->Reset();
 			if(funcInfo)
 			{
@@ -3910,7 +3910,7 @@ luaargs(funcInfo, exp)
 	{
 		if(meta.cachedIters and meta.cachedIters[exp] and  # (meta.cachedIters[exp]) > 0)
 		{
-			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1)));
+			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1))) 
 			iterInfo[2]();
 			if(funcInfo)
 			{
@@ -3962,7 +3962,7 @@ luaargs(funcInfo, exp)
 	{
 		if(meta and meta.cachedIters and meta.cachedIters[exp] and  # (meta.cachedIters[exp]) > 0)
 		{
-			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1)));
+			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1))) 
 			iterInfo[1](true);
 			if(funcInfo)
 			{
@@ -4011,7 +4011,7 @@ luaargs(funcInfo, iterInfo)
 					lualist(meta.cachedIters[exp])assignwith(
 					{
 					}) 
-				};
+				} 
 				table.insert(meta.cachedIters[exp], iterInfo) 
 			}
 			else
@@ -4112,7 +4112,7 @@ luaargs(dict)
 {
 	local(lualist(obj)assignwith(
 	{
-	}));
+	})) 
 	setmetatable(obj, 
 	{
 		__index = __mt_index_of_dictionary;
@@ -4142,7 +4142,7 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, dict, ...)
 	{
 		local(lualist(obj)assignwith(
 		{
-		}));
+		})) 
 		setmetatable(obj, 
 		{
 			__index = __mt_index_of_dictionary;
@@ -4532,7 +4532,7 @@ luaargs(linq, ix, paramList)
 		if(key == "from")
 		{
 			local(lualist(nextIx)assignwith(LINQ.getNextIndex(linq, ix)));
-			local(lualist(coll)assignwith(v[2](unpack(paramList))));
+			local(lualist(coll)assignwith(v[2](unpack(paramList)))) 
 			LINQ.buildIntermediateResult(linq, ix, paramList, coll, interRs, finalRs);
 			lualist(ix)assignwith(nextIx) 
 		}
@@ -4564,7 +4564,7 @@ luaargs(linq, ix, paramList)
 			for(i, val)
 			in(ipairs(interRs))
 			{
-				local(lualist(r)assignwith(v[2](unpack(val))));
+				local(lualist(r)assignwith(v[2](unpack(val)))) 
 				table.insert(finalRs, r) 
 			} 
 		}
@@ -4583,7 +4583,7 @@ luaargs(linq, ix, paramList, coll, interRs, finalRs)
 		local(lualist(newParamList)assignwith(
 		{
 			unpack(paramList) 
-		}));
+		})) 
 		table.insert(newParamList, cv);
 		local(lualist(isMatch)assignwith(true));
 		local(lualist(newIx)assignwith(ix));
@@ -5144,7 +5144,7 @@ luaargs(v1, v2)
 function(isequal)
 luaargs(v1, v2)
 {
-	local(lualist(succ, res)assignwith(pcall(__do_eq, v1, v2)));
+	local(lualist(succ  res)assignwith(pcall(__do_eq, v1, v2)));
 	if(succ)
 	{
 		return(res) 
@@ -5264,22 +5264,22 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 	luaargs(tb)
 	{
 		return(class) 
-	});
-	rawset(class, "__cs2lua_defined", true);
-	rawset(class, "__cs2lua_fullname", fullName);
-	rawset(class, "__cs2lua_typename", typeName);
-	rawset(class, "__cs2lua_parent", base_class);
-	rawset(class, "__is_value_type", is_value_type);
-	rawset(class, "__interfaces", interfaces);
-	rawset(class, "FullName", fullName);
-	rawset(class, "Name", typeName);
+	}) 
+	rawset(class, "__cs2lua_defined", true) 
+	rawset(class, "__cs2lua_fullname", fullName) 
+	rawset(class, "__cs2lua_typename", typeName) 
+	rawset(class, "__cs2lua_parent", base_class) 
+	rawset(class, "__is_value_type", is_value_type) 
+	rawset(class, "__interfaces", interfaces) 
+	rawset(class, "FullName", fullName) 
+	rawset(class, "Name", typeName) 
 	rawset(class, "__get_obj_methods", __get_obj_methods);
 	if( not obj_methods)
 	{
 		lualist(obj_methods)assignwith(
 		{
 		}) 
-	};
+	} 
 	rawset(obj_methods, "GetType", __obj_GetType);
 	if(base_class)
 	{
@@ -5309,7 +5309,7 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 		};
 		if(rawget(base_class, "__get_obj_methods"))
 		{
-			rawset(obj_methods, "__index", base_class.__get_obj_methods());
+			rawset(obj_methods, "__index", base_class.__get_obj_methods()) 
 			setmetatable(obj_methods, obj_methods) 
 		} 
 	}
@@ -5386,11 +5386,11 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 			if(baseObj and __find_extern_class_or_obj_key(k, baseObj))
 			{
 				return(__find_extern_obj_member(k, baseObj)) 
-			};
-			lualog("lookup meta for {0}.{1} base_class {2} baseObj {3}", t->GetType().FullName, k, base_class and base_class.FullName, baseObj);
+			} 
+			lualog("lookup meta for {0}.{1} base_class {2} baseObj {3}", t->GetType().FullName, k, base_class and base_class.FullName, baseObj) 
 			printStack();
 			return(nil) 
-		});
+		}) 
 		rawset(obj_meta, "__newindex", function()
 		luaargs(t, k, v)
 		{
@@ -5413,7 +5413,7 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 	};
 	if(base_class)
 	{
-		rawset(class, "__index", base_class);
+		rawset(class, "__index", base_class) 
 		rawset(class, "__newindex", function()
 		luaargs(t, k, v)
 		{
@@ -5428,14 +5428,14 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 			};
 			lualist(base_class[k])assignwith(v) 
 		}) 
-	};
+	} 
 	rawset(class, "__call", function()
 	luaargs(t)
 	{
-		local(lualist(obj)assignwith(obj_build()));
+		local(lualist(obj)assignwith(obj_build())) 
 		setmetatable(obj, obj_meta);
 		return(obj) 
-	});
+	}) 
 	setmetatable(class, class);
 	if(rawget(class, "cctor"))
 	{
@@ -5452,8 +5452,8 @@ luaargs(class, name)
 function(buildbaseobj)
 luaargs(obj, class, baseClass, baseCtor, baseCtorRetCt, ...)
 {
-	rawset(obj, "__base", nil);
-	getoriginalmethod(baseClass, baseCtor)(obj, ...);
+	rawset(obj, "__base", nil) 
+	getoriginalmethod(baseClass, baseCtor)(obj, ...) 
 	rawset(obj, "__ctor_called", false) 
 };
 function(buildexternbaseobj)
@@ -5467,7 +5467,7 @@ luaargs(obj, class, baseClass, baseCtor, baseCtorRetCt, ...)
 	else
 	{
 		lualist(baseObj)assignwith(baseClass[baseCtor](...)) 
-	};
+	} 
 	rawset(obj, "__base", baseObj) 
 };
 function(getbaseobj)
@@ -5514,7 +5514,7 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 	if(ctor)
 	{
 		class[ctor](obj, ...) 
-	};
+	} 
 	translationlog("need add handler for newstruct {0}", getclasstypename(class));
 	if(obj and initializer)
 	{
@@ -5526,7 +5526,7 @@ function(newexternstruct)
 luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 {
 	local(lualist(obj)assignwith(nil));
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	if(class == System.Nullable_T)
 	{
 		return(nil) 
@@ -5538,7 +5538,7 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 			Key = arg1;
 			Value = arg2 
 		}) 
-	};
+	} 
 	translationlog("need add handler for newexternstruct {0}", getclasstypename(class));
 	lualist(obj)assignwith(class[ctor](...));
 	if(obj and initializer)
@@ -5565,7 +5565,7 @@ function(newexternobject)
 luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 {
 	local(lualist(obj)assignwith(nil));
-	local(lualist(arg1, arg2)assignwith(...));
+	local(lualist(arg1  arg2)assignwith(...));
 	if(class == System.Nullable_T)
 	{
 		return(nil) 
@@ -5588,7 +5588,7 @@ luaargs(class, typeargs, typekinds, ctor, ctorRetCt, initializer, ...)
 function(newtypeparamobject)
 luaargs(t)
 {
-	local(lualist(obj)assignwith(nil));
+	local(lualist(obj)assignwith(nil)) 
 	warmup(t);
 	if(rawget(t, "__cs2lua_defined"))
 	{
@@ -5647,7 +5647,7 @@ luaargs(t, typename, isExtern)
 	{
 		return(nil) 
 	} 
-};
-require(:"lualib_valuetypescript":);
-require(:"lualib_basic":);
+} 
+require(:"lualib_valuetypescript":) 
+require(:"lualib_basic":) 
 require(:"lualib_special":) 
