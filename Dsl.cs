@@ -1904,7 +1904,7 @@ namespace Dsl
                 if (data.IsOperatorParamClass()) {
                     int paramNum = data.GetParamNum();
                     if (paramNum == 1) {
-                        writeText(stream, " ", 0);
+                        writeText(stream, string.Empty, firstLineNoIndent ? 0 : indent);
                         if (data.IsHighOrder) {
                             writeFunctionData(stream, data.LowerOrderFunction, indent, paramNum > 0 ? true : firstLineNoIndent, false, delim);
                         }
@@ -1916,7 +1916,7 @@ namespace Dsl
                             writeText(stream, line, paramNum > 0 ? 0 : (firstLineNoIndent ? 0 : indent));
                         }
                         writeText(stream, " ", 0);
-                        writeSyntaxComponent(stream, data.GetParam(0), indent, firstLineNoIndent, false, delim);
+                        writeSyntaxComponent(stream, data.GetParam(0), indent, true, false, delim);
                     }
                     else {
                         if (paramNum > 0) {

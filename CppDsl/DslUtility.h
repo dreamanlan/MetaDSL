@@ -419,7 +419,7 @@ namespace DslFileReadWrite
                 WriteComponent(fp, component1, indent, TRUE, FALSE, delim);
             }
             else {
-                fwrite(" ", 1, 1, fp);
+                WriteIndent(fp, firstLineNoIndent ? 0 : indent);
                 if (data.IsHighOrder() && nullptr != name.GetFunction()) {
                     auto& call = *name.GetFunction();
                     call.WriteToFile(fp, indent, TRUE, FALSE, delim);
@@ -432,7 +432,7 @@ namespace DslFileReadWrite
                 }
                 fwrite(" ", 1, 1, fp);
                 auto& component0 = *data.GetParam(0);
-                WriteComponent(fp, component0, indent, firstLineNoIndent, FALSE, delim);
+                WriteComponent(fp, component0, indent, TRUE, FALSE, delim);
             }
         }
         else {
