@@ -376,10 +376,12 @@ namespace Dsl
         { }
         public ValueData(string val)
         {
-            if (Utility.needQuote(val))
-                m_Type = STRING_TOKEN;
-            else if (val.Length > 0 && (val[0] >= '0' && val[0] <= '9' || val[0] == '.' || val[0] == '-'))
+            if (val.StartsWith("0x") && uint.TryParse(val.Substring(2), System.Globalization.NumberStyles.HexNumber, null, out var vx))
                 m_Type = NUM_TOKEN;
+            else if (float.TryParse(val, System.Globalization.NumberStyles.Any, null, out var v) || int.TryParse(val, System.Globalization.NumberStyles.Any, null, out var v2))
+                m_Type = NUM_TOKEN;
+            else if (Utility.needQuote(val))
+                m_Type = STRING_TOKEN;
             else
                 m_Type = ID_TOKEN;
 
