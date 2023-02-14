@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -796,10 +797,30 @@ namespace Dsl
         public void CopyFrom(FunctionData other)
         {
             m_IsHighOrder = other.m_IsHighOrder;
-            m_Name = other.m_Name;
-            m_LowerOrderFunction = other.m_LowerOrderFunction;
-            m_Params = other.m_Params;
+            if (null != other.m_Name) {
+                m_Name = Utility.CloneDsl(other.m_Name) as Dsl.ValueData;
+                Debug.Assert(null != m_Name);
+            }
+            else {
+                m_Name = null;
+            }
+            if (null != other.m_LowerOrderFunction) {
+                m_LowerOrderFunction = Utility.CloneDsl(other.m_LowerOrderFunction) as Dsl.FunctionData;
+                Debug.Assert(null != m_LowerOrderFunction);
+            }
+            else {
+                m_LowerOrderFunction = null;
+            }
             m_ParamClass = other.m_ParamClass;
+            if (null != other.m_Params) {
+                ClearParams();
+                foreach (var p in other.m_Params) {
+                    m_Params.Add(Utility.CloneDsl(p));
+                }
+            }
+            else {
+                m_Params = null;
+            }
 
             SetSeparator(other.GetSeparator());
 
@@ -1034,7 +1055,13 @@ namespace Dsl
         }
         public void CopyFrom(StatementData other)
         {
-            m_ValueOrFunctions = other.m_ValueOrFunctions;
+            m_ValueOrFunctions.Clear();
+            foreach (var f in other.m_ValueOrFunctions) {
+                var nf = Utility.CloneDsl(f);
+                var v = nf as Dsl.ValueOrFunctionData;
+                Debug.Assert(null != v);
+                m_ValueOrFunctions.Add(v);
+            }
 
             SetSeparator(other.GetSeparator());
 
@@ -1055,14 +1082,14 @@ namespace Dsl
         private List<ValueOrFunctionData> m_ValueOrFunctions = new List<ValueOrFunctionData>();
         private SyntaxComponentCommentsInfo m_CommentsInfo = null;
 
-        public static StatementData NullStatementData
+        public static StatementData NullStatement
         {
             get {
-                s_NullStatementData.Clear();
-                return s_NullStatementData;
+                s_NullStatement.Clear();
+                return s_NullStatement;
             }
         }
-        private static StatementData s_NullStatementData = new StatementData();
+        private static StatementData s_NullStatement = new StatementData();
     }
 
     public class DslFile
@@ -1818,6 +1845,38 @@ namespace Dsl
             Dsl.Parser.CppParser.Accept(checker);
             return checker.GetResults();
         }
+
+        public static Dsl.ISyntaxComponent CloneDsl(Dsl.ISyntaxComponent syntax)
+        {
+            Dsl.ISyntaxComponent ret;
+            var vd = syntax as Dsl.ValueData;
+            if (null != vd) {
+                var nvd = new Dsl.ValueData();
+                nvd.CopyFrom(vd);
+                ret = nvd;
+            }
+            else {
+                var fd = syntax as Dsl.FunctionData;
+                if (null != fd) {
+                    var nfd = new Dsl.FunctionData();
+                    nfd.CopyFrom(fd);
+                    ret = nfd;
+                }
+                else {
+                    var sd = syntax as Dsl.StatementData;
+                    if (null != sd) {
+                        var nsd = new Dsl.StatementData();
+                        nsd.CopyFrom(sd);
+                        ret = nsd;
+                    }
+                    else {
+                        ret = Dsl.NullSyntax.Instance;
+                    }
+                }
+            }
+            return ret;
+        }
+
         internal static int readInt(byte[] bytes, int pos)
         {
             if (null != bytes && pos >= 0 && pos + 3 < bytes.Length) {

@@ -402,7 +402,7 @@ luaargs()
 	{
 		jit.status() 
 	})) 
-	Utility.AppendFormat(infos, "jit status count {0}",  # results) 
+	Utility.AppendFormat(infos, "jit status count {0}", # results) 
 	infos->AppendLine();
 	for(i, v)
 	in(ipairs(results))
@@ -422,7 +422,7 @@ luaargs()
 jit.off() 
 jit.flush() 
 printJitStatus();
-if( not package.loading)
+if(not package.loading)
 {
 	lualist(package.loading)assignwith(
 	{
@@ -617,7 +617,7 @@ function(luacatch)
 luaargs(handled, err, func)
 {
 	local(lualist(retval)assignwith(nil));
-	if( not handled and func)
+	if(not handled and func)
 	{
 		lualist(retval)assignwith(func(
 		{
@@ -660,7 +660,7 @@ luaargs(arr)
 			{
 			}));
 			for(i)
-			luarange(1,  # arr)
+			luarange(1, # arr)
 			{
 				lualist(tb[i])assignwith(arr[i]) 
 			};
@@ -726,7 +726,7 @@ luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, .
 			elseif(name == "get_Chars")
 			{
 				local(lualist(c)assignwith(LuaSystemString.GetChar(obj, index)));
-				if( not c)
+				if(not c)
 				{
 					error("index out of range") 
 				};
@@ -787,7 +787,7 @@ luaargs(elementType, elementTypeKind, callerClass, obj, class, name, argCount, .
 function(addtofuncinfostructlist)
 luaargs(funcInfo, class, obj)
 {
-	if( not funcInfo or  not class or  not obj)
+	if(not funcInfo or not class or not obj)
 	{
 		return() 
 	};
@@ -855,11 +855,11 @@ luaargs(funcInfo, rettype, class, method, ...)
 	}
 	elseif(arg1 == nil and method == "op_Inequality")
 	{
-		return( not Slua.IsNull(arg2)) 
+		return(not Slua.IsNull(arg2)) 
 	}
 	elseif(arg1 == nil and 1 == string.find(method, "op_Inequality__", 1, true))
 	{
-		return( not Slua.IsNull(arg2)) 
+		return(not Slua.IsNull(arg2)) 
 	}
 	elseif(arg1 ~= nil and arg2 == nil and method == "op_Equality")
 	{
@@ -867,7 +867,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 	}
 	elseif(arg1 ~= nil and arg2 == nil and method == "op_Inequality")
 	{
-		return( not Slua.IsNull(arg1)) 
+		return(not Slua.IsNull(arg1)) 
 	}
 	elseif(arg1 ~= nil and arg2 ~= nil and method == "op_Equality")
 	{
@@ -948,7 +948,7 @@ luaargs(funcInfo, rettype, class, method, ...)
 		}
 		else
 		{
-			return( not Slua.IsNull(arg1)) 
+			return(not Slua.IsNull(arg1)) 
 		} 
 	}
 	elseif(method == "op_Multiply" or 1 == string.find(method, "op_Multiply__", 1, true))
@@ -1167,7 +1167,7 @@ luaargs(rettype, class, method, ...)
 	}
 	elseif(arg1 == nil and (method == "op_Inequality" or 1 == string.find(method, "op_Inequality__", 1, true)))
 	{
-		return( not Slua.IsNull(arg2)) 
+		return(not Slua.IsNull(arg2)) 
 	}
 	elseif(arg1 ~= nil and arg2 == nil and (method == "op_Equality" or 1 == string.find(method, "op_Equality__", 1, true)))
 	{
@@ -1175,7 +1175,7 @@ luaargs(rettype, class, method, ...)
 	}
 	elseif(arg1 ~= nil and arg2 == nil and (method == "op_Inequality" or 1 == string.find(method, "op_Inequality__", 1, true)))
 	{
-		return( not Slua.IsNull(arg1)) 
+		return(not Slua.IsNull(arg1)) 
 	}
 	elseif(method == "op_Implicit" or 1 == string.find(method, "op_Implicit__", 1, true))
 	{
@@ -1185,7 +1185,7 @@ luaargs(rettype, class, method, ...)
 		}
 		else
 		{
-			return( not Slua.IsNull(arg1)) 
+			return(not Slua.IsNull(arg1)) 
 		} 
 	}
 	elseif(method == "op_Multiply" or 1 == string.find(method, "op_Multiply__", 1, true))
@@ -1310,11 +1310,11 @@ luaargs(obj, isEnum, class, method, ...)
 				{
 					return(0) 
 				}
-				elseif( not obj and  not arg1)
+				elseif(not obj and not arg1)
 				{
 					return(0) 
 				}
-				elseif(obj and  not arg1)
+				elseif(obj and not arg1)
 				{
 					return(1) 
 				}
@@ -1448,11 +1448,11 @@ luaargs(firstArray, secondArray, method, ...)
 		elseif(method == "IndexOf" or 1 == string.find(method, "IndexOf__", 1, true))
 		{
 			local(lualist(arr  val  start  count)assignwith(...));
-			if( not start)
+			if(not start)
 			{
 				lualist(start)assignwith(0) 
 			};
-			if( not count)
+			if(not count)
 			{
 				lualist(count)assignwith(arr.Length) 
 			};
@@ -1532,7 +1532,7 @@ luaargs(op, luaop, opd1, opd2, type1, type2)
 		}
 		else
 		{
-			lualist(r)assignwith( - math.floor( - opd1 / opd2)) 
+			lualist(r)assignwith(- math.floor(- opd1 / opd2)) 
 		};
 		return(r) 
 	}
@@ -1559,7 +1559,7 @@ luaargs(op, luaop, opd1, opd2, type1, type2)
 		}
 		else
 		{
-			return( - opd2) 
+			return(- opd2) 
 		} 
 	}
 	elseif(op == __cs2lua_mul)
@@ -1601,7 +1601,7 @@ luaargs(tag, newFunc)
 	luaargs()
 	{
 		local(lualist(data)assignwith(nil));
-		if( # (pool.m_Data) > 0)
+		if(# (pool.m_Data) > 0)
 		{
 			lualist(data)assignwith(table.remove(pool.m_Data)) 
 		}
@@ -1626,7 +1626,7 @@ luaargs(tag, newFunc)
 				break 
 			} 
 		};
-		if( not exists)
+		if(not exists)
 		{
 			table.insert(pool.m_Data, data) 
 		} 
@@ -1926,7 +1926,7 @@ luaargs(isExtern, elementType, callerClass, obj, class, name, argCount, ...)
 			elseif(name == "get_Chars")
 			{
 				local(lualist(c)assignwith(LuaSystemString.GetChar(obj, index)));
-				if( not c)
+				if(not c)
 				{
 					error("index out of range") 
 				};
@@ -2132,7 +2132,7 @@ luaargs(funcInfo, class, val)
 function(luagetcallerfuncinfo)
 luaargs()
 {
-	local(lualist(ct)assignwith( # g_FuncInfoStack));
+	local(lualist(ct)assignwith(# g_FuncInfoStack));
 	if(ct > 1)
 	{
 		return(g_FuncInfoStack[ct - 1]) 
@@ -2200,49 +2200,49 @@ luaargs(funcInfo)
 			RectPool.Recycle(v) 
 		};
 		local(ct);
-		lualist(ct)assignwith( # (funcInfo.iter_list));
+		lualist(ct)assignwith(# (funcInfo.iter_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.iter_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.v2_list));
+		lualist(ct)assignwith(# (funcInfo.v2_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.v2_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.v3_list));
+		lualist(ct)assignwith(# (funcInfo.v3_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.v3_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.v4_list));
+		lualist(ct)assignwith(# (funcInfo.v4_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.v4_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.q_list));
+		lualist(ct)assignwith(# (funcInfo.q_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.q_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.c_list));
+		lualist(ct)assignwith(# (funcInfo.c_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.c_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.c32_list));
+		lualist(ct)assignwith(# (funcInfo.c32_list));
 		for(i)
 		luarange(1, ct)
 		{
 			lualist(funcInfo.c32_list[i])assignwith(nil) 
 		};
-		lualist(ct)assignwith( # (funcInfo.rt_list));
+		lualist(ct)assignwith(# (funcInfo.rt_list));
 		for(i)
 		luarange(1, ct)
 		{
@@ -2414,7 +2414,7 @@ luaargs(handler)
 function(delegationcomparewithnil)
 luaargs(isstatic, t, k, symKind, beequal)
 {
-	if( not t)
+	if(not t)
 	{
 		if(beequal)
 		{
@@ -2459,12 +2459,12 @@ luaargs(isstatic, t, k, symKind, beequal)
 			return(true) 
 		} 
 	};
-	local(lualist(n)assignwith((v and  # v) or 0));
+	local(lualist(n)assignwith((v and # v) or 0));
 	if(beequal and n == 0)
 	{
 		return(true) 
 	}
-	elseif( not isqual and n > 0)
+	elseif(not isqual and n > 0)
 	{
 		return(true) 
 	}
@@ -2488,13 +2488,13 @@ luaargs(isstatic, t, k, symKind, handler)
 			lualist(v)assignwith(t[k]) 
 		} 
 	};
-	if( not v or type(v) ~= "table")
+	if(not v or type(v) ~= "table")
 	{
 		return(handler) 
 	}
 	else
 	{
-		local(lualist(n)assignwith( # v));
+		local(lualist(n)assignwith(# v));
 		for(i)
 		luarange(1, n)
 		{
@@ -2570,11 +2570,11 @@ luaargs(isstatic, t, k, symKind, beequal)
 	{
 		return(true) 
 	};
-	if(beequal and  not v)
+	if(beequal and not v)
 	{
 		return(true) 
 	}
-	elseif( not beequal and v)
+	elseif(not beequal and v)
 	{
 		return(true) 
 	}
@@ -2752,7 +2752,7 @@ luaargs(tb)
 		}
 		else
 		{
-			lualist(count)assignwith( # tb);
+			lualist(count)assignwith(# tb);
 			lualist(meta.__count)assignwith(count) 
 		} 
 	};
@@ -2770,7 +2770,7 @@ luaargs(tb)
 		}
 		else
 		{
-			lualist(meta.__count)assignwith( # tb) 
+			lualist(meta.__count)assignwith(# tb) 
 		} 
 	} 
 };
@@ -2786,7 +2786,7 @@ luaargs(tb)
 		}
 		else
 		{
-			lualist(meta.__count)assignwith( # tb) 
+			lualist(meta.__count)assignwith(# tb) 
 		} 
 	} 
 };
@@ -3350,7 +3350,7 @@ luaargs(t, k)
 	elseif(k == "Keys")
 	{
 		local(lualist(meta)assignwith(getmetatable(t)));
-		if( not meta.cachedKeyCollection)
+		if(not meta.cachedKeyCollection)
 		{
 			lualist(meta.cachedKeyCollection)assignwith(NewKeyCollection(t)) 
 		};
@@ -3359,7 +3359,7 @@ luaargs(t, k)
 	elseif(k == "Values")
 	{
 		local(lualist(meta)assignwith(getmetatable(t)));
-		if( not meta.cachedValueCollection)
+		if(not meta.cachedValueCollection)
 		{
 			lualist(meta.cachedValueCollection)assignwith(NewValueCollection(t)) 
 		};
@@ -3391,7 +3391,7 @@ luaargs(t, k, val)
 	lualist(uk)assignwith(__unwrap_if_string(k));
 	local(lualist(data)assignwith(__get_table_data(t)));
 	local(lualist(v)assignwith(rawget(data, uk)));
-	if( not v)
+	if(not v)
 	{
 		rawset(data, uk, 
 		{
@@ -3863,7 +3863,7 @@ luaargs(funcInfo, exp)
 	local(lualist(meta)assignwith(getmetatable(exp)));
 	if(meta and rawget(meta, "__cs2lua_defined"))
 	{
-		if(meta.cachedIters and meta.cachedIters[exp] and  # (meta.cachedIters[exp]) > 0)
+		if(meta.cachedIters and meta.cachedIters[exp] and # (meta.cachedIters[exp]) > 0)
 		{
 			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1))) 
 			iterInfo[2]->Reset();
@@ -3908,7 +3908,7 @@ luaargs(funcInfo, exp)
 	}
 	elseif(meta and rawget(meta, "__typename") == "LuaArray")
 	{
-		if(meta.cachedIters and meta.cachedIters[exp] and  # (meta.cachedIters[exp]) > 0)
+		if(meta.cachedIters and meta.cachedIters[exp] and # (meta.cachedIters[exp]) > 0)
 		{
 			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1))) 
 			iterInfo[2]();
@@ -3960,7 +3960,7 @@ luaargs(funcInfo, exp)
 	}
 	else
 	{
-		if(meta and meta.cachedIters and meta.cachedIters[exp] and  # (meta.cachedIters[exp]) > 0)
+		if(meta and meta.cachedIters and meta.cachedIters[exp] and # (meta.cachedIters[exp]) > 0)
 		{
 			local(lualist(iterInfo)assignwith(table.remove(meta.cachedIters[exp], 1))) 
 			iterInfo[1](true);
@@ -4006,7 +4006,7 @@ luaargs(funcInfo, iterInfo)
 		{
 			if(meta.cachedIters)
 			{
-				if( not meta.cachedIters[exp])
+				if(not meta.cachedIters[exp])
 				{
 					lualist(meta.cachedIters[exp])assignwith(
 					{
@@ -4030,9 +4030,9 @@ luaargs(funcInfo, iterInfo)
 function(wraparray)
 luaargs(arr, size, classObj, typeKind)
 {
-	if( not size)
+	if(not size)
 	{
-		lualist(size)assignwith( # arr) 
+		lualist(size)assignwith(# arr) 
 	};
 	return(setmetatable(arr, 
 	{
@@ -4181,7 +4181,7 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, list, ...)
 		local(lualist(obj)assignwith(setmetatable(list, 
 		{
 			__index = __mt_index_of_array;
-			__count =  # list;
+			__count = # list;
 			__cs2lua_defined = true;
 			__class = t 
 		})));
@@ -4189,7 +4189,7 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, list, ...)
 		if(arg1 and (type(arg1) == "table" or type(arg1) == "userdata"))
 		{
 			local(lualist(meta)assignwith(getmetatable(arg1)));
-			if(meta and  not rawget(meta, "__cs2lua_defined"))
+			if(meta and not rawget(meta, "__cs2lua_defined"))
 			{
 				local(lualist(typename)assignwith(rawget(meta, "__typename")));
 				if(typename == "LuaArray")
@@ -4243,7 +4243,7 @@ luaargs(t, typeargs, typekinds, ctor, ctorRetCt, coll, ...)
 		if(arg1 and (type(arg1) == "table" or type(arg1) == "userdata"))
 		{
 			local(lualist(meta)assignwith(getmetatable(arg1)));
-			if(meta and  not rawget(meta, "__cs2lua_defined"))
+			if(meta and not rawget(meta, "__cs2lua_defined"))
 			{
 				local(lualist(typename)assignwith(rawget(meta, "__typename")));
 				if(typename == "LuaArray")
@@ -4523,7 +4523,7 @@ luaargs(linq, ix, paramList)
 	local(lualist(interRs)assignwith(
 	{
 	}));
-	local(lualist(itemNum)assignwith( # linq));
+	local(lualist(itemNum)assignwith(# linq));
 	while(ix <= itemNum)
 	{
 		local(lualist(v)assignwith(linq[ix]));
@@ -4587,7 +4587,7 @@ luaargs(linq, ix, paramList, coll, interRs, finalRs)
 		table.insert(newParamList, cv);
 		local(lualist(isMatch)assignwith(true));
 		local(lualist(newIx)assignwith(ix));
-		local(lualist(itemNum)assignwith( # linq));
+		local(lualist(itemNum)assignwith(# linq));
 		while(newIx <= itemNum)
 		{
 			local(lualist(v)assignwith(linq[newIx]));
@@ -4598,7 +4598,7 @@ luaargs(linq, ix, paramList, coll, interRs, finalRs)
 			}
 			elseif(key == "where")
 			{
-				if( not v[2](unpack(newParamList)))
+				if(not v[2](unpack(newParamList)))
 				{
 					lualist(isMatch)assignwith(false);
 					break 
@@ -4653,7 +4653,7 @@ luaargs(l1, l2, list)
 lualist(LINQ.getNextIndex)assignwith(function()
 luaargs(linq, ix)
 {
-	local(lualist(itemNum)assignwith( # linq));
+	local(lualist(itemNum)assignwith(# linq));
 	while(ix <= itemNum)
 	{
 		local(lualist(v)assignwith(linq[ix]));
@@ -4680,7 +4680,7 @@ function(warmup)
 luaargs(class)
 {
 	local(lualist(ret)assignwith(true));
-	if(rawget(class, "__cs2lua_predefined") and  not rawget(class, "__cs2lua_defined"))
+	if(rawget(class, "__cs2lua_predefined") and not rawget(class, "__cs2lua_defined"))
 	{
 		lualist(ret)assignwith(class.__cs2lua_defined) 
 	};
@@ -4919,7 +4919,7 @@ luaargs(obj, t, tk)
 		}
 		elseif(v < 0)
 		{
-			lualist(v)assignwith( - (( - v) % 0x100000000)) 
+			lualist(v)assignwith(- ((- v) % 0x100000000)) 
 		};
 		if(t == System.Int32 and v > 0x7fffffff)
 		{
@@ -4937,7 +4937,7 @@ luaargs(obj, t, tk)
 		}
 		elseif(v < 0)
 		{
-			lualist(v)assignwith( - (( - v) % 0x10000)) 
+			lualist(v)assignwith(- ((- v) % 0x10000)) 
 		};
 		if(t == System.Int16 and v > 0x7fff)
 		{
@@ -4955,7 +4955,7 @@ luaargs(obj, t, tk)
 		}
 		elseif(v < 0)
 		{
-			lualist(v)assignwith( - (( - v) % 0x100)) 
+			lualist(v)assignwith(- ((- v) % 0x100)) 
 		};
 		if(t == System.SByte and v > 0x7f)
 		{
@@ -5111,7 +5111,7 @@ luaargs(obj, t, tk)
 					break 
 				} 
 			};
-			if( not rawget(lastCheckedClass, "__cs2lua_defined"))
+			if(not rawget(lastCheckedClass, "__cs2lua_defined"))
 			{
 				local(lualist(meta3)assignwith(getmetatable(lastCheckedClass)));
 				if(meta3)
@@ -5274,7 +5274,7 @@ luaargs(base, fullName, typeName, class, obj_methods, is_value_type, is_inherit_
 	rawset(class, "FullName", fullName) 
 	rawset(class, "Name", typeName) 
 	rawset(class, "__get_obj_methods", __get_obj_methods);
-	if( not obj_methods)
+	if(not obj_methods)
 	{
 		lualist(obj_methods)assignwith(
 		{
