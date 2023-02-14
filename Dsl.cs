@@ -367,6 +367,8 @@ namespace Dsl
             m_Id = other.m_Id;
             m_Line = other.m_Line;
 
+            SetSeparator(other.GetSeparator());
+
             if (!DslFile.DontLoadComments) {
                 CopyComments(other);
             }
@@ -799,6 +801,8 @@ namespace Dsl
             m_Params = other.m_Params;
             m_ParamClass = other.m_ParamClass;
 
+            SetSeparator(other.GetSeparator());
+
             if (!DslFile.DontLoadComments) {
                 if (null != other.m_CommentsInfo && null != other.m_CommentsInfo.m_Comments) {
                     Comments.AddRange(other.m_CommentsInfo.m_Comments);
@@ -1031,6 +1035,8 @@ namespace Dsl
         public void CopyFrom(StatementData other)
         {
             m_ValueOrFunctions = other.m_ValueOrFunctions;
+
+            SetSeparator(other.GetSeparator());
 
             if (!DslFile.DontLoadComments) {
                 CopyComments(other);
