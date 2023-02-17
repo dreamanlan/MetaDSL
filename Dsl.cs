@@ -1107,20 +1107,21 @@ namespace Dsl
         {
             string content = File.ReadAllText(file);
             //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
-            return LoadFromString(content, file, logCallback);
+            return LoadFromString(content, logCallback);
         }
-        public bool LoadFromString(string content, string resourceName, DslLogDelegation logCallback)
+        public bool LoadFromString(string content, DslLogDelegation logCallback)
         {
             content = Mac2Unix(content);
 
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
-            Common.DslToken tokens = new Common.DslToken(log, content);
-            tokens.OnGetToken = mOnGetToken;
 
             Parser.DslError error = new Parser.DslError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
+            Common.DslToken tokens = new Common.DslToken(action, log, content);
+            tokens.OnGetToken = mOnGetToken;
+
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
@@ -1130,7 +1131,12 @@ namespace Dsl
             action.onAddFunction = mOnAddFunction;
             action.onBeforeEndStatement = mOnBeforeEndStatement;
             action.onEndStatement = mOnEndStatement;
-
+            action.onBeforeBuildOperator = mOnBeforeBuildOperator;
+            action.onBuildOperator = mOnBuildOperator;
+            action.onSetFunctionId = mOnSetFunctionId;
+            action.onSetMemberId = mOnSetMemberId;
+            action.onBeforeSetHighOrder = mOnBeforeSetHighOrder;
+            action.onSetHighOrder = mOnSetHighOrder;
 
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
@@ -1299,9 +1305,9 @@ namespace Dsl
         {
             string content = File.ReadAllText(file);
             //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
-            return LoadLuaFromString(content, file, logCallback);
+            return LoadLuaFromString(content, logCallback);
         }
-        public bool LoadLuaFromString(string content, string resourceName, DslLogDelegation logCallback)
+        public bool LoadLuaFromString(string content, DslLogDelegation logCallback)
         {
             content = Mac2Unix(content);
 
@@ -1329,23 +1335,36 @@ namespace Dsl
         {
             string content = File.ReadAllText(file);
             //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
-            return LoadCppFromString(content, file, logCallback);
+            return LoadCppFromString(content, logCallback);
         }
-        public bool LoadCppFromString(string content, string resourceName, DslLogDelegation logCallback)
+        public bool LoadCppFromString(string content, DslLogDelegation logCallback)
         {
             content = Mac2Unix(content);
 
             mDslInfos.Clear();
             Common.DslLog log = new Common.DslLog();
             log.OnLog += logCallback;
-            Dsl.Parser.CppToken tokens = new Dsl.Parser.CppToken(log, content);
-            Dsl.Parser.CppError error = new Dsl.Parser.CppError(log);
+
+            Parser.CppError error = new Parser.CppError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
+            Common.CppToken tokens = new Common.CppToken(action, log, content);
+            tokens.OnGetToken = mOnGetCppToken;
+
             action.Type = Common.DslActionType.Cpp;
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
+            action.onBeforeAddFunction = mOnBeforeAddFunction;
+            action.onAddFunction = mOnAddFunction;
+            action.onBeforeEndStatement = mOnBeforeEndStatement;
+            action.onEndStatement = mOnEndStatement;
+            action.onBeforeBuildOperator = mOnBeforeBuildOperator;
+            action.onBuildOperator = mOnBuildOperator;
+            action.onSetFunctionId = mOnSetFunctionId;
+            action.onSetMemberId = mOnSetMemberId;
+            action.onBeforeSetHighOrder = mOnBeforeSetHighOrder;
+            action.onSetHighOrder = mOnSetHighOrder;
 
-            Dsl.Parser.CppParser.parse(ref action, ref tokens, ref error, 0);
+            Parser.CppParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
                     mDslInfos.Clear();
@@ -1368,18 +1387,23 @@ namespace Dsl
         {
             string content = File.ReadAllText(file);
             //logCallback(string.Format("DslFile.Load {0}:\n{1}", file, content));
-            return LoadGppFromString(content, file, logCallback, beginDelim, endDelim, out transformedContent);
+            return LoadGppFromString(content, logCallback, beginDelim, endDelim, out transformedContent);
         }
-        public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback)
+        public bool LoadGppFromString(string content, DslLogDelegation logCallback)
         {
             string dummy;
-            return LoadGppFromString(content, resourceName, logCallback, string.Empty, string.Empty, out dummy);
+            return LoadGppFromString(content, logCallback, string.Empty, string.Empty, out dummy);
         }
-        public bool LoadGppFromString(string content, string resourceName, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
+        public bool LoadGppFromString(string content, DslLogDelegation logCallback, string beginDelim, string endDelim)
+        {
+            string dummy;
+            return LoadGppFromString(content, logCallback, beginDelim, endDelim, out dummy);
+        }
+        public bool LoadGppFromString(string content, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
         {
             content = Mac2Unix(content);
             transformedContent = TransformPreprocess(content, beginDelim, endDelim);
-            return LoadFromString(transformedContent, resourceName, logCallback);
+            return LoadFromString(transformedContent, logCallback);
         }
 
         public void SetStringDelimiter(string begin, string end)
@@ -1408,6 +1432,11 @@ namespace Dsl
         {
             get { return mScriptEndDelimiter; }
         }
+        public Dsl.Common.GetCppTokenDelegation onGetCppToken
+        {
+            get { return mOnGetCppToken; }
+            set { mOnGetCppToken = value; }
+        }
         public Dsl.Common.GetTokenDelegation onGetToken
         {
             get { return mOnGetToken; }
@@ -1432,6 +1461,36 @@ namespace Dsl
         {
             get { return mOnEndStatement; }
             set { mOnEndStatement = value; }
+        }
+        public Dsl.Common.BeforeBuildOperatorDelegation onBeforeBuildOperator
+        {
+            get { return mOnBeforeBuildOperator; }
+            set { mOnBeforeBuildOperator = value; }
+        }
+        public Dsl.Common.BuildOperatorDelegation onBuildOperator
+        {
+            get { return mOnBuildOperator; }
+            set { mOnBuildOperator = value; }
+        }
+        public Dsl.Common.SetFunctionIdDelegation onSetFunctionId
+        {
+            get { return mOnSetFunctionId; }
+            set { mOnSetFunctionId = value; }
+        }
+        public Dsl.Common.SetMemberIdDelegation onSetMemberId
+        {
+            get { return mOnSetMemberId; }
+            set { mOnSetMemberId = value; }
+        }
+        public Dsl.Common.BeforeSetHighOrderDelegation onBeforeSetHighOrder
+        {
+            get { return mOnBeforeSetHighOrder; }
+            set { mOnBeforeSetHighOrder = value; }
+        }
+        public Dsl.Common.SetHighOrderDelegation onSetHighOrder
+        {
+            get { return mOnSetHighOrder; }
+            set { mOnSetHighOrder = value; }
         }
 
         private static string TransformPreprocess(string input, string beginDelim, string endDelim)
@@ -1732,11 +1791,18 @@ namespace Dsl
         private string mScriptBeginDelimiter = "{:";
         private string mScriptEndDelimiter = ":}";
 
+        private Dsl.Common.GetCppTokenDelegation mOnGetCppToken;
         private Dsl.Common.GetTokenDelegation mOnGetToken;
         private Dsl.Common.BeforeAddFunctionDelegation mOnBeforeAddFunction;
         private Dsl.Common.AddFunctionDelegation mOnAddFunction;
         private Dsl.Common.BeforeEndStatementDelegation mOnBeforeEndStatement;
         private Dsl.Common.EndStatementDelegation mOnEndStatement;
+        private Dsl.Common.BeforeBuildOperatorDelegation mOnBeforeBuildOperator;
+        private Dsl.Common.BuildOperatorDelegation mOnBuildOperator;
+        private Dsl.Common.SetFunctionIdDelegation mOnSetFunctionId;
+        private Dsl.Common.SetMemberIdDelegation mOnSetMemberId;
+        private Dsl.Common.BeforeSetHighOrderDelegation mOnBeforeSetHighOrder;
+        private Dsl.Common.SetHighOrderDelegation mOnSetHighOrder;
 
         public static byte[] BinaryIdentity
         {

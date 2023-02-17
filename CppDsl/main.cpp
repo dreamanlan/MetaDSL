@@ -49,19 +49,19 @@ int main(int argc, char* argv[])
     {
         DslParser::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();
-        dataFile.OnGetToken.attach([](const DslParser::DslTokenApi& api, char*& tok, short& val, int& line) {
+        dataFile.OnGetToken.attach([](const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, short& val, int& line) {
             if (0 == strcmp(tok, "return")) {
-                char* oldCurTok = api.getCurToken();
-                char* oldLastTok = api.getLastToken(); 
+                char* oldCurTok = tokenApi.getCurToken();
+                char* oldLastTok = tokenApi.getLastToken(); 
                 int index;
-                char nc = api.peekNextValidChar(0, index);
-                if (nc == '<' && api.peekChar(index + 1) == '-')
+                char nc = tokenApi.peekNextValidChar(0, index);
+                if (nc == '<' && tokenApi.peekChar(index + 1) == '-')
                     return false;
-                api.setCurToken(const_cast<char*>("<-"));
-                api.setLastToken(oldCurTok);
-                api.enqueueToken(api.getCurToken(), api.getOperatorTokenValue(), line);
-                api.setCurToken(oldCurTok);
-                api.setLastToken(oldLastTok);
+                tokenApi.setCurToken(const_cast<char*>("<-"));
+                tokenApi.setLastToken(oldCurTok);
+                tokenApi.enqueueToken(tokenApi.getCurToken(), tokenApi.getOperatorTokenValue(), line);
+                tokenApi.setCurToken(oldCurTok);
+                tokenApi.setLastToken(oldLastTok);
             }
             return true; 
             });

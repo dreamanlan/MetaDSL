@@ -444,7 +444,7 @@ short SlkToken::get(void)
 {
     short tok = getImpl();
     if (!mDslFile->OnGetToken.isNull()) {
-        mDslFile->OnGetToken(DslTokenApi(this), mCurToken, tok, mLineNumber);
+        mDslFile->OnGetToken(*mDslActionApi, DslTokenApi(this), mCurToken, tok, mLineNumber);
     }
     return tok;
 }
@@ -1109,7 +1109,7 @@ short SlkToken::getImpl(void)
                 pushTokenChar(curChar());
                 ++mIterator;
             }
-            for (int charCt = 0; (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || !isSpecialChar(curChar()); ++mIterator, ++charCt) {
+            for (int charCt = 0; (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || curChar() == '\'' || !isSpecialChar(curChar()); ++mIterator, ++charCt) {
                 if (curChar() == '#')
                     break;
                 else if (curChar() == '.') {
@@ -1356,7 +1356,7 @@ void SlkToken::endTokenWithEof(void)
     mDslFile->GetUnusedStringPtrRef() += strlen(s_c_Eof) + 1;
 }
 
-SlkToken::SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile) :mSource(&source), mDslFile(&dslFile), mTokenQueue()
+SlkToken::SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile) :mSource(&source), mDslActionApi(nullptr), mDslFile(&dslFile), mTokenQueue()
 {
     MyAssert(mSource);
     MyAssert(mDslFile);

@@ -99,6 +99,10 @@ private:
     void endTokenWithEof(void);
 public:
     SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile);
+    void SetDslActionApi(const DslParser::DslActionApi& api)
+    {
+        mDslActionApi = &api;
+    }
 private:
     struct TokenInfo
     {
@@ -125,6 +129,7 @@ private:
     int mCommentNum;
     int mCommentOnNewLine;
 
+    const DslParser::DslActionApi* mDslActionApi;
     DslParser::DslFile* mDslFile;
     DequeT<TokenInfo, 16> mTokenQueue;
 

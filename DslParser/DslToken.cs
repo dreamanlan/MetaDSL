@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Dsl.Common;
 using Dsl.Parser;
 
 namespace Dsl.Common
 {
     public struct DslToken
     {
-        internal DslToken(DslLog log, string input)
+        internal DslToken(DslAction action, DslLog log, string input)
         {
+            mAction = action;
             mLog = log;
             mInput = input;
             mIterator = 0;
@@ -38,7 +38,7 @@ namespace Dsl.Common
         {
             short tok = getImpl();
             if (null != mOnGetToken) {
-                mOnGetToken(ref this, ref mCurToken, ref tok, ref mLineNumber);
+                mOnGetToken(ref mAction, ref this, ref mCurToken, ref tok, ref mLineNumber);
             }
             return tok;
         }
@@ -567,7 +567,7 @@ namespace Dsl.Common
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (int charCt = 0; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator, ++charCt) {
+                    for (int charCt = 0; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || CurChar=='\'' || !isSpecialChar(CurChar); ++mIterator, ++charCt) {
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '.') {
@@ -575,7 +575,7 @@ namespace Dsl.Common
                                 break;
                             }
                             else {
-                                if(NextChar == 'b' || NextChar == 'B' || NextChar == 'f' || NextChar == 'F' || NextChar == 'l' || NextChar == 'L') {
+                                if (NextChar == 'b' || NextChar == 'B' || NextChar == 'f' || NextChar == 'F' || NextChar == 'l' || NextChar == 'L') {
                                 }
                                 else if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
                                     char c = PeekNextValidChar(1);
@@ -1149,7 +1149,7 @@ namespace Dsl.Common
             else
                 return 0;
         }
-
+		
         private struct TokenInfo
         {
             internal string Token;
@@ -1157,6 +1157,7 @@ namespace Dsl.Common
             internal int LineNumber;
         }
 
+        private DslAction mAction;
         private DslLog mLog;
         private string mInput;
         private int mIterator;

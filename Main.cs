@@ -39,7 +39,7 @@ namespace Dsl
             //*/
             DslFile file = new DslFile();
             //return语句修改为return <-句式，保证return在语义数据的浅层，方便后续处理
-            file.onGetToken = (ref Dsl.Common.DslToken dslToken, ref string tok, ref short val, ref int line) => {
+            file.onGetToken = (ref Dsl.Common.DslAction action, ref Dsl.Common.DslToken dslToken, ref string tok, ref short val, ref int line) => {
                 if (tok == "return") {
                     string oldCurToken = dslToken.getCurToken();
                     string oldLastToken = dslToken.getLastToken();

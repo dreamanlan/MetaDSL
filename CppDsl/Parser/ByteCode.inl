@@ -48,8 +48,14 @@ namespace DslParser
         StatementData* pArg = mData.getCurStatement();
         if (0 == pArg)
             return;
+        if (!mDataFile->OnBeforeBuildOperator.isNull())
+            mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, pArg);
         mData.popStatement();
+        if (!mDataFile->OnBuildOperator.isNull())
+            mDataFile->OnBuildOperator(mApi, tokenInfo.mString, pArg);
+
         ISyntaxComponent& argComp = simplifyStatement(*pArg);
+
         StatementData* pStatement = mDataFile->AddNewStatementComponent();
         if (0 == pStatement)
             return;
@@ -96,9 +102,15 @@ namespace DslParser
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op1/2:%s\n", tokenInfo.mString);
         }
 
-        StatementData* pArg = mData.popStatement();
+        StatementData* pArg = mData.getCurStatement();
         if (0 == pArg)
             return;
+        if (!mDataFile->OnBeforeBuildOperator.isNull())
+            mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, pArg);
+        mData.popStatement();
+        if (!mDataFile->OnBuildOperator.isNull())
+            mDataFile->OnBuildOperator(mApi, tokenInfo.mString, pArg);
+
         ISyntaxComponent& argComp = simplifyStatement(*pArg);
         StatementData* pStatement = mDataFile->AddNewStatementComponent();
         if (0 == pStatement)
@@ -140,6 +152,9 @@ namespace DslParser
 
         StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
+            if (!mDataFile->OnBeforeBuildOperator.isNull())
+                mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, statement);
+
             FunctionData* p = mDataFile->AddNewFunctionComponent();
             if (0 != p) {
                 FunctionData& call = *p;
@@ -442,6 +457,9 @@ namespace DslParser
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("id:%s\n", tokenInfo.mString);
         }
 
+        StatementData* pStm = mData.getCurStatement();
+        if (0 == pStm)
+            return;
         FunctionData* p = mData.getLastFunction();
         if (0 != p && !p->IsValid()) {
             ValueData val = tokenInfo.ToValue();
@@ -450,6 +468,8 @@ namespace DslParser
                 p->SetName(val);
             }
         }
+        if (!mDataFile->OnSetFunctionId.isNull())
+            mDataFile->OnSetFunctionId(mApi, tokenInfo.mString, pStm, p);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::setMemberId(void)
@@ -462,6 +482,9 @@ namespace DslParser
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("member:%s\n", tokenInfo.mString);
         }
 
+        StatementData* pStm = mData.getCurStatement();
+        if (0 == pStm)
+            return;
         FunctionData* p = mData.getLastFunction();
         if (0 != p && !p->IsValid()) {
             ValueData val = tokenInfo.ToValue();
@@ -470,15 +493,22 @@ namespace DslParser
                 p->SetName(val);
             }
         }
+        if (!mDataFile->OnSetMemberId.isNull())
+            mDataFile->OnSetMemberId(mApi, tokenInfo.mString, pStm, p);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildHighOrderFunction(void)
     {
         if (!preconditionCheck())return;
         //高阶函数构造（当前函数返回一个函数）
+        StatementData* pStm = mData.getCurStatement();
+        if (0 == pStm)
+            return;
         FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
+        if (!mDataFile->OnBeforeSetHighOrder.isNull())
+            mDataFile->OnBeforeSetHighOrder(mApi, pStm, p);
         FunctionData* newP = mDataFile->AddNewFunctionComponent();
         if (0 != newP) {
             ValueData val(p);
@@ -486,6 +516,8 @@ namespace DslParser
             newP->SetName(val);
             mData.setLastFunction(newP);
         }
+        if (!mDataFile->OnSetHighOrder.isNull())
+            mDataFile->OnSetHighOrder(mApi, pStm, p);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisParam(void)

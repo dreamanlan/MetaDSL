@@ -131,6 +131,7 @@ inline void ActionForSourceCodeScript::pushSemiColon(void)
 inline ActionForSourceCodeScript::ActionForSourceCodeScript(SlkToken& scanner, DslParser::DslFile& dataFile) :mScanner(&scanner), BaseType(dataFile)
 {
     mApi.SetImpl(this);
+    scanner.SetDslActionApi(mApi);
     initialize_table();
     setEnvironmentObjRef(*this);
 }

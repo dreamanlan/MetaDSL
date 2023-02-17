@@ -1353,11 +1353,17 @@ namespace DslParser
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
     public:
-        typedef Delegation<bool(const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
+        typedef Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeAddFunctionDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> AddFunctionDelegation;
         typedef Delegation<bool(const DslActionApi&)> BeforeEndStatementDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*&)> EndStatementDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*)> BeforeBuildOperatorDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*&)> BuildOperatorDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetFunctionIdDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetMemberIdDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BeforeSetHighOrderDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> SetHighOrderDelegation;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const
@@ -1396,6 +1402,12 @@ namespace DslParser
         AddFunctionDelegation OnAddFunction;
         BeforeEndStatementDelegation OnBeforeEndStatement;
         EndStatementDelegation OnEndStatement;
+        BeforeBuildOperatorDelegation OnBeforeBuildOperator;
+        BuildOperatorDelegation OnBuildOperator;
+        SetFunctionIdDelegation OnSetFunctionId;
+        SetMemberIdDelegation OnSetMemberId;
+        BeforeSetHighOrderDelegation OnBeforeSetHighOrder;
+        SetHighOrderDelegation OnSetHighOrder;
     private:
         DslFile(const DslFile& other) = delete;
         DslFile(DslFile&& other) noexcept = delete;

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Dsl.Common;
+using Dsl.Parser;
 
-namespace Dsl.Parser
+namespace Dsl.Common
 {
-    struct CppToken
+    public struct CppToken
     {
-        internal CppToken(DslLog log, string input)
+        internal CppToken(DslAction action, DslLog log, string input)
         {
+            mAction = action;
             mLog = log;
             mInput = input;
             mIterator = 0;
@@ -22,9 +23,18 @@ namespace Dsl.Parser
             mTokenBuilder = new StringBuilder();
             mTokenQueue = new Queue<TokenInfo>();
             mMatchStack = new Stack<string>();
+            mOnGetToken = null;
         }
 
         internal short get()
+        {
+            short tok = getImpl();
+            if (null != mOnGetToken) {
+                mOnGetToken(ref mAction, ref this, ref mCurToken, ref tok, ref mLineNumber);
+            }
+            return tok;
+        }
+        private short getImpl()
         {
             mLastToken = mCurToken;
             mLastLineNumber = mLineNumber;
@@ -113,9 +123,9 @@ namespace Dsl.Parser
                     }
                     else {
                         ++mIterator;
-                        mTokenQueue.Enqueue(new TokenInfo { Token = "::", TokenValue = CppConstants.STRING_, LineNumber = mLineNumber });
+                        mTokenQueue.Enqueue(new TokenInfo { Token = "::", TokenValue = CppConstants.IDENTIFIER_, LineNumber = mLineNumber });
                         mCurToken = "<";
-                        return CppConstants.STRING_;
+                        return CppConstants.IDENTIFIER_;
                     }
                 }
                 else {
@@ -165,7 +175,7 @@ namespace Dsl.Parser
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "::";
-                return CppConstants.STRING_;
+                return CppConstants.IDENTIFIER_;
             }
             else if (CurChar == '-') {
                 if (NextChar == '>') {
@@ -184,29 +194,29 @@ namespace Dsl.Parser
                         ++mIterator;
                         ++mIterator;
                         mCurToken = "->*";
-                        return CppConstants.STRING_;
+                        return CppConstants.IDENTIFIER_;
                     }
                     else if (!char.IsLetter(nextChar) && nextChar != '_') {
                         getOperatorToken();
-                        return CppConstants.STRING_;
+                        return CppConstants.IDENTIFIER_;
                     }
                     else {
                         ++mIterator;
                         ++mIterator;
                         mCurToken = "->";
-                        return CppConstants.STRING_;
+                        return CppConstants.IDENTIFIER_;
                     }
                 }
                 else {
                     getOperatorToken();
-                    return CppConstants.STRING_;
+                    return CppConstants.IDENTIFIER_;
                 }
             }
             else if (CurChar == '.' && NextChar == '*') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ".*";
-                return CppConstants.STRING_;
+                return CppConstants.IDENTIFIER_;
             }
             else if (CurChar == '.' && NextChar == '.') {
                 ++mIterator;
@@ -214,16 +224,16 @@ namespace Dsl.Parser
                 if (CurChar == '.') {
                     ++mIterator;
                     mCurToken = "...";
-                    return CppConstants.STRING_;
+                    return CppConstants.IDENTIFIER_;
                 }
                 else {
                     mCurToken = "..";
-                    return CppConstants.STRING_;
+                    return CppConstants.IDENTIFIER_;
                 }
             }
             else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
-                return CppConstants.STRING_;
+                return CppConstants.IDENTIFIER_;
             }
             else if (CurChar == '.' && !myisdigit(NextChar, false)) {
                 while (CurChar == '.' && !myisdigit(NextChar, false)) {
@@ -231,7 +241,7 @@ namespace Dsl.Parser
                     ++mIterator;
                 }
                 mCurToken = mTokenBuilder.ToString();
-                return CppConstants.STRING_;
+                return CppConstants.IDENTIFIER_;
             }
             else if (CurChar == '{') {
                 ++mIterator;
@@ -563,21 +573,40 @@ namespace Dsl.Parser
             }
         }
 
-        internal string getCurToken()
+        public void setCurToken(string tok)
+        {
+            mCurToken = tok;
+        }
+        public void setLastToken(string tok)
+        {
+            mLastToken = tok;
+        }
+        public bool enqueueToken(string tok, short val, int line)
+        {
+            mTokenQueue.Enqueue(new TokenInfo { Token = tok, TokenValue = val, LineNumber = line });
+            return true;
+        }
+
+        public string getCurToken()
         {
             return mCurToken;
         }
-        internal string getLastToken()
+        public string getLastToken()
         {
             return mLastToken;
         }
-        internal int getLineNumber()
+        public int getLineNumber()
         {
             return mLineNumber;
         }
-        internal int getLastLineNumber()
+        public int getLastLineNumber()
         {
             return mLastLineNumber;
+        }
+        internal GetCppTokenDelegation OnGetToken
+        {
+            get { return mOnGetToken; }
+            set { mOnGetToken = value; }
         }
 
         private bool SkipWhiteSpaces()
@@ -619,7 +648,7 @@ namespace Dsl.Parser
             return isSkip;
         }
 
-        private void getOperatorToken()
+        public void getOperatorToken()
         {
             int st = mIterator;
             switch (CurChar) {
@@ -753,49 +782,56 @@ namespace Dsl.Parser
             int ed = mIterator;
             mCurToken = mInput.Substring(st, ed - st);
         }
-        private bool isWhiteSpace(char c)
+        public bool isNotIdentifierAndEndParenthesis(char c)
+        {
+            if (0 == c)
+                return false;
+            else
+                return mEndParentheses.IndexOf(c) < 0 && !char.IsLetterOrDigit(c) && c != '_' && c != '@' && c != '$';
+        }
+        public bool isWhiteSpace(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mWhiteSpaces.IndexOf(c) >= 0;
         }
-        private bool isDelimiter(char c)
+        public bool isDelimiter(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mDelimiters.IndexOf(c) >= 0;
         }
-        private bool isBeginParentheses(char c)
+        public bool isBeginParentheses(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mBeginParentheses.IndexOf(c) >= 0;
         }
-        private bool isEndParentheses(char c)
+        public bool isEndParentheses(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mEndParentheses.IndexOf(c) >= 0;
         }
-        private bool isOperator(char c)
+        public bool isOperator(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mOperators.IndexOf(c) >= 0;
         }
-        private bool isQuote(char c)
+        public bool isQuote(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mQuotes.IndexOf(c) >= 0;
         }
-        private bool isSpecialChar(char c)
+        public bool isSpecialChar(char c)
         {
             if (0 == c)
                 return true;
@@ -803,31 +839,31 @@ namespace Dsl.Parser
                 return mSpecialChars.IndexOf(c) >= 0;
         }
 
-        private char CurChar
+        public char CurChar
         {
             get {
                 return PeekChar(0);
             }
         }
-        private char NextChar
+        public char NextChar
         {
             get {
                 return PeekChar(1);
             }
         }
-        private char PeekChar(int ix)
+        public char PeekChar(int ix)
         {
             char c = (char)0;
             if (ix >= 0 && mIterator + ix < mInput.Length)
                 c = mInput[mIterator + ix];
             return c;
         }
-        private char PeekNextValidChar(int beginIndex)
+        public char PeekNextValidChar(int beginIndex)
         {
             int _;
             return PeekNextValidChar(beginIndex, out _);
         }
-        private char PeekNextValidChar(int beginIndex, out int index)
+        public char PeekNextValidChar(int beginIndex, out int index)
         {
             char nextChar = '\0';
             index = -1;
@@ -844,7 +880,7 @@ namespace Dsl.Parser
             return nextChar;
         }
 
-        private void EnqueueMatchedToken(string otherPair)
+        public void EnqueueMatchedToken(string otherPair)
         {
             if (otherPair == "(")
                 mTokenQueue.Enqueue(new TokenInfo { Token = ")", TokenValue = CppConstants.RPAREN_, LineNumber = mLineNumber });
@@ -860,11 +896,11 @@ namespace Dsl.Parser
                 mTokenQueue.Enqueue(new TokenInfo { Token = "{", TokenValue = CppConstants.LBRACE_, LineNumber = mLineNumber });
         }
 
-        private static bool myisdigit(char c, bool isHex)
+        public static bool myisdigit(char c, bool isHex)
         {
             return myisdigit(c, isHex, false, false);
         }
-        private static bool myisdigit(char c, bool isHex, bool includeEPart, bool includeAddSub)
+        public static bool myisdigit(char c, bool isHex, bool includeEPart, bool includeAddSub)
         {
             bool ret = false;
             if (isHex) {
@@ -889,7 +925,7 @@ namespace Dsl.Parser
             }
             return ret;
         }
-        private static int mychar2int(char c)
+        public static int mychar2int(char c)
         {
             if (c >= '0' && c <= '9')
                 return c - '0';
@@ -900,7 +936,7 @@ namespace Dsl.Parser
             else
                 return 0;
         }
-        private static string myUnQuoteString(string str)
+        public static string myUnQuoteString(string str)
         {
             if (str.Length >= 2 && str[0] == '"' && str[str.Length - 1] == '"') {
                 return str.Substring(1, str.Length - 2);
@@ -917,6 +953,7 @@ namespace Dsl.Parser
             internal int LineNumber;
         }
 
+        private DslAction mAction;
         private DslLog mLog;
         private string mInput;
         private int mIterator;
@@ -937,5 +974,6 @@ namespace Dsl.Parser
         private StringBuilder mTokenBuilder;
         private Queue<TokenInfo> mTokenQueue;
         private Stack<string> mMatchStack;
+        private GetCppTokenDelegation mOnGetToken;
     }
 }
