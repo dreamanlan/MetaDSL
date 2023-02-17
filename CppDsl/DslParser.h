@@ -1362,8 +1362,8 @@ namespace DslParser
         typedef Delegation<bool(const DslActionApi&, const char*, StatementData*&)> BuildOperatorDelegation;
         typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetFunctionIdDelegation;
         typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetMemberIdDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BeforeSetHighOrderDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> SetHighOrderDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BeforeBuildHighOrderDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BuildHighOrderDelegation;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const
@@ -1406,8 +1406,8 @@ namespace DslParser
         BuildOperatorDelegation OnBuildOperator;
         SetFunctionIdDelegation OnSetFunctionId;
         SetMemberIdDelegation OnSetMemberId;
-        BeforeSetHighOrderDelegation OnBeforeSetHighOrder;
-        SetHighOrderDelegation OnSetHighOrder;
+        BeforeBuildHighOrderDelegation OnBeforeBuildHighOrder;
+        BuildHighOrderDelegation OnBuildHighOrder;
     private:
         DslFile(const DslFile& other) = delete;
         DslFile(DslFile&& other) noexcept = delete;

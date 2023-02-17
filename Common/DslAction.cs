@@ -23,8 +23,8 @@ namespace Dsl.Common
     public delegate bool BuildOperatorDelegation(ref DslAction dslAction, string op, ref StatementData statement);
     public delegate bool SetFunctionIdDelegation(ref DslAction dslAction, string name, StatementData statement, FunctionData function);
     public delegate bool SetMemberIdDelegation(ref DslAction dslAction, string name, StatementData statement, FunctionData function);
-    public delegate bool BeforeSetHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
-    public delegate bool SetHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
+    public delegate bool BeforeBuildHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
+    public delegate bool BuildHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
 
     internal delegate string GetLastTokenDelegation();
     internal delegate int GetLastLineNumberDelegation();
@@ -74,8 +74,8 @@ namespace Dsl.Common
             mOnBuildOperator = null;
             mOnSetFunctionId = null;
             mOnSetMemberId = null;
-            mOnBeforeSetHighOrder = null;
-            mOnSetHighOrder = null;
+            mOnBeforeBuildHighOrder = null;
+            mOnBuildHighOrder = null;
         }
 
         internal DslActionType Type
@@ -148,15 +148,15 @@ namespace Dsl.Common
             get { return mOnSetMemberId; }
             set { mOnSetMemberId = value; }
         }
-        internal BeforeSetHighOrderDelegation onBeforeSetHighOrder
+        internal BeforeBuildHighOrderDelegation onBeforeBuildHighOrder
         {
-            get { return mOnBeforeSetHighOrder; }
-            set { mOnBeforeSetHighOrder = value; }
+            get { return mOnBeforeBuildHighOrder; }
+            set { mOnBeforeBuildHighOrder = value; }
         }
-        internal SetHighOrderDelegation onSetHighOrder
+        internal BuildHighOrderDelegation onBuildHighOrder
         {
-            get { return mOnSetHighOrder; }
-            set { mOnSetHighOrder = value; }
+            get { return mOnBuildHighOrder; }
+            set { mOnBuildHighOrder = value; }
         }
 
         internal void predict(short productionNumber, short nonterminal, short token, int level, string lastTok, int lastLineNo, string curTok, int lineNo)
@@ -666,15 +666,15 @@ namespace Dsl.Common
             StatementData stm = getCurStatement();
             Debug.Assert(null != stm);
             FunctionData func = getLastFunction();
-            if (null != mOnBeforeSetHighOrder) {
-                mOnBeforeSetHighOrder(ref this, stm, func);
+            if (null != mOnBeforeBuildHighOrder) {
+                mOnBeforeBuildHighOrder(ref this, stm, func);
             }
             FunctionData temp = new FunctionData();
             temp.CopyFrom(func);
             func.Clear();
             func.LowerOrderFunction = temp;
-            if (null != mOnSetHighOrder) {
-                mOnSetHighOrder(ref this, stm, func);
+            if (null != mOnBuildHighOrder) {
+                mOnBuildHighOrder(ref this, stm, func);
             }
         }
         public void markParenthesisParam()
@@ -1272,8 +1272,8 @@ namespace Dsl.Common
         private BuildOperatorDelegation mOnBuildOperator;
         private SetFunctionIdDelegation mOnSetFunctionId;
         private SetMemberIdDelegation mOnSetMemberId;
-        private BeforeSetHighOrderDelegation mOnBeforeSetHighOrder;
-        private SetHighOrderDelegation mOnSetHighOrder;
+        private BeforeBuildHighOrderDelegation mOnBeforeBuildHighOrder;
+        private BuildHighOrderDelegation mOnBuildHighOrder;
 
         private List<ISyntaxComponent> mScriptDatas;
         private Stack<SemanticInfo> mSemanticStack;

@@ -507,8 +507,8 @@ namespace DslParser
         FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
-        if (!mDataFile->OnBeforeSetHighOrder.isNull())
-            mDataFile->OnBeforeSetHighOrder(mApi, pStm, p);
+        if (!mDataFile->OnBeforeBuildHighOrder.isNull())
+            mDataFile->OnBeforeBuildHighOrder(mApi, pStm, p);
         FunctionData* newP = mDataFile->AddNewFunctionComponent();
         if (0 != newP) {
             ValueData val(p);
@@ -516,8 +516,8 @@ namespace DslParser
             newP->SetName(val);
             mData.setLastFunction(newP);
         }
-        if (!mDataFile->OnSetHighOrder.isNull())
-            mDataFile->OnSetHighOrder(mApi, pStm, p);
+        if (!mDataFile->OnBuildHighOrder.isNull())
+            mDataFile->OnBuildHighOrder(mApi, pStm, p);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisParam(void)

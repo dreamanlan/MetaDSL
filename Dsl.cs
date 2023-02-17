@@ -1135,8 +1135,8 @@ namespace Dsl
             action.onBuildOperator = mOnBuildOperator;
             action.onSetFunctionId = mOnSetFunctionId;
             action.onSetMemberId = mOnSetMemberId;
-            action.onBeforeSetHighOrder = mOnBeforeSetHighOrder;
-            action.onSetHighOrder = mOnSetHighOrder;
+            action.onBeforeBuildHighOrder = mOnBeforeBuildHighOrder;
+            action.onBuildHighOrder = mOnBuildHighOrder;
 
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
@@ -1361,8 +1361,8 @@ namespace Dsl
             action.onBuildOperator = mOnBuildOperator;
             action.onSetFunctionId = mOnSetFunctionId;
             action.onSetMemberId = mOnSetMemberId;
-            action.onBeforeSetHighOrder = mOnBeforeSetHighOrder;
-            action.onSetHighOrder = mOnSetHighOrder;
+            action.onBeforeBuildHighOrder = mOnBeforeBuildHighOrder;
+            action.onBuildHighOrder = mOnBuildHighOrder;
 
             Parser.CppParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
@@ -1482,15 +1482,15 @@ namespace Dsl
             get { return mOnSetMemberId; }
             set { mOnSetMemberId = value; }
         }
-        public Dsl.Common.BeforeSetHighOrderDelegation onBeforeSetHighOrder
+        public Dsl.Common.BeforeBuildHighOrderDelegation onBeforeBuildHighOrder
         {
-            get { return mOnBeforeSetHighOrder; }
-            set { mOnBeforeSetHighOrder = value; }
+            get { return mOnBeforeBuildHighOrder; }
+            set { mOnBeforeBuildHighOrder = value; }
         }
-        public Dsl.Common.SetHighOrderDelegation onSetHighOrder
+        public Dsl.Common.BuildHighOrderDelegation onBuildHighOrder
         {
-            get { return mOnSetHighOrder; }
-            set { mOnSetHighOrder = value; }
+            get { return mOnBuildHighOrder; }
+            set { mOnBuildHighOrder = value; }
         }
 
         private static string TransformPreprocess(string input, string beginDelim, string endDelim)
@@ -1801,8 +1801,8 @@ namespace Dsl
         private Dsl.Common.BuildOperatorDelegation mOnBuildOperator;
         private Dsl.Common.SetFunctionIdDelegation mOnSetFunctionId;
         private Dsl.Common.SetMemberIdDelegation mOnSetMemberId;
-        private Dsl.Common.BeforeSetHighOrderDelegation mOnBeforeSetHighOrder;
-        private Dsl.Common.SetHighOrderDelegation mOnSetHighOrder;
+        private Dsl.Common.BeforeBuildHighOrderDelegation mOnBeforeBuildHighOrder;
+        private Dsl.Common.BuildHighOrderDelegation mOnBuildHighOrder;
 
         public static byte[] BinaryIdentity
         {
