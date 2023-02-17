@@ -1356,7 +1356,7 @@ namespace DslParser
         typedef Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeAddFunctionDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> AddFunctionDelegation;
-        typedef Delegation<bool(const DslActionApi&)> BeforeEndStatementDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeEndStatementDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*&)> EndStatementDelegation;
         typedef Delegation<bool(const DslActionApi&, const char*, StatementData*)> BeforeBuildOperatorDelegation;
         typedef Delegation<bool(const DslActionApi&, const char*, StatementData*&)> BuildOperatorDelegation;

@@ -17,7 +17,7 @@ namespace Dsl.Common
     public delegate bool GetTokenDelegation(ref DslAction dslAction, ref DslToken dslToken, ref string tok, ref short val, ref int line);
     public delegate bool BeforeAddFunctionDelegation(ref DslAction dslAction, StatementData statement);
     public delegate bool AddFunctionDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
-    public delegate bool BeforeEndStatementDelegation(ref DslAction dslAction);
+    public delegate bool BeforeEndStatementDelegation(ref DslAction dslAction, StatementData statement);
     public delegate bool EndStatementDelegation(ref DslAction dslAction, ref StatementData statement);
     public delegate bool BeforeBuildOperatorDelegation(ref DslAction dslAction, string op, StatementData statement);
     public delegate bool BuildOperatorDelegation(ref DslAction dslAction, string op, ref StatementData statement);
@@ -301,11 +301,14 @@ namespace Dsl.Common
         private void endStatementImpl(bool addSep)
         {
             if (null != mOnBeforeEndStatement) {
-                mOnBeforeEndStatement(ref this);
+                var stm = getCurStatement();
+                Debug.Assert(null != stm);
+                mOnBeforeEndStatement(ref this, stm);
             }
             StatementData statement = popStatement();
             if (null != mOnEndStatement) {
                 mOnEndStatement(ref this, ref statement);
+                Debug.Assert(null != statement);
             }
             FunctionData call = statement.First.AsFunction;
             if ((null != mSetStringDelimiter || null != mSetScriptDelimiter) && statement.Functions.Count == 1 && null != call && call.GetId() == "@@delimiter" && (call.GetParamNum() == 1 || call.GetParamNum() == 3) && !call.IsHighOrder) {
@@ -496,6 +499,7 @@ namespace Dsl.Common
             arg = popStatement();
             if (null != mOnBuildOperator) {
                 mOnBuildOperator(ref this, name, ref arg);
+                Debug.Assert(null != arg);
             }
 
             ISyntaxComponent argComp = simplifyStatement(arg);
@@ -544,6 +548,7 @@ namespace Dsl.Common
             arg = popStatement();
             if (null != mOnBuildOperator) {
                 mOnBuildOperator(ref this, name, ref arg);
+                Debug.Assert(null != arg);
             }
 
             ISyntaxComponent argComp = simplifyStatement(arg);
@@ -582,6 +587,8 @@ namespace Dsl.Common
             Debug.Assert(null != statement);
             if (null != mOnBeforeBuildOperator) {
                 mOnBeforeBuildOperator(ref this, name, statement);
+                statement = getCurStatement();
+                Debug.Assert(null != statement);
             }
 
             FunctionData newFunc = new FunctionData();
@@ -622,6 +629,8 @@ namespace Dsl.Common
             Debug.Assert(null != statement);
             if (null != mOnBeforeAddFunction) {
                 mOnBeforeAddFunction(ref this, statement);
+                statement = getCurStatement();
+                Debug.Assert(null != statement);
             }
             FunctionData func = newFunctionOfStatement(statement);
             if (null != mOnAddFunction) {
@@ -632,8 +641,6 @@ namespace Dsl.Common
         {
             int type;
             string name = pop(out type);
-            StatementData stm = getCurStatement();
-            Debug.Assert(null != stm);
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
                 func.Name.SetId(name);
@@ -641,6 +648,8 @@ namespace Dsl.Common
                 func.Name.SetLine(getLastLineNumber());
             }
             if (null != mOnSetFunctionId) {
+                StatementData stm = getCurStatement();
+                Debug.Assert(null != stm);
                 mOnSetFunctionId(ref this, name, stm, func);
             }
         }
@@ -648,8 +657,6 @@ namespace Dsl.Common
         {
             int type;
             string name = pop(out type);
-            StatementData stm = getCurStatement();
-            Debug.Assert(null != stm);
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
                 func.Name.SetId(name);
@@ -657,23 +664,28 @@ namespace Dsl.Common
                 func.Name.SetLine(getLastLineNumber());
             }
             if (null != mOnSetMemberId) {
+                StatementData stm = getCurStatement();
+                Debug.Assert(null != stm);
                 mOnSetMemberId(ref this, name, stm, func);
             }
         }
         public void buildHighOrderFunction()
         {
             //高阶函数构造（当前函数返回一个函数）
-            StatementData stm = getCurStatement();
-            Debug.Assert(null != stm);
             FunctionData func = getLastFunction();
             if (null != mOnBeforeBuildHighOrder) {
+                StatementData stm = getCurStatement();
+                Debug.Assert(null != stm);
                 mOnBeforeBuildHighOrder(ref this, stm, func);
+                func = getLastFunction();
             }
             FunctionData temp = new FunctionData();
             temp.CopyFrom(func);
             func.Clear();
             func.LowerOrderFunction = temp;
             if (null != mOnBuildHighOrder) {
+                StatementData stm = getCurStatement();
+                Debug.Assert(null != stm);
                 mOnBuildHighOrder(ref this, stm, func);
             }
         }

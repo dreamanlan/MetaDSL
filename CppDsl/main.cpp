@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
             //在AddFunction里一般不要修改程序结构，但可以修改添加函数的信息
             return true;
             });
-        dataFile.OnBeforeEndStatement.attach([](auto& api) {
+        dataFile.OnBeforeEndStatement.attach([](auto& api, auto* sd) {
             //在BeforeEndStatement里可以修改程序结构，要符合dsl的语法语义流程
             return true;
             });

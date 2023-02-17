@@ -48,11 +48,17 @@ namespace DslParser
         StatementData* pArg = mData.getCurStatement();
         if (0 == pArg)
             return;
-        if (!mDataFile->OnBeforeBuildOperator.isNull())
+        if (!mDataFile->OnBeforeBuildOperator.isNull()) {
             mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, pArg);
-        mData.popStatement();
-        if (!mDataFile->OnBuildOperator.isNull())
+        }
+        pArg = mData.popStatement();
+        if (0 == pArg)
+            return;
+        if (!mDataFile->OnBuildOperator.isNull()) {
             mDataFile->OnBuildOperator(mApi, tokenInfo.mString, pArg);
+            if (0 == pArg)
+                return;
+        }
 
         ISyntaxComponent& argComp = simplifyStatement(*pArg);
 
@@ -105,11 +111,17 @@ namespace DslParser
         StatementData* pArg = mData.getCurStatement();
         if (0 == pArg)
             return;
-        if (!mDataFile->OnBeforeBuildOperator.isNull())
+        if (!mDataFile->OnBeforeBuildOperator.isNull()) {
             mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, pArg);
-        mData.popStatement();
-        if (!mDataFile->OnBuildOperator.isNull())
+        }
+        pArg = mData.popStatement();
+        if (0 == pArg)
+            return;
+        if (!mDataFile->OnBuildOperator.isNull()) {
             mDataFile->OnBuildOperator(mApi, tokenInfo.mString, pArg);
+            if (0 == pArg)
+                return;
+        }
 
         ISyntaxComponent& argComp = simplifyStatement(*pArg);
         StatementData* pStatement = mDataFile->AddNewStatementComponent();
@@ -152,19 +164,22 @@ namespace DslParser
 
         StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
-            if (!mDataFile->OnBeforeBuildOperator.isNull())
+            if (!mDataFile->OnBeforeBuildOperator.isNull()) {
                 mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, statement);
+                statement = mData.getCurStatement();
+            }
+            if (0 != statement) {
+                FunctionData* p = mDataFile->AddNewFunctionComponent();
+                if (0 != p) {
+                    FunctionData& call = *p;
+                    call.SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
 
-            FunctionData* p = mDataFile->AddNewFunctionComponent();
-            if (0 != p) {
-                FunctionData& call = *p;
-                call.SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
+                    ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
+                    op.SetLine(mThis->getLastLineNumber());
+                    call.SetName(op);
 
-                ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
-                op.SetLine(mThis->getLastLineNumber());
-                call.SetName(op);
-
-                statement->AddFunction(p);
+                    statement->AddFunction(p);
+                }
             }
         }
     }
@@ -239,13 +254,20 @@ namespace DslParser
         void RuntimeBuilderT<RealTypeT>::endStatement(void)
     {
         if (!preconditionCheck())return;
-        if (!mDataFile->OnBeforeEndStatement.isNull())
-            mDataFile->OnBeforeEndStatement(mApi);
+        if (!mDataFile->OnBeforeEndStatement.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm)
+                return;
+            mDataFile->OnBeforeEndStatement(mApi, pStm);
+        }
         StatementData* statement = mData.popStatement();
-        if (!mDataFile->OnEndStatement.isNull())
-            mDataFile->OnEndStatement(mApi, statement);
         if (0 == statement)
             return;
+        if (!mDataFile->OnEndStatement.isNull()) {
+            mDataFile->OnEndStatement(mApi, statement);
+            if (0 == statement)
+                return;
+        }
         auto* f = statement->GetLastFunctionRef();
         const char* id = f->GetId();
         auto* func = f->AsFunction();
@@ -433,15 +455,17 @@ namespace DslParser
         if (!preconditionCheck())return;
         StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
-            if (!mDataFile->OnBeforeAddFunction.isNull())
+            if (!mDataFile->OnBeforeAddFunction.isNull()) {
                 mDataFile->OnBeforeAddFunction(mApi, statement);
-            statement = mData.getCurStatement();
+                statement = mData.getCurStatement();
+            }
             if (0 != statement) {
                 FunctionData* newFunc = mDataFile->AddNewFunctionComponent();
                 if (0 != newFunc) {
                     statement->AddFunction(newFunc);
-                    if (!mDataFile->OnAddFunction.isNull())
+                    if (!mDataFile->OnAddFunction.isNull()) {
                         mDataFile->OnAddFunction(mApi, statement, newFunc);
+                    }
                 }
             }
         }
@@ -457,9 +481,6 @@ namespace DslParser
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("id:%s\n", tokenInfo.mString);
         }
 
-        StatementData* pStm = mData.getCurStatement();
-        if (0 == pStm)
-            return;
         FunctionData* p = mData.getLastFunction();
         if (0 != p && !p->IsValid()) {
             ValueData val = tokenInfo.ToValue();
@@ -468,8 +489,12 @@ namespace DslParser
                 p->SetName(val);
             }
         }
-        if (!mDataFile->OnSetFunctionId.isNull())
+        if (!mDataFile->OnSetFunctionId.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm || 0 == p)
+                return;
             mDataFile->OnSetFunctionId(mApi, tokenInfo.mString, pStm, p);
+        }
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::setMemberId(void)
@@ -482,9 +507,6 @@ namespace DslParser
             PRINT_FUNCTION_SCRIPT_DEBUG_INFO("member:%s\n", tokenInfo.mString);
         }
 
-        StatementData* pStm = mData.getCurStatement();
-        if (0 == pStm)
-            return;
         FunctionData* p = mData.getLastFunction();
         if (0 != p && !p->IsValid()) {
             ValueData val = tokenInfo.ToValue();
@@ -493,22 +515,30 @@ namespace DslParser
                 p->SetName(val);
             }
         }
-        if (!mDataFile->OnSetMemberId.isNull())
+        if (!mDataFile->OnSetMemberId.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm || 0 == p)
+                return;
             mDataFile->OnSetMemberId(mApi, tokenInfo.mString, pStm, p);
+        }
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildHighOrderFunction(void)
     {
         if (!preconditionCheck())return;
         //高阶函数构造（当前函数返回一个函数）
-        StatementData* pStm = mData.getCurStatement();
-        if (0 == pStm)
-            return;
         FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
-        if (!mDataFile->OnBeforeBuildHighOrder.isNull())
+        if (!mDataFile->OnBeforeBuildHighOrder.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm)
+                return;
             mDataFile->OnBeforeBuildHighOrder(mApi, pStm, p);
+            p = mData.getLastFunction();
+            if (0 == p)
+                return;
+        }
         FunctionData* newP = mDataFile->AddNewFunctionComponent();
         if (0 != newP) {
             ValueData val(p);
@@ -516,8 +546,12 @@ namespace DslParser
             newP->SetName(val);
             mData.setLastFunction(newP);
         }
-        if (!mDataFile->OnBuildHighOrder.isNull())
-            mDataFile->OnBuildHighOrder(mApi, pStm, p);
+        if (!mDataFile->OnBuildHighOrder.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm || 0 == newP)
+                return;
+            mDataFile->OnBuildHighOrder(mApi, pStm, newP);
+        }
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisParam(void)
