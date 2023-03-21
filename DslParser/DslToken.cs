@@ -32,7 +32,7 @@ namespace Dsl.Common
             mScriptBeginDelimiter = string.Empty;
             mScriptEndDelimiter = string.Empty;
             mOnGetToken = null;
-            mOnTokenCanEatQuestion = null;
+            mOnTokenCanEatChar = null;
         }
 
         internal short get()
@@ -573,8 +573,8 @@ namespace Dsl.Common
                             break;
                         else if (CurChar == '?') {
                             //类型名后接问号的情形（nullable type），只允许后接一个问号
-                            if (null != mOnTokenCanEatQuestion) {
-                                if (mOnTokenCanEatQuestion(mTokenBuilder)) {
+                            if (null != mOnTokenCanEatChar) {
+                                if (mOnTokenCanEatChar(mTokenBuilder, CurChar)) {
                                     mTokenBuilder.Append(CurChar);
                                     ++mIterator;
                                     ++charCt;
@@ -726,10 +726,10 @@ namespace Dsl.Common
             get { return mOnGetToken; }
             set { mOnGetToken = value; }
         }
-        internal TokenCanEatQuestionDelegation OnTokenCanEatQuestion
+        internal TokenCanEatCharDelegation OnTokenCanEatQuestion
         {
-            get { return mOnTokenCanEatQuestion; }
-            set { mOnTokenCanEatQuestion = value; }
+            get { return mOnTokenCanEatChar; }
+            set { mOnTokenCanEatChar = value; }
         }
 
         private bool IsBegin(string delimiter)
@@ -1205,6 +1205,6 @@ namespace Dsl.Common
         private string mScriptBeginDelimiter;
         private string mScriptEndDelimiter;
         private GetTokenDelegation mOnGetToken;
-        private TokenCanEatQuestionDelegation mOnTokenCanEatQuestion;
+        private TokenCanEatCharDelegation mOnTokenCanEatChar;
     }
 }

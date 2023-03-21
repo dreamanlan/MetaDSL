@@ -451,7 +451,7 @@ namespace Dsl.Common
                         else if (CurChar == '?') {
                             //类型名后接问号的情形（nullable type），只允许后接一个问号
                             if (null != mOnTokenCanEatQuestion) {
-                                if (mOnTokenCanEatQuestion(mTokenBuilder)) {
+                                if (mOnTokenCanEatQuestion(mTokenBuilder, CurChar)) {
                                     mTokenBuilder.Append(CurChar);
                                     ++mIterator;
                                     ++charCt;
@@ -621,7 +621,7 @@ namespace Dsl.Common
             get { return mOnGetToken; }
             set { mOnGetToken = value; }
         }
-        internal TokenCanEatQuestionDelegation OnTokenCanEatQuestion
+        internal TokenCanEatCharDelegation OnTokenCanEatQuestion
         {
             get { return mOnTokenCanEatQuestion; }
             set { mOnTokenCanEatQuestion = value; }
@@ -993,6 +993,6 @@ namespace Dsl.Common
         private Queue<TokenInfo> mTokenQueue;
         private Stack<string> mMatchStack;
         private GetCppTokenDelegation mOnGetToken;
-        private TokenCanEatQuestionDelegation mOnTokenCanEatQuestion;
+        private TokenCanEatCharDelegation mOnTokenCanEatQuestion;
     }
 }

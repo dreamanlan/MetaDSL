@@ -13,7 +13,7 @@ namespace Dsl.Common
      * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
      * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
      */
-    public delegate bool TokenCanEatQuestionDelegation(StringBuilder tokenBuilder);
+    public delegate bool TokenCanEatCharDelegation(StringBuilder tokenBuilder, char c);
     public delegate bool GetCppTokenDelegation(ref DslAction dslAction, ref CppToken dslToken, ref string tok, ref short val, ref int line);
     public delegate bool GetTokenDelegation(ref DslAction dslAction, ref DslToken dslToken, ref string tok, ref short val, ref int line);
     public delegate bool BeforeAddFunctionDelegation(ref DslAction dslAction, StatementData statement);

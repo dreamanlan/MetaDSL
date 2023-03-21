@@ -1793,7 +1793,7 @@ namespace Dsl
         private string mScriptBeginDelimiter = "{:";
         private string mScriptEndDelimiter = ":}";
 
-        private Dsl.Common.TokenCanEatQuestionDelegation mOnTokenCanEatQuestion;
+        private Dsl.Common.TokenCanEatCharDelegation mOnTokenCanEatQuestion;
         private Dsl.Common.GetCppTokenDelegation mOnGetCppToken;
         private Dsl.Common.GetTokenDelegation mOnGetToken;
         private Dsl.Common.BeforeAddFunctionDelegation mOnBeforeAddFunction;

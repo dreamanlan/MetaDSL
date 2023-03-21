@@ -1114,8 +1114,8 @@ short SlkToken::getImpl(void)
                     break;
                 else if (curChar() == '?') {
                     //类型名后接问号的情形（nullable type），只允许后接一个问号
-                    if (!mDslFile->OnTokenCanEatQuestion.isNull()) {
-                        if (mDslFile->OnTokenCanEatQuestion(mCurToken, mTokenCharIndex)) {
+                    if (!mDslFile->OnTokenCanEatChar.isNull()) {
+                        if (mDslFile->OnTokenCanEatChar(mCurToken, mTokenCharIndex, curChar())) {
                             pushTokenChar(curChar());
                             ++mIterator;
                             ++charCt;
