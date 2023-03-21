@@ -726,7 +726,7 @@ namespace Dsl.Common
             get { return mOnGetToken; }
             set { mOnGetToken = value; }
         }
-        internal TokenCanEatCharDelegation OnTokenCanEatQuestion
+        internal TokenCanEatCharDelegation OnTokenCanEatChar
         {
             get { return mOnTokenCanEatChar; }
             set { mOnTokenCanEatChar = value; }

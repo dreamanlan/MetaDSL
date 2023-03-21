@@ -24,7 +24,7 @@ namespace Dsl.Common
             mTokenQueue = new Queue<TokenInfo>();
             mMatchStack = new Stack<string>();
             mOnGetToken = null;
-            mOnTokenCanEatQuestion = null;
+            mOnTokenCanEatChar = null;
         }
 
         internal short get()
@@ -450,8 +450,8 @@ namespace Dsl.Common
                             break;
                         else if (CurChar == '?') {
                             //类型名后接问号的情形（nullable type），只允许后接一个问号
-                            if (null != mOnTokenCanEatQuestion) {
-                                if (mOnTokenCanEatQuestion(mTokenBuilder, CurChar)) {
+                            if (null != mOnTokenCanEatChar) {
+                                if (mOnTokenCanEatChar(mTokenBuilder, CurChar)) {
                                     mTokenBuilder.Append(CurChar);
                                     ++mIterator;
                                     ++charCt;
@@ -621,10 +621,10 @@ namespace Dsl.Common
             get { return mOnGetToken; }
             set { mOnGetToken = value; }
         }
-        internal TokenCanEatCharDelegation OnTokenCanEatQuestion
+        internal TokenCanEatCharDelegation OnTokenCanEatChar
         {
-            get { return mOnTokenCanEatQuestion; }
-            set { mOnTokenCanEatQuestion = value; }
+            get { return mOnTokenCanEatChar; }
+            set { mOnTokenCanEatChar = value; }
         }
 
         private bool SkipWhiteSpaces()
@@ -993,6 +993,6 @@ namespace Dsl.Common
         private Queue<TokenInfo> mTokenQueue;
         private Stack<string> mMatchStack;
         private GetCppTokenDelegation mOnGetToken;
-        private TokenCanEatCharDelegation mOnTokenCanEatQuestion;
+        private TokenCanEatCharDelegation mOnTokenCanEatChar;
     }
 }
