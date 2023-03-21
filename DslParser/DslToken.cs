@@ -32,6 +32,7 @@ namespace Dsl.Common
             mScriptBeginDelimiter = string.Empty;
             mScriptEndDelimiter = string.Empty;
             mOnGetToken = null;
+            mOnTokenCanEatQuestion = null;
         }
 
         internal short get()
@@ -567,9 +568,32 @@ namespace Dsl.Common
                         mTokenBuilder.Append(CurChar);
                         ++mIterator;
                     }
-                    for (int charCt = 0; isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || CurChar=='\'' || !isSpecialChar(CurChar); ++mIterator, ++charCt) {
+                    for (int charCt = 0; CurChar == '?' || CurChar == '\'' || isNum && myisdigit(CurChar, isHex, includeEPart, includeAddSub) || !isSpecialChar(CurChar); ++mIterator, ++charCt) {
                         if (CurChar == '#')
                             break;
+                        else if (CurChar == '?') {
+                            //类型名后接问号的情形（nullable type），只允许后接一个问号
+                            if (null != mOnTokenCanEatQuestion) {
+                                if (mOnTokenCanEatQuestion(mTokenBuilder)) {
+                                    mTokenBuilder.Append(CurChar);
+                                    ++mIterator;
+                                    ++charCt;
+                                }
+                            }
+                            break;
+                        }
+                        else if (CurChar == '\'') {
+                            if (!isNum) {
+                                break;
+                            }
+                            else {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                    break;
+                                }
+                                ++mIterator;
+                                ++charCt;
+                            }
+                        }
                         else if (CurChar == '.') {
                             if (!isNum || isHex) {
                                 break;
@@ -586,17 +610,6 @@ namespace Dsl.Common
                             ++dotCt;
                             if (dotCt > 1)
                                 break;
-                        }
-                        else if (CurChar == '\'') {
-                            if (!isNum) {
-                                break;
-                            }
-                            else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
-                                    break;
-                                }
-                                ++mIterator;
-                            }
                         }
                         else if (isNum) {
                             if (dotCt > 0 && (CurChar == 'b' || CurChar == 'B' || CurChar == 'f' || CurChar == 'F' || CurChar == 'l' || CurChar == 'L')) {
@@ -712,6 +725,11 @@ namespace Dsl.Common
         {
             get { return mOnGetToken; }
             set { mOnGetToken = value; }
+        }
+        internal TokenCanEatQuestionDelegation OnTokenCanEatQuestion
+        {
+            get { return mOnTokenCanEatQuestion; }
+            set { mOnTokenCanEatQuestion = value; }
         }
 
         private bool IsBegin(string delimiter)
@@ -1187,5 +1205,6 @@ namespace Dsl.Common
         private string mScriptBeginDelimiter;
         private string mScriptEndDelimiter;
         private GetTokenDelegation mOnGetToken;
+        private TokenCanEatQuestionDelegation mOnTokenCanEatQuestion;
     }
 }

@@ -1353,6 +1353,7 @@ namespace DslParser
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
     public:
+        typedef Delegation<bool(const char*, int)> TokenCanEatQuestionDelegation;
         typedef Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeAddFunctionDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> AddFunctionDelegation;
@@ -1397,6 +1398,7 @@ namespace DslParser
         const char* GetScriptBeginDelimiter(void)const { return m_ScriptBeginDelimiter; }
         const char* GetScriptEndDelimiter(void)const { return m_ScriptEndDelimiter; }
     public:
+        TokenCanEatQuestionDelegation OnTokenCanEatQuestion;
         GetTokenDelegation OnGetToken;
         BeforeAddFunctionDelegation OnBeforeAddFunction;
         AddFunctionDelegation OnAddFunction;

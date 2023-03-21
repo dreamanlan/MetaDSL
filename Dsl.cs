@@ -1121,6 +1121,7 @@ namespace Dsl
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
             Common.DslToken tokens = new Common.DslToken(action, log, content);
             tokens.OnGetToken = mOnGetToken;
+            tokens.OnTokenCanEatQuestion = mOnTokenCanEatQuestion;
 
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
@@ -1349,6 +1350,7 @@ namespace Dsl
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
             Common.CppToken tokens = new Common.CppToken(action, log, content);
             tokens.OnGetToken = mOnGetCppToken;
+            tokens.OnTokenCanEatQuestion = mOnTokenCanEatQuestion;
 
             action.Type = Common.DslActionType.Cpp;
             action.onGetLastToken = () => { return tokens.getLastToken(); };
@@ -1791,6 +1793,7 @@ namespace Dsl
         private string mScriptBeginDelimiter = "{:";
         private string mScriptEndDelimiter = ":}";
 
+        private Dsl.Common.TokenCanEatQuestionDelegation mOnTokenCanEatQuestion;
         private Dsl.Common.GetCppTokenDelegation mOnGetCppToken;
         private Dsl.Common.GetTokenDelegation mOnGetToken;
         private Dsl.Common.BeforeAddFunctionDelegation mOnBeforeAddFunction;

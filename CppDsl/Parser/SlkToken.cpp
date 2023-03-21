@@ -1109,9 +1109,32 @@ short SlkToken::getImpl(void)
                 pushTokenChar(curChar());
                 ++mIterator;
             }
-            for (int charCt = 0; (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || curChar() == '\'' || !isSpecialChar(curChar()); ++mIterator, ++charCt) {
+            for (int charCt = 0; curChar() == '?' || curChar() == '\'' || (isNum && myisdigit(curChar(), isHex, includeEPart, includeAddSub)) || !isSpecialChar(curChar()); ++mIterator, ++charCt) {
                 if (curChar() == '#')
                     break;
+                else if (curChar() == '?') {
+                    //类型名后接问号的情形（nullable type），只允许后接一个问号
+                    if (!mDslFile->OnTokenCanEatQuestion.isNull()) {
+                        if (mDslFile->OnTokenCanEatQuestion(mCurToken, mTokenCharIndex)) {
+                            pushTokenChar(curChar());
+                            ++mIterator;
+                            ++charCt;
+                        }
+                    }
+                    break;
+                }
+                else if (curChar() == '\'') {
+                    if (!isNum) {
+                        break;
+                    }
+                    else {
+                        if (nextChar() != 0 && !myisdigit(nextChar(), isHex, includeEPart, includeAddSub)) {
+                            break;
+                        }
+                        ++mIterator;
+                        ++charCt;
+                    }
+                }
                 else if (curChar() == '.') {
                     if (!isNum || isHex) {
                         break;
@@ -1128,17 +1151,6 @@ short SlkToken::getImpl(void)
                     ++dotCt;
                     if (dotCt > 1)
                         break;
-                }
-                else if (curChar() == '\'') {
-                    if (!isNum) {
-                        break;
-                    }
-                    else {
-                        if (nextChar() != 0 && !myisdigit(nextChar(), isHex, includeEPart, includeAddSub)) {
-                            break;
-                        }
-                        ++mIterator;
-                    }
                 }
                 else if (isNum) {
                     if (dotCt > 0 && (curChar() == 'b' || curChar() == 'B' || curChar() == 'f' || curChar() == 'F' || curChar() == 'l' || curChar() == 'L')) {

@@ -388,9 +388,7 @@ namespace Dsl.Parser
                                 break;
                             }
                             else {
-                                if (NextChar == 'b' || NextChar == 'B' || NextChar == 'f' || NextChar == 'F' || NextChar == 'l' || NextChar == 'L') {
-                                }
-                                else if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
+                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
                                     char c = PeekNextValidChar(1);
                                     if (!isSpecialChar(c))
                                         break;
@@ -400,25 +398,8 @@ namespace Dsl.Parser
                             if (dotCt > 1)
                                 break;
                         }
-                        else if (CurChar == '\'') {
-                            if (!isNum) {
-                                break;
-                            }
-                            else {
-                                if (NextChar != 0 && !myisdigit(NextChar, isHex, includeEPart, includeAddSub)) {
-                                    break;
-                                }
-                                ++mIterator;
-                            }
-                        }
                         else if (isNum) {
-                            if (dotCt > 0 && (CurChar == 'b' || CurChar == 'B' || CurChar == 'f' || CurChar == 'F' || CurChar == 'l' || CurChar == 'L')) {
-
-                            }
-                            else if (dotCt == 0 && charCt > 0 && (CurChar == 'l' || CurChar == 'L' || CurChar == 'u' || CurChar == 'U' || CurChar == 'z' || CurChar == 'Z')) {
-
-                            }
-                            else if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
+                            if (!myisdigit(CurChar, isHex, includeEPart, includeAddSub)) {
                                 isNum = false;
                             }
                         }
