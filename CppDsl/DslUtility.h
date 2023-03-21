@@ -535,15 +535,14 @@ namespace DslFileReadWrite
                     fwrite("->*", 3, 1, fp);
                     break;
                 }
-                const char* sep = "";
                 for (int ix = 0; ix < data.GetParamNum(); ++ix) {
                     if (ix > 0) {
-                        fwrite(sep, 1, 1, fp);
                         fwrite(" ", 1, 1, fp);
                     }
                     auto& component = *data.GetParam(ix);
-                    sep = component.GetSepChar();
+                    const char* sep = component.GetSepChar();
                     WriteComponent(fp, component, indent, TRUE, FALSE, delim);
+                    fwrite(sep, 1, 1, fp);
                 }
                 switch (paramClass) {
                 case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS:

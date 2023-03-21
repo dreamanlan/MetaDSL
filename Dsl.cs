@@ -2201,14 +2201,12 @@ namespace Dsl
                         }
                         stream.Append(lbracket);
                         int ct = data.GetParamNum();
-                        char sep = ' ';
                         for (int i = 0; i < ct; ++i) {
                             if (i > 0) {
-                                stream.Append(sep);
                                 stream.Append(' ');
                             }
                             ISyntaxComponent param = data.GetParam(i);
-                            sep = param.GetSepChar();
+                            char sep = param.GetSepChar();
                             if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
@@ -2218,6 +2216,7 @@ namespace Dsl
                                 stream.Append(param.ToScriptString(true));
                             else
                                 writeSyntaxComponent(stream, param, indent, true, false, delim);
+                            stream.Append(sep);
                         }
                         stream.Append(rbracket);
                     }
