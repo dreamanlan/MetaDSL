@@ -751,6 +751,14 @@ namespace DslParser
         }
         return true;
     }
+    static bool MyIsDigit(char ch)
+    {
+        return (ch >= '0' && ch <= '9');
+    }
+    static bool MyIsLetterOrDigit(char ch)
+    {
+        return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F') || ch == '_';
+    }
     static std::string TransformPreprocess(const char* input, int len, const char* beginDelim, const char* endDelim)
     {
         std::stringstream ss;
@@ -799,8 +807,8 @@ namespace DslParser
                         }
                     }
                 }
+                break;
             }
-                    break;
             case '\'':
             case '"': {
                 TryEmitStartCodeBlock(ss, beginDelim, codeBlockNeedClose);
@@ -824,8 +832,8 @@ namespace DslParser
                         break;
                     }
                 }
+                break;
             }
-                    break;
             case '#': {
                 //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
                 int j = i + 1;
@@ -939,8 +947,8 @@ namespace DslParser
                     ss << std::endl;
                 }
                 i = j;
+                break;
             }
-                    break;
             case ' ':
             case '\t':
             case '\r':
@@ -951,6 +959,31 @@ namespace DslParser
             default:
                 TryEmitStartCodeBlock(ss, beginDelim, codeBlockNeedClose);
                 ss << ch;
+                if (MyIsLetterOrDigit(ch)) {
+                    bool firstIsDigit = MyIsDigit(ch);
+                    for (int j = i + 1; j < len; ++j) {
+                        char c = input[j];
+                        if (c == '\\') {
+                            ss << c;
+                            ++j;
+                            if (j < len) {
+                                c = input[j];
+                                ss << c;
+                            }
+                            else {
+                                i = j - 1;
+                                break;
+                            }
+                        }
+                        else if ((firstIsDigit && c == '\'') || MyIsLetterOrDigit(c)) {
+                            ss << c;
+                        }
+                        else {
+                            i = j - 1;
+                            break;
+                        }
+                    }
+                }
                 break;
             }
         }

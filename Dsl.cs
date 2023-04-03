@@ -1659,6 +1659,7 @@ namespace Dsl
                                     sb.Append('(');
                                     sb.Append(arg);
                                     sb.Append(')');
+                                    sb.Append(';');
                                     sb.AppendLine();
                                 }
                             }
@@ -1694,6 +1695,31 @@ namespace Dsl
                     default:
                         TryEmitStartCodeBlock(sb, beginDelim, ref codeBlockNeedClose);
                         sb.Append(ch);
+                        if (char.IsLetterOrDigit(ch) || ch == '_') {
+                            bool firstIsDigit = char.IsDigit(ch);
+                            for (int j = i + 1; j < input.Length; ++j) {
+                                char c = input[j];
+                                if (c == '\\') {
+                                    sb.Append(c);
+                                    ++j;
+                                    if (j < input.Length) {
+                                        c = input[j];
+                                        sb.Append(c);
+                                    }
+                                    else {
+                                        i = j - 1;
+                                        break;
+                                    }
+                                }
+                                else if ((firstIsDigit && c == '\'') || c == '_' || char.IsLetterOrDigit(c)) {
+                                    sb.Append(c);
+                                }
+                                else {
+                                    i = j - 1;
+                                    break;
+                                }
+                            }
+                        }
                         break;
                 }
             }
