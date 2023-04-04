@@ -644,7 +644,7 @@ namespace Brace
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const = 0;
+        virtual bool BuildExecutor(const DslData::FunctionData& data, bool argIsRef, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
         bool m_IsAssignment;
         BraceApiExecutor m_Op1;
@@ -658,7 +658,7 @@ namespace Brace
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const = 0;
+        virtual bool BuildExecutor(const DslData::FunctionData& data, bool arg1IsRef, bool arg2IsRef, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const = 0;
     protected:
         bool m_IsAssignment;
         BraceApiExecutor m_Op1;

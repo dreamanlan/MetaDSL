@@ -622,7 +622,7 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_STRING";
         $buildArithExecutor = block
         {:
-            else if (load1.Type == load2.Type) {
+            else if (load1.Type == load2.Type && !arg1IsRef && !arg2IsRef) {
                 resultType = BRACE_DATA_TYPE_BOOL;
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
@@ -704,7 +704,7 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_STRING";
         $buildArithExecutor = block
         {:
-            else if (load1.Type == load2.Type) {
+            else if (load1.Type == load2.Type && !arg1IsRef && !arg2IsRef) {
                 resultType = load1.Type;
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
@@ -782,7 +782,7 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_DOUBLE";
         $buildArithExecutor = block
         {:
-            else if (load1.Type == load2.Type && load1.Type != BRACE_DATA_TYPE_BOOL) {
+            else if (load1.Type == load2.Type && load1.Type != BRACE_DATA_TYPE_BOOL && !arg1IsRef && !arg2IsRef) {
                 resultType = load1.Type;
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
@@ -848,7 +848,7 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
-            else if (load1.Type == load2.Type) {
+            else if (load1.Type == load2.Type && !arg1IsRef && !arg2IsRef) {
                 resultType = BRACE_DATA_TYPE_BOOL;
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
@@ -903,7 +903,7 @@ script(writeBinaryExp)args($className, $op)
         $maxType = "BRACE_DATA_TYPE_UINT64";
         $buildArithExecutor = block
         {:
-            else if (load1.Type == load2.Type && load1.Type != BRACE_DATA_TYPE_BOOL) {
+            else if (load1.Type == load2.Type && load1.Type != BRACE_DATA_TYPE_BOOL && !arg1IsRef && !arg2IsRef) {
                 resultType = load1.Type;
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
@@ -963,7 +963,7 @@ script(writeBinaryExp)args($className, $op)
         {
         }
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, bool arg1IsRef, bool arg2IsRef, const OperandTypeInfo& load1, const OperandTypeInfo& load2, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = GetMaxType(load1.Type, load2.Type);
             if (resultType > {% $maxType %}) {
@@ -988,6 +988,23 @@ script(writeUnaryNumericExp)args($className, $op)
         {:
             else if (load1.Type >= BRACE_DATA_TYPE_INT8 && load1.Type <= BRACE_DATA_TYPE_UINT64) {
                 resultType = load1.Type;
+                if(argIsRef){
+                switch (load1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+                case BRACE_DATA_TYPE_INT16:
+                case BRACE_DATA_TYPE_INT32:
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode($className, "Int"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+                case BRACE_DATA_TYPE_UINT16:
+                case BRACE_DATA_TYPE_UINT32:
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode($className, "UInt"); %}
+                    break;
+                }
+                }
+                else{
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getUnaryExecuteBuildCode($className, "Int8Both"); %}
@@ -1013,6 +1030,7 @@ script(writeUnaryNumericExp)args($className, $op)
                 case BRACE_DATA_TYPE_UINT64:
 {% getUnaryExecuteBuildCode($className, "UInt64Both"); %}
                     break;
+                }
                 }
             }
             else if(IsUnsignedType(resultType)) {
@@ -1043,6 +1061,21 @@ script(writeUnaryNumericExp)args($className, $op)
         {:
             else if (IsSignedType(load1.Type) || IsFloatType(load1.Type)) {
                 resultType = load1.Type;
+                if(argIsRef){
+                switch (load1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+                case BRACE_DATA_TYPE_INT16:
+                case BRACE_DATA_TYPE_INT32:
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode($className, "Int"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getUnaryExecuteBuildCode($className, "Float"); %}
+                    break;
+                }
+                }
+                else{
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getUnaryExecuteBuildCode($className, "Int8Both"); %}
@@ -1062,6 +1095,7 @@ script(writeUnaryNumericExp)args($className, $op)
                 case BRACE_DATA_TYPE_DOUBLE:
 {% getUnaryExecuteBuildCode($className, "DoubleBoth"); %}
                     break;
+                }
                 }
             }
             else {
@@ -1087,6 +1121,27 @@ script(writeUnaryNumericExp)args($className, $op)
         {:
             else if (load1.Type >= BRACE_DATA_TYPE_INT8 && load1.Type <= BRACE_DATA_TYPE_DOUBLE) {
                 resultType = load1.Type;
+                if(argIsRef){
+                switch (load1.Type) {
+                case BRACE_DATA_TYPE_INT8:
+                case BRACE_DATA_TYPE_INT16:
+                case BRACE_DATA_TYPE_INT32:
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode($className, "Int"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+                case BRACE_DATA_TYPE_UINT16:
+                case BRACE_DATA_TYPE_UINT32:
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode($className, "UInt"); %}
+                    break;
+                case BRACE_DATA_TYPE_FLOAT:
+                case BRACE_DATA_TYPE_DOUBLE:
+{% getUnaryExecuteBuildCode($className, "Float"); %}
+                    break;
+                }
+                }
+                else{
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_INT8:
 {% getUnaryExecuteBuildCode($className, "Int8Both"); %}
@@ -1118,6 +1173,7 @@ script(writeUnaryNumericExp)args($className, $op)
                 case BRACE_DATA_TYPE_DOUBLE:
 {% getUnaryExecuteBuildCode($className, "DoubleBoth"); %}
                     break;
+                }
                 }
             }
             else if(IsFloatType(resultType)) {
@@ -1157,7 +1213,7 @@ script(writeUnaryNumericExp)args($className, $op)
         {
         }
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, bool argIsRef, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = load1.Type;
             if (resultType >= {% $maxType %}) {
@@ -1185,7 +1241,7 @@ script(writeNotExp)
         {
         }
     protected:
-        virtual bool BuildExecutor(const DslData::FunctionData& data, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
+        virtual bool BuildExecutor(const DslData::FunctionData& data, bool argIsRef, const OperandTypeInfo& load1, int& resultType, BraceApiExecutor& executor) const override
         {
             resultType = load1.Type;
             if (resultType >= BRACE_DATA_TYPE_FLOAT) {
@@ -1196,6 +1252,26 @@ script(writeNotExp)
             }
             else if (load1.Type <= BRACE_DATA_TYPE_UINT64) {
                 resultType = BRACE_DATA_TYPE_BOOL;
+                if(argIsRef){
+                switch (load1.Type) {
+                case BRACE_DATA_TYPE_BOOL:
+{% getUnaryExecuteBuildCode("NotExp", "Bool"); %}
+                    break;
+                case BRACE_DATA_TYPE_INT8:
+                case BRACE_DATA_TYPE_INT16:
+                case BRACE_DATA_TYPE_INT32:
+                case BRACE_DATA_TYPE_INT64:
+{% getUnaryExecuteBuildCode("NotExp", "Int"); %}
+                    break;
+                case BRACE_DATA_TYPE_UINT8:
+                case BRACE_DATA_TYPE_UINT16:
+                case BRACE_DATA_TYPE_UINT32:
+                case BRACE_DATA_TYPE_UINT64:
+{% getUnaryExecuteBuildCode("NotExp", "UInt"); %}
+                    break;
+                }
+                }
+                else{
                 switch (load1.Type) {
                 case BRACE_DATA_TYPE_BOOL:
 {% getUnaryExecuteBuildCode("NotExp", "BoolBoth"); %}
@@ -1225,6 +1301,7 @@ script(writeNotExp)
 {% getUnaryExecuteBuildCode("NotExp", "UInt64Both"); %}
                     break;
                 }
+                }
             }
             else {
                 resultType = BRACE_DATA_TYPE_BOOL;
@@ -1242,6 +1319,8 @@ script(writeNotExp)
 {% getUnaryExecuteCodeBoth("UInt16Both", "uint16_t", "VarGetUInt16", "VarSetBool", "!"); %}
 {% getUnaryExecuteCodeBoth("UInt32Both", "uint32_t", "VarGetUInt32", "VarSetBool", "!"); %}
 {% getUnaryExecuteCodeBoth("UInt64Both", "uint64_t", "VarGetUInt64", "VarSetBool", "!"); %}
+{% getUnaryExecuteCode("Int", "int64_t", "VarGetI64", "VarSetI64", "!"); %}
+{% getUnaryExecuteCode("UInt", "uint64_t", "VarGetU64", "VarSetU64", "!"); %}
 {% getUnaryExecuteCode("Bool", "bool", "VarGetBoolean", "VarSetBoolean", "!"); %}
     };
     :};

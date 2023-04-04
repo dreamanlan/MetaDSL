@@ -613,6 +613,9 @@ namespace Brace
                 argLoadInfo.VarIndex = varInfo->VarIndex;
             }
             m_Exp = LoadHelper(*param2, argLoadInfo);
+            //find again
+            varInfo = GetGlobalVarInfo(varId);
+
             auto realArgType = argLoadInfo.GetLoadTimeRealType(curFunc);
             m_SrcVarIndex = argLoadInfo.VarIndex;
             bool srcIsRef = argLoadInfo.Type == BRACE_DATA_TYPE_REF;
@@ -752,6 +755,9 @@ namespace Brace
                 argLoadInfo.VarIndex = varInfo->VarIndex;
             }
             m_Exp = LoadHelper(*param2, argLoadInfo);
+            //find again
+            varInfo = GetVarInfo(varId);
+
             auto realArgType = argLoadInfo.GetLoadTimeRealType(curFunc);
             m_SrcVarIndex = argLoadInfo.VarIndex;
             bool srcIsRef = argLoadInfo.Type == BRACE_DATA_TYPE_REF;
@@ -1207,7 +1213,7 @@ namespace Brace
             m_IsAssignment = true;
         }
         int resultType = BRACE_DATA_TYPE_UNKNOWN;
-        bool r = BuildExecutor(data, argInfo1.GetLoadTimeRealType(curFunc), resultType, executor);
+        bool r = BuildExecutor(data, IsReferenceType(argInfo1.Type), argInfo1.GetLoadTimeRealType(curFunc), resultType, executor);
         if (isAssignment) {
             resultInfo = argInfo1;
         }
@@ -1255,8 +1261,8 @@ namespace Brace
         if (!resultInfo.IsTempVar && !m_IsAssignment) {
             m_IsAssignment = true;
         }
-        int resultType = BRACE_DATA_TYPE_UNKNOWN;
-        bool r = BuildExecutor(data, argInfo1.GetLoadTimeRealType(curFunc), argInfo2.GetLoadTimeRealType(curFunc), resultType, executor);
+        int resultType = BRACE_DATA_TYPE_UNKNOWN;        
+        bool r = BuildExecutor(data, IsReferenceType(argInfo1.Type), IsReferenceType(argInfo2.Type), argInfo1.GetLoadTimeRealType(curFunc), argInfo2.GetLoadTimeRealType(curFunc), resultType, executor);
         if (isAssignment) {
             resultInfo = argInfo1;
         }
@@ -2574,7 +2580,7 @@ namespace Brace
             std::stringstream ss;
             ss << "INTERNAL BraceScript error, duplicated var: " << name << " type: " << GetDataTypeName(type) << " obj type id: " << GetObjectTypeName(objTypeId) << " exists var index: " << it->second.VarIndex;
             LogError(ss.str());
-            return -1;
+            return it->second.VarIndex;
         }
     }
     int BraceScript::AllocConst(int tok_type, const std::string& value, int& type, int& objTypeId)
