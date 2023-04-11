@@ -862,8 +862,6 @@ namespace DslParser
                         if ((cc == '\r' && lc != '\\') || (cc == '\n' && lc != '\r' && lc != '\\')) {
                             if (cc == '\r')
                                 ++j;
-                            arg = tokenBuilder.str();
-                            trim(arg);
                             break;
                         }
                         if (isExpression && (cc == '"' || cc == '\'')) {
@@ -889,6 +887,8 @@ namespace DslParser
                         }
                         lc = input[j];
                     }
+                    arg = tokenBuilder.str();
+                    trim(arg);
                 }
                 TryEmitCloseCodeBlock(ss, endDelim, codeBlockNeedClose);
                 if (key.length() >= 2 && ((key[0] == 'i' && key[1] == 'f') || (key[0] == 'e' && key[1] == 'l') || (key[0] == 'e' && key[1] == 'n'))) {
@@ -935,13 +935,12 @@ namespace DslParser
                         ss << key;
                     ss << '(';
                     if ((key == "define" && IsSimpleDefine(arg)) || key == "undef") {
-                        ss << key;
+                        ss << arg;
                     }
                     else {
                         std::string quoteArg = quoteString(arg, "\"", "\"");
-                        ss << arg;
+                        ss << quoteArg;
                     }
-                    ss << arg;
                     ss << ')';
                     ss << ';';
                     ss << std::endl;

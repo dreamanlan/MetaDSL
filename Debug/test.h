@@ -23,3 +23,6 @@ main ()
 #define xxx 1
 
 abc(()abcd);
+
+#define xxx2 test();\
+	test2();\

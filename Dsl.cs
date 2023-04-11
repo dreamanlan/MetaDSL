@@ -1599,7 +1599,6 @@ namespace Dsl
                                     if (cc == '\r' && lc != '\\' || cc == '\n' && lc != '\r' && lc != '\\') {
                                         if (cc == '\r')
                                             ++j;
-                                        arg = tokenBuilder.ToString().Trim();
                                         break;
                                     }
                                     if (isExpression && (cc == '"' || cc == '\'')) {
@@ -1625,6 +1624,7 @@ namespace Dsl
                                     }
                                     lc = input[j];
                                 }
+                                arg = tokenBuilder.ToString().Trim();
                             }
                             TryEmitCloseCodeBlock(sb, endDelim, ref codeBlockNeedClose);
                             if (key.Length >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n')) {

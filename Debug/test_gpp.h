@@ -32,9 +32,12 @@ main ()
 };
 
 =:}=;
-@@define(definexxx 1 );
+@@define(xxx 1 );
 @@code
 ={:=
 
 abc(()abcd);
+
 =:}=;
+@@define("xxx2 test();
+	test2();" );
