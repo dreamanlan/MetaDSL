@@ -151,6 +151,19 @@ namespace DslParser
         virtual int HaveId(void) const = 0;
     public:
         int GetSyntaxType(void) const { return m_SyntaxType; }
+        void SetSeparator(int sep) { m_Separator = sep; }
+        int GetSeparator(void) const { return m_Separator; }
+        const char* GetSepChar(void) const
+        {
+            switch (m_Separator) {
+            case SEPARATOR_COMMA:
+                return ",";
+            case SEPARATOR_SEMICOLON:
+                return ";";
+            default:
+                return " ";
+            }
+        }
         void AddFirstComment(const char* cmt)
         {
             if (0 == GetCommentsInfo())
@@ -299,6 +312,7 @@ namespace DslParser
         void PrepareLastComments(void);
     private:
         int m_SyntaxType;
+        int m_Separator;
     };
 
     class FunctionData;
@@ -504,7 +518,7 @@ namespace DslParser
         }
         virtual int GetIdType(void)const override { return m_Name.GetIdType(); }
         virtual const char* GetId(void)const override { return m_Name.GetId(); }
-        virtual int GetLine(void)const override { return m_Name.GetLine(); }
+        virtual int GetLine(void)const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual int HaveId(void)const override { return m_Name.HaveId(); }
     public:
@@ -803,14 +817,7 @@ namespace DslParser
             }
             return str;
         }
-        virtual int GetLine(void)const override
-        {
-            int line = 0;
-            if (IsValid()) {
-                line = m_ValueOrFunctions[0]->GetLine();
-            }
-            return line;
-        }
+        virtual int GetLine(void)const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual int HaveId(void) const override
         {
@@ -1287,6 +1294,7 @@ namespace DslParser
     class DslActionApi
     {
     public:
+        void markSeparator(void)const;
         void endStatement(void)const;
         void buildOperator(void)const;
         void buildFirstTernaryOperator(void)const;
@@ -1340,17 +1348,23 @@ namespace DslParser
     private:
         ActionForSourceCodeScript* m_Impl;
     };
-    typedef Delegation<bool(char*, short, int)> EnqueueTokenDelegation;
     class IScriptSource;
     class DslFile final
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
     public:
-        typedef Delegation<bool(const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
+        typedef Delegation<bool(const char*, int, char)> TokenCanEatCharDelegation;
+        typedef Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeAddFunctionDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> AddFunctionDelegation;
-        typedef Delegation<bool(const DslActionApi&)> BeforeEndStatementDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeEndStatementDelegation;
         typedef Delegation<bool(const DslActionApi&, StatementData*&)> EndStatementDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*)> BeforeBuildOperatorDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*&)> BuildOperatorDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetFunctionIdDelegation;
+        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetMemberIdDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BeforeBuildHighOrderDelegation;
+        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BuildHighOrderDelegation;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const
@@ -1384,11 +1398,18 @@ namespace DslParser
         const char* GetScriptBeginDelimiter(void)const { return m_ScriptBeginDelimiter; }
         const char* GetScriptEndDelimiter(void)const { return m_ScriptEndDelimiter; }
     public:
+        TokenCanEatCharDelegation OnTokenCanEatChar;
         GetTokenDelegation OnGetToken;
         BeforeAddFunctionDelegation OnBeforeAddFunction;
         AddFunctionDelegation OnAddFunction;
         BeforeEndStatementDelegation OnBeforeEndStatement;
         EndStatementDelegation OnEndStatement;
+        BeforeBuildOperatorDelegation OnBeforeBuildOperator;
+        BuildOperatorDelegation OnBuildOperator;
+        SetFunctionIdDelegation OnSetFunctionId;
+        SetMemberIdDelegation OnSetMemberId;
+        BeforeBuildHighOrderDelegation OnBeforeBuildHighOrder;
+        BuildHighOrderDelegation OnBuildHighOrder;
     private:
         DslFile(const DslFile& other) = delete;
         DslFile(DslFile&& other) noexcept = delete;

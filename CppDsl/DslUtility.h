@@ -894,7 +894,7 @@ namespace DslFileReadWrite
     }
 #endif
     //------------------------------------------------------------------------------------------------------------------------------------
-    static bool isBinaryEndCode(byte endCodeStart, byte code, int& sep)
+    static bool isBinaryEndCode(unsigned char endCodeStart, unsigned char code, int& sep)
     {
         bool ret;
         if (code >= endCodeStart && code <= endCodeStart + IDslSyntaxCommon::SEPARATOR_SEMICOLON - IDslSyntaxCommon::SEPARATOR_NOTHING) {

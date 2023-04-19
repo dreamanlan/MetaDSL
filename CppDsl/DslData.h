@@ -715,7 +715,7 @@ namespace DslData
             }
             return ISyntaxComponent::EmptyString();
         }
-        virtual int GetLine(void)const;
+        virtual int GetLine(void)const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual bool HaveId(void) const override
         {

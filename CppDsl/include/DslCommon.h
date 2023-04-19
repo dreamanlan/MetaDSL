@@ -6,7 +6,13 @@ class IDslSyntaxCommon
 public:
     enum
     {
-        TYPE_NULL,
+        SEPARATOR_NOTHING = 0,
+        SEPARATOR_COMMA,
+        SEPARATOR_SEMICOLON,
+    };
+    enum
+    {
+        TYPE_NULL = 0,
         TYPE_VALUE,
         TYPE_FUNCTION,
         TYPE_STATEMENT,
@@ -63,10 +69,16 @@ enum DslBinaryCode
 {
     BinCode_BeginStatement = 1,
     BinCode_EndStatement,
+    BinCode_EndStatementWithComma,
+    BinCode_EndStatementWithSemiColon,
     BinCode_BeginFunction,
     BinCode_EndFunction,
+    BinCode_EndFunctionWithComma,
+    BinCode_EndFunctionWithSemiColon,
     BinCode_BeginValue,
     BinCode_EndValue,
+    BinCode_EndValueWithComma,
+    BinCode_EndValueWithSemiColon,
     BinCode_ValueTypeBegin,
     BinCode_ValueTypeEnd = BinCode_ValueTypeBegin + IDslSyntaxCommon::VALUE_TYPE_MAX,
     BinCode_ParamOrExternClassBegin
