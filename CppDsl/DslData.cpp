@@ -234,7 +234,7 @@ namespace DslData
             m_Params.reserve(static_cast<size_t>(v));
     }
 
-    NullSyntax& FunctionData::GetNullSyntax(void)const
+    ISyntaxComponent& FunctionData::GetNullSyntax(void)const
     {
         return DslFile::GetNullSyntax();
     }
@@ -420,9 +420,9 @@ namespace DslData
     {
         return DslParser::Mac2Unix(buf, len);
     }
-    NullSyntax& DslFile::GetNullSyntax(void)
+    ISyntaxComponent& DslFile::GetNullSyntax(void)
     {
-        static NullSyntax s_Null;
+        static StatementData s_Null;
         return s_Null;
     }
     FunctionData& DslFile::GetNullFunction(void)

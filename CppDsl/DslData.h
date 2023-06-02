@@ -374,24 +374,6 @@ namespace DslData
         int m_Line;
     };
 
-    class NullSyntax final : public ISyntaxComponent
-    {
-    public:
-        NullSyntax(void) : ISyntaxComponent(ISyntaxComponent::TYPE_NULL) {}
-    public:
-        virtual bool IsValid(void) const override { return false; }
-        virtual const std::string& GetId(void) const override { return ISyntaxComponent::EmptyString(); }
-        virtual int GetIdType(void) const override { return ValueData::VALUE_TYPE_IDENTIFIER; }
-        virtual int GetLine(void) const override { return 0; }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override {}
-        virtual bool HaveId() const override { return false; }
-    private:
-        NullSyntax(const NullSyntax&) = delete;
-        NullSyntax(NullSyntax&&) noexcept = delete;
-        NullSyntax& operator=(const NullSyntax&) = delete;
-        NullSyntax& operator=(NullSyntax&&) noexcept = delete;
-    };
-
     class StatementData;
     class FunctionData final : public ValueOrFunctionData
     {
@@ -647,7 +629,7 @@ namespace DslData
         void ReleaseParams(void);
         void ReleaseComments(void);
     private:
-        NullSyntax& GetNullSyntax(void)const;
+        ISyntaxComponent& GetNullSyntax(void)const;
         FunctionData& GetNullFunction(void)const;
     private:
         ValueData m_Name;
@@ -875,7 +857,7 @@ namespace DslData
     public:
         static bool Mac2Unix(char* buf, int len);
     public:
-        static NullSyntax& GetNullSyntax(void);
+        static ISyntaxComponent& GetNullSyntax(void);
         static FunctionData& GetNullFunction(void);
     public:
         static bool DontLoadComments(void)

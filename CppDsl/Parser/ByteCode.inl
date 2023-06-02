@@ -375,8 +375,8 @@ namespace DslParser
             if (0 != p) {
                 if (p->HaveParam()) {
                     //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
-                    if (!statementSyntax.IsValid())
-                        return;
+                    //if (!statementSyntax.IsValid())
+                    //    return;
                 }
                 else if (!statementSyntax.IsValid()) {
                     //_epsilon_表达式无语句语义
@@ -394,7 +394,7 @@ namespace DslParser
                             last->AddLastComment(statementSyntax.GetLastComment(ix));
                         }
                     }
-                    return;
+                    //return;
                 }
                 else if (statementSyntax.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                     //如果语句是普通值，注释挪到上一语句
@@ -900,7 +900,11 @@ namespace DslParser
                 return name;
             }
         }
-        else if (nullptr != data.GetId() && data.GetId()[0] == '-' && data.GetId()[1] == '\0' && data.GetParamNum() == 1) {
+        else {
+            //处理epsilon语句与参数
+            simplifyFunction(data);
+        }
+        if (nullptr != data.GetId() && data.GetId()[0] == '-' && data.GetId()[1] == '\0' && data.GetParamNum() == 1) {
             ISyntaxComponent& temp = *data.GetParam(0);
             if (temp.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
                 ValueData& val = static_cast<ValueData&>(temp);
@@ -941,6 +945,23 @@ namespace DslParser
         else {
             //有参数不会退化
             return data;
+        }
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::simplifyFunction(FunctionData& data)const
+    {
+        //最后一个语句是epsilon与唯一参数是epsilon时，删除这个语句与参数，这样可以正确解析for(;;){}
+        //目前{}用于非语句块的情形，应该没有最后一个参数需要为空的情况（目前已允许前面的参数为空），副
+        //作用是语句列表也允许除最后一个未以分号结尾的语句外其它语句为空，上层应用在进一步解析时需要处
+        //理这种情形
+        if (data.IsHighOrder()) {
+            simplifyFunction(data.GetLowerOrderFunction());
+        }
+        int num = data.GetParamNum();
+        if (data.HaveStatement() && num > 0 || num == 1) {
+            if (!data.GetParam(num - 1)->IsValid()) {
+                data.RemoveLastParam();
+            }
         }
     }
 }

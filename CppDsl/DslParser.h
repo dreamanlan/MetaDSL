@@ -484,25 +484,8 @@ namespace DslParser
         int m_Line;
     };
 
-    class NullSyntax final : public ISyntaxComponent
-    {
-    public:
-        NullSyntax(void) : ISyntaxComponent(ISyntaxComponent::TYPE_NULL) {}
-    public:
-        virtual int IsValid(void) const override { return FALSE; }
-        virtual const char* GetId(void) const override { return ""; }
-        virtual int GetIdType(void) const override { return ValueData::VALUE_TYPE_IDENTIFIER; }
-        virtual int GetLine(void) const override { return 0; }
-        virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override {}
-        virtual int HaveId()const override { return FALSE; }
-    private:
-        NullSyntax(const NullSyntax&) = delete;
-        NullSyntax(NullSyntax&& other) noexcept = delete;
-        NullSyntax& operator=(const NullSyntax&) = delete;
-        NullSyntax& operator=(NullSyntax&& other) noexcept = delete;
-    };
-
     class IDslStringAndObjectBuffer;
+    class StatementData;
     class FunctionData final : public ValueOrFunctionData
     {
         typedef ISyntaxComponent* SyntaxComponentPtr;
@@ -525,6 +508,13 @@ namespace DslParser
         void SetName(const ValueData& val) { m_Name = val; }
         ValueData& GetName(void) { return m_Name; }
         void ClearParams(void) { m_ParamNum = 0; }
+        void RemoveLastParam(void)
+        {
+            if (0 == m_Params || m_ParamNum <= 0)
+                return;
+            --m_ParamNum;
+            m_Params[m_ParamNum] = nullptr;
+        }
         void AddParam(ISyntaxComponent* pVal)
         {
             if (0 == pVal || m_ParamNum < 0 || m_ParamNum >= m_MaxParamNum)
@@ -773,7 +763,7 @@ namespace DslParser
         void PrepareComments(void);
         void ReleaseComments(void);
     private:
-        NullSyntax* GetNullSyntaxPtr(void)const;
+        ISyntaxComponent* GetNullSyntaxPtr(void)const;
         FunctionData* GetNullFunctionPtr(void)const;
     private:
         ValueData m_Name;
@@ -950,7 +940,7 @@ namespace DslParser
         virtual char* GetSingleErrorInfoBuffer(int index) = 0;
         virtual int GetSingleErrorInfoCapacity(void) = 0;
     public:
-        virtual NullSyntax* GetNullSyntaxPtr(void) = 0;
+        virtual ISyntaxComponent* GetNullSyntaxPtr(void) = 0;
         virtual FunctionData* GetNullFunctionPtr(void) = 0;
         virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
         virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void) = 0;
@@ -1148,7 +1138,7 @@ namespace DslParser
             return SingleErrorInfoCapacity;
         }
     public:
-        virtual NullSyntax* GetNullSyntaxPtr(void) override
+        virtual StatementData* GetNullSyntaxPtr(void) override
         {
             return &m_NullSyntax;
         }
@@ -1183,7 +1173,7 @@ namespace DslParser
             m_SyntaxComponentNum(0), 
             m_SyntaxComponentCommentsInfoNum(0), 
             m_FunctionCommentsInfoNum(0),
-            m_NullSyntax(),
+            m_NullSyntax(*this),
             m_NullFunction(*this),
             m_pNullFunction(&m_NullFunction),
             m_pNullValueOrFunction(&m_NullFunction)
@@ -1246,7 +1236,7 @@ namespace DslParser
     private:
         char m_ErrorInfo[MaxErrorInfoNum][SingleErrorInfoCapacity];
     private:
-        NullSyntax m_NullSyntax;
+        StatementData m_NullSyntax;
         FunctionData m_NullFunction;
         FunctionData* m_pNullFunction;
         ValueOrFunctionData* m_pNullValueOrFunction;

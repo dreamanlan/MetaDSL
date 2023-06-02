@@ -66,6 +66,7 @@ namespace DslParser
     private:
         inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
         inline ValueOrFunctionData& simplifyStatement(FunctionData& data)const;
+        inline void simplifyFunction(FunctionData& data)const;
         inline bool	preconditionCheck(void)const
         {
             return nullptr != mThis && nullptr != mDataFile;

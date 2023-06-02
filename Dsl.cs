@@ -158,10 +158,10 @@ namespace Dsl
         {
             get {
                 if (DslFile.DontLoadComments)
-                    return NullSyntax.EmptyStringList;
+                    return EmptyStringList;
                 var cmtsInfo = GetCommentsInfo();
                 if (null == cmtsInfo)
-                    return NullSyntax.EmptyStringList;
+                    return EmptyStringList;
                 if (null == cmtsInfo.mFirstComments) {
                     cmtsInfo.mFirstComments = new List<string>();
                 }
@@ -191,10 +191,10 @@ namespace Dsl
         {
             get {
                 if (DslFile.DontLoadComments)
-                    return NullSyntax.EmptyStringList;
+                    return EmptyStringList;
                 var cmtsInfo = GetCommentsInfo();
                 if (null == cmtsInfo)
-                    return NullSyntax.EmptyStringList;
+                    return EmptyStringList;
                 if (null == cmtsInfo.mLastComments) {
                     cmtsInfo.mLastComments = new List<string>();
                 }
@@ -227,6 +227,22 @@ namespace Dsl
         }
 
         private int m_Separator = AbstractSyntaxComponent.SEPARATOR_NOTHING;
+
+        public static ISyntaxComponent NullSyntax
+        {
+            get {
+                return s_NullSyntax;
+            }
+        }
+        public static List<string> EmptyStringList
+        {
+            get {
+                s_StringList.Clear();
+                return s_StringList;
+            }
+        }
+        private static StatementData s_NullSyntax = new StatementData();
+        private static List<string> s_StringList = new List<string>();
     }
     public abstract class ValueOrFunctionData : AbstractSyntaxComponent
     {
@@ -246,52 +262,6 @@ namespace Dsl
         {
             get { return this as FunctionData; }
         }
-    }
-    /// <summary>
-    /// 空语法单件
-    /// </summary>
-    public class NullSyntax : AbstractSyntaxComponent
-    {
-        public override bool IsValid()
-        {
-            return false;
-        }
-        public override string GetId()
-        {
-            return string.Empty;
-        }
-        public override int GetIdType()
-        {
-            return ID_TOKEN;
-        }
-        public override int GetLine()
-        {
-            return -1;
-        }
-        public override string ToScriptString(bool includeComment)
-        {
-            return ToString();
-        }
-        public override bool HaveId()
-        {
-            return false;
-        }
-
-        public static NullSyntax Instance
-        {
-            get {
-                return s_Instance;
-            }
-        }
-        public static List<string> EmptyStringList
-        {
-            get {
-                s_StringList.Clear();
-                return s_StringList;
-            }
-        }
-        private static NullSyntax s_Instance = new NullSyntax();
-        private static List<string> s_StringList = new List<string>();
     }
     /// <summary>
     /// 用于描述变量、常量与无参命令语句。可能会出现在函数调用参数表与函数语句列表中。
@@ -530,7 +500,7 @@ namespace Dsl
         {
             get {
                 if (DslFile.DontLoadComments)
-                    return NullSyntax.EmptyStringList;
+                    return EmptyStringList;
                 var cmtsInfo = GetFunctionCommentsInfo();
                 if (null == cmtsInfo || null == cmtsInfo.m_Comments) {
                     cmtsInfo.m_Comments = new List<string>();
@@ -718,9 +688,9 @@ namespace Dsl
         public ISyntaxComponent GetParam(int index)
         {
             if (null == m_Params)
-                return NullSyntax.Instance;
+                return NullSyntax;
             if (index < 0 || index >= (int)m_Params.Count)
-                return NullSyntax.Instance;
+                return NullSyntax;
             return m_Params[index];
         }
         public string GetParamId(int index)
@@ -881,7 +851,7 @@ namespace Dsl
         public override bool IsValid()
         {
             bool ret = true;
-            if (m_ValueOrFunctions.Count <= 0) {
+            if (null == m_ValueOrFunctions || m_ValueOrFunctions.Count <= 0) {
                 ret = false;
             }
             else {
@@ -893,21 +863,21 @@ namespace Dsl
         }
         public override string GetId()
         {
-            if (m_ValueOrFunctions.Count <= 0)
+            if (null == m_ValueOrFunctions || m_ValueOrFunctions.Count <= 0)
                 return string.Empty;
             else
                 return m_ValueOrFunctions[0].GetId();
         }
         public override int GetIdType()
         {
-            if (m_ValueOrFunctions.Count <= 0)
+            if (null == m_ValueOrFunctions || m_ValueOrFunctions.Count <= 0)
                 return ID_TOKEN;
             else
                 return m_ValueOrFunctions[0].GetIdType();
         }
         public override int GetLine()
         {
-            if (m_ValueOrFunctions.Count <= 0)
+            if (null == m_ValueOrFunctions || m_ValueOrFunctions.Count <= 0)
                 return -1;
             else {
                 foreach (var item in m_ValueOrFunctions) {
@@ -921,6 +891,9 @@ namespace Dsl
         public override string ToScriptString(bool includeComment)
         {
 #if FULL_VERSION
+            if (null == m_ValueOrFunctions) {
+                return String.Empty;
+            }
             //与write方法不同，这里输出无缩进单行表示
             FunctionData tempData = First.AsFunction;
             FunctionData callData = null;
@@ -975,7 +948,7 @@ namespace Dsl
         }
         public override bool HaveId()
         {
-            if (m_ValueOrFunctions.Count > 0)
+            if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 0)
                 return m_ValueOrFunctions[0].HaveId();
             else
                 return false;
@@ -983,38 +956,44 @@ namespace Dsl
 
         public int GetFunctionNum()
         {
+            if (null == m_ValueOrFunctions)
+                return 0;
             return m_ValueOrFunctions.Count;
         }
         public void SetFunction(int index, ValueOrFunctionData funcData)
         {
-            if (index < 0 || index >= m_ValueOrFunctions.Count)
+            if (null == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctions.Count)
                 return;
             m_ValueOrFunctions[index] = funcData;
         }
         public ValueOrFunctionData GetFunction(int index)
         {
-            if (index < 0 || index >= m_ValueOrFunctions.Count)
+            if (null == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctions.Count)
                 return FunctionData.NullFunction;
             return m_ValueOrFunctions[index];
         }
         public string GetFunctionId(int index)
         {
-            if (index < 0 || index >= m_ValueOrFunctions.Count)
+            if (null == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctions.Count)
                 return string.Empty;
             return m_ValueOrFunctions[index].GetId();
         }
         public void AddFunction(ValueOrFunctionData funcData)
         {
+            PrepareValueOrFunctions();
             m_ValueOrFunctions.Add(funcData);
         }
         public List<ValueOrFunctionData> Functions
         {
-            get { return m_ValueOrFunctions; }
+            get {
+                PrepareValueOrFunctions();
+                return m_ValueOrFunctions; 
+            }
         }
         public ValueOrFunctionData First
         {
             get {
-                if (m_ValueOrFunctions.Count > 0)
+                if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 0)
                     return m_ValueOrFunctions[0];
                 else
                     return ValueData.NullValue;
@@ -1023,7 +1002,7 @@ namespace Dsl
         public ValueOrFunctionData Second
         {
             get {
-                if (m_ValueOrFunctions.Count > 1)
+                if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 1)
                     return m_ValueOrFunctions[1];
                 else
                     return FunctionData.NullFunction;
@@ -1032,7 +1011,7 @@ namespace Dsl
         public ValueOrFunctionData Third
         {
             get {
-                if (m_ValueOrFunctions.Count > 2)
+                if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 2)
                     return m_ValueOrFunctions[2];
                 else
                     return FunctionData.NullFunction;
@@ -1041,7 +1020,7 @@ namespace Dsl
         public ValueOrFunctionData Last
         {
             get {
-                if (m_ValueOrFunctions.Count > 0)
+                if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 0)
                     return m_ValueOrFunctions[m_ValueOrFunctions.Count - 1];
                 else
                     return FunctionData.NullFunction;
@@ -1049,24 +1028,35 @@ namespace Dsl
         }
         public void Clear()
         {
-            m_ValueOrFunctions = new List<ValueOrFunctionData>();
-
+            m_ValueOrFunctions = null;
             m_CommentsInfo = null;
         }
         public void CopyFrom(StatementData other)
         {
-            m_ValueOrFunctions.Clear();
-            foreach (var f in other.m_ValueOrFunctions) {
-                var nf = Utility.CloneDsl(f);
-                var v = nf as Dsl.ValueOrFunctionData;
-                Debug.Assert(null != v);
-                m_ValueOrFunctions.Add(v);
+            if (null != other.m_ValueOrFunctions) {
+                PrepareValueOrFunctions();
+                m_ValueOrFunctions.Clear();
+                foreach (var f in other.m_ValueOrFunctions) {
+                    var nf = Utility.CloneDsl(f);
+                    var v = nf as Dsl.ValueOrFunctionData;
+                    Debug.Assert(null != v);
+                    m_ValueOrFunctions.Add(v);
+                }
+            }
+            else {
+                m_ValueOrFunctions = null;
             }
 
             SetSeparator(other.GetSeparator());
 
             if (!DslFile.DontLoadComments) {
                 CopyComments(other);
+            }
+        }
+        private void PrepareValueOrFunctions()
+        {
+            if (null == m_ValueOrFunctions) {
+                m_ValueOrFunctions = new List<ValueOrFunctionData>();
             }
         }
         internal override SyntaxComponentCommentsInfo GetCommentsInfo()
@@ -1079,7 +1069,7 @@ namespace Dsl
             return m_CommentsInfo;
         }
 
-        private List<ValueOrFunctionData> m_ValueOrFunctions = new List<ValueOrFunctionData>();
+        private List<ValueOrFunctionData> m_ValueOrFunctions = null;
         private SyntaxComponentCommentsInfo m_CommentsInfo = null;
 
         public static StatementData NullStatement
@@ -1965,7 +1955,7 @@ namespace Dsl
                         ret = nsd;
                     }
                     else {
-                        ret = Dsl.NullSyntax.Instance;
+                        ret = Dsl.AbstractSyntaxComponent.NullSyntax;
                     }
                 }
             }

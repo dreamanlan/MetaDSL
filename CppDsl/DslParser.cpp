@@ -222,7 +222,7 @@ namespace DslParser
         }
     }
 
-    NullSyntax* FunctionData::GetNullSyntaxPtr(void)const
+    ISyntaxComponent* FunctionData::GetNullSyntaxPtr(void)const
     {
         return m_Buffer.GetNullSyntaxPtr();
     }
