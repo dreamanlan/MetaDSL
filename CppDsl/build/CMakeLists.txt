@@ -97,7 +97,7 @@ if (APPLE)
         set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib)
     endif ()
 elseif ( WIN32 AND NOT CYGWIN)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 64)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/x86_64)
     else ()
         set (DEPS_LIB_PATH ${CLIB_SRC_PATH}/deps/lib/x86)
@@ -109,6 +109,12 @@ endif ()
 link_directories(${CLIB_SRC_PATH}/lib
     ${DEPS_LIB_PATH}
 )
+
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCH_SUFFIX x64)
+else()
+    set(ARCH_SUFFIX x32)
+endif()
 
 set (THIRDPART_LIB
     boost_context
@@ -163,7 +169,8 @@ endif()
 if ( WIN32 AND NOT CYGWIN )
     target_link_libraries(CppDsl
         ws2_32
-        ${THIRDPART_LIB} 
+        debug libboost_context-vc141-mt-gd-${ARCH_SUFFIX}-1_82.lib
+        optimized libboost_context-vc141-mt-${ARCH_SUFFIX}-1_82.lib
     )
 elseif (APPLE AND NOT IOS)
     target_link_libraries(CppDsl

@@ -1,0 +1,6 @@
+1、boost.context的头文件来自github上的context，安卓与iOS平台使用这个源码编译。windows平台的boots.context使用稳定版本的boost全源码编译结果里的context库。
+2、CppDsl也是静态库，它依赖特定版本的boost.context，当在也使用了boost.context的工程里使用时会出现boost.context的冲突，此时在目标工程链接依赖里只添加
+CppDsl库的依赖，同时链接选项添加上/NODEFAULTLIB:libboost_context_xxx.lib，这里库文件的名称为CppDsl库依赖的boost.context库文件名。
+3、第2条的做法其实就是让CppDsl使用目标工程的boost.context静态库。
+4、我也尝试过将boost.context静态库使用lib命令合并到CppDsl库里面，但好像仍然改变不了CppDsl里使用boost.context的代码对外部boost.context的依赖。如果使用
+/Zl编译选项让.obj文件不标记依赖库名称，又会导致标准运行时库链接报错。另外在lib命令里加上/NODEFAULTLIB:libboost_context_xxx.lib是没有效果的。

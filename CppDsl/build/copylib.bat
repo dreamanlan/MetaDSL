@@ -6,4 +6,5 @@ cd %workdir%
 xcopy /Y/S Plugins\* ..\lib\*
 
 xcopy /Y/S ..\lib\* ..\..\..\..\UGit\ScriptableUnreal\Plugins\Brace\Source\Brace\lib\*
+xcopy /Y/S ..\lib\* ..\..\..\yuzu\externals\brace\lib\*
 

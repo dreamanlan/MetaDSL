@@ -12,7 +12,7 @@ public:
     };
     enum
     {
-        TYPE_NULL = 0,
+        TYPE_UNKNOWN_SYNTAX = 0,
         TYPE_VALUE,
         TYPE_FUNCTION,
         TYPE_STATEMENT,
