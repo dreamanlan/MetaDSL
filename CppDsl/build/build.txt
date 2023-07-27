@@ -5,3 +5,5 @@ CppDsl库的依赖，同时链接选项添加上/NODEFAULTLIB:libboost_context_x
 4、我也尝试过将boost.context静态库使用lib命令合并到CppDsl库里面，但好像仍然改变不了CppDsl里使用boost.context的代码对外部boost.context的依赖。如果使用
 /Zl编译选项让.obj文件不标记依赖库名称，又会导致标准运行时库链接报错。另外在lib命令里加上/NODEFAULTLIB:libboost_context_xxx.lib是没有效果的。
 5、我们选择使用vs2017编译CppDsl与boost.context库，这样比高版本编译器有更好的二进制兼容性。
+6、github上context工程的fork以及CppDsl的依赖库头文件里，boost库的version.hpp是从特定版本的boost库里复制过来的，更新新版本的boost静态库文件时，需要同时
+将这个版本文件同步过来，否则链接的静态库的文件名会不正确。
