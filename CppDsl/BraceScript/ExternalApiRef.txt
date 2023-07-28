@@ -613,14 +613,14 @@ namespace BraceScriptInterpreter
         FResourceSizeEx* m_pResSize;
     };
     template<typename T>
-    class CppUnrealObjT final : public Brace::IBraceObject
+    class CppUnrealObjT final
     {
     public:
         CppUnrealObjT(void) :m_Impl(), m_pMemSize(nullptr)
         {}
         CppUnrealObjT(T* pImpl) :m_Impl(pImpl), m_pMemSize(nullptr)
         {}
-        virtual ~CppUnrealObjT(void) override
+        virtual ~CppUnrealObjT(void)
         {
             if (nullptr != m_pMemSize) {
                 delete m_pMemSize;
@@ -654,7 +654,7 @@ namespace BraceScriptInterpreter
     using UObjectBraceObject = CppUnrealObjT<UObject>;
     using AActorBraceObject = CppUnrealObjT<AActor>;
 
-    class StructObj final : public Brace::IBraceObject
+    class StructObj final
     {
     public:
         void AllocMemory(const BraceObjectInfo* pInfo)
@@ -667,12 +667,12 @@ namespace BraceScriptInterpreter
             m_pObjectInfo = pInfo;
             m_pMemory = reinterpret_cast<char*>(pMemory);
         }
-        void CacheObjField(int offset, const std::shared_ptr<IBraceObject>& ptr)
+        void CacheObjField(int offset, const std::shared_ptr<void>& ptr)
         {
             PrepareObjFields();
             (*m_pObjFields)[offset] = ptr;
         }
-        std::shared_ptr<IBraceObject>* GetCachedObjField(int offset)
+        std::shared_ptr<void>* GetCachedObjField(int offset)
         {
             PrepareObjFields();
             auto it = m_pObjFields->find(offset);
@@ -698,7 +698,7 @@ namespace BraceScriptInterpreter
     public:
         StructObj(void) :m_pObjectInfo(nullptr), m_pMemory(nullptr), m_pObjFields(nullptr), m_pStrFields(nullptr)
         {}
-        virtual ~StructObj(void) override
+        virtual ~StructObj(void)
         {
             if (nullptr != m_pMemory) {
                 delete[] m_pMemory;
@@ -709,7 +709,7 @@ namespace BraceScriptInterpreter
         void PrepareObjFields(void)
         {
             if (nullptr == m_pObjFields)
-                m_pObjFields = new std::unordered_map<int, std::shared_ptr<IBraceObject>>();
+                m_pObjFields = new std::unordered_map<int, std::shared_ptr<void>>();
         }
         void PrepareStrFields(void)
         {
@@ -719,19 +719,19 @@ namespace BraceScriptInterpreter
     private:
         const BraceObjectInfo* m_pObjectInfo;
         char* m_pMemory;
-        std::unordered_map<int, std::shared_ptr<IBraceObject>>* m_pObjFields;
+        std::unordered_map<int, std::shared_ptr<void>>* m_pObjFields;
         std::unordered_map<int, std::string>* m_pStrFields;
     };
 
     template<typename T>
-    class ArrayObjT final : public Brace::IBraceObject
+    class ArrayObjT final
     {
     public:
         using ArrayType = std::vector<T>;
     public:
         ArrayObjT(void) :m_Array()
         {}
-        virtual ~ArrayObjT(void) override
+        virtual ~ArrayObjT(void)
         {
         }
     public:
@@ -740,14 +740,14 @@ namespace BraceScriptInterpreter
     private:
         std::vector<T> m_Array;
     };
-    class ObjectArray final : public Brace::IBraceObject
+    class ObjectArray final
     {
     public:
-        using ArrayType = std::vector<std::shared_ptr<Brace::IBraceObject>>;
+        using ArrayType = std::vector<std::shared_ptr<void>>;
     public:
         ObjectArray(void) :m_Array()
         {}
-        virtual ~ObjectArray(void) override
+        virtual ~ObjectArray(void)
         {
         }
     public:
@@ -758,14 +758,14 @@ namespace BraceScriptInterpreter
     };
 
     template<typename KeyT, typename ValT>
-    class HashtableObjT final : public Brace::IBraceObject
+    class HashtableObjT final
     {
     public:
         using HashType = std::unordered_map<KeyT, ValT>;
     public:
         HashtableObjT(void) :m_Hashtable()
         {}
-        virtual ~HashtableObjT(void) override
+        virtual ~HashtableObjT(void)
         {
 
         }
@@ -775,14 +775,14 @@ namespace BraceScriptInterpreter
     private:
         std::unordered_map<KeyT, ValT> m_Hashtable;
     };
-    class StrObjHashtable final : public Brace::IBraceObject
+    class StrObjHashtable final
     {
     public:
-        using HashType = std::unordered_map<std::string, std::shared_ptr<Brace::IBraceObject>>;
+        using HashType = std::unordered_map<std::string, std::shared_ptr<void>>;
     public:
         StrObjHashtable(void) :m_Hashtable()
         {}
-        virtual ~StrObjHashtable(void) override
+        virtual ~StrObjHashtable(void)
         {}
     public:
         const HashType& GetImpl(void)const { return m_Hashtable; }
@@ -790,14 +790,14 @@ namespace BraceScriptInterpreter
     private:
         HashType m_Hashtable;
     };
-    class IntObjHashtable final : public Brace::IBraceObject
+    class IntObjHashtable final
     {
     public:
-        using HashType = std::unordered_map<int64_t, std::shared_ptr<Brace::IBraceObject>>;
+        using HashType = std::unordered_map<int64_t, std::shared_ptr<void>>;
     public:
         IntObjHashtable(void) :m_Hashtable()
         {}
-        virtual ~IntObjHashtable(void) override
+        virtual ~IntObjHashtable(void)
         {}
     public:
         const HashType& GetImpl(void)const { return m_Hashtable; }
@@ -1938,14 +1938,14 @@ namespace BraceScriptInterpreter
 										StructObj* pStruct = new StructObj();
 										pStruct->AllocMemory(m_ResultObjInfo);
 										FMemory::Memcpy(pStruct->GetMemory(), propBuffer, static_cast<size_t>(size <= rsize ? size : rsize));
-										std::shared_ptr<Brace::IBraceObject> p(pStruct);
+										std::shared_ptr<void> p(pStruct);
 										Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, p);
 									}
 									else {
 										switch (m_ResultInfo.ObjectTypeId) {
 										case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
 											UObject* v = *reinterpret_cast<UObject**>(outParamBuffer);
-											std::shared_ptr<Brace::IBraceObject> p(new UObjectBraceObject(v));
+											std::shared_ptr<void> p(new UObjectBraceObject(v));
 											Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, p);
 										}break;
 										}
@@ -2824,7 +2824,7 @@ namespace BraceScriptInterpreter
 				uint64_t size = 0;
 				UPackage* pPackage = pObj->GetPackage();
 				if (nullptr != pPackage) {
-					Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(new UObjectBraceObject(pPackage)));
+					Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(new UObjectBraceObject(pPackage)));
 				}
 			}
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
@@ -2955,14 +2955,14 @@ namespace BraceScriptInterpreter
 							StructObj* pStruct = new StructObj();
 							pStruct->AllocMemory(m_ResultObjInfo);
 							FMemory::Memcpy(pStruct->GetMemory(), propBuffer, static_cast<size_t>(size <= rsize ? size : rsize));
-							std::shared_ptr<Brace::IBraceObject> p(pStruct);
+							std::shared_ptr<void> p(pStruct);
 							Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, p);
 						}
 						else {
 							switch (m_ResultInfo.ObjectTypeId) {
 							case CUSTOM_BRACE_OBJECT_TYPE_CPP_UOBJECT: {
 								UObject* v = *reinterpret_cast<UObject**>(outParamBuffer);
-								std::shared_ptr<Brace::IBraceObject> p(new UObjectBraceObject(v));
+								std::shared_ptr<void> p(new UObjectBraceObject(v));
 								Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, p);
 							}break;
 							}
@@ -3123,7 +3123,7 @@ namespace BraceScriptInterpreter
 								if (nullptr == pExists) {
 									StructObj* pWrap = new StructObj();
 									pWrap->SetMemory(pFieldInfo, v);
-									std::shared_ptr<Brace::IBraceObject> sptr(pWrap);
+									std::shared_ptr<void> sptr(pWrap);
 									pObj->CacheObjField(m_FieldInfo.Offset, sptr);
 								}
 							}
@@ -3316,7 +3316,7 @@ namespace BraceScriptInterpreter
 								}
 								StructObj* pWrap = new StructObj();
 								pWrap->SetMemory(pFieldInfo, v);
-								std::shared_ptr<Brace::IBraceObject> sptr(pWrap);
+								std::shared_ptr<void> sptr(pWrap);
 								pObj->CacheObjField(m_FieldInfo.Offset, sptr);
 								Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, sptr);
 							}
@@ -3456,7 +3456,7 @@ namespace BraceScriptInterpreter
 		{
 			auto* pObj = new StructObj();
 			pObj->AllocMemory(m_pObjectInfo);
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(pObj));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(pObj));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 	private:
@@ -3507,7 +3507,7 @@ namespace BraceScriptInterpreter
 			uint64_t v = Brace::VarGetU64((m_ArgInfo.IsGlobal ? gvars : lvars), m_ArgInfo.Type, m_ArgInfo.VarIndex);
 			auto* pObj = new StructObj();
 			pObj->SetMemory(m_pObjectInfo, reinterpret_cast<void*>(v));
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(pObj));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(pObj));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 	private:
@@ -3822,7 +3822,7 @@ namespace BraceScriptInterpreter
 			}
 			auto& arr = m_ObjInfo;
 			auto& arg = m_ArgInfos[0];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			switch (arr.ObjectTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
 				auto* ptr = p.get();
@@ -3877,7 +3877,7 @@ namespace BraceScriptInterpreter
 			}
 			auto& arr = m_ObjInfo;
 			auto& arg = m_ArgInfos[0];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			switch (arr.ObjectTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
 				auto* ptr = p.get();
@@ -3927,7 +3927,7 @@ namespace BraceScriptInterpreter
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
 			auto& arr = m_ObjInfo;
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			switch (arr.ObjectTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
 				auto* ptr = p.get();
@@ -3988,7 +3988,7 @@ namespace BraceScriptInterpreter
 			auto& arr = m_ObjInfo;
 			auto& arg = m_ArgInfos[0];
 			auto& val = m_ArgInfos[1];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			switch (arr.ObjectTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
 				auto* ptr = p.get();
@@ -4048,7 +4048,7 @@ namespace BraceScriptInterpreter
 			}
 			auto& arr = m_ObjInfo;
 			auto& arg = m_ArgInfos[0];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			switch (arr.ObjectTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
 				auto* ptr = p.get();
@@ -4098,7 +4098,7 @@ namespace BraceScriptInterpreter
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
 			auto& arr = m_ObjInfo;
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			switch (arr.ObjectTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
 				auto* ptr = p.get();
@@ -4148,7 +4148,7 @@ namespace BraceScriptInterpreter
 			}
 			auto& hash = m_ObjInfo;
 			auto& ix = m_ArgInfos[0];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
 			int objTypeId = hash.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE: {
@@ -4260,7 +4260,7 @@ namespace BraceScriptInterpreter
 			auto& hash = m_ObjInfo;
 			auto& ix = m_ArgInfos[0];
 			auto& val = m_ArgInfos[1];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
 			int objTypeId = hash.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE: {
@@ -4371,7 +4371,7 @@ namespace BraceScriptInterpreter
 			}
 			auto& hash = m_ObjInfo;
 			auto& ix = m_ArgInfos[0];
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
 			int objTypeId = hash.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE: {
@@ -4467,7 +4467,7 @@ namespace BraceScriptInterpreter
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
 			auto& hash = m_ObjInfo;
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((hash.IsGlobal ? gvars : lvars), hash.VarIndex);
 			int objTypeId = hash.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_STR_STR_HASHTABLE: {
@@ -4680,7 +4680,7 @@ namespace BraceScriptInterpreter
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
 			int objTypeId = m_ObjInfo.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
@@ -4730,7 +4730,7 @@ namespace BraceScriptInterpreter
 		{
 			if (!m_Obj.isNull())
 				m_Obj(gvars, lvars);
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((m_ObjInfo.IsGlobal ? gvars : lvars), m_ObjInfo.VarIndex);
 			int objTypeId = m_ObjInfo.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_INT_BOOL_HASHTABLE: {
@@ -4969,7 +4969,7 @@ namespace BraceScriptInterpreter
 		}
 		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& val, const Brace::OperandRuntimeInfo& resultInfo) const override
 		{
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			int objTypeId = arr.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
@@ -5238,7 +5238,7 @@ namespace BraceScriptInterpreter
 		}
 		virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const Brace::OperandRuntimeInfo& arr, const Brace::OperandRuntimeInfo& ix, const Brace::OperandRuntimeInfo& resultInfo) const override
 		{
-			const std::shared_ptr<Brace::IBraceObject>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
+			const std::shared_ptr<void>& p = Brace::VarGetObject((arr.IsGlobal ? gvars : lvars), arr.VarIndex);
 			int objTypeId = arr.ObjectTypeId;
 			switch (objTypeId) {
 			case CUSTOM_BRACE_OBJECT_TYPE_BOOL_ARRAY: {
@@ -6074,7 +6074,7 @@ namespace BraceScriptInterpreter
 				auto* ptr = obj.get();
 				if (nullptr != ptr) {
 					auto* pNewArr = new ObjectArray();
-					std::shared_ptr<Brace::IBraceObject> newArr(pNewArr);
+					std::shared_ptr<void> newArr(pNewArr);
 					Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, newArr);
 					auto* pArr = static_cast<ObjectArray*>(ptr);
 					switch (m_Operation) {
@@ -6328,7 +6328,7 @@ namespace BraceScriptInterpreter
 			if (!m_List.isNull())
 				m_List(gvars, lvars);
 			ObjectArray* pArr = nullptr;
-			std::shared_ptr<Brace::IBraceObject> arrFromType;
+			std::shared_ptr<void> arrFromType;
 			if (!m_Type.empty()) {
 				pArr = BuildObjectArray(m_Type);
 				arrFromType.reset(pArr);
@@ -6345,7 +6345,7 @@ namespace BraceScriptInterpreter
 			if (nullptr == pArr)
 				return Brace::BRACE_FLOW_CONTROL_NORMAL;
 			auto* pNewArr = new ObjectArray();
-			std::shared_ptr<Brace::IBraceObject> newArr(pNewArr);
+			std::shared_ptr<void> newArr(pNewArr);
 			// where
 			ExecuteWhere(gvars, lvars, pArr, pNewArr);
 			// orderby
@@ -6368,7 +6368,7 @@ namespace BraceScriptInterpreter
 				GetObjectsOfClass(pClass, results);
 				auto* p = new ObjectArray();
 				for (auto* pObj : results) {
-					std::shared_ptr<Brace::IBraceObject> ptr(new UObjectBraceObject(pObj));
+					std::shared_ptr<void> ptr(new UObjectBraceObject(pObj));
 					p->GetImpl().push_back(ptr);
 				}
 				return p;
@@ -8055,7 +8055,7 @@ namespace BraceScriptInterpreter
 				bool v = Brace::VarGetBoolean((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteInt(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8070,7 +8070,7 @@ namespace BraceScriptInterpreter
 				int64_t v = Brace::VarGetI64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteFloat(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8085,7 +8085,7 @@ namespace BraceScriptInterpreter
 				double v = Brace::VarGetF64((ai.IsGlobal ? gvars : lvars), ai.Type, ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteString(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8100,7 +8100,7 @@ namespace BraceScriptInterpreter
 				const std::string& v = Brace::VarGetString((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteObject(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8114,7 +8114,7 @@ namespace BraceScriptInterpreter
 				auto& v = Brace::VarGetObject((ai.IsGlobal ? gvars : lvars), ai.VarIndex);
 				p->GetImpl().push_back(v);
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 	private:
@@ -8654,7 +8654,7 @@ namespace BraceScriptInterpreter
 				std::string v = Brace::VarGetStr((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(k, std::move(v)));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteIntInt(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8676,7 +8676,7 @@ namespace BraceScriptInterpreter
 				int64_t v = Brace::VarGetI64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(k, v));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteIntFloat(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8698,7 +8698,7 @@ namespace BraceScriptInterpreter
 				double v = Brace::VarGetF64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(k, v));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteIntBool(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8720,7 +8720,7 @@ namespace BraceScriptInterpreter
 				bool v = Brace::VarGetBoolean((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(k, v));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteIntObj(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8741,7 +8741,7 @@ namespace BraceScriptInterpreter
 				auto v = Brace::VarGetObject((val.IsGlobal ? gvars : lvars), val.VarIndex);
 				p->GetImpl().insert(std::make_pair(k, std::move(v)));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteStrStr(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8763,7 +8763,7 @@ namespace BraceScriptInterpreter
 				std::string v = Brace::VarGetStr((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(std::move(k), std::move(v)));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteStrInt(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8785,7 +8785,7 @@ namespace BraceScriptInterpreter
 				int64_t v = Brace::VarGetI64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(std::move(k), v));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteStrFloat(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8807,7 +8807,7 @@ namespace BraceScriptInterpreter
 				double v = Brace::VarGetF64((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(std::move(k), v));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteStrBool(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8829,7 +8829,7 @@ namespace BraceScriptInterpreter
 				bool v = Brace::VarGetBoolean((val.IsGlobal ? gvars : lvars), val.Type, val.VarIndex);
 				p->GetImpl().insert(std::make_pair(std::move(k), v));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 		int ExecuteStrObj(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars)const
@@ -8850,7 +8850,7 @@ namespace BraceScriptInterpreter
 				auto v = Brace::VarGetObject((val.IsGlobal ? gvars : lvars), val.VarIndex);
 				p->GetImpl().insert(std::make_pair(std::move(k), std::move(v)));
 			}
-			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<Brace::IBraceObject>(p));
+			Brace::VarSetObject((m_ResultInfo.IsGlobal ? gvars : lvars), m_ResultInfo.VarIndex, std::shared_ptr<void>(p));
 			return Brace::BRACE_FLOW_CONTROL_NORMAL;
 		}
 	private:

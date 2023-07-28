@@ -49,15 +49,6 @@ namespace Brace
         PREDEFINED_BRACE_OBJECT_TYPE_NUM
     };
 
-    /// <summary>
-    /// use std::shared_ptr<IBraceObject> rather than std::shared_ptr<void> to allow std::shared_ptr to delete object correctly
-    /// </summary>
-    class IBraceObject
-    {
-    public:
-        virtual ~IBraceObject(void) {}
-    };
-
     struct DataTypeInfo
     {
         int Type;
@@ -226,7 +217,7 @@ namespace Brace
     {
         std::vector<NumericValue> NumericVars;
         std::vector<std::string> StringVars;
-        std::vector<std::shared_ptr<IBraceObject>> ObjectVars;
+        std::vector<std::shared_ptr<void>> ObjectVars;
         std::vector<ReferenceInfo> ReferenceVars;
 
         int AllocVariable(int type);
@@ -406,7 +397,7 @@ namespace Brace
     DEFINE_VAR_GET_NUMERIC(Float, FloatVal, float);
     DEFINE_VAR_GET_NUMERIC(Double, DoubleVal, double);
     DEFINE_VAR_GET(String, StringVars, std::string&);
-    DEFINE_VAR_GET(Object, ObjectVars, std::shared_ptr<IBraceObject>&);
+    DEFINE_VAR_GET(Object, ObjectVars, std::shared_ptr<void>&);
     DEFINE_VAR_GET(Ref, ReferenceVars, ReferenceInfo&);
 
     DEFINE_VAR_SET_NUMERIC(Bool, BoolVal, bool);
@@ -421,14 +412,14 @@ namespace Brace
     DEFINE_VAR_SET_NUMERIC(Float, FloatVal, float);
     DEFINE_VAR_SET_NUMERIC(Double, DoubleVal, double);
     DEFINE_VAR_SET(String, StringVars, const std::string&);
-    DEFINE_VAR_SET(Object, ObjectVars, const std::shared_ptr<IBraceObject>&);
+    DEFINE_VAR_SET(Object, ObjectVars, const std::shared_ptr<void>&);
     DEFINE_VAR_SET(Ref, ReferenceVars, const ReferenceInfo&);
 
     static inline void VarSetString(VariableInfo& info, int index, std::string&& val)
     {
         info.StringVars[index] = std::move(val);
     }
-    static inline void VarSetObject(VariableInfo& info, int index, std::shared_ptr<IBraceObject>&& val)
+    static inline void VarSetObject(VariableInfo& info, int index, std::shared_ptr<void>&& val)
     {
         info.ObjectVars[index] = std::move(val);
     }
@@ -560,7 +551,7 @@ namespace Brace
     protected:
         FuncInfo* CurFuncInfo(void)const;
         AbstractBraceApi* GetFailbackApi(void)const;
-        IBraceObject* GetContextObject(void)const;
+        const std::shared_ptr<void>& GetContextObject(void)const;
     protected:
         BraceApiImplHelper(BraceScript& interpreter) :m_Interpreter(interpreter)
         {}
@@ -822,8 +813,8 @@ namespace Brace
         void RegisterApi(std::string&& id, IBraceApiFactory* pApiFactory);
         void SetFailbackApi(AbstractBraceApi* pFailbackApi);
         AbstractBraceApi* GetFailbackApi(void)const;
-        void SetContextObject(IBraceObject* pContext);
-        IBraceObject* GetContextObject(void)const;
+        void SetContextObject(const std::shared_ptr<void>& pContext);
+        const std::shared_ptr<void>& GetContextObject(void)const;
         void Reset(void);
         void LoadFuncApiTypeInfo(const DslData::DslFile& dslInfos);
         void AddFuncApiTypeInfo(const std::string& name, const FuncApiTypeInfo& info);
@@ -918,6 +909,6 @@ namespace Brace
 
         LoadTypeInfoDelegation m_LoadTypeInfo;
         AbstractBraceApi* m_FailbackApi;
-        IBraceObject* m_ContextObj;
+        std::shared_ptr<void> m_ContextObj;
     };
 }

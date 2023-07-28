@@ -183,7 +183,7 @@ namespace Brace
     {
         return GetInterpreter().GetFailbackApi();
     }
-    IBraceObject* BraceApiImplHelper::GetContextObject(void)const
+    const std::shared_ptr<void>& BraceApiImplHelper::GetContextObject(void)const
     {
         return GetInterpreter().GetContextObject();
     }
@@ -3312,11 +3312,11 @@ namespace Brace
     {
         return m_FailbackApi;
     }
-    void BraceScript::SetContextObject(IBraceObject* pContext)
+    void BraceScript::SetContextObject(const std::shared_ptr<void>& pContext)
     {
         m_ContextObj = pContext;
     }
-    IBraceObject* BraceScript::GetContextObject(void)const
+    const std::shared_ptr<void>& BraceScript::GetContextObject(void)const
     {
         return m_ContextObj;
     }
