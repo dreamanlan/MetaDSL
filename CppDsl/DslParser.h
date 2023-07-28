@@ -1178,11 +1178,13 @@ namespace DslParser
             m_pNullFunction(&m_NullFunction),
             m_pNullValueOrFunction(&m_NullFunction)
         {
-            memset(m_SyntaxComponentPool, 0, sizeof(SyntaxComponentPtr) * (SyntaxComponentAndPtrArrayPoolSize));
+            memset(m_StringBuffer, 0, sizeof(m_StringBuffer));
+            memset(m_SyntaxComponentPool, 0, sizeof(m_SyntaxComponentPool));
             m_pPtrFreeLink = reinterpret_cast<FreeLinkInfo*>(m_SyntaxComponentPool + SyntaxComponentAndPtrArrayPoolSize);
             m_FreeLinkNum = 0;
-            memset(m_PtrFreeLinkHeader, 0, sizeof(unsigned int) * PtrArrayPoolFreeLinkHeaderSize);
+            memset(m_PtrFreeLinkHeader, 0, sizeof(m_PtrFreeLinkHeader));
             m_FreedFreeLinkHeader = 0;
+            memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
         }
         virtual void Reset(void) override
         {

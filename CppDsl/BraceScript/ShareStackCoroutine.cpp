@@ -86,12 +86,38 @@ namespace CoroutineWithShareStack
     static CoroutineMain g_Main;
     static Coroutine* g_Current = nullptr;
 
+    static void InitSequencing(int main_StackSize)
+    {
+        Task tmp{};
+        tmp.size = INT_MAX;
+        g_Main.m_pData->StackSize = main_StackSize;
+        tmp.next = 0;
+        g_Main.m_pData->MyTask = &tmp;
+        main_task.pred = main_task.suc = &main_task;
+        tmp.MyCoroutine = g_Current = &g_Main;
+        if (!setjmp(tmp.jmpb))
+            g_Main.Eat();
+        tmp.pred = main_task.pred;
+        tmp.suc = main_task.suc;
+        main_task = tmp;
+        main_task.next->prev = &main_task;
+        g_Main.m_pData->MyTask = &main_task;
+        main_task.used = 1;
+        g_Main.m_pData->Ready = 0;
+    }
+
     Coroutine::Coroutine(int stackSize)
     {
         m_pData = new CoroutineData(stackSize);
     }
     Coroutine::~Coroutine(void)
     {
+        Release();
+    }
+    void Coroutine::Release(void)
+    {
+        if (nullptr == m_pData)
+            return;
         delete m_pData;
         m_pData = nullptr;
     }
@@ -118,14 +144,17 @@ namespace CoroutineWithShareStack
         m_pData->Ready = 1;
         m_pData->Terminated = 0;
     }
-    void Coroutine::CallFromMain(void)
+    void Coroutine::Call(void)
     {
-        if (g_Main.m_pData->StackSize == 0) {
-            InitSequencing(DEFAULT_STACK_SIZE);
-        }
         if (IsTerminated())
             Reset();
         CoroutineWithShareStack::Call(this);
+    }
+    void Coroutine::Resume(void)
+    {
+        if (IsTerminated())
+            Reset();
+        CoroutineWithShareStack::Resume(this);
     }
     inline void Coroutine::Enter(void)
     {
@@ -276,6 +305,17 @@ namespace CoroutineWithShareStack
         }
         next->Enter();
     }
+    bool TryInit(int main_StackSize)
+    {
+        if (g_Main.m_pData->StackSize == 0) {
+            InitSequencing(main_StackSize);
+        }
+        return !g_Main.IsTerminated();
+    }
+    void TryRelease(void)
+    {
+        g_Main.Release();
+    }
     Coroutine* CurrentCoroutine(void)
     {
         return g_Current;
@@ -283,24 +323,5 @@ namespace CoroutineWithShareStack
     Coroutine* MainCoroutine(void)
     {
         return &g_Main;
-    }
-    void InitSequencing(int main_StackSize)
-    {
-        Task tmp{};
-        tmp.size = INT_MAX;
-        g_Main.m_pData->StackSize = main_StackSize;
-        tmp.next = 0;
-        g_Main.m_pData->MyTask = &tmp;
-        main_task.pred = main_task.suc = &main_task;
-        tmp.MyCoroutine = g_Current = &g_Main;
-        if (!setjmp(tmp.jmpb))
-            g_Main.Eat();
-        tmp.pred = main_task.pred;
-        tmp.suc = main_task.suc;
-        main_task = tmp;
-        main_task.next->prev = &main_task;
-        g_Main.m_pData->MyTask = &main_task;
-        main_task.used = 1;
-        g_Main.m_pData->Ready = 0;
     }
 }

@@ -1,4 +1,4 @@
-#ifndef _DSL_UTILITY_H
+﻿#ifndef _DSL_UTILITY_H
 #define _DSL_UTILITY_H
 
 #include "DslParser.h"

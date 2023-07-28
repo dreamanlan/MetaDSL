@@ -386,21 +386,24 @@ void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string
         g_ScriptEnv = new ScriptEnv();
     }
     if (nullptr == g_LongJmpRoutine1) {
+        //CoroutineWithLongJmp::TryInit();
         g_LongJmpRoutine1 = new LongJmpRoutine1(4 * 1024);
     }
     if (nullptr == g_LongJmpRoutine2) {
+        //CoroutineWithShareStack::TryInit(1024 * 1024);
         g_LongJmpRoutine2 = new LongJmpRoutine2(1024*1024);
     }
     if (nullptr == g_BoostContextRoutine) {
+        CoroutineWithBoostContext::TryInit();
         g_BoostContextRoutine = new BoostContextRoutine(1024*1024);
     }
     g_ScriptEnv->SetScript(pBuffer, txt);
 }
 void Tick(void)
 {
-    //g_LongJmpRoutine1->CallFromMain();
-    //g_LongJmpRoutine2->CallFromMain();
-    g_BoostContextRoutine->CallFromMain();
+    //g_LongJmpRoutine1->Call();
+    //g_LongJmpRoutine2->Call();
+    g_BoostContextRoutine->Call();
     //g_ScriptEnv->Run();
 }
 void Terminate(void)

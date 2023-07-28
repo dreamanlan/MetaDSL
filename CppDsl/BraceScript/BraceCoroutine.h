@@ -11,12 +11,13 @@ namespace CoroutineWithBoostContext
         friend void Resume(Coroutine*);
         friend void Call(Coroutine*);
         friend void Detach(void);
-        friend void TryInit(void);
+        friend bool TryInit(void);
         friend void TryRelease(void);
     public:
         bool IsTerminated(void)const;
         void Reset(void);
-        void CallFromMain(void);
+        void Call(void);
+        void Resume(void);
     protected:
         Coroutine(int stackSize);
         virtual ~Coroutine(void);
@@ -24,7 +25,6 @@ namespace CoroutineWithBoostContext
     private:
         void Enter(void);
         void Exit(void);
-        void Init(void);
         void Release(void);
     private:
         int m_StackSize;
@@ -34,7 +34,7 @@ namespace CoroutineWithBoostContext
     extern void Resume(Coroutine*);
     extern void Call(Coroutine*);
     extern void Detach(void);
-    extern void TryInit(void);
+    extern bool TryInit(void);
     extern void TryRelease(void);
     extern Coroutine* CurrentCoroutine(void);
     extern Coroutine* MainCoroutine(void);

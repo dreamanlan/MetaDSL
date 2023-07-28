@@ -87,6 +87,12 @@ namespace CoroutineWithLongJmp
     }
     Coroutine::~Coroutine(void)
     {
+        Release();
+    }
+    void Coroutine::Release(void)
+    {
+        if (nullptr == m_pData)
+            return;
         delete m_pData;
         m_pData = nullptr;
     }
@@ -112,15 +118,17 @@ namespace CoroutineWithLongJmp
         m_pData->Callee = m_pData->Caller = nullptr;
         m_pData->IsTerminated = false;
     }
-    void Coroutine::CallFromMain(void)
+    void Coroutine::Call(void)
     {
-        if (nullptr == g_StackBottom) {
-            char _dummy{};
-            g_StackBottom = &_dummy;
-        }
         if (IsTerminated())
             Reset();
         CoroutineWithLongJmp::Call(this);
+    }
+    void Coroutine::Resume(void)
+    {
+        if (IsTerminated())
+            Reset();
+        CoroutineWithLongJmp::Resume(this);
     }
     inline void Coroutine::RestoreStack(void)
     {
@@ -243,6 +251,18 @@ namespace CoroutineWithLongJmp
             }
         }
         next->Enter();
+    }
+    bool TryInit(void)
+    {
+        if (nullptr == g_StackBottom) {
+            char _dummy{};
+            g_StackBottom = &_dummy;
+        }
+        return !g_Main.IsTerminated();
+    }
+    void TryRelease(void)
+    {
+        g_Main.Release();
     }
     Coroutine* CurrentCoroutine(void)
     { 

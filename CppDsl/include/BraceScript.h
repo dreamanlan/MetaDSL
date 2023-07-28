@@ -223,7 +223,7 @@ namespace Brace
         int AllocVariable(int type);
     };
 
-    typedef void (*VarAssignPtr)(VariableInfo&, int, VariableInfo&, int);
+    using VarAssignPtr = void (*)(VariableInfo&, int, VariableInfo&, int);
     extern VarAssignPtr GetVarAssignPtr(int varType, bool isRef, int srcVarType, bool srcIsRef);
     extern const char* GetDataTypeName(int type);
     extern int GetDataType(const std::string& typeName); 
@@ -747,18 +747,18 @@ namespace Brace
         CtorBinder<ApiT, Args...> m_Binder;
     };
 
-    typedef std::stack<FuncInfo*> FuncInfoStack;
-    typedef std::stack<RuntimeStackInfo> RuntimeStack;
-    typedef std::function<void(const std::string&)> LogDelegation;
-    typedef std::function<bool(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&)> LoadTypeInfoDelegation;
-    typedef std::function<int(const DslData::ISyntaxComponent&, const LoadTypeInfoDelegation&)> GetObjectTypeIdDelegation;
-    typedef std::function<const char* (int)> GetObjectTypeNameDelegation;
-    typedef std::function<bool(int,int)> ObjectAssignCheckDelegation;
-    typedef std::function<bool(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&, BraceApiExecutor&)> FilterLoadDelegation;
-    typedef std::function<bool(const DslData::ValueData&, OperandLoadtimeInfo&, BraceApiExecutor&)> LoadValueFailedDelegation;
-    typedef std::function<bool(const DslData::FunctionData&, OperandLoadtimeInfo&, BraceApiExecutor&)> LoadFunctionFailedDelegation;
-    typedef std::function<bool(const DslData::StatementData&, OperandLoadtimeInfo&, BraceApiExecutor&)> LoadStatementFailedDelegation;
-    typedef std::function<RuntimeStack*(void)> GetRuntimeStackDelegation;
+    using FuncInfoStack = std::stack<FuncInfo*>;
+    using RuntimeStack = std::stack<RuntimeStackInfo>;
+    using LogDelegation = std::function<void(const std::string&)>;
+    using LoadTypeInfoDelegation = std::function<bool(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&)>;
+    using GetObjectTypeIdDelegation = std::function<int(const DslData::ISyntaxComponent&, const LoadTypeInfoDelegation&)>;
+    using GetObjectTypeNameDelegation = std::function<const char* (int)>;
+    using ObjectAssignCheckDelegation = std::function<bool(int,int)>;
+    using FilterLoadDelegation = std::function<bool(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&, BraceApiExecutor&)>;
+    using LoadValueFailedDelegation = std::function<bool(const DslData::ValueData&, OperandLoadtimeInfo&, BraceApiExecutor&)>;
+    using LoadFunctionFailedDelegation = std::function<bool(const DslData::FunctionData&, OperandLoadtimeInfo&, BraceApiExecutor&)>;
+    using LoadStatementFailedDelegation = std::function<bool(const DslData::StatementData&, OperandLoadtimeInfo&, BraceApiExecutor&)>;
+    using GetRuntimeStackDelegation = std::function<RuntimeStack*(void)>;
     class BraceScript final
     {
         friend class BraceApiImplHelper;

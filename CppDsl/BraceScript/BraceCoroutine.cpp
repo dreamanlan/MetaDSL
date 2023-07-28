@@ -199,17 +199,13 @@ namespace CoroutineWithBoostContext
 
     Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize), m_pData(nullptr)
     {
-        Init();
+        if (nullptr == m_pData) {
+            m_pData = new CoroutineData(this, m_StackSize);
+        }
     }
     Coroutine::~Coroutine(void)
     {
         Release();
-    }
-    void Coroutine::Init(void)
-    {
-        if (nullptr == m_pData) {
-            m_pData = new CoroutineData(this, m_StackSize);
-        }
     }
     void Coroutine::Release(void)
     {
@@ -239,11 +235,17 @@ namespace CoroutineWithBoostContext
 
         m_pData->BuildEnv();
     }
-    void Coroutine::CallFromMain(void)
+    void Coroutine::Call(void)
     {
         if (IsTerminated())
             Reset();
         CoroutineWithBoostContext::Call(this);
+    }
+    void Coroutine::Resume(void)
+    {
+        if (IsTerminated())
+            Reset();
+        CoroutineWithBoostContext::Resume(this);
     }
     inline void Coroutine::Enter()
     {
@@ -319,9 +321,9 @@ namespace CoroutineWithBoostContext
         }
         next->Enter();
     }
-    void TryInit(void)
+    bool TryInit(void)
     {
-        g_Main.Init();
+        return !g_Main.IsTerminated();
     }
     void TryRelease(void)
     {
