@@ -42,8 +42,8 @@ public:
         DslParser::ValueData ToValue(void)const;
     };
 private:
-    typedef DequeT<TokenInfo, STACKSIZE> TokenStack;
-    typedef DequeT<DslParser::StatementData*, STACKSIZE> SemanticStack;
+    using TokenStack = DequeT<TokenInfo, STACKSIZE>;
+    using SemanticStack = DequeT<DslParser::StatementData*, STACKSIZE>;
 public:
     RuntimeBuilderData(void);
 public:

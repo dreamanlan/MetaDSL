@@ -8,9 +8,9 @@
 #define MAX_ACTION_NUM	44
 
 //--------------------------------------------------------------------------------------
-class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT < ActionForSourceCodeScript >
+class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT<ActionForSourceCodeScript>
 {
-    typedef RuntimeBuilderT<ActionForSourceCodeScript> BaseType;
+    using BaseType = RuntimeBuilderT<ActionForSourceCodeScript>;
 public:
     inline char* getLastToken(void) const;
     inline int getLastLineNumber(void) const;
@@ -639,12 +639,12 @@ namespace DslParser
     static inline void ltrim(std::string& s) {
         s.erase(s.begin(), std::find_if_not(s.begin(), s.end(), [](unsigned char ch) {
             return std::isspace(ch);
-            }));
+        }));
     }
     static inline void rtrim(std::string& s) {
         s.erase(std::find_if_not(s.rbegin(), s.rend(), [](unsigned char ch) {
             return std::isspace(ch);
-            }).base(), s.end());
+        }).base(), s.end());
     }
     static inline void trim(std::string& s) {
         ltrim(s);
@@ -928,7 +928,7 @@ namespace DslParser
                 }
                 else {
                     //函数
-                    ss << "@@"; 
+                    ss << "@@";
                     if (key.empty())
                         ss << "ignore";
                     else

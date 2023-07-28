@@ -79,46 +79,46 @@ namespace CollectionMemory
     class SelectorT
     {
     public:
-        typedef StaticT<T, MaxSizeV> Type;
+        using Type = StaticT<T, MaxSizeV>;
     };
     template<typename T>
     class SelectorT<T, 0>
     {
     public:
-        typedef DynamicT<T> Type;
+        using Type = DynamicT<T>;
     };
 }
 
 //
-//Tæ˜¯é˜Ÿåˆ—å…ƒç´ ç±»å‹ï¼ŒSizeVæ˜¯æ‰€æœŸæœ›çš„é˜Ÿåˆ—çš„æœ€å¤§å…ƒç´ æ•°ç›®(ä¸º0æ—¶é‡‡ç”¨åŠ¨æ€å†…å­˜åˆ†é…æ–¹æ¡ˆ)
+//TÊÇ¶ÓÁĞÔªËØÀàĞÍ£¬SizeVÊÇËùÆÚÍûµÄ¶ÓÁĞµÄ×î´óÔªËØÊıÄ¿(Îª0Ê±²ÉÓÃ¶¯Ì¬ÄÚ´æ·ÖÅä·½°¸)
 template<typename T, int SizeV = 0>
 class DequeT
 {
-    typedef typename CollectionMemory::SelectorT<T, (SizeV == 0 ? 0 : SizeV + 1)>::Type MemoryType;
-public://æ ‡å‡†åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•
-    //é˜Ÿåˆ—æ˜¯å¦ç©º
+    using MemoryType = typename CollectionMemory::SelectorT<T, (SizeV == 0 ? 0 : SizeV + 1)>::Type;
+public://±ê×¼Ë«Ïò¶ÓÁĞ·ÃÎÊ·½·¨
+    //¶ÓÁĞÊÇ·ñ¿Õ
     inline int Empty(void) const
     {
         return m_Head == m_Tail;
     }
-    //é˜Ÿåˆ—æ˜¯å¦æ»¡
+    //¶ÓÁĞÊÇ·ñÂú
     inline int Full(void) const
     {
         return m_Head == (m_Tail + 1) % m_MaxSize;
     }
-    //æ¸…ç©ºé˜Ÿåˆ—
+    //Çå¿Õ¶ÓÁĞ
     inline void Clear(void)
     {
         m_Size = 0;
         m_Head = m_Tail = 0;
         m_Memory.Clear();
     }
-    //å½“å‰é˜Ÿåˆ—ä¸­çš„å…ƒç´ ä¸ªæ•°
+    //µ±Ç°¶ÓÁĞÖĞµÄÔªËØ¸öÊı
     inline int Size(void) const
     {
         return m_Size;
     }
-    //é˜Ÿåˆ—å°¾åŠ ä¸€ä¸ªå…ƒç´ 
+    //¶ÓÁĞÎ²¼ÓÒ»¸öÔªËØ
     inline int PushBack(const T& t)
     {
         MyAssert(m_Data);
@@ -131,7 +131,7 @@ public://æ ‡å‡†åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•
         UpdateSize();
         return id;
     }
-    //é˜Ÿåˆ—å¤´åŠ ä¸€ä¸ªå…ƒç´ 
+    //¶ÓÁĞÍ·¼ÓÒ»¸öÔªËØ
     inline int PushFront(const T& t)
     {
         MyAssert(m_Data);
@@ -143,7 +143,7 @@ public://æ ‡å‡†åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•
         UpdateSize();
         return m_Head;
     }
-    //åˆ é™¤é˜Ÿåˆ—å°¾ä¸€ä¸ªå…ƒç´ 
+    //É¾³ı¶ÓÁĞÎ²Ò»¸öÔªËØ
     inline T PopBack(void)
     {
         MyAssert(m_Data);
@@ -155,7 +155,7 @@ public://æ ‡å‡†åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•
         UpdateSize();
         return m_Data[id];
     }
-    //åˆ é™¤é˜Ÿåˆ—å¤´ä¸€ä¸ªå…ƒç´ 
+    //É¾³ı¶ÓÁĞÍ·Ò»¸öÔªËØ
     inline T PopFront(void)
     {
         MyAssert(m_Data);
@@ -167,33 +167,33 @@ public://æ ‡å‡†åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•
         UpdateSize();
         return m_Data[id];
     }
-    //è¯»é˜Ÿåˆ—å°¾å…ƒç´ 
+    //¶Á¶ÓÁĞÎ²ÔªËØ
     inline const T& Back(void) const
     {
         return m_Data[BackID()];
     }
-    //è¯»é˜Ÿåˆ—å°¾å…ƒç´ å¯å†™å¼•ç”¨ï¼ˆç”¨äºä¿®æ”¹é˜Ÿåˆ—å°¾å…ƒç´ ï¼‰
+    //¶Á¶ÓÁĞÎ²ÔªËØ¿ÉĞ´ÒıÓÃ£¨ÓÃÓÚĞŞ¸Ä¶ÓÁĞÎ²ÔªËØ£©
     inline T& Back(void)
     {
         return m_Data[BackID()];
     }
-    //è¯»é˜Ÿåˆ—å¤´å…ƒç´ 
+    //¶Á¶ÓÁĞÍ·ÔªËØ
     inline const T& Front(void) const
     {
         return m_Data[FrontID()];
     }
-    //è¯»é˜Ÿåˆ—å¤´å…ƒç´ å¯å†™å¼•ç”¨ï¼ˆç”¨äºä¿®æ”¹é˜Ÿåˆ—å¤´å…ƒç´ ï¼‰
+    //¶Á¶ÓÁĞÍ·ÔªËØ¿ÉĞ´ÒıÓÃ£¨ÓÃÓÚĞŞ¸Ä¶ÓÁĞÍ·ÔªËØ£©
     inline T& Front(void)
     {
         return m_Data[FrontID()];
     }
-public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
-    //FrontIDæ˜¯é˜Ÿåˆ—å¤´å…ƒç´ çš„ID
+public://À©Õ¹Ë«Ïò¶ÓÁĞ·ÃÎÊ·½·¨£¨±éÀúÓë¶ÁĞ´·½·¨£©
+    //FrontIDÊÇ¶ÓÁĞÍ·ÔªËØµÄID
     inline int FrontID(void) const
     {
         return m_Head;
     }
-    //BackIDæ˜¯é˜Ÿåˆ—å°¾å…ƒç´ çš„ID
+    //BackIDÊÇ¶ÓÁĞÎ²ÔªËØµÄID
     inline int BackID(void) const
     {
         if (Empty()) {
@@ -202,7 +202,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
         int newId = (m_MaxSize + m_Tail - 1) % m_MaxSize;
         return newId;
     }
-    //å–å½“å‰IDçš„å‰ä¸€ä¸ªIDï¼Œå¦‚æœå·²ç»æ˜¯å¤´å…ƒç´ IDï¼Œåˆ™è¿”å›INVALID_ID
+    //È¡µ±Ç°IDµÄÇ°Ò»¸öID£¬Èç¹ûÒÑ¾­ÊÇÍ·ÔªËØID£¬Ôò·µ»ØINVALID_ID
     inline int PrevID(int id) const
     {
         if (id == m_Head)
@@ -210,7 +210,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
         int newId = (m_MaxSize + id - 1) % m_MaxSize;
         return newId;
     }
-    //å–å½“å‰IDçš„åä¸€ä¸ªIDï¼Œå¦‚æœå·²ç»æ˜¯å°¾å…ƒç´ IDï¼Œåˆ™è¿”å›INVALID_ID
+    //È¡µ±Ç°IDµÄºóÒ»¸öID£¬Èç¹ûÒÑ¾­ÊÇÎ²ÔªËØID£¬Ôò·µ»ØINVALID_ID
     inline int NextID(int id) const
     {
         if (id == BackID())
@@ -218,7 +218,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
         int newId = (id + 1) % m_MaxSize;
         return newId;
     }
-    //åˆ¤æ–­æ˜¯å¦æ˜¯æœ‰æ•ˆçš„IDï¼Œå¯¹ç©ºé˜Ÿåˆ—ï¼Œå¤´IDä¸å°¾IDå‡å±æ— æ•ˆID
+    //ÅĞ¶ÏÊÇ·ñÊÇÓĞĞ§µÄID£¬¶Ô¿Õ¶ÓÁĞ£¬Í·IDÓëÎ²ID¾ùÊôÎŞĞ§ID
     inline int IsValidID(int id) const
     {
         if (Empty()) {
@@ -233,7 +233,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
             return FALSE;
         return TRUE;
     }
-    //å–æŒ‡å®šIDçš„å…ƒç´ 
+    //È¡Ö¸¶¨IDµÄÔªËØ
     inline const T& operator [] (int id) const
     {
         if (id < 0 || id >= m_MaxSize) {
@@ -243,7 +243,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
             return m_Data[id];
         }
     }
-    //å–æŒ‡å®šIDçš„å…ƒç´ çš„å¯å†™å¼•ç”¨ï¼ˆç”¨äºä¿®æ”¹å…ƒç´ ï¼‰
+    //È¡Ö¸¶¨IDµÄÔªËØµÄ¿ÉĞ´ÒıÓÃ£¨ÓÃÓÚĞŞ¸ÄÔªËØ£©
     inline T& operator [] (int id)
     {
         if (id < 0 || id >= m_MaxSize) {
@@ -253,7 +253,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
             return m_Data[id];
         }
     }
-    //æ±‚2ä¸ªIDçš„è·ç¦»ï¼ˆé—´éš”å…ƒç´ ä¸ªæ•°+1ï¼‰
+    //Çó2¸öIDµÄ¾àÀë£¨¼ä¸ôÔªËØ¸öÊı+1£©
     inline int Distance(int id1, int id2) const
     {
         int val = Difference(id1, id2);
@@ -262,7 +262,7 @@ public://æ‰©å±•åŒå‘é˜Ÿåˆ—è®¿é—®æ–¹æ³•ï¼ˆéå†ä¸è¯»å†™æ–¹æ³•ï¼‰
         else
             return val;
     }
-    //æ±‚2ä¸ªIDä¹‹å·®ï¼ˆæŒ‰ä»å¤´åˆ°å°¾çš„é¡ºåºç¼–å·å…ƒç´ ï¼Œç¼–å·ä¹‹å·®ï¼‰
+    //Çó2¸öIDÖ®²î£¨°´´ÓÍ·µ½Î²µÄË³Ğò±àºÅÔªËØ£¬±àºÅÖ®²î£©
     inline int Difference(int id1, int id2) const
     {
         int id1Val = CalcIndex(id1);
@@ -318,7 +318,7 @@ protected:
         Clear();
     }
 private:
-    //è®¡ç®—å…ƒç´ çš„ç´¢å¼•ï¼ˆå¤´å…ƒç´ ç´¢å¼•ä¸º0ï¼‰
+    //¼ÆËãÔªËØµÄË÷Òı£¨Í·ÔªËØË÷ÒıÎª0£©
     inline int CalcIndex(int id) const
     {
         if (id < m_Head)
@@ -326,7 +326,7 @@ private:
         else
             return id - m_Head;
     }
-    //æ›´æ–°é˜Ÿåˆ—å°ºå¯¸
+    //¸üĞÂ¶ÓÁĞ³ß´ç
     inline void UpdateSize(void)
     {
         m_Size = (m_MaxSize + m_Tail - m_Head) % m_MaxSize;
@@ -344,9 +344,9 @@ private:
     T* m_Data;
     int m_Size;
     int m_MaxSize;
-    //å¤´å…ƒç´ çš„ID
+    //Í·ÔªËØµÄID
     int m_Head;
-    //å°¾å…ƒç´ åé¢ä¸€ä¸ªä½ç½®çš„IDï¼Œå®ƒæ ‡æ˜é˜Ÿåˆ—å°¾çš„ä½ç½®ï¼Œå®ƒçš„å€¼æ€»æ˜¯ä¸€ä¸ªæ— æ•ˆçš„ID
+    //Î²ÔªËØºóÃæÒ»¸öÎ»ÖÃµÄID£¬Ëü±êÃ÷¶ÓÁĞÎ²µÄÎ»ÖÃ£¬ËüµÄÖµ×ÜÊÇÒ»¸öÎŞĞ§µÄID
     int m_Tail;
 public:
     static T& GetInvalidValueRef(void)

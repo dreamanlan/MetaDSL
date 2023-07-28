@@ -3231,7 +3231,7 @@ namespace Brace
     {
         m_LexicalScopeStack.clear();
         m_FuncInfoStack = FuncInfoStack();
-        m_RuntimeStack = RuntimeStack();
+        GetRuntimeStack() = RuntimeStack();
 
         m_GlobalFunc = nullptr;
         m_GlobalVariables = nullptr;

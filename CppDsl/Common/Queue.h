@@ -79,13 +79,13 @@ namespace CollectionMemory
     class SelectorT
     {
     public:
-        typedef StaticT<T, MaxSizeV> Type;
+        using Type = StaticT<T, MaxSizeV>;
     };
     template<typename T>
     class SelectorT<T, 0>
     {
     public:
-        typedef DynamicT<T> Type;
+        using Type = DynamicT<T>;
     };
 }
 
@@ -94,7 +94,7 @@ namespace CollectionMemory
 template<typename T, int SizeV = 0>
 class DequeT
 {
-    typedef typename CollectionMemory::SelectorT<T, (SizeV == 0 ? 0 : SizeV + 1)>::Type MemoryType;
+    using MemoryType = typename CollectionMemory::SelectorT<T, (SizeV == 0 ? 0 : SizeV + 1)>::Type;
 public://标准双向队列访问方法
     //队列是否空
     inline int Empty(void) const

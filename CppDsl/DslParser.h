@@ -488,7 +488,7 @@ namespace DslParser
     class StatementData;
     class FunctionData final : public ValueOrFunctionData
     {
-        typedef ISyntaxComponent* SyntaxComponentPtr;
+        using SyntaxComponentPtr = ISyntaxComponent*;
     public:
         virtual int IsValid(void)const override
         {
@@ -967,7 +967,7 @@ namespace DslParser
             int m_PtrPoolIndex;
             int m_NextFreeLink;
         };
-        typedef ISyntaxComponent* SyntaxComponentPtr;
+        using SyntaxComponentPtr = ISyntaxComponent*;
     public:
         virtual DslOptions& GetOptions(void) override { return m_Options; }
         virtual const DslOptions& GetOptions(void)const override { return m_Options; }
@@ -1242,7 +1242,7 @@ namespace DslParser
         ValueOrFunctionData* m_pNullValueOrFunction;
     };
 
-    class DslTokenApi
+    class DslTokenApi final
     {
     public:
         char* getCurToken(void) const;
@@ -1281,7 +1281,7 @@ namespace DslParser
         static int myisdigit(char c, int isHex);
         static int mychar2int(char c);
     };
-    class DslActionApi
+    class DslActionApi final
     {
     public:
         void markSeparator(void)const;
@@ -1341,20 +1341,20 @@ namespace DslParser
     class IScriptSource;
     class DslFile final
     {
-        typedef ISyntaxComponent* SyntaxComponentPtr;
+        using SyntaxComponentPtr = ISyntaxComponent*;
     public:
-        typedef Delegation<bool(const char*, int, char)> TokenCanEatCharDelegation;
-        typedef Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)> GetTokenDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeAddFunctionDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> AddFunctionDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*)> BeforeEndStatementDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*&)> EndStatementDelegation;
-        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*)> BeforeBuildOperatorDelegation;
-        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*&)> BuildOperatorDelegation;
-        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetFunctionIdDelegation;
-        typedef Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)> SetMemberIdDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BeforeBuildHighOrderDelegation;
-        typedef Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)> BuildHighOrderDelegation;
+        using TokenCanEatCharDelegation = Delegation<bool(const char*, int, char)>;
+        using GetTokenDelegation = Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)>;
+        using BeforeAddFunctionDelegation = Delegation<bool(const DslActionApi&, StatementData*)>;
+        using AddFunctionDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
+        using BeforeEndStatementDelegation = Delegation<bool(const DslActionApi&, StatementData*)>;
+        using EndStatementDelegation = Delegation<bool(const DslActionApi&, StatementData*&)>;
+        using BeforeBuildOperatorDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*)>;
+        using BuildOperatorDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*&)>;
+        using SetFunctionIdDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)>;
+        using SetMemberIdDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)>;
+        using BeforeBuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
+        using BuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
     public:
         int GetDslInfoNum(void)const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const

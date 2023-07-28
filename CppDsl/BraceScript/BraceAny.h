@@ -7,7 +7,7 @@ namespace Brace
     template<typename ValueType> ValueType
         AnyCast(const Any& operand);
 
-    class Any final : public IBraceObject
+    class Any final
     {
     public:
         Any(void) : m_Content(nullptr)

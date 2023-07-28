@@ -43,8 +43,8 @@ template<typename Delegation, typename R>
 struct FuncInvoker0
 {
 public:
-    typedef FuncInvoker0<Delegation, R> ThisType;
-    typedef R(*Fptr)(void);
+    using ThisType = FuncInvoker0<Delegation, R>;
+    using Fptr = R(*)(void);
     FuncInvoker0(Fptr func)
     {
         mFunc = func;
@@ -73,8 +73,8 @@ template<typename Delegation, typename T, typename R>
 struct MemFuncInvoker0
 {
 public:
-    typedef MemFuncInvoker0<Delegation, T, R> ThisType;
-    typedef R(T::* Fptr)(void);
+    using ThisType = MemFuncInvoker0<Delegation, T, R>;
+    using Fptr = R(T::*)(void);
     MemFuncInvoker0(T* obj, Fptr func)
     {
         mObj = obj;
@@ -106,8 +106,8 @@ template<typename Delegation, typename T, typename R>
 struct ConstMemFuncInvoker0
 {
 public:
-    typedef ConstMemFuncInvoker0<Delegation, T, R> ThisType;
-    typedef R(T::* Fptr)(void)const;
+    using ThisType = ConstMemFuncInvoker0<Delegation, T, R>;
+    using Fptr = R(T::*)(void)const;
     ConstMemFuncInvoker0(const T* obj, Fptr func)
     {
         mObj = obj;
@@ -139,8 +139,8 @@ template<typename R>
 struct Delegation0
 {
 public:
-    typedef Delegation0<R> ThisType;
-    typedef R(*InvokerType)(const ObjectPlaceHolder*);
+    using ThisType = Delegation0<R>;
+    using InvokerType = R(*)(const ObjectPlaceHolder*);
 public:
     Delegation0()
     {
@@ -212,8 +212,8 @@ template<typename Delegation, typename R, typename P1>
 struct FuncInvoker1
 {
 public:
-    typedef FuncInvoker1<Delegation, R, P1> ThisType;
-    typedef R(*Fptr)(P1);
+    using ThisType = FuncInvoker1<Delegation, R, P1>;
+    using Fptr = R(*)(P1);
     FuncInvoker1(Fptr func)
     {
         mFunc = func;
@@ -239,8 +239,8 @@ template<typename Delegation, typename T, typename R, typename P1>
 struct MemFuncInvoker1
 {
 public:
-    typedef MemFuncInvoker1<Delegation, T, R, P1> ThisType;
-    typedef R(T::* Fptr)(P1);
+    using ThisType = MemFuncInvoker1<Delegation, T, R, P1>;
+    using Fptr = R(T::*)(P1);
     MemFuncInvoker1(T* obj, Fptr func)
     {
         mObj = obj;
@@ -269,8 +269,8 @@ template<typename Delegation, typename T, typename R, typename P1>
 struct ConstMemFuncInvoker1
 {
 public:
-    typedef ConstMemFuncInvoker1<Delegation, T, R, P1> ThisType;
-    typedef R(T::* Fptr)(P1)const;
+    using ThisType = ConstMemFuncInvoker1<Delegation, T, R, P1>;
+    using Fptr = R(T::*)(P1)const;
     ConstMemFuncInvoker1(const T* obj, Fptr func)
     {
         mObj = obj;
@@ -299,8 +299,8 @@ template<typename R, typename P1>
 struct Delegation1
 {
 public:
-    typedef Delegation1<R, P1> ThisType;
-    typedef R(*InvokerType)(const ObjectPlaceHolder*, P1);
+    using ThisType = Delegation1<R, P1>;
+    using InvokerType = R(*)(const ObjectPlaceHolder*, P1);
 public:
     Delegation1()
     {
@@ -407,8 +407,8 @@ template<typename Delegation,typename R,RepeatArg1_##X(typename P)>\
 struct FuncInvoker##X\
 {\
 public:\
-	typedef FuncInvoker##X<Delegation,R,RepeatArg1_##X(P)> ThisType;\
-	typedef R (*Fptr)(RepeatArg1_##X(P));\
+	using ThisType = FuncInvoker##X<Delegation,R,RepeatArg1_##X(P)>;\
+	using Fptr = R (*)(RepeatArg1_##X(P));\
 	FuncInvoker##X(Fptr func)\
 	{\
 		mFunc=func;\
@@ -434,8 +434,8 @@ template<typename Delegation,typename T,typename R,RepeatArg1_##X(typename P)>\
 struct MemFuncInvoker##X\
 {\
 public:\
-	typedef MemFuncInvoker##X<Delegation,T,R,RepeatArg1_##X(P)> ThisType;\
-	typedef R (T::*Fptr)(RepeatArg1_##X(P));\
+	using ThisType = MemFuncInvoker##X<Delegation,T,R,RepeatArg1_##X(P)>;\
+	using Fptr = R (T::*)(RepeatArg1_##X(P));\
 	MemFuncInvoker##X(T* obj,Fptr func)\
 	{\
 		mObj=obj;\
@@ -464,8 +464,8 @@ template<typename Delegation,typename T,typename R,RepeatArg1_##X(typename P)>\
 struct ConstMemFuncInvoker##X\
 {\
 public:\
-	typedef ConstMemFuncInvoker##X<Delegation,T,R,RepeatArg1_##X(P)> ThisType;\
-	typedef R (T::*Fptr)(RepeatArg1_##X(P))const;\
+	using ThisType = ConstMemFuncInvoker##X<Delegation,T,R,RepeatArg1_##X(P)>;\
+	using Fptr = R (T::*)(RepeatArg1_##X(P))const;\
 	ConstMemFuncInvoker##X(const T* obj,Fptr func)\
 	{\
 		mObj=obj;\
@@ -494,8 +494,8 @@ template<typename R,RepeatArg1_##X(typename P)>\
 struct Delegation##X\
 {\
 public:\
-	typedef Delegation##X<R,RepeatArg1_##X(P)> ThisType;\
-	typedef R (*InvokerType)(const ObjectPlaceHolder*,RepeatArg1_##X(P));\
+	using ThisType = Delegation##X<R,RepeatArg1_##X(P)>;\
+	using InvokerType = R (*)(const ObjectPlaceHolder*,RepeatArg1_##X(P));\
 public:\
 	Delegation##X()\
 	{\
@@ -587,8 +587,8 @@ template<typename Delegation, typename R, typename... Args>
 struct FuncInvoker<Delegation, R(Args...)>
 {
 public:
-    typedef FuncInvoker<Delegation, R(Args...)> ThisType;
-    typedef R(*Fptr)(Args...);
+    using ThisType = FuncInvoker<Delegation, R(Args...)>;
+    using Fptr = R(*)(Args...);
     FuncInvoker(Fptr func)
     {
         mFunc = func;
@@ -617,8 +617,8 @@ template<typename Delegation, typename T, typename R, typename... Args>
 struct MemFuncInvoker<Delegation, T, R(Args...)>
 {
 public:
-    typedef MemFuncInvoker<Delegation, T, R(Args...)> ThisType;
-    typedef R(T::* Fptr)(Args...);
+    using ThisType = MemFuncInvoker<Delegation, T, R(Args...)>;
+    using Fptr = R(T::*)(Args...);
     MemFuncInvoker(T* obj, Fptr func)
     {
         mObj = obj;
@@ -650,8 +650,8 @@ template<typename Delegation, typename T, typename R, typename... Args>
 struct ConstMemFuncInvoker<Delegation, T, R(Args...)>
 {
 public:
-    typedef ConstMemFuncInvoker<Delegation, T, R(Args...)> ThisType;
-    typedef R(T::* Fptr)(Args...)const;
+    using ThisType = ConstMemFuncInvoker<Delegation, T, R(Args...)>;
+    using Fptr = R(T::*)(Args...)const;
     ConstMemFuncInvoker(const T* obj, Fptr func)
     {
         mObj = obj;
@@ -685,8 +685,8 @@ template<typename R, typename... Args>
 struct Delegation<R(Args...)>
 {
 public:
-    typedef Delegation<R(Args...)> ThisType;
-    typedef R(*InvokerType)(const ObjectPlaceHolder*, Args...);
+    using ThisType = Delegation<R(Args...)>;
+    using InvokerType = R(*)(const ObjectPlaceHolder*, Args...);
 public:
     Delegation()
     {

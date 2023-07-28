@@ -5,7 +5,7 @@ using namespace DslParser;
 
 class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 {
-    typedef RuntimeBuilderT<TestRuntimeBuilder> BaseType;
+    using BaseType = RuntimeBuilderT<TestRuntimeBuilder>;
 public:
     char* getLastToken(void) const { return const_cast<char*>(""); }
     int getLastLineNumber(void) const { return 0; }

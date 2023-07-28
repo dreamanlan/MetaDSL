@@ -115,7 +115,7 @@ namespace CoroutineWithBoostContext
 
     struct my_fixedsize_stack
     {
-        typedef ctx::stack_traits traits_type;
+        using traits_type = ctx::stack_traits;
 
         my_fixedsize_stack(std::size_t size = traits_type::default_size()) BOOST_NOEXCEPT_OR_NOTHROW :
         size_(size)

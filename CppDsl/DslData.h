@@ -377,7 +377,7 @@ namespace DslData
     class StatementData;
     class FunctionData final : public ValueOrFunctionData
     {
-        typedef ISyntaxComponent* SyntaxComponentPtr;
+        using SyntaxComponentPtr = ISyntaxComponent*;
     public:
         virtual bool IsValid(void)const override
         {
@@ -771,7 +771,7 @@ namespace DslData
 
     class DslFile final
     {
-        typedef ISyntaxComponent* SyntaxComponentPtr;
+        using SyntaxComponentPtr = ISyntaxComponent*;
     public:
         int GetDslInfoNum(void)const { return static_cast<int>(m_DslInfos.size()); }
         ISyntaxComponent* GetDslInfo(int index)const
