@@ -24,7 +24,6 @@ namespace CoroutineWithShareStack
         friend void Detach(void);
         friend bool TryInit(int main_StackSize);
         friend void TryRelease(void);
-        friend void InitSequencing(int main_StackSize);
     public:
         bool IsTerminated(void)const;
         void Reset(void);
@@ -40,6 +39,8 @@ namespace CoroutineWithShareStack
         void Release(void);
     protected:
         CoroutineData* m_pData;
+    private:
+        static void InitSequencing(int main_StackSize);
     };
 
     extern void Resume(Coroutine*);

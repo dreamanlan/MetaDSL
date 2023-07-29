@@ -86,7 +86,7 @@ namespace CoroutineWithShareStack
     static CoroutineMain g_Main;
     static Coroutine* g_Current = nullptr;
 
-    static void InitSequencing(int main_StackSize)
+    void Coroutine::InitSequencing(int main_StackSize)
     {
         Task tmp{};
         tmp.size = INT_MAX;
@@ -308,7 +308,7 @@ namespace CoroutineWithShareStack
     bool TryInit(int main_StackSize)
     {
         if (g_Main.m_pData->StackSize == 0) {
-            InitSequencing(main_StackSize);
+            g_Main.InitSequencing(main_StackSize);
         }
         return !g_Main.IsTerminated();
     }
