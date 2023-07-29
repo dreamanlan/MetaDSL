@@ -176,8 +176,9 @@ namespace CoroutineWithBoostContext
         {
             ResumeFrom->m_pData->Environment = std::move(cont);
             Current->Routine();
+            //fiber always gives control to ResumeFrom coroutine
             if (Current == g_Current) {
-                Current->Exit();
+                g_Current = ResumeFrom;
             }
             return std::move(ResumeFrom->m_pData->Environment);
         }
@@ -252,12 +253,8 @@ namespace CoroutineWithBoostContext
         Coroutine* pCurrent = g_Current;
         g_Current = this;
         m_pData->ResumeFrom = pCurrent;
+        //fiber.resume return suspended fiber, null on exit, or itself.
         m_pData->Environment = std::move(m_pData->Environment).resume();
-    }
-    inline void Coroutine::Exit()
-    {
-        if (g_Current == this)
-            g_Current = &g_Main;
     }
 
     void Resume(Coroutine* next)

@@ -24,7 +24,6 @@ namespace CoroutineWithBoostContext
         virtual void Routine(void) = 0;
     private:
         void Enter(void);
-        void Exit(void);
         void Release(void);
     private:
         int m_StackSize;
