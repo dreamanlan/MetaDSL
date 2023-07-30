@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
         std::getline(std::cin, scp);
         InitScript(pDslBuffer, scp);
         Tick();
-        /*
+        ///*
         for (int i = 0; i < 100; ++i) {
             printf("Tick %d", i);
             Tick();
@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
             ::Sleep(100);
 #endif
         }
-        */
+        //*/
         Terminate();
         CoroutineWithBoostContext::TryRelease();
         std::size_t count = 0;
@@ -247,7 +247,9 @@ protected:
                     auto cv = sv;
                     while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
                         
-                        CoroutineWithBoostContext::Detach();
+                        //CoroutineWithLongJmp::Detach();
+                        //CoroutineWithShareStack::Detach();
+                        CoroutineWithBoostContext::TryYield();
 
                         cv = std::chrono::system_clock::now();
                     }
@@ -403,7 +405,8 @@ void Tick(void)
 {
     //g_LongJmpRoutine1->Call();
     //g_LongJmpRoutine2->Call();
-    g_BoostContextRoutine->Call();
+    g_BoostContextRoutine->TryStart();
+    CoroutineWithBoostContext::TryYield();
     //g_ScriptEnv->Run();
 }
 void Terminate(void)

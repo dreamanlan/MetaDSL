@@ -1424,6 +1424,11 @@ namespace Dsl
         {
             get { return mScriptEndDelimiter; }
         }
+        public Dsl.Common.TokenCanEatCharDelegation onTokenCanEatChar
+        {
+            get { return mOnTokenCanEatChar; }
+            set { mOnTokenCanEatChar = value; }
+        }
         public Dsl.Common.GetCppTokenDelegation onGetCppToken
         {
             get { return mOnGetCppToken; }

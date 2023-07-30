@@ -8,31 +8,25 @@ namespace CoroutineWithBoostContext
     class Coroutine
     {
         friend struct CoroutineData;
-        friend void Resume(Coroutine*);
-        friend void Call(Coroutine*);
-        friend void Detach(void);
+        friend bool TryYield(void);
         friend bool TryInit(void);
         friend void TryRelease(void);
     public:
         bool IsTerminated(void)const;
         void Reset(void);
-        void Call(void);
-        void Resume(void);
+        bool TryStart(void);
     protected:
         Coroutine(int stackSize);
         virtual ~Coroutine(void);
         virtual void Routine(void) = 0;
     private:
-        void Enter(void);
         void Release(void);
     private:
         int m_StackSize;
         CoroutineData* m_pData;
     };
 
-    extern void Resume(Coroutine*);
-    extern void Call(Coroutine*);
-    extern void Detach(void);
+    extern bool TryYield(void);
     extern bool TryInit(void);
     extern void TryRelease(void);
     extern Coroutine* CurrentCoroutine(void);

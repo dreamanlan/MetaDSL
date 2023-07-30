@@ -1,8 +1,10 @@
 #include "BraceCoroutine.h"
 #include "boost/context/fiber.hpp"
 #include <iostream>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
+#include <queue>
 
 namespace CoroutineWithBoostContext
 {
@@ -99,6 +101,7 @@ namespace CoroutineWithBoostContext
     };
 
     thread_local static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
+    thread_local static std::queue<fiber> g_fiber_queue{};
 
     void FreeStackMemory(void)
     {
@@ -143,24 +146,22 @@ namespace CoroutineWithBoostContext
 
     struct CoroutineData final
     {
-        fiber Environment;
+        fiber StartupFiber;
+        fiber ResumeFrom;
         size_t BufferSize;
-        Coroutine* Caller, * Callee;
-        Coroutine* ResumeFrom;
+        bool Started;
         Coroutine* Current;
 
-        CoroutineData(Coroutine* current, int bufferSize) :Environment{}
+        CoroutineData(Coroutine* current, int bufferSize) :StartupFiber{}, ResumeFrom{}
         {
             BufferSize = bufferSize;
-            Callee = Caller = nullptr;
-            ResumeFrom = nullptr;
+            Started = false;
             Current = current;
         }
         ~CoroutineData(void)
         {
-            Environment.~fiber();
-            Callee = Caller = nullptr;
-            ResumeFrom = nullptr;
+            StartupFiber.~fiber();
+            ResumeFrom.~fiber();
             Current = nullptr;
         }
         void BuildEnv(void)
@@ -170,17 +171,28 @@ namespace CoroutineWithBoostContext
             void* sp = static_cast<char*>(sctx.sp);
             std::size_t size = sctx.size;
 
-            Environment = fiber(std::allocator_arg, ctx::preallocated(sp, size, sctx), salloc, [this](fiber&& c) { return Callcc(std::move(c)); });
+            StartupFiber = fiber(std::allocator_arg, ctx::preallocated(sp, size, sctx), salloc, [this](fiber&& c) { return Callcc(std::move(c)); });
         }
-        fiber Callcc(fiber&& cont)const
+        fiber Callcc(fiber&& cont)
         {
-            ResumeFrom->m_pData->Environment = std::move(cont);
+            ResumeFrom = std::move(cont);
+            Started = true;
             Current->Routine();
+            Started = false;
             //fiber always gives control to ResumeFrom coroutine
-            if (Current == g_Current) {
-                g_Current = ResumeFrom;
+            if (ResumeFrom) {
+                return std::move(ResumeFrom);
             }
-            return std::move(ResumeFrom->m_pData->Environment);
+            else if (g_fiber_queue.size() > 0) {
+                fiber tmp;
+                std::swap(tmp, g_fiber_queue.front());
+                g_fiber_queue.pop();
+                return std::move(tmp);
+            }
+            else {
+                fiber tmp{};
+                return std::move(tmp);
+            }
         }
     };
 
@@ -197,6 +209,7 @@ namespace CoroutineWithBoostContext
     };
 
     thread_local static CoroutineMain g_Main;
+    static std::string g_EmptyId;
 
     Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize), m_pData(nullptr)
     {
@@ -217,7 +230,7 @@ namespace CoroutineWithBoostContext
     }
     bool Coroutine::IsTerminated(void)const
     {
-        return Terminated(this);
+        return !m_pData->Started;
     }
     void Coroutine::Reset(void)
     {
@@ -225,98 +238,51 @@ namespace CoroutineWithBoostContext
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
         }
-        if (nullptr != m_pData->Callee) {
-            m_pData->Callee->m_pData->Caller = m_pData->Caller;
-        }
-        if (nullptr != m_pData->Caller) {
-            m_pData->Caller->m_pData->Callee = m_pData->Callee;
-        }
-        m_pData->Callee = m_pData->Caller = nullptr;
-        m_pData->ResumeFrom = nullptr;
-
         m_pData->BuildEnv();
     }
-    void Coroutine::Call(void)
+    bool Coroutine::TryStart(void)
     {
-        if (IsTerminated())
+        bool ret = false;
+        if (IsTerminated()) {
             Reset();
-        CoroutineWithBoostContext::Call(this);
-    }
-    void Coroutine::Resume(void)
-    {
-        if (IsTerminated())
-            Reset();
-        CoroutineWithBoostContext::Resume(this);
-    }
-    inline void Coroutine::Enter()
-    {
-        Coroutine* pCurrent = g_Current;
-        g_Current = this;
-        m_pData->ResumeFrom = pCurrent;
-        //fiber.resume return suspended fiber, null on exit, or itself.
-        m_pData->Environment = std::move(m_pData->Environment).resume();
+
+            Coroutine* pCurrent = g_Current;
+            g_Current = this;
+            //fiber.resume return suspended fiber, null on exit, or itself or other suspended fiber.
+            auto&& suspendedFiber = std::move(m_pData->StartupFiber).resume();
+            if (suspendedFiber) {
+                g_fiber_queue.push(std::move(suspendedFiber));
+            }
+            g_Current = pCurrent;
+            ret = true;
+        }
+        return false;
     }
 
-    void Resume(Coroutine* next)
+    bool TryYield(void)
     {
-        if (nullptr == next) {
-            Error("Attempt to Resume a non-existing Coroutine");
-            return;
-        }
-        if (next == g_Current) {
-            return;
-        }
-        if (Terminated(next)) {
-            Error("Attempt to Resume a terminated Coroutine");
-            return;
-        }
-        if (next->m_pData->Caller) {
-            Error("Attempt to Resume an attached Coroutine");
-            return;
-        }
-        while (next->m_pData->Callee) {
-            next = next->m_pData->Callee;
-        }
-        next->Enter();
-    }
-    void Call(Coroutine* next)
-    {
-        if (nullptr == next) {
-            Error("Attempt to Call a non-existing Coroutine");
-            return;
-        }
-        if (Terminated(next)) {
-            Error("Attempt to Call a terminated Coroutine");
-            return;
-        }
-        if (next->m_pData->Caller) {
-            Error("Attempt to Call an attached Coroutine");
-            return;
-        }
-        g_Current->m_pData->Callee = next;
-        next->m_pData->Caller = g_Current;
-        while (next->m_pData->Callee) {
-            next = next->m_pData->Callee;
-        }
-        if (next == g_Current) {
-            Error("Attempt to Call an operating Coroutine");
-            return;
-        }
-        next->Enter();
-    }
-    void Detach(void)
-    {
-        Coroutine* next = g_Current->m_pData->Caller;
-        if (next) {
-            g_Current->m_pData->Caller = next->m_pData->Callee = nullptr;
-        }
-        else {
-            next = &g_Main;
-            while (next->m_pData->Callee) {
-                next = next->m_pData->Callee;
+        bool ret = false;
+        Coroutine* pCurrent = g_Current;
+        if (pCurrent->m_pData->ResumeFrom) {
+            auto&& suspendedFiber = std::move(pCurrent->m_pData->ResumeFrom).resume();
+            if (suspendedFiber) {
+                g_fiber_queue.push(std::move(suspendedFiber));
             }
+            g_Current = pCurrent;
+            ret = true;
         }
-        next->Enter();
+        else if (g_fiber_queue.size() > 0) {
+            fiber tmp;
+            std::swap(tmp, g_fiber_queue.front());
+            g_fiber_queue.pop();
+            auto&& suspendedFiber = std::move(tmp).resume();
+            if (suspendedFiber) {
+                g_fiber_queue.push(std::move(suspendedFiber));
+            }
+            g_Current = pCurrent;
+            ret = true;
+        }
+        return ret;
     }
     bool TryInit(void)
     {
