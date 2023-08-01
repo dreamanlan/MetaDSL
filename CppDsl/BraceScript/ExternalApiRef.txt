@@ -620,6 +620,10 @@ namespace BraceScriptInterpreter
         {}
         CppUnrealObjT(T* pImpl) :m_Impl(pImpl), m_pMemSize(nullptr)
         {}
+        CppUnrealObjT(const TStrongObjectPtr<T>& ptr) :m_Impl(ptr)
+        {}
+        CppUnrealObjT(TStrongObjectPtr<T>&& ptr) :m_Impl(ptr)
+        {}
         virtual ~CppUnrealObjT(void)
         {
             if (nullptr != m_pMemSize) {
