@@ -5,10 +5,11 @@
 #include <algorithm>
 #include <limits>
 
-namespace Brace
-{
+#define BRACE_SCRIPT_INC
 #include "BraceScript_Assignment.inl"
 
+namespace Brace
+{
     std::string BraceApiImplHelper::GenTempVarName(void)const
     {
         return std::string("_t_") + std::to_string(GenNextUniqueId());
@@ -2124,9 +2125,12 @@ namespace Brace
         std::vector<OperandRuntimeInfo> m_ArgInfos;
         OperandRuntimeInfo m_ResultInfo;
     };
+}
 
 #include "BraceScript_ArithUnit.inl"
 
+namespace Brace
+{
     OperandTypeInfo OperandLoadtimeInfo::GetLoadTimeRealType(const FuncInfo& curFunc) const
     {
         if (Type == BRACE_DATA_TYPE_REF) {

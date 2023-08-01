@@ -1,4 +1,13 @@
+#ifndef BRACE_SCRIPT_INC
+#include "BraceScript.h"
+#include <stdexcept>
+#include <sstream>
+#include <algorithm>
+#include <limits>
+#endif
 
+namespace Brace
+{
     class AddExp final : public BinaryOperatorBaseExp
     {
     public:
@@ -23469,3 +23478,4 @@
         }
 
     };
+}
