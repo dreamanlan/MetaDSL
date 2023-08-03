@@ -124,7 +124,7 @@ namespace Brace
         ParamRetInfo(const std::string& name, int type, int objTypeId, int index) :IsRef(false), Name(name)
         {
             Type = type;
-            ObjectTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+            ObjectTypeId = objTypeId;
             VarIndex = index;
         }
         ParamRetInfo(const std::string& name, int type, int objTypeId, int index, bool isRef) :IsRef(isRef), Name(name)
@@ -167,15 +167,15 @@ namespace Brace
 
         OperandRuntimeInfo():Type(BRACE_DATA_TYPE_UNKNOWN), IsGlobal(false), VarIndex(INVALID_INDEX), ObjectTypeId(PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ)
         {}
-        OperandRuntimeInfo(int type, int objTypeId, int varIndex, bool isGlobal) :Type(type), IsGlobal(isGlobal ? 1 : 0), VarIndex(varIndex), ObjectTypeId(objTypeId)
+        OperandRuntimeInfo(int type, int objTypeId, int varIndex, bool isGlobal) :Type(static_cast<int8_t>(type)), IsGlobal(isGlobal ? 1 : 0), VarIndex(static_cast<int16_t>(varIndex)), ObjectTypeId(objTypeId)
         {}
-        OperandRuntimeInfo(const OperandLoadtimeInfo& loadInfo):Type(loadInfo.Type), IsGlobal(loadInfo.IsGlobal ? 1 : 0), VarIndex(loadInfo.VarIndex), ObjectTypeId(loadInfo.ObjectTypeId)
+        OperandRuntimeInfo(const OperandLoadtimeInfo& loadInfo):Type(static_cast<int8_t>(loadInfo.Type)), IsGlobal(loadInfo.IsGlobal ? 1 : 0), VarIndex(static_cast<int16_t>(loadInfo.VarIndex)), ObjectTypeId(loadInfo.ObjectTypeId)
         {}
         OperandRuntimeInfo& operator=(const OperandLoadtimeInfo& loadInfo)
         {
-            Type = loadInfo.Type;
+            Type = static_cast<int8_t>(loadInfo.Type);
             IsGlobal = loadInfo.IsGlobal ? 1 : 0;
-            VarIndex = loadInfo.VarIndex;
+            VarIndex = static_cast<int16_t>(loadInfo.VarIndex);
             ObjectTypeId = loadInfo.ObjectTypeId;
             return *this;
         }
@@ -575,19 +575,23 @@ namespace Brace
     protected:
         virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
         {
+            curFunc, data, resultInfo, executor;
             return false;
         }
         virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
         {
+            curFunc, data, resultInfo, executor;
             return false;
         }
         virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
         {
+            curFunc, data, resultInfo, executor;
             return false;
         }
         //ArgLoadInfos and ARgs that use non-const references are used to support operations such as std::swap or rvalue reference and to allow passes to failback without modification 
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
         {
+            curFunc, data, argLoadInfos, args, resultInfo, executor;
             return false;
         }
     protected:

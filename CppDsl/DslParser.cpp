@@ -158,6 +158,7 @@ namespace DslParser
     //------------------------------------------------------------------------------------------------------
     static inline int CalcCapacity(int need, int init, int max_delta)
     {
+        init;
         if (need <= 0) {
             return 0;
         }

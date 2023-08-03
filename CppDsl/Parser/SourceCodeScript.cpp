@@ -987,7 +987,7 @@ namespace DslParser
             }
         }
         ss.seekg(-1, std::ios::end);
-        if (!isWhiteSpace(ss.get())) {
+        if (!isWhiteSpace(static_cast<char>(ss.get()))) {
             ss << std::endl;
         }
         TryEmitCloseCodeBlock(ss, endDelim, codeBlockNeedClose);

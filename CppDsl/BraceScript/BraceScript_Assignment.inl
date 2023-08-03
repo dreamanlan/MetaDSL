@@ -4023,10 +4023,10 @@ namespace Brace
             info.NumericVars[index].BoolVal = val == "true";
             break;
         case BRACE_DATA_TYPE_INT8:
-            info.NumericVars[index].Int8Val = StrToInt32(val);
+            info.NumericVars[index].Int8Val = static_cast<int8_t>(StrToInt32(val));
             break;
         case BRACE_DATA_TYPE_INT16:
-            info.NumericVars[index].Int16Val = StrToInt32(val);
+            info.NumericVars[index].Int16Val = static_cast<int16_t>(StrToInt32(val));
             break;
         case BRACE_DATA_TYPE_INT32:
             info.NumericVars[index].Int32Val = StrToInt32(val);
@@ -4035,10 +4035,10 @@ namespace Brace
             info.NumericVars[index].Int64Val = StrToInt64(val);
             break;
         case BRACE_DATA_TYPE_UINT8:
-            info.NumericVars[index].UInt8Val = StrToUInt32(val);
+            info.NumericVars[index].UInt8Val = static_cast<uint8_t>(StrToUInt32(val));
             break;
         case BRACE_DATA_TYPE_UINT16:
-            info.NumericVars[index].UInt16Val = StrToUInt32(val);
+            info.NumericVars[index].UInt16Val = static_cast<uint16_t>(StrToUInt32(val));
             break;
         case BRACE_DATA_TYPE_UINT32:
             info.NumericVars[index].UInt32Val = StrToUInt32(val);
@@ -4069,10 +4069,10 @@ namespace Brace
             info.NumericVars[index].BoolVal = val == "true";
             break;
         case BRACE_DATA_TYPE_INT8:
-            info.NumericVars[index].Int8Val = StrToInt32(val);
+            info.NumericVars[index].Int8Val = static_cast<int8_t>(StrToInt32(val));
             break;
         case BRACE_DATA_TYPE_INT16:
-            info.NumericVars[index].Int16Val = StrToInt32(val);
+            info.NumericVars[index].Int16Val = static_cast<int16_t>(StrToInt32(val));
             break;
         case BRACE_DATA_TYPE_INT32:
             info.NumericVars[index].Int32Val = StrToInt32(val);
@@ -4081,10 +4081,10 @@ namespace Brace
             info.NumericVars[index].Int64Val = StrToInt64(val);
             break;
         case BRACE_DATA_TYPE_UINT8:
-            info.NumericVars[index].UInt8Val = StrToUInt32(val);
+            info.NumericVars[index].UInt8Val = static_cast<uint8_t>(StrToUInt32(val));
             break;
         case BRACE_DATA_TYPE_UINT16:
-            info.NumericVars[index].UInt16Val = StrToUInt32(val);
+            info.NumericVars[index].UInt16Val = static_cast<uint16_t>(StrToUInt32(val));
             break;
         case BRACE_DATA_TYPE_UINT32:
             info.NumericVars[index].UInt32Val = StrToUInt32(val);

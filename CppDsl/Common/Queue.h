@@ -273,7 +273,7 @@ public://扩展双向队列访问方法（遍历与读写方法）
 public:
     DequeT() :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(nullptr)
     {
-        if (SizeV > 0) {
+        if constexpr (SizeV > 0) {
             Init(SizeV);
         }
     }

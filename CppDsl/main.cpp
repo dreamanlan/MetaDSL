@@ -18,6 +18,7 @@ void Tick();
 void Terminate();
 int main(int argc, char* argv[])
 {
+    argc, argv;
     g_start_time_point = std::chrono::high_resolution_clock::now();
 
     char* pbuf = new char[1024 * 1024 + 1];
@@ -36,11 +37,11 @@ int main(int argc, char* argv[])
     fclose(fp2);
     char* p2 = pbuf2;
 
-    if (size >= 3 && pbuf[0] == (char)0xef && pbuf[1] == (char)0xbb && pbuf[2] == (char)0xbf) {
+    if (size >= 3 && pbuf[0] == '\xef' && pbuf[1] == '\xbb' && pbuf[2] == '\xbf') {
         //skip utf-8 bom
         p += 3;
     }
-    if (size >= 3 && pbuf2[0] == (char)0xef && pbuf2[1] == (char)0xbb && pbuf2[2] == (char)0xbf) {
+    if (size >= 3 && pbuf2[0] == '\xef' && pbuf2[1] == '\xbb' && pbuf2[2] == '\xbf') {
         //skip utf-8 bom
         p2 += 3;
     }
@@ -50,6 +51,7 @@ int main(int argc, char* argv[])
         DslParser::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();
         dataFile.OnGetToken.attach([](const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, short& val, int& line) {
+            actionApi, val;
             if (0 == strcmp(tok, "return")) {
                 char* oldCurTok = tokenApi.getCurToken();
                 char* oldLastTok = tokenApi.getLastToken(); 
@@ -66,6 +68,7 @@ int main(int argc, char* argv[])
             return true; 
             });
         dataFile.OnBeforeAddFunction.attach([](auto& api, auto* sd) {
+            api;
             const char* pId = sd->GetFunctionId(0);
             if (sd->GetFunctionNum() > 0 && pId && 0 != strcmp(pId, "if")) {
                 //在BeforeAddFunction回调里结束当前语句并开始一个新语句，效果上相当于给前一个函数加上分号
@@ -75,14 +78,17 @@ int main(int argc, char* argv[])
             return true;
             });
         dataFile.OnAddFunction.attach([](auto& api, auto* sd, auto* func) {
+            api, sd, func;
             //在AddFunction里一般不要修改程序结构，但可以修改添加函数的信息
             return true;
             });
         dataFile.OnBeforeEndStatement.attach([](auto& api, auto* sd) {
+            api, sd;
             //在BeforeEndStatement里可以修改程序结构，要符合dsl的语法语义流程
             return true;
             });
         dataFile.OnEndStatement.attach([](auto& api, auto*& sd) {
+            api, sd;
             //在EndStatement里一般不要修改程序结构，但可以修改或整体替换当前语句，在回调后会化简语句并添加到上一层语法构造中
             return true;
             });
@@ -96,11 +102,11 @@ int main(int argc, char* argv[])
         fclose(fp4);
         DslParser::DslFile dataFile2(*pDslBuffer);
         FILE* fp5 = fopen("binary.txt", "rb");
-        size_t size = fread(pbuf, 1, 1024 * 1024, fp5);
+        size_t size3 = fread(pbuf, 1, 1024 * 1024, fp5);
         fclose(fp5);
         std::vector<const char*> keys;
         std::vector<const char*> ids;
-        dataFile2.LoadBinaryCode(pbuf, static_cast<int>(size), keys, ids);
+        dataFile2.LoadBinaryCode(pbuf, static_cast<int>(size3), keys, ids);
         FILE* fp6 = fopen("unbinary.txt", "wb");
         dataFile2.WriteToFile(fp4, 0);
         fclose(fp6);
@@ -116,11 +122,11 @@ int main(int argc, char* argv[])
         fclose(fp7);
         file.Reset();
         FILE* fp8 = fopen("binary2.txt", "rb");
-        size_t size2 = fread(pbuf, 1, 1024 * 1024, fp8);
+        size_t size4 = fread(pbuf, 1, 1024 * 1024, fp8);
         fclose(fp8);
         std::vector<std::string> keys2;
         std::vector<std::string> ids2;
-        file.LoadBinaryCode(pbuf, static_cast<int>(size2), keys2, ids2);
+        file.LoadBinaryCode(pbuf, static_cast<int>(size4), keys2, ids2);
         dfp = fopen("unbinary2.txt", "wb");
         file.WriteToFile(dfp, 0);
         fclose(dfp);
@@ -225,6 +231,7 @@ public:
 protected:
     virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
+        func;
         for (auto&& ali : argInfos) {
             if (ali.Type != Brace::BRACE_DATA_TYPE_INT32) {
                 std::stringstream ss;
@@ -238,6 +245,7 @@ protected:
     }
     virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
     {
+        resultInfo;
         auto sv = std::chrono::system_clock::now();
 
         for (auto&& argInfo : argInfos) {
@@ -268,6 +276,7 @@ public:
 protected:
     virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
+        func, data, argInfos;
         resultInfo.Type = Brace::BRACE_DATA_TYPE_UINT64;
         resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
         resultInfo.Name = GenTempVarName();
@@ -276,6 +285,7 @@ protected:
     }
     virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
     {
+        argInfos;
         auto cv = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = cv - g_start_time_point;
         auto tv = static_cast<uint64_t>(diff.count() * 1000'000);
