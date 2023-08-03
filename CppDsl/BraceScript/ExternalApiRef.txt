@@ -95,7 +95,7 @@ namespace BraceScriptInterpreter
     };
     struct BraceObjectInfo final
     {
-        int GetTypeParamCount(void)const
+        int GetTypeParamCount()const
         {
             auto& ps = TypeParams;
             return static_cast<int>(ps.size()) / 2;
@@ -118,28 +118,28 @@ namespace BraceScriptInterpreter
             }
             return Brace::PREDEFINED_BRACE_OBJECT_TYPE_UNKNOWN;
         }
-        int FirstTypeParamType(void)const
+        int FirstTypeParamType()const
         {
             return GetTypeParamType(0);
         }
-        int FirstTypeParamObjTypeId(void)const
+        int FirstTypeParamObjTypeId()const
         {
             return GetTypeParamObjTypeId(0);
         }
-        int SecondTypeParamType(void)const
+        int SecondTypeParamType()const
         {
             return GetTypeParamType(1);
         }
-        int SecondTypeParamObjTypeId(void)const
+        int SecondTypeParamObjTypeId()const
         {
             return GetTypeParamObjTypeId(1);
         }
-        int LastTypeParamType(void)const
+        int LastTypeParamType()const
         {
             int ct = GetTypeParamCount();            
             return GetTypeParamType(ct - 1);
         }
-        int LastTypeParamObjTypeId(void)const
+        int LastTypeParamObjTypeId()const
         {
             int ct = GetTypeParamCount();
             return GetTypeParamObjTypeId(ct - 1);
@@ -507,7 +507,7 @@ namespace BraceScriptInterpreter
             return ret;
         }
     public:
-        BraceObjectInfoManager(void) :m_ObjTypeIdMap(), m_ObjInfoMap(), m_NextObjectTypeId(BRACE_INNER_FIXED_OBJECT_TYPE_NUM)
+        BraceObjectInfoManager() :m_ObjTypeIdMap(), m_ObjInfoMap(), m_NextObjectTypeId(BRACE_INNER_FIXED_OBJECT_TYPE_NUM)
         {}
     private:
         void CalcObjTypeKey(const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo, std::stringstream& ss)
@@ -569,7 +569,7 @@ namespace BraceScriptInterpreter
             return ss.str();
         }
     private:
-        int GenNextObjectTypeId(void)
+        int GenNextObjectTypeId()
         {
             return m_NextObjectTypeId++;
         }
@@ -578,7 +578,7 @@ namespace BraceScriptInterpreter
         std::unordered_map<int, BraceObjectInfo> m_ObjInfoMap;
         int m_NextObjectTypeId;
     public:
-        static const std::string& EmptyString(void)
+        static const std::string& EmptyString()
         {
             static std::string s_Empty{};
             return s_Empty;
@@ -594,20 +594,20 @@ namespace BraceScriptInterpreter
             m_pResSize = new FResourceSizeEx(EResourceSizeMode::Exclusive);
             pObj->GetResourceSizeEx(*m_pResSize);
         }
-        ~MemorySize(void)
+        ~MemorySize()
         {
             delete m_pCountMem;
             delete m_pResSize;
         }
     public:
-        uint64_t GetNum(void)const { return static_cast<uint64_t>(m_pCountMem->GetNum()); }
-        uint64_t GetMax(void)const { return static_cast<uint64_t>(m_pCountMem->GetMax()); }
-        uint64_t GetSysRes(void)const { return static_cast<uint64_t>(m_pResSize->GetDedicatedSystemMemoryBytes()); }
-        uint64_t GetVideoRes(void)const { return static_cast<uint64_t>(m_pResSize->GetDedicatedVideoMemoryBytes()); }
-        uint64_t GetSysSharedRes(void)const { return static_cast<uint64_t>(m_pResSize->GetSharedSystemMemoryBytes()); }
-        uint64_t GetVideoSharedRes(void)const { return static_cast<uint64_t>(m_pResSize->GetSharedVideoMemoryBytes()); }
-        uint64_t GetUnknownRes(void)const { return static_cast<uint64_t>(m_pResSize->GetUnknownMemoryBytes()); }
-        uint64_t GetTotalRes(void)const { return static_cast<uint64_t>(m_pResSize->GetTotalMemoryBytes()); }
+        uint64_t GetNum()const { return static_cast<uint64_t>(m_pCountMem->GetNum()); }
+        uint64_t GetMax()const { return static_cast<uint64_t>(m_pCountMem->GetMax()); }
+        uint64_t GetSysRes()const { return static_cast<uint64_t>(m_pResSize->GetDedicatedSystemMemoryBytes()); }
+        uint64_t GetVideoRes()const { return static_cast<uint64_t>(m_pResSize->GetDedicatedVideoMemoryBytes()); }
+        uint64_t GetSysSharedRes()const { return static_cast<uint64_t>(m_pResSize->GetSharedSystemMemoryBytes()); }
+        uint64_t GetVideoSharedRes()const { return static_cast<uint64_t>(m_pResSize->GetSharedVideoMemoryBytes()); }
+        uint64_t GetUnknownRes()const { return static_cast<uint64_t>(m_pResSize->GetUnknownMemoryBytes()); }
+        uint64_t GetTotalRes()const { return static_cast<uint64_t>(m_pResSize->GetTotalMemoryBytes()); }
     private:
         FArchiveCountMem* m_pCountMem;
         FResourceSizeEx* m_pResSize;
@@ -616,7 +616,7 @@ namespace BraceScriptInterpreter
     class CppUnrealObjT final
     {
     public:
-        CppUnrealObjT(void) :m_Impl(), m_pMemSize(nullptr)
+        CppUnrealObjT() :m_Impl(), m_pMemSize(nullptr)
         {}
         CppUnrealObjT(T* pImpl) :m_Impl(pImpl), m_pMemSize(nullptr)
         {}
@@ -624,7 +624,7 @@ namespace BraceScriptInterpreter
         {}
         CppUnrealObjT(TStrongObjectPtr<T>&& ptr) :m_Impl(ptr)
         {}
-        virtual ~CppUnrealObjT(void)
+        virtual ~CppUnrealObjT()
         {
             if (nullptr != m_pMemSize) {
                 delete m_pMemSize;
@@ -632,16 +632,16 @@ namespace BraceScriptInterpreter
             }
         }
     public:
-        T* GetImpl(void)const { return m_Impl.Get(); }
+        T* GetImpl()const { return m_Impl.Get(); }
         void SetImpl(T* pImpl) { m_Impl.Reset(pImpl); }
-        const MemorySize* GetOrCalcMemorySize(void)
+        const MemorySize* GetOrCalcMemorySize()
         {
             auto* p = GetMemorySize();
             if (nullptr == p)
                 p = ReCalcMemSize();
             return p;
         }
-        const MemorySize* ReCalcMemSize(void)
+        const MemorySize* ReCalcMemSize()
         {
             if (m_Impl.Get()) {
                 if (nullptr != m_pMemSize)
@@ -650,7 +650,7 @@ namespace BraceScriptInterpreter
             }
             return m_pMemSize;
         }
-        const MemorySize* GetMemorySize(void)const { return m_pMemSize; }
+        const MemorySize* GetMemorySize()const { return m_pMemSize; }
     private:
         TStrongObjectPtr<T> m_Impl;
         MemorySize* m_pMemSize;
@@ -697,12 +697,12 @@ namespace BraceScriptInterpreter
                 return &(it->second);
             return nullptr;
         }
-        const BraceObjectInfo* GetObjectInfo(void)const { return m_pObjectInfo; }
-        void* GetMemory(void)const { return m_pMemory; }
+        const BraceObjectInfo* GetObjectInfo()const { return m_pObjectInfo; }
+        void* GetMemory()const { return m_pMemory; }
     public:
-        StructObj(void) :m_pObjectInfo(nullptr), m_pMemory(nullptr), m_pObjFields(nullptr), m_pStrFields(nullptr)
+        StructObj() :m_pObjectInfo(nullptr), m_pMemory(nullptr), m_pObjFields(nullptr), m_pStrFields(nullptr)
         {}
-        virtual ~StructObj(void)
+        virtual ~StructObj()
         {
             if (nullptr != m_pMemory) {
                 delete[] m_pMemory;
@@ -710,12 +710,12 @@ namespace BraceScriptInterpreter
             }
         }
     private:
-        void PrepareObjFields(void)
+        void PrepareObjFields()
         {
             if (nullptr == m_pObjFields)
                 m_pObjFields = new std::unordered_map<int, std::shared_ptr<void>>();
         }
-        void PrepareStrFields(void)
+        void PrepareStrFields()
         {
             if (nullptr == m_pStrFields)
                 m_pStrFields = new std::unordered_map<int, std::string>();
@@ -733,14 +733,14 @@ namespace BraceScriptInterpreter
     public:
         using ArrayType = std::vector<T>;
     public:
-        ArrayObjT(void) :m_Array()
+        ArrayObjT() :m_Array()
         {}
-        virtual ~ArrayObjT(void)
+        virtual ~ArrayObjT()
         {
         }
     public:
-        const std::vector<T>& GetImpl(void)const { return m_Array; }
-        std::vector<T>& GetImpl(void) { return m_Array; }
+        const std::vector<T>& GetImpl()const { return m_Array; }
+        std::vector<T>& GetImpl() { return m_Array; }
     private:
         std::vector<T> m_Array;
     };
@@ -749,14 +749,14 @@ namespace BraceScriptInterpreter
     public:
         using ArrayType = std::vector<std::shared_ptr<void>>;
     public:
-        ObjectArray(void) :m_Array()
+        ObjectArray() :m_Array()
         {}
-        virtual ~ObjectArray(void)
+        virtual ~ObjectArray()
         {
         }
     public:
-        const ArrayType& GetImpl(void)const { return m_Array; }
-        ArrayType& GetImpl(void) { return m_Array; }
+        const ArrayType& GetImpl()const { return m_Array; }
+        ArrayType& GetImpl() { return m_Array; }
     private:
         ArrayType m_Array;
     };
@@ -767,15 +767,15 @@ namespace BraceScriptInterpreter
     public:
         using HashType = std::unordered_map<KeyT, ValT>;
     public:
-        HashtableObjT(void) :m_Hashtable()
+        HashtableObjT() :m_Hashtable()
         {}
-        virtual ~HashtableObjT(void)
+        virtual ~HashtableObjT()
         {
 
         }
     public:
-        const std::unordered_map<KeyT, ValT>& GetImpl(void)const { return m_Hashtable; }
-        std::unordered_map<KeyT, ValT>& GetImpl(void) { return m_Hashtable; }
+        const std::unordered_map<KeyT, ValT>& GetImpl()const { return m_Hashtable; }
+        std::unordered_map<KeyT, ValT>& GetImpl() { return m_Hashtable; }
     private:
         std::unordered_map<KeyT, ValT> m_Hashtable;
     };
@@ -784,13 +784,13 @@ namespace BraceScriptInterpreter
     public:
         using HashType = std::unordered_map<std::string, std::shared_ptr<void>>;
     public:
-        StrObjHashtable(void) :m_Hashtable()
+        StrObjHashtable() :m_Hashtable()
         {}
-        virtual ~StrObjHashtable(void)
+        virtual ~StrObjHashtable()
         {}
     public:
-        const HashType& GetImpl(void)const { return m_Hashtable; }
-        HashType& GetImpl(void) { return m_Hashtable; }
+        const HashType& GetImpl()const { return m_Hashtable; }
+        HashType& GetImpl() { return m_Hashtable; }
     private:
         HashType m_Hashtable;
     };
@@ -799,13 +799,13 @@ namespace BraceScriptInterpreter
     public:
         using HashType = std::unordered_map<int64_t, std::shared_ptr<void>>;
     public:
-        IntObjHashtable(void) :m_Hashtable()
+        IntObjHashtable() :m_Hashtable()
         {}
-        virtual ~IntObjHashtable(void)
+        virtual ~IntObjHashtable()
         {}
     public:
-        const HashType& GetImpl(void)const { return m_Hashtable; }
-        HashType& GetImpl(void) { return m_Hashtable; }
+        const HashType& GetImpl()const { return m_Hashtable; }
+        HashType& GetImpl() { return m_Hashtable; }
     private:
         HashType m_Hashtable;
     };
