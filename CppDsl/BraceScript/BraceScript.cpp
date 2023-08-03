@@ -10,7 +10,7 @@
 
 namespace Brace
 {
-    std::string BraceApiImplHelper::GenTempVarName(void)const
+    std::string BraceApiImplHelper::GenTempVarName()const
     {
         return std::string("_t_") + std::to_string(GenNextUniqueId());
     }
@@ -82,31 +82,31 @@ namespace Brace
     {
         return GetInterpreter().PushFuncInfo(name);
     }
-    void BraceApiImplHelper::PopFuncInfo(void)const
+    void BraceApiImplHelper::PopFuncInfo()const
     {
         GetInterpreter().PopFuncInfo();
     }
-    int BraceApiImplHelper::GenNextUniqueId(void)const
+    int BraceApiImplHelper::GenNextUniqueId()const
     {
         return GetInterpreter().GenNextUniqueId();
     }
-    int BraceApiImplHelper::CurBlockId(void)const
+    int BraceApiImplHelper::CurBlockId()const
     {
         return GetInterpreter().CurBlockId();
     }
-    std::vector<int>& BraceApiImplHelper::CurBlockObjVars(void)const
+    std::vector<int>& BraceApiImplHelper::CurBlockObjVars()const
     {
         return GetInterpreter().CurBlockObjVars();
     }
-    std::vector<Instruction>& BraceApiImplHelper::CurBasicBlock(void)const
+    std::vector<Instruction>& BraceApiImplHelper::CurBasicBlock()const
     {
         return GetInterpreter().CurBasicBlock();
     }
-    void BraceApiImplHelper::PushBlock(void)const
+    void BraceApiImplHelper::PushBlock()const
     {
         GetInterpreter().PushBlock();
     }
-    void BraceApiImplHelper::PopBlock(void)const
+    void BraceApiImplHelper::PopBlock()const
     {
         GetInterpreter().PopBlock();
     }
@@ -147,23 +147,23 @@ namespace Brace
         return GetInterpreter().Load(syntaxUnit, resultInfo);
     }
 
-    bool BraceApiImplHelper::IsForceQuit(void)const
+    bool BraceApiImplHelper::IsForceQuit()const
     {
         return GetInterpreter().IsForceQuit();
     }
-    FuncInfo* BraceApiImplHelper::GlobalFuncInfo(void)const
+    FuncInfo* BraceApiImplHelper::GlobalFuncInfo()const
     {
         return GetInterpreter().GlobalFuncInfo();
     }
-    VariableInfo* BraceApiImplHelper::GlobalVariables(void)const
+    VariableInfo* BraceApiImplHelper::GlobalVariables()const
     {
         return GetInterpreter().GlobalVariables();
     }
-    const FuncInfo* BraceApiImplHelper::CurRuntimeFuncInfo(void)const
+    const FuncInfo* BraceApiImplHelper::CurRuntimeFuncInfo()const
     {
         return GetInterpreter().CurRuntimeFuncInfo();
     }
-    VariableInfo* BraceApiImplHelper::CurRuntimeVariables(void)const
+    VariableInfo* BraceApiImplHelper::CurRuntimeVariables()const
     {
         return GetInterpreter().CurRuntimeVariables();
     }
@@ -171,20 +171,20 @@ namespace Brace
     {
         GetInterpreter().PushRuntimeStack(funcInfo);
     }
-    void BraceApiImplHelper::PopRuntimeStack(void)const
+    void BraceApiImplHelper::PopRuntimeStack()const
     {
         GetInterpreter().PopRuntimeStack();
     }
 
-    FuncInfo* BraceApiImplHelper::CurFuncInfo(void)const
+    FuncInfo* BraceApiImplHelper::CurFuncInfo()const
     {
         return GetInterpreter().CurFuncInfo();
     }
-    AbstractBraceApi* BraceApiImplHelper::GetFailbackApi(void)const
+    AbstractBraceApi* BraceApiImplHelper::GetFailbackApi()const
     {
         return GetInterpreter().GetFailbackApi();
     }
-    const std::shared_ptr<void>& BraceApiImplHelper::GetContextObject(void)const
+    const std::shared_ptr<void>& BraceApiImplHelper::GetContextObject()const
     {
         return GetInterpreter().GetContextObject();
     }
@@ -248,7 +248,7 @@ namespace Brace
     FunctionExecutor::FunctionExecutor(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Func(nullptr), m_Args(), m_ArgInfos(), m_ArgAssigns(), m_ResultInfo(), m_ResultAssign(nullptr), m_CodeExecutor(nullptr)
     {
     }
-    void FunctionExecutor::Reset(void)
+    void FunctionExecutor::Reset()
     {
         m_Func = nullptr;
         m_Args.clear();
@@ -281,7 +281,7 @@ namespace Brace
         }
         LoadCall(callerFunc, funcData, argLoadInfos, args, resultInfo, m_CodeExecutor);
     }
-    bool FunctionExecutor::IsValid(void)const
+    bool FunctionExecutor::IsValid()const
     {
         return !m_CodeExecutor.isNull();
     }
@@ -291,7 +291,7 @@ namespace Brace
             return m_CodeExecutor(gvars, lvars);
         return BRACE_FLOW_CONTROL_NORMAL;
     }
-    int FunctionExecutor::GetArgCount(void)const
+    int FunctionExecutor::GetArgCount()const
     {
         return static_cast<int>(m_ArgInfos.size());
     }
@@ -301,7 +301,7 @@ namespace Brace
             return nullptr; 
         return &m_ArgInfos[ix]; 
     }
-    const OperandRuntimeInfo* FunctionExecutor::ResultInfo(void) const 
+    const OperandRuntimeInfo* FunctionExecutor::ResultInfo() const 
     { 
         return &m_ResultInfo; 
     }
@@ -2199,7 +2199,7 @@ namespace Brace
         return INVALID_INDEX;
     }
 
-    VariableInfo* FuncInfo::AllocVariableInfo(void)const
+    VariableInfo* FuncInfo::AllocVariableInfo()const
     {
         if (VariableInfoPool->empty()) {
             auto* p = new VariableInfo();
@@ -2229,7 +2229,7 @@ namespace Brace
             }
         }
     }
-    FuncInfo::FuncInfo(void)
+    FuncInfo::FuncInfo()
     {
         VariableInfoPool = new std::deque<VariableInfo*>();
         VariableInfoStore = new std::vector<VariableInfo*>();
@@ -2260,7 +2260,7 @@ namespace Brace
         Codes = std::move(other.Codes);
         VarInitInfo = std::move(other.VarInitInfo);
     }
-    FuncInfo::~FuncInfo(void)
+    FuncInfo::~FuncInfo()
     {
         if (VariableInfoPool) {
             VariableInfoPool->clear();
@@ -2277,15 +2277,15 @@ namespace Brace
         }
     }
 
-    FuncInfo* BraceScript::GlobalFuncInfo(void)const
+    FuncInfo* BraceScript::GlobalFuncInfo()const
     {
         return m_GlobalFunc;
     }
-    VariableInfo* BraceScript::GlobalVariables(void)const
+    VariableInfo* BraceScript::GlobalVariables()const
     {
         return m_GlobalVariables;
     }
-    const FuncInfo* BraceScript::CurRuntimeFuncInfo(void)const
+    const FuncInfo* BraceScript::CurRuntimeFuncInfo()const
     {
         auto& runtimeStack = GetRuntimeStack();
         if (runtimeStack.empty()) {
@@ -2293,7 +2293,7 @@ namespace Brace
         }
         return runtimeStack.top().Func;
     }
-    VariableInfo* BraceScript::CurRuntimeVariables(void)const
+    VariableInfo* BraceScript::CurRuntimeVariables()const
     {
         auto& runtimeStack = GetRuntimeStack();
         if (runtimeStack.empty()) {
@@ -2309,7 +2309,7 @@ namespace Brace
         rsi.Variables = funcInfo->AllocVariableInfo();
         runtimeStack.push(std::move(rsi));
     }
-    void BraceScript::PopRuntimeStack(void)
+    void BraceScript::PopRuntimeStack()
     {
         auto& runtimeStack = GetRuntimeStack();
         RuntimeStackInfo& info = runtimeStack.top();
@@ -2466,13 +2466,13 @@ namespace Brace
             return &(it->second);
         return nullptr;
     }
-    const FuncInfo* BraceScript::CurFuncInfo(void)const
+    const FuncInfo* BraceScript::CurFuncInfo()const
     {
         if (m_FuncInfoStack.empty())
             return m_GlobalFunc;
         return m_FuncInfoStack.top();
     }
-    FuncInfo* BraceScript::CurFuncInfo(void)
+    FuncInfo* BraceScript::CurFuncInfo()
     {
         if (m_FuncInfoStack.empty())
             return m_GlobalFunc;
@@ -2485,40 +2485,40 @@ namespace Brace
         PushBlock();
         return p;
     }
-    void BraceScript::PopFuncInfo(void)
+    void BraceScript::PopFuncInfo()
     {
         PopBlock();
         m_FuncInfoStack.pop();
     }
-    int BraceScript::CurBlockId(void)const
+    int BraceScript::CurBlockId()const
     {
         if (m_LexicalScopeStack.empty())
             return 0;
         return m_LexicalScopeStack.back().BlockId;
     }
-    const std::vector<int>& BraceScript::CurBlockObjVars(void)const
+    const std::vector<int>& BraceScript::CurBlockObjVars()const
     {
         return m_LexicalScopeStack.back().ObjVars;
     }
-    std::vector<int>& BraceScript::CurBlockObjVars(void)
+    std::vector<int>& BraceScript::CurBlockObjVars()
     {
         return m_LexicalScopeStack.back().ObjVars;
     }
-    const std::vector<Instruction>& BraceScript::CurBasicBlock(void)const
+    const std::vector<Instruction>& BraceScript::CurBasicBlock()const
     {
         return m_LexicalScopeStack.back().BasicBlock;
     }
-    std::vector<Instruction>& BraceScript::CurBasicBlock(void)
+    std::vector<Instruction>& BraceScript::CurBasicBlock()
     {
         return m_LexicalScopeStack.back().BasicBlock;
     }
-    void BraceScript::PushBlock(void)
+    void BraceScript::PushBlock()
     {
         ++m_LastBlockId;
         BlockInfo bi(m_LastBlockId);
         m_LexicalScopeStack.push_back(std::move(bi));
     }
-    void BraceScript::PopBlock(void)
+    void BraceScript::PopBlock()
     {
         m_LexicalScopeStack.pop_back();
     }
@@ -3155,7 +3155,7 @@ namespace Brace
         return false;
     }
     
-    void BraceScript::RegisterInnerApis(void)
+    void BraceScript::RegisterInnerApis()
     {
         RegisterApi("+", new BraceApiFactoryWithArgs<AddExp, bool>(false));
         RegisterApi("-", new BraceApiFactoryWithArgs<SubExp, bool>(false));
@@ -3216,7 +3216,7 @@ namespace Brace
         /// RegisterApi("looplist", new BraceApiFactory<LoopListExp>());
         /// ----------------------------------------------------------------------------------------------------------
     }
-    void BraceScript::Init(void)
+    void BraceScript::Init()
     {
         m_ForceQuit = false;
         m_HasWarn = false;
@@ -3231,7 +3231,7 @@ namespace Brace
         p->Name = name;
         m_GlobalVariables = &(p->VarInitInfo);
     }
-    void BraceScript::Release(void)
+    void BraceScript::Release()
     {
         m_LexicalScopeStack.clear();
         m_FuncInfoStack = FuncInfoStack();
@@ -3258,7 +3258,7 @@ namespace Brace
             return true;
         return false;
     }
-    const RuntimeStack& BraceScript::GetRuntimeStack(void)const
+    const RuntimeStack& BraceScript::GetRuntimeStack()const
     {
         RuntimeStack* p = nullptr;
         if (OnGetRuntimeStack) {
@@ -3269,7 +3269,7 @@ namespace Brace
         else
             return m_RuntimeStack;
     }
-    RuntimeStack& BraceScript::GetRuntimeStack(void)
+    RuntimeStack& BraceScript::GetRuntimeStack()
     {
         RuntimeStack* p = nullptr;
         if (OnGetRuntimeStack) {
@@ -3281,13 +3281,13 @@ namespace Brace
             return m_RuntimeStack;
     }
 
-    BraceScript::BraceScript(void) :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_LoadTypeInfo(nullptr), m_FailbackApi(nullptr), m_ContextObj(nullptr)
+    BraceScript::BraceScript() :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_LoadTypeInfo(nullptr), m_FailbackApi(nullptr), m_ContextObj(nullptr)
     {
         m_LoadTypeInfo = std::bind(&BraceScript::DoLoadTypeInfo, this, std::placeholders::_1, std::placeholders::_2);
         RegisterInnerApis();
         Init();
     }
-    BraceScript::~BraceScript(void)
+    BraceScript::~BraceScript()
     {
         Release();
 
@@ -3312,7 +3312,7 @@ namespace Brace
     {
         m_FailbackApi = pFailbackApi;
     }
-    AbstractBraceApi* BraceScript::GetFailbackApi(void)const
+    AbstractBraceApi* BraceScript::GetFailbackApi()const
     {
         return m_FailbackApi;
     }
@@ -3320,11 +3320,11 @@ namespace Brace
     {
         m_ContextObj = pContext;
     }
-    const std::shared_ptr<void>& BraceScript::GetContextObject(void)const
+    const std::shared_ptr<void>& BraceScript::GetContextObject()const
     {
         return m_ContextObj;
     }
-    void BraceScript::Reset(void)
+    void BraceScript::Reset()
     {
         Release();
         Init();
@@ -3413,7 +3413,7 @@ namespace Brace
             }
         }
     }
-    void BraceScript::Run(void)
+    void BraceScript::Run()
     {
         Run(0);
     }
@@ -3446,7 +3446,7 @@ namespace Brace
         }
         */
     }
-    int BraceScript::GetGlobalCodeNum(void)const
+    int BraceScript::GetGlobalCodeNum()const
     {
         if (nullptr == m_GlobalFunc)
             return INVALID_INDEX;

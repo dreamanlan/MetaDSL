@@ -13,21 +13,21 @@
 class SlkToken
 {
 public:
-    short get(void);
+    short get();
     short peek(int level);
-    char* getCurToken(void) const
+    char* getCurToken() const
     {
         return mCurToken;
     }
-    char* getLastToken(void) const
+    char* getLastToken() const
     {
         return mLastToken;
     }
-    int getLineNumber(void) const
+    int getLineNumber() const
     {
         return mLineNumber;
     }
-    int getLastLineNumber(void) const
+    int getLastLineNumber() const
     {
         return mLastLineNumber;
     }
@@ -45,7 +45,7 @@ public:
             return 0;
         }
     }
-    void resetComments(void)
+    void resetComments()
     {
         mCommentNum = 0;
         mCommentOnNewLine = FALSE;
@@ -57,21 +57,21 @@ public:
     }
     void setStringDelimiter(const char* begin, const char* end);
     void setScriptDelimiter(const char* begin, const char* end);
-    const char* getStringBeginDelimiter(void)const { return mStringBeginDelimiter; }
-    const char* getStringEndDelimiter(void)const { return mStringEndDelimiter; }
-    const char* getScriptBeginDelimiter(void)const { return mScriptBeginDelimiter; }
-    const char* getScriptEndDelimiter(void)const { return mScriptEndDelimiter; }
+    const char* getStringBeginDelimiter()const { return mStringBeginDelimiter; }
+    const char* getStringEndDelimiter()const { return mStringEndDelimiter; }
+    const char* getScriptBeginDelimiter()const { return mScriptBeginDelimiter; }
+    const char* getScriptEndDelimiter()const { return mScriptEndDelimiter; }
 public:
     void setCurToken(char* tok) { mCurToken = tok; }
     void setLastToken(char* tok) { mLastToken = tok; }
     bool enqueueToken(char* tok, short val, int line);
-    char curChar(void)const;
-    char nextChar(void)const;
+    char curChar()const;
+    char nextChar()const;
     char peekChar(int ix)const;
     char peekNextValidChar(int beginIx)const;
     char peekNextValidChar(int beginIx, int& index)const;
-    void getOperatorToken(void);
-    short getOperatorTokenValue(void)const;
+    void getOperatorToken();
+    short getOperatorTokenValue()const;
     int isNotIdentifierAndEndParenthesis(char c)const;
     int isWhiteSpace(char c) const;
     int isDelimiter(char c) const;
@@ -81,22 +81,22 @@ public:
     int isQuote(char c) const;
     int isSpecialChar(char c) const;
 private:
-    short getImpl(void);
-    int isCanFinish(void)const
+    short getImpl();
+    int isCanFinish()const
     {
         return mCanFinish;
     }
     int isBegin(const char* delimiter, int len) const;
     void getBlockString(const char* delimiter, int len);
-    void removeFirstAndLastEmptyLine(void);
-    void newComment(void);
+    void removeFirstAndLastEmptyLine();
+    void newComment();
     void pushCommentChar(char c);
-    void endComment(void);
-    void newToken(void);
+    void endComment();
+    void newToken();
     void pushTokenChar(char c);
-    void tempEndToken(void);
-    void endToken(void);
-    void endTokenWithEof(void);
+    void tempEndToken();
+    void endToken();
+    void endTokenWithEof();
 public:
     SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile);
     void SetDslActionApi(const DslParser::DslActionApi& api)
@@ -110,7 +110,7 @@ private:
         short TokenValue;
         int LineNumber;
 
-        inline TokenInfo(void) :Token(nullptr), TokenValue(0), LineNumber(0) {}
+        inline TokenInfo() :Token(nullptr), TokenValue(0), LineNumber(0) {}
         inline TokenInfo(char* token, short tokenValue, int lineNumber) :Token(token), TokenValue(tokenValue), LineNumber(lineNumber) {}
     };
 

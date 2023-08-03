@@ -12,30 +12,30 @@ class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT<Actio
 {
     using BaseType = RuntimeBuilderT<ActionForSourceCodeScript>;
 public:
-    inline char* getLastToken(void) const;
-    inline int getLastLineNumber(void) const;
+    inline char* getLastToken() const;
+    inline int getLastLineNumber() const;
     inline int getCommentNum(int& commentOnNewLine) const;
     inline char* getComment(int index) const;
-    inline void resetComments(void);
+    inline void resetComments();
     inline void setCanFinish(int val);
     inline void setStringDelimiter(const char* begin, const char* end);
     inline void setScriptDelimiter(const char* begin, const char* end);
 public:
     ActionForSourceCodeScript(SlkToken& scanner, DslParser::DslFile& dataFile);
 public:
-    inline void    pushId(void);
-    inline void    pushStr(void);
-    inline void    pushNum(void);
-    inline void    pushComma(void);
-    inline void    pushSemiColon(void);
-    void    (ActionForSourceCodeScript::* Action[MAX_ACTION_NUM]) (void);
-    inline void    initialize_table(void);
+    inline void    pushId();
+    inline void    pushStr();
+    inline void    pushNum();
+    inline void    pushComma();
+    inline void    pushSemiColon();
+    void    (ActionForSourceCodeScript::* Action[MAX_ACTION_NUM]) ();
+    inline void    initialize_table();
     inline void 	 execute(int  number) { (this->*Action[number]) (); }
 private:
     SlkToken* mScanner;
 };
 //--------------------------------------------------------------------------------------
-inline char* ActionForSourceCodeScript::getLastToken(void) const
+inline char* ActionForSourceCodeScript::getLastToken() const
 {
     if (nullptr != mScanner) {
         return mScanner->getLastToken();
@@ -44,7 +44,7 @@ inline char* ActionForSourceCodeScript::getLastToken(void) const
         return nullptr;
     }
 }
-inline int ActionForSourceCodeScript::getLastLineNumber(void) const
+inline int ActionForSourceCodeScript::getLastLineNumber() const
 {
     if (nullptr != mScanner) {
         return mScanner->getLastLineNumber();
@@ -72,7 +72,7 @@ inline char* ActionForSourceCodeScript::getComment(int index) const
         return nullptr;
     }
 }
-inline void ActionForSourceCodeScript::resetComments(void)
+inline void ActionForSourceCodeScript::resetComments()
 {
     if (nullptr != mScanner) {
         mScanner->resetComments();
@@ -98,32 +98,32 @@ inline void ActionForSourceCodeScript::setScriptDelimiter(const char* begin, con
 }
 //--------------------------------------------------------------------------------------
 //标识符
-inline void ActionForSourceCodeScript::pushId(void)
+inline void ActionForSourceCodeScript::pushId()
 {
     char* lastToken = getLastToken();
     if (nullptr != lastToken) {
         mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::ID_TOKEN));
     }
 }
-inline void ActionForSourceCodeScript::pushNum(void)
+inline void ActionForSourceCodeScript::pushNum()
 {
     char* lastToken = getLastToken();
     if (nullptr != lastToken) {
         mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::NUM_TOKEN));
     }
 }
-inline void ActionForSourceCodeScript::pushStr(void)
+inline void ActionForSourceCodeScript::pushStr()
 {
     char* lastToken = getLastToken();
     if (nullptr != lastToken) {
         mData.push(RuntimeBuilderData::TokenInfo(lastToken, RuntimeBuilderData::STRING_TOKEN));
     }
 }
-inline void ActionForSourceCodeScript::pushComma(void)
+inline void ActionForSourceCodeScript::pushComma()
 {
     mData.push(RuntimeBuilderData::TokenInfo(",", RuntimeBuilderData::STRING_TOKEN));
 }
-inline void ActionForSourceCodeScript::pushSemiColon(void)
+inline void ActionForSourceCodeScript::pushSemiColon()
 {
     mData.push(RuntimeBuilderData::TokenInfo(";", RuntimeBuilderData::STRING_TOKEN));
 }
@@ -136,7 +136,7 @@ inline ActionForSourceCodeScript::ActionForSourceCodeScript(SlkToken& scanner, D
     setEnvironmentObjRef(*this);
 }
 //--------------------------------------------------------------------------------------
-inline void ActionForSourceCodeScript::initialize_table(void)
+inline void ActionForSourceCodeScript::initialize_table()
 {
     Action[0] = 0;
     Action[1] = &ActionForSourceCodeScript::markSeparator;
@@ -193,11 +193,11 @@ namespace DslParser
         explicit CachedScriptSource(const char* p) :m_Source(p)
         {}
     protected:
-        virtual int Load(void)
+        virtual int Load()
         {
             return FALSE;
         }
-        virtual const char* GetBuffer(void)const
+        virtual const char* GetBuffer()const
         {
             return m_Source;
         }
@@ -205,25 +205,25 @@ namespace DslParser
         const char* m_Source;
     };
     //------------------------------------------------------------------------------------------------------
-    char* DslTokenApi::getCurToken(void) const
+    char* DslTokenApi::getCurToken() const
     {
         if (!m_Impl)
             return 0;
         return m_Impl->getCurToken();
     }
-    char* DslTokenApi::getLastToken(void) const
+    char* DslTokenApi::getLastToken() const
     {
         if (!m_Impl)
             return 0;
         return m_Impl->getLastToken();
     }
-    int DslTokenApi::getLineNumber(void) const
+    int DslTokenApi::getLineNumber() const
     {
         if (!m_Impl)
             return 0;
         return m_Impl->getLineNumber();
     }
-    int DslTokenApi::getLastLineNumber(void) const
+    int DslTokenApi::getLastLineNumber() const
     {
         if (!m_Impl)
             return 0;
@@ -247,13 +247,13 @@ namespace DslParser
             return 0;
         return m_Impl->enqueueToken(tok, val, line);
     }
-    char DslTokenApi::curChar(void)const
+    char DslTokenApi::curChar()const
     {
         if (!m_Impl)
             return 0;
         return m_Impl->curChar();
     }
-    char DslTokenApi::nextChar(void)const
+    char DslTokenApi::nextChar()const
     {
         if (!m_Impl)
             return 0;
@@ -278,13 +278,13 @@ namespace DslParser
             return 0;
         return m_Impl->peekNextValidChar(beginIx, index);
     }
-    void DslTokenApi::getOperatorToken(void)
+    void DslTokenApi::getOperatorToken()
     {
         if (!m_Impl)
             return;
         m_Impl->getOperatorToken();
     }
-    short DslTokenApi::getOperatorTokenValue(void)const
+    short DslTokenApi::getOperatorTokenValue()const
     {
         if (!m_Impl)
             return 0;
@@ -339,229 +339,229 @@ namespace DslParser
         return m_Impl->isSpecialChar(c);
     }
     //------------------------------------------------------------------------------------------------------
-    void DslActionApi::markSeparator(void)const
+    void DslActionApi::markSeparator()const
     {
         if (!m_Impl)
             return;
         m_Impl->markSeparator();
     }
-    void DslActionApi::endStatement(void)const
+    void DslActionApi::endStatement()const
     {
         if (!m_Impl)
             return;
         m_Impl->endStatement();
     }
-    void DslActionApi::buildOperator(void)const
+    void DslActionApi::buildOperator()const
     {
         if (!m_Impl)
             return;
         m_Impl->buildOperator();
     }
-    void DslActionApi::buildFirstTernaryOperator(void)const
+    void DslActionApi::buildFirstTernaryOperator()const
     {
         if (!m_Impl)
             return;
         m_Impl->buildFirstTernaryOperator();
     }
-    void DslActionApi::buildSecondTernaryOperator(void)const
+    void DslActionApi::buildSecondTernaryOperator()const
     {
         if (!m_Impl)
             return;
         m_Impl->buildSecondTernaryOperator();
     }
-    void DslActionApi::beginStatement(void)const
+    void DslActionApi::beginStatement()const
     {
         if (!m_Impl)
             return;
         m_Impl->beginStatement();
     }
-    void DslActionApi::addFunction(void)const
+    void DslActionApi::addFunction()const
     {
         if (!m_Impl)
             return;
         m_Impl->addFunction();
     }
-    void DslActionApi::setFunctionId(void)const
+    void DslActionApi::setFunctionId()const
     {
         if (!m_Impl)
             return;
         m_Impl->setFunctionId();
     }
-    void DslActionApi::markParenthesisParam(void)const
+    void DslActionApi::markParenthesisParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markParenthesisParam();
     }
-    void DslActionApi::buildHighOrderFunction(void)const
+    void DslActionApi::buildHighOrderFunction()const
     {
         if (!m_Impl)
             return;
         m_Impl->buildHighOrderFunction();
     }
-    void DslActionApi::markBracketParam(void)const
+    void DslActionApi::markBracketParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markBracketParam();
     }
-    void DslActionApi::markQuestionParenthesisParam(void)const
+    void DslActionApi::markQuestionParenthesisParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markQuestionParenthesisParam();
     }
-    void DslActionApi::markQuestionBracketParam(void)const
+    void DslActionApi::markQuestionBracketParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markQuestionBracketParam();
     }
-    void DslActionApi::markQuestionBraceParam(void)const
+    void DslActionApi::markQuestionBraceParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markQuestionBraceParam();
     }
-    void DslActionApi::markStatement(void)const
+    void DslActionApi::markStatement()const
     {
         if (!m_Impl)
             return;
         m_Impl->markStatement();
     }
-    void DslActionApi::markExternScript(void)const
+    void DslActionApi::markExternScript()const
     {
         if (!m_Impl)
             return;
         m_Impl->markExternScript();
     }
-    void DslActionApi::markBracketColonParam(void)const
+    void DslActionApi::markBracketColonParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markBracketColonParam();
     }
-    void DslActionApi::markParenthesisColonParam(void)const
+    void DslActionApi::markParenthesisColonParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markParenthesisColonParam();
     }
-    void DslActionApi::markAngleBracketColonParam(void)const
+    void DslActionApi::markAngleBracketColonParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markAngleBracketColonParam();
     }
-    void DslActionApi::markBracePercentParam(void)const
+    void DslActionApi::markBracePercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markBracePercentParam();
     }
-    void DslActionApi::markBracketPercentParam(void)const
+    void DslActionApi::markBracketPercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markBracketPercentParam();
     }
-    void DslActionApi::markParenthesisPercentParam(void)const
+    void DslActionApi::markParenthesisPercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markParenthesisPercentParam();
     }
-    void DslActionApi::markAngleBracketPercentParam(void)const
+    void DslActionApi::markAngleBracketPercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markAngleBracketPercentParam();
     }
-    void DslActionApi::markColonColonParam(void)const
+    void DslActionApi::markColonColonParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markColonColonParam();
     }
-    void DslActionApi::markColonColonParenthesisParam(void)const
+    void DslActionApi::markColonColonParenthesisParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markColonColonParenthesisParam();
     }
-    void DslActionApi::markColonColonBracketParam(void)const
+    void DslActionApi::markColonColonBracketParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markColonColonBracketParam();
     }
-    void DslActionApi::markColonColonBraceParam(void)const
+    void DslActionApi::markColonColonBraceParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markColonColonBraceParam();
     }
-    void DslActionApi::setExternScript(void)const
+    void DslActionApi::setExternScript()const
     {
         if (!m_Impl)
             return;
         m_Impl->setExternScript();
     }
-    void DslActionApi::markPeriodParam(void)const
+    void DslActionApi::markPeriodParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markPeriodParam();
     }
-    void DslActionApi::setMemberId(void)const
+    void DslActionApi::setMemberId()const
     {
         if (!m_Impl)
             return;
         m_Impl->setMemberId();
     }
-    void DslActionApi::markPeriodParenthesisParam(void)const
+    void DslActionApi::markPeriodParenthesisParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markPeriodParenthesisParam();
     }
-    void DslActionApi::markPeriodBracketParam(void)const
+    void DslActionApi::markPeriodBracketParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markPeriodBracketParam();
     }
-    void DslActionApi::markPeriodBraceParam(void)const
+    void DslActionApi::markPeriodBraceParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markPeriodBraceParam();
     }
-    void DslActionApi::markQuestionPeriodParam(void)const
+    void DslActionApi::markQuestionPeriodParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markQuestionPeriodParam();
     }
-    void DslActionApi::markPointerParam(void)const
+    void DslActionApi::markPointerParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markPointerParam();
     }
-    void DslActionApi::markPeriodStarParam(void)const
+    void DslActionApi::markPeriodStarParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markPeriodStarParam();
     }
-    void DslActionApi::markQuestionPeriodStarParam(void)const
+    void DslActionApi::markQuestionPeriodStarParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markQuestionPeriodStarParam();
     }
-    void DslActionApi::markPointerStarParam(void)const
+    void DslActionApi::markPointerStarParam()const
     {
         if (!m_Impl)
             return;
@@ -573,13 +573,13 @@ namespace DslParser
             return;
         m_Impl->getRuntimeBuilderData().push(RuntimeBuilderData::TokenInfo(token, type));
     }
-    StatementData* DslActionApi::getCurStatement(void)const
+    StatementData* DslActionApi::getCurStatement()const
     {
         if (!m_Impl)
             return 0;
         return m_Impl->getRuntimeBuilderData().getCurStatement();
     }
-    FunctionData* DslActionApi::getLastFunction(void)const
+    FunctionData* DslActionApi::getLastFunction()const
     {
         if (!m_Impl)
             return 0;

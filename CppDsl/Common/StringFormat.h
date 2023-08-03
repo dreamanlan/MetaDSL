@@ -285,7 +285,7 @@ namespace StringFormatUtility
 class StringParser
 {
 public:
-    inline void	Format(void)
+    inline void	Format()
     {
         ParseToEnd();
     }
@@ -326,7 +326,7 @@ public:
 public:
     //使用方（snprintf_）保证buf、fmt不会为空，StringFormat类及其实现辅助都不再检查这2个指针是否为空。
     StringParser(char* buf, int size, const char* fmt);
-    inline int GetLength(void)const { return m_BufPos; }
+    inline int GetLength()const { return m_BufPos; }
 private:
     template<typename P1>
     inline void	_Format(P1 p1)
@@ -371,8 +371,8 @@ private:
     DEF_PARSER_FORMAT_IMPL(33, 32);
     DEF_PARSER_FORMAT_IMPL(34, 33);
 private:
-    const char* ParseToNextFormat(void);
-    void		ParseToEnd(void);
+    const char* ParseToNextFormat();
+    void		ParseToEnd();
 private:
     char* m_pBuffer;
     const char* m_pFmt;

@@ -28,7 +28,7 @@ namespace CoroutineWithBoostContext
         std::unordered_map<std::size_t, my_fixedsize_stack_alloc_record> fixedsize_stack_pool_;
         std::size_t total_alloced_size_;
 
-        my_fixedsize_stack_alloc_pool(void) :fixedsize_stack_pool_(), total_alloced_size_(0)
+        my_fixedsize_stack_alloc_pool() :fixedsize_stack_pool_(), total_alloced_size_(0)
         {}
 
         my_fixedsize_stack_alloc_record& get_or_new_alloc_record(std::size_t size)
@@ -68,7 +68,7 @@ namespace CoroutineWithBoostContext
             auto& rec = get_or_new_alloc_record(ctx.size);
             return rec.contexts.push_back(ctx);
         }
-        void free_pooled_stacks(void)
+        void free_pooled_stacks()
         {
             for (auto&& pair : fixedsize_stack_pool_) {
                 auto& rec = pair.second;
@@ -79,7 +79,7 @@ namespace CoroutineWithBoostContext
                 rec.contexts.clear();
             }
         }
-        void cleanup_pool(void)
+        void cleanup_pool()
         {
             free_pooled_stacks();
             fixedsize_stack_pool_.clear();
@@ -103,11 +103,11 @@ namespace CoroutineWithBoostContext
     thread_local static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
     thread_local static std::queue<fiber> g_fiber_queue{};
 
-    void FreeStackMemory(void)
+    void FreeStackMemory()
     {
         g_fixedsize_stack_alloc_pool.free_pooled_stacks();
     }
-    void CleanupPool(void)
+    void CleanupPool()
     {
         g_fixedsize_stack_alloc_pool.cleanup_pool();
     }
@@ -124,7 +124,7 @@ namespace CoroutineWithBoostContext
         size_(size)
         {
         }
-        ctx::stack_context allocate(void)
+        ctx::stack_context allocate()
         {
             return g_fixedsize_stack_alloc_pool.alloc_stack(size_);
         }
@@ -158,13 +158,13 @@ namespace CoroutineWithBoostContext
             Started = false;
             Current = current;
         }
-        ~CoroutineData(void)
+        ~CoroutineData()
         {
             StartupFiber.~fiber();
             ResumeFrom.~fiber();
             Current = nullptr;
         }
-        void BuildEnv(void)
+        void BuildEnv()
         {
             my_fixedsize_stack salloc(BufferSize);
             ctx::stack_context sctx(salloc.allocate());
@@ -199,11 +199,11 @@ namespace CoroutineWithBoostContext
     class CoroutineMain : public Coroutine
     {
     public:
-        CoroutineMain(void) :Coroutine(1024*1024)
+        CoroutineMain() :Coroutine(1024*1024)
         {
             g_Current = this;
         }
-        virtual void Routine(void) override
+        virtual void Routine() override
         {
         }
     };
@@ -217,22 +217,22 @@ namespace CoroutineWithBoostContext
             m_pData = new CoroutineData(this, m_StackSize);
         }
     }
-    Coroutine::~Coroutine(void)
+    Coroutine::~Coroutine()
     {
         Release();
     }
-    void Coroutine::Release(void)
+    void Coroutine::Release()
     {
         if (nullptr == m_pData)
             return;
         delete m_pData;
         m_pData = nullptr;
     }
-    bool Coroutine::IsTerminated(void)const
+    bool Coroutine::IsTerminated()const
     {
         return !m_pData->Started;
     }
-    void Coroutine::Reset(void)
+    void Coroutine::Reset()
     {
         if (this == g_Current) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
@@ -240,7 +240,7 @@ namespace CoroutineWithBoostContext
         }
         m_pData->BuildEnv();
     }
-    bool Coroutine::TryStart(void)
+    bool Coroutine::TryStart()
     {
         bool ret = false;
         if (IsTerminated()) {
@@ -259,7 +259,7 @@ namespace CoroutineWithBoostContext
         return false;
     }
 
-    bool TryYield(void)
+    bool TryYield()
     {
         bool ret = false;
         Coroutine* pCurrent = g_Current;
@@ -284,19 +284,19 @@ namespace CoroutineWithBoostContext
         }
         return ret;
     }
-    bool TryInit(void)
+    bool TryInit()
     {
         return !g_Main.IsTerminated();
     }
-    void TryRelease(void)
+    void TryRelease()
     {
         g_Main.Release();
     }
-    Coroutine* CurrentCoroutine(void)
+    Coroutine* CurrentCoroutine()
     {
         return g_Current;
     }
-    Coroutine* MainCoroutine(void)
+    Coroutine* MainCoroutine()
     {
         return &g_Main;
     }

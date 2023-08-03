@@ -62,7 +62,7 @@ namespace DslParser
     class DslOptions final
     {
     public:
-        DslOptions(void) :
+        DslOptions() :
             m_MaxFunctionDimensionNum(MAX_FUNCTION_DIMENSION_NUM),
             m_MaxParamNum(MAX_FUNCTION_PARAM_NUM),
             m_MaxDslInfoNum(MAX_DSL_INFO_NUM)
@@ -80,7 +80,7 @@ namespace DslParser
         int	m_MaxParamNum;
         int	m_MaxDslInfoNum;
     public:
-        static bool DontLoadComments(void)
+        static bool DontLoadComments()
         {
             return DontLoadCommentsRef();
         }
@@ -89,7 +89,7 @@ namespace DslParser
             DontLoadCommentsRef() = val;
         }
     private:
-        static bool& DontLoadCommentsRef(void)
+        static bool& DontLoadCommentsRef()
         {
             static bool s_DontLoadComments = false;
             return s_DontLoadComments;
@@ -102,7 +102,7 @@ namespace DslParser
         const char* StringBeginDelimiter;
         const char* StringEndDelimiter;
 
-        DelimiterInfo(void)
+        DelimiterInfo()
             :ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}"), StringBeginDelimiter("\""), StringEndDelimiter("\"")
         {}
         DelimiterInfo(const char* strBeginDelim, const char* strEndDelim, const char* scpBeginDelim, const char* scpEndDelim)
@@ -122,7 +122,7 @@ namespace DslParser
         int m_LastCommentSpace;
         int m_LastCommentOnNewLine;
 
-        SyntaxComponentCommentsInfo(void) :m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
+        SyntaxComponentCommentsInfo() :m_FirstComments(0), m_FirstCommentNum(0), m_FirstCommentSpace(0), m_FirstCommentOnNewLine(0),
             m_LastComments(0), m_LastCommentNum(0), m_LastCommentSpace(0), m_LastCommentOnNewLine(0)
         {}
     };
@@ -132,7 +132,7 @@ namespace DslParser
         int m_CommentNum;
         int m_CommentSpace;
 
-        FunctionCommentsInfo(void) :SyntaxComponentCommentsInfo(), m_Comments(0), m_CommentNum(0), m_CommentSpace(0)
+        FunctionCommentsInfo() :SyntaxComponentCommentsInfo(), m_Comments(0), m_CommentNum(0), m_CommentSpace(0)
         {}
     };
 
@@ -141,19 +141,19 @@ namespace DslParser
     {
     public:
         ISyntaxComponent(int syntaxType);
-        virtual ~ISyntaxComponent(void) override;
+        virtual ~ISyntaxComponent() override;
     public:
-        virtual int IsValid(void) const = 0;
-        virtual const char* GetId(void) const = 0;
-        virtual int GetIdType(void) const = 0;
-        virtual int GetLine(void) const = 0;
+        virtual int IsValid() const = 0;
+        virtual const char* GetId() const = 0;
+        virtual int GetIdType() const = 0;
+        virtual int GetLine() const = 0;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const = 0;
-        virtual int HaveId(void) const = 0;
+        virtual int HaveId() const = 0;
     public:
-        int GetSyntaxType(void) const { return m_SyntaxType; }
+        int GetSyntaxType() const { return m_SyntaxType; }
         void SetSeparator(int sep) { m_Separator = sep; }
-        int GetSeparator(void) const { return m_Separator; }
-        const char* GetSepChar(void) const
+        int GetSeparator() const { return m_Separator; }
+        const char* GetSepChar() const
         {
             switch (m_Separator) {
             case SEPARATOR_COMMA:
@@ -190,7 +190,7 @@ namespace DslParser
                 return;
             GetCommentsInfo()->m_FirstCommentNum = 0;
         }
-        int GetFirstCommentNum(void) const
+        int GetFirstCommentNum() const
         {
             if (0 == GetCommentsInfo())
                 return 0;
@@ -205,7 +205,7 @@ namespace DslParser
                 return 0;
             }
         }
-        int IsFirstCommentOnNewLine(void) const
+        int IsFirstCommentOnNewLine() const
         {
             if (0 == GetCommentsInfo())
                 return 0;
@@ -241,7 +241,7 @@ namespace DslParser
                 return;
             GetCommentsInfo()->m_LastCommentNum = 0;
         }
-        int GetLastCommentNum(void) const
+        int GetLastCommentNum() const
         {
             if (0 == GetCommentsInfo())
                 return 0;
@@ -256,7 +256,7 @@ namespace DslParser
                 return 0;
             }
         }
-        int IsLastCommentOnNewLine(void) const
+        int IsLastCommentOnNewLine() const
         {
             if (0 == GetCommentsInfo())
                 return 0;
@@ -305,11 +305,11 @@ namespace DslParser
         void ReleaseFirstComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo);
         void ReleaseLastComments(IDslStringAndObjectBuffer* pBuffer, SyntaxComponentCommentsInfo* pCommentsInfo);
     protected:
-        virtual IDslStringAndObjectBuffer* GetBuffer(void) const { return 0; }
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const { return 0; }
+        virtual IDslStringAndObjectBuffer* GetBuffer() const { return 0; }
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo() const { return 0; }
     private:
-        void PrepareFirstComments(void);
-        void PrepareLastComments(void);
+        void PrepareFirstComments();
+        void PrepareLastComments();
     private:
         int m_SyntaxType;
         int m_Separator;
@@ -323,36 +323,36 @@ namespace DslParser
         ValueOrFunctionData(int syntaxType) :ISyntaxComponent(syntaxType)
         {}
     public:
-        int IsValue(void)const
+        int IsValue()const
         {
             return GetSyntaxType() == ISyntaxComponent::TYPE_VALUE ? TRUE : FALSE;
         }
-        int IsFunction(void)const
+        int IsFunction()const
         {
             return GetSyntaxType() == ISyntaxComponent::TYPE_FUNCTION ? TRUE : FALSE;
         }
-        const ValueData* AsValue(void)const
+        const ValueData* AsValue()const
         {
             if (IsValue())
                 return reinterpret_cast<const ValueData*>(this);
             else
                 return nullptr;
         }
-        ValueData* AsValue(void)
+        ValueData* AsValue()
         {
             if (IsValue())
                 return reinterpret_cast<ValueData*>(this);
             else
                 return nullptr;
         }
-        const FunctionData* AsFunction(void)const
+        const FunctionData* AsFunction()const
         {
             if (IsFunction())
                 return reinterpret_cast<const FunctionData*>(this);
             else
                 return nullptr;
         }
-        FunctionData* AsFunction(void)
+        FunctionData* AsFunction()
         {
             if (IsFunction())
                 return reinterpret_cast<FunctionData*>(this);
@@ -369,7 +369,7 @@ namespace DslParser
     class ValueData final : public ValueOrFunctionData
     {
     public:
-        ValueData(void) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
+        ValueData() :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(0), m_Line(0) {}
         explicit ValueData(char* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_StringVal(val), m_Line(0) {}
         explicit ValueData(const char* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_ConstStringVal(val), m_Line(0) {}
         explicit ValueData(FunctionData* val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_FUNCTION), m_FunctionVal(val), m_Line(0) {}
@@ -404,21 +404,21 @@ namespace DslParser
             return *this;
         }
 
-        virtual int IsValid(void)const override;
-        virtual int GetIdType(void)const override;
-        virtual const char* GetId(void)const override;
-        virtual int GetLine(void)const override;
+        virtual int IsValid()const override;
+        virtual int GetIdType()const override;
+        virtual const char* GetId()const override;
+        virtual int GetLine()const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual int HaveId()const override;
 
-        FunctionData* GetFunction(void)const { return m_FunctionVal; }
+        FunctionData* GetFunction()const { return m_FunctionVal; }
 
-        int IsNum(void)const { return (m_Type == VALUE_TYPE_NUM ? TRUE : FALSE); }
-        int IsString(void)const { return (m_Type == VALUE_TYPE_STRING ? TRUE : FALSE); }
-        int IsIdentifier(void)const { return (m_Type == VALUE_TYPE_IDENTIFIER && nullptr != m_ConstStringVal ? TRUE : FALSE); }
-        int IsFunction(void)const { return (m_Type == VALUE_TYPE_FUNCTION ? TRUE : FALSE); }
+        int IsNum()const { return (m_Type == VALUE_TYPE_NUM ? TRUE : FALSE); }
+        int IsString()const { return (m_Type == VALUE_TYPE_STRING ? TRUE : FALSE); }
+        int IsIdentifier()const { return (m_Type == VALUE_TYPE_IDENTIFIER && nullptr != m_ConstStringVal ? TRUE : FALSE); }
+        int IsFunction()const { return (m_Type == VALUE_TYPE_FUNCTION ? TRUE : FALSE); }
 
-        void SetInvalid(void)
+        void SetInvalid()
         {
             m_Type = VALUE_TYPE_IDENTIFIER;
             m_StringVal = 0;
@@ -490,7 +490,7 @@ namespace DslParser
     {
         using SyntaxComponentPtr = ISyntaxComponent*;
     public:
-        virtual int IsValid(void)const override
+        virtual int IsValid()const override
         {
             if (m_Name.IsValid())
                 return TRUE;
@@ -499,16 +499,16 @@ namespace DslParser
             else
                 return FALSE;
         }
-        virtual int GetIdType(void)const override { return m_Name.GetIdType(); }
-        virtual const char* GetId(void)const override { return m_Name.GetId(); }
-        virtual int GetLine(void)const override;
+        virtual int GetIdType()const override { return m_Name.GetIdType(); }
+        virtual const char* GetId()const override { return m_Name.GetId(); }
+        virtual int GetLine()const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
-        virtual int HaveId(void)const override { return m_Name.HaveId(); }
+        virtual int HaveId()const override { return m_Name.HaveId(); }
     public:
         void SetName(const ValueData& val) { m_Name = val; }
-        ValueData& GetName(void) { return m_Name; }
-        void ClearParams(void) { m_ParamNum = 0; }
-        void RemoveLastParam(void)
+        ValueData& GetName() { return m_Name; }
+        void ClearParams() { m_ParamNum = 0; }
+        void RemoveLastParam()
         {
             if (0 == m_Params || m_ParamNum <= 0)
                 return;
@@ -532,28 +532,28 @@ namespace DslParser
             m_Params[index] = pVal;
         }
         void SetParamClass(int v) { m_ParamClass = v; }
-        int GetParamClass(void)const { return m_ParamClass; }
-        int GetParamClassUnmasked(void)const
+        int GetParamClass()const { return m_ParamClass; }
+        int GetParamClassUnmasked()const
         {
             int paramClass = (m_ParamClass & (int)PARAM_CLASS_UNMASK);
             return paramClass;
         }
-        int HaveParamClassInfixFlag(void)const
+        int HaveParamClassInfixFlag()const
         {
             int infix = (m_ParamClass & (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK);
             return infix == (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK ? TRUE : FALSE;
         }
-        int IsOperatorParamClass(void)const
+        int IsOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_OPERATOR ? TRUE : FALSE;
         }
-        int IsTernaryOperatorParamClass(void)const
+        int IsTernaryOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_TERNARY_OPERATOR ? TRUE : FALSE;
         }
-        int IsMemberParamClass(void)const
+        int IsMemberParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return (paramClass == (int)PARAM_CLASS_COLON_COLON ||
@@ -564,12 +564,12 @@ namespace DslParser
                 paramClass == (int)PARAM_CLASS_QUESTION_PERIOD ||
                 paramClass == (int)PARAM_CLASS_QUESTION_PERIOD_STAR) ? TRUE : FALSE;
         }
-        int HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
-        int HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
-        int HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
-        int HaveExternScript(void)const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT ? TRUE : FALSE; }
-        int IsHighOrder(void)const { return m_Name.IsFunction(); }
-        FunctionData& GetLowerOrderFunction(void)const
+        int HaveParamOrStatement()const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
+        int HaveParam()const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
+        int HaveStatement()const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }
+        int HaveExternScript()const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT ? TRUE : FALSE; }
+        int IsHighOrder()const { return m_Name.IsFunction(); }
+        FunctionData& GetLowerOrderFunction()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr) {
@@ -579,7 +579,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        const FunctionData& GetThisOrLowerOrderCall(void)const
+        const FunctionData& GetThisOrLowerOrderCall()const
         {
             if (HaveParam()) {
                 return *this;
@@ -591,7 +591,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        FunctionData& GetThisOrLowerOrderCall(void)
+        FunctionData& GetThisOrLowerOrderCall()
         {
             if (HaveParam()) {
                 return *this;
@@ -603,7 +603,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        const FunctionData& GetThisOrLowerOrderBody(void)const
+        const FunctionData& GetThisOrLowerOrderBody()const
         {
             if (HaveStatement()) {
                 return *this;
@@ -615,7 +615,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        FunctionData& GetThisOrLowerOrderBody(void)
+        FunctionData& GetThisOrLowerOrderBody()
         {
             if (HaveStatement()) {
                 return *this;
@@ -627,7 +627,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        const FunctionData& GetThisOrLowerOrderScript(void)const
+        const FunctionData& GetThisOrLowerOrderScript()const
         {
             if (HaveExternScript()) {
                 return *this;
@@ -639,7 +639,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        FunctionData& GetThisOrLowerOrderScript(void)
+        FunctionData& GetThisOrLowerOrderScript()
         {
             if (HaveExternScript()) {
                 return *this;
@@ -651,7 +651,7 @@ namespace DslParser
                 return *GetNullFunctionPtr();
             }
         }
-        int HaveLowerOrderParam(void)const
+        int HaveLowerOrderParam()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr && fptr->HaveParam())
@@ -659,7 +659,7 @@ namespace DslParser
             else
                 return FALSE;
         }
-        int HaveLowerOrderStatement(void)const
+        int HaveLowerOrderStatement()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr && fptr->HaveStatement())
@@ -667,7 +667,7 @@ namespace DslParser
             else
                 return FALSE;
         }
-        int HaveLowerOrderExternScript(void)const
+        int HaveLowerOrderExternScript()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr && fptr->HaveExternScript())
@@ -676,8 +676,8 @@ namespace DslParser
                 return FALSE;
         }
     public:
-        const ValueData& GetName(void)const { return m_Name; }
-        int GetParamNum(void)const { return m_ParamNum; }
+        const ValueData& GetName()const { return m_Name; }
+        int GetParamNum()const { return m_ParamNum; }
         ISyntaxComponent* GetParam(int index)const
         {
             if (0 == m_Params || index < 0 || index >= m_ParamNum || index >= m_MaxParamNum)
@@ -720,7 +720,7 @@ namespace DslParser
                 return;
             p->m_CommentNum = 0;
         }
-        int GetCommentNum(void) const
+        int GetCommentNum() const
         {
             auto p = m_pCommentsInfo;
             if (0 == p)
@@ -741,14 +741,14 @@ namespace DslParser
         }
     public:
         FunctionData(IDslStringAndObjectBuffer& buffer);
-        virtual ~FunctionData(void) override;
+        virtual ~FunctionData() override;
         void InitParamsCapacity(int c);
     protected:
-        virtual IDslStringAndObjectBuffer* GetBuffer(void) const override
+        virtual IDslStringAndObjectBuffer* GetBuffer() const override
         {
             return &m_Buffer;
         }
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const override
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo() const override
         {
             return m_pCommentsInfo;
         }
@@ -758,13 +758,13 @@ namespace DslParser
         FunctionData operator=(const FunctionData& other) = delete;
         FunctionData& operator=(FunctionData&& other) noexcept = delete;
     private:
-        void PrepareParams(void);
-        void ReleaseParams(void);
-        void PrepareComments(void);
-        void ReleaseComments(void);
+        void PrepareParams();
+        void ReleaseParams();
+        void PrepareComments();
+        void ReleaseComments();
     private:
-        ISyntaxComponent* GetNullSyntaxPtr(void)const;
-        FunctionData* GetNullFunctionPtr(void)const;
+        ISyntaxComponent* GetNullSyntaxPtr()const;
+        FunctionData* GetNullFunctionPtr()const;
     private:
         ValueData m_Name;
         ISyntaxComponent** m_Params;
@@ -784,14 +784,14 @@ namespace DslParser
     class StatementData final : public ISyntaxComponent
     {
     public:
-        virtual int IsValid(void)const override
+        virtual int IsValid()const override
         {
             if (nullptr != m_ValueOrFunctions && m_ValueOrFunctionNum > 0 && m_ValueOrFunctions[0]->IsValid())
                 return TRUE;
             else
                 return FALSE;
         }
-        virtual int GetIdType(void)const override
+        virtual int GetIdType()const override
         {
             int type = ValueData::VALUE_TYPE_IDENTIFIER;
             if (IsValid()) {
@@ -799,7 +799,7 @@ namespace DslParser
             }
             return type;
         }
-        virtual const char* GetId(void)const override
+        virtual const char* GetId()const override
         {
             const char* str = "";
             if (IsValid()) {
@@ -807,9 +807,9 @@ namespace DslParser
             }
             return str;
         }
-        virtual int GetLine(void)const override;
+        virtual int GetLine()const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
-        virtual int HaveId(void) const override
+        virtual int HaveId() const override
         {
             if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
                 return FALSE;
@@ -817,7 +817,7 @@ namespace DslParser
                 return m_ValueOrFunctions[m_ValueOrFunctionNum - 1]->HaveId();
         }
     public:
-        void ClearFunctions(void) { m_ValueOrFunctionNum = 0; }
+        void ClearFunctions() { m_ValueOrFunctionNum = 0; }
         void AddFunction(ValueOrFunctionData* pVal)
         {
             if (nullptr == pVal || m_ValueOrFunctionNum < 0 || m_ValueOrFunctionNum >= m_MaxValueOrFunctionNum)
@@ -828,7 +828,7 @@ namespace DslParser
             m_ValueOrFunctions[m_ValueOrFunctionNum] = pVal;
             ++m_ValueOrFunctionNum;
         }
-        ValueOrFunctionData*& GetLastFunctionRef(void)const
+        ValueOrFunctionData*& GetLastFunctionRef()const
         {
             if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
                 return GetNullValueOrFunctionPtrRef();
@@ -842,7 +842,7 @@ namespace DslParser
             return m_ValueOrFunctions[index];
         }
     public:
-        int GetFunctionNum(void)const { return m_ValueOrFunctionNum; }
+        int GetFunctionNum()const { return m_ValueOrFunctionNum; }
         ValueOrFunctionData* GetFunction(int index)const
         {
             if (nullptr == m_ValueOrFunctions || index < 0 || index >= m_ValueOrFunctionNum || index >= m_MaxValueOrFunctionNum)
@@ -855,19 +855,19 @@ namespace DslParser
                 return "";
             return m_ValueOrFunctions[index]->GetId();
         }
-        ValueOrFunctionData* GetFirst(void)const
+        ValueOrFunctionData* GetFirst()const
         {
             return GetFunction(0);
         }
-        ValueOrFunctionData* GetSecond(void)const
+        ValueOrFunctionData* GetSecond()const
         {
             return GetFunction(1);
         }
-        ValueOrFunctionData* GetThird(void)const
+        ValueOrFunctionData* GetThird()const
         {
             return GetFunction(2);
         }
-        ValueOrFunctionData* GetLast(void)const
+        ValueOrFunctionData* GetLast()const
         {
             int num = GetFunctionNum();
             if (num <= 0)
@@ -876,7 +876,7 @@ namespace DslParser
         }
     public:
         StatementData(IDslStringAndObjectBuffer& buffer);
-        virtual ~StatementData(void) override
+        virtual ~StatementData() override
         {
             ReleaseFunctions();
             ReleaseFirstComments(&m_Buffer, m_pCommentsInfo);
@@ -884,11 +884,11 @@ namespace DslParser
         }
         void InitFunctionsCapacity(int c);
     protected:
-        virtual IDslStringAndObjectBuffer* GetBuffer(void) const override
+        virtual IDslStringAndObjectBuffer* GetBuffer() const override
         {
             return &m_Buffer;
         }
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const override
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo() const override
         {
             return m_pCommentsInfo;
         }
@@ -898,10 +898,10 @@ namespace DslParser
         StatementData& operator=(const StatementData&) = delete;
         StatementData& operator=(StatementData&& other) noexcept = delete;
     private:
-        void PrepareFunctions(void);
-        void ReleaseFunctions(void);
+        void PrepareFunctions();
+        void ReleaseFunctions();
     private:
-        ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void)const;
+        ValueOrFunctionData*& GetNullValueOrFunctionPtrRef()const;
     private:
         ValueOrFunctionData** m_ValueOrFunctions;
         int m_ValueOrFunctionNum;
@@ -916,37 +916,37 @@ namespace DslParser
     class IDslStringAndObjectBuffer
     {
     public:
-        virtual DslOptions& GetOptions(void) = 0;
-        virtual const DslOptions& GetOptions(void)const = 0;
+        virtual DslOptions& GetOptions() = 0;
+        virtual const DslOptions& GetOptions()const = 0;
     public:
         virtual char* AllocString(int len) = 0;
         virtual char* AllocString(const char* src) = 0;
-        virtual char* GetStringBuffer(void)const = 0;
-        virtual char*& GetUnusedStringPtrRef(void) = 0;
-        virtual int GetUnusedStringLength(void)const = 0;
+        virtual char* GetStringBuffer()const = 0;
+        virtual char*& GetUnusedStringPtrRef() = 0;
+        virtual int GetUnusedStringLength()const = 0;
     public:
-        virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo(void) = 0;
-        virtual FunctionCommentsInfo* NewFunctionCommentsInfo(void) = 0;
+        virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo() = 0;
+        virtual FunctionCommentsInfo* NewFunctionCommentsInfo() = 0;
     public:
-        virtual ValueData* AddNewValueComponent(void) = 0;
-        virtual FunctionData* AddNewFunctionComponent(void) = 0;
-        virtual StatementData* AddNewStatementComponent(void) = 0;
-        virtual int GetUnusedObjectLength(void)const = 0;
+        virtual ValueData* AddNewValueComponent() = 0;
+        virtual FunctionData* AddNewFunctionComponent() = 0;
+        virtual StatementData* AddNewStatementComponent() = 0;
+        virtual int GetUnusedObjectLength()const = 0;
     public:
         virtual void** NewPtrArray(int size) = 0;
         virtual void DeletePtrArray(void** ptr, int size) = 0;
     public:
-        virtual void ZeroErrorInfoBuffer(void) = 0;
+        virtual void ZeroErrorInfoBuffer() = 0;
         virtual char* GetSingleErrorInfoBuffer(int index) = 0;
-        virtual int GetSingleErrorInfoCapacity(void) = 0;
+        virtual int GetSingleErrorInfoCapacity() = 0;
     public:
-        virtual ISyntaxComponent* GetNullSyntaxPtr(void) = 0;
-        virtual FunctionData* GetNullFunctionPtr(void) = 0;
-        virtual FunctionData*& GetNullFunctionPtrRef(void) = 0;
-        virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void) = 0;
+        virtual ISyntaxComponent* GetNullSyntaxPtr() = 0;
+        virtual FunctionData* GetNullFunctionPtr() = 0;
+        virtual FunctionData*& GetNullFunctionPtrRef() = 0;
+        virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef() = 0;
     public:
-        virtual void Reset(void) = 0;
-        virtual ~IDslStringAndObjectBuffer(void) {}
+        virtual void Reset() = 0;
+        virtual ~IDslStringAndObjectBuffer() {}
     };
 
     /*
@@ -969,8 +969,8 @@ namespace DslParser
         };
         using SyntaxComponentPtr = ISyntaxComponent*;
     public:
-        virtual DslOptions& GetOptions(void) override { return m_Options; }
-        virtual const DslOptions& GetOptions(void)const override { return m_Options; }
+        virtual DslOptions& GetOptions() override { return m_Options; }
+        virtual const DslOptions& GetOptions()const override { return m_Options; }
     public:
         virtual char* AllocString(int len) override
         {
@@ -995,16 +995,16 @@ namespace DslParser
             }
             return p;
         }
-        virtual char* GetStringBuffer(void)const override { return m_pStringBuffer; }
-        virtual char*& GetUnusedStringPtrRef(void) override { return m_pUnusedStringPtr; }
-        virtual int GetUnusedStringLength(void)const override
+        virtual char* GetStringBuffer()const override { return m_pStringBuffer; }
+        virtual char*& GetUnusedStringPtrRef() override { return m_pUnusedStringPtr; }
+        virtual int GetUnusedStringLength()const override
         {
             MyAssert(m_pUnusedStringRef);
             MyAssert(m_pUnusedObjectPtr);
             return static_cast<int>(m_pUnusedObjectPtr - m_pUnusedStringPtr);
         }
     public:
-        virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo(void) override
+        virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo() override
         {
             size_t size = sizeof(SyntaxComponentCommentsInfo);
             if (GetUnusedObjectLength() < static_cast<int>(size))
@@ -1015,7 +1015,7 @@ namespace DslParser
             ++m_SyntaxComponentCommentsInfoNum;
             return p;
         }
-        virtual FunctionCommentsInfo* NewFunctionCommentsInfo(void) override
+        virtual FunctionCommentsInfo* NewFunctionCommentsInfo() override
         {
             size_t size = sizeof(FunctionCommentsInfo);
             if (GetUnusedObjectLength() < static_cast<int>(size))
@@ -1027,7 +1027,7 @@ namespace DslParser
             return p;
         }
     public:
-        virtual ValueData* AddNewValueComponent(void) override
+        virtual ValueData* AddNewValueComponent() override
         {
             size_t size = sizeof(ValueData);
             if (GetUnusedObjectLength() < static_cast<int>(size))
@@ -1038,7 +1038,7 @@ namespace DslParser
             AddSyntaxComponent(p);
             return p;
         }
-        virtual FunctionData* AddNewFunctionComponent(void) override
+        virtual FunctionData* AddNewFunctionComponent() override
         {
             size_t size = sizeof(FunctionData);
             if (GetUnusedObjectLength() < static_cast<int>(size))
@@ -1049,7 +1049,7 @@ namespace DslParser
             AddSyntaxComponent(p);
             return p;
         }
-        virtual StatementData* AddNewStatementComponent(void) override
+        virtual StatementData* AddNewStatementComponent() override
         {
             size_t size = sizeof(StatementData);
             if (GetUnusedObjectLength() < static_cast<int>(size))
@@ -1060,7 +1060,7 @@ namespace DslParser
             AddSyntaxComponent(p);
             return p;
         }
-        virtual int GetUnusedObjectLength(void)const override
+        virtual int GetUnusedObjectLength()const override
         {
             MyAssert(m_pUnusedStringPtr);
             MyAssert(m_pUnusedObjectRef);
@@ -1123,7 +1123,7 @@ namespace DslParser
             }
         }
     public:
-        virtual void ZeroErrorInfoBuffer(void) override
+        virtual void ZeroErrorInfoBuffer() override
         {
             memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
         }
@@ -1133,23 +1133,23 @@ namespace DslParser
                 return nullptr;
             return m_ErrorInfo[index];
         }
-        virtual int GetSingleErrorInfoCapacity(void) override
+        virtual int GetSingleErrorInfoCapacity() override
         {
             return SingleErrorInfoCapacity;
         }
     public:
-        virtual StatementData* GetNullSyntaxPtr(void) override
+        virtual StatementData* GetNullSyntaxPtr() override
         {
             return &m_NullSyntax;
         }
-        virtual FunctionData* GetNullFunctionPtr(void) override
+        virtual FunctionData* GetNullFunctionPtr() override
         {
             m_NullFunction.GetName().SetInvalid();
             m_NullFunction.SetParamClass(FunctionData::PARAM_CLASS_NOTHING);
             m_NullFunction.ClearParams();
             return &m_NullFunction;
         }
-        virtual FunctionData*& GetNullFunctionPtrRef(void) override
+        virtual FunctionData*& GetNullFunctionPtrRef() override
         {
             auto fptr = m_pNullFunction;
             fptr->GetName().SetInvalid();
@@ -1157,7 +1157,7 @@ namespace DslParser
             fptr->ClearParams();
             return m_pNullFunction;
         }
-        virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef(void) override
+        virtual ValueOrFunctionData*& GetNullValueOrFunctionPtrRef() override
         {
             auto fptr = m_pNullFunction;
             fptr->GetName().SetInvalid();
@@ -1166,7 +1166,7 @@ namespace DslParser
             return m_pNullValueOrFunction;
         }
     public:
-        DslStringAndObjectBufferT(void) :
+        DslStringAndObjectBufferT() :
             m_pStringBuffer(m_StringBuffer),
             m_pUnusedStringPtr(m_StringBuffer),
             m_pUnusedObjectPtr(m_StringBuffer + StringAndObjectBufferSize),
@@ -1186,7 +1186,7 @@ namespace DslParser
             m_FreedFreeLinkHeader = 0;
             memset(m_ErrorInfo, 0, sizeof(m_ErrorInfo));
         }
-        virtual void Reset(void) override
+        virtual void Reset() override
         {
             m_SyntaxComponentNum = 0;
             m_SyntaxComponentCommentsInfoNum = 0;
@@ -1247,20 +1247,20 @@ namespace DslParser
     class DslTokenApi final
     {
     public:
-        char* getCurToken(void) const;
-        char* getLastToken(void) const;
-        int getLineNumber(void) const;
-        int getLastLineNumber(void) const;
+        char* getCurToken() const;
+        char* getLastToken() const;
+        int getLineNumber() const;
+        int getLastLineNumber() const;
         void setCurToken(char* tok)const;
         void setLastToken(char* tok)const;
         bool enqueueToken(char* tok, short val, int line)const;
-        char curChar(void)const;
-        char nextChar(void)const;
+        char curChar()const;
+        char nextChar()const;
         char peekChar(int ix)const;
         char peekNextValidChar(int beginIx)const;
         char peekNextValidChar(int beginIx, int& index)const;
-        void getOperatorToken(void);
-        short getOperatorTokenValue(void)const;
+        void getOperatorToken();
+        short getOperatorTokenValue()const;
         int isNotIdentifierAndEndParenthesis(char c)const;
         int isWhiteSpace(char c) const;
         int isDelimiter(char c) const;
@@ -1286,51 +1286,51 @@ namespace DslParser
     class DslActionApi final
     {
     public:
-        void markSeparator(void)const;
-        void endStatement(void)const;
-        void buildOperator(void)const;
-        void buildFirstTernaryOperator(void)const;
-        void buildSecondTernaryOperator(void)const;
-        void beginStatement(void)const;
-        void addFunction(void)const;
-        void setFunctionId(void)const;
-        void markParenthesisParam(void)const;
-        void buildHighOrderFunction(void)const;
-        void markBracketParam(void)const;
-        void markQuestionParenthesisParam(void)const;
-        void markQuestionBracketParam(void)const;
-        void markQuestionBraceParam(void)const;
-        void markStatement(void)const;
-        void markExternScript(void)const;
-        void markBracketColonParam(void)const;
-        void markParenthesisColonParam(void)const;
-        void markAngleBracketColonParam(void)const;
-        void markBracePercentParam(void)const;
-        void markBracketPercentParam(void)const;
-        void markParenthesisPercentParam(void)const;
-        void markAngleBracketPercentParam(void)const;
-        void markColonColonParam(void)const;
-        void markColonColonParenthesisParam(void)const;
-        void markColonColonBracketParam(void)const;
-        void markColonColonBraceParam(void)const;
-        void setExternScript(void)const;
-        void markPeriodParam(void)const;
-        void setMemberId(void)const;
-        void markPeriodParenthesisParam(void)const;
-        void markPeriodBracketParam(void)const;
-        void markPeriodBraceParam(void)const;
-        void markQuestionPeriodParam(void)const;
-        void markPointerParam(void)const;
-        void markPeriodStarParam(void)const;
-        void markQuestionPeriodStarParam(void)const;
-        void markPointerStarParam(void)const;
+        void markSeparator()const;
+        void endStatement()const;
+        void buildOperator()const;
+        void buildFirstTernaryOperator()const;
+        void buildSecondTernaryOperator()const;
+        void beginStatement()const;
+        void addFunction()const;
+        void setFunctionId()const;
+        void markParenthesisParam()const;
+        void buildHighOrderFunction()const;
+        void markBracketParam()const;
+        void markQuestionParenthesisParam()const;
+        void markQuestionBracketParam()const;
+        void markQuestionBraceParam()const;
+        void markStatement()const;
+        void markExternScript()const;
+        void markBracketColonParam()const;
+        void markParenthesisColonParam()const;
+        void markAngleBracketColonParam()const;
+        void markBracePercentParam()const;
+        void markBracketPercentParam()const;
+        void markParenthesisPercentParam()const;
+        void markAngleBracketPercentParam()const;
+        void markColonColonParam()const;
+        void markColonColonParenthesisParam()const;
+        void markColonColonBracketParam()const;
+        void markColonColonBraceParam()const;
+        void setExternScript()const;
+        void markPeriodParam()const;
+        void setMemberId()const;
+        void markPeriodParenthesisParam()const;
+        void markPeriodBracketParam()const;
+        void markPeriodBraceParam()const;
+        void markQuestionPeriodParam()const;
+        void markPointerParam()const;
+        void markPeriodStarParam()const;
+        void markQuestionPeriodStarParam()const;
+        void markPointerStarParam()const;
     public:
         void push(char* token, int type)const;
-        StatementData* getCurStatement(void)const;
-        FunctionData* getLastFunction(void)const;
+        StatementData* getCurStatement()const;
+        FunctionData* getLastFunction()const;
         void setLastFunction(FunctionData* p)const;
     public:
-        inline DslActionApi(void) :m_Impl(0) {}
+        inline DslActionApi() :m_Impl(0) {}
         inline void SetImpl(ActionForSourceCodeScript* p) { m_Impl = p; }
     private:
         DslActionApi(const DslActionApi& other) = delete;
@@ -1358,7 +1358,7 @@ namespace DslParser
         using BeforeBuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
         using BuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
     public:
-        int GetDslInfoNum(void)const { return m_DslInfoNum; }
+        int GetDslInfoNum()const { return m_DslInfoNum; }
         ISyntaxComponent* GetDslInfo(int index)const
         {
             if (index < 0 || index >= m_DslInfoNum)
@@ -1370,8 +1370,8 @@ namespace DslParser
         void AddDslInfo(ISyntaxComponent* p);
     public:
         DslFile(IDslStringAndObjectBuffer& buffer);
-        ~DslFile(void);
-        void Reset(void);
+        ~DslFile();
+        void Reset();
         void Parse(const char* buf);
         void Parse(IScriptSource& source);
     public:
@@ -1385,10 +1385,10 @@ namespace DslParser
         void SetStringDelimiter(const char* begin, const char* end);
         void SetScriptDelimiter(const char* begin, const char* end);
     public:
-        const char* GetStringBeginDelimiter(void)const { return m_StringBeginDelimiter; }
-        const char* GetStringEndDelimiter(void)const { return m_StringEndDelimiter; }
-        const char* GetScriptBeginDelimiter(void)const { return m_ScriptBeginDelimiter; }
-        const char* GetScriptEndDelimiter(void)const { return m_ScriptEndDelimiter; }
+        const char* GetStringBeginDelimiter()const { return m_StringBeginDelimiter; }
+        const char* GetStringEndDelimiter()const { return m_StringEndDelimiter; }
+        const char* GetScriptBeginDelimiter()const { return m_ScriptBeginDelimiter; }
+        const char* GetScriptEndDelimiter()const { return m_ScriptEndDelimiter; }
     public:
         TokenCanEatCharDelegation OnTokenCanEatChar;
         GetTokenDelegation OnGetToken;
@@ -1408,17 +1408,17 @@ namespace DslParser
         DslFile& operator=(const DslFile& other) = delete;
         DslFile& operator=(DslFile&& other) noexcept = delete;
     private:
-        void Init(void);
-        void Release(void);
+        void Init();
+        void Release();
     public:
-        void EnableDebugInfo(void) { m_IsDebugInfoEnable = TRUE; }
-        void DisableDebugInfo(void) { m_IsDebugInfoEnable = FALSE; }
-        int IsDebugInfoEnable(void)const { return m_IsDebugInfoEnable; }
+        void EnableDebugInfo() { m_IsDebugInfoEnable = TRUE; }
+        void DisableDebugInfo() { m_IsDebugInfoEnable = FALSE; }
+        int IsDebugInfoEnable()const { return m_IsDebugInfoEnable; }
     public:
-        void ClearErrorInfo(void);
+        void ClearErrorInfo();
         void AddError(const char* error);
-        int HasError(void)const { return m_HasError; }
-        int GetErrorNum(void)const { return m_ErrorNum; }
+        int HasError()const { return m_HasError; }
+        int GetErrorNum()const { return m_ErrorNum; }
         const char* GetErrorInfo(int index) const
         {
             if (index < 0 || index >= m_ErrorNum)
@@ -1428,7 +1428,7 @@ namespace DslParser
                 return "";
             return ptr;
         }
-        char* NewErrorInfo(void)
+        char* NewErrorInfo()
         {
             m_HasError = TRUE;
             auto* ptr = m_Buffer.GetSingleErrorInfoBuffer(m_ErrorNum);
@@ -1440,22 +1440,22 @@ namespace DslParser
                 return nullptr;
             }
         }
-        int GetSingleErrorInfoCapacity(void)const { return m_Buffer.GetSingleErrorInfoCapacity(); }
+        int GetSingleErrorInfoCapacity()const { return m_Buffer.GetSingleErrorInfoCapacity(); }
     public:
         char* AllocString(int len) const { return m_Buffer.AllocString(len); }
         char* AllocString(const char* src) const { return m_Buffer.AllocString(src); }
-        char* GetStringBuffer(void) const { return m_Buffer.GetStringBuffer(); }
-        char*& GetUnusedStringPtrRef(void) const { return m_Buffer.GetUnusedStringPtrRef(); }
-        int GetUnusedStringLength(void) const { return m_Buffer.GetUnusedStringLength(); }
+        char* GetStringBuffer() const { return m_Buffer.GetStringBuffer(); }
+        char*& GetUnusedStringPtrRef() const { return m_Buffer.GetUnusedStringPtrRef(); }
+        int GetUnusedStringLength() const { return m_Buffer.GetUnusedStringLength(); }
     public:
-        ValueData* AddNewValueComponent(void) const { return m_Buffer.AddNewValueComponent(); }
-        FunctionData* AddNewFunctionComponent(void) const { return m_Buffer.AddNewFunctionComponent(); }
-        StatementData* AddNewStatementComponent(void) const { return m_Buffer.AddNewStatementComponent(); }
+        ValueData* AddNewValueComponent() const { return m_Buffer.AddNewValueComponent(); }
+        FunctionData* AddNewFunctionComponent() const { return m_Buffer.AddNewFunctionComponent(); }
+        StatementData* AddNewStatementComponent() const { return m_Buffer.AddNewStatementComponent(); }
     public:
-        FunctionData* GetNullFunctionPtr(void) { return m_Buffer.GetNullFunctionPtr(); }
+        FunctionData* GetNullFunctionPtr() { return m_Buffer.GetNullFunctionPtr(); }
     private:
-        void PrepareDslInfos(void);
-        void ReleaseDslInfos(void);
+        void PrepareDslInfos();
+        void ReleaseDslInfos();
     private:
         IDslStringAndObjectBuffer& m_Buffer;
     private:
@@ -1480,16 +1480,16 @@ namespace DslParser
     class IScriptSource
     {
     public:
-        virtual ~IScriptSource(void) {}
+        virtual ~IScriptSource() {}
     public:
         class Iterator
         {
         public:
-            const char& operator * (void) const
+            const char& operator * () const
             {
                 return Peek(0);
             }
-            Iterator& operator ++ (void)
+            Iterator& operator ++ ()
             {
                 Advance();
                 return *this;
@@ -1507,7 +1507,7 @@ namespace DslParser
                     it.Advance();
                 return it;
             }
-            int Load(void)
+            int Load()
             {
                 if (nullptr != m_pSource) {
                     int r = m_pSource->Load();
@@ -1520,11 +1520,11 @@ namespace DslParser
                     return FALSE;
                 }
             }
-            const char* GetBuffer(void)const
+            const char* GetBuffer()const
             {
                 return m_pSource->GetBuffer();
             }
-            const char* GetLeft(void)const
+            const char* GetLeft()const
             {
                 return m_Iterator;
             }
@@ -1538,7 +1538,7 @@ namespace DslParser
                 return !(operator ==(other));
             }
         public:
-            Iterator(void) :m_pSource(nullptr), m_Iterator(""), m_EndIterator(m_Iterator)
+            Iterator() :m_pSource(nullptr), m_Iterator(""), m_EndIterator(m_Iterator)
             {
             }
             explicit Iterator(IScriptSource& source) :m_pSource(&source)
@@ -1572,7 +1572,7 @@ namespace DslParser
                 else
                     return *m_EndIterator;
             }
-            void Advance(void)
+            void Advance()
             {
                 if (m_Iterator < m_EndIterator)
                     ++m_Iterator;
@@ -1590,13 +1590,13 @@ namespace DslParser
         };
         friend class Iterator;
     public:
-        Iterator GetIterator(void)
+        Iterator GetIterator()
         {
             return Iterator(*this);
         }
     protected:
-        virtual int Load(void) = 0;
-        virtual const char* GetBuffer(void)const = 0;
+        virtual int Load() = 0;
+        virtual const char* GetBuffer()const = 0;
     };
 }
 

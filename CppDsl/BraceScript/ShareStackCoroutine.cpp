@@ -60,7 +60,7 @@ namespace CoroutineWithShareStack
             Terminated = 0;
             Caller = Callee = nullptr;
         }
-        ~CoroutineData(void)
+        ~CoroutineData()
         {
             MyTask = nullptr;
             StackSize = 0;
@@ -73,10 +73,10 @@ namespace CoroutineWithShareStack
     class CoroutineMain : public Coroutine
     {
     public:
-        CoroutineMain(void) :Coroutine(0)
+        CoroutineMain() :Coroutine(0)
         {
         }
-        virtual void Routine(void) override
+        virtual void Routine() override
         {
         }
     };
@@ -110,22 +110,22 @@ namespace CoroutineWithShareStack
     {
         m_pData = new CoroutineData(stackSize);
     }
-    Coroutine::~Coroutine(void)
+    Coroutine::~Coroutine()
     {
         Release();
     }
-    void Coroutine::Release(void)
+    void Coroutine::Release()
     {
         if (nullptr == m_pData)
             return;
         delete m_pData;
         m_pData = nullptr;
     }
-    bool Coroutine::IsTerminated(void)const
+    bool Coroutine::IsTerminated()const
     {
         return m_pData->Terminated != 0;
     }
-    void Coroutine::Reset(void)
+    void Coroutine::Reset()
     {
         if (this == g_Current) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
@@ -144,19 +144,19 @@ namespace CoroutineWithShareStack
         m_pData->Ready = 1;
         m_pData->Terminated = 0;
     }
-    void Coroutine::Call(void)
+    void Coroutine::Call()
     {
         if (IsTerminated())
             Reset();
         CoroutineWithShareStack::Call(this);
     }
-    void Coroutine::Resume(void)
+    void Coroutine::Resume()
     {
         if (IsTerminated())
             Reset();
         CoroutineWithShareStack::Resume(this);
     }
-    inline void Coroutine::Enter(void)
+    inline void Coroutine::Enter()
     {
         if (nullptr == g_Current) {
             Error("InitSequencing has not been called");
@@ -180,7 +180,7 @@ namespace CoroutineWithShareStack
             longjmp(m_pData->MyTask->jmpb, 1);
         }
     }
-    inline void Coroutine::Eat(void)
+    inline void Coroutine::Eat()
     {
         static int d;
         static Task* p;
@@ -291,7 +291,7 @@ namespace CoroutineWithShareStack
         }
         next->Enter();
     }
-    void Detach(void)
+    void Detach()
     {
         Coroutine* next = g_Current->m_pData->Caller;
         if (next) {
@@ -312,15 +312,15 @@ namespace CoroutineWithShareStack
         }
         return !g_Main.IsTerminated();
     }
-    void TryRelease(void)
+    void TryRelease()
     {
         g_Main.Release();
     }
-    Coroutine* CurrentCoroutine(void)
+    Coroutine* CurrentCoroutine()
     {
         return g_Current;
     }
-    Coroutine* MainCoroutine(void)
+    Coroutine* MainCoroutine()
     {
         return &g_Main;
     }

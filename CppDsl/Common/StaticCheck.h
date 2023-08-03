@@ -28,7 +28,7 @@ int CompileChecker(CompileSuccess<true> const&);
 	sizeof(CompileChecker(CompileSuccess<false!=(expr)>(CompileError_##msg())));\
 }
 //下面是单元测试函数 和 使用格式样例
-//void UnitTest_StaticCheck(void)
+//void UnitTest_StaticCheck()
 //{
 //	STATIC_CHECK(false, CheckFailed_CheckItNow);
 //	STATIC_CHECK(true, CheckSuccessfully_Pass);

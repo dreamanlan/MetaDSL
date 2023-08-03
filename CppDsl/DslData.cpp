@@ -17,7 +17,7 @@ namespace DslData
     ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType), m_Separator(IDslSyntaxCommon::SEPARATOR_NOTHING)
     {
     }
-    ISyntaxComponent::~ISyntaxComponent(void)
+    ISyntaxComponent::~ISyntaxComponent()
     {
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
@@ -43,7 +43,7 @@ namespace DslData
     {
         SetInvalid();
     }
-    void ValueData::Release(void)
+    void ValueData::Release()
     {
         if (nullptr != m_FunctionVal) {
             delete m_FunctionVal;
@@ -66,7 +66,7 @@ namespace DslData
         }
         m_Line = other.m_Line;
     }
-    FunctionData* ValueData::SetFunction(void)
+    FunctionData* ValueData::SetFunction()
     {
         m_Type = VALUE_TYPE_FUNCTION;
         if (nullptr == m_FunctionVal)
@@ -80,7 +80,7 @@ namespace DslData
         p->CopyFrom(other);
         return p;
     }
-    bool ValueData::IsValid(void)const
+    bool ValueData::IsValid()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (nullptr != m_FunctionVal)
@@ -90,7 +90,7 @@ namespace DslData
         }
         return HaveId();
     }
-    int ValueData::GetIdType(void)const
+    int ValueData::GetIdType()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (nullptr != m_FunctionVal)
@@ -100,7 +100,7 @@ namespace DslData
         }
         return m_Type;
     }
-    const std::string& ValueData::GetId(void)const
+    const std::string& ValueData::GetId()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (nullptr != m_FunctionVal)
@@ -110,7 +110,7 @@ namespace DslData
         }
         return m_StringVal;
     }
-    int ValueData::GetLine(void)const
+    int ValueData::GetLine()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (nullptr != m_FunctionVal)
@@ -120,7 +120,7 @@ namespace DslData
         }
         return m_Line;
     }
-    bool ValueData::HaveId(void)const
+    bool ValueData::HaveId()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (nullptr != m_FunctionVal)
@@ -154,7 +154,7 @@ namespace DslData
         return need;
     }
     //------------------------------------------------------------------------------------------------------
-    FunctionData::FunctionData(void) :ValueOrFunctionData(ISyntaxComponent::TYPE_FUNCTION),
+    FunctionData::FunctionData() :ValueOrFunctionData(ISyntaxComponent::TYPE_FUNCTION),
         m_Params(0),
         m_ParamClass(PARAM_CLASS_NOTHING)
     {
@@ -166,7 +166,7 @@ namespace DslData
         }
     }
 
-    FunctionData::~FunctionData(void)
+    FunctionData::~FunctionData()
     {
         ReleaseParams();
         ReleaseComments();
@@ -211,7 +211,7 @@ namespace DslData
         }
     }
 
-    int FunctionData::GetLine(void)const
+    int FunctionData::GetLine()const
     {
         if (HaveId())
             return m_Name.GetLine();
@@ -234,17 +234,17 @@ namespace DslData
             m_Params.reserve(static_cast<size_t>(v));
     }
 
-    ISyntaxComponent& FunctionData::GetNullSyntax(void)const
+    ISyntaxComponent& FunctionData::GetNullSyntax()const
     {
         return DslFile::GetNullSyntax();
     }
 
-    FunctionData& FunctionData::GetNullFunction(void)const
+    FunctionData& FunctionData::GetNullFunction()const
     {
         return DslFile::GetNullFunction();
     }
 
-    void FunctionData::ReleaseParams(void)
+    void FunctionData::ReleaseParams()
     {
         for (auto* ptr : m_Params) {
             delete ptr;
@@ -252,33 +252,33 @@ namespace DslData
         m_Params.clear();
     }
 
-    void FunctionData::ReleaseComments(void)
+    void FunctionData::ReleaseComments()
     {
         if (nullptr == m_pCommentsInfo)
             return;
         m_pCommentsInfo->m_Comments.clear();
     }
 
-    void FunctionData::ClearParams(void)
+    void FunctionData::ClearParams()
     {
         ReleaseParams();
     }
 
-    ValueData* FunctionData::AddValueParam(void)
+    ValueData* FunctionData::AddValueParam()
     {
         auto* p = new ValueData();
         m_Params.push_back(p);
         return p;
     }
 
-    FunctionData* FunctionData::AddFunctionParam(void)
+    FunctionData* FunctionData::AddFunctionParam()
     {
         auto* p = new FunctionData();
         m_Params.push_back(p);
         return p;
     }
 
-    StatementData* FunctionData::AddStatementParam(void)
+    StatementData* FunctionData::AddStatementParam()
     {
         auto* p = new StatementData();
         m_Params.push_back(p);
@@ -307,7 +307,7 @@ namespace DslData
         return nullptr;
     }
 
-    StatementData::StatementData(void) :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
+    StatementData::StatementData() :ISyntaxComponent(ISyntaxComponent::TYPE_STATEMENT),
         m_ValueOrFunctions(0)
     {
         if (DslFile::DontLoadComments()) {
@@ -318,7 +318,7 @@ namespace DslData
         }
     }
 
-    StatementData::~StatementData(void)
+    StatementData::~StatementData()
     {
         ReleaseFunctions();
         ReleaseFirstComments(m_pCommentsInfo);
@@ -352,7 +352,7 @@ namespace DslData
         }
     }
 
-    int StatementData::GetLine(void)const
+    int StatementData::GetLine()const
     {
         for (int ix = 0; ix < GetFunctionNum(); ++ix) {
             auto* p = GetFunction(ix);
@@ -371,29 +371,29 @@ namespace DslData
             m_ValueOrFunctions.reserve(static_cast<size_t>(v));
     }
 
-    void StatementData::ReleaseFunctions(void)
+    void StatementData::ReleaseFunctions()
     {
         for (auto* ptr : m_ValueOrFunctions) {
             delete ptr;
         }
         m_ValueOrFunctions.clear();
     }
-    ValueOrFunctionData& StatementData::GetNullValueOrFunction(void)const
+    ValueOrFunctionData& StatementData::GetNullValueOrFunction()const
     {
         return DslFile::GetNullFunction();
     }
 
-    void StatementData::ClearFunctions(void)
+    void StatementData::ClearFunctions()
     {
         ReleaseFunctions();
     }
-    ValueData* StatementData::AddValue(void)
+    ValueData* StatementData::AddValue()
     {
         auto* p = new ValueData();
         m_ValueOrFunctions.push_back(p);
         return p;
     }
-    FunctionData* StatementData::AddFunction(void)
+    FunctionData* StatementData::AddFunction()
     {
         auto* p = new FunctionData();
         m_ValueOrFunctions.push_back(p);
@@ -420,41 +420,41 @@ namespace DslData
     {
         return DslParser::Mac2Unix(buf, len);
     }
-    ISyntaxComponent& DslFile::GetNullSyntax(void)
+    ISyntaxComponent& DslFile::GetNullSyntax()
     {
         static StatementData s_Null;
         return s_Null;
     }
-    FunctionData& DslFile::GetNullFunction(void)
+    FunctionData& DslFile::GetNullFunction()
     {
         static FunctionData s_Null;
         return s_Null;
     }
 
-    DslFile::DslFile(void) :m_DslInfos(0), m_HasError(false), 
+    DslFile::DslFile() :m_DslInfos(0), m_HasError(false), 
         m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
     {
     }
 
-    DslFile::~DslFile(void)
+    DslFile::~DslFile()
     {
         Release();
     }
 
-    void DslFile::Reset(void)
+    void DslFile::Reset()
     {
         Release();
         Init();
     }
 
-    void DslFile::Init(void)
+    void DslFile::Init()
     {
         m_HasError = false;
         SetStringDelimiter("\"", "\"");
         SetScriptDelimiter("{:", ":}");
     }
 
-    void DslFile::Release(void)
+    void DslFile::Release()
     {
         ClearErrorInfo();
         for (auto* ptr : m_DslInfos) {
@@ -475,21 +475,21 @@ namespace DslData
         m_ScriptEndDelimiter = end;
     }
 
-    ValueData* DslFile::AddValue(void)
+    ValueData* DslFile::AddValue()
     {
         auto* p = new ValueData();
         m_DslInfos.push_back(p);
         return p;
     }
 
-    FunctionData* DslFile::AddFunction(void)
+    FunctionData* DslFile::AddFunction()
     {
         auto* p = new FunctionData();
         m_DslInfos.push_back(p);
         return p;
     }
 
-    StatementData* DslFile::AddStatement(void)
+    StatementData* DslFile::AddStatement()
     {
         auto* p = new StatementData();
         m_DslInfos.push_back(p);

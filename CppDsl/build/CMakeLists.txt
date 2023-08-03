@@ -156,11 +156,11 @@ elseif ( WIN32 AND NOT CYGWIN OR ANDROID )
     add_library(CppDsl STATIC
         ${CLIB_SRC}
     )
-else ( )
+else ()
     add_library(CppDsl SHARED
         ${CLIB_SRC}
     )
-endif ( )
+endif ()
 
 if(UINT_ESPECIALLY)
     ADD_DEFINITIONS(-DUINT_ESPECIALLY)
@@ -177,9 +177,9 @@ elseif (APPLE AND NOT IOS)
         m
         ${THIRDPART_LIB} 
     )
-else ( )
+else ()
     target_link_libraries(CppDsl
         m
         ${THIRDPART_LIB} 
     )
-endif ( )
+endif ()

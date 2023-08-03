@@ -7,11 +7,11 @@ class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 {
     using BaseType = RuntimeBuilderT<TestRuntimeBuilder>;
 public:
-    char* getLastToken(void) const { return const_cast<char*>(""); }
-    int getLastLineNumber(void) const { return 0; }
+    char* getLastToken() const { return const_cast<char*>(""); }
+    int getLastLineNumber() const { return 0; }
     int getCommentNum(int& commentOnNewLine) const { return 0; }
     char* getComment(int index) const { return const_cast<char*>(""); }
-    void resetComments(void) {}
+    void resetComments() {}
     void setCanFinish(int val) {}
     void setStringDelimiter(const char* begin, const char* end) {}
     void setScriptDelimiter(const char* begin, const char* end) {}
@@ -20,7 +20,7 @@ public:
     {}
 };
 
-void CompileTest_ByteCode(void)
+void CompileTest_ByteCode()
 {
     DslStringAndObjectBufferT<> buffer;
     DslFile dataFile(buffer);

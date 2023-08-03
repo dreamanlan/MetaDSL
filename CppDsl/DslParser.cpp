@@ -20,7 +20,7 @@ namespace DslParser
     ISyntaxComponent::ISyntaxComponent(int syntaxType) :m_SyntaxType(syntaxType), m_Separator(IDslSyntaxCommon::SEPARATOR_NOTHING)
     {
     }
-    ISyntaxComponent::~ISyntaxComponent(void)
+    ISyntaxComponent::~ISyntaxComponent()
     {
     }
     void ISyntaxComponent::CopyFrom(const ISyntaxComponent& other)
@@ -48,7 +48,7 @@ namespace DslParser
             }
         }
     }
-    void ISyntaxComponent::PrepareFirstComments(void)
+    void ISyntaxComponent::PrepareFirstComments()
     {
         auto pBuffer = GetBuffer();
         if (0 != pBuffer && 0 != GetCommentsInfo()) {
@@ -76,7 +76,7 @@ namespace DslParser
             }
         }
     }
-    void ISyntaxComponent::PrepareLastComments(void)
+    void ISyntaxComponent::PrepareLastComments()
     {
         auto pBuffer = GetBuffer();
         if (0 != pBuffer && 0 != GetCommentsInfo()) {
@@ -105,7 +105,7 @@ namespace DslParser
         }
     }
     //------------------------------------------------------------------------------------------------------
-    int ValueData::IsValid(void)const
+    int ValueData::IsValid()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (0 != m_FunctionVal)
@@ -115,7 +115,7 @@ namespace DslParser
         }
         return HaveId();
     }
-    int ValueData::GetIdType(void)const
+    int ValueData::GetIdType()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (0 != m_FunctionVal)
@@ -125,7 +125,7 @@ namespace DslParser
         }
         return m_Type;
     }
-    const char* ValueData::GetId(void)const
+    const char* ValueData::GetId()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (0 != m_FunctionVal)
@@ -135,7 +135,7 @@ namespace DslParser
         }
         return m_StringVal;
     }
-    int ValueData::GetLine(void)const
+    int ValueData::GetLine()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (0 != m_FunctionVal)
@@ -145,7 +145,7 @@ namespace DslParser
         }
         return m_Line;
     }
-    int ValueData::HaveId(void)const
+    int ValueData::HaveId()const
     {
         if (m_Type == VALUE_TYPE_FUNCTION) {
             if (0 != m_FunctionVal)
@@ -197,7 +197,7 @@ namespace DslParser
         m_MaxParamNum = options.GetMaxParamNum();
     }
 
-    FunctionData::~FunctionData(void)
+    FunctionData::~FunctionData()
     {
         ReleaseParams();
         ReleaseComments();
@@ -205,7 +205,7 @@ namespace DslParser
         ReleaseLastComments(&m_Buffer, m_pCommentsInfo);
     }
 
-    int FunctionData::GetLine(void)const
+    int FunctionData::GetLine()const
     {
         if(HaveId())
             return m_Name.GetLine();
@@ -222,12 +222,12 @@ namespace DslParser
         }
     }
 
-    ISyntaxComponent* FunctionData::GetNullSyntaxPtr(void)const
+    ISyntaxComponent* FunctionData::GetNullSyntaxPtr()const
     {
         return m_Buffer.GetNullSyntaxPtr();
     }
 
-    FunctionData* FunctionData::GetNullFunctionPtr(void)const
+    FunctionData* FunctionData::GetNullFunctionPtr()const
     {
         return m_Buffer.GetNullFunctionPtr();
     }
@@ -250,7 +250,7 @@ namespace DslParser
         }
     }
 
-    void FunctionData::PrepareParams(void)
+    void FunctionData::PrepareParams()
     {
         if (nullptr == m_Params && TRUE == HaveParamOrStatement()) {
             m_Params = (SyntaxComponentPtr*)(m_Buffer.NewPtrArray(INIT_FUNCTION_PARAM));
@@ -282,7 +282,7 @@ namespace DslParser
         }
     }
 
-    void FunctionData::ReleaseParams(void)
+    void FunctionData::ReleaseParams()
     {
         if (nullptr != m_Params) {
             m_Buffer.DeletePtrArray((void**)m_Params, m_ParamSpace);
@@ -290,7 +290,7 @@ namespace DslParser
         }
     }
 
-    void FunctionData::PrepareComments(void)
+    void FunctionData::PrepareComments()
     {
         auto p = m_pCommentsInfo;
         if (0 == p)
@@ -308,7 +308,7 @@ namespace DslParser
         }
     }
 
-    void FunctionData::ReleaseComments(void)
+    void FunctionData::ReleaseComments()
     {
         auto p = m_pCommentsInfo;
         if (0 == p)
@@ -336,12 +336,12 @@ namespace DslParser
         m_MaxValueOrFunctionNum = options.GetMaxFunctionDimensionNum();
     }
 
-    ValueOrFunctionData*& StatementData::GetNullValueOrFunctionPtrRef(void)const
+    ValueOrFunctionData*& StatementData::GetNullValueOrFunctionPtrRef()const
     {
         return m_Buffer.GetNullValueOrFunctionPtrRef();
     }
 
-    int StatementData::GetLine(void)const
+    int StatementData::GetLine()const
     {
         for (int ix = 0; ix < GetFunctionNum(); ++ix) {
             auto* p = GetFunction(ix);
@@ -365,7 +365,7 @@ namespace DslParser
         }
     }
 
-    void StatementData::PrepareFunctions(void)
+    void StatementData::PrepareFunctions()
     {
         if (nullptr == m_ValueOrFunctions) {
             m_ValueOrFunctions = (ValueOrFunctionData**)(m_Buffer.NewPtrArray(INIT_STATEMENT_FUNCTION));
@@ -391,7 +391,7 @@ namespace DslParser
         }
     }
 
-    void StatementData::ReleaseFunctions(void)
+    void StatementData::ReleaseFunctions()
     {
         if (nullptr != m_ValueOrFunctions) {
             m_Buffer.DeletePtrArray((void**)m_ValueOrFunctions, m_ValueOrFunctionSpace);
@@ -411,12 +411,12 @@ namespace DslParser
         ClearErrorInfo();
     }
 
-    DslFile::~DslFile(void)
+    DslFile::~DslFile()
     {
         Release();
     }
 
-    void DslFile::Reset(void)
+    void DslFile::Reset()
     {
         Release();
         Init();
@@ -460,7 +460,7 @@ namespace DslParser
         ++m_DslInfoNum;
     }
 
-    void DslFile::PrepareDslInfos(void)
+    void DslFile::PrepareDslInfos()
     {
         if (nullptr == m_DslInfos) {
             m_DslInfos = (ISyntaxComponent**)(m_Buffer.NewPtrArray(INIT_DSL_INFO));
@@ -485,7 +485,7 @@ namespace DslParser
             }
         }
     }
-    void DslFile::ReleaseDslInfos(void)
+    void DslFile::ReleaseDslInfos()
     {
         if (nullptr != m_DslInfos) {
             m_Buffer.DeletePtrArray((void**)m_DslInfos, m_DslInfoSpace);
@@ -515,19 +515,19 @@ namespace DslParser
         m_ScriptEndDelimiter = end;
     }
 
-    void DslFile::Init(void)
+    void DslFile::Init()
     {
         m_DslInfos = 0;
         m_DslInfoNum = 0;
         m_DslInfoSpace = 0;
         m_MaxDslInfoNum = m_Buffer.GetOptions().GetMaxDslInfoNum();
     }
-    void DslFile::Release(void)
+    void DslFile::Release()
     {
         ReleaseDslInfos();
     }
 
-    void DslFile::ClearErrorInfo(void)
+    void DslFile::ClearErrorInfo()
     {
         m_HasError = FALSE;
         m_ErrorNum = 0;

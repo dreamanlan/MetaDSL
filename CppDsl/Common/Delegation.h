@@ -25,11 +25,11 @@ public:
         memcpy(ptrBuffer, other.ptrBuffer, sizeof(ptrBuffer));
         return *this;
     }
-    inline bool isNull(void) const
+    inline bool isNull() const
     {
         return obj == nullptr;
     }
-    inline void clear(void)
+    inline void clear()
     {
         obj = nullptr;
         memset(ptrBuffer, 0, sizeof(ptrBuffer));
@@ -44,7 +44,7 @@ struct FuncInvoker0
 {
 public:
     using ThisType = FuncInvoker0<Delegation, R>;
-    using Fptr = R(*)(void);
+    using Fptr = R(*)();
     FuncInvoker0(Fptr func)
     {
         mFunc = func;
@@ -74,7 +74,7 @@ struct MemFuncInvoker0
 {
 public:
     using ThisType = MemFuncInvoker0<Delegation, T, R>;
-    using Fptr = R(T::*)(void);
+    using Fptr = R(T::*)();
     MemFuncInvoker0(T* obj, Fptr func)
     {
         mObj = obj;
@@ -107,7 +107,7 @@ struct ConstMemFuncInvoker0
 {
 public:
     using ThisType = ConstMemFuncInvoker0<Delegation, T, R>;
-    using Fptr = R(T::*)(void)const;
+    using Fptr = R(T::*)()const;
     ConstMemFuncInvoker0(const T* obj, Fptr func)
     {
         mObj = obj;
@@ -152,16 +152,16 @@ public:
         invoker = other.invoker;
     }
     template<typename T>
-    Delegation0(const T* obj, R(T::* fptr)(void)const)
+    Delegation0(const T* obj, R(T::* fptr)()const)
     {
         attach(obj, fptr);
     }
     template<typename T>
-    Delegation0(T* obj, R(T::* fptr)(void))
+    Delegation0(T* obj, R(T::* fptr)())
     {
         attach(obj, fptr);
     }
-    Delegation0(R(*fptr)(void))
+    Delegation0(R(*fptr)())
     {
         attach(fptr);
     }
@@ -174,32 +174,32 @@ public:
         return *this;
     }
     template<typename T>
-    inline void attach(const T* obj, R(T::* fptr)(void)const)
+    inline void attach(const T* obj, R(T::* fptr)()const)
     {
         invoker = ConstMemFuncInvoker0<ThisType, T, R>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) ConstMemFuncInvoker0<ThisType, T, R>(obj, fptr);
     }
     template<typename T>
-    inline void attach(T* obj, R(T::* fptr)(void))
+    inline void attach(T* obj, R(T::* fptr)())
     {
         invoker = MemFuncInvoker0<ThisType, T, R>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) MemFuncInvoker0<ThisType, T, R>(obj, fptr);
     }
-    inline void attach(R(*fptr)(void))
+    inline void attach(R(*fptr)())
     {
         invoker = FuncInvoker0<ThisType, R>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) FuncInvoker0<ThisType, R>(fptr);
     }
-    inline void detach(void)
+    inline void detach()
     {
         mObj.clear();
         invoker = nullptr;
     }
-    inline bool isNull(void) const
+    inline bool isNull() const
     {
         return mObj.isNull() || invoker == nullptr;
     }
-    inline R operator () (void)const
+    inline R operator () ()const
     {
         return invoker(&mObj);
     }
@@ -350,12 +350,12 @@ public:
         invoker = FuncInvoker1<ThisType, R, P1>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) FuncInvoker1<ThisType, R, P1>(fptr);
     }
-    inline void detach(void)
+    inline void detach()
     {
         mObj.clear();
         invoker = nullptr;
     }
-    inline bool isNull(void) const
+    inline bool isNull() const
     {
         return mObj.isNull() || invoker == nullptr;
     }
@@ -545,12 +545,12 @@ public:\
 		invoker=FuncInvoker##X<ThisType,R,RepeatArg1_##X(P)>::invoke;\
 		new(&mObj,sizeof(ObjectPlaceHolder)) FuncInvoker##X<ThisType,R,RepeatArg1_##X(P)>(fptr);\
 	}\
-	inline void detach(void)\
+	inline void detach()\
 	{\
 		mObj.clear();\
 		invoker=nullptr;\
 	}\
-	inline bool isNull(void) const\
+	inline bool isNull() const\
 	{\
 		return mObj.isNull() || invoker==nullptr;\
 	}\
@@ -736,12 +736,12 @@ public:
         invoker = FuncInvoker<ThisType, R(Args...)>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) FuncInvoker<ThisType, R(Args...)>(fptr);
     }
-    inline void detach(void)
+    inline void detach()
     {
         mObj.clear();
         invoker = nullptr;
     }
-    inline bool isNull(void) const
+    inline bool isNull() const
     {
         return mObj.isNull() || invoker == nullptr;
     }

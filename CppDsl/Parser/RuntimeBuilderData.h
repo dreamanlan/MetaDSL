@@ -28,32 +28,32 @@ public:
         char* mString;
         int mType;
 
-        TokenInfo(void) :mString(0), mType(UNKNOWN_TOKEN)
+        TokenInfo() :mString(0), mType(UNKNOWN_TOKEN)
         {}
         TokenInfo(char* pstr, int type) :mString(pstr), mType(type)
         {}
-        int IsValid(void)const
+        int IsValid()const
         {
             if (UNKNOWN_TOKEN != mType)
                 return TRUE;
             else
                 return FALSE;
         }
-        DslParser::ValueData ToValue(void)const;
+        DslParser::ValueData ToValue()const;
     };
 private:
     using TokenStack = DequeT<TokenInfo, STACKSIZE>;
     using SemanticStack = DequeT<DslParser::StatementData*, STACKSIZE>;
 public:
-    RuntimeBuilderData(void);
+    RuntimeBuilderData();
 public:
     void push(const TokenInfo& info);
-    TokenInfo pop(void);
-    int isSemanticStackEmpty(void)const;
+    TokenInfo pop();
+    int isSemanticStackEmpty()const;
     void pushStatement(DslParser::StatementData* p);
-    DslParser::StatementData* popStatement(void);
-    DslParser::StatementData* getCurStatement(void)const;
-    DslParser::FunctionData* getLastFunction(void)const;
+    DslParser::StatementData* popStatement();
+    DslParser::StatementData* getCurStatement()const;
+    DslParser::FunctionData* getLastFunction()const;
     void setLastFunction(DslParser::FunctionData* p)const;
 private:
     TokenStack		mTokenStack;

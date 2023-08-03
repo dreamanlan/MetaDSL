@@ -8,31 +8,31 @@ namespace CoroutineWithBoostContext
     class Coroutine
     {
         friend struct CoroutineData;
-        friend bool TryYield(void);
-        friend bool TryInit(void);
-        friend void TryRelease(void);
+        friend bool TryYield();
+        friend bool TryInit();
+        friend void TryRelease();
     public:
-        bool IsTerminated(void)const;
-        void Reset(void);
-        bool TryStart(void);
+        bool IsTerminated()const;
+        void Reset();
+        bool TryStart();
     protected:
         Coroutine(int stackSize);
-        virtual ~Coroutine(void);
-        virtual void Routine(void) = 0;
+        virtual ~Coroutine();
+        virtual void Routine() = 0;
     private:
-        void Release(void);
+        void Release();
     private:
         int m_StackSize;
         CoroutineData* m_pData;
     };
 
-    extern bool TryYield(void);
-    extern bool TryInit(void);
-    extern void TryRelease(void);
-    extern Coroutine* CurrentCoroutine(void);
-    extern Coroutine* MainCoroutine(void);
+    extern bool TryYield();
+    extern bool TryInit();
+    extern void TryRelease();
+    extern Coroutine* CurrentCoroutine();
+    extern Coroutine* MainCoroutine();
 
-    extern void FreeStackMemory(void);
-    extern void CleanupPool(void);
+    extern void FreeStackMemory();
+    extern void CleanupPool();
     extern std::size_t StatMemory(std::size_t& count, std::size_t& alloced_size);
 }

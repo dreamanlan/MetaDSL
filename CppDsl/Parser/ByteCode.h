@@ -22,52 +22,52 @@ namespace DslParser
             MyAssert(mThis);
         }
     public:
-        inline void    markSeparator(void);
-        inline void    endStatement(void);
-        inline void    buildOperator(void);
-        inline void    buildFirstTernaryOperator(void);
-        inline void    buildSecondTernaryOperator(void);
-        inline void    beginStatement(void);
-        inline void    addFunction(void);
-        inline void    setFunctionId(void);
-        inline void    markParenthesisParam(void);
-        inline void    buildHighOrderFunction(void);
-        inline void    markBracketParam(void);
-        inline void    markQuestionParenthesisParam(void);
-        inline void    markQuestionBracketParam(void);
-        inline void    markQuestionBraceParam(void);
-        inline void    markStatement(void);
-        inline void    markExternScript(void);
-        inline void    markBracketColonParam(void);
-        inline void    markParenthesisColonParam(void);
-        inline void    markAngleBracketColonParam(void);
-        inline void    markBracePercentParam(void);
-        inline void    markBracketPercentParam(void);
-        inline void    markParenthesisPercentParam(void);
-        inline void    markAngleBracketPercentParam(void);
-        inline void    markColonColonParam(void);
-        inline void    markColonColonParenthesisParam(void);
-        inline void    markColonColonBracketParam(void);
-        inline void    markColonColonBraceParam(void);
-        inline void    setExternScript(void);
-        inline void    markPeriodParam(void);
-        inline void    setMemberId(void);
-        inline void    markPeriodParenthesisParam(void);
-        inline void    markPeriodBracketParam(void);
-        inline void    markPeriodBraceParam(void);
-        inline void    markQuestionPeriodParam(void);
-        inline void    markPointerParam(void);
-        inline void    markPeriodStarParam(void);
-        inline void    markQuestionPeriodStarParam(void);
-        inline void    markPointerStarParam(void);
+        inline void    markSeparator();
+        inline void    endStatement();
+        inline void    buildOperator();
+        inline void    buildFirstTernaryOperator();
+        inline void    buildSecondTernaryOperator();
+        inline void    beginStatement();
+        inline void    addFunction();
+        inline void    setFunctionId();
+        inline void    markParenthesisParam();
+        inline void    buildHighOrderFunction();
+        inline void    markBracketParam();
+        inline void    markQuestionParenthesisParam();
+        inline void    markQuestionBracketParam();
+        inline void    markQuestionBraceParam();
+        inline void    markStatement();
+        inline void    markExternScript();
+        inline void    markBracketColonParam();
+        inline void    markParenthesisColonParam();
+        inline void    markAngleBracketColonParam();
+        inline void    markBracePercentParam();
+        inline void    markBracketPercentParam();
+        inline void    markParenthesisPercentParam();
+        inline void    markAngleBracketPercentParam();
+        inline void    markColonColonParam();
+        inline void    markColonColonParenthesisParam();
+        inline void    markColonColonBracketParam();
+        inline void    markColonColonBraceParam();
+        inline void    setExternScript();
+        inline void    markPeriodParam();
+        inline void    setMemberId();
+        inline void    markPeriodParenthesisParam();
+        inline void    markPeriodBracketParam();
+        inline void    markPeriodBraceParam();
+        inline void    markQuestionPeriodParam();
+        inline void    markPointerParam();
+        inline void    markPeriodStarParam();
+        inline void    markQuestionPeriodStarParam();
+        inline void    markPointerStarParam();
     public:
-        RuntimeBuilderData& getRuntimeBuilderData(void) { return mData; }
-        const RuntimeBuilderData& getRuntimeBuilderData(void)const { return mData; }
+        RuntimeBuilderData& getRuntimeBuilderData() { return mData; }
+        const RuntimeBuilderData& getRuntimeBuilderData()const { return mData; }
     private:
         inline ISyntaxComponent& simplifyStatement(StatementData& data)const;
         inline ValueOrFunctionData& simplifyStatement(FunctionData& data)const;
         inline void simplifyFunction(FunctionData& data)const;
-        inline bool	preconditionCheck(void)const
+        inline bool	preconditionCheck()const
         {
             return nullptr != mThis && nullptr != mDataFile;
         }

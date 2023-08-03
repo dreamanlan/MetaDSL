@@ -62,7 +62,7 @@ public:
         PARAM_CLASS_UNMASK = 0x1F,
     };
 public:
-    virtual ~IDslSyntaxCommon(void) {}
+    virtual ~IDslSyntaxCommon() {}
 };
 
 enum DslBinaryCode

@@ -27,7 +27,7 @@ StringParser::StringParser(char* buf, int size, const char* fmt) :m_pBuffer(buf)
     m_FmtIndex = 0;
 }
 
-const char* StringParser::ParseToNextFormat(void)
+const char* StringParser::ParseToNextFormat()
 {
     int len = m_FmtLen;
     for (int i = m_FmtPos; i < len; ++i) {
@@ -70,7 +70,7 @@ const char* StringParser::ParseToNextFormat(void)
     return nullptr;
 }
 
-void StringParser::ParseToEnd(void)
+void StringParser::ParseToEnd()
 {
     int len = m_FmtLen;
     for (int i = m_FmtPos; i < len; ++i) {

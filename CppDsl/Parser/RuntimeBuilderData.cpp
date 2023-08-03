@@ -3,7 +3,7 @@
 #define BYTECODE_PRINTF	nullprintf
 
 //--------------------------------------------------------------------------------------
-DslParser::ValueData RuntimeBuilderData::TokenInfo::ToValue(void)const
+DslParser::ValueData RuntimeBuilderData::TokenInfo::ToValue()const
 {
     switch (mType) {
     case ID_TOKEN:
@@ -41,7 +41,7 @@ void RuntimeBuilderData::push(const TokenInfo& info)
 {
     mTokenStack.PushBack(info);
 }
-RuntimeBuilderData::TokenInfo RuntimeBuilderData::pop(void)
+RuntimeBuilderData::TokenInfo RuntimeBuilderData::pop()
 {
     if (mTokenStack.Empty())
         return TokenInfo();
@@ -49,7 +49,7 @@ RuntimeBuilderData::TokenInfo RuntimeBuilderData::pop(void)
     mTokenStack.PopBack();
     return info;
 }
-int RuntimeBuilderData::isSemanticStackEmpty(void)const
+int RuntimeBuilderData::isSemanticStackEmpty()const
 {
     return mSemanticStack.Empty();
 }
@@ -57,7 +57,7 @@ void RuntimeBuilderData::pushStatement(DslParser::StatementData* p)
 {
     mSemanticStack.PushBack(p);
 }
-DslParser::StatementData* RuntimeBuilderData::popStatement(void)
+DslParser::StatementData* RuntimeBuilderData::popStatement()
 {
     if (mSemanticStack.Empty()) {
         return 0;
@@ -66,14 +66,14 @@ DslParser::StatementData* RuntimeBuilderData::popStatement(void)
     mSemanticStack.PopBack();
     return cdata;
 }
-DslParser::StatementData* RuntimeBuilderData::getCurStatement(void)const
+DslParser::StatementData* RuntimeBuilderData::getCurStatement()const
 {
     if (mSemanticStack.Empty())
         return 0;
     DslParser::StatementData* topData = mSemanticStack.Back();
     return topData;
 }
-DslParser::FunctionData* RuntimeBuilderData::getLastFunction(void)const
+DslParser::FunctionData* RuntimeBuilderData::getLastFunction()const
 {
     DslParser::StatementData* statement = getCurStatement();
     if (0 != statement) {
@@ -96,6 +96,6 @@ void RuntimeBuilderData::setLastFunction(DslParser::FunctionData* p)const
     }
 }
 //--------------------------------------------------------------------------------------
-RuntimeBuilderData::RuntimeBuilderData(void)
+RuntimeBuilderData::RuntimeBuilderData()
 {
 }

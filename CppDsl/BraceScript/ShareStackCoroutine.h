@@ -21,22 +21,22 @@ namespace CoroutineWithShareStack
     {
         friend void Resume(Coroutine*);
         friend void Call(Coroutine*);
-        friend void Detach(void);
+        friend void Detach();
         friend bool TryInit(int main_StackSize);
-        friend void TryRelease(void);
+        friend void TryRelease();
     public:
-        bool IsTerminated(void)const;
-        void Reset(void);
-        void Call(void);
-        void Resume(void);
+        bool IsTerminated()const;
+        void Reset();
+        void Call();
+        void Resume();
     protected:
         Coroutine(int stackSize = DEFAULT_STACK_SIZE);
-        virtual ~Coroutine(void);
-        virtual void Routine(void) = 0;
+        virtual ~Coroutine();
+        virtual void Routine() = 0;
     private:
-        void Enter(void);
-        void Eat(void);
-        void Release(void);
+        void Enter();
+        void Eat();
+        void Release();
     protected:
         CoroutineData* m_pData;
     private:
@@ -45,9 +45,9 @@ namespace CoroutineWithShareStack
 
     extern void Resume(Coroutine*);
     extern void Call(Coroutine*);
-    extern void Detach(void);
+    extern void Detach();
     extern bool TryInit(int main_StackSize);
-    extern void TryRelease(void);
-    extern Coroutine* CurrentCoroutine(void);
-    extern Coroutine* MainCoroutine(void);
+    extern void TryRelease();
+    extern Coroutine* CurrentCoroutine();
+    extern Coroutine* MainCoroutine();
 }

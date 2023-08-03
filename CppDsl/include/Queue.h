@@ -18,11 +18,11 @@ namespace CollectionMemory
             }
             return m_Data;
         }
-        inline void Clear(void)
+        inline void Clear()
         {
             memset(m_Data, 0, sizeof(m_Data));
         }
-        size_t GetMemoryInUsed(void) const
+        size_t GetMemoryInUsed() const
         {
             return sizeof(T) * MaxSizeV;
         }
@@ -45,25 +45,25 @@ namespace CollectionMemory
             m_MaxSize = size;
             return m_Data;
         }
-        inline void Clear(void)
+        inline void Clear()
         {
             if (m_MaxSize > 0 && nullptr != m_Data) {
                 memset(m_Data, 0, sizeof(T) * m_MaxSize);
             }
         }
-        size_t GetMemoryInUsed(void) const
+        size_t GetMemoryInUsed() const
         {
             return (m_Data == nullptr ? 0 : (sizeof(T) * m_MaxSize));
         }
     public:
-        DynamicT(void) :m_Data(nullptr), m_MaxSize(0)
+        DynamicT() :m_Data(nullptr), m_MaxSize(0)
         {}
-        virtual ~DynamicT(void)
+        virtual ~DynamicT()
         {
             Cleanup();
         }
     private:
-        inline void Cleanup(void)
+        inline void Cleanup()
         {
             if (nullptr != m_Data) {
                 delete[] m_Data;
@@ -97,24 +97,24 @@ class DequeT
     using MemoryType = typename CollectionMemory::SelectorT<T, (SizeV == 0 ? 0 : SizeV + 1)>::Type;
 public://标准双向队列访问方法
     //队列是否空
-    inline int Empty(void) const
+    inline int Empty() const
     {
         return m_Head == m_Tail;
     }
     //队列是否满
-    inline int Full(void) const
+    inline int Full() const
     {
         return m_Head == (m_Tail + 1) % m_MaxSize;
     }
     //清空队列
-    inline void Clear(void)
+    inline void Clear()
     {
         m_Size = 0;
         m_Head = m_Tail = 0;
         m_Memory.Clear();
     }
     //当前队列中的元素个数
-    inline int Size(void) const
+    inline int Size() const
     {
         return m_Size;
     }
@@ -144,7 +144,7 @@ public://标准双向队列访问方法
         return m_Head;
     }
     //删除队列尾一个元素
-    inline T PopBack(void)
+    inline T PopBack()
     {
         MyAssert(m_Data);
         MyAssert(!Empty());
@@ -156,7 +156,7 @@ public://标准双向队列访问方法
         return m_Data[id];
     }
     //删除队列头一个元素
-    inline T PopFront(void)
+    inline T PopFront()
     {
         MyAssert(m_Data);
         MyAssert(!Empty());
@@ -168,33 +168,33 @@ public://标准双向队列访问方法
         return m_Data[id];
     }
     //读队列尾元素
-    inline const T& Back(void) const
+    inline const T& Back() const
     {
         return m_Data[BackID()];
     }
     //读队列尾元素可写引用（用于修改队列尾元素）
-    inline T& Back(void)
+    inline T& Back()
     {
         return m_Data[BackID()];
     }
     //读队列头元素
-    inline const T& Front(void) const
+    inline const T& Front() const
     {
         return m_Data[FrontID()];
     }
     //读队列头元素可写引用（用于修改队列头元素）
-    inline T& Front(void)
+    inline T& Front()
     {
         return m_Data[FrontID()];
     }
 public://扩展双向队列访问方法（遍历与读写方法）
     //FrontID是队列头元素的ID
-    inline int FrontID(void) const
+    inline int FrontID() const
     {
         return m_Head;
     }
     //BackID是队列尾元素的ID
-    inline int BackID(void) const
+    inline int BackID() const
     {
         if (Empty()) {
             return m_Head;
@@ -271,7 +271,7 @@ public://扩展双向队列访问方法（遍历与读写方法）
         return id2Val - id1Val;
     }
 public:
-    DequeT(void) :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(nullptr)
+    DequeT() :m_Size(0), m_MaxSize(1), m_Head(0), m_Tail(0), m_Data(nullptr)
     {
         if (SizeV > 0) {
             Init(SizeV);
@@ -281,7 +281,7 @@ public:
     {
         Init(size);
     }
-    virtual ~DequeT(void)
+    virtual ~DequeT()
     {
         m_Size = 0;
         m_MaxSize = 1;
@@ -327,7 +327,7 @@ private:
             return id - m_Head;
     }
     //更新队列尺寸
-    inline void UpdateSize(void)
+    inline void UpdateSize()
     {
         m_Size = (m_MaxSize + m_Tail - m_Head) % m_MaxSize;
     }
@@ -349,7 +349,7 @@ private:
     //尾元素后面一个位置的ID，它标明队列尾的位置，它的值总是一个无效的ID
     int m_Tail;
 public:
-    static T& GetInvalidValueRef(void)
+    static T& GetInvalidValueRef()
     {
         static T s_Temp;
         return s_Temp;

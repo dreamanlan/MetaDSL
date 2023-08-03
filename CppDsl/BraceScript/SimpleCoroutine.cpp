@@ -56,7 +56,7 @@ namespace CoroutineWithLongJmp
             Callee = Caller = nullptr;
             IsTerminated = false;
         }
-        ~CoroutineData(void)
+        ~CoroutineData()
         {
             delete StackBuffer;
             StackBuffer = nullptr;
@@ -66,11 +66,11 @@ namespace CoroutineWithLongJmp
     class CoroutineMain : public Coroutine
     {
     public:
-        CoroutineMain(void) :Coroutine(0)
+        CoroutineMain() :Coroutine(0)
         {
             g_Current = this;
         }
-        virtual void Routine(void) override
+        virtual void Routine() override
         {
         }
     };
@@ -85,22 +85,22 @@ namespace CoroutineWithLongJmp
                 Error("Attempt to allocate a Coroutine on the stack");
         m_pData = new CoroutineData(bufferSize);
     }
-    Coroutine::~Coroutine(void)
+    Coroutine::~Coroutine()
     {
         Release();
     }
-    void Coroutine::Release(void)
+    void Coroutine::Release()
     {
         if (nullptr == m_pData)
             return;
         delete m_pData;
         m_pData = nullptr;
     }
-    bool Coroutine::IsTerminated(void)const
+    bool Coroutine::IsTerminated()const
     {
         return Terminated(this);
     }
-    void Coroutine::Reset(void)
+    void Coroutine::Reset()
     {
         if (this == g_Current) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
@@ -118,19 +118,19 @@ namespace CoroutineWithLongJmp
         m_pData->Callee = m_pData->Caller = nullptr;
         m_pData->IsTerminated = false;
     }
-    void Coroutine::Call(void)
+    void Coroutine::Call()
     {
         if (IsTerminated())
             Reset();
         CoroutineWithLongJmp::Call(this);
     }
-    void Coroutine::Resume(void)
+    void Coroutine::Resume()
     {
         if (IsTerminated())
             Reset();
         CoroutineWithLongJmp::Resume(this);
     }
-    inline void Coroutine::RestoreStack(void)
+    inline void Coroutine::RestoreStack()
     {
         Synchronize;
         char x{};
@@ -140,7 +140,7 @@ namespace CoroutineWithLongJmp
         memcpy(m_pData->Low, m_pData->StackBuffer, m_pData->High - m_pData->Low);
         longjmp(g_Current->m_pData->Environment, 1);
     }
-    inline void Coroutine::StoreStack(void)
+    inline void Coroutine::StoreStack()
     {
         if (nullptr == m_pData->Low) {
             if (nullptr == g_StackBottom) {
@@ -173,7 +173,7 @@ namespace CoroutineWithLongJmp
         Synchronize;
         memcpy(m_pData->StackBuffer, m_pData->Low, m_pData->High - m_pData->Low);
     }
-    inline void Coroutine::Enter(void)
+    inline void Coroutine::Enter()
     {
         if (!Terminated(g_Current)) {
             g_Current->StoreStack();
@@ -238,7 +238,7 @@ namespace CoroutineWithLongJmp
         }
         next->Enter();
     }
-    void Detach(void)
+    void Detach()
     {
         Coroutine* next = g_Current->m_pData->Caller;
         if (next) {
@@ -252,7 +252,7 @@ namespace CoroutineWithLongJmp
         }
         next->Enter();
     }
-    bool TryInit(void)
+    bool TryInit()
     {
         if (nullptr == g_StackBottom) {
             char _dummy{};
@@ -260,15 +260,15 @@ namespace CoroutineWithLongJmp
         }
         return !g_Main.IsTerminated();
     }
-    void TryRelease(void)
+    void TryRelease()
     {
         g_Main.Release();
     }
-    Coroutine* CurrentCoroutine(void)
+    Coroutine* CurrentCoroutine()
     { 
         return g_Current; 
     }
-    Coroutine* MainCoroutine(void) 
+    Coroutine* MainCoroutine() 
     { 
         return &g_Main; 
     }

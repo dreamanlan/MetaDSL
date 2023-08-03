@@ -27,7 +27,7 @@ namespace DslData
         const std::string StringBeginDelimiter;
         const std::string StringEndDelimiter;
 
-        DelimiterInfo(void)
+        DelimiterInfo()
             :ScriptBeginDelimiter("{:"), ScriptEndDelimiter(":}"), StringBeginDelimiter("\""), StringEndDelimiter("\"")
         {}
         DelimiterInfo(const std::string& strBeginDelim, const std::string& strEndDelim, const std::string& scpBeginDelim, const std::string& scpEndDelim)
@@ -43,14 +43,14 @@ namespace DslData
         std::vector<std::string> m_FirstComments;
         std::vector<std::string> m_LastComments;
 
-        SyntaxComponentCommentsInfo(void) :m_FirstCommentOnNewLine(false), m_LastCommentOnNewLine(false), m_FirstComments(0), m_LastComments(0)
+        SyntaxComponentCommentsInfo() :m_FirstCommentOnNewLine(false), m_LastCommentOnNewLine(false), m_FirstComments(0), m_LastComments(0)
         {}
     };
     struct FunctionCommentsInfo : public SyntaxComponentCommentsInfo
     {
         std::vector<std::string> m_Comments;
 
-        FunctionCommentsInfo(void) :SyntaxComponentCommentsInfo(), m_Comments(0)
+        FunctionCommentsInfo() :SyntaxComponentCommentsInfo(), m_Comments(0)
         {}
     };
 
@@ -58,19 +58,19 @@ namespace DslData
     {
     public:
         ISyntaxComponent(int syntaxType);
-        virtual ~ISyntaxComponent(void)override;
+        virtual ~ISyntaxComponent()override;
     public:
-        virtual bool IsValid(void) const = 0;
-        virtual const std::string& GetId(void) const = 0;
-        virtual int GetIdType(void) const = 0;
-        virtual int GetLine(void) const = 0;
+        virtual bool IsValid() const = 0;
+        virtual const std::string& GetId() const = 0;
+        virtual int GetIdType() const = 0;
+        virtual int GetLine() const = 0;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const = 0;
-        virtual bool HaveId(void) const = 0;
+        virtual bool HaveId() const = 0;
     public:
-        int GetSyntaxType(void) const { return m_SyntaxType; }
+        int GetSyntaxType() const { return m_SyntaxType; }
         void SetSeparator(int sep) { m_Separator = sep; }
-        int GetSeparator(void) const { return m_Separator; }
-        const char* GetSepChar(void) const
+        int GetSeparator() const { return m_Separator; }
+        const char* GetSepChar() const
         {
             switch (m_Separator) {
             case SEPARATOR_COMMA:
@@ -108,7 +108,7 @@ namespace DslData
                 return;
             GetCommentsInfo()->m_FirstComments.clear();
         }
-        int GetFirstCommentNum(void) const
+        int GetFirstCommentNum() const
         {
             if (nullptr == GetCommentsInfo())
                 return 0;
@@ -123,7 +123,7 @@ namespace DslData
                 return EmptyString();
             }
         }
-        bool IsFirstCommentOnNewLine(void) const
+        bool IsFirstCommentOnNewLine() const
         {
             if (nullptr == GetCommentsInfo())
                 return false;
@@ -160,7 +160,7 @@ namespace DslData
                 return;
             GetCommentsInfo()->m_LastComments.clear();
         }
-        int GetLastCommentNum(void) const
+        int GetLastCommentNum() const
         {
             if (nullptr == GetCommentsInfo())
                 return 0;
@@ -175,7 +175,7 @@ namespace DslData
                 return EmptyString();
             }
         }
-        bool IsLastCommentOnNewLine(void) const
+        bool IsLastCommentOnNewLine() const
         {
             if (nullptr == GetCommentsInfo())
                 return false;
@@ -224,12 +224,12 @@ namespace DslData
         void ReleaseFirstComments(SyntaxComponentCommentsInfo* pCommentsInfo);
         void ReleaseLastComments(SyntaxComponentCommentsInfo* pCommentsInfo);
     protected:
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const { return nullptr; }
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo() const { return nullptr; }
     private:
         int m_SyntaxType;
         int m_Separator;
     public:
-        static const std::string& EmptyString(void)
+        static const std::string& EmptyString()
         {
             static std::string s_Str;
             return s_Str;
@@ -244,24 +244,24 @@ namespace DslData
         ValueOrFunctionData(int syntaxType) :ISyntaxComponent(syntaxType)
         {}
     public:
-        bool IsValue(void)const
+        bool IsValue()const
         {
             return GetSyntaxType() == ISyntaxComponent::TYPE_VALUE;
         }
-        bool IsFunction(void)const
+        bool IsFunction()const
         {
             return GetSyntaxType() == ISyntaxComponent::TYPE_FUNCTION;
         }
-        inline const ValueData* AsValue(void)const;
-        inline ValueData* AsValue(void);
-        inline const FunctionData* AsFunction(void)const;
-        inline FunctionData* AsFunction(void);
+        inline const ValueData* AsValue()const;
+        inline ValueData* AsValue();
+        inline const FunctionData* AsFunction()const;
+        inline FunctionData* AsFunction();
     };
 
     class ValueData final : public ValueOrFunctionData
     {
     public:
-        ValueData(void) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(), m_FunctionVal(nullptr), m_Line(0) {}
+        ValueData() :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_IDENTIFIER), m_StringVal(), m_FunctionVal(nullptr), m_Line(0) {}
         explicit ValueData(const std::string& val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_StringVal(val), m_FunctionVal(nullptr), m_Line(0) {}
         explicit ValueData(const std::string& val, int type) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(type), m_StringVal(val), m_FunctionVal(nullptr), m_Line(0) {}
         explicit ValueData(std::string&& val) :ValueOrFunctionData(ISyntaxComponent::TYPE_VALUE), m_Type(VALUE_TYPE_STRING), m_StringVal(std::move(val)), m_FunctionVal(nullptr), m_Line(0) {}
@@ -290,21 +290,21 @@ namespace DslData
         }
         virtual ~ValueData() override;
 
-        virtual bool IsValid(void)const override;
-        virtual int GetIdType(void)const override;
-        virtual const std::string& GetId(void)const override;
-        virtual int GetLine(void)const override;
+        virtual bool IsValid()const override;
+        virtual int GetIdType()const override;
+        virtual const std::string& GetId()const override;
+        virtual int GetLine()const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
         virtual bool HaveId()const override;
 
-        FunctionData* GetFunction(void)const { return m_FunctionVal; }
+        FunctionData* GetFunction()const { return m_FunctionVal; }
 
-        bool IsNum(void)const { return (m_Type == VALUE_TYPE_NUM); }
-        bool IsString(void)const { return (m_Type == VALUE_TYPE_STRING); }
-        bool IsIdentifier(void)const { return (m_Type == VALUE_TYPE_IDENTIFIER && !m_StringVal.empty()); }
-        bool IsFunction(void)const { return (m_Type == VALUE_TYPE_FUNCTION); }
+        bool IsNum()const { return (m_Type == VALUE_TYPE_NUM); }
+        bool IsString()const { return (m_Type == VALUE_TYPE_STRING); }
+        bool IsIdentifier()const { return (m_Type == VALUE_TYPE_IDENTIFIER && !m_StringVal.empty()); }
+        bool IsFunction()const { return (m_Type == VALUE_TYPE_FUNCTION); }
 
-        void SetInvalid(void)
+        void SetInvalid()
         {
             Release();
             m_Type = VALUE_TYPE_IDENTIFIER;
@@ -362,11 +362,11 @@ namespace DslData
         {
             m_Line = line;
         }
-        FunctionData* SetFunction(void);
+        FunctionData* SetFunction();
         FunctionData* SetFunctionCopyFrom(const FunctionData& other);
     private:
         void CopyFrom(const ValueData& other);
-        void Release(void);
+        void Release();
     private:
         int m_Type;
         std::string m_StringVal;
@@ -379,7 +379,7 @@ namespace DslData
     {
         using SyntaxComponentPtr = ISyntaxComponent*;
     public:
-        virtual bool IsValid(void)const override
+        virtual bool IsValid()const override
         {
             if (m_Name.IsValid())
                 return true;
@@ -388,42 +388,42 @@ namespace DslData
             else
                 return false;
         }
-        virtual int GetIdType(void)const override { return m_Name.GetIdType(); }
-        virtual const std::string& GetId(void)const override { return m_Name.GetId(); }
-        virtual int GetLine(void)const override;
+        virtual int GetIdType()const override { return m_Name.GetIdType(); }
+        virtual const std::string& GetId()const override { return m_Name.GetId(); }
+        virtual int GetLine()const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
-        virtual bool HaveId(void)const override { return m_Name.HaveId(); }
+        virtual bool HaveId()const override { return m_Name.HaveId(); }
     public:
         void SetName(const ValueData& val) { m_Name = val; }
-        ValueData& GetName(void) { return m_Name; }
-        void ClearParams(void);
-        ValueData* AddValueParam(void);
-        FunctionData* AddFunctionParam(void);
-        StatementData* AddStatementParam(void);
+        ValueData& GetName() { return m_Name; }
+        void ClearParams();
+        ValueData* AddValueParam();
+        FunctionData* AddFunctionParam();
+        StatementData* AddStatementParam();
         ISyntaxComponent* AddParamCopyFrom(const ISyntaxComponent& other);
         void SetParamClass(int v) { m_ParamClass = v; }
-        int GetParamClass(void)const { return m_ParamClass; }
-        int GetParamClassUnmasked(void)const
+        int GetParamClass()const { return m_ParamClass; }
+        int GetParamClassUnmasked()const
         {
             int paramClass = (m_ParamClass & (int)PARAM_CLASS_UNMASK);
             return paramClass;
         }
-        bool HaveParamClassInfixFlag(void)const
+        bool HaveParamClassInfixFlag()const
         {
             int infix = (m_ParamClass & (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK);
             return infix == (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK;
         }
-        bool IsOperatorParamClass(void)const
+        bool IsOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_OPERATOR;
         }
-        bool IsTernaryOperatorParamClass(void)const
+        bool IsTernaryOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_TERNARY_OPERATOR;
         }
-        bool IsMemberParamClass(void)const
+        bool IsMemberParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return (paramClass == (int)PARAM_CLASS_COLON_COLON ||
@@ -434,12 +434,12 @@ namespace DslData
                 paramClass == (int)PARAM_CLASS_QUESTION_PERIOD ||
                 paramClass == (int)PARAM_CLASS_QUESTION_PERIOD_STAR);
         }
-        bool HaveParamOrStatement(void)const { return m_ParamClass != PARAM_CLASS_NOTHING; }
-        bool HaveParam(void)const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
-        bool HaveStatement(void)const { return m_ParamClass == PARAM_CLASS_STATEMENT; }
-        bool HaveExternScript(void)const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT; }
-        bool IsHighOrder(void)const { return m_Name.IsFunction(); }
-        FunctionData& GetLowerOrderFunction(void)const
+        bool HaveParamOrStatement()const { return m_ParamClass != PARAM_CLASS_NOTHING; }
+        bool HaveParam()const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
+        bool HaveStatement()const { return m_ParamClass == PARAM_CLASS_STATEMENT; }
+        bool HaveExternScript()const { return m_ParamClass == PARAM_CLASS_EXTERN_SCRIPT; }
+        bool IsHighOrder()const { return m_Name.IsFunction(); }
+        FunctionData& GetLowerOrderFunction()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr) {
@@ -449,7 +449,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        const FunctionData& GetThisOrLowerOrderCall(void)const
+        const FunctionData& GetThisOrLowerOrderCall()const
         {
             if (HaveParam()) {
                 return *this;
@@ -461,7 +461,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        FunctionData& GetThisOrLowerOrderCall(void)
+        FunctionData& GetThisOrLowerOrderCall()
         {
             if (HaveParam()) {
                 return *this;
@@ -473,7 +473,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        const FunctionData& GetThisOrLowerOrderBody(void)const
+        const FunctionData& GetThisOrLowerOrderBody()const
         {
             if (HaveStatement()) {
                 return *this;
@@ -485,7 +485,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        FunctionData& GetThisOrLowerOrderBody(void)
+        FunctionData& GetThisOrLowerOrderBody()
         {
             if (HaveStatement()) {
                 return *this;
@@ -497,7 +497,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        const FunctionData& GetThisOrLowerOrderScript(void)const
+        const FunctionData& GetThisOrLowerOrderScript()const
         {
             if (HaveExternScript()) {
                 return *this;
@@ -509,7 +509,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        FunctionData& GetThisOrLowerOrderScript(void)
+        FunctionData& GetThisOrLowerOrderScript()
         {
             if (HaveExternScript()) {
                 return *this;
@@ -521,7 +521,7 @@ namespace DslData
                 return GetNullFunction();
             }
         }
-        bool HaveLowerOrderParam(void)const
+        bool HaveLowerOrderParam()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr && fptr->HaveParam())
@@ -529,7 +529,7 @@ namespace DslData
             else
                 return false;
         }
-        bool HaveLowerOrderStatement(void)const
+        bool HaveLowerOrderStatement()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr && fptr->HaveStatement())
@@ -537,7 +537,7 @@ namespace DslData
             else
                 return false;
         }
-        int HaveLowerOrderExternScript(void)const
+        int HaveLowerOrderExternScript()const
         {
             auto fptr = m_Name.GetFunction();
             if (IsHighOrder() && fptr && fptr->HaveExternScript())
@@ -546,8 +546,8 @@ namespace DslData
                 return false;
         }
     public:
-        const ValueData& GetName(void)const { return m_Name; }
-        int GetParamNum(void)const { return static_cast<int>(m_Params.size()); }
+        const ValueData& GetName()const { return m_Name; }
+        int GetParamNum()const { return static_cast<int>(m_Params.size()); }
         ISyntaxComponent* GetParam(int index)const
         {
             if (index < 0 || index >= static_cast<int>(m_Params.size()))
@@ -591,7 +591,7 @@ namespace DslData
                 return;
             p->m_Comments.clear();
         }
-        int GetCommentNum(void) const
+        int GetCommentNum() const
         {
             auto p = m_pCommentsInfo;
             if (nullptr == p)
@@ -611,12 +611,12 @@ namespace DslData
             }
         }
     public:
-        FunctionData(void);
-        virtual ~FunctionData(void)override;
+        FunctionData();
+        virtual ~FunctionData()override;
         void CopyFrom(const FunctionData& other);
         void InitParamsCapacity(int v);
     protected:
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const override
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo() const override
         {
             return m_pCommentsInfo;
         }
@@ -626,11 +626,11 @@ namespace DslData
         FunctionData operator=(const FunctionData&) = delete;
         FunctionData operator=(FunctionData&&) noexcept = delete;
     private:
-        void ReleaseParams(void);
-        void ReleaseComments(void);
+        void ReleaseParams();
+        void ReleaseComments();
     private:
-        ISyntaxComponent& GetNullSyntax(void)const;
-        FunctionData& GetNullFunction(void)const;
+        ISyntaxComponent& GetNullSyntax()const;
+        FunctionData& GetNullFunction()const;
     private:
         ValueData m_Name;
         std::vector<SyntaxComponentPtr> m_Params;
@@ -639,28 +639,28 @@ namespace DslData
         FunctionCommentsInfo* m_pCommentsInfo;
     };
 
-    inline const ValueData* ValueOrFunctionData::AsValue(void)const
+    inline const ValueData* ValueOrFunctionData::AsValue()const
     {
         if (IsValue())
             return static_cast<const ValueData*>(this);
         else
             return nullptr;
     }
-    inline ValueData* ValueOrFunctionData::AsValue(void)
+    inline ValueData* ValueOrFunctionData::AsValue()
     {
         if (IsValue())
             return static_cast<ValueData*>(this);
         else
             return nullptr;
     }
-    inline const FunctionData* ValueOrFunctionData::AsFunction(void)const
+    inline const FunctionData* ValueOrFunctionData::AsFunction()const
     {
         if (IsFunction())
             return static_cast<const FunctionData*>(this);
         else
             return nullptr;
     }
-    inline FunctionData* ValueOrFunctionData::AsFunction(void)
+    inline FunctionData* ValueOrFunctionData::AsFunction()
     {
         if (IsFunction())
             return static_cast<FunctionData*>(this);
@@ -675,14 +675,14 @@ namespace DslData
     class StatementData final : public ISyntaxComponent
     {
     public:
-        virtual bool IsValid(void)const override
+        virtual bool IsValid()const override
         {
             if (m_ValueOrFunctions.size() > 0 && m_ValueOrFunctions[0]->IsValid())
                 return true;
             else
                 return false;
         }
-        virtual int GetIdType(void)const override
+        virtual int GetIdType()const override
         {
             int type = ValueData::VALUE_TYPE_IDENTIFIER;
             if (IsValid()) {
@@ -690,16 +690,16 @@ namespace DslData
             }
             return type;
         }
-        virtual const std::string& GetId(void)const override
+        virtual const std::string& GetId()const override
         {
             if (IsValid()) {
                 return m_ValueOrFunctions[0]->GetId();
             }
             return ISyntaxComponent::EmptyString();
         }
-        virtual int GetLine(void)const override;
+        virtual int GetLine()const override;
         virtual void WriteToFile(FILE* fp, int indent, int firstLineNoIndent, int isLastOfStatement, const DelimiterInfo& delim) const override;
-        virtual bool HaveId(void) const override
+        virtual bool HaveId() const override
         {
             if (0 == static_cast<int>(m_ValueOrFunctions.size()))
                 return false;
@@ -707,12 +707,12 @@ namespace DslData
                 return m_ValueOrFunctions[static_cast<int>(m_ValueOrFunctions.size()) - 1]->HaveId();
         }
     public:
-        void ClearFunctions(void);
-        ValueData* AddValue(void);
-        FunctionData* AddFunction(void);
+        void ClearFunctions();
+        ValueData* AddValue();
+        FunctionData* AddFunction();
         ValueOrFunctionData* AddValueOrFunctionCopyFrom(const ValueOrFunctionData& other);
     public:
-        int GetFunctionNum(void)const { return static_cast<int>(m_ValueOrFunctions.size()); }
+        int GetFunctionNum()const { return static_cast<int>(m_ValueOrFunctions.size()); }
         ValueOrFunctionData* GetFunction(int index)const
         {
             if (index < 0 || index >= static_cast<int>(m_ValueOrFunctions.size()))
@@ -725,19 +725,19 @@ namespace DslData
                 return ISyntaxComponent::EmptyString();
             return m_ValueOrFunctions[index]->GetId();
         }
-        ValueOrFunctionData* GetFirst(void)const
+        ValueOrFunctionData* GetFirst()const
         {
             return GetFunction(0);
         }
-        ValueOrFunctionData* GetSecond(void)const
+        ValueOrFunctionData* GetSecond()const
         {
             return GetFunction(1);
         }
-        ValueOrFunctionData* GetThird(void)const
+        ValueOrFunctionData* GetThird()const
         {
             return GetFunction(2);
         }
-        ValueOrFunctionData* GetLast(void)const
+        ValueOrFunctionData* GetLast()const
         {
             int num = GetFunctionNum();
             if (num <= 0)
@@ -745,12 +745,12 @@ namespace DslData
             return GetFunction(num - 1);
         }
     public:
-        StatementData(void);
-        virtual ~StatementData(void) override;
+        StatementData();
+        virtual ~StatementData() override;
         void CopyFrom(const StatementData& other);
         void InitFunctionsCapacity(int v);
     protected:
-        virtual SyntaxComponentCommentsInfo* GetCommentsInfo(void) const override
+        virtual SyntaxComponentCommentsInfo* GetCommentsInfo() const override
         {
             return m_pCommentsInfo;
         }
@@ -760,9 +760,9 @@ namespace DslData
         StatementData& operator=(const StatementData&) = delete;
         StatementData& operator=(StatementData&&) noexcept = delete;
     private:
-        void ReleaseFunctions(void);
+        void ReleaseFunctions();
     private:
-        ValueOrFunctionData& GetNullValueOrFunction(void)const;
+        ValueOrFunctionData& GetNullValueOrFunction()const;
     private:
         std::vector<ValueOrFunctionData*> m_ValueOrFunctions;
     private:
@@ -773,7 +773,7 @@ namespace DslData
     {
         using SyntaxComponentPtr = ISyntaxComponent*;
     public:
-        int GetDslInfoNum(void)const { return static_cast<int>(m_DslInfos.size()); }
+        int GetDslInfoNum()const { return static_cast<int>(m_DslInfos.size()); }
         ISyntaxComponent* GetDslInfo(int index)const
         {
             if (index < 0 || index >= static_cast<int>(m_DslInfos.size()))
@@ -782,14 +782,14 @@ namespace DslData
         }
         void WriteToFile(FILE* fp, int indent) const;
     public:
-        ValueData* AddValue(void);
-        FunctionData* AddFunction(void);
-        StatementData* AddStatement(void);
+        ValueData* AddValue();
+        FunctionData* AddFunction();
+        StatementData* AddStatement();
         ISyntaxComponent* AddDslCopyFrom(const DslData::ISyntaxComponent& other);
     public:
-        DslFile(void);
-        ~DslFile(void);
-        void Reset(void);
+        DslFile();
+        ~DslFile();
+        void Reset();
     public:
         void LoadBinaryCode(const char* buffer, int bufferSize, std::vector<std::string>& reuseKeyBuffer, std::vector<std::string>& reuseIdBuffer);
         void SaveBinaryFile(FILE* fp) const;
@@ -803,16 +803,16 @@ namespace DslData
         {
             m_FileName = std::move(name);
         }
-        const std::string& GetFileName(void)const { return m_FileName; }
+        const std::string& GetFileName()const { return m_FileName; }
         void SetStringDelimiter(const char* begin, const char* end);
         void SetScriptDelimiter(const char* begin, const char* end);
     public:
-        const std::string& GetStringBeginDelimiter(void)const { return m_StringBeginDelimiter; }
-        const std::string& GetStringEndDelimiter(void)const { return m_StringEndDelimiter; }
-        const std::string& GetScriptBeginDelimiter(void)const { return m_ScriptBeginDelimiter; }
-        const std::string& GetScriptEndDelimiter(void)const { return m_ScriptEndDelimiter; }
+        const std::string& GetStringBeginDelimiter()const { return m_StringBeginDelimiter; }
+        const std::string& GetStringEndDelimiter()const { return m_StringEndDelimiter; }
+        const std::string& GetScriptBeginDelimiter()const { return m_ScriptBeginDelimiter; }
+        const std::string& GetScriptEndDelimiter()const { return m_ScriptEndDelimiter; }
     public:
-        void ClearErrorInfo(void)
+        void ClearErrorInfo()
         {
             m_HasError = false;
             m_ErrorInfo.clear();
@@ -827,8 +827,8 @@ namespace DslData
             m_HasError = true;
             m_ErrorInfo.push_back(std::move(err));
         }
-        int HasError(void)const { return m_HasError; }
-        int GetErrorNum(void)const { return static_cast<int>(m_ErrorInfo.size()); }
+        int HasError()const { return m_HasError; }
+        int GetErrorNum()const { return static_cast<int>(m_ErrorInfo.size()); }
         const std::string& GetErrorInfo(int index) const
         {
             if (index < 0 || index >= GetErrorNum())
@@ -841,8 +841,8 @@ namespace DslData
         DslFile& operator=(const DslFile&) = delete;
         DslFile& operator=(DslFile&&) noexcept = delete;
     private:
-        void Init(void);
-        void Release(void);
+        void Init();
+        void Release();
     private:
         std::string m_FileName;
         std::vector<SyntaxComponentPtr> m_DslInfos;
@@ -857,10 +857,10 @@ namespace DslData
     public:
         static bool Mac2Unix(char* buf, int len);
     public:
-        static ISyntaxComponent& GetNullSyntax(void);
-        static FunctionData& GetNullFunction(void);
+        static ISyntaxComponent& GetNullSyntax();
+        static FunctionData& GetNullFunction();
     public:
-        static bool DontLoadComments(void)
+        static bool DontLoadComments()
         {
             return DontLoadCommentsRef();
         }
@@ -869,7 +869,7 @@ namespace DslData
             DontLoadCommentsRef() = val;
         }
     private:
-        static bool& DontLoadCommentsRef(void)
+        static bool& DontLoadCommentsRef()
         {
             static bool s_DontLoadComments = false;
             return s_DontLoadComments;

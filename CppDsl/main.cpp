@@ -14,8 +14,8 @@
 static std::chrono::time_point<std::chrono::high_resolution_clock> g_start_time_point;
 
 void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt);
-void Tick(void);
-void Terminate(void);
+void Tick();
+void Terminate();
 int main(int argc, char* argv[])
 {
     g_start_time_point = std::chrono::high_resolution_clock::now();
@@ -294,9 +294,9 @@ public:
         m_ScriptTxt = txt;
     }
 public:
-    ScriptEnv(void):m_pBuffer(nullptr), m_pBraceScript(nullptr), m_pDslFile(nullptr), m_pParsedFile(nullptr)
+    ScriptEnv():m_pBuffer(nullptr), m_pBraceScript(nullptr), m_pDslFile(nullptr), m_pParsedFile(nullptr)
     {}
-    ~ScriptEnv(void)
+    ~ScriptEnv()
     {
         if (nullptr != m_pBraceScript) {
             delete m_pBraceScript;
@@ -312,7 +312,7 @@ public:
         }
     }
 public:
-    void Run(void)
+    void Run()
     {
         m_pBuffer->Reset();
         m_pParsedFile->Reset();
@@ -350,7 +350,7 @@ public:
     LongJmpRoutine1(int bufferSize) :CoroutineWithLongJmp::Coroutine(bufferSize)
     {}
 protected:
-    virtual void Routine(void) override
+    virtual void Routine() override
     {
         g_ScriptEnv->Run();
     }
@@ -361,7 +361,7 @@ public:
     LongJmpRoutine2(int bufferSize):CoroutineWithShareStack::Coroutine(bufferSize)
     {}
 protected:
-    virtual void Routine(void) override
+    virtual void Routine() override
     {
         g_ScriptEnv->Run();
     }
@@ -375,7 +375,7 @@ public:
     BoostContextRoutine(int stackSize):CoroutineWithBoostContext::Coroutine(stackSize)
     {}
 protected:
-    virtual void Routine(void)override
+    virtual void Routine()override
     {
         g_ScriptEnv->Run();
     }
@@ -401,7 +401,7 @@ void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string
     }
     g_ScriptEnv->SetScript(pBuffer, txt);
 }
-void Tick(void)
+void Tick()
 {
     //g_LongJmpRoutine1->Call();
     //g_LongJmpRoutine2->Call();
@@ -409,7 +409,7 @@ void Tick(void)
     CoroutineWithBoostContext::TryYield();
     //g_ScriptEnv->Run();
 }
-void Terminate(void)
+void Terminate()
 {
     if (nullptr != g_LongJmpRoutine1) {
         delete g_LongJmpRoutine1;
