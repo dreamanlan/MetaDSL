@@ -10,7 +10,7 @@ namespace Brace
     class Any final
     {
     public:
-        Any(void) : m_Content(nullptr)
+        Any() : m_Content(nullptr)
         {
         }
         template<typename ValueType>
@@ -27,7 +27,7 @@ namespace Brace
         {
             other.m_Content = nullptr;
         }
-        virtual ~Any(void)
+        virtual ~Any()
         {
             reset();
         }
@@ -54,17 +54,17 @@ namespace Brace
             return *this;
         }
     public:
-        bool has_value(void) const
+        bool has_value() const
         {
             return m_Content != nullptr;
         }
-        void reset(void)
+        void reset()
         {
             delete m_Content;
             m_Content = nullptr;
         }
         template<typename ValueType>
-        inline ValueType* cast(void)const
+        inline ValueType* cast()const
         {
             return holder<ValueType>::DoCast(m_Content);
         }
@@ -72,12 +72,12 @@ namespace Brace
         class placeholder
         {
         public:
-            virtual ~placeholder(void)
+            virtual ~placeholder()
             {
             }
         public:
-            virtual placeholder* clone(void) const = 0;
-            virtual const void* typetag(void) const = 0;
+            virtual placeholder* clone() const = 0;
+            virtual const void* typetag() const = 0;
         };
 
         template<typename ValueType>
@@ -89,11 +89,11 @@ namespace Brace
             {
             }
         public:
-            virtual placeholder* clone(void) const override
+            virtual placeholder* clone() const override
             {
                 return new holder(held);
             }
-            virtual const void* typetag(void) const override
+            virtual const void* typetag() const override
             {
                 return reinterpret_cast<const void*>(&DoCast);
             }
