@@ -9,12 +9,12 @@ class TestRuntimeBuilder : public RuntimeBuilderT < TestRuntimeBuilder >
 public:
     char* getLastToken() const { return const_cast<char*>(""); }
     int getLastLineNumber() const { return 0; }
-    int getCommentNum(int& commentOnNewLine) const { commentOnNewLine; return 0; }
-    char* getComment(int index) const { index; return const_cast<char*>(""); }
+    int getCommentNum([[maybe_unused]] int& commentOnNewLine) const { return 0; }
+    char* getComment([[maybe_unused]] int index) const { return const_cast<char*>(""); }
     void resetComments() {}
-    void setCanFinish(int val) { val; }
-    void setStringDelimiter(const char* begin, const char* end) { begin, end; }
-    void setScriptDelimiter(const char* begin, const char* end) { begin, end; }
+    void setCanFinish([[maybe_unused]] int val) {}
+    void setStringDelimiter([[maybe_unused]] const char* begin, [[maybe_unused]] const char* end) {}
+    void setScriptDelimiter([[maybe_unused]] const char* begin, [[maybe_unused]] const char* end) {}
 public:
     TestRuntimeBuilder(DslFile& dataFile) :BaseType(dataFile)
     {}

@@ -16,9 +16,8 @@ static std::chrono::time_point<std::chrono::high_resolution_clock> g_start_time_
 void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string& txt);
 void Tick();
 void Terminate();
-int main(int argc, char* argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 {
-    argc, argv;
     g_start_time_point = std::chrono::high_resolution_clock::now();
 
     char* pbuf = new char[1024 * 1024 + 1];
@@ -50,8 +49,7 @@ int main(int argc, char* argv[])
     {
         DslParser::DslFile dataFile(*pDslBuffer);
         //dataFile.EnableDebugInfo();
-        dataFile.OnGetToken.attach([](const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, short& val, int& line) {
-            actionApi, val;
+        dataFile.OnGetToken.attach([]([[maybe_unused]] const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, [[maybe_unused]] short& val, int& line) {
             if (0 == strcmp(tok, "return")) {
                 char* oldCurTok = tokenApi.getCurToken();
                 char* oldLastTok = tokenApi.getLastToken(); 
@@ -68,7 +66,7 @@ int main(int argc, char* argv[])
             return true; 
             });
         dataFile.OnBeforeAddFunction.attach([](auto& api, auto* sd) {
-            api;
+            (void)api;
             const char* pId = sd->GetFunctionId(0);
             if (sd->GetFunctionNum() > 0 && pId && 0 != strcmp(pId, "if")) {
                 //在BeforeAddFunction回调里结束当前语句并开始一个新语句，效果上相当于给前一个函数加上分号
@@ -78,17 +76,17 @@ int main(int argc, char* argv[])
             return true;
             });
         dataFile.OnAddFunction.attach([](auto& api, auto* sd, auto* func) {
-            api, sd, func;
+            (void)api, (void)sd, (void)func;
             //在AddFunction里一般不要修改程序结构，但可以修改添加函数的信息
             return true;
             });
         dataFile.OnBeforeEndStatement.attach([](auto& api, auto* sd) {
-            api, sd;
+            (void)api, (void)sd;
             //在BeforeEndStatement里可以修改程序结构，要符合dsl的语法语义流程
             return true;
             });
         dataFile.OnEndStatement.attach([](auto& api, auto*& sd) {
-            api, sd;
+            (void)api, (void)sd;
             //在EndStatement里一般不要修改程序结构，但可以修改或整体替换当前语句，在回调后会化简语句并添加到上一层语法构造中
             return true;
             });
@@ -229,9 +227,8 @@ public:
     {
     }
 protected:
-    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+    virtual bool TypeInference([[maybe_unused]] const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
-        func;
         for (auto&& ali : argInfos) {
             if (ali.Type != Brace::BRACE_DATA_TYPE_INT32) {
                 std::stringstream ss;
@@ -243,9 +240,8 @@ protected:
         resultInfo = Brace::OperandLoadtimeInfo();
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, [[maybe_unused]] const Brace::OperandRuntimeInfo& resultInfo)const override
     {
-        resultInfo;
         auto sv = std::chrono::system_clock::now();
 
         for (auto&& argInfo : argInfos) {
@@ -274,18 +270,16 @@ public:
     {
     }
 protected:
-    virtual bool TypeInference(const Brace::FuncInfo& func, const DslData::FunctionData& data, const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
+    virtual bool TypeInference([[maybe_unused]] const Brace::FuncInfo& func, [[maybe_unused]] const DslData::FunctionData& data, [[maybe_unused]] const std::vector<Brace::OperandLoadtimeInfo>& argInfos, Brace::OperandLoadtimeInfo& resultInfo) override
     {
-        func, data, argInfos;
         resultInfo.Type = Brace::BRACE_DATA_TYPE_UINT64;
         resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
         resultInfo.Name = GenTempVarName();
         resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
         return true;
     }
-    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
+    virtual void Execute(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars, [[maybe_unused]] const std::vector<Brace::OperandRuntimeInfo>& argInfos, const Brace::OperandRuntimeInfo& resultInfo)const override
     {
-        argInfos;
         auto cv = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> diff = cv - g_start_time_point;
         auto tv = static_cast<uint64_t>(diff.count() * 1000'000);

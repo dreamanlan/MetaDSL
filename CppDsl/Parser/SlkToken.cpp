@@ -1190,9 +1190,8 @@ bool SlkToken::enqueueToken(char* tok, short val, int line)
     return true;
 }
 
-short SlkToken::peek(int level)
+short SlkToken::peek([[maybe_unused]] int level)
 {
-    level;
     short token = 0;
 
     printf("peek_token is not called in an LL(1) grammar\n");

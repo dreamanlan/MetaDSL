@@ -496,9 +496,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo, executor;
             //@var : type; or @var : objType<: type params :>;
             DslData::ISyntaxComponent* param1 = data.GetParam(0);
             DslData::ISyntaxComponent* param2 = data.GetParam(1);
@@ -540,9 +539,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo, executor;
             //$var : type; or $var : objType<: type params :>;
             DslData::ISyntaxComponent* param1 = data.GetParam(0);
             DslData::ISyntaxComponent* param2 = data.GetParam(1);
@@ -584,9 +582,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo, executor;
             //@var = exp; or @var : type = exp;
             DslData::ISyntaxComponent* param1 = data.GetParam(0);
             DslData::ISyntaxComponent* param2 = data.GetParam(1);
@@ -696,9 +693,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue([[maybe_unused]] const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc;
             const std::string& varId = data.GetId();
             auto* info = GetGlobalVarInfo(varId);
             if (nullptr != info) {
@@ -726,9 +722,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             //$var = exp; or $var : type = exp;
             DslData::ISyntaxComponent* param1 = data.GetParam(0);
             DslData::ISyntaxComponent* param2 = data.GetParam(1);
@@ -856,9 +851,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue([[maybe_unused]] const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc;
             const std::string& varId = data.GetId();
             auto* info = GetVarInfo(varId);
             if (nullptr != info) {
@@ -886,9 +880,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue([[maybe_unused]] const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc;
             const std::string& varId = data.GetId();
             auto* info = GetConstInfo(data.GetIdType(), varId);
             if (nullptr != info) {
@@ -918,17 +911,15 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, data;
             resultInfo = OperandLoadtimeInfo();
             executor.attach(this, &BreakExp::Execute);
             return false;
         }
     private:
-        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
+        int Execute([[maybe_unused]] VariableInfo& gvars, [[maybe_unused]] VariableInfo& lvars)const
         {
-            gvars, lvars;
             return BRACE_FLOW_CONTROL_BREAK;
         }
     };
@@ -939,17 +930,15 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadValue([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, data;
             resultInfo = OperandLoadtimeInfo();
             executor.attach(this, &ContinueExp::Execute);
             return false;
         }
     private:
-        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
+        int Execute([[maybe_unused]] VariableInfo& gvars, [[maybe_unused]] VariableInfo& lvars)const
         {
-            gvars, lvars;
             return BRACE_FLOW_CONTROL_CONTINUE;
         }
     };
@@ -1049,9 +1038,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& funcInfo, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& funcInfo, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            funcInfo;
             //func(name){...};
             if (data.IsHighOrder()) {
                 const std::string& func = data.GetLowerOrderFunction().GetParamId(0);
@@ -1076,9 +1064,8 @@ namespace Brace
             }
             return false;
         }
-        virtual bool LoadStatement(const FuncInfo& funcInfo, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& funcInfo, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            funcInfo;
             //func(name)params($a:int32,$b:int8,...)int{...}; or func(name)params($a:int32,$b:int8,...){...};
             bool hasError = false;
             if (data.GetFunctionNum() == 2) {
@@ -1488,9 +1475,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, data;
             std::swap(m_Args, args);
             for (auto&& argInfo : argLoadInfos) {
                 m_ArgInfos.push_back(argInfo);
@@ -1530,9 +1516,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& funcData, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& funcData, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             if (funcData.IsHighOrder()) {
                 auto* cond = funcData.GetLowerOrderFunction().GetParam(0);
                 OperandLoadtimeInfo loadInfo;
@@ -1559,9 +1544,8 @@ namespace Brace
             }
             return true;
         }
-        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             //if(exp) func(args);
             int funcNum = data.GetFunctionNum();
             if (funcNum == 2) {
@@ -1709,9 +1693,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& funcData, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& funcData, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             if (funcData.IsHighOrder()) {
                 auto* cond = funcData.GetLowerOrderFunction().GetParam(0);
                 OperandLoadtimeInfo loadInfo;
@@ -1736,9 +1719,8 @@ namespace Brace
             }
             return true;
         }
-        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             //while(exp) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
@@ -1814,9 +1796,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& funcData, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& funcData, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             if (funcData.IsHighOrder()) {
                 auto* count = funcData.GetLowerOrderFunction().GetParam(0);
                 OperandLoadtimeInfo loadInfo;
@@ -1842,9 +1823,8 @@ namespace Brace
             }
             return true;
         }
-        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             //loop(exp) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
@@ -1919,9 +1899,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& funcData, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, const DslData::FunctionData& funcData, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             int iteratorType = BRACE_DATA_TYPE_UNKNOWN;
             int iteratorObjTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
             if (funcData.IsHighOrder()) {
@@ -1974,9 +1953,8 @@ namespace Brace
             executor.attach(this, &ForeachExp::Execute);
             return true;
         }
-        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, resultInfo;
             //foreach(exp1,exp2,...) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
@@ -2103,9 +2081,8 @@ namespace Brace
         {
         }
     protected:
-        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        virtual bool LoadCall([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            curFunc, data;
             if (argLoadInfos.size() > 0) {
                 auto& lastLoadInfo = argLoadInfos[argLoadInfos.size() - 1];
                 auto lastRealType = lastLoadInfo.GetLoadTimeRealType(curFunc);
@@ -2565,9 +2542,8 @@ namespace Brace
             return it->second.VarIndex;
         }
     }
-    auto BraceScript::FindVariable(FuncInfo* curFunc, const std::string& name, std::string& key, int& level) const -> decltype(curFunc->VarTypeInfos.end())
+    auto BraceScript::FindVariable(FuncInfo* curFunc, const std::string& name, std::string& key, [[maybe_unused]] int& level) const -> decltype(curFunc->VarTypeInfos.end())
     {
-        level;
         key = CalcVarKey(name, CurBlockId());
         std::string fkey = key;
         int curLevel = static_cast<int>(m_LexicalScopeStack.size());
@@ -3052,14 +3028,12 @@ namespace Brace
                         newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESIS);
                         if (callData.IsHighOrder()) {
                             newCall->AddParamCopyFrom(callData.GetLowerOrderFunction());
-                            auto* p = newCall->AddParamCopyFrom(*callData.GetParam(0));
-                            p;
+                            [[maybe_unused]] auto* p = newCall->AddParamCopyFrom(*callData.GetParam(0));
                             ConvertMember(callData.GetParam(0), callData.GetParamClassUnmasked());
                         }
                         else {
                             newCall->AddParamCopyFrom(callData.GetName());
-                            auto* p = newCall->AddParamCopyFrom(*callData.GetParam(0));
-                            p;
+                            [[maybe_unused]] auto* p = newCall->AddParamCopyFrom(*callData.GetParam(0));
                             ConvertMember(callData.GetParam(0), callData.GetParamClassUnmasked());
                         }
 

@@ -30,9 +30,8 @@ short SlkError::mismatch(short terminal, short token, SlkToken& tokens)
     return token;
 }
 
-short SlkError::no_entry(short productionNumber, short nonterminal, short token, int level, SlkToken& tokens)
+short SlkError::no_entry([[maybe_unused]] short productionNumber, [[maybe_unused]] short nonterminal, short token, [[maybe_unused]] int level, SlkToken& tokens)
 {
-    productionNumber, nonterminal, level;
     if (mDslFile) {
         char* p = mDslFile->NewErrorInfo();
         if (p)

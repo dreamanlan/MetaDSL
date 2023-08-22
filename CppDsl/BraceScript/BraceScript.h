@@ -573,25 +573,21 @@ namespace Brace
     public:
         virtual bool Load(const DslData::ISyntaxComponent& syntax, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
-        virtual bool LoadValue(const FuncInfo& curFunc, const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadValue([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::ValueData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor)
         {
-            curFunc, data, resultInfo, executor;
             return false;
         }
-        virtual bool LoadFunction(const FuncInfo& curFunc, const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadFunction([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::FunctionData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor)
         {
-            curFunc, data, resultInfo, executor;
             return false;
         }
-        virtual bool LoadStatement(const FuncInfo& curFunc, const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor)
         {
-            curFunc, data, resultInfo, executor;
             return false;
         }
         //ArgLoadInfos and ARgs that use non-const references are used to support operations such as std::swap or rvalue reference and to allow passes to failback without modification 
-        virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
+        virtual bool LoadCall([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::FunctionData& data, [[maybe_unused]] std::vector<OperandLoadtimeInfo>& argLoadInfos, [[maybe_unused]] std::vector<BraceApiExecutor>& args, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, [[maybe_unused]] BraceApiExecutor& executor)
         {
-            curFunc, data, argLoadInfos, args, resultInfo, executor;
             return false;
         }
     protected:

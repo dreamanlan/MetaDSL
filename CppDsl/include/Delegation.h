@@ -55,18 +55,16 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (*pFunc)();
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, address, space;
         /*char buf[1025];
         ::sprintf(buf,"%d<->%d",size,space);
         ::MessageBox(nullptr,buf,"",MB_OK);
         Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     Fptr mFunc;
@@ -90,18 +88,16 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (pObj->*pFunc)();
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, address, space;
         /*char buf[1025];
         ::sprintf(buf,"%d<->%d",size,space);
         ::MessageBox(nullptr,buf,"",MB_OK);*/
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     T* mObj;
@@ -126,18 +122,16 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (pObj->*pFunc)();
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, address, space;
         /*char buf[1025];
         ::sprintf(buf,"%d<->%d",size,space);
         ::MessageBox(nullptr,buf,"",MB_OK);*/
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     const T* mObj;
@@ -233,15 +227,13 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (*pFunc)(p1);
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, address, space;
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     Fptr mFunc;
@@ -265,15 +257,13 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (pObj->*pFunc)(p1);
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, address, space;
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     T* mObj;
@@ -298,15 +288,13 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (pObj->*pFunc)(p1);
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, address, space;
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     const T* mObj;
@@ -437,15 +425,13 @@ public:\
         Fptr pFunc=pThis->mFunc;\
         return (*pFunc)(RepeatArg1_##X(p));\
     }\
-    static inline void* operator new (size_t size,const ObjectPlaceHolder* address,size_t space)\
+    static inline void* operator new ([[maybe_unused]] size_t size,const ObjectPlaceHolder* address,[[maybe_unused]] size_t space)\
     {\
-        size, address, space;\
         /*Assert(size<=space);*/\
         return (void*)address;\
     }\
-    static inline void operator delete(void*,const ObjectPlaceHolder* address,size_t space)\
+    static inline void operator delete(void*,[[maybe_unused]] const ObjectPlaceHolder* address,[[maybe_unused]] size_t space)\
     {\
-        address, space;\
     }\
 private:\
     Fptr mFunc;\
@@ -469,15 +455,13 @@ public:\
         Fptr pFunc=pThis->mFunc;\
         return (pObj->*pFunc)(RepeatArg1_##X(p));\
     }\
-    static inline void* operator new (size_t size,const ObjectPlaceHolder* address,size_t space)\
+    static inline void* operator new ([[maybe_unused]] size_t size,const ObjectPlaceHolder* address,[[maybe_unused]] size_t space)\
     {\
-        size, address, space;\
         /*Assert(size<=space);*/\
         return (void*)address;\
     }\
-    static inline void operator delete(void*,const ObjectPlaceHolder* address,size_t space)\
+    static inline void operator delete(void*,[[maybe_unused]] const ObjectPlaceHolder* address,[[maybe_unused]] size_t space)\
     {\
-        address, space;\
     }\
 private:\
     T* mObj;\
@@ -502,15 +486,13 @@ public:\
         Fptr pFunc=pThis->mFunc;\
         return (pObj->*pFunc)(RepeatArg1_##X(p));\
     }\
-    static inline void* operator new (size_t size,const ObjectPlaceHolder* address,size_t space)\
+    static inline void* operator new ([[maybe_unused]] size_t size,const ObjectPlaceHolder* address,[[maybe_unused]] size_t space)\
     {\
-        size, address, space;\
         /*Assert(size<=space);*/\
         return (void*)address;\
     }\
-    static inline void operator delete(void*,const ObjectPlaceHolder* address,size_t space)\
+    static inline void operator delete(void*,[[maybe_unused]] const ObjectPlaceHolder* address,[[maybe_unused]] size_t space)\
     {\
-        address, space;\
     }\
 private:\
     const T* mObj;\
@@ -626,15 +608,13 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (*pFunc)(args...);
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, space;
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     Fptr mFunc;
@@ -661,15 +641,13 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (pObj->*pFunc)(args...);
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, space;
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     T* mObj;
@@ -697,15 +675,13 @@ public:
         Fptr pFunc = pThis->mFunc;
         return (pObj->*pFunc)(args...);
     }
-    static inline void* operator new (size_t size, const ObjectPlaceHolder* address, size_t space)
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        size, space;
         /*Assert(size<=space);*/
         return (void*)address;
     }
-    static inline void operator delete(void*, const ObjectPlaceHolder* address, size_t space)
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
     {
-        address, space;
     }
 private:
     const T* mObj;

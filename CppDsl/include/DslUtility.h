@@ -99,9 +99,8 @@ namespace DslFileReadWrite
         {
             return str;
         }
-        static inline void Null2Empty(std::string ids[], int len)
+        static inline void Null2Empty([[maybe_unused]] std::string ids[], [[maybe_unused]] int len)
         {
-            ids, len;
         }
         static inline void Null2Empty(const char* ids[], int len)
         {
@@ -163,51 +162,42 @@ namespace DslFileReadWrite
     };
     struct DslPolicy
     {
-        static inline DslParser::FunctionData* SetFunction(DslParser::DslFile& file, DslParser::FunctionData& data)
+        static inline DslParser::FunctionData* SetFunction(DslParser::DslFile& file, [[maybe_unused]] DslParser::FunctionData& data)
         {
-            data;
             return file.AddNewFunctionComponent();
         }
-        static inline void CompleteSetFunction(DslParser::DslFile& file, DslParser::FunctionData& data, DslParser::FunctionData* p)
+        static inline void CompleteSetFunction([[maybe_unused]] DslParser::DslFile& file, DslParser::FunctionData& data, DslParser::FunctionData* p)
         {
-            file;
             if (p)
                 data.GetName().SetFunction(p);
         }
-        static inline DslParser::ValueData* AddValueParam(DslParser::DslFile& file, DslParser::FunctionData& data)
+        static inline DslParser::ValueData* AddValueParam(DslParser::DslFile& file, [[maybe_unused]] DslParser::FunctionData& data)
         {
-            data;
             return file.AddNewValueComponent();
         }
-        static inline DslParser::FunctionData* AddFunctionParam(DslParser::DslFile& file, DslParser::FunctionData& data)
+        static inline DslParser::FunctionData* AddFunctionParam(DslParser::DslFile& file, [[maybe_unused]] DslParser::FunctionData& data)
         {
-            data;
             return file.AddNewFunctionComponent();
         }
-        static inline DslParser::StatementData* AddStatementParam(DslParser::DslFile& file, DslParser::FunctionData& data)
+        static inline DslParser::StatementData* AddStatementParam(DslParser::DslFile& file, [[maybe_unused]] DslParser::FunctionData& data)
         {
-            data;
             return file.AddNewStatementComponent();
         }
-        static inline void CompleteAddParam(DslParser::DslFile& file, DslParser::FunctionData& data, DslParser::ISyntaxComponent* p)
+        static inline void CompleteAddParam([[maybe_unused]] DslParser::DslFile& file, DslParser::FunctionData& data, DslParser::ISyntaxComponent* p)
         {
-            file;
             if (p)
                 data.AddParam(p);
         }
-        static inline DslParser::ValueData* AddValue(DslParser::DslFile& file, DslParser::StatementData& data)
+        static inline DslParser::ValueData* AddValue(DslParser::DslFile& file, [[maybe_unused]] DslParser::StatementData& data)
         {
-            data;
             return file.AddNewValueComponent();
         }
-        static inline DslParser::FunctionData* AddFunction(DslParser::DslFile& file, DslParser::StatementData& data)
+        static inline DslParser::FunctionData* AddFunction(DslParser::DslFile& file, [[maybe_unused]] DslParser::StatementData& data)
         {
-            data;
             return file.AddNewFunctionComponent();
         }
-        static inline void CompleteAddValurOrFunction(DslParser::DslFile& file, DslParser::StatementData& data, DslParser::ValueOrFunctionData* p)
+        static inline void CompleteAddValurOrFunction([[maybe_unused]] DslParser::DslFile& file, DslParser::StatementData& data, DslParser::ValueOrFunctionData* p)
         {
-            file;
             if (p)
                 data.AddFunction(p);
         }
@@ -229,47 +219,38 @@ namespace DslFileReadWrite
                 file.AddDslInfo(p);
         }
 
-        static inline DslData::FunctionData* SetFunction(DslData::DslFile& file, DslData::FunctionData& data)
+        static inline DslData::FunctionData* SetFunction([[maybe_unused]] DslData::DslFile& file, DslData::FunctionData& data)
         {
-            file;
             return data.GetName().SetFunction();
         }
-        static inline void CompleteSetFunction(DslData::DslFile& file, DslData::FunctionData& data, DslData::FunctionData* p)
+        static inline void CompleteSetFunction([[maybe_unused]] DslData::DslFile& file, [[maybe_unused]] DslData::FunctionData& data, [[maybe_unused]] DslData::FunctionData* p)
         {
-            file, data, p;
         }
-        static inline DslData::ValueData* AddValueParam(DslData::DslFile& file, DslData::FunctionData& data)
+        static inline DslData::ValueData* AddValueParam([[maybe_unused]] DslData::DslFile& file, DslData::FunctionData& data)
         {
-            file;
             return data.AddValueParam();
         }
-        static inline DslData::FunctionData* AddFunctionParam(DslData::DslFile& file, DslData::FunctionData& data)
+        static inline DslData::FunctionData* AddFunctionParam([[maybe_unused]] DslData::DslFile& file, DslData::FunctionData& data)
         {
-            file;
             return data.AddFunctionParam();
         }
-        static inline DslData::StatementData* AddStatementParam(DslData::DslFile& file, DslData::FunctionData& data)
+        static inline DslData::StatementData* AddStatementParam([[maybe_unused]] DslData::DslFile& file, DslData::FunctionData& data)
         {
-            file;
             return data.AddStatementParam();
         }
-        static inline void CompleteAddParam(DslData::DslFile& file, DslData::FunctionData& data, DslData::ISyntaxComponent* p)
+        static inline void CompleteAddParam([[maybe_unused]] DslData::DslFile& file, [[maybe_unused]] DslData::FunctionData& data, [[maybe_unused]] DslData::ISyntaxComponent* p)
         {
-            file, data, p;
         }
-        static inline DslData::ValueData* AddValue(DslData::DslFile& file, DslData::StatementData& data)
+        static inline DslData::ValueData* AddValue([[maybe_unused]] DslData::DslFile& file, DslData::StatementData& data)
         {
-            file;
             return data.AddValue();
         }
-        static inline DslData::FunctionData* AddFunction(DslData::DslFile& file, DslData::StatementData& data)
+        static inline DslData::FunctionData* AddFunction([[maybe_unused]] DslData::DslFile& file, DslData::StatementData& data)
         {
-            file;
             return data.AddFunction();
         }
-        static inline void CompleteAddValurOrFunction(DslData::DslFile& file, DslData::StatementData& data, DslData::ValueOrFunctionData* p)
+        static inline void CompleteAddValurOrFunction([[maybe_unused]] DslData::DslFile& file, [[maybe_unused]] DslData::StatementData& data, [[maybe_unused]] DslData::ValueOrFunctionData* p)
         {
-            file, data, p;
         }
         static inline DslData::ValueData* AddValueDsl(DslData::DslFile& file)
         {
@@ -283,9 +264,8 @@ namespace DslFileReadWrite
         {
             return file.AddStatement();
         }
-        static inline void CompleteAddDsl(DslData::DslFile& file, DslData::ISyntaxComponent* p)
+        static inline void CompleteAddDsl([[maybe_unused]] DslData::DslFile& file, [[maybe_unused]] DslData::ISyntaxComponent* p)
         {
-            file, p;
         }
 
         static inline void CopyStr(DslParser::DslFile& file, std::vector<const char*>& keys, const char* p, int len)
@@ -295,9 +275,8 @@ namespace DslFileReadWrite
             id[len] = 0;
             keys.push_back(id);
         }
-        static inline void CopyStr(DslData::DslFile& file, std::vector<std::string>& keys, const char* p, int len)
+        static inline void CopyStr([[maybe_unused]] DslData::DslFile& file, std::vector<std::string>& keys, const char* p, int len)
         {
-            file;
             std::string str;
             str.append(p, len);
             keys.push_back(std::move(str));
@@ -916,7 +895,7 @@ namespace DslFileReadWrite
     }
 #endif
     //------------------------------------------------------------------------------------------------------------------------------------
-    static bool isBinaryEndCode(unsigned char endCodeStart, unsigned char code, int& sep)
+    [[maybe_unused]] static bool isBinaryEndCode(unsigned char endCodeStart, unsigned char code, int& sep)
     {
         bool ret;
         if (code >= endCodeStart && code <= endCodeStart + IDslSyntaxCommon::SEPARATOR_SEMICOLON - IDslSyntaxCommon::SEPARATOR_NOTHING) {
@@ -932,9 +911,8 @@ namespace DslFileReadWrite
     template<typename DslFileT, typename StrT, typename DslTypeT>
     static inline IDslSyntaxCommon* readBinaryParam(DslFileT& file, const char* bytes, int size, int start, int& curCodeIndex, StrT* identifiers, int idCount, int& curIdIndex, DslTypeT& data);
     template<typename DslFileT, typename StrT, typename DslTypeT>
-    static inline void readBinaryValue(DslFileT& file, const char* bytes, int size, int start, int& curCodeIndex, StrT* identifiers, int idCount, int& curIdIndex, DslTypeT& data)
+    static inline void readBinaryValue([[maybe_unused]] DslFileT& file, const char* bytes, int size, int start, int& curCodeIndex, StrT* identifiers, int idCount, int& curIdIndex, DslTypeT& data)
     {
-        file;
         char code = readByte(bytes, size, start + curCodeIndex++);
         if (code == (char)BinCode_BeginValue) {
             code = readByte(bytes, size, start + curCodeIndex);

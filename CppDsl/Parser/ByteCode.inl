@@ -958,7 +958,7 @@ namespace DslParser
             simplifyFunction(data.GetLowerOrderFunction());
         }
         int num = data.GetParamNum();
-        if (data.HaveStatement() && num > 0 || num == 1) {
+        if ((data.HaveStatement() && num > 0) || num == 1) {
             if (!data.GetParam(num - 1)->IsValid()) {
                 data.RemoveLastParam();
             }
