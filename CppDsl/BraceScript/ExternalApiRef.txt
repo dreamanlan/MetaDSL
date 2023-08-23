@@ -4584,7 +4584,8 @@ namespace BraceScriptInterpreter
                 if (m_Member == "length") {
                     resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
                     resultInfo.Name = GenTempVarName();
-                    resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                    resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+                    resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
                     m_ResultInfo = resultInfo;
                     executor.attach(this, &ArrayHashtableMemberGetProvider::ExecuteArrayLength);
                     return true;
@@ -4594,7 +4595,8 @@ namespace BraceScriptInterpreter
                 if (m_Member == "count") {
                     resultInfo.Type = Brace::BRACE_DATA_TYPE_INT32;
                     resultInfo.Name = GenTempVarName();
-                    resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                    resultInfo.ObjectTypeId = Brace::PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+                    resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
                     m_ResultInfo = resultInfo;
                     executor.attach(this, &ArrayHashtableMemberGetProvider::ExecuteHashtableCount);
                     return true;
