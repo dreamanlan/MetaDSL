@@ -106,6 +106,31 @@ namespace Dsl
             }
         }
 
+        public void SetEmptySeparator()
+        {
+            m_Separator = SEPARATOR_NOTHING;
+        }
+        public void SetCommaSeparator()
+        {
+            m_Separator = SEPARATOR_COMMA;
+        }
+        public void SetSemiColonSeparator()
+        {
+            m_Separator = SEPARATOR_SEMICOLON;
+        }
+        public bool IsEmptySeparator()
+        {
+            return m_Separator == SEPARATOR_NOTHING;
+        }
+        public bool IsCommaSeparator()
+        {
+            return m_Separator == SEPARATOR_COMMA;
+        }
+        public bool IsSemiColonSeparator()
+        {
+            return m_Separator == SEPARATOR_SEMICOLON;
+        }
+
         public string CalcFirstComment()
         {
             if (DslFile.DontLoadComments)

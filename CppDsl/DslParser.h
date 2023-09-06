@@ -164,6 +164,30 @@ namespace DslParser
                 return " ";
             }
         }
+        void SetEmptySeparator()
+        {
+            m_Separator = (int)SEPARATOR_NOTHING;
+        }
+        void SetCommaSeparator()
+        {
+            m_Separator = (int)SEPARATOR_COMMA;
+        }
+        void SetSemiColonSeparator()
+        {
+            m_Separator = (int)SEPARATOR_SEMICOLON;
+        }
+        bool IsEmptySeparator()const
+        {
+            return m_Separator == (int)SEPARATOR_NOTHING;
+        }
+        bool IsCommaSeparator()const
+        {
+            return m_Separator == (int)SEPARATOR_COMMA;
+        }
+        bool IsSemiColonSeparator()const
+        {
+            return m_Separator == (int)SEPARATOR_SEMICOLON;
+        }
         void AddFirstComment(const char* cmt)
         {
             if (0 == GetCommentsInfo())
