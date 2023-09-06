@@ -401,7 +401,13 @@ namespace DslData
         FunctionData* AddFunctionParam();
         StatementData* AddStatementParam();
         ISyntaxComponent* AddParamCopyFrom(const ISyntaxComponent& other);
-        void SetParamClass(int v) { m_ParamClass = v; }
+        void SetParamClass(int v)
+        {
+            int innerType = v & (int)PARAM_CLASS_UNMASK;
+            if (innerType >= (int)PARAM_CLASS_MIN && innerType < (int)PARAM_CLASS_MAX) {
+                m_ParamClass = v;
+            }
+        }
         int GetParamClass()const { return m_ParamClass; }
         int GetParamClassUnmasked()const
         {
@@ -413,6 +419,118 @@ namespace DslData
             int infix = (m_ParamClass & (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK);
             return infix == (int)PARAM_CLASS_WRAP_INFIX_CALL_MASK;
         }
+        void SetInfixOperatorParamClass()
+        {
+            m_ParamClass = (int)(PARAM_CLASS_WRAP_INFIX_CALL_MASK | PARAM_CLASS_OPERATOR);
+        }
+        void SetOperatorParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_OPERATOR;
+        }
+        void SetTernaryOperatorParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_TERNARY_OPERATOR;
+        }
+        void SetParenthesisParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS;
+        }
+        void SetBracketParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_BRACKET;
+        }
+        void SetColonColonParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_COLON_COLON;
+        }
+        void SetPeriodParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PERIOD;
+        }
+        void SetPeriodStarParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PERIOD_STAR;
+        }
+        void SetPointerParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_POINTER;
+        }
+        void SetPointerStarParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_POINTER_STAR;
+        }
+        void SetQuestionPeriodParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_PERIOD;
+        }
+        void SetQuestionPeriodStarParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_PERIOD_STAR;
+        }
+        void SetPeriodParenthesisParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PERIOD_PARENTHESIS;
+        }
+        void SetPeriodBracketParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PERIOD_BRACKET;
+        }
+        void SetPeriodBraceParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PERIOD_BRACE;
+        }
+        void SetQuestionParenthesisParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_PARENTHESIS;
+        }
+        void SetQuestionBracketParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_BRACKET;
+        }
+        void SetQuestionBraceParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_BRACE;
+        }
+        void SetParenthesisColonParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_COLON;
+        }
+        void SetBracketColonParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_BRACKET_COLON;
+        }
+        void SetAngleBracketColonParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_ANGLE_BRACKET_COLON;
+        }
+        void SetParenthesisPercentParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_PERCENT;
+        }
+        void SetBracketPercentParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_BRACKET_PERCENT;
+        }
+        void SetBracePercentParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_BRACE_PERCENT;
+        }
+        void SetAngleBracketPercentParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_ANGLE_BRACKET_PERCENT;
+        }
+        void SetColonColonParenthesisParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_COLON_COLON_PARENTHESIS;
+        }
+        void SetColonColonBracketParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_COLON_COLON_BRACKET;
+        }
+        void SetColonColonBraceParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_COLON_COLON_BRACE;
+        }
         bool IsOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
@@ -422,6 +540,131 @@ namespace DslData
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_TERNARY_OPERATOR;
+        }
+        bool IsParenthesisParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PARENTHESIS;
+        }
+        bool IsBracketParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_BRACKET;
+        }
+        bool IsColonColonParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_COLON_COLON;
+        }
+        bool IsPeriodParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PERIOD;
+        }
+        bool IsPeriodStarParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PERIOD_STAR;
+        }
+        bool IsPointerParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_POINTER;
+        }
+        bool IsPointerStarParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_POINTER_STAR;
+        }
+        bool IsQuestionPeriodParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_QUESTION_PERIOD;
+        }
+        bool IsQuestionPeriodStarParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_QUESTION_PERIOD_STAR;
+        }
+        bool IsPeriodParenthesisParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PERIOD_PARENTHESIS;
+        }
+        bool IsPeriodBracketParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PERIOD_BRACKET;
+        }
+        bool IsPeriodBraceParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PERIOD_BRACE;
+        }
+        bool IsQuestionParenthesisParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_QUESTION_PARENTHESIS;
+        }
+        bool IsQuestionBracketParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_QUESTION_BRACKET;
+        }
+        bool IsQuestionBraceParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_QUESTION_BRACE;
+        }
+        bool IsParenthesisColonParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PARENTHESIS_COLON;
+        }
+        bool IsBracketColonParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_BRACKET_COLON;
+        }
+        bool IsAngleBracketColonParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_ANGLE_BRACKET_COLON;
+        }
+        bool IsParenthesisPercentParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_PARENTHESIS_PERCENT;
+        }
+        bool IsBracketPercentParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_BRACKET_PERCENT;
+        }
+        bool IsBracePercentParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_BRACE_PERCENT;
+        }
+        bool IsAngleBracketPercentParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_ANGLE_BRACKET_PERCENT;
+        }
+        bool IsColonColonParenthesisParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_COLON_COLON_PARENTHESIS;
+        }
+        bool IsColonColonBracketParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_COLON_COLON_BRACKET;
+        }
+        bool IsColonColonBraceParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_COLON_COLON_BRACE;
         }
         bool IsMemberParamClass()const
         {

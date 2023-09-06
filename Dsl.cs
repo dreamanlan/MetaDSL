@@ -96,7 +96,7 @@ namespace Dsl
         }
         public char GetSepChar()
         {
-            switch(m_Separator) {
+            switch (m_Separator) {
                 case SEPARATOR_COMMA:
                     return ',';
                 case SEPARATOR_SEMICOLON:
@@ -154,8 +154,7 @@ namespace Dsl
             }
         }
 
-        public List<string> FirstComments
-        {
+        public List<string> FirstComments {
             get {
                 if (DslFile.DontLoadComments)
                     return EmptyStringList;
@@ -168,8 +167,7 @@ namespace Dsl
                 return cmtsInfo.mFirstComments;
             }
         }
-        public bool FirstCommentOnNewLine
-        {
+        public bool FirstCommentOnNewLine {
             get {
                 if (DslFile.DontLoadComments)
                     return false;
@@ -187,8 +185,7 @@ namespace Dsl
                 cmtsInfo.mFirstCommentOnNewLine = value;
             }
         }
-        public List<string> LastComments
-        {
+        public List<string> LastComments {
             get {
                 if (DslFile.DontLoadComments)
                     return EmptyStringList;
@@ -201,8 +198,7 @@ namespace Dsl
                 return cmtsInfo.mLastComments;
             }
         }
-        public bool LastCommentOnNewLine
-        {
+        public bool LastCommentOnNewLine {
             get {
                 if (DslFile.DontLoadComments)
                     return false;
@@ -228,14 +224,12 @@ namespace Dsl
 
         private int m_Separator = AbstractSyntaxComponent.SEPARATOR_NOTHING;
 
-        public static ISyntaxComponent NullSyntax
-        {
+        public static ISyntaxComponent NullSyntax {
             get {
                 return s_NullSyntax;
             }
         }
-        public static List<string> EmptyStringList
-        {
+        public static List<string> EmptyStringList {
             get {
                 s_StringList.Clear();
                 return s_StringList;
@@ -246,20 +240,16 @@ namespace Dsl
     }
     public abstract class ValueOrFunctionData : AbstractSyntaxComponent
     {
-        public bool IsValue
-        {
+        public bool IsValue {
             get { return this is ValueData; }
         }
-        public bool IsFunction
-        {
+        public bool IsFunction {
             get { return this is FunctionData; }
         }
-        public ValueData AsValue
-        {
+        public ValueData AsValue {
             get { return this as ValueData; }
         }
-        public FunctionData AsFunction
-        {
+        public FunctionData AsFunction {
             get { return this as FunctionData; }
         }
     }
@@ -372,8 +362,7 @@ namespace Dsl
         private string m_Id = string.Empty;
         private int m_Line = -1;
 
-        public static ValueData NullValue
-        {
+        public static ValueData NullValue {
             get {
                 s_Instance.Clear();
                 return s_Instance;
@@ -452,7 +441,7 @@ namespace Dsl
             else if (null != m_LowerOrderFunction)
                 return m_LowerOrderFunction.GetLine();
             else {
-                foreach(var p in m_Params) {
+                foreach (var p in m_Params) {
                     int line = p.GetLine();
                     if (line >= 0)
                         return line;
@@ -496,8 +485,7 @@ namespace Dsl
             }
             return cmt;
         }
-        public List<string> Comments
-        {
+        public List<string> Comments {
             get {
                 if (DslFile.DontLoadComments)
                     return EmptyStringList;
@@ -509,8 +497,7 @@ namespace Dsl
             }
         }
 
-        public List<ISyntaxComponent> Params
-        {
+        public List<ISyntaxComponent> Params {
             get {
                 PrepareParams();
                 return m_Params;
@@ -527,12 +514,10 @@ namespace Dsl
                 }
             }
         }
-        public bool IsHighOrder
-        {
+        public bool IsHighOrder {
             get { return m_IsHighOrder; }
         }
-        public ValueData Name
-        {
+        public ValueData Name {
             get {
                 if (null != m_Name)
                     return m_Name;
@@ -545,8 +530,7 @@ namespace Dsl
                 m_IsHighOrder = false;
             }
         }
-        public FunctionData LowerOrderFunction
-        {
+        public FunctionData LowerOrderFunction {
             get {
                 if (null != m_LowerOrderFunction)
                     return m_LowerOrderFunction;
@@ -559,36 +543,33 @@ namespace Dsl
                 m_IsHighOrder = true;
             }
         }
-        public FunctionData ThisOrLowerOrderCall
-        {
+        public FunctionData ThisOrLowerOrderCall {
             get {
                 if (HaveParam())
                     return this;
                 else if (HaveLowerOrderParam())
                     return m_LowerOrderFunction;
-                else 
+                else
                     return FunctionData.NullFunction;
             }
         }
-        public FunctionData ThisOrLowerOrderBody
-        {
+        public FunctionData ThisOrLowerOrderBody {
             get {
                 if (HaveStatement())
                     return this;
                 else if (HaveLowerOrderStatement())
                     return m_LowerOrderFunction;
-                else 
+                else
                     return FunctionData.NullFunction;
             }
         }
-        public FunctionData ThisOrLowerOrderScript
-        {
+        public FunctionData ThisOrLowerOrderScript {
             get {
                 if (HaveExternScript())
                     return this;
                 else if (HaveLowerOrderExternScript())
                     return m_LowerOrderFunction;
-                else 
+                else
                     return FunctionData.NullFunction;
             }
         }
@@ -634,6 +615,118 @@ namespace Dsl
             int infix = (m_ParamClass & (int)ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK);
             return infix == (int)ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK;
         }
+        public void SetInfixOperatorParamClass()
+        {
+            m_ParamClass = (int)(ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | ParamClassEnum.PARAM_CLASS_OPERATOR);
+        }
+        public void SetOperatorParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_OPERATOR;
+        }
+        public void SetTernaryOperatorParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR;
+        }
+        public void SetParenthesisParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+        }
+        public void SetBracketParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_BRACKET;
+        }
+        public void SetColonColonParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON;
+        }
+        public void SetPeriodParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD;
+        }
+        public void SetPeriodStarParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR;
+        }
+        public void SetPointerParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_POINTER;
+        }
+        public void SetPointerStarParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
+        }
+        public void SetQuestionPeriodParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD;
+        }
+        public void SetQuestionPeriodStarParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR;
+        }
+        public void SetPeriodParenthesisParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS;
+        }
+        public void SetPeriodBracketParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET;
+        }
+        public void SetPeriodBraceParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACE;
+        }
+        public void SetQuestionParenthesisParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS;
+        }
+        public void SetQuestionBracketParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET;
+        }
+        public void SetQuestionBraceParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACE;
+        }
+        public void SetParenthesisColonParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON;
+        }
+        public void SetBracketColonParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_BRACKET_COLON;
+        }
+        public void SetAngleBracketColonParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON;
+        }
+        public void SetParenthesisPercentParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT;
+        }
+        public void SetBracketPercentParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT;
+        }
+        public void SetBracePercentParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_BRACE_PERCENT;
+        }
+        public void SetAngleBracketPercentParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT;
+        }
+        public void SetColonColonParenthesisParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS;
+        }
+        public void SetColonColonBracketParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET;
+        }
+        public void SetColonColonBraceParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE;
+        }
         public bool IsOperatorParamClass()
         {
             int paramClass = GetParamClassUnmasked();
@@ -643,6 +736,131 @@ namespace Dsl
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR;
+        }
+        public bool IsParenthesisParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+        }
+        public bool IsBracketParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_BRACKET;
+        }
+        public bool IsColonColonParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON;
+        }
+        public bool IsPeriodParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD;
+        }
+        public bool IsPeriodStarParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR;
+        }
+        public bool IsPointerParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER;
+        }
+        public bool IsPointerStarParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
+        }
+        public bool IsQuestionPeriodParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD;
+        }
+        public bool IsQuestionPeriodStarParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR;
+        }
+        public bool IsPeriodParenthesisParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS;
+        }
+        public bool IsPeriodBracketParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET;
+        }
+        public bool IsPeriodBraceParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACE;
+        }
+        public bool IsQuestionParenthesisParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS;
+        }
+        public bool IsQuestionBracketParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET;
+        }
+        public bool IsQuestionBraceParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACE;
+        }
+        public bool IsParenthesisColonParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON;
+        }
+        public bool IsBracketColonParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_BRACKET_COLON;
+        }
+        public bool IsAngleBracketColonParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON;
+        }
+        public bool IsParenthesisPercentParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT;
+        }
+        public bool IsBracketPercentParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT;
+        }
+        public bool IsBracePercentParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_BRACE_PERCENT;
+        }
+        public bool IsAngleBracketPercentParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT;
+        }
+        public bool IsColonColonParenthesisParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS;
+        }
+        public bool IsColonColonBracketParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET;
+        }
+        public bool IsColonColonBraceParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE;
         }
         public bool IsMemberParamClass()
         {
@@ -829,8 +1047,7 @@ namespace Dsl
 
         private FunctionCommentsInfo m_CommentsInfo = null;
 
-        public static FunctionData NullFunction
-        {
+        public static FunctionData NullFunction {
             get {
                 s_Instance.Clear();
                 return s_Instance;
@@ -983,15 +1200,13 @@ namespace Dsl
             PrepareValueOrFunctions();
             m_ValueOrFunctions.Add(funcData);
         }
-        public List<ValueOrFunctionData> Functions
-        {
+        public List<ValueOrFunctionData> Functions {
             get {
                 PrepareValueOrFunctions();
-                return m_ValueOrFunctions; 
+                return m_ValueOrFunctions;
             }
         }
-        public ValueOrFunctionData First
-        {
+        public ValueOrFunctionData First {
             get {
                 if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 0)
                     return m_ValueOrFunctions[0];
@@ -999,8 +1214,7 @@ namespace Dsl
                     return ValueData.NullValue;
             }
         }
-        public ValueOrFunctionData Second
-        {
+        public ValueOrFunctionData Second {
             get {
                 if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 1)
                     return m_ValueOrFunctions[1];
@@ -1008,8 +1222,7 @@ namespace Dsl
                     return FunctionData.NullFunction;
             }
         }
-        public ValueOrFunctionData Third
-        {
+        public ValueOrFunctionData Third {
             get {
                 if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 2)
                     return m_ValueOrFunctions[2];
@@ -1017,8 +1230,7 @@ namespace Dsl
                     return FunctionData.NullFunction;
             }
         }
-        public ValueOrFunctionData Last
-        {
+        public ValueOrFunctionData Last {
             get {
                 if (null != m_ValueOrFunctions && m_ValueOrFunctions.Count > 0)
                     return m_ValueOrFunctions[m_ValueOrFunctions.Count - 1];
@@ -1072,8 +1284,7 @@ namespace Dsl
         private List<ValueOrFunctionData> m_ValueOrFunctions = null;
         private SyntaxComponentCommentsInfo m_CommentsInfo = null;
 
-        public static StatementData NullStatement
-        {
+        public static StatementData NullStatement {
             get {
                 s_NullStatement.Clear();
                 return s_NullStatement;
@@ -1084,8 +1295,7 @@ namespace Dsl
 
     public class DslFile
     {
-        public List<ISyntaxComponent> DslInfos
-        {
+        public List<ISyntaxComponent> DslInfos {
             get { return mDslInfos; }
         }
         public void AddDslInfo(ISyntaxComponent data)
@@ -1153,7 +1363,7 @@ namespace Dsl
         {
 #if FULL_VERSION
             StringBuilder sb = new StringBuilder();
-            if(mStringBeginDelimiter!="\"" || mStringEndDelimiter != "\"") {
+            if (mStringBeginDelimiter != "\"" || mStringEndDelimiter != "\"") {
                 sb.AppendFormat("@@delimiter(string, \"{0}\", \"{1}\");", mStringBeginDelimiter, mStringEndDelimiter);
                 sb.AppendLine();
             }
@@ -1312,7 +1522,7 @@ namespace Dsl
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
-            
+
             Dsl.Parser.LuaParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
                 for (int i = 0; i < mDslInfos.Count; i++) {
@@ -1408,84 +1618,67 @@ namespace Dsl
             mScriptBeginDelimiter = begin;
             mScriptEndDelimiter = end;
         }
-        public string StringBeginDelimiter
-        {
+        public string StringBeginDelimiter {
             get { return mStringBeginDelimiter; }
         }
-        public string StringEndDelimiter
-        {
+        public string StringEndDelimiter {
             get { return mStringEndDelimiter; }
         }
-        public string ScriptBeginDelimiter
-        {
+        public string ScriptBeginDelimiter {
             get { return mScriptBeginDelimiter; }
         }
-        public string ScriptEndDelimiter
-        {
+        public string ScriptEndDelimiter {
             get { return mScriptEndDelimiter; }
         }
-        public Dsl.Common.TokenCanEatCharDelegation onTokenCanEatChar
-        {
+        public Dsl.Common.TokenCanEatCharDelegation onTokenCanEatChar {
             get { return mOnTokenCanEatChar; }
             set { mOnTokenCanEatChar = value; }
         }
-        public Dsl.Common.GetCppTokenDelegation onGetCppToken
-        {
+        public Dsl.Common.GetCppTokenDelegation onGetCppToken {
             get { return mOnGetCppToken; }
             set { mOnGetCppToken = value; }
         }
-        public Dsl.Common.GetTokenDelegation onGetToken
-        {
+        public Dsl.Common.GetTokenDelegation onGetToken {
             get { return mOnGetToken; }
             set { mOnGetToken = value; }
         }
-        public Dsl.Common.BeforeAddFunctionDelegation onBeforeAddFunction
-        {
+        public Dsl.Common.BeforeAddFunctionDelegation onBeforeAddFunction {
             get { return mOnBeforeAddFunction; }
             set { mOnBeforeAddFunction = value; }
         }
-        public Dsl.Common.AddFunctionDelegation onAddFunction
-        {
+        public Dsl.Common.AddFunctionDelegation onAddFunction {
             get { return mOnAddFunction; }
             set { mOnAddFunction = value; }
         }
-        public Dsl.Common.BeforeEndStatementDelegation onBeforeEndStatement
-        {
+        public Dsl.Common.BeforeEndStatementDelegation onBeforeEndStatement {
             get { return mOnBeforeEndStatement; }
             set { mOnBeforeEndStatement = value; }
         }
-        public Dsl.Common.EndStatementDelegation onEndStatement
-        {
+        public Dsl.Common.EndStatementDelegation onEndStatement {
             get { return mOnEndStatement; }
             set { mOnEndStatement = value; }
         }
-        public Dsl.Common.BeforeBuildOperatorDelegation onBeforeBuildOperator
-        {
+        public Dsl.Common.BeforeBuildOperatorDelegation onBeforeBuildOperator {
             get { return mOnBeforeBuildOperator; }
             set { mOnBeforeBuildOperator = value; }
         }
-        public Dsl.Common.BuildOperatorDelegation onBuildOperator
-        {
+        public Dsl.Common.BuildOperatorDelegation onBuildOperator {
             get { return mOnBuildOperator; }
             set { mOnBuildOperator = value; }
         }
-        public Dsl.Common.SetFunctionIdDelegation onSetFunctionId
-        {
+        public Dsl.Common.SetFunctionIdDelegation onSetFunctionId {
             get { return mOnSetFunctionId; }
             set { mOnSetFunctionId = value; }
         }
-        public Dsl.Common.SetMemberIdDelegation onSetMemberId
-        {
+        public Dsl.Common.SetMemberIdDelegation onSetMemberId {
             get { return mOnSetMemberId; }
             set { mOnSetMemberId = value; }
         }
-        public Dsl.Common.BeforeBuildHighOrderDelegation onBeforeBuildHighOrder
-        {
+        public Dsl.Common.BeforeBuildHighOrderDelegation onBeforeBuildHighOrder {
             get { return mOnBeforeBuildHighOrder; }
             set { mOnBeforeBuildHighOrder = value; }
         }
-        public Dsl.Common.BuildHighOrderDelegation onBuildHighOrder
-        {
+        public Dsl.Common.BuildHighOrderDelegation onBuildHighOrder {
             get { return mOnBuildHighOrder; }
             set { mOnBuildHighOrder = value; }
         }
@@ -1493,7 +1686,7 @@ namespace Dsl
         private static string TransformPreprocess(string input, string beginDelim, string endDelim)
         {
             var sb = new StringBuilder();
-            if(!string.IsNullOrEmpty(beginDelim) && !string.IsNullOrEmpty(endDelim)) {
+            if (!string.IsNullOrEmpty(beginDelim) && !string.IsNullOrEmpty(endDelim)) {
                 sb.AppendFormat("@@delimiter(script, \"{0}\", \"{1}\");", beginDelim, endDelim);
                 sb.AppendLine();
             }
@@ -1828,8 +2021,7 @@ namespace Dsl
         private Dsl.Common.BeforeBuildHighOrderDelegation mOnBeforeBuildHighOrder;
         private Dsl.Common.BuildHighOrderDelegation mOnBuildHighOrder;
 
-        public static byte[] BinaryIdentity
-        {
+        public static byte[] BinaryIdentity {
             get {
                 if (null == sBinaryIdentity) {
                     sBinaryIdentity = Encoding.ASCII.GetBytes(c_BinaryIdentity);
@@ -1837,8 +2029,7 @@ namespace Dsl
                 return sBinaryIdentity;
             }
         }
-        public static bool DontLoadComments
-        {
+        public static bool DontLoadComments {
             get {
                 return sDontLoadComments;
             }
@@ -2273,7 +2464,7 @@ namespace Dsl
             if (null != callData && tempData.IsTernaryOperatorParamClass()) {
                 //三目运算符表示为op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
-                    string line = "/*[?:]*/";                    
+                    string line = "/*[?:]*/";
                     if (data.Functions.Count == 2) {
                         FunctionData funcData = data.Functions[1].AsFunction;
                         if (null != funcData && funcData.HaveId() && funcData.HaveParamOrStatement()) {
@@ -2339,7 +2530,7 @@ namespace Dsl
             writeLastComments(stream, data, indent, isLastOfStatement);
 #endif
         }
-        
+
         internal static bool needQuote(string str)
         {
             const string escapeChars = " \t\r\n{}()[],;~`!%^&*-+=|:<>?/#\\'\"";
@@ -2591,7 +2782,7 @@ namespace Dsl
       return string.Empty;
 #endif
         }
-        
+
         private static void writeStatementsOrExternScript(StringBuilder stream, FunctionData data, int indent, DelimiterInfo delim)
         {
 #if FULL_VERSION
@@ -2628,7 +2819,7 @@ namespace Dsl
             }
 #endif
         }
-        
+
         private static void writeFirstComments(StringBuilder stream, ISyntaxComponent data, int indent, bool firstLineNoIndent)
         {
 #if FULL_VERSION

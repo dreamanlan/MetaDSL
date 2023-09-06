@@ -27,7 +27,8 @@ public:
     };
     enum
     {
-        PARAM_CLASS_NOTHING = 0,
+        PARAM_CLASS_MIN = 0,
+        PARAM_CLASS_NOTHING = PARAM_CLASS_MIN,
         PARAM_CLASS_PARENTHESIS,
         PARAM_CLASS_BRACKET,
         PARAM_CLASS_PERIOD,
