@@ -33,6 +33,15 @@ DslParser::ValueData RuntimeBuilderData::TokenInfo::ToValue()const
         }
     }
     break;
+    case DOLLAR_STRING_TOKEN:
+    {
+        char* pStr = mString;
+        if (0 != pStr) {
+            DslParser::ValueData val(pStr, DslParser::ValueData::VALUE_TYPE_DOLLAR_STRING);
+            return val;
+        }
+    }
+    break;
     }
     return DslParser::ValueData();
 }

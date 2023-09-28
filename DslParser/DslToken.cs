@@ -387,7 +387,7 @@ namespace Dsl.Common
                 if (mLastToken.Length > 0 && isNotIdentifierAndEndParenthesis(mLastToken[0]))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
-                if(!char.IsLetter(nextChar) && nextChar != '_') {
+                if (!char.IsLetter(nextChar) && nextChar != '_') {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.DOT_;
@@ -432,8 +432,59 @@ namespace Dsl.Common
                 mCurToken = ";";
                 return DslConstants.SEMI_;
             }
+            else if ((CurChar == '@' && (NextChar == '"' || NextChar == '\'')) ||
+                (CurChar == '@' && NextChar == '$' && (PeekChar(2) == '"' || PeekChar(2) == '\'')) ||
+                (CurChar == '$' && NextChar == '@' && (PeekChar(2) == '"' || PeekChar(2) == '\''))) {
+                bool isDollar = false;
+                if ((CurChar == '@' && NextChar == '$') || (CurChar == '$' && NextChar == '@')) {
+                    ++mIterator;
+                    ++mIterator;
+                    isDollar = true;
+                }
+                else {
+                    ++mIterator;
+                }
+                int line = mLineNumber;
+                char c = CurChar;
+                for (++mIterator; CurChar != 0; ++mIterator) {
+                    if (CurChar == '\n') ++mLineNumber;
+                    if (CurChar == c) {
+                        if (NextChar == c) {
+                            mTokenBuilder.Append(CurChar);
+                            ++mIterator;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                    else {
+                        mTokenBuilder.Append(CurChar);
+                    }
+                }
+                if (CurChar != 0) {
+                    ++mIterator;
+                }
+                else {
+                    mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
+                }
+                mCurToken = mTokenBuilder.ToString();
+                /*普通字符串保持源码的样子，不去掉首尾空行
+                if (mCurToken.IndexOf('\n') >= 0) {
+                    mCurToken = removeFirstAndLastEmptyLine(mCurToken);
+                }
+                */
+                if (isDollar)
+                    return DslConstants.DOLLAR_STRING_;
+                else
+                    return DslConstants.STRING_;
+            }
             else {//关键字、标识符或常数
-                if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
+                if (CurChar == '"' || CurChar == '\'' || CurChar=='$' && (NextChar == '"' || NextChar == '\'')) {//引号括起来的名称或关键字
+                    bool isDollar = false;
+                    if (CurChar == '$') {
+                        ++mIterator;
+                        isDollar = true;
+                    }
                     int line = mLineNumber;
                     char c = CurChar;
                     for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
@@ -552,7 +603,10 @@ namespace Dsl.Common
                         mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                     }
                     */
-                    return DslConstants.STRING_;
+                    if(isDollar)
+                        return DslConstants.DOLLAR_STRING_;
+                    else
+                        return DslConstants.STRING_;
                 }
                 else {
                     bool isNum = true;

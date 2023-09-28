@@ -47,7 +47,8 @@ public void execute  ( int  number )
     case 39:  markPointerStarParam();  break;
     case 40:  pushStr();  break;
     case 41:  pushNum();  break;
-    case 42:  pushComma();  break;
-    case 43:  pushSemiColon();  break;
+    case 42:  pushDollarStr();  break;
+    case 43:  pushComma();  break;
+    case 44:  pushSemiColon();  break;
   }
 }

@@ -43,6 +43,7 @@ void    markQuestionPeriodStarParam ( void );
 void    markPointerStarParam ( void );
 void    pushStr ( void );
 void    pushNum ( void );
+void    pushDollarStr ( void );
 void    pushComma ( void );
 void    pushSemiColon ( void );
 
@@ -91,7 +92,8 @@ void execute ( slk_size_t  number )
     case 39:  markPointerStarParam();  break;
     case 40:  pushStr();  break;
     case 41:  pushNum();  break;
-    case 42:  pushComma();  break;
-    case 43:  pushSemiColon();  break;
+    case 42:  pushDollarStr();  break;
+    case 43:  pushComma();  break;
+    case 44:  pushSemiColon();  break;
   }
 }

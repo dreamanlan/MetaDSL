@@ -58,6 +58,7 @@ static Slk_keyword_t Slk_keyword [] = {
 ,{ IDENTIFIER_, "IDENTIFIER" } 
 ,{ STRING_, "STRING" } 
 ,{ NUMBER_, "NUMBER" } 
+,{ DOLLAR_STRING_, "DOLLAR_STRING" } 
 ,{ 0, NULL } 
 }; 
 

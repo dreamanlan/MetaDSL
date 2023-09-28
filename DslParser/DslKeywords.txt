@@ -51,6 +51,7 @@ public static string[] name = {
 ,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
+,"DOLLAR_STRING"
 }; 
 
 public  short[] token = {
@@ -99,6 +100,7 @@ public  short[] token = {
 ,DslConstants.IDENTIFIER_ 
 ,DslConstants.STRING_ 
 ,DslConstants.NUMBER_ 
+,DslConstants.DOLLAR_STRING_ 
 }; 
 
 }; 

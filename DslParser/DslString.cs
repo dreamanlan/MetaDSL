@@ -158,6 +158,7 @@ private static string[] Terminal_name ={"0"
 ,"IDENTIFIER"
 ,"STRING"
 ,"NUMBER"
+,"DOLLAR_STRING"
 ,","
 ,";"
 ,"END_OF_SLK_INPUT"
@@ -206,6 +207,7 @@ private static string[] Action_name ={"0"
 ,"_action_markPointerStarParam"
 ,"_action_pushStr"
 ,"_action_pushNum"
+,"_action_pushDollarStr"
 ,"_action_pushComma"
 ,"_action_pushSemiColon"
 };
@@ -292,6 +294,7 @@ private static string[] Production_name ={"0"
 ,"FUNCTION_ID --> IDENTIFIER _action_pushId"
 ,"FUNCTION_ID --> STRING _action_pushStr"
 ,"FUNCTION_ID --> NUMBER _action_pushNum"
+,"FUNCTION_ID --> DOLLAR_STRING _action_pushDollarStr"
 ,"SEP --> , _action_pushComma"
 ,"SEP --> ; _action_pushSemiColon"
 ,"SEP_STATEMENT_* --> SEP _action_markSeparator STATEMENT SEP_STATEMENT_*"
@@ -382,9 +385,9 @@ private static string[] Production_name ={"0"
 ,"FUNCTION_PARAMS_22_opt -->"
 };
 
-private const short   START_SYMBOL = 56;
-private const short   START_ACTION = 151;
-private const short   END_ACTION = 194;
+private const short   START_SYMBOL = 57;
+private const short   START_ACTION = 152;
+private const short   END_ACTION = 196;
 
 public static string  GetSymbolName ( short symbol )
 {

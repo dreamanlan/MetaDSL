@@ -73,7 +73,8 @@ namespace Dsl
         public const int ID_TOKEN = 0;
         public const int NUM_TOKEN = 1;
         public const int STRING_TOKEN = 2;
-        public const int MAX_TYPE = 2;
+        public const int DOLLAR_STRING_TOKEN = 3;
+        public const int MAX_TYPE = 3;
 
         public const int SEPARATOR_NOTHING = 0;
         public const int SEPARATOR_COMMA = 1;
@@ -340,6 +341,10 @@ namespace Dsl
         public bool IsString()
         {
             return STRING_TOKEN == m_Type;
+        }
+        public bool IsDollarString()
+        {
+            return DOLLAR_STRING_TOKEN == m_Type;
         }
         public void Clear()
         {
@@ -2589,6 +2594,9 @@ namespace Dsl
         internal static string quoteString(string str, int _Type, string strBeginDelim, string strEndDelim)
         {
             switch (_Type) {
+                case AbstractSyntaxComponent.DOLLAR_STRING_TOKEN: {
+                        return "$" + quoteString(str, strBeginDelim, strEndDelim);
+                    }
                 case AbstractSyntaxComponent.STRING_TOKEN: {
                         return quoteString(str, strBeginDelim, strEndDelim);
                     }

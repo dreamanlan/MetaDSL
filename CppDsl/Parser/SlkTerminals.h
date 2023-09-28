@@ -66,6 +66,7 @@ static Slk_terminal_t Slk_terminal [] = {
 ,{ IDENTIFIER_, "IDENTIFIER" } 
 ,{ STRING_, "STRING" } 
 ,{ NUMBER_, "NUMBER" } 
+,{ DOLLAR_STRING_, "DOLLAR_STRING" } 
 ,{ COMMA_, "," } 
 ,{ SEMI_, ";" } 
 ,{ END_OF_SLK_INPUT_, "END_OF_SLK_INPUT" } 

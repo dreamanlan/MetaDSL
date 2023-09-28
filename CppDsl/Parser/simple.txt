@@ -185,6 +185,7 @@ FUNCTION_ID:
 	IDENTIFIER _action_pushId
 	STRING	_action_pushStr
 	NUMBER _action_pushNum
+	DOLLAR_STRING	_action_pushDollarStr
 	
 SEP:
 	, _action_pushComma

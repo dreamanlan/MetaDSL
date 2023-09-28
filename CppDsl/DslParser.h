@@ -439,6 +439,7 @@ namespace DslParser
 
         int IsNum()const { return (m_Type == VALUE_TYPE_NUM ? TRUE : FALSE); }
         int IsString()const { return (m_Type == VALUE_TYPE_STRING ? TRUE : FALSE); }
+        int IsDollarString()const { return (m_Type == VALUE_TYPE_DOLLAR_STRING ? TRUE : FALSE); }
         int IsIdentifier()const { return (m_Type == VALUE_TYPE_IDENTIFIER && nullptr != m_ConstStringVal ? TRUE : FALSE); }
         int IsFunction()const { return (m_Type == VALUE_TYPE_FUNCTION ? TRUE : FALSE); }
 
@@ -465,6 +466,16 @@ namespace DslParser
         void SetString(const char* str)
         {
             m_Type = VALUE_TYPE_STRING;
+            m_ConstStringVal = str;
+        }
+        void SetDollarString(char* str)
+        {
+            m_Type = VALUE_TYPE_DOLLAR_STRING;
+            m_StringVal = str;
+        }
+        void SetDollarString(const char* str)
+        {
+            m_Type = VALUE_TYPE_DOLLAR_STRING;
             m_ConstStringVal = str;
         }
         void SetFunction(FunctionData* func)

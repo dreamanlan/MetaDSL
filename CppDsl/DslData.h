@@ -325,6 +325,7 @@ namespace DslData
 
         bool IsNum()const { return (m_Type == VALUE_TYPE_NUM); }
         bool IsString()const { return (m_Type == VALUE_TYPE_STRING); }
+        bool IsDollarString()const { return (m_Type == VALUE_TYPE_DOLLAR_STRING); }
         bool IsIdentifier()const { return (m_Type == VALUE_TYPE_IDENTIFIER && !m_StringVal.empty()); }
         bool IsFunction()const { return (m_Type == VALUE_TYPE_FUNCTION); }
 
@@ -343,6 +344,11 @@ namespace DslData
         {
             std::string tstr = str;
             SetString(std::move(tstr));
+        }
+        void SetDollarString(const std::string& str)
+        {
+            std::string tstr = str;
+            SetDollarString(std::move(tstr));
         }
         void SetIdentifier(const std::string& name)
         {
@@ -364,6 +370,12 @@ namespace DslData
         {
             Release();
             m_Type = VALUE_TYPE_STRING;
+            m_StringVal = std::move(str);
+        }
+        void SetDollarString(std::string&& str)
+        {
+            Release();
+            m_Type = VALUE_TYPE_DOLLAR_STRING;
             m_StringVal = std::move(str);
         }
         void SetIdentifier(std::string&& name)

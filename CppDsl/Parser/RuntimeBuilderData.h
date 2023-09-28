@@ -22,6 +22,7 @@ public:
         ID_TOKEN = 0,
         NUM_TOKEN,
         STRING_TOKEN,
+        DOLLAR_STRING_TOKEN,
     };
     struct TokenInfo
     {

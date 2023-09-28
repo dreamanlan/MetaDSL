@@ -385,6 +385,10 @@ namespace DslFileReadWrite
         if (data.IsString()) {
             WriteString(fp, StrPolicy::ToCStr(data.GetId()), firstLineNoIndent ? 0 : indent, StrPolicy::ToCStr(delim.StringBeginDelimiter), StrPolicy::ToCStr(delim.StringEndDelimiter));
         }
+        else if (data.IsDollarString()) {
+            fwrite("$", 1, 1, fp);
+            WriteString(fp, StrPolicy::ToCStr(data.GetId()), firstLineNoIndent ? 0 : indent, StrPolicy::ToCStr(delim.StringBeginDelimiter), StrPolicy::ToCStr(delim.StringEndDelimiter));
+        }
         else if (data.IsValid()) {
             WriteId(fp, StrPolicy::ToCStr(data.GetId()), firstLineNoIndent ? 0 : indent);
         }

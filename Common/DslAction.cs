@@ -239,8 +239,9 @@ namespace Dsl.Common
                 case 39: markPointerStarParam(); break;
                 case 40: pushStr(); break;
                 case 41: pushNum(); break;
-                case 42: pushComma(); break;
-                case 43: pushSemiColon(); break;
+                case 42: pushDollarStr(); break;
+                case 43: pushComma(); break;
+                case 44: pushSemiColon(); break;
             }
         }
         private void executeLua(int number)
@@ -863,6 +864,10 @@ namespace Dsl.Common
         private void pushStr()
         {
             push(getLastToken(), FunctionData.STRING_TOKEN);
+        }
+        private void pushDollarStr()
+        {
+            push(getLastToken(), FunctionData.DOLLAR_STRING_TOKEN);
         }
         private void pushComma()
         {

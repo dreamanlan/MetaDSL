@@ -2526,6 +2526,9 @@ namespace Brace
         if (tok_type == DslData::ValueData::VALUE_TYPE_STRING) {
             return "\"" + value + "\"";
         }
+        else if (tok_type == DslData::ValueData::VALUE_TYPE_DOLLAR_STRING) {
+            return "$\"" + value + "\"";
+        }
         else {
             return "[" + value + "]";
         }
@@ -2603,6 +2606,12 @@ namespace Brace
                     index = curFunc->VarInitInfo.AllocVariable(type);
                     curFunc->VarInitInfo.ObjectVars[index] = nullptr;
                 }
+                break;
+            case DslData::ValueData::VALUE_TYPE_DOLLAR_STRING:
+                type = BRACE_DATA_TYPE_DOLLAR_STRING;
+                objTypeId = PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ;
+                index = curFunc->VarInitInfo.AllocVariable(type);
+                curFunc->VarInitInfo.StringVars[index] = value;
                 break;
             case DslData::ValueData::VALUE_TYPE_STRING:
                 type = BRACE_DATA_TYPE_STRING;
