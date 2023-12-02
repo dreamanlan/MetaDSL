@@ -376,7 +376,23 @@ short SlkToken::getOperatorTokenValue()const
     return val;
 }
 
-int SlkToken::isNotIdentifierAndEndParenthesis(char c)const
+int SlkToken::isNotIdentifier(char c)const
+{
+    if (0 == c)
+        return FALSE;
+    else
+        return (!::isalpha(c) && c != '_' && c != '@' && c != '$') ? TRUE : FALSE;
+}
+
+int SlkToken::isNotIdentifierAndBeginParenthesis(char c)const
+{
+    if (0 == c)
+        return FALSE;
+    else
+        return (0 == strchr(mBeginParentheses, c) && !::isalpha(c) && c != '_' && c != '@' && c != '$') ? TRUE : FALSE;
+}
+
+int SlkToken::isNotIdentifierAndNumberAndEndParenthesis(char c)const
 {
     if (0 == c)
         return FALSE;
@@ -739,10 +755,10 @@ short SlkToken::getImpl()
         pushTokenChar(':');
         endToken();
 
-        if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+        if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
             return getOperatorTokenValue();
         char nextChar = peekNextValidChar(0);
-        if (!::isalnum(nextChar) && nextChar != '_') {
+        if (isNotIdentifierAndBeginParenthesis(nextChar)) {
             return getOperatorTokenValue();
         }
         return COLON_COLON_;
@@ -759,10 +775,10 @@ short SlkToken::getImpl()
                 pushTokenChar('*');
                 endToken();
 
-                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
                     return getOperatorTokenValue();
                 char nextChar = peekNextValidChar(0);
-                if (!::isalnum(nextChar) && nextChar != '_') {
+                if (isNotIdentifier(nextChar)) {
                     return getOperatorTokenValue();
                 }
                 return QUESTION_PERIOD_STAR_;
@@ -772,10 +788,10 @@ short SlkToken::getImpl()
                 pushTokenChar('.');
                 endToken();
 
-                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
                     return getOperatorTokenValue();
                 char nextChar = peekNextValidChar(0);
-                if (!::isalnum(nextChar) && nextChar != '_') {
+                if (isNotIdentifier(nextChar)) {
                     return getOperatorTokenValue();
                 }
                 return QUESTION_PERIOD_;
@@ -822,10 +838,10 @@ short SlkToken::getImpl()
                 pushTokenChar('*');
                 endToken();
 
-                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
                     return getOperatorTokenValue();
                 char nextChar = peekNextValidChar(0);
-                if (!::isalnum(nextChar) && nextChar != '_') {
+                if (isNotIdentifier(nextChar)) {
                     return getOperatorTokenValue();
                 }
                 return POINTER_STAR_;
@@ -835,10 +851,10 @@ short SlkToken::getImpl()
                 pushTokenChar('>');
                 endToken();
 
-                if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
                     return getOperatorTokenValue();
                 char nextChar = peekNextValidChar(0);
-                if (!::isalnum(nextChar) && nextChar != '_') {
+                if (isNotIdentifier(nextChar)) {
                     return getOperatorTokenValue();
                 }
                 return POINTER_;
@@ -878,10 +894,10 @@ short SlkToken::getImpl()
             pushTokenChar('*');
             endToken();
 
-            if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+            if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
                 return getOperatorTokenValue();
             char nextChar = peekNextValidChar(0);
-            if (!::isalnum(nextChar) && nextChar != '_') {
+            if (isNotIdentifier(nextChar)) {
                 return getOperatorTokenValue();
             }
             return PERIOD_STAR_;
@@ -893,10 +909,10 @@ short SlkToken::getImpl()
             pushTokenChar(c);
             endToken();
 
-            if (mLastToken && isNotIdentifierAndEndParenthesis(mLastToken[0]))
+            if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
                 return getOperatorTokenValue();
             char nextChar = peekNextValidChar(0);
-            if (!::isalnum(nextChar) && nextChar != '_') {
+            if (isNotIdentifierAndBeginParenthesis(nextChar)) {
                 return getOperatorTokenValue();
             }
             return DOT_;

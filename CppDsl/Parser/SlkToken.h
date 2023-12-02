@@ -72,7 +72,9 @@ public:
     char peekNextValidChar(int beginIx, int& index)const;
     void getOperatorToken();
     short getOperatorTokenValue()const;
-    int isNotIdentifierAndEndParenthesis(char c)const;
+    int isNotIdentifier(char c)const;
+    int isNotIdentifierAndBeginParenthesis(char c)const;
+    int isNotIdentifierAndNumberAndEndParenthesis(char c)const;
     int isWhiteSpace(char c) const;
     int isDelimiter(char c) const;
     int isBeginParentheses(char c) const;

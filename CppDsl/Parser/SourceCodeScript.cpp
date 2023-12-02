@@ -299,11 +299,23 @@ namespace DslParser
             return 0;
         return m_Impl->getOperatorTokenValue();
     }
-    int DslTokenApi::isNotIdentifierAndEndParenthesis(char c)const
+    int DslTokenApi::isNotIdentifier(char c)const
     {
         if (!m_Impl)
             return 0;
-        return m_Impl->isNotIdentifierAndEndParenthesis(c);
+        return m_Impl->isNotIdentifier(c);
+    }
+    int DslTokenApi::isNotIdentifierAndBeginParenthesis(char c)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isNotIdentifierAndBeginParenthesis(c);
+    }
+    int DslTokenApi::isNotIdentifierAndNumberAndEndParenthesis(char c)const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->isNotIdentifierAndNumberAndEndParenthesis(c);
     }
     int DslTokenApi::isWhiteSpace(char c) const
     {
