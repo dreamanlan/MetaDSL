@@ -264,7 +264,11 @@ namespace Dsl.Common
                 return DslConstants.COLON_COLON_;
             }
             else if (CurChar == '?' || CurChar == '!') {
-                if (mNullableSyntaxEnabled) {
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0])) {
+                    getOperatorToken();
+                    return getOperatorTokenValue();
+                }
+                else if (mNullableSyntaxEnabled) {
                     if (NextChar == '.') {
                         ++mIterator;
                         return DslConstants.OP_TOKEN_NULLABLE_;

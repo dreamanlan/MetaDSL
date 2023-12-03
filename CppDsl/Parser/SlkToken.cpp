@@ -767,7 +767,11 @@ short SlkToken::getImpl()
     }
     else if (curChar() == '?' || curChar() == '!') {
         char nc = nextChar();
-        if (mNullableSyntaxEnabled) {
+        if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0])) {
+            getOperatorToken();
+            return getOperatorTokenValue();
+        }
+        else if (mNullableSyntaxEnabled) {
             if (nc == '.') {
                 ++mIterator;
                 pushTokenChar('?');
