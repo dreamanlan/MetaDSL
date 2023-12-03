@@ -13,6 +13,13 @@ namespace Dsl.Common
      * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
      * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
      */
+    public enum OperatorCategoryEnum
+    {
+        NormalOperator = 0,
+        NullableOperator,
+        TernaryOperator,
+        MaxNum
+    }
     public delegate bool TokenCanEatCharDelegation(StringBuilder tokenBuilder, char c);
     public delegate bool GetCppTokenDelegation(ref DslAction dslAction, ref CppToken dslToken, ref string tok, ref short val, ref int line);
     public delegate bool GetTokenDelegation(ref DslAction dslAction, ref DslToken dslToken, ref string tok, ref short val, ref int line);
@@ -20,8 +27,8 @@ namespace Dsl.Common
     public delegate bool AddFunctionDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
     public delegate bool BeforeEndStatementDelegation(ref DslAction dslAction, StatementData statement);
     public delegate bool EndStatementDelegation(ref DslAction dslAction, ref StatementData statement);
-    public delegate bool BeforeBuildOperatorDelegation(ref DslAction dslAction, string op, StatementData statement);
-    public delegate bool BuildOperatorDelegation(ref DslAction dslAction, string op, ref StatementData statement);
+    public delegate bool BeforeBuildOperatorDelegation(ref DslAction dslAction, OperatorCategoryEnum category, string op, StatementData statement);
+    public delegate bool BuildOperatorDelegation(ref DslAction dslAction, OperatorCategoryEnum category, string op, ref StatementData statement);
     public delegate bool SetFunctionIdDelegation(ref DslAction dslAction, string name, StatementData statement, FunctionData function);
     public delegate bool SetMemberIdDelegation(ref DslAction dslAction, string name, StatementData statement, FunctionData function);
     public delegate bool BeforeBuildHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
@@ -74,7 +81,6 @@ namespace Dsl.Common
             mOnBeforeBuildOperator = null;
             mOnBuildOperator = null;
             mOnSetFunctionId = null;
-            mOnSetMemberId = null;
             mOnBeforeBuildHighOrder = null;
             mOnBuildHighOrder = null;
         }
@@ -144,11 +150,6 @@ namespace Dsl.Common
             get { return mOnSetFunctionId; }
             set { mOnSetFunctionId = value; }
         }
-        internal SetMemberIdDelegation onSetMemberId
-        {
-            get { return mOnSetMemberId; }
-            set { mOnSetMemberId = value; }
-        }
         internal BeforeBuildHighOrderDelegation onBeforeBuildHighOrder
         {
             get { return mOnBeforeBuildHighOrder; }
@@ -204,44 +205,33 @@ namespace Dsl.Common
                 case 4: buildOperator(); break;
                 case 5: buildFirstTernaryOperator(); break;
                 case 6: buildSecondTernaryOperator(); break;
-                case 7: beginStatement(); break;
-                case 8: addFunction(); break;
-                case 9: setFunctionId(); break;
-                case 10: markParenthesisParam(); break;
-                case 11: buildHighOrderFunction(); break;
-                case 12: markBracketParam(); break;
-                case 13: markQuestionParenthesisParam(); break;
-                case 14: markQuestionBracketParam(); break;
-                case 15: markQuestionBraceParam(); break;
-                case 16: markStatement(); break;
-                case 17: markExternScript(); break;
-                case 18: setExternScript(); break;
-                case 19: markBracketColonParam(); break;
-                case 20: markParenthesisColonParam(); break;
-                case 21: markAngleBracketColonParam(); break;
-                case 22: markBracePercentParam(); break;
-                case 23: markBracketPercentParam(); break;
-                case 24: markParenthesisPercentParam(); break;
-                case 25: markAngleBracketPercentParam(); break;
-                case 26: markColonColonParam(); break;
-                case 27: setMemberId(); break;
-                case 28: markColonColonParenthesisParam(); break;
-                case 29: markColonColonBracketParam(); break;
-                case 30: markColonColonBraceParam(); break;
-                case 31: markPeriodParam(); break;
-                case 32: markPeriodParenthesisParam(); break;
-                case 33: markPeriodBracketParam(); break;
-                case 34: markPeriodBraceParam(); break;
-                case 35: markQuestionPeriodParam(); break;
-                case 36: markPointerParam(); break;
-                case 37: markPeriodStarParam(); break;
-                case 38: markQuestionPeriodStarParam(); break;
-                case 39: markPointerStarParam(); break;
-                case 40: pushStr(); break;
-                case 41: pushNum(); break;
-                case 42: pushDollarStr(); break;
-                case 43: pushComma(); break;
-                case 44: pushSemiColon(); break;
+                case 7: buildNullableOperator(); break;
+                case 8: beginStatement(); break;
+                case 9: addFunction(); break;
+                case 10: setFunctionId(); break;
+                case 11: markParenthesisParam(); break;
+                case 12: buildHighOrderFunction(); break;
+                case 13: markBracketParam(); break;
+                case 14: markStatement(); break;
+                case 15: markExternScript(); break;
+                case 16: setExternScript(); break;
+                case 17: markBracketColonParam(); break;
+                case 18: markParenthesisColonParam(); break;
+                case 19: markAngleBracketColonParam(); break;
+                case 20: markBracePercentParam(); break;
+                case 21: markBracketPercentParam(); break;
+                case 22: markParenthesisPercentParam(); break;
+                case 23: markAngleBracketPercentParam(); break;
+                case 24: markColonColonParam(); break;
+                case 25: markPeriodParam(); break;
+                case 26: markPointerParam(); break;
+                case 27: markPeriodStarParam(); break;
+                case 28: markPointerStarParam(); break;
+                case 29: pushStr(); break;
+                case 30: pushNum(); break;
+                case 31: pushDollarStr(); break;
+                case 32: pushComma(); break;
+                case 33: pushSemiColon(); break;
             }
         }
         private void executeLua(int number)
@@ -272,10 +262,9 @@ namespace Dsl.Common
                 case 23: markBracketParam(); break;
                 case 24: markParenthesisColonParam(); break;
                 case 25: markPeriodParam(); break;
-                case 26: setMemberId(); break;
-                case 27: markPointerParam(); break;
-                case 28: pushStr(); break;
-                case 29: pushNum(); break;
+                case 26: markPointerParam(); break;
+                case 27: pushStr(); break;
+                case 28: pushNum(); break;
             }
         }
         private void executeCpp(int number)
@@ -496,11 +485,11 @@ namespace Dsl.Common
             StatementData arg = getCurStatement();
             Debug.Assert(null != arg);
             if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, name, arg);
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.NormalOperator, name, arg);
             }
             arg = popStatement();
             if (null != mOnBuildOperator) {
-                mOnBuildOperator(ref this, name, ref arg);
+                mOnBuildOperator(ref this, OperatorCategoryEnum.NormalOperator, name, ref arg);
                 Debug.Assert(null != arg);
             }
 
@@ -537,6 +526,55 @@ namespace Dsl.Common
                 }
             }
         }
+        public void buildNullableOperator()
+        {
+            int type;
+            string name = pop(out type);
+
+            StatementData arg = getCurStatement();
+            Debug.Assert(null != arg);
+            if (null != mOnBeforeBuildOperator) {
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.NullableOperator, name, arg);
+            }
+            arg = popStatement();
+            if (null != mOnBuildOperator) {
+                mOnBuildOperator(ref this, OperatorCategoryEnum.NullableOperator, name, ref arg);
+                Debug.Assert(null != arg);
+            }
+
+            ISyntaxComponent argComp = simplifyStatement(arg);
+
+            StatementData _statement = newStatementWithOneFunction();
+            var first = _statement.First;
+            if (first.IsValue)
+                first.AsValue.SetLine(getLastLineNumber());
+            else
+                first.AsFunction.Name.SetLine(getLastLineNumber());
+
+            _statement.CopyFirstComments(argComp);
+            argComp.FirstComments.Clear();
+
+            mStatementSemanticStack.Push(_statement);
+
+            FunctionData func = getLastFunction();
+            if (!func.IsValid()) {
+                if (name.Length > 0 && name[0] == '`') {
+                    func.SetParamClass((int)(FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR));
+
+                    func.Name.SetId(name.Substring(1));
+                    func.Name.SetType(type);
+                }
+                else {
+                    func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_NULLABLE_OPERATOR);
+
+                    func.Name.SetId(name);
+                    func.Name.SetType(type);
+                }
+                if (argComp.IsValid()) {
+                    func.AddParam(argComp);
+                }
+            }
+        }
         public void buildFirstTernaryOperator()
         {
             int type;
@@ -545,11 +583,11 @@ namespace Dsl.Common
             StatementData arg = getCurStatement();
             Debug.Assert(null != arg);
             if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, name, arg);
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.TernaryOperator, name, arg);
             }
             arg = popStatement();
             if (null != mOnBuildOperator) {
-                mOnBuildOperator(ref this, name, ref arg);
+                mOnBuildOperator(ref this, OperatorCategoryEnum.TernaryOperator, name, ref arg);
                 Debug.Assert(null != arg);
             }
 
@@ -588,7 +626,7 @@ namespace Dsl.Common
             StatementData statement = getCurStatement();
             Debug.Assert(null != statement);
             if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, name, statement);
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.TernaryOperator, name, statement);
                 statement = getCurStatement();
                 Debug.Assert(null != statement);
             }
@@ -655,22 +693,6 @@ namespace Dsl.Common
                 mOnSetFunctionId(ref this, name, stm, func);
             }
         }
-        public void setMemberId()
-        {
-            int type;
-            string name = pop(out type);
-            FunctionData func = getLastFunction();
-            if (!func.IsValid()) {
-                func.Name.SetId(name);
-                func.Name.SetType(type);
-                func.Name.SetLine(getLastLineNumber());
-            }
-            if (null != mOnSetMemberId) {
-                StatementData stm = getCurStatement();
-                Debug.Assert(null != stm);
-                mOnSetMemberId(ref this, name, stm, func);
-            }
-        }
         public void buildHighOrderFunction()
         {
             //高阶函数构造（当前函数返回一个函数）
@@ -707,41 +729,6 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD);
-        }
-        public void markPeriodParenthesisParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS);
-        }
-        public void markPeriodBracketParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET);
-        }
-        public void markPeriodBraceParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE);
-        }
-        public void markQuestionPeriodParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD);
-        }
-        public void markQuestionParenthesisParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS);
-        }
-        public void markQuestionBracketParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET);
-        }
-        public void markQuestionBraceParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE);
         }
         public void markStatement()
         {
@@ -813,21 +800,6 @@ namespace Dsl.Common
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON);
         }
-        public void markColonColonParenthesisParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS);
-        }
-        public void markColonColonBracketParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET);
-        }
-        public void markColonColonBraceParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE);
-        }
         public void setExternScript()
         {
             FunctionData func = getLastFunction();
@@ -842,11 +814,6 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
-        }
-        public void markQuestionPeriodStarParam()
-        {
-            FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR);
         }
         public void markPointerStarParam()
         {
@@ -1309,7 +1276,6 @@ namespace Dsl.Common
         private BeforeBuildOperatorDelegation mOnBeforeBuildOperator;
         private BuildOperatorDelegation mOnBuildOperator;
         private SetFunctionIdDelegation mOnSetFunctionId;
-        private SetMemberIdDelegation mOnSetMemberId;
         private BeforeBuildHighOrderDelegation mOnBeforeBuildHighOrder;
         private BuildHighOrderDelegation mOnBuildHighOrder;
 

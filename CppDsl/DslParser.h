@@ -592,6 +592,10 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_OPERATOR;
         }
+        void SetNullableOperatorParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_NULLABLE_OPERATOR;
+        }
         void SetTernaryOperatorParamClass()
         {
             m_ParamClass = (int)PARAM_CLASS_TERNARY_OPERATOR;
@@ -624,38 +628,6 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_POINTER_STAR;
         }
-        void SetQuestionPeriodParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_QUESTION_PERIOD;
-        }
-        void SetQuestionPeriodStarParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_QUESTION_PERIOD_STAR;
-        }
-        void SetPeriodParenthesisParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_PERIOD_PARENTHESIS;
-        }
-        void SetPeriodBracketParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_PERIOD_BRACKET;
-        }
-        void SetPeriodBraceParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_PERIOD_BRACE;
-        }
-        void SetQuestionParenthesisParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_QUESTION_PARENTHESIS;
-        }
-        void SetQuestionBracketParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_QUESTION_BRACKET;
-        }
-        void SetQuestionBraceParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_QUESTION_BRACE;
-        }
         void SetParenthesisColonParamClass()
         {
             m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_COLON;
@@ -684,22 +656,15 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_ANGLE_BRACKET_PERCENT;
         }
-        void SetColonColonParenthesisParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_COLON_COLON_PARENTHESIS;
-        }
-        void SetColonColonBracketParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_COLON_COLON_BRACKET;
-        }
-        void SetColonColonBraceParamClass()
-        {
-            m_ParamClass = (int)PARAM_CLASS_COLON_COLON_BRACE;
-        }
         int IsOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_OPERATOR ? TRUE : FALSE;
+        }
+        int IsNullableOperatorParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_NULLABLE_OPERATOR ? TRUE : FALSE;
         }
         int IsTernaryOperatorParamClass()const
         {
@@ -741,46 +706,6 @@ namespace DslParser
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_POINTER_STAR;
         }
-        bool IsQuestionPeriodParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_QUESTION_PERIOD;
-        }
-        bool IsQuestionPeriodStarParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_QUESTION_PERIOD_STAR;
-        }
-        bool IsPeriodParenthesisParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PERIOD_PARENTHESIS;
-        }
-        bool IsPeriodBracketParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PERIOD_BRACKET;
-        }
-        bool IsPeriodBraceParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PERIOD_BRACE;
-        }
-        bool IsQuestionParenthesisParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_QUESTION_PARENTHESIS;
-        }
-        bool IsQuestionBracketParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_QUESTION_BRACKET;
-        }
-        bool IsQuestionBraceParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_QUESTION_BRACE;
-        }
         bool IsParenthesisColonParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
@@ -816,21 +741,6 @@ namespace DslParser
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_ANGLE_BRACKET_PERCENT;
         }
-        bool IsColonColonParenthesisParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_COLON_COLON_PARENTHESIS;
-        }
-        bool IsColonColonBracketParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_COLON_COLON_BRACKET;
-        }
-        bool IsColonColonBraceParamClass()const
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_COLON_COLON_BRACE;
-        }
         int IsMemberParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
@@ -838,9 +748,7 @@ namespace DslParser
                 paramClass == (int)PARAM_CLASS_PERIOD ||
                 paramClass == (int)PARAM_CLASS_PERIOD_STAR ||
                 paramClass == (int)PARAM_CLASS_POINTER ||
-                paramClass == (int)PARAM_CLASS_POINTER_STAR ||
-                paramClass == (int)PARAM_CLASS_QUESTION_PERIOD ||
-                paramClass == (int)PARAM_CLASS_QUESTION_PERIOD_STAR) ? TRUE : FALSE;
+                paramClass == (int)PARAM_CLASS_POINTER_STAR) ? TRUE : FALSE;
         }
         int HaveParamOrStatement()const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
         int HaveParam()const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
@@ -1569,6 +1477,7 @@ namespace DslParser
         void markSeparator()const;
         void endStatement()const;
         void buildOperator()const;
+        void buildNullableOperator()const;
         void buildFirstTernaryOperator()const;
         void buildSecondTernaryOperator()const;
         void beginStatement()const;
@@ -1577,9 +1486,6 @@ namespace DslParser
         void markParenthesisParam()const;
         void buildHighOrderFunction()const;
         void markBracketParam()const;
-        void markQuestionParenthesisParam()const;
-        void markQuestionBracketParam()const;
-        void markQuestionBraceParam()const;
         void markStatement()const;
         void markExternScript()const;
         void markBracketColonParam()const;
@@ -1590,19 +1496,10 @@ namespace DslParser
         void markParenthesisPercentParam()const;
         void markAngleBracketPercentParam()const;
         void markColonColonParam()const;
-        void markColonColonParenthesisParam()const;
-        void markColonColonBracketParam()const;
-        void markColonColonBraceParam()const;
         void setExternScript()const;
         void markPeriodParam()const;
-        void setMemberId()const;
-        void markPeriodParenthesisParam()const;
-        void markPeriodBracketParam()const;
-        void markPeriodBraceParam()const;
-        void markQuestionPeriodParam()const;
         void markPointerParam()const;
         void markPeriodStarParam()const;
-        void markQuestionPeriodStarParam()const;
         void markPointerStarParam()const;
     public:
         void push(char* token, int type)const;
@@ -1631,8 +1528,8 @@ namespace DslParser
         using AddFunctionDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
         using BeforeEndStatementDelegation = Delegation<bool(const DslActionApi&, StatementData*)>;
         using EndStatementDelegation = Delegation<bool(const DslActionApi&, StatementData*&)>;
-        using BeforeBuildOperatorDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*)>;
-        using BuildOperatorDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*&)>;
+        using BeforeBuildOperatorDelegation = Delegation<bool(const DslActionApi&, int, const char*, StatementData*)>;
+        using BuildOperatorDelegation = Delegation<bool(const DslActionApi&, int, const char*, StatementData*&)>;
         using SetFunctionIdDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)>;
         using SetMemberIdDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)>;
         using BeforeBuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
@@ -1662,9 +1559,11 @@ namespace DslParser
         void LoadBinaryCode(const char* buffer, int bufferSize, std::vector<const char*>& reuseKeyBuffer, std::vector<const char*>& reuseIdBuffer);
         void SaveBinaryFile(FILE* fp) const;
     public:
+        void SetNullableSyntax(bool enabled);
         void SetStringDelimiter(const char* begin, const char* end);
         void SetScriptDelimiter(const char* begin, const char* end);
     public:
+        bool IsNullableSyntaxEnabled()const { return m_NullableSyntaxEnabled; }
         const char* GetStringBeginDelimiter()const { return m_StringBeginDelimiter; }
         const char* GetStringEndDelimiter()const { return m_StringEndDelimiter; }
         const char* GetScriptBeginDelimiter()const { return m_ScriptBeginDelimiter; }
@@ -1744,6 +1643,7 @@ namespace DslParser
         int m_DslInfoSpace;
         int m_MaxDslInfoNum;
     private:
+        bool m_NullableSyntaxEnabled;
         const char* m_ScriptBeginDelimiter;
         const char* m_ScriptEndDelimiter;
         const char* m_StringBeginDelimiter;

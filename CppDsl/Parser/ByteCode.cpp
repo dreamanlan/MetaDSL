@@ -44,20 +44,10 @@ void CompileTest_ByteCode()
     builder.markAngleBracketPercentParam();
     builder.setExternScript();
     builder.markParenthesisParam();
-    builder.markPeriodBraceParam();
-    builder.markPeriodBracketParam();
     builder.markPeriodParam();
-    builder.markPeriodParenthesisParam();
-    builder.setMemberId();
     builder.setCanFinish(false);
     builder.setFunctionId();
-    builder.setMemberId();
-    builder.markQuestionPeriodParam();
-    builder.markQuestionParenthesisParam();
-    builder.markQuestionBracketParam();
-    builder.markQuestionBraceParam();
     builder.markPointerParam();
     builder.markPeriodStarParam();
-    builder.markQuestionPeriodStarParam();
     builder.markPointerStarParam();
 }

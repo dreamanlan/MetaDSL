@@ -366,7 +366,9 @@ short SlkToken::getOperatorTokenValue()const
         else if (pOperator[0] == '`') {
             val = OP_TOKEN_1_;
         }
-        else if ((pOperator[0] == '-' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '.' && pOperator[1] == '\0')) {
+        else if ((pOperator[0] == '-' && pOperator[1] == '>' && (pOperator[2] == '\0' || (pOperator[2] == '*' && pOperator[3] == '\0')))
+            || (pOperator[0] == '.' && (pOperator[1] == '\0' || (pOperator[1] == '*' && pOperator[2] == '\0')))
+            || (pOperator[0] == ':' && pOperator[1] == ':' && pOperator[2] == '\0')) {
             val = OP_TOKEN_15_;
         }
         else {
@@ -763,63 +765,49 @@ short SlkToken::getImpl()
         }
         return COLON_COLON_;
     }
-    else if (curChar() == '?') {
+    else if (curChar() == '?' || curChar() == '!') {
         char nc = nextChar();
-        if (nc == '.') {
-            ++mIterator;
-            ++mIterator;
-            if (curChar() == '*') {
+        if (mNullableSyntaxEnabled) {
+            if (nc == '.') {
                 ++mIterator;
                 pushTokenChar('?');
-                pushTokenChar('.');
-                pushTokenChar('*');
                 endToken();
-
-                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
-                    return getOperatorTokenValue();
-                char nextChar = peekNextValidChar(0);
-                if (isNotIdentifier(nextChar)) {
-                    return getOperatorTokenValue();
-                }
-                return QUESTION_PERIOD_STAR_;
+                return OP_TOKEN_NULLABLE_;
+            }
+            else if (nc == '-' && peekChar(2) == '>') {
+                ++mIterator;
+                pushTokenChar('?');
+                endToken();
+                return OP_TOKEN_NULLABLE_;
+            }
+            else if (nc == '(') {
+                ++mIterator;
+                pushTokenChar('?');
+                endToken();
+                return OP_TOKEN_NULLABLE_;
+            }
+            else if (nc == '[') {
+                ++mIterator;
+                pushTokenChar('?');
+                endToken();
+                return OP_TOKEN_NULLABLE_;
+            }
+            else if (nc == '{') {
+                ++mIterator;
+                pushTokenChar('?');
+                endToken();
+                return OP_TOKEN_NULLABLE_;
+            }
+            else if (nc == '<' && (peekChar(2) == ':' || peekChar(2) == '%')) {
+                ++mIterator;
+                pushTokenChar('?');
+                endToken();
+                return OP_TOKEN_NULLABLE_;
             }
             else {
-                pushTokenChar('?');
-                pushTokenChar('.');
-                endToken();
-
-                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
-                    return getOperatorTokenValue();
-                char nextChar = peekNextValidChar(0);
-                if (isNotIdentifier(nextChar)) {
-                    return getOperatorTokenValue();
-                }
-                return QUESTION_PERIOD_;
+                getOperatorToken();
+                return getOperatorTokenValue();
             }
-        }
-        else if (nc == '(') {
-            ++mIterator;
-            ++mIterator;
-            pushTokenChar('?');
-            pushTokenChar('(');
-            endToken();
-            return QUESTION_PARENTHESIS_;
-        }
-        else if (nc == '[') {
-            ++mIterator;
-            ++mIterator;
-            pushTokenChar('?');
-            pushTokenChar('[');
-            endToken();
-            return QUESTION_BRACKET_;
-        }
-        else if (nc == '{') {
-            ++mIterator;
-            ++mIterator;
-            pushTokenChar('?');
-            pushTokenChar('{');
-            endToken();
-            return QUESTION_BRACE_;
         }
         else {
             getOperatorToken();
@@ -1441,6 +1429,7 @@ SlkToken::SlkToken(DslParser::IScriptSource& source, DslParser::DslFile& dslFile
     MyAssert(mSource);
     MyAssert(mDslFile);
 
+    mNullableSyntaxEnabled = dslFile.IsNullableSyntaxEnabled();
     mIterator = mSource->GetIterator();
 
     mWhiteSpaces = " \t\r\n";

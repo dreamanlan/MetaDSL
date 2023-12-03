@@ -105,6 +105,7 @@ namespace Dsl
     {
         DslData::DslFile::DontLoadComments(DslParser::DslOptions::DontLoadComments());
         dest.Reset();
+        dest.SetNullableSyntax(src.IsNullableSyntaxEnabled());
         dest.SetStringDelimiter(src.GetStringBeginDelimiter(), src.GetStringEndDelimiter());
         dest.SetScriptDelimiter(src.GetScriptBeginDelimiter(), src.GetScriptEndDelimiter());
         for (int ix = 0; ix < src.GetErrorNum(); ++ix) {

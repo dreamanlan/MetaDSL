@@ -412,13 +412,6 @@ namespace Dsl
             PARAM_CLASS_PARENTHESIS,
             PARAM_CLASS_BRACKET,
             PARAM_CLASS_PERIOD,
-            PARAM_CLASS_PERIOD_PARENTHESIS,
-            PARAM_CLASS_PERIOD_BRACKET,
-            PARAM_CLASS_PERIOD_BRACE,
-            PARAM_CLASS_QUESTION_PERIOD,
-            PARAM_CLASS_QUESTION_PARENTHESIS,
-            PARAM_CLASS_QUESTION_BRACKET,
-            PARAM_CLASS_QUESTION_BRACE,
             PARAM_CLASS_POINTER,
             PARAM_CLASS_STATEMENT,
             PARAM_CLASS_EXTERN_SCRIPT,
@@ -430,13 +423,10 @@ namespace Dsl
             PARAM_CLASS_BRACE_PERCENT,
             PARAM_CLASS_ANGLE_BRACKET_PERCENT,
             PARAM_CLASS_COLON_COLON,
-            PARAM_CLASS_COLON_COLON_PARENTHESIS,
-            PARAM_CLASS_COLON_COLON_BRACKET,
-            PARAM_CLASS_COLON_COLON_BRACE,
             PARAM_CLASS_PERIOD_STAR,
-            PARAM_CLASS_QUESTION_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,
             PARAM_CLASS_OPERATOR,
+            PARAM_CLASS_NULLABLE_OPERATOR,
             PARAM_CLASS_TERNARY_OPERATOR,
             PARAM_CLASS_MAX,
             PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x20,
@@ -653,6 +643,10 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_OPERATOR;
         }
+        public void SetNullableOperatorParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NULLABLE_OPERATOR;
+        }
         public void SetTernaryOperatorParamClass()
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR;
@@ -685,38 +679,6 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
         }
-        public void SetQuestionPeriodParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD;
-        }
-        public void SetQuestionPeriodStarParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR;
-        }
-        public void SetPeriodParenthesisParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS;
-        }
-        public void SetPeriodBracketParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET;
-        }
-        public void SetPeriodBraceParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACE;
-        }
-        public void SetQuestionParenthesisParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS;
-        }
-        public void SetQuestionBracketParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET;
-        }
-        public void SetQuestionBraceParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACE;
-        }
         public void SetParenthesisColonParamClass()
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON;
@@ -745,22 +707,15 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT;
         }
-        public void SetColonColonParenthesisParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS;
-        }
-        public void SetColonColonBracketParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET;
-        }
-        public void SetColonColonBraceParamClass()
-        {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE;
-        }
         public bool IsOperatorParamClass()
         {
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_OPERATOR;
+        }
+        public bool IsNullableOperatorParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_NULLABLE_OPERATOR;
         }
         public bool IsTernaryOperatorParamClass()
         {
@@ -802,46 +757,6 @@ namespace Dsl
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
         }
-        public bool IsQuestionPeriodParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD;
-        }
-        public bool IsQuestionPeriodStarParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR;
-        }
-        public bool IsPeriodParenthesisParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS;
-        }
-        public bool IsPeriodBracketParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET;
-        }
-        public bool IsPeriodBraceParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_BRACE;
-        }
-        public bool IsQuestionParenthesisParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS;
-        }
-        public bool IsQuestionBracketParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET;
-        }
-        public bool IsQuestionBraceParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_BRACE;
-        }
         public bool IsParenthesisColonParamClass()
         {
             int paramClass = GetParamClassUnmasked();
@@ -877,21 +792,6 @@ namespace Dsl
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT;
         }
-        public bool IsColonColonParenthesisParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS;
-        }
-        public bool IsColonColonBracketParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET;
-        }
-        public bool IsColonColonBraceParamClass()
-        {
-            int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE;
-        }
         public bool IsMemberParamClass()
         {
             int paramClass = GetParamClassUnmasked();
@@ -899,9 +799,7 @@ namespace Dsl
                 paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD ||
                 paramClass == (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR ||
                 paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER ||
-                paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR ||
-                paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD ||
-                paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR;
+                paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
         }
         public bool HaveParamOrStatement()
         {
@@ -1349,7 +1247,7 @@ namespace Dsl
 
             Parser.DslError error = new Parser.DslError(log);
             Common.DslAction action = new Common.DslAction(log, mDslInfos);
-            Common.DslToken tokens = new Common.DslToken(action, log, content);
+            Common.DslToken tokens = new Common.DslToken(action, log, content, mNullableSyntaxEnabled);
             tokens.OnGetToken = mOnGetToken;
             tokens.OnTokenCanEatChar = mOnTokenCanEatChar;
 
@@ -1365,7 +1263,6 @@ namespace Dsl
             action.onBeforeBuildOperator = mOnBeforeBuildOperator;
             action.onBuildOperator = mOnBuildOperator;
             action.onSetFunctionId = mOnSetFunctionId;
-            action.onSetMemberId = mOnSetMemberId;
             action.onBeforeBuildHighOrder = mOnBeforeBuildHighOrder;
             action.onBuildHighOrder = mOnBuildHighOrder;
 
@@ -1592,7 +1489,6 @@ namespace Dsl
             action.onBeforeBuildOperator = mOnBeforeBuildOperator;
             action.onBuildOperator = mOnBuildOperator;
             action.onSetFunctionId = mOnSetFunctionId;
-            action.onSetMemberId = mOnSetMemberId;
             action.onBeforeBuildHighOrder = mOnBeforeBuildHighOrder;
             action.onBuildHighOrder = mOnBuildHighOrder;
 
@@ -1648,6 +1544,11 @@ namespace Dsl
             mScriptBeginDelimiter = begin;
             mScriptEndDelimiter = end;
         }
+        public bool NullableSyntaxEnabled
+        {
+            set { mNullableSyntaxEnabled = value; }
+            get { return mNullableSyntaxEnabled; }
+        }
         public string StringBeginDelimiter {
             get { return mStringBeginDelimiter; }
         }
@@ -1699,10 +1600,6 @@ namespace Dsl
         public Dsl.Common.SetFunctionIdDelegation onSetFunctionId {
             get { return mOnSetFunctionId; }
             set { mOnSetFunctionId = value; }
-        }
-        public Dsl.Common.SetMemberIdDelegation onSetMemberId {
-            get { return mOnSetMemberId; }
-            set { mOnSetMemberId = value; }
         }
         public Dsl.Common.BeforeBuildHighOrderDelegation onBeforeBuildHighOrder {
             get { return mOnBeforeBuildHighOrder; }
@@ -2032,6 +1929,7 @@ namespace Dsl
 
         private MyStringComparer mStringComparer = null;
         private List<ISyntaxComponent> mDslInfos = new List<ISyntaxComponent>();
+        private bool mNullableSyntaxEnabled = true;
         private string mStringBeginDelimiter = "\"";
         private string mStringEndDelimiter = "\"";
         private string mScriptBeginDelimiter = "{:";
@@ -2047,7 +1945,6 @@ namespace Dsl
         private Dsl.Common.BeforeBuildOperatorDelegation mOnBeforeBuildOperator;
         private Dsl.Common.BuildOperatorDelegation mOnBuildOperator;
         private Dsl.Common.SetFunctionIdDelegation mOnSetFunctionId;
-        private Dsl.Common.SetMemberIdDelegation mOnSetMemberId;
         private Dsl.Common.BeforeBuildHighOrderDelegation mOnBeforeBuildHighOrder;
         private Dsl.Common.BuildHighOrderDelegation mOnBuildHighOrder;
 
@@ -2352,49 +2249,9 @@ namespace Dsl
                                 lbracket = ".";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
-                                lbracket = ".(";
-                                rbracket = ")";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
-                                lbracket = ".[";
-                                rbracket = "]";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
-                                lbracket = ".{";
-                                rbracket = "}";
-                                break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON:
                                 lbracket = "::";
                                 rbracket = string.Empty;
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS:
-                                lbracket = "::(";
-                                rbracket = ")";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET:
-                                lbracket = "::[";
-                                rbracket = "]";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE:
-                                lbracket = "::{";
-                                rbracket = "}";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
-                                lbracket = "?.";
-                                rbracket = string.Empty;
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
-                                lbracket = "?(";
-                                rbracket = ")";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
-                                lbracket = "?[";
-                                rbracket = "]";
-                                break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
-                                lbracket = "?{";
-                                rbracket = "}";
                                 break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
                                 lbracket = "->";
@@ -2432,10 +2289,6 @@ namespace Dsl
                                 lbracket = ".*";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
-                                lbracket = "?.*";
-                                rbracket = string.Empty;
-                                break;
                             case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
                                 lbracket = "->*";
                                 rbracket = string.Empty;
@@ -2450,10 +2303,8 @@ namespace Dsl
                             ISyntaxComponent param = data.GetParam(i);
                             char sep = param.GetSepChar();
                             if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                                 stream.Append(param.ToScriptString(true));
                             else
@@ -2664,6 +2515,9 @@ namespace Dsl
                             return line;
                     }
                 }
+                else if (data.IsNullableOperatorParamClass()) {
+                    return string.Format("{0}{1}", data.GetParam(0).ToScriptString(includeComment), line);
+                }
                 else {
                     string lbracket = string.Empty;
                     string rbracket = string.Empty;
@@ -2681,49 +2535,9 @@ namespace Dsl
                             lbracket = ".";
                             rbracket = string.Empty;
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_PARENTHESIS:
-                            lbracket = ".(";
-                            rbracket = ")";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACKET:
-                            lbracket = ".[";
-                            rbracket = "]";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_BRACE:
-                            lbracket = ".{";
-                            rbracket = "}";
-                            break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON:
                             lbracket = "::";
                             rbracket = string.Empty;
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_PARENTHESIS:
-                            lbracket = "::(";
-                            rbracket = ")";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACKET:
-                            lbracket = "::[";
-                            rbracket = "]";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON_BRACE:
-                            lbracket = "::{";
-                            rbracket = "}";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD:
-                            lbracket = "?.";
-                            rbracket = string.Empty;
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PARENTHESIS:
-                            lbracket = "?(";
-                            rbracket = ")";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACKET:
-                            lbracket = "?[";
-                            rbracket = "]";
-                            break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_BRACE:
-                            lbracket = "?{";
-                            rbracket = "}";
                             break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
                             lbracket = "->";
@@ -2769,10 +2583,6 @@ namespace Dsl
                             lbracket = ".*";
                             rbracket = string.Empty;
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR:
-                            lbracket = "?.*";
-                            rbracket = string.Empty;
-                            break;
                         case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
                             lbracket = "->*";
                             rbracket = string.Empty;
@@ -2791,10 +2601,8 @@ namespace Dsl
                             }
                             ISyntaxComponent param = data.GetParam(i);
                             if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_PERIOD_STAR == paramClass
                                  || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                                 stream.Append(param.ToScriptString(includeComment));
                             else

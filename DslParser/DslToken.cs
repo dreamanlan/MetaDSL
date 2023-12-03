@@ -7,7 +7,7 @@ namespace Dsl.Common
 {
     public struct DslToken
     {
-        internal DslToken(DslAction action, DslLog log, string input)
+        internal DslToken(DslAction action, DslLog log, string input, bool nullableSyntaxEnabled)
         {
             mAction = action;
             mLog = log;
@@ -27,6 +27,7 @@ namespace Dsl.Common
             mTokenBuilder = new StringBuilder();
             mTokenQueue = new Queue<TokenInfo>();
 
+            mNullableSyntaxEnabled = nullableSyntaxEnabled;
             mStringBeginDelimiter = string.Empty;
             mStringEndDelimiter = string.Empty;
             mScriptBeginDelimiter = string.Empty;
@@ -262,51 +263,36 @@ namespace Dsl.Common
                 }
                 return DslConstants.COLON_COLON_;
             }
-            else if (CurChar == '?') {
-                if (NextChar == '.') {
-                    ++mIterator;
-                    ++mIterator;
-                    if (CurChar == '*') {
+            else if (CurChar == '?' || CurChar == '!') {
+                if (mNullableSyntaxEnabled) {
+                    if (NextChar == '.') {
                         ++mIterator;
-                        mCurToken = "?.*";
-
-                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
-                            return getOperatorTokenValue();
-                        char nextChar = PeekNextValidChar(0);
-                        if (isNotIdentifier(nextChar)) {
-                            return getOperatorTokenValue();
-                        }
-                        return DslConstants.QUESTION_PERIOD_STAR_;
+                        return DslConstants.OP_TOKEN_NULLABLE_;
+                    }
+                    else if (NextChar == '-' && PeekChar(2) == '>') {
+                        ++mIterator;
+                        return DslConstants.OP_TOKEN_NULLABLE_;
+                    }
+                    else if (NextChar == '(') {
+                        ++mIterator;
+                        return DslConstants.OP_TOKEN_NULLABLE_;
+                    }
+                    else if (NextChar == '[') {
+                        ++mIterator;
+                        return DslConstants.OP_TOKEN_NULLABLE_;
+                    }
+                    else if (NextChar == '{') {
+                        ++mIterator;
+                        return DslConstants.OP_TOKEN_NULLABLE_;
+                    }
+                    else if (NextChar == '<' && (PeekChar(2) == ':' || PeekChar(2) == '%')) {
+                        ++mIterator;
+                        return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else {
-                        mCurToken = "?.";
-
-                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
-                            return getOperatorTokenValue();
-                        char nextChar = PeekNextValidChar(0);
-                        if (isNotIdentifier(nextChar)) {
-                            return getOperatorTokenValue();
-                        }
-                        return DslConstants.QUESTION_PERIOD_;
+                        getOperatorToken();
+                        return getOperatorTokenValue();
                     }
-                }
-                else if (NextChar == '(') {
-                    ++mIterator;
-                    ++mIterator;
-                    mCurToken = "?(";
-                    return DslConstants.QUESTION_PARENTHESIS_;
-                }
-                else if (NextChar == '[') {
-                    ++mIterator;
-                    ++mIterator;
-                    mCurToken = "?[";
-                    return DslConstants.QUESTION_BRACKET_;
-                }
-                else if (NextChar == '{') {
-                    ++mIterator;
-                    ++mIterator;
-                    mCurToken = "?{";
-                    return DslConstants.QUESTION_BRACE_;
                 }
                 else {
                     getOperatorToken();
@@ -1072,8 +1058,7 @@ namespace Dsl.Common
                 }
                 else if (c0 == '-' && c1 == '>' && (c2 == '\0' || c2 == '*' && c3 == '\0') || 
                     c0 == '.' && (c1 == '\0' || c1 == '*' && c2 == '\0') || 
-                    c0 == ':' && c1 == ':' && c2 == '\0' ||
-                    c0 == '?' && c1 == '.' && (c2 == '\0' || c2 == '*' && c3 == '\0')
+                    (c0 == ':' && c1 == ':' && c2 == '\0')
                     ) {
                     val = DslConstants.OP_TOKEN_15_;
                 }
@@ -1268,6 +1253,7 @@ namespace Dsl.Common
         private StringBuilder mTokenBuilder;
         private Queue<TokenInfo> mTokenQueue;
 
+        private bool mNullableSyntaxEnabled;
         private string mStringBeginDelimiter;
         private string mStringEndDelimiter;
         private string mScriptBeginDelimiter;

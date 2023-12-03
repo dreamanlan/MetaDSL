@@ -25,6 +25,7 @@ namespace DslParser
         inline void    markSeparator();
         inline void    endStatement();
         inline void    buildOperator();
+        inline void    buildNullableOperator();
         inline void    buildFirstTernaryOperator();
         inline void    buildSecondTernaryOperator();
         inline void    beginStatement();
@@ -33,9 +34,6 @@ namespace DslParser
         inline void    markParenthesisParam();
         inline void    buildHighOrderFunction();
         inline void    markBracketParam();
-        inline void    markQuestionParenthesisParam();
-        inline void    markQuestionBracketParam();
-        inline void    markQuestionBraceParam();
         inline void    markStatement();
         inline void    markExternScript();
         inline void    markBracketColonParam();
@@ -46,19 +44,10 @@ namespace DslParser
         inline void    markParenthesisPercentParam();
         inline void    markAngleBracketPercentParam();
         inline void    markColonColonParam();
-        inline void    markColonColonParenthesisParam();
-        inline void    markColonColonBracketParam();
-        inline void    markColonColonBraceParam();
         inline void    setExternScript();
         inline void    markPeriodParam();
-        inline void    setMemberId();
-        inline void    markPeriodParenthesisParam();
-        inline void    markPeriodBracketParam();
-        inline void    markPeriodBraceParam();
-        inline void    markQuestionPeriodParam();
         inline void    markPointerParam();
         inline void    markPeriodStarParam();
-        inline void    markQuestionPeriodStarParam();
         inline void    markPointerStarParam();
     public:
         RuntimeBuilderData& getRuntimeBuilderData() { return mData; }
@@ -72,7 +61,7 @@ namespace DslParser
             return nullptr != mThis && nullptr != mDataFile;
         }
     protected:
-        RuntimeBuilderData		        mData;
+        RuntimeBuilderData mData;
         DslActionApi mApi;
         DslFile* mDataFile;
         RealTypeT* mThis;

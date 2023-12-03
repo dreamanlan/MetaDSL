@@ -221,10 +221,10 @@ FUNCTION_PARAMS :
     _action_markParenthesisColonParam STRING_PARAM [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     
 MEMBER_DESC:
-	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setFunctionId _action_endStatement
 	
 MEMBER_DESC2:
-	_action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement
+	_action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setFunctionId _action_endStatement
 	
 STRING_PARAM:
 	_action_beginStatement _action_addFunction STRING _action_pushStr _action_setFunctionId _action_endStatement

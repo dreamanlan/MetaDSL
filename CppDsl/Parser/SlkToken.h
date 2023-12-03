@@ -147,6 +147,7 @@ private:
     const char* mQuotes;
     const char* mSpecialChars;
 
+    bool mNullableSyntaxEnabled;
     const char* mScriptBeginDelimiter;
     const char* mScriptEndDelimiter;
     const char* mStringBeginDelimiter;

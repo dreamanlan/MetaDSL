@@ -31,9 +31,8 @@ public void execute  ( int  number )
     case 23:  markBracketParam();  break;
     case 24:  markParenthesisColonParam();  break;
     case 25:  markPeriodParam();  break;
-    case 26:  setMemberId();  break;
-    case 27:  markPointerParam();  break;
-    case 28:  pushStr();  break;
-    case 29:  pushNum();  break;
+    case 26:  markPointerParam();  break;
+    case 27:  pushStr();  break;
+    case 28:  pushNum();  break;
   }
 }

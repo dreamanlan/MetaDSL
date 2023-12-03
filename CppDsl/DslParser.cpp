@@ -405,7 +405,12 @@ namespace DslParser
     }
 
     DslFile::DslFile(IDslStringAndObjectBuffer& buffer) :m_Buffer(buffer), m_IsDebugInfoEnable(FALSE),
-        m_DslInfos(nullptr), m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
+        m_DslInfos(nullptr), 
+        m_NullableSyntaxEnabled(true),
+        m_StringBeginDelimiter("\""),
+        m_StringEndDelimiter("\""),
+        m_ScriptBeginDelimiter("{:"),
+        m_ScriptEndDelimiter(":}")
     {
         Init();
         ClearErrorInfo();
@@ -504,6 +509,10 @@ namespace DslParser
 #endif
     }
 
+    void DslFile::SetNullableSyntax(bool enabled)
+    {
+        m_NullableSyntaxEnabled = enabled;
+    }
     void DslFile::SetStringDelimiter(const char* begin, const char* end)
     {
         m_StringBeginDelimiter = begin;

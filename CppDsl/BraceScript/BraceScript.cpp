@@ -2779,8 +2779,7 @@ namespace Brace
         if (p->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
             auto* pvd = static_cast<DslData::ValueData*>(p);
             if (pvd->IsIdentifier() && (paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD
-                || paramClass == DslData::FunctionData::PARAM_CLASS_POINTER
-                || paramClass == DslData::FunctionData::PARAM_CLASS_QUESTION_PERIOD)) {
+                || paramClass == DslData::FunctionData::PARAM_CLASS_POINTER)) {
                 pvd->SetType(DslData::ValueData::VALUE_TYPE_STRING);
             }
         }
@@ -2838,10 +2837,7 @@ namespace Brace
                             //obj.property += val -> memberset(obj, property, memberget(obj, property) + val)
                             int innerParamClass = innerCall->GetParamClassUnmasked();
                             if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD ||
-                                innerParamClass == DslData::FunctionData::PARAM_CLASS_BRACKET ||
-                                innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACE ||
-                                innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACKET ||
-                                innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_PARENTHESIS) {
+                                innerParamClass == DslData::FunctionData::PARAM_CLASS_BRACKET) {
                                 auto* newCall = new DslData::FunctionData();
                                 AddSyntaxComponent(newCall);
                                 if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD)
@@ -2981,11 +2977,8 @@ namespace Brace
                         int innerParamClass = innerCall.GetParamClassUnmasked();
                         if (paramClass == DslData::FunctionData::PARAM_CLASS_PARENTHESIS && (
                             innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD ||
-                            innerParamClass == DslData::FunctionData::PARAM_CLASS_BRACKET ||
-                            innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACE ||
-                            innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACKET ||
-                            innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD_PARENTHESIS)) {
-                            //obj.member(a,b,...) or obj[member](a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> membercall(obj,member,a,b,...)
+                            innerParamClass == DslData::FunctionData::PARAM_CLASS_BRACKET)) {
+                            //obj.member(a,b,...) or obj[member](a,b,...) -> membercall(obj,member,a,b,...)
                             std::string apiName;
                             std::string member = innerCall.GetParamId(0);
                             if (member == "orderby" || member == "orderbydesc" || member == "where" || member == "top") {
@@ -3023,11 +3016,8 @@ namespace Brace
                         }
                     }
                     if (paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD ||
-                        paramClass == DslData::FunctionData::PARAM_CLASS_BRACKET ||
-                        paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACE ||
-                        paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD_BRACKET ||
-                        paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD_PARENTHESIS) {
-                        //obj.property or obj[property] or obj.(property) or obj.[property] or obj.{property} -> memberget(obj,property)
+                        paramClass == DslData::FunctionData::PARAM_CLASS_BRACKET) {
+                        //obj.property or obj[property] -> memberget(obj,property)
                         auto* newCall = new DslData::FunctionData();
                         AddSyntaxComponent(newCall);
                         if (paramClass == DslData::FunctionData::PARAM_CLASS_PERIOD)

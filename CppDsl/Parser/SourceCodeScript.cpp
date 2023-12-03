@@ -5,7 +5,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	45
+#define MAX_ACTION_NUM	34
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT<ActionForSourceCodeScript>
@@ -153,44 +153,33 @@ inline void ActionForSourceCodeScript::initialize_table()
     Action[4] = &ActionForSourceCodeScript::buildOperator;
     Action[5] = &ActionForSourceCodeScript::buildFirstTernaryOperator;
     Action[6] = &ActionForSourceCodeScript::buildSecondTernaryOperator;
-    Action[7] = &ActionForSourceCodeScript::beginStatement;
-    Action[8] = &ActionForSourceCodeScript::addFunction;
-    Action[9] = &ActionForSourceCodeScript::setFunctionId;
-    Action[10] = &ActionForSourceCodeScript::markParenthesisParam;
-    Action[11] = &ActionForSourceCodeScript::buildHighOrderFunction;
-    Action[12] = &ActionForSourceCodeScript::markBracketParam;
-    Action[13] = &ActionForSourceCodeScript::markQuestionParenthesisParam;
-    Action[14] = &ActionForSourceCodeScript::markQuestionBracketParam;
-    Action[15] = &ActionForSourceCodeScript::markQuestionBraceParam;
-    Action[16] = &ActionForSourceCodeScript::markStatement;
-    Action[17] = &ActionForSourceCodeScript::markExternScript;
-    Action[18] = &ActionForSourceCodeScript::setExternScript;
-    Action[19] = &ActionForSourceCodeScript::markBracketColonParam;
-    Action[20] = &ActionForSourceCodeScript::markParenthesisColonParam;
-    Action[21] = &ActionForSourceCodeScript::markAngleBracketColonParam;
-    Action[22] = &ActionForSourceCodeScript::markBracePercentParam;
-    Action[23] = &ActionForSourceCodeScript::markBracketPercentParam;
-    Action[24] = &ActionForSourceCodeScript::markParenthesisPercentParam;
-    Action[25] = &ActionForSourceCodeScript::markAngleBracketPercentParam;
-    Action[26] = &ActionForSourceCodeScript::markColonColonParam;
-    Action[27] = &ActionForSourceCodeScript::setMemberId;
-    Action[28] = &ActionForSourceCodeScript::markColonColonParenthesisParam;
-    Action[29] = &ActionForSourceCodeScript::markColonColonBracketParam;
-    Action[30] = &ActionForSourceCodeScript::markColonColonBraceParam;
-    Action[31] = &ActionForSourceCodeScript::markPeriodParam;
-    Action[32] = &ActionForSourceCodeScript::markPeriodParenthesisParam;
-    Action[33] = &ActionForSourceCodeScript::markPeriodBracketParam;
-    Action[34] = &ActionForSourceCodeScript::markPeriodBraceParam;
-    Action[35] = &ActionForSourceCodeScript::markQuestionPeriodParam;
-    Action[36] = &ActionForSourceCodeScript::markPointerParam;
-    Action[37] = &ActionForSourceCodeScript::markPeriodStarParam;
-    Action[38] = &ActionForSourceCodeScript::markQuestionPeriodStarParam;
-    Action[39] = &ActionForSourceCodeScript::markPointerStarParam;
-    Action[40] = &ActionForSourceCodeScript::pushStr;
-    Action[41] = &ActionForSourceCodeScript::pushNum;
-    Action[42] = &ActionForSourceCodeScript::pushDollarStr;
-    Action[43] = &ActionForSourceCodeScript::pushComma;
-    Action[44] = &ActionForSourceCodeScript::pushSemiColon;
+    Action[7] = &ActionForSourceCodeScript::buildNullableOperator;
+    Action[8] = &ActionForSourceCodeScript::beginStatement;
+    Action[9] = &ActionForSourceCodeScript::addFunction;
+    Action[10] = &ActionForSourceCodeScript::setFunctionId;
+    Action[11] = &ActionForSourceCodeScript::markParenthesisParam;
+    Action[12] = &ActionForSourceCodeScript::buildHighOrderFunction;
+    Action[13] = &ActionForSourceCodeScript::markBracketParam;
+    Action[14] = &ActionForSourceCodeScript::markStatement;
+    Action[15] = &ActionForSourceCodeScript::markExternScript;
+    Action[16] = &ActionForSourceCodeScript::setExternScript;
+    Action[17] = &ActionForSourceCodeScript::markBracketColonParam;
+    Action[18] = &ActionForSourceCodeScript::markParenthesisColonParam;
+    Action[19] = &ActionForSourceCodeScript::markAngleBracketColonParam;
+    Action[20] = &ActionForSourceCodeScript::markBracePercentParam;
+    Action[21] = &ActionForSourceCodeScript::markBracketPercentParam;
+    Action[22] = &ActionForSourceCodeScript::markParenthesisPercentParam;
+    Action[23] = &ActionForSourceCodeScript::markAngleBracketPercentParam;
+    Action[24] = &ActionForSourceCodeScript::markColonColonParam;
+    Action[25] = &ActionForSourceCodeScript::markPeriodParam;
+    Action[26] = &ActionForSourceCodeScript::markPointerParam;
+    Action[27] = &ActionForSourceCodeScript::markPeriodStarParam;
+    Action[28] = &ActionForSourceCodeScript::markPointerStarParam;
+    Action[29] = &ActionForSourceCodeScript::pushStr;
+    Action[30] = &ActionForSourceCodeScript::pushNum;
+    Action[31] = &ActionForSourceCodeScript::pushDollarStr;
+    Action[32] = &ActionForSourceCodeScript::pushComma;
+    Action[33] = &ActionForSourceCodeScript::pushSemiColon;
 }
 //--------------------------------------------------------------------------------------
 
@@ -378,6 +367,12 @@ namespace DslParser
             return;
         m_Impl->buildOperator();
     }
+    void DslActionApi::buildNullableOperator()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->buildNullableOperator();
+    }
     void DslActionApi::buildFirstTernaryOperator()const
     {
         if (!m_Impl)
@@ -425,24 +420,6 @@ namespace DslParser
         if (!m_Impl)
             return;
         m_Impl->markBracketParam();
-    }
-    void DslActionApi::markQuestionParenthesisParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markQuestionParenthesisParam();
-    }
-    void DslActionApi::markQuestionBracketParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markQuestionBracketParam();
-    }
-    void DslActionApi::markQuestionBraceParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markQuestionBraceParam();
     }
     void DslActionApi::markStatement()const
     {
@@ -504,24 +481,6 @@ namespace DslParser
             return;
         m_Impl->markColonColonParam();
     }
-    void DslActionApi::markColonColonParenthesisParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markColonColonParenthesisParam();
-    }
-    void DslActionApi::markColonColonBracketParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markColonColonBracketParam();
-    }
-    void DslActionApi::markColonColonBraceParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markColonColonBraceParam();
-    }
     void DslActionApi::setExternScript()const
     {
         if (!m_Impl)
@@ -534,36 +493,6 @@ namespace DslParser
             return;
         m_Impl->markPeriodParam();
     }
-    void DslActionApi::setMemberId()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->setMemberId();
-    }
-    void DslActionApi::markPeriodParenthesisParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markPeriodParenthesisParam();
-    }
-    void DslActionApi::markPeriodBracketParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markPeriodBracketParam();
-    }
-    void DslActionApi::markPeriodBraceParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markPeriodBraceParam();
-    }
-    void DslActionApi::markQuestionPeriodParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markQuestionPeriodParam();
-    }
     void DslActionApi::markPointerParam()const
     {
         if (!m_Impl)
@@ -575,12 +504,6 @@ namespace DslParser
         if (!m_Impl)
             return;
         m_Impl->markPeriodStarParam();
-    }
-    void DslActionApi::markQuestionPeriodStarParam()const
-    {
-        if (!m_Impl)
-            return;
-        m_Impl->markQuestionPeriodStarParam();
     }
     void DslActionApi::markPointerStarParam()const
     {

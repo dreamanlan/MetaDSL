@@ -49,13 +49,13 @@ namespace DslParser
         if (0 == pArg)
             return;
         if (!mDataFile->OnBeforeBuildOperator.isNull()) {
-            mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, pArg);
+            mDataFile->OnBeforeBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_NORMAL, tokenInfo.mString, pArg);
         }
         pArg = mData.popStatement();
         if (0 == pArg)
             return;
         if (!mDataFile->OnBuildOperator.isNull()) {
-            mDataFile->OnBuildOperator(mApi, tokenInfo.mString, pArg);
+            mDataFile->OnBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_NORMAL, tokenInfo.mString, pArg);
             if (0 == pArg)
                 return;
         }
@@ -98,6 +98,69 @@ namespace DslParser
         }
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::buildNullableOperator()
+    {
+        if (!preconditionCheck())return;
+        RuntimeBuilderData::TokenInfo tokenInfo = mData.pop();
+        if (TRUE != tokenInfo.IsValid())return;
+
+        if (mDataFile->IsDebugInfoEnable()) {
+            PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op:%s\n", tokenInfo.mString);
+        }
+
+        StatementData* pArg = mData.getCurStatement();
+        if (0 == pArg)
+            return;
+        if (!mDataFile->OnBeforeBuildOperator.isNull()) {
+            mDataFile->OnBeforeBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_NULLABLE, tokenInfo.mString, pArg);
+        }
+        pArg = mData.popStatement();
+        if (0 == pArg)
+            return;
+        if (!mDataFile->OnBuildOperator.isNull()) {
+            mDataFile->OnBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_NULLABLE, tokenInfo.mString, pArg);
+            if (0 == pArg)
+                return;
+        }
+
+        ISyntaxComponent& argComp = simplifyStatement(*pArg);
+
+        StatementData* pStatement = mDataFile->AddNewStatementComponent();
+        if (0 == pStatement)
+            return;
+
+        pStatement->CopyFirstComments(argComp);
+        argComp.ClearFirstComments();
+
+        mData.pushStatement(pStatement);
+
+        FunctionData* p = mDataFile->AddNewFunctionComponent();
+        if (0 != p) {
+            FunctionData& call = *p;
+            if (0 != tokenInfo.mString && tokenInfo.mString[0] == '`') {
+                call.SetParamClass(FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData::PARAM_CLASS_OPERATOR);
+
+                ValueData v = call.GetName();
+                ValueData op(tokenInfo.mString + 1, ValueData::VALUE_TYPE_IDENTIFIER);
+                op.SetLine(mThis->getLastLineNumber());
+                call.SetName(op);
+            }
+            else {
+                call.SetParamClass(FunctionData::PARAM_CLASS_NULLABLE_OPERATOR);
+
+                ValueData v = call.GetName();
+                ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
+                op.SetLine(mThis->getLastLineNumber());
+                call.SetName(op);
+            }
+            if (argComp.IsValid()) {
+                call.AddParam(&argComp);
+            }
+
+            pStatement->AddFunction(p);
+        }
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildFirstTernaryOperator()
     {
         if (!preconditionCheck())return;
@@ -112,13 +175,13 @@ namespace DslParser
         if (0 == pArg)
             return;
         if (!mDataFile->OnBeforeBuildOperator.isNull()) {
-            mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, pArg);
+            mDataFile->OnBeforeBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_TERNARY, tokenInfo.mString, pArg);
         }
         pArg = mData.popStatement();
         if (0 == pArg)
             return;
         if (!mDataFile->OnBuildOperator.isNull()) {
-            mDataFile->OnBuildOperator(mApi, tokenInfo.mString, pArg);
+            mDataFile->OnBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_TERNARY, tokenInfo.mString, pArg);
             if (0 == pArg)
                 return;
         }
@@ -165,7 +228,7 @@ namespace DslParser
         StatementData* statement = mData.getCurStatement();
         if (0 != statement) {
             if (!mDataFile->OnBeforeBuildOperator.isNull()) {
-                mDataFile->OnBeforeBuildOperator(mApi, tokenInfo.mString, statement);
+                mDataFile->OnBeforeBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_TERNARY, tokenInfo.mString, statement);
                 statement = mData.getCurStatement();
             }
             if (0 != statement) {
@@ -497,32 +560,6 @@ namespace DslParser
         }
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::setMemberId()
-    {
-        if (!preconditionCheck())return;
-        RuntimeBuilderData::TokenInfo tokenInfo = mData.pop();
-        if (TRUE != tokenInfo.IsValid())return;
-
-        if (mDataFile->IsDebugInfoEnable()) {
-            PRINT_FUNCTION_SCRIPT_DEBUG_INFO("member:%s\n", tokenInfo.mString);
-        }
-
-        FunctionData* p = mData.getLastFunction();
-        if (0 != p && !p->IsValid()) {
-            ValueData val = tokenInfo.ToValue();
-            if (TRUE == val.IsValid()) {
-                val.SetLine(mThis->getLastLineNumber());
-                p->SetName(val);
-            }
-        }
-        if (!mDataFile->OnSetMemberId.isNull()) {
-            StatementData* pStm = mData.getCurStatement();
-            if (0 == pStm || 0 == p)
-                return;
-            mDataFile->OnSetMemberId(mApi, tokenInfo.mString, pStm, p);
-        }
-    }
-    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildHighOrderFunction()
     {
         if (!preconditionCheck())return;
@@ -584,76 +621,6 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_PERIOD);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markPeriodParenthesisParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_PERIOD_PARENTHESIS);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markPeriodBracketParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_PERIOD_BRACKET);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markPeriodBraceParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_PERIOD_BRACE);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markQuestionPeriodParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_QUESTION_PERIOD);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markQuestionParenthesisParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_QUESTION_PARENTHESIS);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markQuestionBracketParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_QUESTION_BRACKET);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markQuestionBraceParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_QUESTION_BRACE);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markStatement()
@@ -788,36 +755,6 @@ namespace DslParser
         call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markColonColonParenthesisParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON_PARENTHESIS);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markColonColonBracketParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON_BRACKET);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markColonColonBraceParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_COLON_COLON_BRACE);
-    }
-    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPointerParam()
     {
         if (!preconditionCheck())return;
@@ -836,16 +773,6 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_PERIOD_STAR);
-    }
-    template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markQuestionPeriodStarParam()
-    {
-        if (!preconditionCheck())return;
-        FunctionData* p = mData.getLastFunction();
-        if (0 == p)
-            return;
-        FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_QUESTION_PERIOD_STAR);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPointerStarParam()

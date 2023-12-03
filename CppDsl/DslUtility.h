@@ -440,6 +440,21 @@ namespace DslFileReadWrite
                 WriteComponent(fp, component0, indent, TRUE, FALSE, delim);
             }
         }
+        else if (data.IsNullableOperatorParamClass()) {
+            WriteIndent(fp, firstLineNoIndent ? 0 : indent);
+            auto& component0 = *data.GetParam(0);
+            WriteComponent(fp, component0, indent, TRUE, FALSE, delim);
+            if (data.IsHighOrder() && nullptr != name.GetFunction()) {
+                auto& call = *name.GetFunction();
+                call.WriteToFile(fp, indent, TRUE, FALSE, delim);
+            }
+            else {
+                if (data.HaveParamClassInfixFlag()) {
+                    fwrite("`", 1, 1, fp);
+                }
+                name.WriteToFile(fp, indent, TRUE, FALSE, delim);
+            }
+        }
         else {
             if (data.IsHighOrder() && nullptr != name.GetFunction()) {
                 auto& lowerOrderFunction = *name.GetFunction();
@@ -473,38 +488,8 @@ namespace DslFileReadWrite
                 case IDslSyntaxCommon::PARAM_CLASS_PERIOD:
                     fwrite(".", 1, 1, fp);
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_PERIOD_PARENTHESIS:
-                    fwrite(".(", 2, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_PERIOD_BRACKET:
-                    fwrite(".[", 2, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_PERIOD_BRACE:
-                    fwrite(".{", 2, 1, fp);
-                    break;
                 case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON:
                     fwrite("::", 2, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON_PARENTHESIS:
-                    fwrite("::(", 3, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON_BRACKET:
-                    fwrite("::[", 3, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON_BRACE:
-                    fwrite("::{", 3, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_PERIOD:
-                    fwrite("?.", 2, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_PARENTHESIS:
-                    fwrite("?(", 2, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_BRACKET:
-                    fwrite("?[", 2, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_BRACE:
-                    fwrite("?{", 2, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_POINTER:
                     fwrite("->", 2, 1, fp);
@@ -533,9 +518,6 @@ namespace DslFileReadWrite
                 case IDslSyntaxCommon::PARAM_CLASS_PERIOD_STAR:
                     fwrite(".*", 2, 1, fp);
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_PERIOD_STAR:
-                    fwrite("?.*", 3, 1, fp);
-                    break;
                 case IDslSyntaxCommon::PARAM_CLASS_POINTER_STAR:
                     fwrite("->*", 3, 1, fp);
                     break;
@@ -558,36 +540,7 @@ namespace DslFileReadWrite
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_PERIOD:
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_PERIOD_PARENTHESIS:
-                    fwrite(")", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_PERIOD_BRACKET:
-                    fwrite("]", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_PERIOD_BRACE:
-                    fwrite("}", 1, 1, fp);
-                    break;
                 case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON:
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON_PARENTHESIS:
-                    fwrite(")", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON_BRACKET:
-                    fwrite("]", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_COLON_COLON_BRACE:
-                    fwrite("}", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_PERIOD:
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_PARENTHESIS:
-                    fwrite(")", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_BRACKET:
-                    fwrite("]", 1, 1, fp);
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_BRACE:
-                    fwrite("}", 1, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_POINTER:
                     break;
@@ -613,8 +566,6 @@ namespace DslFileReadWrite
                     fwrite("%>", 2, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_PERIOD_STAR:
-                    break;
-                case IDslSyntaxCommon::PARAM_CLASS_QUESTION_PERIOD_STAR:
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_POINTER_STAR:
                     break;

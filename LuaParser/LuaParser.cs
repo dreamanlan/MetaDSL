@@ -34,14 +34,14 @@ private static short[] Production = {0
 ,2,93,94 ,2,93,95 ,2,93,96 ,4,94,156,111,158 ,5,95,156,110,158,141 
 ,3,96,156,97 ,6,97,160,26,142,27,143 ,6,97,159,41,144,42,145 
 ,2,98,97 ,6,98,177,43,80,44,146 ,4,98,24,99,147 ,4,98,25,100,148 
-,4,98,178,101,149 ,7,99,179,155,156,110,180,161 ,7,100,181,155,156,110,180,161 
-,7,101,155,156,45,182,158,161 ,3,102,104,150 ,3,103,109,151 
+,4,98,178,101,149 ,7,99,179,155,156,110,158,161 ,7,100,180,155,156,110,158,161 
+,7,101,155,156,45,181,158,161 ,3,102,104,150 ,3,103,109,151 
 ,12,104,155,156,177,43,80,44,6,157,176,80,161 ,2,104,105 
 ,7,105,155,156,23,157,158,107 ,8,105,155,156,111,157,158,108,161 
 ,3,105,106,161 ,7,105,155,39,157,176,92,161 ,2,105,74 ,2,105,77 
 ,4,106,155,96,152 ,6,107,6,157,176,80,161 ,3,107,108,161 
-,3,108,153,154 ,2,109,5 ,2,109,4 ,3,110,23,157 ,3,111,45,182 
-,3,111,46,183 ,3,111,47,157 ,3,111,48,157 ,3,111,49,157 
+,3,108,153,154 ,2,109,5 ,2,109,4 ,3,110,23,157 ,3,111,45,181 
+,3,111,46,182 ,3,111,47,157 ,3,111,48,157 ,3,111,49,157 
 ,3,112,53,112 ,1,112 ,2,113,67 ,1,113 ,6,114,5,155,93,161,114 
 ,1,114 ,12,115,156,14,157,158,160,80,13,167,159,52,115 ,1,115 
 ,7,116,156,15,157,158,159,52 ,1,116 ,6,117,5,155,93,161,117 
@@ -196,13 +196,15 @@ private const short   START_STATE = 0;
 private const short   START_CONFLICT = 187;
 private const short   END_CONFLICT = 187;
 private const short   START_ACTION = 155;
-private const short   END_ACTION = 184;
+private const short   END_ACTION = 183;
 private const short   TOTAL_CONFLICTS = 0;
 
 public const int   NOT_A_SYMBOL = 0;
 public const int   NONTERMINAL_SYMBOL = 1;
 public const int   TERMINAL_SYMBOL = 2;
 public const int   ACTION_SYMBOL = 3;
+
+public const int   PARSE_STACK_SIZE = 65535;
 
 public static short[]
 GetProductionArray ( short  production_number )
@@ -253,7 +255,7 @@ public static short GetTerminalIndex ( short   token ){
 
 public static short
 get_production ( short     conflict_number,
-                 LuaToken  tokens )
+                 ref LuaToken  tokens )
 {
     short   entry = 0;
     int     index, level;
@@ -273,7 +275,7 @@ get_production ( short     conflict_number,
 }
 
 private static short
-get_predicted_entry ( LuaToken   tokens,
+get_predicted_entry ( ref LuaToken   tokens,
                       short      production_number,
                       short      token,
                       int        scan_level,
@@ -282,104 +284,103 @@ get_predicted_entry ( LuaToken   tokens,
  return  0;
 }
 
-        internal unsafe static void
-        parse(ref DslAction action,
-                ref LuaToken tokens,
-                ref LuaError error,
-                short start_symbol)
-        {
-            short lhs;
-            short production_number, entry, symbol, token, new_token;
-            int production_length, top, index, level;
+internal static
+void Accept(IVisitor visitor)
+{
+    visitor.Visit(Production, Production_row, Parse, Parse_row, START_SYMBOL, START_ACTION);
+}
 
-            short* stack = stackalloc short[65535];
+internal unsafe static void
+parse (ref DslAction   action,
+        ref LuaToken    tokens,
+        ref LuaError    error,
+        short       start_symbol )
+{
+ short     lhs;
+ short     production_number, entry, symbol, token, new_token;
+ int       production_length, top, index, level;
+ short* stack = stackalloc short[PARSE_STACK_SIZE];
 
-            top = 65534;
-            stack[top] = 0;
-            if (start_symbol == 0) {
-                start_symbol = START_SYMBOL;
-            }
-            if (top > 0) {
-                stack[--top] = start_symbol;
-            }
-            else { error.message("LuaParse: stack overflow\n", ref tokens); return; }
-            token = tokens.get();
-            new_token = token;
+ top = PARSE_STACK_SIZE - 1;
+ stack [ top ] = 0;
+ if ( start_symbol == 0 ) {
+     start_symbol = START_SYMBOL;
+ }
+ if ( top > 0 ) { stack [--top] = start_symbol;
+ } else { error.message ("LuaParse: stack overflow\n", ref tokens); return; }
+ token = tokens.get();
+ new_token = token;
 
-            for (symbol = (stack[top] != 0 ? stack[top++] : (short)0); symbol != 0;) {
+ for ( symbol = (stack[top] != 0  ? stack[top++] : (short) 0);  symbol != 0; ) {
 
-                if (symbol >= START_ACTION) {
-                    action.execute(symbol - (START_ACTION - 1));
+     if ( symbol >= START_ACTION ) {
+         action.execute ( symbol - (START_ACTION-1) );
 
-                }
-                else if (symbol >= START_SYMBOL) {
-                    entry = 0;
-                    level = 1;
-                    production_number = get_conditional_production(symbol);
-                    if (production_number != 0) {
-                        entry = get_predicted_entry(tokens,
-                                                      production_number, token,
-                                                      level, 1);
-                    }
-                    if (entry == 0) {
-                        index = Parse_row[symbol - (START_SYMBOL - 1)];
-                        index += token;
-                        entry = Parse[index];
-                    }
-                    while (entry >= START_CONFLICT) {
-                        index = Conflict_row[entry - (START_CONFLICT - 1)];
-                        index += tokens.peek(level);
-                        entry = Conflict[index];
-                        ++level;
-                    }
-                    if (entry != 0) {
-                        index = Production_row[entry];
-                        production_length = Production[index] - 1;
-                        lhs = Production[++index];
+     } else if ( symbol >= START_SYMBOL ) {
+         entry = 0;
+         level = 1;
+         production_number = get_conditional_production ( symbol );
+         if ( production_number != 0 ) {
+             entry = get_predicted_entry ( ref tokens,
+                                           production_number, token,
+                                           level, 1 );
+         }
+         if ( entry == 0 ) {
+             index = Parse_row [ symbol - (START_SYMBOL-1) ];
+             index += token;
+             entry = Parse [ index ];
+         }
+         while ( entry >= START_CONFLICT ) {
+             index = Conflict_row [entry - (START_CONFLICT -1)];
+             index += tokens.peek (level);
+             entry = Conflict [ index ];
+             ++level;
+         }
+         if ( entry != 0 ) {
+             index = Production_row [ entry ];
+             production_length = Production [ index ] - 1;
+             lhs = Production [ ++index ];
+             if ( lhs == symbol ) {
+                 action.predict ( entry, symbol, token, level - 1, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber() );
+                 index += production_length;
+                 for (;  production_length-- > 0;  --index ) {
+                     if ( top > 0 ) { stack [--top] = Production [index];
+                     } else { error.message ("LuaParse: stack overflow\n", ref tokens); return; }
+                 }
+             } else {
+                 new_token = error.no_entry ( entry, symbol, token, level - 1, ref tokens );
+             }
+         } else {                                       // no table entry
+             new_token = error.no_entry ( entry, symbol, token, level - 1, ref tokens );
+         }
+     } else if ( symbol > 0 ) {
+         if ( symbol == token ) {
+             token = tokens.get();
+             new_token = token;
+         } else {
+             new_token = error.mismatch ( symbol, token, ref tokens );
+         }
+     } else {
+         error.message ( "\n parser error: symbol value 0\n", ref tokens );
+     }
+     if ( token != new_token ) {
+         if ( new_token != 0 ) {
+             token = new_token;
+         }
+         if ( token != END_OF_SLK_INPUT_ ) {
+             continue;
+         }
+     }
+     symbol = (stack[top] != 0  ? stack[top++] : (short) 0);
+ }
+ if ( token != END_OF_SLK_INPUT_ ) {
+     error.input_left (ref tokens);
+ }
+}
 
-                        if (lhs == symbol) {
-                            action.predict(entry, symbol, token, level - 1, tokens.getLastToken(), tokens.getLastLineNumber(), tokens.getCurToken(), tokens.getLineNumber());
-                            index += production_length;
-                            for (; production_length-- > 0; --index) {
-                                if (top > 0) {
-                                    stack[--top] = Production[index];
-                                }
-                                else { error.message("LuaParse: stack overflow\n", ref tokens); return; }
-                            }
-                        }
-                        else {
-                            new_token = error.no_entry(entry, symbol, token, level - 1, ref tokens);
-                        }
-                    }
-                    else {
-                        new_token = error.no_entry(entry, symbol, token, level - 1, ref tokens);
-                    }
-                }
-                else if (symbol > 0) {
-                    if (symbol == token) {
-                        token = tokens.get();
-                        new_token = token;
-                    }
-                    else {
-                        new_token = error.mismatch(symbol, token, ref tokens);
-                    }
-                }
-                else {
-                    error.message("\n parser error: symbol value 0\n", ref tokens);
-                }
-                if (token != new_token) {
-                    if (new_token != 0) {
-                        token = new_token;
-                    }
-                    if (token != END_OF_SLK_INPUT_) {
-                        continue;
-                    }
-                }
-                symbol = (stack[top] != 0 ? stack[top++] : (short)0);
-            }
-            if (token != END_OF_SLK_INPUT_) {
-                error.input_left(ref tokens);
-            }
-        }
-    };
+
+
+};
+
+
 }

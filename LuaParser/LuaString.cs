@@ -194,7 +194,6 @@ private static string[] Action_name ={"0"
 ,"_action_markBracketParam"
 ,"_action_markParenthesisColonParam"
 ,"_action_markPeriodParam"
-,"_action_setMemberId"
 ,"_action_markPointerParam"
 ,"_action_pushStr"
 ,"_action_pushNum"
@@ -277,8 +276,8 @@ private static string[] Production_name ={"0"
 ,"FUNCTION_PARAMS --> . MEMBER_DESC FUNCTION_PARAMS_5_opt"
 ,"FUNCTION_PARAMS --> : MEMBER_DESC2 FUNCTION_PARAMS_6_opt"
 ,"FUNCTION_PARAMS --> _action_markParenthesisColonParam STRING_PARAM FUNCTION_PARAMS_7_opt"
-,"MEMBER_DESC --> _action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement"
-,"MEMBER_DESC2 --> _action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setMemberId _action_endStatement"
+,"MEMBER_DESC --> _action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setFunctionId _action_endStatement"
+,"MEMBER_DESC2 --> _action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setFunctionId _action_endStatement"
 ,"STRING_PARAM --> _action_beginStatement _action_addFunction STRING _action_pushStr _action_setFunctionId _action_endStatement"
 ,"FIELD_LIST --> FIELD FIELD_LIST_TAIL_opt"
 ,"FIELD_LIST_TAIL --> FIELD_SEP FIELD_LIST_2_opt"
@@ -392,7 +391,7 @@ private static string[] Production_name ={"0"
 
 private const short   START_SYMBOL = 51;
 private const short   START_ACTION = 155;
-private const short   END_ACTION = 184;
+private const short   END_ACTION = 183;
 
 public static string  GetSymbolName ( short symbol )
 {

@@ -431,7 +431,7 @@ namespace DslData
         return s_Null;
     }
 
-    DslFile::DslFile() :m_DslInfos(0), m_HasError(false), 
+    DslFile::DslFile() :m_DslInfos(0), m_HasError(false), m_NullableSyntaxEnabled(true),
         m_StringBeginDelimiter("\""), m_StringEndDelimiter("\""), m_ScriptBeginDelimiter("{:"), m_ScriptEndDelimiter(":}")
     {
     }
@@ -461,6 +461,11 @@ namespace DslData
             delete ptr;
         }
         m_DslInfos.clear();
+    }
+
+    void DslFile::SetNullableSyntax(bool enabled)
+    {
+        m_NullableSyntaxEnabled = enabled;
     }
 
     void DslFile::SetStringDelimiter(const char* begin, const char* end)
