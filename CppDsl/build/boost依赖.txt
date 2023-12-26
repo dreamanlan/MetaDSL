@@ -1,0 +1,14 @@
+1、windows上需要特定版本的boost，目前与yuzu模拟器所用版本保持同步。
+
+2、需要编译msvc141与msvc143版本的boost库，分别在2个版本vs的开发工具命令行执行（首次解压boost先执行bootstrap.bat）
+
+b2 link=static threading=multi
+
+可以考虑写成build.bat放到boost根目录备用。
+3、拷贝相应context库的编译库文件到deps/lib的x86与x86_64目录下，以及lib的x86与x86_64目录下
+
+4、更新deps/include/boost为对应版本boost的头文件
+
+5、build CppDsl的win32/64版本
+
+6、context库的安卓、iOS与mac版本使用context源码编译，一般不用重新编译

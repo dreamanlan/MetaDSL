@@ -1007,7 +1007,7 @@ short SlkToken::getImpl()
             return STRING_;
     }
     else {//关键字、标识符或常数
-        if (curChar() == '"' || curChar() == '\'' || curChar() == '$' && (nextChar() == '"' || nextChar() == '\'')) {//引号括起来的名称或关键字
+        if (curChar() == '"' || curChar() == '\'' || (curChar() == '$' && (nextChar() == '"' || nextChar() == '\''))) {//引号括起来的名称或关键字
             bool isDollar = false;
             if (curChar() == '$') {
                 ++mIterator;

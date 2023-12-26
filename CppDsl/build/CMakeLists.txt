@@ -169,8 +169,8 @@ endif()
 if ( WIN32 AND NOT CYGWIN )
     target_link_libraries(CppDsl
         ws2_32
-        debug libboost_context-vc141-mt-gd-${ARCH_SUFFIX}-1_82.lib
-        optimized libboost_context-vc141-mt-${ARCH_SUFFIX}-1_82.lib
+        debug libboost_context-vc141-mt-gd-${ARCH_SUFFIX}-1_83.lib
+        optimized libboost_context-vc141-mt-${ARCH_SUFFIX}-1_83.lib
     )
 elseif (APPLE AND NOT IOS)
     target_link_libraries(CppDsl
