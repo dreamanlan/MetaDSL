@@ -4,6 +4,7 @@
 #include "Dsl.h"
 #include <stack>
 #include <deque>
+#include <map>
 #include <unordered_map>
 #include <functional>
 #include <memory>
@@ -810,8 +811,9 @@ namespace Brace
         /// RegisterApi("hashtable", new BraceApiFactory<HashtableExp>());
         /// RegisterApi("looplist", new BraceApiFactory<LoopListExp>());
         /// -----------------------------------------------------------------------------------------------------------
-        void RegisterApi(const std::string& id, IBraceApiFactory* pApiFactory);
-        void RegisterApi(std::string&& id, IBraceApiFactory* pApiFactory);
+        void RegisterApi(const std::string& id, const std::string& doc, IBraceApiFactory* pApiFactory);
+        void RegisterApi(std::string&& id, std::string&& doc, IBraceApiFactory* pApiFactory);
+        const std::map<std::string, std::string>& GetApiDocs()const;
         void SetFailbackApi(AbstractBraceApi* pFailbackApi);
         AbstractBraceApi* GetFailbackApi()const;
         void SetContextObject(const std::shared_ptr<void>& pContext);
@@ -891,6 +893,7 @@ namespace Brace
         BraceScript(BraceScript&&) noexcept = delete;
         BraceScript& operator=(BraceScript&&) noexcept = delete;
     private:
+        std::map<std::string, std::string> m_ApiDocs;
         std::unordered_map<std::string, IBraceApiFactory*> m_ApiFactories;
         std::vector<DslData::ISyntaxComponent*> m_AddedSyntaxComponents;
         std::vector<IBraceApi*> m_ApiInstances;

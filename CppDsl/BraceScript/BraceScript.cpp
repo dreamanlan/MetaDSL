@@ -3150,63 +3150,63 @@ namespace Brace
     
     void BraceScript::RegisterInnerApis()
     {
-        RegisterApi("+", new BraceApiFactoryWithArgs<AddExp, bool>(false));
-        RegisterApi("-", new BraceApiFactoryWithArgs<SubExp, bool>(false));
-        RegisterApi("*", new BraceApiFactoryWithArgs<MulExp, bool>(false));
-        RegisterApi("/", new BraceApiFactoryWithArgs<DivExp, bool>(false));
-        RegisterApi("%", new BraceApiFactoryWithArgs<ModExp, bool>(false));
-        RegisterApi("&", new BraceApiFactoryWithArgs<BitAndExp, bool>(false));
-        RegisterApi("|", new BraceApiFactoryWithArgs<BitOrExp, bool>(false));
-        RegisterApi("^", new BraceApiFactoryWithArgs<BitXorExp, bool>(false));
-        RegisterApi("~", new BraceApiFactoryWithArgs<BitNotExp, bool>(false));
-        RegisterApi("<<", new BraceApiFactoryWithArgs<LShiftExp, bool>(false));
-        RegisterApi(">>", new BraceApiFactoryWithArgs<RShiftExp, bool>(false));
+        RegisterApi("+", "add operator", new BraceApiFactoryWithArgs<AddExp, bool>(false));
+        RegisterApi("-", "sub operator", new BraceApiFactoryWithArgs<SubExp, bool>(false));
+        RegisterApi("*", "mul operator", new BraceApiFactoryWithArgs<MulExp, bool>(false));
+        RegisterApi("/", "div operator", new BraceApiFactoryWithArgs<DivExp, bool>(false));
+        RegisterApi("%", "mod operator", new BraceApiFactoryWithArgs<ModExp, bool>(false));
+        RegisterApi("&", "bitand operator", new BraceApiFactoryWithArgs<BitAndExp, bool>(false));
+        RegisterApi("|", "bitor operator", new BraceApiFactoryWithArgs<BitOrExp, bool>(false));
+        RegisterApi("^", "bitxor operator", new BraceApiFactoryWithArgs<BitXorExp, bool>(false));
+        RegisterApi("~", "bitnot operator", new BraceApiFactoryWithArgs<BitNotExp, bool>(false));
+        RegisterApi("<<", "left shift operator", new BraceApiFactoryWithArgs<LShiftExp, bool>(false));
+        RegisterApi(">>", "right shift operator", new BraceApiFactoryWithArgs<RShiftExp, bool>(false));
 
-        RegisterApi("+=", new BraceApiFactoryWithArgs<AddExp, bool>(true));
-        RegisterApi("-=", new BraceApiFactoryWithArgs<SubExp, bool>(true));
-        RegisterApi("*=", new BraceApiFactoryWithArgs<MulExp, bool>(true));
-        RegisterApi("/=", new BraceApiFactoryWithArgs<DivExp, bool>(true));
-        RegisterApi("%=", new BraceApiFactoryWithArgs<ModExp, bool>(true));
-        RegisterApi("&=", new BraceApiFactoryWithArgs<BitAndExp, bool>(true));
-        RegisterApi("|=", new BraceApiFactoryWithArgs<BitOrExp, bool>(true));
-        RegisterApi("^=", new BraceApiFactoryWithArgs<BitXorExp, bool>(true));
-        RegisterApi("<<=", new BraceApiFactoryWithArgs<LShiftExp, bool>(true));
-        RegisterApi(">>=", new BraceApiFactoryWithArgs<RShiftExp, bool>(true));
+        RegisterApi("+=", "compound add assignment", new BraceApiFactoryWithArgs<AddExp, bool>(true));
+        RegisterApi("-=", "compound sub assignment", new BraceApiFactoryWithArgs<SubExp, bool>(true));
+        RegisterApi("*=", "compound mul assignment", new BraceApiFactoryWithArgs<MulExp, bool>(true));
+        RegisterApi("/=", "compound div assignment", new BraceApiFactoryWithArgs<DivExp, bool>(true));
+        RegisterApi("%=", "compound mod assignment", new BraceApiFactoryWithArgs<ModExp, bool>(true));
+        RegisterApi("&=", "compound bitand assignment", new BraceApiFactoryWithArgs<BitAndExp, bool>(true));
+        RegisterApi("|=", "compound bitor assignment", new BraceApiFactoryWithArgs<BitOrExp, bool>(true));
+        RegisterApi("^=", "compound bitxor assignment", new BraceApiFactoryWithArgs<BitXorExp, bool>(true));
+        RegisterApi("<<=", "compound left shift assignment", new BraceApiFactoryWithArgs<LShiftExp, bool>(true));
+        RegisterApi(">>=", "compound right shift assignment", new BraceApiFactoryWithArgs<RShiftExp, bool>(true));
 
-        RegisterApi("++", new BraceApiFactoryWithArgs<IncExp, bool>(true));
-        RegisterApi("--", new BraceApiFactoryWithArgs<DecExp, bool>(true));
+        RegisterApi("++", "increment assignment", new BraceApiFactoryWithArgs<IncExp, bool>(true));
+        RegisterApi("--", "decrement assignment", new BraceApiFactoryWithArgs<DecExp, bool>(true));
 
-        RegisterApi(">", new BraceApiFactoryWithArgs<GreatExp, bool>(false));
-        RegisterApi(">=", new BraceApiFactoryWithArgs<GreatEqualExp, bool>(false));
-        RegisterApi("<", new BraceApiFactoryWithArgs<LessExp, bool>(false));
-        RegisterApi("<=", new BraceApiFactoryWithArgs<LessEqualExp, bool>(false));
-        RegisterApi("==", new BraceApiFactoryWithArgs<EqualExp, bool>(false));
-        RegisterApi("!=", new BraceApiFactoryWithArgs<NotEqualExp, bool>(false));
-        RegisterApi("&&", new BraceApiFactoryWithArgs<AndExp, bool>(false));
-        RegisterApi("||", new BraceApiFactoryWithArgs<OrExp, bool>(false));
-        RegisterApi("!", new BraceApiFactoryWithArgs<NotExp, bool>(false));
-        RegisterApi("?", new BraceApiFactory<CondExp>());
-        RegisterApi("echo", new BraceApiFactory<EchoExp>());
-        RegisterApi("if", new BraceApiFactory<IfExp>());
-        RegisterApi("while", new BraceApiFactory<WhileExp>());
-        RegisterApi("loop", new BraceApiFactory<LoopExp>());
-        RegisterApi("foreach", new BraceApiFactory<ForeachExp>());
-        RegisterApi("return", new BraceApiFactory<ReturnExp>());
-        RegisterApi("func", new BraceApiFactory<FunctionDefine>());
+        RegisterApi(">", "great operator", new BraceApiFactoryWithArgs<GreatExp, bool>(false));
+        RegisterApi(">=", "great equal opeartor", new BraceApiFactoryWithArgs<GreatEqualExp, bool>(false));
+        RegisterApi("<", "less operator", new BraceApiFactoryWithArgs<LessExp, bool>(false));
+        RegisterApi("<=", "less equal operator", new BraceApiFactoryWithArgs<LessEqualExp, bool>(false));
+        RegisterApi("==", "equal operator", new BraceApiFactoryWithArgs<EqualExp, bool>(false));
+        RegisterApi("!=", "not equal operator", new BraceApiFactoryWithArgs<NotEqualExp, bool>(false));
+        RegisterApi("&&", "logical and operator", new BraceApiFactoryWithArgs<AndExp, bool>(false));
+        RegisterApi("||", "logical or operator", new BraceApiFactoryWithArgs<OrExp, bool>(false));
+        RegisterApi("!", "logical not operator", new BraceApiFactoryWithArgs<NotExp, bool>(false));
+        RegisterApi("?", "conditional expression", new BraceApiFactory<CondExp>());
+        RegisterApi("echo", "echo function", new BraceApiFactory<EchoExp>());
+        RegisterApi("if", "if statement", new BraceApiFactory<IfExp>());
+        RegisterApi("while", "while statement", new BraceApiFactory<WhileExp>());
+        RegisterApi("loop", "loop statement", new BraceApiFactory<LoopExp>());
+        RegisterApi("foreach", "foreach statement", new BraceApiFactory<ForeachExp>());
+        RegisterApi("return", "return statement", new BraceApiFactory<ReturnExp>());
+        RegisterApi("func", "define function", new BraceApiFactory<FunctionDefine>());
 
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
         /// -----------------------------------------------------------------------------------------------------------
-        /// RegisterApi("membercall", new BraceApiFactory<MemberCallExp>());
-        /// RegisterApi("memberset", new BraceApiFactory<MemberSetExp>());
-        /// RegisterApi("memberget", new BraceApiFactory<MemberGetExp>());
-        /// RegisterApi("collectioncall", new BraceApiFactory<CollectionCallExp>());
-        /// RegisterApi("collectionset", new BraceApiFactory<CollectionSetExp>());
-        /// RegisterApi("collectionget", new BraceApiFactory<CollectionGetExp>());
-        /// RegisterApi("linq", new BraceApiFactory<LinqExp>());
-        /// RegisterApi("lambda", new BraceApiFactory<LambdaExp>());
-        /// RegisterApi("array", new BraceApiFactory<ArrayExp>());
-        /// RegisterApi("hashtable", new BraceApiFactory<HashtableExp>());
-        /// RegisterApi("looplist", new BraceApiFactory<LoopListExp>());
+        /// RegisterApi("membercall", "membercall api", new BraceApiFactory<MemberCallExp>());
+        /// RegisterApi("memberset", "memberset api", new BraceApiFactory<MemberSetExp>());
+        /// RegisterApi("memberget", "memberget api", new BraceApiFactory<MemberGetExp>());
+        /// RegisterApi("collectioncall", "collectioncall api", new BraceApiFactory<CollectionCallExp>());
+        /// RegisterApi("collectionset", "collectionset api", new BraceApiFactory<CollectionSetExp>());
+        /// RegisterApi("collectionget", "collectionget api", new BraceApiFactory<CollectionGetExp>());
+        /// RegisterApi("linq", "linq statement", new BraceApiFactory<LinqExp>());
+        /// RegisterApi("lambda", "lamdba expression", new BraceApiFactory<LambdaExp>());
+        /// RegisterApi("array", "array object", new BraceApiFactory<ArrayExp>());
+        /// RegisterApi("hashtable", "hashtable object", new BraceApiFactory<HashtableExp>());
+        /// RegisterApi("looplist", "looplist statement", new BraceApiFactory<LoopListExp>());
         /// ----------------------------------------------------------------------------------------------------------
     }
     void BraceScript::Init()
@@ -3284,22 +3284,35 @@ namespace Brace
     {
         Release();
 
+        m_ApiDocs.clear();
         for (auto&& pair : m_ApiFactories) {
             delete pair.second;
         }
         m_ApiFactories.clear();
     }
-    void BraceScript::RegisterApi(const std::string& id, IBraceApiFactory* pApiFactory)
+    void BraceScript::RegisterApi(const std::string& id, const std::string& doc, IBraceApiFactory* pApiFactory)
     {
         std::string str = id;
-        RegisterApi(std::move(str), pApiFactory);
+        std::string strDoc = doc;
+        RegisterApi(std::move(str), std::move(strDoc), pApiFactory);
     }
-    void BraceScript::RegisterApi(std::string&& id, IBraceApiFactory* pApiFactory)
+    void BraceScript::RegisterApi(std::string&& id, std::string&& doc, IBraceApiFactory* pApiFactory)
     {
+        auto docIt = m_ApiDocs.find(id);
+        if (docIt == m_ApiDocs.end()) {
+            m_ApiDocs.insert(std::make_pair(id, std::move(doc)));
+        }
+        else {
+            docIt->second = std::move(doc);
+        }
         auto it = m_ApiFactories.find(id);
         if (it == m_ApiFactories.end()) {
             m_ApiFactories.insert(std::make_pair(std::move(id), pApiFactory));
         }
+    }
+    const std::map<std::string, std::string>& BraceScript::GetApiDocs()const
+    {
+        return m_ApiDocs;
     }
     void BraceScript::SetFailbackApi(AbstractBraceApi* pFailbackApi)
     {

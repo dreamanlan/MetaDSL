@@ -330,8 +330,8 @@ public:
             m_pDslFile->Reset();
             Dsl::Transform(*m_pParsedFile, *m_pDslFile);
             m_pBraceScript->Reset();
-            m_pBraceScript->RegisterApi("wait", new Brace::BraceApiFactory<WaitExp>());
-            m_pBraceScript->RegisterApi("time", new Brace::BraceApiFactory<TimeExp>());
+            m_pBraceScript->RegisterApi("wait", "wait api", new Brace::BraceApiFactory<WaitExp>());
+            m_pBraceScript->RegisterApi("time", "time api", new Brace::BraceApiFactory<TimeExp>());
             m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
             m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", str.c_str()); };
             m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };
