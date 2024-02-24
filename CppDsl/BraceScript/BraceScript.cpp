@@ -1582,7 +1582,7 @@ namespace Brace
             for (int ix = 0; ix < data.GetFunctionNum(); ++ix) {
                 auto* fd = data.GetFunction(ix);
                 auto* fData = fd->AsFunction();
-                if (fData->GetId() == "if" || fData->GetId() == "elseif") {
+                if (fData->GetId() == "if" || fData->GetId() == "elseif" || fData->GetId() == "elif") {
                     Clause item;
                     if (fData->IsHighOrder() && fData->GetLowerOrderFunction().GetParamNum() > 0) {
                         auto* cond = fData->GetLowerOrderFunction().GetParam(0);
@@ -3186,13 +3186,13 @@ namespace Brace
         RegisterApi("||", "logical or operator", new BraceApiFactoryWithArgs<OrExp, bool>(false));
         RegisterApi("!", "logical not operator", new BraceApiFactoryWithArgs<NotExp, bool>(false));
         RegisterApi("?", "conditional expression", new BraceApiFactory<CondExp>());
-        RegisterApi("echo", "echo function", new BraceApiFactory<EchoExp>());
-        RegisterApi("if", "if statement", new BraceApiFactory<IfExp>());
-        RegisterApi("while", "while statement", new BraceApiFactory<WhileExp>());
-        RegisterApi("loop", "loop statement", new BraceApiFactory<LoopExp>());
-        RegisterApi("foreach", "foreach statement", new BraceApiFactory<ForeachExp>());
-        RegisterApi("return", "return statement", new BraceApiFactory<ReturnExp>());
-        RegisterApi("func", "define function", new BraceApiFactory<FunctionDefine>());
+        RegisterApi("echo", "echo(arg,...) function", new BraceApiFactory<EchoExp>());
+        RegisterApi("if", "if(cond)func(args); or if(cond){...}[elif/elseif(cond){...}else{...}]; statement", new BraceApiFactory<IfExp>());
+        RegisterApi("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", new BraceApiFactory<WhileExp>());
+        RegisterApi("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", new BraceApiFactory<LoopExp>());
+        RegisterApi("foreach", "foreach(args)func(args); or foreach(args){...}; statement, iterator is $$", new BraceApiFactory<ForeachExp>());
+        RegisterApi("return", "return(exp); or return <- exp; or return val; statement", new BraceApiFactory<ReturnExp>());
+        RegisterApi("func", "func(name){...}; or func(name)params($a:int32,$b:int8,...)int{...}; or func(name)params($a:int32,$b:int8,...){...}; define function", new BraceApiFactory<FunctionDefine>());
 
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
         /// -----------------------------------------------------------------------------------------------------------
