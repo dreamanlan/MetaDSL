@@ -8917,56 +8917,8 @@ namespace BraceScriptInterpreter
     };
 }
 /*
-*   ========== in BraceScript init code, some callbacks must be implemented. ==========
+*   ========== InitGlobalBraceObjectInfo ==========
 * 
-	m_pBraceScript = new Brace::BraceScript();
-	m_pBraceScript->OnInfo = [](auto& str) { printf("[brace info]:%s", str.c_str()); };
-	m_pBraceScript->OnWarn = [](auto& str) { printf("[brace warn]:%s", str.c_str()); };
-	m_pBraceScript->OnError = [](auto& str) { printf("[brace error]:%s", str.c_str()); };
-
-        m_pBraceScript->OnGetObjectTypeId = [](const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo) {
-            int objTypeId;
-            g_ObjectInfoMgr.TryGetOrAddBraceObjectInfo(syntax, doLoadTypeInfo, objTypeId);
-            return objTypeId;
-        };
-	m_pBraceScript->OnGetObjectTypeName = [](int objTypeId) {
-		auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
-		if (nullptr != pInfo)
-			return pInfo->TypeName.c_str();
-		return "unknown";
-	};
-	m_pBraceScript->OnObjectAssignCheck = [](int destObjTypeId, int srcObjTypeId) {
-		if (destObjTypeId == srcObjTypeId)
-			return true;
-		return false;
-	};
-
-	/// missing language features
-        m_pBraceScript->RegisterApi("membercall", "object member call", new Brace::BraceApiFactory<MemberCallExp>());
-        m_pBraceScript->RegisterApi("memberset", "object property set", new Brace::BraceApiFactory<MemberSetExp>());
-        m_pBraceScript->RegisterApi("memberget", "object property get", new Brace::BraceApiFactory<MemberGetExp>());
-        m_pBraceScript->RegisterApi("collectioncall", "collection member call", new Brace::BraceApiFactory<CollectionCallExp>());
-        m_pBraceScript->RegisterApi("collectionset", "collection property set", new Brace::BraceApiFactory<CollectionSetExp>());
-        m_pBraceScript->RegisterApi("collectionget", "collection property get", new Brace::BraceApiFactory<CollectionGetExp>());
-        m_pBraceScript->RegisterApi("linq", "objs.where(args) or objs.orderby(args) or objs.orderbydesc(args) or objs.top(args) or linq(objs,method_str,arg1,arg2,...) statement", new Brace::BraceApiFactory<LinqExp>());
-        m_pBraceScript->RegisterApi("select", "select(fields)top(10)from(objlist)where(exp)oderby(exps)groupby(exps)having(exp){statements;} statement", new Brace::BraceApiFactory<SelectExp>());
-        m_pBraceScript->RegisterApi("lambda", "lambda expression, (args) => {...} or (args)int => {...} or [...](args) => {...} or [...](args)int => {...}", new Brace::BraceApiFactory<LambdaExp>());
-        m_pBraceScript->RegisterApi("array", "[v1,v2,...] or array(v1,v2,...) or array<:type:>(v1,v2,...) object", new Brace::BraceApiFactory<ArrayExp>());
-        m_pBraceScript->RegisterApi("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) or hashtable<:key_type,val_type:>(k1=>v1,k2=>v2,...) or hashtable<:key_type,val_type:>(k1:v1,k2:v2,...) object", new Brace::BraceApiFactory<HashtableExp>());
-        m_pBraceScript->RegisterApi("looplist", "looplist statement", new Brace::BraceApiFactory<LoopListExp>());
-        m_pBraceScript->RegisterApi("cast", "cast(exp,type) api", new Brace::BraceApiFactory<CastExp>());
-        m_pBraceScript->RegisterApi("typetag", "typetag(type) or typetag(exp) api", new Brace::BraceApiFactory<TypeTagExp>());
-        m_pBraceScript->RegisterApi("typeid", "typeid(type) or typeid(exp) api", new Brace::BraceApiFactory<TypeIdExp>());
-        m_pBraceScript->RegisterApi("objtypeid", "objtypeid(type) or objtypeid(exp) api", new Brace::BraceApiFactory<ObjTypeIdExp>());
-        m_pBraceScript->RegisterApi("getobjtypename", "getobjtypename(objtypeid) api", new Brace::BraceApiFactory<GetObjTypeNameExp>());
-        m_pBraceScript->RegisterApi("getobjcategory", "getobjcategory(objtypeid) api", new Brace::BraceApiFactory<GetObjCategoryExp>());
-        m_pBraceScript->RegisterApi("gettypeparamcount", "gettypeparamcount(objtypeid) api", new Brace::BraceApiFactory<GetTypeParamCountExp>());
-        m_pBraceScript->RegisterApi("gettypeparamtype", "gettypeparamtype(objtypeid,index) api", new Brace::BraceApiFactory<GetTypeParamTypeExp>());
-        m_pBraceScript->RegisterApi("gettypeparamobjtypeid", "gettypeparamobjtypeid(objtypeid,index) api", new Brace::BraceApiFactory<GetTypeParamObjTypeIdExp>());
-        m_pBraceScript->RegisterApi("swap", "swap(var1,var2) api", new Brace::BraceApiFactory<SwapExp>());
-        m_pBraceScript->RegisterApi("struct", "struct(name){a:int32;b:int32;...}, define struct", new Brace::BraceApiFactory<StructExp>());
-        m_pBraceScript->RegisterApi("newstruct", "newstruct(struct_type) api", new Brace::BraceApiFactory<NewStructExp>());
-        m_pBraceScript->RegisterApi("reinterpretas", "reinterpret_cast(uint,struct_type) api", new Brace::BraceApiFactory<ReInterpretAsExp>());
 
 	//add fixed map, obj table id <-> obj category
         g_ObjectInfoMgr.AddBraceObjectInfo(Brace::PREDEFINED_BRACE_OBJECT_TYPE_ANY, BRACE_OBJECT_CATEGORY_INTERNAL_FIXED_OBJECT, "any");  //fake obj info for any
@@ -9210,4 +9162,56 @@ namespace BraceScriptInterpreter
         g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint16,uint64:>");
         g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint32,uint64:>");
         g_ObjectInfoMgr.AddBraceObjectAlias(CUSTOM_BRACE_OBJECT_TYPE_INT_INT_HASHTABLE, "hashtable<:uint64,uint64:>");
+	
+	// ========== InitBraceScript ==========
+	// ========== in BraceScript init code, some callbacks must be implemented. ==========
+	m_pBraceScript = new Brace::BraceScript();
+	m_pBraceScript->OnInfo = [](auto& str) { printf("[brace info]:%s", str.c_str()); };
+	m_pBraceScript->OnWarn = [](auto& str) { printf("[brace warn]:%s", str.c_str()); };
+	m_pBraceScript->OnError = [](auto& str) { printf("[brace error]:%s", str.c_str()); };
+
+        m_pBraceScript->OnGetObjectTypeId = [](const DslData::ISyntaxComponent& syntax, const Brace::LoadTypeInfoDelegation& doLoadTypeInfo) {
+            int objTypeId;
+            g_ObjectInfoMgr.TryGetOrAddBraceObjectInfo(syntax, doLoadTypeInfo, objTypeId);
+            return objTypeId;
+        };
+	m_pBraceScript->OnGetObjectTypeName = [](int objTypeId) {
+		auto* pInfo = g_ObjectInfoMgr.GetBraceObjectInfo(objTypeId);
+		if (nullptr != pInfo)
+			return pInfo->TypeName.c_str();
+		return "unknown";
+	};
+	m_pBraceScript->OnObjectAssignCheck = [](int destObjTypeId, int srcObjTypeId) {
+		if (destObjTypeId == srcObjTypeId)
+			return true;
+		return false;
+	};
+
+	/// missing language features
+        m_pBraceScript->RegisterApi("membercall", "object member call", new Brace::BraceApiFactory<MemberCallExp>());
+        m_pBraceScript->RegisterApi("memberset", "object property set", new Brace::BraceApiFactory<MemberSetExp>());
+        m_pBraceScript->RegisterApi("memberget", "object property get", new Brace::BraceApiFactory<MemberGetExp>());
+        m_pBraceScript->RegisterApi("collectioncall", "collection member call", new Brace::BraceApiFactory<CollectionCallExp>());
+        m_pBraceScript->RegisterApi("collectionset", "collection property set", new Brace::BraceApiFactory<CollectionSetExp>());
+        m_pBraceScript->RegisterApi("collectionget", "collection property get", new Brace::BraceApiFactory<CollectionGetExp>());
+        m_pBraceScript->RegisterApi("linq", "objs.where(args) or objs.orderby(args) or objs.orderbydesc(args) or objs.top(args) or linq(objs,method_str,arg1,arg2,...) statement", new Brace::BraceApiFactory<LinqExp>());
+        m_pBraceScript->RegisterApi("select", "select(fields)top(10)from(objlist)where(exp)oderby(exps)groupby(exps)having(exp){statements;} statement", new Brace::BraceApiFactory<SelectExp>());
+        m_pBraceScript->RegisterApi("lambda", "lambda expression, (args) => {...} or (args)int => {...} or [...](args) => {...} or [...](args)int => {...}", new Brace::BraceApiFactory<LambdaExp>());
+        m_pBraceScript->RegisterApi("array", "[v1,v2,...] or array(v1,v2,...) or array<:type:>(v1,v2,...) object", new Brace::BraceApiFactory<ArrayExp>());
+        m_pBraceScript->RegisterApi("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) or hashtable<:key_type,val_type:>(k1=>v1,k2=>v2,...) or hashtable<:key_type,val_type:>(k1:v1,k2:v2,...) object", new Brace::BraceApiFactory<HashtableExp>());
+        m_pBraceScript->RegisterApi("looplist", "looplist statement", new Brace::BraceApiFactory<LoopListExp>());
+        m_pBraceScript->RegisterApi("cast", "cast(exp,type) api", new Brace::BraceApiFactory<CastExp>());
+        m_pBraceScript->RegisterApi("typetag", "typetag(type) or typetag(exp) api", new Brace::BraceApiFactory<TypeTagExp>());
+        m_pBraceScript->RegisterApi("typeid", "typeid(type) or typeid(exp) api", new Brace::BraceApiFactory<TypeIdExp>());
+        m_pBraceScript->RegisterApi("objtypeid", "objtypeid(type) or objtypeid(exp) api", new Brace::BraceApiFactory<ObjTypeIdExp>());
+        m_pBraceScript->RegisterApi("getobjtypename", "getobjtypename(objtypeid) api", new Brace::BraceApiFactory<GetObjTypeNameExp>());
+        m_pBraceScript->RegisterApi("getobjcategory", "getobjcategory(objtypeid) api", new Brace::BraceApiFactory<GetObjCategoryExp>());
+        m_pBraceScript->RegisterApi("gettypeparamcount", "gettypeparamcount(objtypeid) api", new Brace::BraceApiFactory<GetTypeParamCountExp>());
+        m_pBraceScript->RegisterApi("gettypeparamtype", "gettypeparamtype(objtypeid,index) api", new Brace::BraceApiFactory<GetTypeParamTypeExp>());
+        m_pBraceScript->RegisterApi("gettypeparamobjtypeid", "gettypeparamobjtypeid(objtypeid,index) api", new Brace::BraceApiFactory<GetTypeParamObjTypeIdExp>());
+        m_pBraceScript->RegisterApi("swap", "swap(var1,var2) api", new Brace::BraceApiFactory<SwapExp>());
+        m_pBraceScript->RegisterApi("struct", "struct(name){a:int32;b:int32;...}, define struct", new Brace::BraceApiFactory<StructExp>());
+        m_pBraceScript->RegisterApi("newstruct", "newstruct(struct_type) api", new Brace::BraceApiFactory<NewStructExp>());
+        m_pBraceScript->RegisterApi("reinterpretas", "reinterpret_cast(uint,struct_type) api", new Brace::BraceApiFactory<ReInterpretAsExp>());
+
 */
