@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <functional>
 #include <memory>
+#include <type_traits>
 
 namespace Brace
 {
@@ -704,7 +705,7 @@ namespace Brace
             return new ApiT(interpreter, m_A1);
         }
     private:
-        A1 m_A1;
+        std::remove_cv_t<std::remove_reference_t<A1>> m_A1;
     };
     template<typename ApiT, typename A1, typename A2>
     class CtorBinder<ApiT, A1, A2>
@@ -717,8 +718,8 @@ namespace Brace
             return new ApiT(interpreter, m_A1, m_A2);
         }
     private:
-        A1 m_A1;
-        A2 m_A2;
+        std::remove_cv_t<std::remove_reference_t<A1>> m_A1;
+        std::remove_cv_t<std::remove_reference_t<A2>> m_A2;
     };
     template<typename ApiT, typename A1, typename A2, typename A3>
     class CtorBinder<ApiT, A1, A2, A3>
@@ -731,9 +732,9 @@ namespace Brace
             return new ApiT(interpreter, m_A1, m_A2, m_A3);
         }
     private:
-        A1 m_A1;
-        A2 m_A2;
-        A3 m_A3;
+        std::remove_cv_t<std::remove_reference_t<A1>> m_A1;
+        std::remove_cv_t<std::remove_reference_t<A2>> m_A2;
+        std::remove_cv_t<std::remove_reference_t<A3>> m_A3;
     };
     template<typename ApiT, typename... Args>
     class BraceApiFactoryWithArgs final : public IBraceApiFactory
