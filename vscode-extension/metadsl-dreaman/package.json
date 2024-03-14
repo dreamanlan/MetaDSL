@@ -1,0 +1,59 @@
+{
+    "name": "metadsl",
+    "displayName": "%displayName%",
+    "description": "%description%",
+    "version": "1.0.0",
+    "publisher": "dreamanlan",
+    "license": "MIT",
+    "engines": {
+        "vscode": "*"
+    },
+    "scripts": {
+        "update-grammar": "./syntaxes/metadsl.tmLanguage.json"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "metadsl",
+                "extensions": [
+                    ".dsl",
+                    ".mdsl",
+                    ".scp"
+                ],
+                "aliases": [
+                    "MetaDSL",
+                    "metadsl",
+                    "mdsl"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "metadsl",
+                "scopeName": "source.metadsl",
+                "path": "./syntaxes/metadsl.tmLanguage.json"
+            }
+        ],
+        "breakpoints": [
+            {
+                "language": "metadsl"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "metadsl",
+                "path": "./snippets/metadsl.code-snippets"
+            }
+        ],
+        "configurationDefaults": {
+            "[metadsl]": {
+                "diffEditor.ignoreTrimWhitespace": false
+            }
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dreamanlan/MetaDSL.git"
+    }
+}
