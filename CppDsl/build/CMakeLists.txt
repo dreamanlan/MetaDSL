@@ -128,8 +128,10 @@ if (APPLE)
         )
 		set_xcode_property (CppDsl IPHONEOS_DEPLOYMENT_TARGET "7.0" "all")
     else ()
-        set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_64_BIT)")
+        #set(CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD)")
         #set(CMAKE_OSX_ARCHITECTURES "x86_64")
+        #set(CMAKE_OSX_ARCHITECTURES "arm64")
+        
         if (BUILD_AS_OSX_BUNDLE)
             add_library(CppDsl MODULE
                 ${CLIB_SRC}

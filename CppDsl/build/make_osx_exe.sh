@@ -1,5 +1,5 @@
 mkdir -p build_osx && cd build_osx
-cmake -GXcode ../
+cmake -G Xcode -D CMAKE_OSX_ARCHITECTURES='$(ARCHS_STANDARD)' ../
 cd ..
 cmake --build build_osx --config Debug
 cmake --build build_osx --config Release
