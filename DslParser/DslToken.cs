@@ -55,7 +55,7 @@ namespace Dsl.Common
                 return token.TokenValue;
             }
             bool isSkip = true;
-            //跳过注释与白空格
+            //skip comments and white spaces
             for (; isSkip && CurChar != 0;) {
                 isSkip = false;
                 for (; mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
@@ -67,7 +67,7 @@ namespace Dsl.Common
                     }
                     isSkip = true;
                 }
-                //#引导的单行注释或C++风格的单行注释
+                //#Leading single-line or block comment
                 if (CurChar == '#' || CurChar == '/' && NextChar == '/') {
                     mCommentBuilder.Length = 0;
                     for (; CurChar != 0 && CurChar != '\n'; ++mIterator) {
@@ -106,7 +106,7 @@ namespace Dsl.Common
                 }
             }
             mTokenBuilder.Length = 0;
-            if (CurChar == 0) {//输入结束
+            if (CurChar == 0) {//end of input
                 mCurToken = "<<eof>>";
                 return DslConstants.END_OF_SLK_INPUT_;
             }
@@ -124,7 +124,7 @@ namespace Dsl.Common
                 ++mIterator;
                 ++mIterator;
                 int line = mLineNumber;
-                //搜索脚本结束 :}
+                //find the end of script ':}'
                 for (; CurChar != 0;) {
                     while (CurChar != 0 && CurChar != ':') {
                         if (CurChar == '\n')
@@ -468,8 +468,8 @@ namespace Dsl.Common
                 else
                     return DslConstants.STRING_;
             }
-            else {//关键字、标识符或常数
-                if (CurChar == '"' || CurChar == '\'' || CurChar=='$' && (NextChar == '"' || NextChar == '\'')) {//引号括起来的名称或关键字
+            else {//keyword,identifier or constant
+                if (CurChar == '"' || CurChar == '\'' || CurChar=='$' && (NextChar == '"' || NextChar == '\'')) {//Quoted name or keyword
                     bool isDollar = false;
                     if (CurChar == '$') {
                         ++mIterator;
@@ -504,7 +504,7 @@ namespace Dsl.Common
                             }
                             else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
                                 ++mIterator;
-                                //4位16进制数
+                                //4bit HEX
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -517,7 +517,7 @@ namespace Dsl.Common
                             else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
                                 && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
                                 ++mIterator;
-                                //8位16进制数
+                                //8bit HEX
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -538,7 +538,7 @@ namespace Dsl.Common
                             }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
-                                //1~2位16进制数
+                                //1~2 chars HEX
                                 char h1 = CurChar;
                                 if (myisdigit(NextChar, true)) {
                                     ++mIterator;
@@ -552,7 +552,7 @@ namespace Dsl.Common
                                 }
                             }
                             else if (myisdigit(CurChar, false)) {
-                                //1~3位8进制数
+                                //1~3 chars OCT
                                 char o1 = CurChar;
                                 if (myisdigit(NextChar, false)) {
                                     ++mIterator;
@@ -585,15 +585,15 @@ namespace Dsl.Common
                         ++mIterator;
                     }
                     else {
-                        mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
+                        mLog.Log("[error][line {0} ]：string can't end !\n", line);
                     }
                     mCurToken = mTokenBuilder.ToString();
-                    /*普通字符串保持源码的样子，不去掉首尾空行
+                    /*Ordinary strings should maintain their appearance in the source code, without removing leading or trailing blank lines.
                     if (mCurToken.IndexOf('\n') >= 0) {
                         mCurToken = removeFirstAndLastEmptyLine(mCurToken);
                     }
                     */
-                    if(isDollar)
+                    if (isDollar)
                         return DslConstants.DOLLAR_STRING_;
                     else
                         return DslConstants.STRING_;
@@ -616,7 +616,7 @@ namespace Dsl.Common
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '?') {
-                            //类型名后接问号的情形（nullable type），只允许后接一个问号
+                            //In the case of a nullable type (with a question mark following the type name), only one question mark is allowed.
                             if (null != mOnTokenCanEatChar) {
                                 if (mOnTokenCanEatChar(mTokenBuilder, CurChar)) {
                                     mTokenBuilder.Append(CurChar);
@@ -811,14 +811,14 @@ namespace Dsl.Common
                 ++start;
             }
             else {
-                //如果开始行没有换行，就保留白空格
+                //If there is no newline at the beginning of the line, preserve the white space.
                 start = 0;
             }
             int end = str.Length - 1;
             while (end > 0 && isWhiteSpace(str[end]) && str[end] != '\n')
                 --end;
             if (end > 0 && str[end] != '\n') {
-                //如果结束行没有换行，就保留白空格；否则去掉白空格，但保留换行
+                //If there is no newline at the end of the line, preserve the white space; otherwise, remove the white space but keep the newline.
                 end = str.Length - 1;
             }
             if (start > 0 || end < str.Length - 1) {

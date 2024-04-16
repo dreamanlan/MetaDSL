@@ -341,11 +341,12 @@ namespace Dsl.Common
             }
 
             if (mStatementSemanticStack.Count == 0) {
-                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+                //Simplification only needs to handle the first level, and the parameters and statement parts
+                //should have already been processed when added to the statement.
                 AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
                 ValueData vdSyntax = statementSyntax as ValueData;
                 if (!statementSyntax.IsValid()) {
-                    //_epsilon_表达式无语句语义
+                    //The "epsilon" expression has no statement semantics.
                     if (mScriptDatas.Count > 0) {
                         ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
                         if (last.LastComments.Count <= 0) {
@@ -357,7 +358,7 @@ namespace Dsl.Common
                     return;
                 }
                 else if (null != vdSyntax) {
-                    //如果语句是普通值，注释挪到上一语句
+                    //If the statement is a regular value, move the comment to the previous statement.
                     if (mScriptDatas.Count > 0) {
                         ISyntaxComponent last = mScriptDatas[mScriptDatas.Count - 1];
                         if (last.LastComments.Count <= 0) {
@@ -368,7 +369,7 @@ namespace Dsl.Common
                     }
                 }
                 else {
-                    //上一行语句的注释挪到上一行语句
+                    //Move the comment from the previous line of code to the line above.
                     if (mScriptDatas.Count > 0 && !statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
                         string cmt = statementSyntax.FirstComments[0];
                         statementSyntax.FirstComments.RemoveAt(0);
@@ -380,7 +381,7 @@ namespace Dsl.Common
                         last.LastComments.Add(cmt);
                     }
                 }
-                //顶层元素结束
+                //Top-level element ends.
                 if (addSep && mScriptDatas.Count > 0) {
                     var lastStm = mScriptDatas[mScriptDatas.Count - 1];
                     lastStm.SetSeparator(AbstractSyntaxComponent.SEPARATOR_SEMICOLON);
@@ -388,17 +389,20 @@ namespace Dsl.Common
                 mScriptDatas.Add(statementSyntax);
             }
             else {
-                //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+                //Simplification only needs to handle the first level. The parameters and statement parts
+                //should have already been processed when added to the statement.
                 AbstractSyntaxComponent statementSyntax = simplifyStatement(statement);
                 ValueData vdSyntax = statementSyntax as ValueData;
                 FunctionData func = getLastFunction();
                 if (func.HaveParam()) {
-                    //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
+                    //If it is a comment within the parameters, keep it as it is. Comments on regular values
+                    //will be discarded, and if embedded comments are moved to the end of the line, it may
+                    //appear inexplicable.
                     //if (!statementSyntax.IsValid())
                     //    return;
                 }
                 else if (!statement.IsValid()) {
-                    //_epsilon_表达式无语句语义
+                    //The "epsilon" expression has no statement semantics.
                     if (func.Params.Count > 0 && statementSyntax.FirstComments.Count > 0) {
                         AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
                         if (last.LastComments.Count <= 0) {
@@ -410,7 +414,7 @@ namespace Dsl.Common
                     //return;
                 }
                 else if (null != vdSyntax) {
-                    //如果语句是普通值，注释挪到上一语句
+                    //If the statement is a regular value, move the comment to the previous statement.
                     if (func.Params.Count > 0) {
                         AbstractSyntaxComponent last = func.Params[func.Params.Count - 1] as AbstractSyntaxComponent;
                         if (last.LastComments.Count <= 0) {
@@ -425,7 +429,7 @@ namespace Dsl.Common
                     }
                 }
                 else {
-                    //上一行语句的注释挪到上一行语句或外层函数头或外层函数
+                    //Move the comment from the previous line of code to the line above.
                     if (!statementSyntax.FirstCommentOnNewLine && statementSyntax.FirstComments.Count > 0) {
                         string cmt = statementSyntax.FirstComments[0];
                         statementSyntax.FirstComments.RemoveAt(0);
@@ -596,7 +600,7 @@ namespace Dsl.Common
             StatementData _statement = newStatementWithOneFunction();
             FunctionData first = _statement.First.AsFunction;
             if (null != first) {
-                //三元运算符表示成op1(cond)(true_val)op2(false_val)
+                //The ternary operator is represented as op1(cond)(true_val)op2(false_val)
                 first.LowerOrderFunction = new FunctionData();
                 first.LowerOrderFunction.Name = new ValueData();
                 first.LowerOrderFunction.Name.SetLine(getLastLineNumber());
@@ -695,7 +699,7 @@ namespace Dsl.Common
         }
         public void buildHighOrderFunction()
         {
-            //高阶函数构造（当前函数返回一个函数）
+            //Higher-order function construction (the current function returns another function).
             FunctionData func = getLastFunction();
             if (null != mOnBeforeBuildHighOrder) {
                 StatementData stm = getCurStatement();
@@ -845,9 +849,9 @@ namespace Dsl.Common
             push(";", FunctionData.STRING_TOKEN);
         }
         /// ---------------------------------------------------------------
-        /// 用于特定语法的语义行为，dsl目前提供lua精确语法与cpp类语言模糊语法的解析
-        /// cpp类语言的解析主要识别括弧结构与分隔符分隔开的语句，可用于提取类接口等
-        /// 简单应用
+        /// Used for semantic behavior specific to a certain syntax. The DSL currently provides parsing for both precise Lua syntax and fuzzy syntax similar to C++-like languages.
+        /// Parsing for C++-like languages mainly recognizes bracket structures and statements separated by delimiters, which can be used to extract class interfaces, etc.
+        /// Simple application.
         /// ---------------------------------------------------------------
         private void pushDot()
         {
@@ -967,8 +971,8 @@ namespace Dsl.Common
         {
             push("lualabel", FunctionData.ID_TOKEN);
         }
-        ///在每个函数结束时（可能是单个标识符样式、函数调用样式、高阶函数调用样式）对c++语句进行断句，
-        ///这比在语法上精确定义处理起来更简单
+        /// At the end of each function (which may be in the form of a single identifier, function call, or higher-order function call), the C++ statements are segmented.
+        /// This is simpler to handle than defining it precisely in terms of syntax.
         private void cppOnFunctionBegin()
         {
             var first = getFirstFunction();
@@ -1003,13 +1007,14 @@ namespace Dsl.Common
                 newStatement.Functions.Add(last);
                 return;
             }
-            //构造函数初始化列表转换为:的参数列表
+            //Convert constructor initialization lists to a parameter list of ":".
             if (IsCppConstructor(statement, true)) {
                 markParenthesisParam();
                 beginStatement();
                 return;
             }
-            //构造函数初始化列表结束需要将函数体与最后一个初始化变量拆分
+            //The constructor initialization list should be separated from the function body and
+            //the last initialized variable when it ends.
             if (last.HaveStatement() && mStatementSemanticStack.Count > 1) {
                 StatementData parentSt = getCurParentStatement();
                 Debug.Assert(null != parentSt);
@@ -1033,7 +1038,7 @@ namespace Dsl.Common
             }
         }
         /// ---------------------------------------------------------------
-        /// 特定语言工具函数
+        /// Specific language utility functions.
         /// ---------------------------------------------------------------
         private bool IsCppConstructor(StatementData statement, bool curIsColon)
         {
@@ -1055,7 +1060,7 @@ namespace Dsl.Common
         }
 
         /// ---------------------------------------------------------------
-        /// 工具函数部分
+        /// Utility function section.
         /// ---------------------------------------------------------------
         public void push(string s, int val)
         {
@@ -1142,9 +1147,13 @@ namespace Dsl.Common
         }
         private AbstractSyntaxComponent simplifyStatement(StatementData data)
         {
-            //对语句进行化简（语法分析过程中为了方便，全部按完整StatementData来构造，这里化简为原来的类型：ValueData/CallData/FunctionData等，主要涉及参数与语句部分）
+            //Translation: Simplify statements (during the process of syntax analysis, they are constructed
+            //using complete StatementData for convenience, but here they are simplified to their original
+            //types: ValueData/CallData/FunctionData, etc.,
+            //mainly involving parameters and statement parts).
             if (data.Functions.Count == 1) {
-                //只有一个函数的语句退化为函数（再按函数进一步退化）。
+                //Translation: Statements with only one function are reduced to the function itself
+                //(and further reduced according to the function).
                 var f = data.Functions[0];
                 f.CopyComments(data);
                 if (f.IsValue)
@@ -1165,11 +1174,12 @@ namespace Dsl.Common
         }
         private ValueOrFunctionData simplifyStatement(FunctionData data)
         {
-            //注意，为了省内存ValueData上不附带注释了，相关接口无实际效果！！！
+            //Note that in order to save memory, comments are not included in ValueData.
+            //The related interfaces have no actual effect!!!
             if (!data.HaveParamOrStatement()) {
-                //没有参数的调用退化为基本值数据
+                //Calls without parameters are reduced to basic value data.
                 if (data.IsHighOrder) {
-                    //这种情况应该不会出现
+                    //This situation should not occur.
                     return data;
                 }
                 else {
@@ -1177,7 +1187,7 @@ namespace Dsl.Common
                 }
             }
             else {
-                //处理epsilon语句与参数
+                //Handling epsilon statements and parameters.
                 simplifyFunction(data);
             }
             if (data.GetId() == "-" && data.GetParamNum() == 1) {
@@ -1208,10 +1218,12 @@ namespace Dsl.Common
         }
         private void simplifyFunction(FunctionData data)
         {
-            //最后一个语句是epsilon与唯一参数是epsilon时，删除这个语句与参数，这样可以正确解析for(;;){}
-            //目前{}用于非语句块的情形，应该没有最后一个参数需要为空的情况（目前已允许前面的参数为空），副
-            //作用是语句列表也允许除最后一个未以分号结尾的语句外其它语句为空，上层应用在进一步解析时需要处
-            //理这种情形
+            // When the last statement is epsilon and the only parameter is epsilon, delete this statement and parameter.
+            // This ensures correct parsing of for(;;){}.
+            // Currently, {} is used for non-block statement cases, so there should be no need for the last parameter to be empty
+            // (allowing preceding parameters to be empty is already allowed). The side effect is that the statement list
+            // also allows other statements to be empty except for the last one that is not terminated by a semicolon.
+            // The higher-level application needs to handle this case when further parsing.
             if (data.IsHighOrder) {
                 simplifyFunction(data.LowerOrderFunction);
             }

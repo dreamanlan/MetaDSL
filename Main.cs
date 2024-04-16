@@ -38,7 +38,8 @@ namespace Dsl
 #endif
             //*/
             DslFile file = new DslFile();
-            //return语句修改为return <-句式，保证return在语义数据的浅层，方便后续处理
+            //Modify the return statement to the 'return <-' syntax, ensuring that the return is at a shallow level
+            //of semantic data for easier subsequent processing.
             file.onGetToken = (ref Dsl.Common.DslAction action, ref Dsl.Common.DslToken dslToken, ref string tok, ref short val, ref int line) => {
                 if (tok == "return") {
                     string oldCurToken = dslToken.getCurToken();

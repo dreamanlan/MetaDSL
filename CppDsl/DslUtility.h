@@ -346,7 +346,7 @@ namespace DslFileReadWrite
             haveComments = TRUE;
         }
         if (haveComments && !newLine) {
-            //行首注释必须要换行，否则可能会把代码注释掉
+            //Line comments must be on a new line, otherwise they may accidentally comment out the code.
             fwrite("\n", 1, 1, fp);
         }
 #endif

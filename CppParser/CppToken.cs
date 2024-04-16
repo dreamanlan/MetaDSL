@@ -46,14 +46,14 @@ namespace Dsl.Common
                 return token.TokenValue;
             }
             bool isSkip = true;
-            //跳过注释与白空格
+            //skip comments and white spaces
             for (; isSkip && CurChar != 0;) {
                 bool s1 = SkipWhiteSpaces();
                 bool s2 = SkipComments();
                 isSkip = s1 || s2;
-                //预处理先忽略掉
+                //Preprocessing is ignored first.
                 if (CurChar == '#') {
-                    //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
+                    //preprocess（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
                     ++mIterator;
                     mTokenBuilder.Length = 0;
                     bool isSkip2 = true;
@@ -80,7 +80,7 @@ namespace Dsl.Common
                                 break;
                             }
                             if (cc == '"' || cc == '\'') {
-                                //字符串
+                                //string
                                 mTokenBuilder.Append(cc);
                                 ++mIterator;
                                 while (CurChar != 0 && CurChar != cc) {
@@ -95,7 +95,7 @@ namespace Dsl.Common
                                 mTokenBuilder.Append(CurChar);
                             }
                             else if (cc == '\\' && (NextChar == '\r' || NextChar == '\n')) {
-                                //续行符不输出
+                                //The line continuation character does not output.
                             }
                             else {
                                 if (cc == '\n')
@@ -109,7 +109,7 @@ namespace Dsl.Common
                 }
             }
             mTokenBuilder.Length = 0;
-            if (CurChar == 0) {//输入结束
+            if (CurChar == 0) {//end of input
                 mCurToken = "<<eof>>";
                 return CppConstants.END_OF_SLK_INPUT_;
             }
@@ -314,8 +314,8 @@ namespace Dsl.Common
                 mCurToken = ";";
                 return CppConstants.SEMI_;
             }
-            else {//关键字、标识符或常数
-                if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
+            else {//keyword,identifier or constant
+                if (CurChar == '"' || CurChar == '\'') {//Quoted name or keyword
                     int line = mLineNumber;
                     char c = CurChar;
                     for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
@@ -345,7 +345,7 @@ namespace Dsl.Common
                             }
                             else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
                                 ++mIterator;
-                                //4位16进制数
+                                //4bit HEX
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -358,7 +358,7 @@ namespace Dsl.Common
                             else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
                                 && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
                                 ++mIterator;
-                                //8位16进制数
+                                //8bit HEX
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -379,7 +379,7 @@ namespace Dsl.Common
                             }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
-                                //1~2位16进制数
+                                //1~2 chars HEX
                                 char h1 = CurChar;
                                 if (myisdigit(NextChar, true)) {
                                     ++mIterator;
@@ -393,7 +393,7 @@ namespace Dsl.Common
                                 }
                             }
                             else if (myisdigit(CurChar, false)) {
-                                //1~3位8进制数
+                                //1~3 chars OCT
                                 char o1 = CurChar;
                                 if (myisdigit(NextChar, false)) {
                                     ++mIterator;
@@ -449,7 +449,8 @@ namespace Dsl.Common
                         if (CurChar == '#')
                             break;
                         else if (CurChar == '?') {
-                            //类型名后接问号的情形（nullable type），只允许后接一个问号
+                            //In the case of a type name followed by a question mark (nullable type),
+                            //only one question mark is allowed to follow it.
                             if (null != mOnTokenCanEatChar) {
                                 if (mOnTokenCanEatChar(mTokenBuilder, CurChar)) {
                                     mTokenBuilder.Append(CurChar);
@@ -641,13 +642,13 @@ namespace Dsl.Common
         private bool SkipComments()
         {
             bool isSkip = false;
-            //单行注释
+            //single line comment
             if (CurChar == '/' && NextChar == '/') {
                 for (; CurChar != 0 && CurChar != '\n'; ++mIterator) ;
                 //++mLineNumber;
                 isSkip = true;
             }
-            //多行注释
+            //multi-line comment
             if (CurChar == '/' && NextChar == '*') {
                 ++mIterator;
                 ++mIterator;

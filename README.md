@@ -1,11 +1,11 @@
 # DSL
-DSL是一种类似XML/JSON的脚本语言，对比XML/JSON，它不仅可以用来描述数据，还能用来描述逻辑，同时在形式上更容易手写与阅读。DSL比XML/JSON更接近程序语言的构造，基于DSL的描述可以方便的构建解释器，从而可以很容易建造一个领域特定语言（DSL）。这是为什么直接取名叫DSL的原因，意思是它是一个元语言，可以很方便的用来构造DSL。
+DSL is a scripting language similar to XML/JSON. Compared with XML/JSON, it can be used not only to describe data, but also to describe logic. It is also easier to write and read in form. DSL is closer to the structure of a programming language than XML/JSON. The description based on DSL can easily build an interpreter, making it easy to build a domain-specific language (DSL). This is the reason why it is directly named DSL, which means that it is a meta-language that can be easily used to construct DSL.
 
-PDF文档:[《MetaDSL及在Unity游戏开发中的应用》]( https://github.com/dreamanlan/MetaDSL/raw/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.pdf "MetaDSL及在Unity游戏开发中的应用")
+PDF Document (Chinese):[《MetaDSL and its application in Unity game development"》]( https://github.com/dreamanlan/MetaDSL/raw/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.pdf "MetaDSL及在Unity游戏开发中的应用")
 
-pptx文档压缩zip:[《MetaDSL及在Unity游戏开发中的应用》 pptx]( https://github.com/dreamanlan/MetaDSL/raw/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.zip "MetaDSL及在Unity游戏开发中的应用 pptx")
+pptx file compression zip (Chinese):[《MetaDSL and its application in Unity game development"》 pptx]( https://github.com/dreamanlan/MetaDSL/raw/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.zip "MetaDSL及在Unity游戏开发中的应用 pptx")
 
-## 例1：用来描述一个技能（一个2段的技能，第一段80毫秒，第二段100毫秒，在第二段50毫秒时触发伤害逻辑100011）（另外需要在逻辑上基于解析器将技能描述转换成技能实例）
+## Example 1: Used to describe a skill (a 2-stage skill, the first stage is 80 milliseconds, the second stage is 100 milliseconds, and the damage logic 100011 is triggered when the second stage is 50 milliseconds) (in addition, the skill needs to be logically separated based on the parser) Description converted into skill instance)
 ```
 skill(100001)
 {
@@ -22,7 +22,7 @@ skill(100001)
 };
 ```
 
-## 例2：用于剧情脚本，剧情开始先显示一段对话5，对话完毕创建一堆NPC,每杀死一个NPC更新一次剩余NPC数量，全部杀完显示完成对话6，对话结束后剧情脚本结束。（另外需要在逻辑上基于解析器实现剧情脚本的解释执行[可采取命令队列的形式]）
+## Example 2: Used for plot scripts. A dialogue 5 is displayed at the beginning of the plot. After the dialogue is completed, a bunch of NPCs are created. The number of remaining NPCs is updated every time an NPC is killed. When all are killed, the completed dialogue 6 is displayed. After the dialogue is completed, the plot script ends. (In addition, it is necessary to logically implement the interpretation and execution of the plot script based on the parser [which can be in the form of a command queue])
 
 ```
 story(main)
@@ -59,7 +59,7 @@ story(main)
 };
 ```
 
-## 例3：用于描述数据配表结构（另外需要基于解析器实现一个工具根据此描述生成对应的读表器代码）
+## Example 3: Used to describe the data matching table structure (in addition, a tool based on the parser needs to be implemented to generate the corresponding meter reader code based on this description)
 
 ```
 table(NpcConfig)
@@ -70,16 +70,18 @@ table(NpcConfig)
 };
 ```
 
-## 语言的语法定义见Parse/Dsl.txt文件，语法分析程序采用LL语法分析器生成工具SLK生成。
+## The syntax definition of the language can be found in the Parse/Dsl.txt file, and the syntax analysis program is generated using the LL syntax analyzer generation tool SLK.
 
-## 面向语言的开发
-DSL即领域特定语言的简写，这个工程提供的是用作DSL的元语言。DSL通常按实现方式分内部DSL与外部DSL两大类，内部DSL一般使用宿主语言的部分语法构造，这样免去了写语法分析的必要，编写DSL的人需要对宿主语言本身有一定的了解，内部DSL的使用在函数式语言里比较常见，C++的模板元编程与操作符重载也常用来实现内部DSL，为java扩充的groove语言有很多对DSL的支持，比如提供命令链的语法糖：a b c d e f <=> a(b).c(d).e(f)。
+## Language-oriented development
+DSL is the abbreviation of Domain Specific Language. This project provides the metalanguage used as DSL. DSL is usually divided into two categories: internal DSL and external DSL according to the implementation method. Internal DSL generally uses part of the grammatical structure of the host language, which eliminates the need to write syntax analysis. People who write DSL need to have a certain understanding of the host language itself. The use of internal DSL is relatively common in functional languages. C++ template metaprogramming and operator overloading are also commonly used to implement internal DSL. The groove language extended for Java has a lot of support for DSL, such as providing syntactic sugar for command chains:
+```
+abcdef < => a(b).c(d).e(f).
+```
+
+What this project provides is an external DSL. External DSL requires designing grammar, writing lexicon, grammar analysis, etc., which is more troublesome to implement than internal DSL. This project attempts to implement DSL metalanguage in the hope of simplifying this work, based on standards. syntax to customize the DSL, which can be implemented as easily as the internal DSL. In fact, XML and json are examples of such general DSL languages. The DSL metalanguage syntax of this project is borrowed from C-series languages. It is expected to provide a similar experience to C-series languages ​​in terms of syntax. Compared with XML and json, it provides a higher-order representation. More readable support that is closer to the core concepts of human language.
 
 
-本工程提供的属于外部DSL，外部DSL因为需要设计语法与编写词法、语法解析等，相比内部DSL在实现上比较麻烦，本工程尝试实现DSL元语言，就是期望简化这一块的工作，基于标准语法来定制DSL，可以与内部DSL在实现上一样简便。其实XML、json就是这种通用DSL语言的例子，本工程的DSL元语言语法借鉴自C系语言，期望在语法上提供与C系语言类似的体验，相比XML与json提供了对高阶表示更易读的支持，更接近于人类语言的核心概念。
-
-
-面向语言的开发（LOP）最早提出于1994年[middle-out-t](http://www.gkc.org.uk/martin/papers/middle-out-t.pdf)，强调基于语言来提供分层间的抽象，这与操作系统分层虚拟机的观点很相似，每一层抽象都定义一种语言，语言定义本质上基于数学，所以是精确的。这篇文章[language oriented software engineering](https://parametri.city/blog/2018-12-23-language-oriented-software-engineering/index.html)对LOP的开发过程有一个提炼：
+Language-oriented development (LOP) was first proposed in 1994 by[middle-out-t](http://www.gkc.org.uk/martin/papers/middle-out-t.pdf),It emphasizes providing abstraction between layers based on language. This is very similar to the view of operating system layered virtual machines. Each layer of abstraction defines a Language, language definitions are essentially based on mathematics, so they are precise.  This article [language oriented software engineering](https://parametri.city/blog/2018-12-23-language-oriented-software-engineering/index.html) has a refinement of the LOP development process:
 ```
 The language-oriented methodology proceeds in three steps:
 
@@ -88,28 +90,29 @@ The language-oriented methodology proceeds in three steps:
 3. Build interpreters to execute your DSL programs, mapping your logical constructs to the actual machinery.
 ```
 
-## 泛化
-维特根斯坦的《逻辑哲学论》从人类语言与世界的类比来理解世界
-- 世界是由事实组成的（对应我们语言中的句子）。
-- 事实是由事态组成的（对应逻辑里的函项，或陈述句式）。
-- 事态是由客体组成的（客体是事物或者说对象，是原子的）。
+## generalize
 
+Wittgenstein's Tractatus Logico-Philosophicus understands the world from the analogy between human language and the world
 
-类似的，程序语言可以这样构成
-- 语言是由语句组成的（StatementData）。
-- 语句是由函数项组成的(FunctionData)。
-- 函数项由符号组成。符号是一个原子的值(ValueData)。
+- The world is made up of facts (corresponding to sentences in our language).
+- Facts are composed of states of affairs (corresponding to functions in logic, or declarative sentences).
+- The state of affairs is composed of objects (objects are things or objects, which are atomic).
 
+Similarly, a programming language can be structured like this
 
-从这个角度看，DSL的这种构造，可以是足够抽象与普遍的语言组织形式，所以，可以想见是足够通用。
+- Language is composed of statements (StatementData).
+- Statements are composed of function items (FunctionData).
+- Function terms are composed of symbols. The symbol is an atomic value (ValueData).
 
-## 一些例子
-- 几百行代码的脚本解释器：https://github.com/dreamanlan/ScriptInterpreterByDsl0 与 https://github.com/dreamanlan/ScriptInterpreterByDsl
-- 基于DSL的unity3d地形生成：https://github.com/dreamanlan/TerrainGenByDsl
-- unity3d游戏课程Demo，使用DSL实现一个基于命令队列的脚本，并用于编写游戏逻辑：https://github.com/dreamanlan/GameDemo
-- 一个比较完整的基于c#与unity3d的客户端与服务器架构，DSL用于实现游戏高层逻辑与各种编辑器工具以及前面提到的剧情、技能、配表的描述：https://github.com/dreamanlan/CSharpGameFramework
-- 一个跨平台批处理脚本解释器：https://github.com/dreamanlan/BatchCommand
-- 基于roslyn的C#重写工具（在包含new的函数开头与结尾插入指定的函数调用，可用来profile内存），使用DSL作为配置语言：https://github.com/dreamanlan/CSharpHookRewriter
-- 基于roslyn的C#无用类分析工具（可用来清理废弃代码），使用DSL作为配置语言：https://github.com/dreamanlan/UnusedClass
-- 一个dotnet exe/dll补丁工具，使用DSL作为脚本：https://github.com/dreamanlan/DotnetPatch
-- Cs2Lua，一个将unity c#翻译为lua使用slua运行时的工具，翻译的中间语言使用DSL，翻译的配置与定制翻译脚本也使用了DSL和一个基于DSL实现的通用解释器：https://github.com/dreamanlan/Cs2Lua
+From this perspective, the structure of DSL can be a sufficiently abstract and universal language organization form, so it can be imagined that it is general enough.
+
+## some examples
+- Script interpreter with several hundred lines of code: https://github.com/dreamanlan/ScriptInterpreterByDsl0 与 https://github.com/dreamanlan/ScriptInterpreterByDsl
+- Unity3d terrain generation based on DSL:https://github.com/dreamanlan/TerrainGenByDsl
+- Unity3d game course Demo uses DSL to implement a command queue-based script and is used to write game logic:https://github.com/dreamanlan/GameDemo
+- A relatively complete client and server architecture based on c# and unity3d. DSL is used to implement high-level game logic and various editor tools as well as the description of the plot, skills, and matching tables mentioned earlier: https://github.com/dreamanlan/CSharpGameFramework
+- A cross-platform batch script interpreter: https://github.com/dreamanlan/BatchCommand
+- C# rewriting tool based on roslyn (insert specified function calls at the beginning and end of functions containing new, which can be used to profile memory), using DSL as the configuration language:https://github.com/dreamanlan/CSharpHookRewriter
+- C# useless class analysis tool based on roslyn (can be used to clean up abandoned code), using DSL as the configuration language: https://github.com/dreamanlan/UnusedClass
+- A dotnet exe/dll patch tool that uses DSL as a script: https://github.com/dreamanlan/DotnetPatch
+- Cs2Lua, a tool that translates unity c# to lua using slua runtime. The translation intermediate language uses DSL. The translation configuration and customized translation scripts also use DSL and a universal interpreter based on DSL:https://github.com/dreamanlan/Cs2Lua

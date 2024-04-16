@@ -67,12 +67,12 @@ namespace Dsl.Parser
                     return LuaConstants.END_OF_SLK_INPUT_;
                 }
                 else {
-                    //走到这里应该不可能
+                    //it's impossible to reach here
                     throw new Exception("Fatal error !");
                 }
             }
             bool isSkip = true;
-            //跳过注释与白空格
+            //skip comments and white spaces
             for (; isSkip && CurChar != 0;) {
                 isSkip = false;
                 for (; mWhiteSpaces.IndexOf(CurChar) >= 0; ++mIterator) {
@@ -84,7 +84,7 @@ namespace Dsl.Parser
                     }
                     isSkip = true;
                 }
-                //--引导的单行或块注释
+                //--Leading single-line or block comment
                 if (CurChar == '-' && NextChar == '-') {
                     mCommentBuilder.Length = 0;
                     mCommentBuilder.Append(CurChar);
@@ -157,13 +157,13 @@ namespace Dsl.Parser
                         }
                     }
                     isSkip = true;
-                    //lua的注释在dsl里不是合法语法，另外，解析到dsl时添加的许多语法构造在输出时
-                    //可能会与注释冲突，如果真的需要输出注释，可以考虑都转为块注释形式
+                    //Lua comments in DSL are not valid syntax.Additionally, many syntax constructs added during the parsing of DSL may conflict with comments when output.
+                    //If you really need to output comments, consider converting them all to block comment format.
                     //mComments.Add(mCommentBuilder.ToString());
                 }
             }
             mTokenBuilder.Length = 0;
-            if (CurChar == 0) {//输入结束
+            if (CurChar == 0) {//end of input
                 mCurToken = "<<eof>>";
                 if (mLastToken != ";") {
                     mCachedToken = mCurToken;
@@ -249,8 +249,8 @@ namespace Dsl.Parser
                 mCurToken = ";";
                 return LuaConstants.SEMI_;
             }
-            else {//关键字、标识符或常数
-                if (CurChar == '"' || CurChar == '\'') {//引号括起来的名称或关键字
+            else {//keyword，identifier or constant
+                if (CurChar == '"' || CurChar == '\'') {//Quoted name or keyword
                     int line = mLineNumber;
                     char c = CurChar;
                     for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
@@ -280,7 +280,7 @@ namespace Dsl.Parser
                             }
                             else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
                                 ++mIterator;
-                                //4位16进制数
+                                //4bit hex
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -293,7 +293,7 @@ namespace Dsl.Parser
                             else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
                                 && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
                                 ++mIterator;
-                                //8位16进制数
+                                //8bit hex
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -314,7 +314,7 @@ namespace Dsl.Parser
                             }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
-                                //1~2位16进制数
+                                //1~2 chars hex
                                 char h1 = CurChar;
                                 if (myisdigit(NextChar, true)) {
                                     ++mIterator;
@@ -328,7 +328,7 @@ namespace Dsl.Parser
                                 }
                             }
                             else if (myisdigit(CurChar, false)) {
-                                //1~3位8进制数
+                                //1~3 chars OCT
                                 char o1 = CurChar;
                                 if (myisdigit(NextChar, false)) {
                                     ++mIterator;

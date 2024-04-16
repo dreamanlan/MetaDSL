@@ -39,10 +39,12 @@ namespace Dsl
         internal List<string> m_Comments = null;
     }
     /// <summary>
-    /// 基于函数样式的脚本化数据解析工具。可以用作DSL元语言。
+    /// A scripting data parsing tool based on function-style syntax. Can be used as a DSL meta-language.
     /// </summary>
     /// <remarks>
-    /// 混淆的当前实现要求脚本里不能出现`字符。另外，测试代码的加解密表的设计要求脚本里不能出现以形如“_数字_”的标识符。
+    /// The current implementation of obfuscation requires that the script not contain the ` character.
+    /// In addition, the design of the encryption and decryption table in the test code requires that
+    /// the script not contain identifiers in the form of "_number_".
     /// </remarks>
     public interface ISyntaxComponent
     {
@@ -280,7 +282,8 @@ namespace Dsl
         }
     }
     /// <summary>
-    /// 用于描述变量、常量与无参命令语句。可能会出现在函数调用参数表与函数语句列表中。
+    /// Used to describe variables, constants, and no-argument command statements.
+    /// May appear in function call argument lists and function statement lists.
     /// </summary>
     public class ValueData : ValueOrFunctionData
     {
@@ -401,7 +404,7 @@ namespace Dsl
         private static ValueData s_Instance = new ValueData();
     }
     /// <summary>
-    /// 函数数据，可能出现在函数头、参数表中。
+    /// Function data, which may appear in function headers and argument lists.
     /// </summary>
     public class FunctionData : ValueOrFunctionData
     {
@@ -984,12 +987,12 @@ namespace Dsl
         private static FunctionData s_Instance = new FunctionData();
     }
     /// <summary>
-    /// 语句数据，由多个函数项连接而成。
+    /// A statement data consists of multiple function items connected together.
     /// </summary>
     /// <remarks>
-    /// 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
-    /// 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
-    /// 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
+    /// Note: Why do the members of StatementData use FunctionData[] instead of ISyntaxComponent[]? 
+    /// 1. Although FunctionData can be reduced to ValueData syntactically, it cannot be StatementData. Thus, conceptually, it cannot be equivalent to ISyntaxComponent.
+    /// 2. In terms of design, FunctionData should take into account the reduction scenario and try not to occupy additional space when reduced.
     /// </remarks>
     public class StatementData : AbstractSyntaxComponent
     {
@@ -1039,14 +1042,14 @@ namespace Dsl
             if (null == m_ValueOrFunctions) {
                 return String.Empty;
             }
-            //与write方法不同，这里输出无缩进单行表示
+            //In contrast to the write method, here the output is a single line with no indentation.
             FunctionData tempData = First.AsFunction;
             FunctionData callData = null;
             if (null != tempData) {
                 callData = tempData.LowerOrderFunction;
             }
             if (null != callData && tempData.IsTernaryOperatorParamClass()) {
-                //三目表达式表示为op1(cond)(true_val)op2(false_val)
+                //The ternary operator is represented as op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
                     string line = "/*[?:]*/";
                     if (Functions.Count == 2) {
@@ -1687,7 +1690,7 @@ namespace Dsl
                         }
                         break;
                     case '#': {
-                            //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
+                            //preprocess（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
                             int j = i + 1;
                             tokenBuilder.Length = 0;
                             bool isSkip = true;
@@ -1717,7 +1720,7 @@ namespace Dsl
                                         break;
                                     }
                                     if (isExpression && (cc == '"' || cc == '\'')) {
-                                        //字符串
+                                        //string
                                         tokenBuilder.Append(cc);
                                         ++j;
                                         while (j + 1 < input.Length && input[j] != cc) {
@@ -1732,7 +1735,7 @@ namespace Dsl
                                         tokenBuilder.Append(input[j]);
                                     }
                                     else if (cc == '\\' && (input[j + 1] == '\r' || input[j + 1] == '\n')) {
-                                        //续行符不输出
+                                        //The line continuation character is not output.
                                     }
                                     else {
                                         tokenBuilder.Append(cc);
@@ -1743,7 +1746,7 @@ namespace Dsl
                             }
                             TryEmitCloseCodeBlock(sb, endDelim, ref codeBlockNeedClose);
                             if (key.Length >= 2 && (key[0] == 'i' && key[1] == 'f' || key[0] == 'e' && key[1] == 'l' || key[0] == 'e' && key[1] == 'n')) {
-                                //语句块
+                                //statement block
                                 if (key[0] == 'i' && key[1] == 'f') {
                                     sb.Append("@@");
                                     sb.Append(key);
@@ -1779,7 +1782,7 @@ namespace Dsl
                                 }
                             }
                             else {
-                                //函数
+                                //function
                                 sb.Append("@@");
                                 if (string.IsNullOrEmpty(key))
                                     sb.Append("ignore");
@@ -1874,12 +1877,12 @@ namespace Dsl
         private static bool SkipComments(string input, ref int ix)
         {
             bool isSkip = false;
-            //单行注释
+            //single line comment
             if (ix + 1 < input.Length && input[ix] == '/' && input[ix + 1] == '/') {
                 for (; ix < input.Length && input[ix] != '\n'; ++ix) ;
                 isSkip = true;
             }
-            //多行注释
+            //multi-line comment
             if (ix + 1 < input.Length && input[ix] == '/' && input[ix + 1] == '*') {
                 ++ix;
                 ++ix;
@@ -2343,7 +2346,7 @@ namespace Dsl
                 callData = tempData.LowerOrderFunction;
             }
             if (null != callData && tempData.IsTernaryOperatorParamClass()) {
-                //三目运算符表示为op1(cond)(true_val)op2(false_val)
+                //The ternary operator is represented as op1(cond)(true_val)op2(false_val)
                 if (callData.HaveId() && callData.HaveParamOrStatement()) {
                     string line = "/*[?:]*/";
                     if (data.Functions.Count == 2) {
@@ -2680,7 +2683,7 @@ namespace Dsl
                 haveComments = true;
             }
             if (haveComments && !newLine) {
-                //行首注释必须要换行，否则可能会把代码注释掉
+                //Line-leading comments must be followed by a newline, otherwise they may comment out the code.
                 writeLine(stream, string.Empty, 0);
             }
 #endif
