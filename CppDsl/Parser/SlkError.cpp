@@ -11,8 +11,8 @@
 
 using namespace DslParser;
 
-//mScanner,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
-
+//mScanner, mErrorInfo are passed in by the reference parameters of the constructor and will not be empty.
+//So it no longer checks whether it is empty when using it.
 #define GET_SYMBOL_NAME        SlkGetSymbolName
 
 short SlkError::mismatch(short terminal, short token, SlkToken& tokens)

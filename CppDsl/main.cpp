@@ -1,6 +1,4 @@
-﻿// Dsl.cpp : 定义控制台应用程序的入口点。
-//
-#include "BaseType.h"
+﻿#include "BaseType.h"
 #include "Dsl.h"
 #include "BraceScript.h"
 #include "SimpleCoroutine.h"
@@ -69,7 +67,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
             (void)api;
             const char* pId = sd->GetFunctionId(0);
             if (sd->GetFunctionNum() > 0 && pId && 0 != strcmp(pId, "if")) {
-                //在BeforeAddFunction回调里结束当前语句并开始一个新语句，效果上相当于给前一个函数加上分号
+                //End the current statement and start a new statement in the BeforeAddFunction callback.
+                //The effect is equivalent to adding a semicolon to the previous function.
                 //api.endStatement();
                 //api.beginStatement();
             }
@@ -77,17 +76,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
             });
         dataFile.OnAddFunction.attach([](auto& api, auto* sd, auto* func) {
             (void)api, (void)sd, (void)func;
-            //在AddFunction里一般不要修改程序结构，但可以修改添加函数的信息
+            //Generally, you should not modify the program structure in AddFunction, but you can modify the information about the added function.
             return true;
             });
         dataFile.OnBeforeEndStatement.attach([](auto& api, auto* sd) {
             (void)api, (void)sd;
-            //在BeforeEndStatement里可以修改程序结构，要符合dsl的语法语义流程
+            //The program structure can be modified in BeforeEndStatement, and it must comply with the syntax and semantic process of DSL.
             return true;
             });
         dataFile.OnEndStatement.attach([](auto& api, auto*& sd) {
             (void)api, (void)sd;
-            //在EndStatement里一般不要修改程序结构，但可以修改或整体替换当前语句，在回调后会化简语句并添加到上一层语法构造中
+            //Generally, the program structure should not be modified in EndStatement, but the current statement can be modified or replaced as a whole.
+            //After the callback, the statement will be simplified and added to the upper level syntax structure.
             return true;
             });
         dataFile.Parse(p);
@@ -137,7 +137,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
         dataFile3.WriteToFile(fp9, 0);
         fclose(fp9);
     }
-    //brace脚本测试
+    //brace script test
     {
         pDslBuffer->Reset();
         DslParser::DslFile parsedFile(*pDslBuffer);
@@ -215,7 +215,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     }
     delete[] pbuf;
     delete[] pbuf2;
-    //必须在DslFile都释放后再释放DslStringAndObjectBuffer
+    //DslStringAndObjectBuffer must be released after all DslFiles are released.
     delete pDslBuffer;
     return 0;
 }

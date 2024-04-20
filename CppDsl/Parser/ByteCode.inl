@@ -9,13 +9,13 @@
 namespace DslParser
 {
     /*
-     * 备忘：为什么采用约简的方式而不是延迟一次性构造
-     * 1、已尝试过采用一个临时的结构比如SyntaxMaterial来收集语法解析过程中的数据，到语句完成时再构造语句
-     * 2、临时的结构与最终语义数据结构上相似度很高，也需要表示递归结构并且要与现有语义数据关联，代码重复并且逻辑不够清晰。
-     * 3、约简方式已经尽量重用语法解析中构造的实例，基本不会产生额外内存占用
-     * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
-     * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
-     */
+    * Memo: Why use reduction instead of delayed one-time construction
+    * 1. We have tried to use a temporary structure such as SyntaxMaterial to collect data during the syntax parsing process, and then construct the statement when the statement is completed.
+    * 2. The temporary structure is very similar to the final semantic data structure. It also needs to represent the recursive structure and be associated with the existing semantic data. The code is repeated and the logic is not clear enough.
+    * 3. The reduction method has tried its best to reuse the instances constructed in the grammar parsing, and basically does not cause additional memory usage.
+    * 4. In the reduction mode, the final memory usage is linearly related to the script complexity, so there is no need to worry about taking up too much memory.
+    * 5. The definition of semantic data takes degradation situations into consideration and tries not to occupy additional space except for necessary data.
+    */
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::setExternScript()
     {
@@ -198,7 +198,7 @@ namespace DslParser
 
         FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
-            //三元运算符表示成op1(cond)(true_val)op2(false_val)
+            //The ternary operator is expressed as op1(cond)(true_val)op2(false_val)
             FunctionData* lowerOrderFunction = mDataFile->AddNewFunctionComponent();
             p->GetName().SetFunction(lowerOrderFunction);
             p->SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
@@ -376,10 +376,10 @@ namespace DslParser
         mThis->resetComments();
 
         if (mData.isSemanticStackEmpty()) {
-            //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+            //Simplification only needs to be processed at one level, and the parameters and statement parts should have been processed when they are added to the statement.
             ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
             if (!statementSyntax.IsValid()) {
-                //_epsilon_表达式无语句语义
+                //_epsilon_ Expression has no statement semantics
                 if (mDataFile->GetDslInfoNum() > 0) {
                     ISyntaxComponent* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
@@ -397,7 +397,7 @@ namespace DslParser
                 return;
             }
             else if (statementSyntax.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
-                //普通值语句的注释挪到上一语句
+                //Comments for ordinary value statements are moved to the previous statement
                 if (mDataFile->GetDslInfoNum() > 0) {
                     ISyntaxComponent* last = mDataFile->GetDslInfo(mDataFile->GetDslInfoNum() - 1);
                     if (last->GetLastCommentNum() <= 0) {
@@ -414,7 +414,7 @@ namespace DslParser
                 }
             }
             else {
-                //上一行语句的注释挪到上一行语句
+                //The comment on the previous line of statement is moved to the previous line of statement
                 if (mDataFile->GetDslInfoNum() > 0 && !statementSyntax.IsFirstCommentOnNewLine() && statementSyntax.GetFirstCommentNum() > 0) {
                     const char* cmt = statementSyntax.GetFirstComment(0);
                     statementSyntax.RemoveFirstComment(0);
@@ -426,23 +426,25 @@ namespace DslParser
                     last->AddLastComment(cmt);
                 }
             }
-            //顶层元素结束
+            //End of top-level element
             mDataFile->AddDslInfo(&statementSyntax);
             mThis->setCanFinish(TRUE);
         }
         else {
-            //化简只需要处理一级，参数与语句部分应该在添加到语句时已经处理了
+            //Simplification only needs to be processed at one level, and the parameters and statement parts
+            //should have been processed when they are added to the statement.
             ISyntaxComponent& statementSyntax = simplifyStatement(*statement);
 
             FunctionData* p = mData.getLastFunction();
             if (0 != p) {
                 if (p->HaveParam()) {
-                    //如果是参数里的注释，保持原样。普通值上的注释会丢弃，嵌入的注释如果挪到行尾会比较莫名其妙。
+                    //If it is a comment in a parameter, leave it as is. Comments on ordinary values will be discarded,
+                    //and embedded comments will be confusing if they are moved to the end of the line.
                     //if (!statementSyntax.IsValid())
                     //    return;
                 }
                 else if (!statementSyntax.IsValid()) {
-                    //_epsilon_表达式无语句语义
+                    //_epsilon_ Expression has no statement semantics
                     if (p->GetParamNum() > 0 && statementSyntax.GetFirstCommentNum() > 0) {
                         ISyntaxComponent* last = p->GetParam(p->GetParamNum() - 1);
                         if (last->GetLastCommentNum() <= 0) {
@@ -460,7 +462,7 @@ namespace DslParser
                     //return;
                 }
                 else if (statementSyntax.GetSyntaxType() == ISyntaxComponent::TYPE_VALUE) {
-                    //如果语句是普通值，注释挪到上一语句
+                    //If the statement is a normal value, the comment is moved to the previous statement
                     if (p->GetParamNum() > 0) {
                         ISyntaxComponent* last = p->GetParam(p->GetParamNum() - 1);
                         if (last->GetLastCommentNum() <= 0) {
@@ -487,7 +489,7 @@ namespace DslParser
                     }
                 }
                 else {
-                    //上一行语句的注释挪到上一行语句或外层函数头或外层函数
+                    //The comment of the previous line of statement is moved to the previous line of statement or outer function header or outer function.
                     if (!statementSyntax.IsFirstCommentOnNewLine() && statementSyntax.GetFirstCommentNum() > 0) {
                         const char* cmt = statementSyntax.GetFirstComment(0);
                         statementSyntax.RemoveFirstComment(0);
@@ -507,7 +509,7 @@ namespace DslParser
                         }
                     }
                 }
-                //函数扩展语句部分
+                //Function expansion statement part
                 p->AddParam(&statementSyntax);
             }
         }
@@ -563,7 +565,7 @@ namespace DslParser
         void RuntimeBuilderT<RealTypeT>::buildHighOrderFunction()
     {
         if (!preconditionCheck())return;
-        //高阶函数构造（当前函数返回一个函数）
+        //Higher-order function construction (the current function returns a function)
         FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
@@ -788,9 +790,11 @@ namespace DslParser
         ISyntaxComponent& RuntimeBuilderT<RealTypeT>::simplifyStatement(StatementData& data)const
     {
         int num = data.GetFunctionNum();
-        //对语句进行化简（语法分析过程中为了方便，全部按完整StatementData来构造，这里化简为原来的类型：ValueData/FunctionData/FunctionData等，主要涉及参数与语句部分）
+        //Simplify the statements (for convenience during the syntax analysis process, all are constructed according to the complete StatementData.
+        //Here they are simplified to the original types: ValueData/FunctionData/FunctionData, etc.,
+        //mainly involving parameters and statement parts)
         if (num == 1) {
-            //只有一个函数的语句退化为函数（再按函数进一步退化）。
+            //A statement with only one function degenerates into a function (and then further degenerates by function).
             auto* f = data.GetFunction(0);
             f->CopyComments(data);
             if (f->IsFunction()) {
@@ -815,11 +819,12 @@ namespace DslParser
     template<class RealTypeT> inline
         ValueOrFunctionData& RuntimeBuilderT<RealTypeT>::simplifyStatement(FunctionData& data)const
     {
-        //注意，为了省内存ValueData上不附带注释了，相关接口无实际效果！！！
+        //Note that in order to save memory, there are no comments on ValueData,
+        //and the related interfaces have no actual effect! ! !
         if (!data.HaveParamOrStatement()) {
-            //没有参数的调用退化为基本值数据
+            //Calls without parameters degenerate to basic value data
             if (data.IsHighOrder()) {
-                //这种情况应该不会出现
+                //This should not happen
                 return data;
             }
             else {
@@ -828,7 +833,7 @@ namespace DslParser
             }
         }
         else {
-            //处理epsilon语句与参数
+            //Processing epsilon statements and parameters
             simplifyFunction(data);
         }
         if (nullptr != data.GetId() && data.GetId()[0] == '-' && data.GetId()[1] == '\0' && data.GetParamNum() == 1) {
@@ -870,17 +875,18 @@ namespace DslParser
             }
         }
         else {
-            //有参数不会退化
+            //There are parameters that will not degrade
             return data;
         }
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::simplifyFunction(FunctionData& data)const
     {
-        //最后一个语句是epsilon与唯一参数是epsilon时，删除这个语句与参数，这样可以正确解析for(;;){}
-        //目前{}用于非语句块的情形，应该没有最后一个参数需要为空的情况（目前已允许前面的参数为空），副
-        //作用是语句列表也允许除最后一个未以分号结尾的语句外其它语句为空，上层应用在进一步解析时需要处
-        //理这种情形
+        //When the last statement is epsilon and the only parameter is epsilon, delete this statement and parameters so that for(;;){} can be parsed correctly
+        //Currently {} is used in non-statement blocks. There should be no situation where the last parameter needs to be empty (the previous parameters are
+        //currently allowed to be empty).
+        //The function is that the statement list also allows other statements to be empty except the last statement that does not end with a semicolon.
+        //The upper-layer application needs to handle it during further parsing
         if (data.IsHighOrder()) {
             simplifyFunction(data.GetLowerOrderFunction());
         }

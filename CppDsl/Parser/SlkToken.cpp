@@ -8,8 +8,8 @@ SlkToken.cpp
 
 using namespace DslParser;
 
-//mIterator,mErrorInfo由构造函数的引用参数传入，不会为空。所以使用时不再检查是否为空。
-
+//mIterator and mErrorInfo are passed in by the reference parameters of the constructor and will not be empty.
+//So it no longer checks whether it is empty when using it.
 static inline int myisdigit(char c, int isHex, int includeEPart, int includeAddSub)
 {
     int ret = FALSE;
@@ -499,7 +499,7 @@ short SlkToken::getImpl()
         }
 
         int isSkip = TRUE;
-        //跳过注释与白空格
+        //Skip comments and white spaces
         for (; isSkip && curChar() != '\0';) {
             isSkip = FALSE;
             for (; isWhiteSpace(curChar()); ++mIterator) {
@@ -511,7 +511,7 @@ short SlkToken::getImpl()
                 }
                 isSkip = TRUE;
             }
-            //#引导的单行注释与C++风格的单行注释
+            //# Guided single-line comments and C++-style single-line comments
             if (curChar() == '#' || (curChar() == '/' && nextChar() == '/')) {
                 newComment();
                 for (; curChar() != '\0' && curChar() != '\n'; ++mIterator) {
@@ -521,7 +521,7 @@ short SlkToken::getImpl()
                 endComment();
                 isSkip = TRUE;
             }
-            //C++风格的单行注释与多行注释
+            //C++ style single-line comments and multi-line comments
             if (curChar() == '/' && nextChar() == '*') {
                 newComment();
                 pushCommentChar(curChar());
@@ -584,7 +584,7 @@ short SlkToken::getImpl()
         ++mIterator;
         ++mIterator;
         int line = mLineNumber;
-        //搜索脚本结束 :}
+        //End of search script ':}'
         for (; curChar() != '\0';) {
             while (curChar() != '\0' && curChar() != ':') {
                 if (curChar() == '\n')++mLineNumber;
@@ -874,7 +874,7 @@ short SlkToken::getImpl()
             return getOperatorTokenValue();
         }
     }
-    else if (isOperator(curChar())) {//操作符
+    else if (isOperator(curChar())) {//operator
         getOperatorToken();
         return getOperatorTokenValue();
     }
@@ -996,7 +996,7 @@ short SlkToken::getImpl()
                 tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
         }
         endToken();
-        /*普通字符串保持源码的样子，不去掉首尾空行
+        /*Ordinary strings keep the appearance of the source code without removing the leading and trailing blank lines.
         if (myhavelinefeed(mCurToken)) {
             removeFirstAndLastEmptyLine();
         }
@@ -1006,8 +1006,8 @@ short SlkToken::getImpl()
         else
             return STRING_;
     }
-    else {//关键字、标识符或常数
-        if (curChar() == '"' || curChar() == '\'' || (curChar() == '$' && (nextChar() == '"' || nextChar() == '\''))) {//引号括起来的名称或关键字
+    else {//keyword, identifier, or constant
+        if (curChar() == '"' || curChar() == '\'' || (curChar() == '$' && (nextChar() == '"' || nextChar() == '\''))) {//Name or keyword enclosed in quotes
             bool isDollar = false;
             if (curChar() == '$') {
                 ++mIterator;
@@ -1042,7 +1042,7 @@ short SlkToken::getImpl()
                     }
                     else if (curChar() == 'u' && myisdigit(nextChar(), true) && myisdigit(peekChar(2), true) && myisdigit(peekChar(3), true)) {
                         ++mIterator;
-                        //4位16进制数
+                        //4-digits hexadecimal number
                         char h1 = curChar();
                         ++mIterator;
                         char h2 = curChar();
@@ -1056,8 +1056,7 @@ short SlkToken::getImpl()
                     else if (curChar() == 'U' && myisdigit(nextChar(), true) && myisdigit(peekChar(2), true) && myisdigit(peekChar(3), true)
                         && myisdigit(peekChar(4), true) && myisdigit(peekChar(5), true) && myisdigit(peekChar(6), true) && myisdigit(peekChar(7), true)) {
                         ++mIterator;
-                        //8位16进制数
-                        char h1 = curChar();
+                        //8-digits hexadecimal number
                         ++mIterator;
                         char h2 = curChar();
                         ++mIterator;
@@ -1079,7 +1078,7 @@ short SlkToken::getImpl()
                     }
                     else if (curChar() == 'x' && myisdigit(nextChar(), true)) {
                         ++mIterator;
-                        //1~2位16进制数
+                        //1~2 digits hexadecimal number
                         char h1 = curChar();
                         if (myisdigit(nextChar(), true)) {
                             ++mIterator;
@@ -1093,7 +1092,7 @@ short SlkToken::getImpl()
                         }
                     }
                     else if (myisdigit(curChar(), false)) {
-                        //1~3位8进制数
+                        //1~3 digit octal number
                         char o1 = curChar();
                         if (myisdigit(nextChar(), false)) {
                             ++mIterator;
@@ -1145,7 +1144,7 @@ short SlkToken::getImpl()
                     tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
             }
             endToken();
-            /*普通字符串保持源码的样子，不去掉首尾空行
+            /*Ordinary strings keep the appearance of the source code without removing the leading and trailing blank lines.
             if (myhavelinefeed(mCurToken)) {
                 removeFirstAndLastEmptyLine();
             }
@@ -1173,7 +1172,7 @@ short SlkToken::getImpl()
                 if (curChar() == '#')
                     break;
                 else if (curChar() == '?') {
-                    //类型名后接问号的情形（nullable type），只允许后接一个问号
+                    //When the type name is followed by a question mark (nullable type), only one question mark is allowed.
                     if (!mDslFile->OnTokenCanEatChar.isNull()) {
                         if (mDslFile->OnTokenCanEatChar(mCurToken, mTokenCharIndex, curChar())) {
                             pushTokenChar(curChar());
@@ -1340,7 +1339,7 @@ void SlkToken::removeFirstAndLastEmptyLine()
         ++start;
     }
     else {
-        //开始行没有换行，则不要去掉白空格
+        //If there is no line break at the beginning of the line, do not remove the white spaces.
         start = 0;
     }
     int end = len - 1;
@@ -1348,7 +1347,7 @@ void SlkToken::removeFirstAndLastEmptyLine()
         --end;
     }
     if (end > 0 && mCurToken[end] == '\n') {
-        //结束行有换行，则去掉白空格，但保留换行
+        //If there is a line break at the end of the line, remove the white spaces but retain the line break.
         mCurToken[end + 1] = 0;
     }
     mCurToken = &(mCurToken[start]);

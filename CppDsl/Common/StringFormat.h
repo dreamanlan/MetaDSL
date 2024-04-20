@@ -130,7 +130,7 @@ namespace StringFormatUtility
             return nullptr;
         char* res = strncpy(dest, src, len);
         if (len <= strlen(src)) {
-            //发生字符串截断时，补一个空字符
+            //When a string truncation occurs, fill with a null character
             dest[len] = 0;
         }
         return res;
@@ -139,7 +139,7 @@ namespace StringFormatUtility
     template<typename T>
     inline int BasicValue2String(char* dest, int& pos, int size, const char* fmt, T t)
     {
-        //基础格式化处理
+        //Basic formatting process
         if (pos >= size - 1)
             return FALSE;
         int r = t_snprintf(dest + pos, size - pos, fmt, t);
@@ -324,7 +324,9 @@ public:
     DEF_PARSER_FORMAT(33);
     DEF_PARSER_FORMAT(34);
 public:
-    //使用方（snprintf_）保证buf、fmt不会为空，StringFormat类及其实现辅助都不再检查这2个指针是否为空。
+    //The user (snprintf_) guarantees that buf and fmt will not be empty, and neither
+    //the StringFormat class nor its implementation assistance will ever check whether
+    //the two Pointers are empty.
     StringParser(char* buf, int size, const char* fmt);
     inline int GetLength()const { return m_BufPos; }
 private:

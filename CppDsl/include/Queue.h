@@ -90,35 +90,36 @@ namespace CollectionMemory
 }
 
 //
-//T是队列元素类型，SizeV是所期望的队列的最大元素数目(为0时采用动态内存分配方案)
+//T is the queue element type, and SizeV is the maximum number of elements
+//expected in the queue (0 using dynamic memory allocation scheme).
 template<typename T, int SizeV = 0>
 class DequeT
 {
     using MemoryType = typename CollectionMemory::SelectorT<T, (SizeV == 0 ? 0 : SizeV + 1)>::Type;
-public://标准双向队列访问方法
-    //队列是否空
+public://Standard bidirectional queue access method
+    //queue is empty?
     inline int Empty() const
     {
         return m_Head == m_Tail;
     }
-    //队列是否满
+    //queue is full?
     inline int Full() const
     {
         return m_Head == (m_Tail + 1) % m_MaxSize;
     }
-    //清空队列
+    //clear queue
     inline void Clear()
     {
         m_Size = 0;
         m_Head = m_Tail = 0;
         m_Memory.Clear();
     }
-    //当前队列中的元素个数
+    //The number of elements in the current queue
     inline int Size() const
     {
         return m_Size;
     }
-    //队列尾加一个元素
+    //Add an element to the tail of the queue
     inline int PushBack(const T& t)
     {
         MyAssert(m_Data);
@@ -131,7 +132,7 @@ public://标准双向队列访问方法
         UpdateSize();
         return id;
     }
-    //队列头加一个元素
+    //Add an element to the head of the queue
     inline int PushFront(const T& t)
     {
         MyAssert(m_Data);
@@ -143,7 +144,7 @@ public://标准双向队列访问方法
         UpdateSize();
         return m_Head;
     }
-    //删除队列尾一个元素
+    //Delete an element at the tail of the queue
     inline T PopBack()
     {
         MyAssert(m_Data);
@@ -155,7 +156,7 @@ public://标准双向队列访问方法
         UpdateSize();
         return m_Data[id];
     }
-    //删除队列头一个元素
+    //Delete an element at the head of the queue
     inline T PopFront()
     {
         MyAssert(m_Data);
@@ -167,33 +168,33 @@ public://标准双向队列访问方法
         UpdateSize();
         return m_Data[id];
     }
-    //读队列尾元素
+    //read the element at the tail of the queue
     inline const T& Back() const
     {
         return m_Data[BackID()];
     }
-    //读队列尾元素可写引用（用于修改队列尾元素）
+    //read the element reference at the tail of the queue
     inline T& Back()
     {
         return m_Data[BackID()];
     }
-    //读队列头元素
+    //read the element at the head of the queue
     inline const T& Front() const
     {
         return m_Data[FrontID()];
     }
-    //读队列头元素可写引用（用于修改队列头元素）
+    //read the element reference at the head of the queue
     inline T& Front()
     {
         return m_Data[FrontID()];
     }
-public://扩展双向队列访问方法（遍历与读写方法）
-    //FrontID是队列头元素的ID
+public://Extended bidirectional queue access methods (traversal and read-write methods)
+    //FrontID is the id of the head element
     inline int FrontID() const
     {
         return m_Head;
     }
-    //BackID是队列尾元素的ID
+    //BackID is the id of the tail element
     inline int BackID() const
     {
         if (Empty()) {
@@ -202,7 +203,8 @@ public://扩展双向队列访问方法（遍历与读写方法）
         int newId = (m_MaxSize + m_Tail - 1) % m_MaxSize;
         return newId;
     }
-    //取当前ID的前一个ID，如果已经是头元素ID，则返回INVALID_ID
+    //Takes the previous ID of the current ID, and returns INVALID_ID
+    //if it is already a header element ID
     inline int PrevID(int id) const
     {
         if (id == m_Head)
@@ -210,7 +212,8 @@ public://扩展双向队列访问方法（遍历与读写方法）
         int newId = (m_MaxSize + id - 1) % m_MaxSize;
         return newId;
     }
-    //取当前ID的后一个ID，如果已经是尾元素ID，则返回INVALID_ID
+    //Takes the next ID of the current ID, and returns INVALID_ID
+    //if it is already a tail element ID
     inline int NextID(int id) const
     {
         if (id == BackID())
@@ -218,7 +221,8 @@ public://扩展双向队列访问方法（遍历与读写方法）
         int newId = (id + 1) % m_MaxSize;
         return newId;
     }
-    //判断是否是有效的ID，对空队列，头ID与尾ID均属无效ID
+    //Check whether the ID is valid. For an empty queue,
+    //the header ID and tail ID are invalid ids
     inline int IsValidID(int id) const
     {
         if (Empty()) {
@@ -233,7 +237,7 @@ public://扩展双向队列访问方法（遍历与读写方法）
             return FALSE;
         return TRUE;
     }
-    //取指定ID的元素
+    //Gets the element with the specified ID
     inline const T& operator [] (int id) const
     {
         if (id < 0 || id >= m_MaxSize) {
@@ -243,7 +247,8 @@ public://扩展双向队列访问方法（遍历与读写方法）
             return m_Data[id];
         }
     }
-    //取指定ID的元素的可写引用（用于修改元素）
+    //Takes a writable reference to an element with a specified ID
+    //(used to modify the element)
     inline T& operator [] (int id)
     {
         if (id < 0 || id >= m_MaxSize) {
@@ -253,7 +258,7 @@ public://扩展双向队列访问方法（遍历与读写方法）
             return m_Data[id];
         }
     }
-    //求2个ID的距离（间隔元素个数+1）
+    //Find the distance between 2 ids (number of separated elements +1)
     inline int Distance(int id1, int id2) const
     {
         int val = Difference(id1, id2);
@@ -262,7 +267,8 @@ public://扩展双向队列访问方法（遍历与读写方法）
         else
             return val;
     }
-    //求2个ID之差（按从头到尾的顺序编号元素，编号之差）
+    //Find the difference between 2 ids (number the elements from beginning
+    //to end, the difference in numbers)
     inline int Difference(int id1, int id2) const
     {
         int id1Val = CalcIndex(id1);
@@ -318,7 +324,7 @@ protected:
         Clear();
     }
 private:
-    //计算元素的索引（头元素索引为0）
+    //calc the index of the element (head element's index is 0)
     inline int CalcIndex(int id) const
     {
         if (id < m_Head)
@@ -326,7 +332,7 @@ private:
         else
             return id - m_Head;
     }
-    //更新队列尺寸
+    //update the size of the queue
     inline void UpdateSize()
     {
         m_Size = (m_MaxSize + m_Tail - m_Head) % m_MaxSize;
@@ -344,9 +350,10 @@ private:
     T* m_Data;
     int m_Size;
     int m_MaxSize;
-    //头元素的ID
+    //the ID of the head element
     int m_Head;
-    //尾元素后面一个位置的ID，它标明队列尾的位置，它的值总是一个无效的ID
+    //The ID of a position after the tail element, which indicates
+    //the position of the queue tail, and its value is always an invalid ID
     int m_Tail;
 public:
     static T& GetInvalidValueRef()

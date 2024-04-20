@@ -346,7 +346,7 @@ namespace DslFileReadWrite
             haveComments = TRUE;
         }
         if (haveComments && !newLine) {
-            //Translation: Line comments must be on a new line, otherwise they may accidentally comment out the code.
+            //Line comments must be on a new line, otherwise they may accidentally comment out the code.
             fwrite("\n", 1, 1, fp);
         }
 #endif

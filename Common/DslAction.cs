@@ -6,13 +6,13 @@ using System.Text;
 namespace Dsl.Common
 {
     /*
-     * 备忘：为什么采用约简的方式而不是延迟一次性构造
-     * 1、已尝试过采用一个临时的结构比如SyntaxMaterial来收集语法解析过程中的数据，到语句完成时再构造语句
-     * 2、临时的结构与最终语义数据结构上相似度很高，也需要表示递归结构并且要与现有语义数据关联，代码重复并且逻辑不够清晰。
-     * 3、约简方式已经尽量重用语法解析中构造的实例，基本不会产生额外内存占用
-     * 4、约简方式下最终内存占用与脚本复杂度线性相关，不用担心占用过多内存
-     * 5、语义数据在定义上考虑了退化情形，除必须数据外已尽量不占用额外空间
-     */
+    * Memo: Why use reduction instead of delayed one-time construction
+    * 1. We have tried to use a temporary structure such as SyntaxMaterial to collect data during the syntax parsing process, and then construct the statement when the statement is completed.
+    * 2. The temporary structure is very similar to the final semantic data structure. It also needs to represent the recursive structure and be associated with the existing semantic data. The code is repeated and the logic is not clear enough.
+    * 3. The reduction method has tried its best to reuse the instances constructed in the grammar parsing, and basically does not cause additional memory usage.
+    * 4. In the reduction mode, the final memory usage is linearly related to the script complexity, so there is no need to worry about taking up too much memory.
+    * 5. The definition of semantic data takes degradation situations into consideration and tries not to occupy additional space except for necessary data.
+    */
     public enum OperatorCategoryEnum
     {
         NormalOperator = 0,
@@ -1147,12 +1147,12 @@ namespace Dsl.Common
         }
         private AbstractSyntaxComponent simplifyStatement(StatementData data)
         {
-            //Translation: Simplify statements (during the process of syntax analysis, they are constructed
+            //Simplify statements (during the process of syntax analysis, they are constructed
             //using complete StatementData for convenience, but here they are simplified to their original
             //types: ValueData/CallData/FunctionData, etc.,
             //mainly involving parameters and statement parts).
             if (data.Functions.Count == 1) {
-                //Translation: Statements with only one function are reduced to the function itself
+                //Statements with only one function are reduced to the function itself
                 //(and further reduced according to the function).
                 var f = data.Functions[0];
                 f.CopyComments(data);

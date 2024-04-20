@@ -16,10 +16,9 @@ DslData.h
 
 namespace DslData
 {
-    //DslParser部分主要设计考虑使用固定大小的内存来解析dsl文件，使用连续内存，避免内存碎片，同时内存可完全重用。
-    //这里则是解析后供外部使用的结果数据，考虑到实际使用方便，这里会使用动态内存管理与比较多的stl对象
-    //这里出现的类与DslParser里面的类基本上是平行的一对一关系
-
+    // The main design of DslParser considers the use of fixed-size memory to parse dsl files, using continuous memory to avoid memory fragmentation, and memory can be fully reused.
+    // Here is the result data parsed for external use. Considering the practical convenience, dynamic memory management and more stl objects are used here
+    // The classes presented here are essentially parallel to the classes in DslParser
     struct DelimiterInfo final
     {
         const std::string ScriptBeginDelimiter;
@@ -35,7 +34,7 @@ namespace DslData
         {}
     };
 
-    //这2个结构作纯数据使用，不需要虚析构了
+    //These two structures are used for pure data and do not need virtual destruction
     struct SyntaxComponentCommentsInfo
     {
         bool m_FirstCommentOnNewLine;
@@ -855,9 +854,9 @@ namespace DslData
             return nullptr;
     }
 
-    /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
-     * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
-     * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
+    /* Note: Why StatementData members do not use ISyntaxComponent[] instead of FunctionData[]
+     * 1. While syntactically FunctionData here can degenerate to ValueData, it cannot be StatementData and is thus not conceptually equivalent to ISyntaxComponent
+     * 2. FunctionData should be designed with degradation in mind and take up as little extra space as possible in degenerate cases
      */
     class StatementData final : public ISyntaxComponent
     {

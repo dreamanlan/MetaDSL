@@ -98,7 +98,7 @@ inline void ActionForSourceCodeScript::setScriptDelimiter(const char* begin, con
     }
 }
 //--------------------------------------------------------------------------------------
-//标识符
+//identifier
 inline void ActionForSourceCodeScript::pushId()
 {
     char* lastToken = getLastToken();
@@ -666,12 +666,12 @@ namespace DslParser
     static inline bool SkipComments(const char* input, int len, int& ix)
     {
         bool isSkip = false;
-        //单行注释
+        //Single line comments
         if (ix + 1 < len && input[ix] == '/' && input[ix + 1] == '/') {
             for (; ix < len && input[ix] != '\n'; ++ix);
             isSkip = true;
         }
-        //多行注释
+        //Multi-line comments
         if (ix + 1 < len && input[ix] == '/' && input[ix + 1] == '*') {
             ++ix;
             ++ix;
@@ -779,7 +779,7 @@ namespace DslParser
                 break;
             }
             case '#': {
-                //预处理（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
+                //preprocessing（define, undef, include, if, ifdef, ifndef, else, elif, elifdef, elifndef (since C++23), endif, line, error, pragma）
                 int j = i + 1;
                 tokenBuilder.str(std::string());
                 bool isSkip = true;
@@ -809,7 +809,7 @@ namespace DslParser
                             break;
                         }
                         if (isExpression && (cc == '"' || cc == '\'')) {
-                            //字符串
+                            //string
                             tokenBuilder << cc;
                             ++j;
                             while (j + 1 < len && input[j] != cc) {
@@ -824,7 +824,7 @@ namespace DslParser
                             tokenBuilder << input[j];
                         }
                         else if (cc == '\\' && (input[j + 1] == '\r' || input[j + 1] == '\n')) {
-                            //续行符不输出
+                            //Line continuation characters are not output
                         }
                         else {
                             tokenBuilder << cc;
@@ -836,7 +836,7 @@ namespace DslParser
                 }
                 TryEmitCloseCodeBlock(ss, endDelim, codeBlockNeedClose);
                 if (key.length() >= 2 && ((key[0] == 'i' && key[1] == 'f') || (key[0] == 'e' && key[1] == 'l') || (key[0] == 'e' && key[1] == 'n'))) {
-                    //语句块
+                    //statement block
                     if (key[0] == 'i' && key[1] == 'f') {
                         ss << "@@";
                         ss << key;
@@ -871,7 +871,7 @@ namespace DslParser
                     }
                 }
                 else {
-                    //函数
+                    //function
                     ss << "@@";
                     if (key.empty())
                         ss << "ignore";

@@ -49,7 +49,7 @@ namespace DslParser
 
     enum
     {
-        //这三个数不能大于PTR_ARRAY_POOL_FREELINK_HEADER_SIZE
+        //These three numbers cannot be greater than PTR_ARRAY_POOL_FREELINK_HEADER_SIZE
         MAX_FUNCTION_DIMENSION_NUM = 256 * 1024,
         MAX_FUNCTION_PARAM_NUM = 256 * 1024,
         MAX_DSL_INFO_NUM = 256 * 1024,
@@ -110,7 +110,7 @@ namespace DslParser
         {}
     };
 
-    //这2个结构作纯数据使用，不需要虚析构了
+    //These two structures are used for pure data and do not require virtual destruction.
     struct SyntaxComponentCommentsInfo
     {
         const char** m_FirstComments;
@@ -513,7 +513,7 @@ namespace DslParser
         union
         {
             char* m_StringVal;
-            const char* m_ConstStringVal;//在脚本里与m_StringVal类型相同,用于实现自动const_cast
+            const char* m_ConstStringVal;//The same type as m_StringVal in the script, used to implement automatic const_cast
             FunctionData* m_FunctionVal;
         };
         int m_Line;
@@ -963,10 +963,10 @@ namespace DslParser
         FunctionCommentsInfo* m_pCommentsInfo;
     };
 
-    /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
-     * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
-     * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
-     */
+    /* Memo: Why do members of StatementData not use ISyntaxComponent[] but FunctionData[]?
+    * 1. Although FunctionData here can be degenerated into ValueData grammatically, it cannot be StatementData, so it cannot be conceptually equivalent to ISyntaxComponent.
+    * 2. In terms of design, FunctionData should take the degradation situation into consideration and try not to occupy additional space in the degradation situation.
+    */
     class StatementData final : public ISyntaxComponent
     {
     public:
@@ -1098,7 +1098,8 @@ namespace DslParser
         SyntaxComponentCommentsInfo* m_pCommentsInfo;
     };
 
-    //在c++实现里，DSL的内存希望尽量是预先分配的，这个接口用来实现预先分配的内存
+    //In the C++ implementation, DSL memory is expected to be pre-allocated as much as possible.
+    //This interface is used to implement pre-allocated memory.
     class IDslStringAndObjectBuffer
     {
     public:
@@ -1136,10 +1137,10 @@ namespace DslParser
     };
 
     /*
-     * 实际的DSL预先分配缓冲区，这个类需要在堆上实例化（在栈上可能导致栈溢出），类本身使
-     * 用数组来分配缓冲区。
-     * 理想情况是所有相关类使用的内存都是预先分配的。
-     */
+    * The actual DSL pre-allocates the buffer. This class needs to be instantiated on the heap
+    * (which may cause stack overflow on the stack). The class itself uses Use an array to allocate buffers.
+    * The ideal situation is that the memory used by all related classes is pre-allocated.
+    */
     template<int StringAndObjectBufferSize = STRING_AND_OBJECT_BUFFER_SIZE,
         int SyntaxComponentAndPtrArrayPoolSize = SYNTAXCOMPONENT_AND_PTR_ARRAY_POOL_SIZE,
         int PtrArrayPoolFreeLinkHeaderSize = PTR_ARRAY_POOL_FREELINK_HEADER_SIZE,
@@ -1259,7 +1260,10 @@ namespace DslParser
                 return 0;
             int ix = m_PtrFreeLinkHeader[size];
             if (ix > 0) {
-                //空闲链表上有的话就用空闲链表的数据，空闲链表头指向链表后一个元素，原链表头从链表拆除后放到空闲链表块的空闲链表中
+                //If there is any in the free linked list, use the data of the free linked list.
+                //The free linked list head points to the last element of the linked list. The
+                //original linked list head is removed from the linked list and placed in the
+                //free linked list of the free linked list block.
                 auto& link = *(m_pPtrFreeLink - ix);
                 m_PtrFreeLinkHeader[size] = link.m_NextFreeLink;
                 if (m_FreedFreeLinkHeader > 0) {
@@ -1280,7 +1284,8 @@ namespace DslParser
         {
             if (size<0 || size>PtrArrayPoolFreeLinkHeaderSize)
                 return;
-            //分配一个新的空闲链表块来描述回收的数组，并加到空闲链表上
+            //Allocate a new free list block to describe the recycled array and
+            //add it to the free list
             int newFreeHeader = 0;
             FreeLinkInfo* p = 0;
             if (m_FreedFreeLinkHeader > 0) {
@@ -1294,7 +1299,7 @@ namespace DslParser
                 p = m_pPtrFreeLink - m_FreeLinkNum;
             }
             else {
-                //这个块浪费掉了，需要调整空闲链表参数的大小
+                //This block is wasted, and the size of the free list parameters needs to be adjusted.
             }
             if (p) {
                 p->m_PtrPoolIndex = static_cast<int>(ptr - reinterpret_cast<void**>(m_SyntaxComponentPool));
@@ -1404,7 +1409,8 @@ namespace DslParser
     private:
         DslOptions m_Options;
     private:
-        //字符串与对象共用一个buffer，字符串正向增长，对象反向增长
+        //Strings and objects share a buffer. Strings grow in the forward direction and objects
+        //in the reverse direction.
         char m_StringBuffer[StringAndObjectBufferSize];
         char* m_pStringBuffer;
         char* m_pUnusedStringPtr;
@@ -1413,14 +1419,24 @@ namespace DslParser
         int m_SyntaxComponentCommentsInfoNum;
         int m_FunctionCommentsInfoNum;
     private:
-        //语法组件指针、指针数组与空闲块共用一个buffer，语法组件指针与指针数组正向增长，空闲块反向增长，这里的数据通常是字对齐的，所以不考虑与字符串和对象buffer共用
-        SyntaxComponentPtr m_SyntaxComponentPool[SyntaxComponentAndPtrArrayPoolSize];//语法组件指针数组，总数与一个dsl文件里的所有语法组件数量相当
-            //指针数组缓冲区，主要用来分配语法组件指针数组，PtrPoolSize与一个dsl文件里的所有语法组件数量相当
-        FreeLinkInfo* m_pPtrFreeLink;//低32位对应m_PtrPool的索引，高32位是下一个空闲块的索引。空闲块的数量，对dsl文件解析来说，这个值理论上应该很低，大约与（语法数组扩容的次数-新语法重用数组的次数）相当
+        //The syntax component pointer, pointer array and free block share a buffer. The syntax
+        //component pointer and pointer array grow in the forward direction, and the free block
+        //grows in the opposite direction. The data here is usually word-aligned, so it is not
+        //considered to be shared with string and object buffers.
+        SyntaxComponentPtr m_SyntaxComponentPool[SyntaxComponentAndPtrArrayPoolSize];//Array of syntax component pointers,
+            //the total number is equivalent to the number of all syntax components in a dsl file Pointer array buffer,
+            //mainly used to allocate syntax component pointer array, PtrPoolSize is equivalent to the number of all
+            //syntax components in a dsl file
+        FreeLinkInfo* m_pPtrFreeLink;//The lower 32 bits correspond to the index of m_PtrPool, and the upper 32 bits are 
+            //the index of the next free block. The number of free blocks. For DSL file parsing, this value should
+            //theoretically be very low, approximately equivalent to (the number of times the syntax array is expanded
+            //- the number of times the new syntax reuses the array)
         int m_FreeLinkNum;
     private:
-        int m_PtrFreeLinkHeader[PtrArrayPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置，这个数组的大小就是允许的各个语法组件数组的最大值，语句函数数量、参数数量、单文件DSL数量等受此限制
-        int m_FreedFreeLinkHeader;//空闲的空闲块链表的头
+        int m_PtrFreeLinkHeader[PtrArrayPoolFreeLinkHeaderSize];//The position of the free linked list head of each size
+            //indexed by the array size. The size of this array is the maximum value of each syntax component array allowed.
+            //The number of statement functions, number of parameters, number of single file DSL, etc. are limited by this.
+        int m_FreedFreeLinkHeader;//The head of the free free block list
     private:
         char m_ErrorInfo[MaxErrorInfoNum][SingleErrorInfoCapacity];
     private:

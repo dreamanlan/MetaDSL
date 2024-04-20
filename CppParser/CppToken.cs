@@ -345,7 +345,7 @@ namespace Dsl.Common
                             }
                             else if (CurChar == 'u' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)) {
                                 ++mIterator;
-                                //4bit HEX
+                                //4 digits HEX
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -358,7 +358,7 @@ namespace Dsl.Common
                             else if (CurChar == 'U' && myisdigit(NextChar, true) && myisdigit(PeekChar(2), true) && myisdigit(PeekChar(3), true)
                                 && myisdigit(PeekChar(4), true) && myisdigit(PeekChar(5), true) && myisdigit(PeekChar(6), true) && myisdigit(PeekChar(7), true)) {
                                 ++mIterator;
-                                //8bit HEX
+                                //8 digits HEX
                                 char h1 = CurChar;
                                 ++mIterator;
                                 char h2 = CurChar;
@@ -379,7 +379,7 @@ namespace Dsl.Common
                             }
                             else if (CurChar == 'x' && myisdigit(NextChar, true)) {
                                 ++mIterator;
-                                //1~2 chars HEX
+                                //1~2 digits HEX
                                 char h1 = CurChar;
                                 if (myisdigit(NextChar, true)) {
                                     ++mIterator;
@@ -393,7 +393,7 @@ namespace Dsl.Common
                                 }
                             }
                             else if (myisdigit(CurChar, false)) {
-                                //1~3 chars OCT
+                                //1~3 digits OCT
                                 char o1 = CurChar;
                                 if (myisdigit(NextChar, false)) {
                                     ++mIterator;
@@ -426,7 +426,7 @@ namespace Dsl.Common
                         ++mIterator;
                     }
                     else {
-                        mLog.Log("[error][行 {0} ]：字符串无法结束！\n", line);
+                        mLog.Log("[error][line {0} ]: String cannot be ended !\n", line);
                     }
                     mCurToken = mTokenBuilder.ToString();
                     return CppConstants.STRING_;
