@@ -1057,6 +1057,7 @@ short SlkToken::getImpl()
                         && myisdigit(peekChar(4), true) && myisdigit(peekChar(5), true) && myisdigit(peekChar(6), true) && myisdigit(peekChar(7), true)) {
                         ++mIterator;
                         //8-digits hexadecimal number
+                        char h1 = curChar();
                         ++mIterator;
                         char h2 = curChar();
                         ++mIterator;
