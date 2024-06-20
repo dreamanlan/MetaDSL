@@ -20,7 +20,7 @@ skill(kkk )
 	{: abcd :};
 	(:attr :)
 	script(ttt )
-	{:  :} 
+	{::} 
 	[:attr :]
 	script(ttt )
 	{:
@@ -94,9 +94,9 @@ int
 {
 	@ct += 2;
 	echo("@ct:"  @ct );
-	echo("inc:"  ++ @ct );
+	echo("inc\":"  ++ @ct );
 	echo("dec:"  -- @ct );
 	echo("positive:"  + @ct );
-	echo("negative:"  - @ct );
+	echo("negative:\"--"  - @ct );
 	return <- a * b + 4;
 } 

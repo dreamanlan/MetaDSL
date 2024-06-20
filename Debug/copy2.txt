@@ -24,7 +24,7 @@ skill(kkk )
 	BEGIN_SCRIPT abcd END_SCRIPT;
 	(:attr :)
 	script(ttt )
-	BEGIN_SCRIPT  END_SCRIPT 
+	BEGIN_SCRIPTEND_SCRIPT 
 	[:attr :]
 	script(ttt )
 	BEGIN_SCRIPT
@@ -98,9 +98,9 @@ int
 {
 	@ct += 2;
 	echo([[@ct:]]  @ct );
-	echo([[inc:]]  ++ @ct );
+	echo([[inc\":]]  ++ @ct );
 	echo([[dec:]]  -- @ct );
 	echo([[positive:]]  + @ct );
-	echo([[negative:]]  - @ct );
+	echo([[negative:\"--]]  - @ct );
 	return <- a * b + 4;
 } 

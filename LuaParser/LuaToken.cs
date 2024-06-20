@@ -253,7 +253,7 @@ namespace Dsl.Parser
                 if (CurChar == '"' || CurChar == '\'') {//Quoted name or keyword
                     int line = mLineNumber;
                     char c = CurChar;
-                    for (++mIterator; CurChar != 0 && CurChar != c; ++mIterator) {
+                    for (++mIterator; CurChar != 0; ++mIterator) {
                         if (CurChar == '\n') ++mLineNumber;
                         if (CurChar == '\\') {
                             ++mIterator;
@@ -351,6 +351,15 @@ namespace Dsl.Parser
                             }
                             else {
                                 mTokenBuilder.Append(CurChar);
+                            }
+                        }
+                        else if (CurChar == c) {
+                            if (NextChar == c) {
+                                mTokenBuilder.Append(CurChar);
+                                ++mIterator;
+                            }
+                            else {
+                                break;
                             }
                         }
                         else {
