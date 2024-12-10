@@ -301,78 +301,87 @@ short SlkToken::getOperatorTokenValue()const
     short val = OP_TOKEN_2_;
     if (pOperator && pOperator[0]) {
         if (pOperator[0] == '=' && pOperator[1] == '\0') {
-            val = OP_TOKEN_0_;
-        }
-        else if (pOperator[0] != '=' && pOperator[0] != '!' && pOperator[0] != '>' && pOperator[0] != '<' && pOperator[1] == '=' && pOperator[2] == '\0') {
-            val = OP_TOKEN_0_;
-        }
-        else if (pOperator[1] && pOperator[2] == '=' && pOperator[3] == '\0') {
-            val = OP_TOKEN_0_;
-        }
-        else if (pOperator[1] && pOperator[2] && pOperator[3] == '=' && pOperator[4] == '\0') {
-            val = OP_TOKEN_0_;
-        }
-        else if ((pOperator[0] == '=' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '<' && pOperator[1] == '-' && pOperator[2] == '\0')) {
             val = OP_TOKEN_1_;
         }
+        else if (pOperator[0] != '=' && pOperator[0] != '!' && pOperator[0] != '>' && pOperator[0] != '<' && pOperator[1] == '=' && pOperator[2] == '\0') {
+            val = OP_TOKEN_1_;
+        }
+        else if (pOperator[1] && pOperator[2] == '=' && pOperator[3] == '\0') {
+            val = OP_TOKEN_1_;
+        }
+        else if (pOperator[1] && pOperator[2] && pOperator[3] == '=' && pOperator[4] == '\0') {
+            val = OP_TOKEN_1_;
+        }
+        else if ((pOperator[0] == '=' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '<' && pOperator[1] == '-' && pOperator[2] == '\0')) {
+            val = OP_TOKEN_2_;
+        }
         else if (pOperator[0] == ':' && pOperator[1] == '\0') {
-            val = OP_TOKEN_COLON_;
+            if (mDslActionApi->peekPairTypeStack() == IDslSyntaxCommon::PAIR_TYPE_QUESTION_COLON)
+                val = OP_TOKEN_QUESTION_COLON_;
+            else
+                val = OP_TOKEN_COLON_;
         }
         else if (pOperator[0] == '?' && pOperator[1] == '\0') {
             val = OP_TOKEN_QUESTION_;
         }
         else if ((pOperator[0] == '|' && pOperator[1] == '|' && pOperator[2] == '\0') || (pOperator[0] == '?' && pOperator[1] == '?' && pOperator[2] == '\0')) {
-            val = OP_TOKEN_3_;
-        }
-        else if (pOperator[0] == '&' && pOperator[1] == '&' && pOperator[2] == '\0') {
             val = OP_TOKEN_4_;
         }
-        else if (pOperator[0] == '|' && pOperator[1] == '\0') {
+        else if (pOperator[0] == '&' && pOperator[1] == '&' && pOperator[2] == '\0') {
             val = OP_TOKEN_5_;
         }
-        else if (pOperator[0] == '^' && pOperator[1] == '\0') {
+        else if (pOperator[0] == '|' && pOperator[1] == '\0') {
             val = OP_TOKEN_6_;
+        }
+        else if (pOperator[0] == '^' && pOperator[1] == '\0') {
+            val = OP_TOKEN_7_;
         }
         else if (pOperator[0] == '&' && pOperator[1] == '\0') {
             if (lastIsOperator)
                 val = OP_TOKEN_14_;
             else
-                val = OP_TOKEN_7_;
+                val = OP_TOKEN_8_;
         }
         else if (((pOperator[0] == '=' || pOperator[0] == '!') && pOperator[1] == '=' && pOperator[2] == '\0') || (pOperator[0] == '<' && pOperator[1] == '=' && pOperator[2] == '>' && pOperator[3] == '\0')) {
-            val = OP_TOKEN_8_;
-        }
-        else if ((pOperator[0] == '<' || pOperator[0] == '>') && ((pOperator[1] == '=' && pOperator[2] == '\0') || pOperator[1] == '\0')) {
             val = OP_TOKEN_9_;
         }
-        else if ((pOperator[0] == '<' && pOperator[1] == '<' && pOperator[2] == '\0') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '>' && pOperator[3] == '\0')) {
+        else if ((pOperator[0] == '<' || pOperator[0] == '>') && ((pOperator[1] == '=' && pOperator[2] == '\0') || pOperator[1] == '\0')) {
             val = OP_TOKEN_10_;
+        }
+        else if ((pOperator[0] == '<' && pOperator[1] == '<' && pOperator[2] == '\0') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '>' && pOperator[1] == '>' && pOperator[2] == '>' && pOperator[3] == '\0')) {
+            val = OP_TOKEN_11_;
         }
         else if ((pOperator[0] == '+' || pOperator[0] == '-') && pOperator[1] == '\0') {
             if (lastIsOperator)
-                val = OP_TOKEN_13_;
+                val = OP_TOKEN_14_;
             else
-                val = OP_TOKEN_11_;
+                val = OP_TOKEN_12_;
         }
         else if ((pOperator[0] == '*' || pOperator[0] == '/' || pOperator[0] == '%') && pOperator[1] == '\0') {
             if (pOperator[0] == '*' && lastIsOperator)
                 val = OP_TOKEN_14_;
             else
-                val = OP_TOKEN_12_;
+                val = OP_TOKEN_13_;
         }
         else if ((pOperator[0] == '+' && pOperator[1] == '+' && pOperator[2] == '\0') || (pOperator[0] == '-' && pOperator[1] == '-' && pOperator[2] == '\0') || (pOperator[0] == '~' && pOperator[1] == '\0') || (pOperator[0] == '!' && pOperator[1] == '\0')) {
-            val = OP_TOKEN_13_;
+            val = OP_TOKEN_14_;
         }
-        else if (pOperator[0] == '`') {
-            val = OP_TOKEN_1_;
+        else if (pOperator[0] == '`' && pOperator[1] == '\0') {
+            val = OP_TOKEN_0_;
+        }
+        else if (pOperator[0] == '`' && pOperator[1] != '\0') {
+            val = OP_TOKEN_3_;
         }
         else if ((pOperator[0] == '-' && pOperator[1] == '>' && (pOperator[2] == '\0' || (pOperator[2] == '*' && pOperator[3] == '\0')))
             || (pOperator[0] == '.' && (pOperator[1] == '\0' || (pOperator[1] == '*' && pOperator[2] == '\0')))
             || (pOperator[0] == ':' && pOperator[1] == ':' && pOperator[2] == '\0')) {
-            val = OP_TOKEN_15_;
+            char* pInfo = mDslFile->NewErrorInfo();
+            if (pInfo)
+                tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[warning][line %d]: Member access operation '%s' should not appear in operators！", mLineNumber, pOperator);
+            return OP_TOKEN_15_;
         }
         else {
-            val = OP_TOKEN_2_;
+            val = OP_TOKEN_4_;
         }
     }
     return val;
@@ -610,7 +619,7 @@ short SlkToken::getImpl()
         if (curChar() == '\0') {
             char* pInfo = mDslFile->NewErrorInfo();
             if (pInfo)
-                tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:ExternScript can't finish！", line);
+                tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d]: ExternScript can't finish！", line);
         }
         endToken();
         removeFirstAndLastEmptyLine();
@@ -757,54 +766,61 @@ short SlkToken::getImpl()
         pushTokenChar(':');
         endToken();
 
-        if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+        size_t len = mLastToken ? strlen(mLastToken) : 0;
+        if (mLastToken && len > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[len - 1]) && mLastToken[len - 1] != '?' && mLastToken[len - 1] != '!' &&
+            (len != 2 || (!(mLastToken[len - 2] == ':' && mLastToken[len - 1] == '>') && !(mLastToken[len - 2] == '%' && mLastToken[len - 1] == '>'))))
             return getOperatorTokenValue();
         char nextChar = peekNextValidChar(0);
-        if (isNotIdentifierAndBeginParenthesis(nextChar)) {
+        char nextChar2 = peekNextValidChar(1);
+        char nextChar3 = peekNextValidChar(2);
+        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && isWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && isWhiteSpace(nextChar3))) {
             return getOperatorTokenValue();
         }
         return COLON_COLON_;
     }
     else if (curChar() == '?' || curChar() == '!') {
+        char cc = curChar();
         char nc = nextChar();
-        if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0])) {
+        size_t len = mLastToken ? strlen(mLastToken) : 0;
+        if (mLastToken && len > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[len - 1]) && mLastToken[len - 1] != '?' && mLastToken[len - 1] != '!' &&
+            (len != 2 || (!(mLastToken[len - 2] == ':' && mLastToken[len - 1] == '>') && !(mLastToken[len - 2] == '%' && mLastToken[len - 1] == '>')))) {
             getOperatorToken();
             return getOperatorTokenValue();
         }
         else if (mNullableSyntaxEnabled) {
             if (nc == '.') {
                 ++mIterator;
-                pushTokenChar('?');
+                pushTokenChar(cc);
                 endToken();
                 return OP_TOKEN_NULLABLE_;
             }
             else if (nc == '-' && peekChar(2) == '>') {
                 ++mIterator;
-                pushTokenChar('?');
+                pushTokenChar(cc);
                 endToken();
                 return OP_TOKEN_NULLABLE_;
             }
             else if (nc == '(') {
                 ++mIterator;
-                pushTokenChar('?');
+                pushTokenChar(cc);
                 endToken();
                 return OP_TOKEN_NULLABLE_;
             }
             else if (nc == '[') {
                 ++mIterator;
-                pushTokenChar('?');
+                pushTokenChar(cc);
                 endToken();
                 return OP_TOKEN_NULLABLE_;
             }
             else if (nc == '{') {
                 ++mIterator;
-                pushTokenChar('?');
+                pushTokenChar(cc);
                 endToken();
                 return OP_TOKEN_NULLABLE_;
             }
             else if (nc == '<' && (peekChar(2) == ':' || peekChar(2) == '%')) {
                 ++mIterator;
-                pushTokenChar('?');
+                pushTokenChar(cc);
                 endToken();
                 return OP_TOKEN_NULLABLE_;
             }
@@ -830,10 +846,14 @@ short SlkToken::getImpl()
                 pushTokenChar('*');
                 endToken();
 
-                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                size_t len = mLastToken ? strlen(mLastToken) : 0;
+                if (mLastToken && len > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[len - 1]) && mLastToken[len - 1] != '?' && mLastToken[len - 1] != '!' &&
+                    (len != 2 || (!(mLastToken[len - 2] == ':' && mLastToken[len - 1] == '>') && !(mLastToken[len - 2] == '%' && mLastToken[len - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = peekNextValidChar(0);
-                if (isNotIdentifier(nextChar)) {
+                char nextChar2 = peekNextValidChar(1);
+                char nextChar3 = peekNextValidChar(2);
+                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && isWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && isWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return POINTER_STAR_;
@@ -843,10 +863,14 @@ short SlkToken::getImpl()
                 pushTokenChar('>');
                 endToken();
 
-                if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                size_t len = mLastToken ? strlen(mLastToken) : 0;
+                if (mLastToken && len > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[len - 1]) && mLastToken[len - 1] != '?' && mLastToken[len - 1] != '!' &&
+                    (len != 2 || (!(mLastToken[len - 2] == ':' && mLastToken[len - 1] == '>') && !(mLastToken[len - 2] == '%' && mLastToken[len - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = peekNextValidChar(0);
-                if (isNotIdentifier(nextChar)) {
+                char nextChar2 = peekNextValidChar(1);
+                char nextChar3 = peekNextValidChar(2);
+                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && isWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && isWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return POINTER_;
@@ -856,6 +880,25 @@ short SlkToken::getImpl()
             getOperatorToken();
             return getOperatorTokenValue();
         }
+    }
+    else if (curChar() == '.' && nextChar() == '*') {
+        ++mIterator;
+        ++mIterator;
+        pushTokenChar('.');
+        pushTokenChar('*');
+        endToken();
+
+        size_t len = mLastToken ? strlen(mLastToken) : 0;
+        if (mLastToken && len > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[len - 1]) && mLastToken[len - 1] != '?' && mLastToken[len - 1] != '!' &&
+            (len != 2 || (!(mLastToken[len - 2] == ':' && mLastToken[len - 1] == '>') && !(mLastToken[len - 2] == '%' && mLastToken[len - 1] == '>'))))
+            return getOperatorTokenValue();
+        char nextChar = peekNextValidChar(0);
+        char nextChar2 = peekNextValidChar(1);
+        char nextChar3 = peekNextValidChar(2);
+        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && isWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && isWhiteSpace(nextChar3))) {
+            return getOperatorTokenValue();
+        }
+        return PERIOD_STAR_;
     }
     else if (curChar() == '.' && nextChar() == '.') {
         char c = curChar();
@@ -879,36 +922,23 @@ short SlkToken::getImpl()
         return getOperatorTokenValue();
     }
     else if (curChar() == '.' && 0 == myisdigit(nextChar(), FALSE)) {
-        if (nextChar() == '*') {
-            ++mIterator;
-            ++mIterator;
-            pushTokenChar('.');
-            pushTokenChar('*');
-            endToken();
+        char c = curChar();
+        ++mIterator;
 
-            if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
-                return getOperatorTokenValue();
-            char nextChar = peekNextValidChar(0);
-            if (isNotIdentifier(nextChar)) {
-                return getOperatorTokenValue();
-            }
-            return PERIOD_STAR_;
+        pushTokenChar(c);
+        endToken();
+
+        size_t len = mLastToken ? strlen(mLastToken) : 0;
+        if (mLastToken && len > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[len - 1]) && mLastToken[len - 1] != '?' && mLastToken[len - 1] != '!' &&
+            (len != 2 || (!(mLastToken[len - 2] == ':' && mLastToken[len - 1] == '>') && !(mLastToken[len - 2] == '%' && mLastToken[len - 1] == '>'))))
+            return getOperatorTokenValue();
+        char nextChar = peekNextValidChar(0);
+        char nextChar2 = peekNextValidChar(1);
+        char nextChar3 = peekNextValidChar(2);
+        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && isWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && isWhiteSpace(nextChar3))) {
+            return getOperatorTokenValue();
         }
-        else {
-            char c = curChar();
-            ++mIterator;
-
-            pushTokenChar(c);
-            endToken();
-
-            if (mLastToken && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
-                return getOperatorTokenValue();
-            char nextChar = peekNextValidChar(0);
-            if (isNotIdentifierAndBeginParenthesis(nextChar)) {
-                return getOperatorTokenValue();
-            }
-            return DOT_;
-        }
+        return DOT_;
     }
     else if (curChar() == '(') {
         ++mIterator;
@@ -993,7 +1023,7 @@ short SlkToken::getImpl()
         else {
             char* pInfo = mDslFile->NewErrorInfo();
             if (pInfo)
-                tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
+                tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d]: String can't finish！", line);
         }
         endToken();
         /*Ordinary strings keep the appearance of the source code without removing the leading and trailing blank lines.
@@ -1139,7 +1169,7 @@ short SlkToken::getImpl()
                     else {
                         char* pInfo = mDslFile->NewErrorInfo();
                         if (pInfo)
-                            tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
+                            tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d]: String can't finish！", line);
                         endTokenWithEof();
                         return END_OF_SLK_INPUT_;
                     }
@@ -1151,7 +1181,7 @@ short SlkToken::getImpl()
             else {
                 char* pInfo = mDslFile->NewErrorInfo();
                 if (pInfo)
-                    tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:String can't finish！", line);
+                    tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d]: String can't finish！", line);
             }
             endToken();
             /*Ordinary strings keep the appearance of the source code without removing the leading and trailing blank lines.
@@ -1323,7 +1353,7 @@ void SlkToken::getBlockString(const char* delimiter, int len)
     if (!pFind) {
         char* pInfo = mDslFile->NewErrorInfo();
         if (pInfo)
-            tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d ]:Block can't finish, delimiter: %s！", mLineNumber, delimiter);
+            tsnprintf(pInfo, mDslFile->GetSingleErrorInfoCapacity(), "[line %d]: Block can't finish, delimiter: %s！", mLineNumber, delimiter);
         endToken();
         return;
     }

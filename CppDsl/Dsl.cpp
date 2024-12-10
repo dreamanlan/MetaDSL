@@ -37,6 +37,7 @@ namespace Dsl
     {
         CopyFirstLastComments(src, dest);
         dest.SetLine(src.GetLine());
+        dest.SetSeparator(src.GetSeparator());
         if (!src.IsValid()) {
             dest.SetInvalid();
         }
@@ -63,6 +64,7 @@ namespace Dsl
         CopyFunctionComments(src, dest);
         TransformValue(src.GetName(), dest.GetName());
         dest.SetParamClass(src.GetParamClass());
+        dest.SetSeparator(src.GetSeparator());
         for (int ix = 0; ix < src.GetParamNum(); ++ix) {
             auto& param = *src.GetParam(ix);
             switch (param.GetSyntaxType()) {
@@ -87,6 +89,7 @@ namespace Dsl
     static void TransformStatement(const DslParser::StatementData& src, DslData::StatementData& dest)
     {
         CopyFirstLastComments(src, dest);
+        dest.SetSeparator(src.GetSeparator());
         for (int ix = 0; ix < src.GetFunctionNum(); ++ix) {
             auto& func = *src.GetFunction(ix);
             if (func.IsValue()) {

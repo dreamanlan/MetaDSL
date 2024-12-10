@@ -9,9 +9,10 @@ public static string[] name = {
 
  "OP_TOKEN_0"
 ,"OP_TOKEN_1"
+,"OP_TOKEN_QUESTION"
+,"OP_TOKEN_QUESTION_COLON"
 ,"OP_TOKEN_2"
 ,"OP_TOKEN_COLON"
-,"OP_TOKEN_QUESTION"
 ,"OP_TOKEN_3"
 ,"OP_TOKEN_4"
 ,"OP_TOKEN_5"
@@ -54,9 +55,10 @@ public  short[] token = {
 
  DslConstants.OP_TOKEN_0_ 
 ,DslConstants.OP_TOKEN_1_ 
+,DslConstants.OP_TOKEN_QUESTION_ 
+,DslConstants.OP_TOKEN_QUESTION_COLON_ 
 ,DslConstants.OP_TOKEN_2_ 
 ,DslConstants.OP_TOKEN_COLON_ 
-,DslConstants.OP_TOKEN_QUESTION_ 
 ,DslConstants.OP_TOKEN_3_ 
 ,DslConstants.OP_TOKEN_4_ 
 ,DslConstants.OP_TOKEN_5_ 

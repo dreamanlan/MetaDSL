@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using Dsl.Parser;
 
@@ -146,7 +147,7 @@ namespace Dsl.Common
                     }
                 }
                 if (CurChar == 0) {
-                    mLog.Log("[error][行 {0} ]：ExternScript can't finish！\n", line);
+                    mLog.Log("[error][line {0}]: ExternScript can't finish! \n", line);
                 }
                 mCurToken = mTokenBuilder.ToString();
                 mCurToken = removeFirstAndLastEmptyLine(mCurToken);
@@ -255,42 +256,53 @@ namespace Dsl.Common
                 ++mIterator;
                 mCurToken = "::";
 
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                    (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
-                if (isNotIdentifierAndBeginParenthesis(nextChar)) {
+                char nextChar2 = PeekNextValidChar(1);
+                char nextChar3 = PeekNextValidChar(2);
+                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.COLON_COLON_;
             }
             else if (CurChar == '?' || CurChar == '!') {
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0])) {
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                    (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>')))) {
                     getOperatorToken();
                     return getOperatorTokenValue();
                 }
                 else if (mNullableSyntaxEnabled) {
+                    string tok = (CurChar == '?' ? "?" : "!");
                     if (NextChar == '.') {
                         ++mIterator;
+                        mCurToken = tok;
                         return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else if (NextChar == '-' && PeekChar(2) == '>') {
                         ++mIterator;
+                        mCurToken = tok;
                         return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else if (NextChar == '(') {
                         ++mIterator;
+                        mCurToken = tok;
                         return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else if (NextChar == '[') {
                         ++mIterator;
+                        mCurToken = tok;
                         return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else if (NextChar == '{') {
                         ++mIterator;
+                        mCurToken = tok;
                         return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else if (NextChar == '<' && (PeekChar(2) == ':' || PeekChar(2) == '%')) {
                         ++mIterator;
+                        mCurToken = tok;
                         return DslConstants.OP_TOKEN_NULLABLE_;
                     }
                     else {
@@ -307,14 +319,17 @@ namespace Dsl.Common
                 if (NextChar == '>') {
                     ++mIterator;
                     ++mIterator;
-                    if (NextChar == '*') {
+                    if (CurChar == '*') {
                         ++mIterator;
                         mCurToken = "->*";
 
-                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                            (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                             return getOperatorTokenValue();
                         char nextChar = PeekNextValidChar(0);
-                        if (isNotIdentifier(nextChar)) {
+                        char nextChar2 = PeekNextValidChar(1);
+                        char nextChar3 = PeekNextValidChar(2);
+                        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                             return getOperatorTokenValue();
                         }
                         return DslConstants.POINTER_STAR_;
@@ -322,11 +337,13 @@ namespace Dsl.Common
                     else {
                         mCurToken = "->";
 
-                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                            (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                             return getOperatorTokenValue();
                         char nextChar = PeekNextValidChar(0);
-                        if (isNotIdentifier(nextChar)) {
-                            getOperatorToken();
+                        char nextChar2 = PeekNextValidChar(1);
+                        char nextChar3 = PeekNextValidChar(2);
+                        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                             return getOperatorTokenValue();
                         }
                         return DslConstants.POINTER_;
@@ -342,10 +359,13 @@ namespace Dsl.Common
                 ++mIterator;
                 mCurToken = ".*";
 
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                    (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
-                if (isNotIdentifier(nextChar)) {
+                char nextChar2 = PeekNextValidChar(1);
+                char nextChar3 = PeekNextValidChar(2);
+                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.PERIOD_STAR_;
@@ -374,10 +394,13 @@ namespace Dsl.Common
                 mTokenBuilder.Append(c);
                 mCurToken = mTokenBuilder.ToString();
 
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[0]))
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                    (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
-                if (isNotIdentifierAndBeginParenthesis(nextChar)) {
+                char nextChar2 = PeekNextValidChar(1);
+                char nextChar3 = PeekNextValidChar(2);
+                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.DOT_;
@@ -455,7 +478,7 @@ namespace Dsl.Common
                     ++mIterator;
                 }
                 else {
-                    mLog.Log("[error][line {0} ]: String cannot be ended !\n", line);
+                    mLog.Log("[error][line {0}]: String cannot be ended !\n", line);
                 }
                 mCurToken = mTokenBuilder.ToString();
                 /*Ordinary strings keep the appearance of the source code without removing the leading and trailing blank lines.
@@ -594,7 +617,7 @@ namespace Dsl.Common
                         ++mIterator;
                     }
                     else {
-                        mLog.Log("[error][line {0} ]：string can't end !\n", line);
+                        mLog.Log("[error][line {0}]: string can't end !\n", line);
                     }
                     mCurToken = mTokenBuilder.ToString();
                     /*Ordinary strings should maintain their appearance in the source code, without removing leading or trailing blank lines.
@@ -800,7 +823,7 @@ namespace Dsl.Common
             int start = mIterator;
             int end = mInput.IndexOf(delimiter, start);
             if (end < 0) {
-                mLog.Log("[error][行 {0} ]：block can't finish, delimiter: {1}！\n", mLineNumber, delimiter);
+                mLog.Log("[error][line {0}]: block can't finish, delimiter: {1}！\n", mLineNumber, delimiter);
                 return string.Empty;
             }
             mIterator = end + delimiter.Length;
@@ -1004,79 +1027,83 @@ namespace Dsl.Common
                 if (curOperator.Length > 4)
                     c4 = curOperator[4];
                 if (c0 == '=' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c0 != '=' && c0 != '!' && c0 != '>' && c0 != '<' && c1 == '=' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c2 == '=' && c3 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c3 == '=' && c4 == '\0') {
-                    val = DslConstants.OP_TOKEN_0_;
-                }
-                else if (c0 == '=' && c1 == '>' && c2 == '\0' || c0 == '<' && c1 == '-' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_1_;
                 }
+                else if (c0 != '=' && c0 != '!' && c0 != '>' && c0 != '<' && c1 == '=' && c2 == '\0') {
+                    val = DslConstants.OP_TOKEN_1_;
+                }
+                else if (c2 == '=' && c3 == '\0') {
+                    val = DslConstants.OP_TOKEN_1_;
+                }
+                else if (c3 == '=' && c4 == '\0') {
+                    val = DslConstants.OP_TOKEN_1_;
+                }
+                else if (c0 == '=' && c1 == '>' && c2 == '\0' || c0 == '<' && c1 == '-' && c2 == '\0') {
+                    val = DslConstants.OP_TOKEN_2_;
+                }
                 else if (c0 == ':' && c1 == '\0') {
-                    val = DslConstants.OP_TOKEN_COLON_;
+                     val = DslConstants.OP_TOKEN_COLON_;
                 }
                 else if (c0 == '?' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_QUESTION_;
                 }
                 else if (c0 == '|' && c1 == '|' && c2 == '\0' || c0 == '?' && c1 == '?' && c2 == '\0') {
-                    val = DslConstants.OP_TOKEN_3_;
-                }
-                else if (c0 == '&' && c1 == '&' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_4_;
                 }
-                else if (c0 == '|' && c1 == '\0') {
+                else if (c0 == '&' && c1 == '&' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_5_;
                 }
-                else if (c0 == '^' && c1 == '\0') {
+                else if (c0 == '|' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_6_;
+                }
+                else if (c0 == '^' && c1 == '\0') {
+                    val = DslConstants.OP_TOKEN_7_;
                 }
                 else if (c0 == '&' && c1 == '\0') {
                     if (lastIsOperator)
                         val = DslConstants.OP_TOKEN_14_;
                     else
-                        val = DslConstants.OP_TOKEN_7_;
+                        val = DslConstants.OP_TOKEN_8_;
                 }
                 else if ((c0 == '=' || c0 == '!') && c1 == '=' && c2 == '\0' || c0 == '<' && c1 == '=' && c2 == '>' && c3 == '\0') {
-                    val = DslConstants.OP_TOKEN_8_;
-                }
-                else if ((c0 == '<' || c0 == '>') && (c1 == '=' && c2 == '\0' || c1 == 0)) {
                     val = DslConstants.OP_TOKEN_9_;
                 }
-                else if ((c0 == '<' && c1 == '<' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '>' && c3 == '\0')) {
+                else if ((c0 == '<' || c0 == '>') && (c1 == '=' && c2 == '\0' || c1 == 0)) {
                     val = DslConstants.OP_TOKEN_10_;
+                }
+                else if ((c0 == '<' && c1 == '<' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '\0') || (c0 == '>' && c1 == '>' && c2 == '>' && c3 == '\0')) {
+                    val = DslConstants.OP_TOKEN_11_;
                 }
                 else if ((c0 == '+' || c0 == '-') && c1 == '\0') {
                     if (lastIsOperator)
-                        val = DslConstants.OP_TOKEN_13_;
+                        val = DslConstants.OP_TOKEN_14_;
                     else
-                        val = DslConstants.OP_TOKEN_11_;
+                        val = DslConstants.OP_TOKEN_12_;
                 }
                 else if ((c0 == '*' || c0 == '/' || c0 == '%') && c1 == '\0' || c0 == '.' && c1 == '.' && c2 == '\0') {
                     if (c0 == '*' && lastIsOperator)
                         val = DslConstants.OP_TOKEN_14_;
                     else
-                        val = DslConstants.OP_TOKEN_12_;
+                        val = DslConstants.OP_TOKEN_13_;
                 }
                 else if ((c0 == '+' && c1 == '+' && c2 == '\0') || (c0 == '-' && c1 == '-' && c2 == '\0') || (c0 == '~' && c1 == '\0') || (c0 == '!' && c1 == '\0')) {
-                    val = DslConstants.OP_TOKEN_13_;
+                    val = DslConstants.OP_TOKEN_14_;
                 }
-                else if (c0 == '`') {
-                    val = DslConstants.OP_TOKEN_1_;
+                else if (c0 == '`' && c1 == '\0') {
+                    val = DslConstants.OP_TOKEN_0_;
+                }
+                else if (c0 == '`' && c1 != '\0') {
+                    val = DslConstants.OP_TOKEN_3_;
                 }
                 else if (c0 == '-' && c1 == '>' && (c2 == '\0' || c2 == '*' && c3 == '\0') || 
                     c0 == '.' && (c1 == '\0' || c1 == '*' && c2 == '\0') || 
                     (c0 == ':' && c1 == ':' && c2 == '\0')
                     ) {
+                    mLog.Log("[warning][line {0}]: Member access operation '{1}' should not appear in operators", mLineNumber, mCurToken);
                     val = DslConstants.OP_TOKEN_15_;
                 }
                 else {
-                    val = DslConstants.OP_TOKEN_2_;
+                    val = DslConstants.OP_TOKEN_3_;
                 }
             }
             return val;

@@ -25,12 +25,12 @@ namespace DslParser
         inline void    markSeparator();
         inline void    endStatement();
         inline void    buildOperator();
-        inline void    buildNullableOperator();
         inline void    buildFirstTernaryOperator();
         inline void    buildSecondTernaryOperator();
         inline void    beginStatement();
         inline void    addFunction();
         inline void    setFunctionId();
+        inline void    buildNullableOperator();
         inline void    markParenthesisParam();
         inline void    buildHighOrderFunction();
         inline void    markBracketParam();
@@ -49,6 +49,10 @@ namespace DslParser
         inline void    markPointerParam();
         inline void    markPeriodStarParam();
         inline void    markPointerStarParam();
+    public:
+        inline int     peekPairTypeStack()const;
+        inline int     getPairTypeStackSize()const;
+        inline int     peekPairTypeStack(int ix)const;
     public:
         RuntimeBuilderData& getRuntimeBuilderData() { return mData; }
         const RuntimeBuilderData& getRuntimeBuilderData()const { return mData; }

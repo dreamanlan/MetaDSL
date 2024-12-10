@@ -98,69 +98,6 @@ namespace DslParser
         }
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::buildNullableOperator()
-    {
-        if (!preconditionCheck())return;
-        RuntimeBuilderData::TokenInfo tokenInfo = mData.pop();
-        if (TRUE != tokenInfo.IsValid())return;
-
-        if (mDataFile->IsDebugInfoEnable()) {
-            PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op:%s\n", tokenInfo.mString);
-        }
-
-        StatementData* pArg = mData.getCurStatement();
-        if (0 == pArg)
-            return;
-        if (!mDataFile->OnBeforeBuildOperator.isNull()) {
-            mDataFile->OnBeforeBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_NULLABLE, tokenInfo.mString, pArg);
-        }
-        pArg = mData.popStatement();
-        if (0 == pArg)
-            return;
-        if (!mDataFile->OnBuildOperator.isNull()) {
-            mDataFile->OnBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_NULLABLE, tokenInfo.mString, pArg);
-            if (0 == pArg)
-                return;
-        }
-
-        ISyntaxComponent& argComp = simplifyStatement(*pArg);
-
-        StatementData* pStatement = mDataFile->AddNewStatementComponent();
-        if (0 == pStatement)
-            return;
-
-        pStatement->CopyFirstComments(argComp);
-        argComp.ClearFirstComments();
-
-        mData.pushStatement(pStatement);
-
-        FunctionData* p = mDataFile->AddNewFunctionComponent();
-        if (0 != p) {
-            FunctionData& call = *p;
-            if (0 != tokenInfo.mString && tokenInfo.mString[0] == '`') {
-                call.SetParamClass(FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData::PARAM_CLASS_OPERATOR);
-
-                ValueData v = call.GetName();
-                ValueData op(tokenInfo.mString + 1, ValueData::VALUE_TYPE_IDENTIFIER);
-                op.SetLine(mThis->getLastLineNumber());
-                call.SetName(op);
-            }
-            else {
-                call.SetParamClass(FunctionData::PARAM_CLASS_NULLABLE_OPERATOR);
-
-                ValueData v = call.GetName();
-                ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
-                op.SetLine(mThis->getLastLineNumber());
-                call.SetName(op);
-            }
-            if (argComp.IsValid()) {
-                call.AddParam(&argComp);
-            }
-
-            pStatement->AddFunction(p);
-        }
-    }
-    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildFirstTernaryOperator()
     {
         if (!preconditionCheck())return;
@@ -195,6 +132,7 @@ namespace DslParser
         argComp.ClearFirstComments();
 
         mData.pushStatement(pStatement);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_QUESTION_COLON);
 
         FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
@@ -231,6 +169,9 @@ namespace DslParser
                 mDataFile->OnBeforeBuildOperator(mApi, IDslSyntaxCommon::OPERATOR_CATEGORY_TERNARY, tokenInfo.mString, statement);
                 statement = mData.getCurStatement();
             }
+
+            mData.popPairType();
+
             if (0 != statement) {
                 FunctionData* p = mDataFile->AddNewFunctionComponent();
                 if (0 != p) {
@@ -326,6 +267,25 @@ namespace DslParser
         StatementData* statement = mData.popStatement();
         if (0 == statement)
             return;
+
+        auto&& lastFunc = statement->GetLast()->AsFunction();
+        if (nullptr != lastFunc) {
+            switch (lastFunc->GetParamClassUnmasked()) {
+            case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS:
+            case IDslSyntaxCommon::PARAM_CLASS_BRACKET:
+            case IDslSyntaxCommon::PARAM_CLASS_STATEMENT:
+            case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_COLON:
+            case IDslSyntaxCommon::PARAM_CLASS_BRACKET_COLON:
+            case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_COLON:
+            case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_PERCENT:
+            case IDslSyntaxCommon::PARAM_CLASS_BRACKET_PERCENT:
+            case IDslSyntaxCommon::PARAM_CLASS_BRACE_PERCENT:
+            case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                mData.getPairTypeStack().PopBack();
+                break;
+            }
+        }
+
         if (!mDataFile->OnEndStatement.isNull()) {
             mDataFile->OnEndStatement(mApi, statement);
             if (0 == statement)
@@ -562,6 +522,50 @@ namespace DslParser
         }
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::buildNullableOperator()
+    {
+        if (!preconditionCheck())return;
+        RuntimeBuilderData::TokenInfo tokenInfo = mData.pop();
+        if (TRUE != tokenInfo.IsValid())return;
+
+        if (mDataFile->IsDebugInfoEnable()) {
+            PRINT_FUNCTION_SCRIPT_DEBUG_INFO("op:%s\n", tokenInfo.mString);
+        }
+
+        if (!preconditionCheck())return;
+        //Higher-order function construction (the current function returns a function)
+        FunctionData* p = mData.getLastFunction();
+        if (0 == p)
+            return;
+        if (tokenInfo.mString[0] == '?')
+            p->SetParamClass(IDslSyntaxCommon::PARAM_CLASS_QUESTION_NULLABLE_OPERATOR);
+        else
+            p->SetParamClass(IDslSyntaxCommon::PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR);
+
+        if (!mDataFile->OnBeforeBuildHighOrder.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm)
+                return;
+            mDataFile->OnBeforeBuildHighOrder(mApi, pStm, p);
+            p = mData.getLastFunction();
+            if (0 == p)
+                return;
+        }
+        FunctionData* newP = mDataFile->AddNewFunctionComponent();
+        if (0 != newP) {
+            ValueData val(p);
+            val.SetLine(p->GetLine());
+            newP->SetName(val);
+            mData.setLastFunction(newP);
+        }
+        if (!mDataFile->OnBuildHighOrder.isNull()) {
+            StatementData* pStm = mData.getCurStatement();
+            if (0 == pStm || 0 == newP)
+                return;
+            mDataFile->OnBuildHighOrder(mApi, pStm, newP);
+        }
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::buildHighOrderFunction()
     {
         if (!preconditionCheck())return;
@@ -602,6 +606,7 @@ namespace DslParser
         FunctionData& call = *p;
 
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketParam()
@@ -613,6 +618,7 @@ namespace DslParser
         FunctionData& call = *p;
 
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodParam()
@@ -649,6 +655,7 @@ namespace DslParser
         mThis->resetComments();
 
         p->SetParamClass(FunctionData::PARAM_CLASS_STATEMENT);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markExternScript()
@@ -685,6 +692,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_COLON);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_COLON);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisColonParam()
@@ -695,6 +703,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_COLON);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_COLON);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markAngleBracketColonParam()
@@ -705,6 +714,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_COLON);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracePercentParam()
@@ -715,6 +725,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACE_PERCENT);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE_PERCENT);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketPercentParam()
@@ -725,6 +736,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_PERCENT);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_PERCENT);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParam()
@@ -735,6 +747,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_PERCENT);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_PERCENT);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markAngleBracketPercentParam()
@@ -745,6 +758,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_PERCENT);
+        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_PERCENT);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markColonColonParam()
@@ -896,6 +910,26 @@ namespace DslParser
                 data.RemoveLastParam();
             }
         }
+    }
+    template<class RealTypeT> inline
+        int RuntimeBuilderT<RealTypeT>::peekPairTypeStack()const
+    {
+        return mData.peekPairType();
+    }
+    template<class RealTypeT> inline
+        int RuntimeBuilderT<RealTypeT>::getPairTypeStackSize()const
+    {
+        return mData.getPairTypeStack().Size();
+    }
+    template<class RealTypeT> inline
+        int RuntimeBuilderT<RealTypeT>::peekPairTypeStack(int ix)const
+    {
+        auto&& stack = mData.getPairTypeStack();
+        int id = stack.BackID();
+        for (int i = 0; i < ix; ++i) {
+            id = stack.PrevID(id);
+        }
+        return stack[id];
     }
 }
 //--------------------------------------------------------------------------------------

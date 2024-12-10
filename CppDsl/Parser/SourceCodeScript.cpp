@@ -153,10 +153,10 @@ inline void ActionForSourceCodeScript::initialize_table()
     Action[4] = &ActionForSourceCodeScript::buildOperator;
     Action[5] = &ActionForSourceCodeScript::buildFirstTernaryOperator;
     Action[6] = &ActionForSourceCodeScript::buildSecondTernaryOperator;
-    Action[7] = &ActionForSourceCodeScript::buildNullableOperator;
-    Action[8] = &ActionForSourceCodeScript::beginStatement;
-    Action[9] = &ActionForSourceCodeScript::addFunction;
-    Action[10] = &ActionForSourceCodeScript::setFunctionId;
+    Action[7] = &ActionForSourceCodeScript::beginStatement;
+    Action[8] = &ActionForSourceCodeScript::addFunction;
+    Action[9] = &ActionForSourceCodeScript::setFunctionId;
+    Action[10] = &ActionForSourceCodeScript::buildNullableOperator;
     Action[11] = &ActionForSourceCodeScript::markParenthesisParam;
     Action[12] = &ActionForSourceCodeScript::buildHighOrderFunction;
     Action[13] = &ActionForSourceCodeScript::markBracketParam;
@@ -534,6 +534,24 @@ namespace DslParser
         if (!m_Impl)
             return;
         m_Impl->getRuntimeBuilderData().setLastFunction(p);
+    }
+    int DslActionApi::peekPairTypeStack()const
+    {
+        if (!m_Impl)
+            return IDslSyntaxCommon::PAIR_TYPE_NONE;
+        return m_Impl->peekPairTypeStack();
+    }
+    int DslActionApi::getPairTypeStackSize()const
+    {
+        if (!m_Impl)
+            return 0;
+        return m_Impl->getPairTypeStackSize();
+    }
+    int DslActionApi::peekPairTypeStack(int ix)const
+    {
+        if (!m_Impl)
+            return IDslSyntaxCommon::PAIR_TYPE_NONE;
+        return m_Impl->peekPairTypeStack(ix);
     }
     //------------------------------------------------------------------------------------------------------
     bool Mac2Unix(char* buf, int len)

@@ -46,15 +46,15 @@ skill(kkk )
 	[%abcd %];
 	(%abcd %);
 	<%abcd %>;
-	a -> 
+	a->
 	{
-	};
-	a -> [];
-	a -> ();
+	} ;
+	a->[] ;
+	a->() ;
 	a->*b ;
 	a->func ();
-	a? .* p();
-	a? . b;
+	a?.*p ();
+	a?.b ;
 	a.b ;
 	a.*p ();
 };	//test test test

@@ -440,21 +440,6 @@ namespace DslFileReadWrite
                 WriteComponent(fp, component0, indent, TRUE, FALSE, delim);
             }
         }
-        else if (data.IsNullableOperatorParamClass()) {
-            WriteIndent(fp, firstLineNoIndent ? 0 : indent);
-            auto& component0 = *data.GetParam(0);
-            WriteComponent(fp, component0, indent, TRUE, FALSE, delim);
-            if (data.IsHighOrder() && nullptr != name.GetFunction()) {
-                auto& call = *name.GetFunction();
-                call.WriteToFile(fp, indent, TRUE, FALSE, delim);
-            }
-            else {
-                if (data.HaveParamClassInfixFlag()) {
-                    fwrite("`", 1, 1, fp);
-                }
-                name.WriteToFile(fp, indent, TRUE, FALSE, delim);
-            }
-        }
         else {
             if (data.IsHighOrder() && nullptr != name.GetFunction()) {
                 auto& lowerOrderFunction = *name.GetFunction();
@@ -466,7 +451,13 @@ namespace DslFileReadWrite
             else {
                 WriteIndent(fp, firstLineNoIndent ? 0 : indent);
             }
-            if (data.HaveStatement() || data.HaveExternScript()) {
+            if (data.IsQuestionNullableOperatorParamClass()) {
+                fwrite("?", 1, 1, fp);
+            }
+            else if (data.IsExclamationNullableOperatorParamClass()) {
+                fwrite("!", 1, 1, fp);
+            }
+            else if (data.HaveStatement() || data.HaveExternScript()) {
                 if (data.IsHighOrder()) {
                     auto& lowerOrderFunction = *name.GetFunction();
                     lowerOrderFunction.WriteLastCommentsToFile(fp, indent, FALSE);

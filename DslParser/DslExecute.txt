@@ -12,10 +12,10 @@ public void execute  ( int  number )
     case 4:  buildOperator();  break;
     case 5:  buildFirstTernaryOperator();  break;
     case 6:  buildSecondTernaryOperator();  break;
-    case 7:  buildNullableOperator();  break;
-    case 8:  beginStatement();  break;
-    case 9:  addFunction();  break;
-    case 10:  setFunctionId();  break;
+    case 7:  beginStatement();  break;
+    case 8:  addFunction();  break;
+    case 9:  setFunctionId();  break;
+    case 10:  buildNullableOperator();  break;
     case 11:  markParenthesisParam();  break;
     case 12:  buildHighOrderFunction();  break;
     case 13:  markBracketParam();  break;

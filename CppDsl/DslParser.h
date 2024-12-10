@@ -592,9 +592,13 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_OPERATOR;
         }
-        void SetNullableOperatorParamClass()
+        void SetQuestionNullableOperatorParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_NULLABLE_OPERATOR;
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_NULLABLE_OPERATOR;
+        }
+        void SetExclamationNullableOperatorParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR;
         }
         void SetTernaryOperatorParamClass()
         {
@@ -661,10 +665,15 @@ namespace DslParser
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_OPERATOR ? TRUE : FALSE;
         }
-        int IsNullableOperatorParamClass()const
+        int IsQuestionNullableOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_NULLABLE_OPERATOR ? TRUE : FALSE;
+            return paramClass == (int)PARAM_CLASS_QUESTION_NULLABLE_OPERATOR ? TRUE : FALSE;
+        }
+        int IsExclamationNullableOperatorParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR ? TRUE : FALSE;
         }
         int IsTernaryOperatorParamClass()const
         {
@@ -1522,6 +1531,9 @@ namespace DslParser
         StatementData* getCurStatement()const;
         FunctionData* getLastFunction()const;
         void setLastFunction(FunctionData* p)const;
+        int peekPairTypeStack()const;
+        int getPairTypeStackSize()const;
+        int peekPairTypeStack(int ix)const;
     public:
         inline DslActionApi() :m_Impl(0) {}
         inline void SetImpl(ActionForSourceCodeScript* p) { m_Impl = p; }

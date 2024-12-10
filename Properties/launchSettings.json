@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Dsl": {
+      "commandName": "Project",
+      "workingDirectory": "F:\\GitHub\\MetaDSL\\bin\\Debug\\net6.0"
+    }
+  }
+}

@@ -429,8 +429,9 @@ namespace Dsl
             PARAM_CLASS_PERIOD_STAR,
             PARAM_CLASS_POINTER_STAR,
             PARAM_CLASS_OPERATOR,
-            PARAM_CLASS_NULLABLE_OPERATOR,
             PARAM_CLASS_TERNARY_OPERATOR,
+            PARAM_CLASS_QUESTION_NULLABLE_OPERATOR,
+            PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR,
             PARAM_CLASS_MAX,
             PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x20,
             PARAM_CLASS_UNMASK = 0x1F,
@@ -646,9 +647,13 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_OPERATOR;
         }
-        public void SetNullableOperatorParamClass()
+        public void SetQuestionNullableOperatorParamClass()
         {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_NULLABLE_OPERATOR;
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_QUESTION_NULLABLE_OPERATOR;
+        }
+        public void SetExclamationNullableOperatorParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR;
         }
         public void SetTernaryOperatorParamClass()
         {
@@ -715,10 +720,15 @@ namespace Dsl
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_OPERATOR;
         }
-        public bool IsNullableOperatorParamClass()
+        public bool IsQuestionNullableOperatorParamClass()
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_NULLABLE_OPERATOR;
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_QUESTION_NULLABLE_OPERATOR;
+        }
+        public bool IsExclamationNullableOperatorParamClass()
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR;
         }
         public bool IsTernaryOperatorParamClass()
         {
@@ -2226,7 +2236,13 @@ namespace Dsl
                     else {
                         writeText(stream, string.Empty, firstLineNoIndent ? 0 : indent);
                     }
-                    if (data.HaveStatement() || data.HaveExternScript()) {
+                    if (data.IsQuestionNullableOperatorParamClass()) {
+                        writeText(stream, "?", 0);
+                    }
+                    else if (data.IsExclamationNullableOperatorParamClass()) {
+                        writeText(stream, "!", 0);
+                    }
+                    else if (data.HaveStatement() || data.HaveExternScript()) {
                         if (data.IsHighOrder) {
                             writeLastComments(stream, data.LowerOrderFunction, indent, false);
                         }
@@ -2518,8 +2534,11 @@ namespace Dsl
                             return line;
                     }
                 }
-                else if (data.IsNullableOperatorParamClass()) {
-                    return string.Format("{0}{1}", data.GetParam(0).ToScriptString(includeComment), line);
+                else if (data.IsQuestionNullableOperatorParamClass()) {
+                    return string.Format("{0}{1}?", data.GetParam(0).ToScriptString(includeComment), line);
+                }
+                else if (data.IsExclamationNullableOperatorParamClass()) {
+                    return string.Format("{0}{1}!", data.GetParam(0).ToScriptString(includeComment), line);
                 }
                 else {
                     string lbracket = string.Empty;

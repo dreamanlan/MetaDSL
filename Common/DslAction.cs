@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Dsl.Common
@@ -16,8 +17,23 @@ namespace Dsl.Common
     public enum OperatorCategoryEnum
     {
         NormalOperator = 0,
-        NullableOperator,
         TernaryOperator,
+        MaxNum
+    }
+    public enum PairTypeEnum
+    {
+        None = -1,
+        QuestionColon = 0,
+        Parenthesis,
+        Bracket,
+        Brace,
+        BracketColon,
+        ParenthesisColon,
+        AngleBracketColon,
+        BracePercent,
+        BracketPercent,
+        ParenthesisPercent,
+        AngleBracketPercent,
         MaxNum
     }
     public delegate bool TokenCanEatCharDelegation(StringBuilder tokenBuilder, char c);
@@ -68,6 +84,7 @@ namespace Dsl.Common
 
             mSemanticStack = new Stack<SemanticInfo>();
             mStatementSemanticStack = new Stack<StatementData>();
+            mPairTypeStack = new Stack<PairTypeEnum>();
 
             mGetLastToken = null;
             mGetLastLineNumber = null;
@@ -205,10 +222,10 @@ namespace Dsl.Common
                 case 4: buildOperator(); break;
                 case 5: buildFirstTernaryOperator(); break;
                 case 6: buildSecondTernaryOperator(); break;
-                case 7: buildNullableOperator(); break;
-                case 8: beginStatement(); break;
-                case 9: addFunction(); break;
-                case 10: setFunctionId(); break;
+                case 7: beginStatement(); break;
+                case 8: addFunction(); break;
+                case 9: setFunctionId(); break;
+                case 10: buildNullableOperator(); break;
                 case 11: markParenthesisParam(); break;
                 case 12: buildHighOrderFunction(); break;
                 case 13: markBracketParam(); break;
@@ -297,6 +314,23 @@ namespace Dsl.Common
                 mOnBeforeEndStatement(ref this, stm);
             }
             StatementData statement = popStatement();
+            var lastFunc = statement.Last.AsFunction;
+            if (null != lastFunc) {
+                switch (lastFunc.GetParamClassUnmasked()) {
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
+                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                        mPairTypeStack.Pop();
+                        break;
+                }
+            }
             if (null != mOnEndStatement) {
                 mOnEndStatement(ref this, ref statement);
                 Debug.Assert(null != statement);
@@ -462,6 +496,19 @@ namespace Dsl.Common
             endStatementImpl(true);
         }
 
+        public PairTypeEnum PeekPairType()
+        {
+            var ret = PairTypeEnum.None;
+            if (mPairTypeStack.Count > 0) {
+                ret = mPairTypeStack.Peek();
+            }
+            return ret;
+        }
+        public IEnumerable<PairTypeEnum> GetPairTypeStack()
+        {
+            return mPairTypeStack;
+        }
+
         public void markSeparator()
         {
             int type;
@@ -530,55 +577,6 @@ namespace Dsl.Common
                 }
             }
         }
-        public void buildNullableOperator()
-        {
-            int type;
-            string name = pop(out type);
-
-            StatementData arg = getCurStatement();
-            Debug.Assert(null != arg);
-            if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.NullableOperator, name, arg);
-            }
-            arg = popStatement();
-            if (null != mOnBuildOperator) {
-                mOnBuildOperator(ref this, OperatorCategoryEnum.NullableOperator, name, ref arg);
-                Debug.Assert(null != arg);
-            }
-
-            ISyntaxComponent argComp = simplifyStatement(arg);
-
-            StatementData _statement = newStatementWithOneFunction();
-            var first = _statement.First;
-            if (first.IsValue)
-                first.AsValue.SetLine(getLastLineNumber());
-            else
-                first.AsFunction.Name.SetLine(getLastLineNumber());
-
-            _statement.CopyFirstComments(argComp);
-            argComp.FirstComments.Clear();
-
-            mStatementSemanticStack.Push(_statement);
-
-            FunctionData func = getLastFunction();
-            if (!func.IsValid()) {
-                if (name.Length > 0 && name[0] == '`') {
-                    func.SetParamClass((int)(FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR));
-
-                    func.Name.SetId(name.Substring(1));
-                    func.Name.SetType(type);
-                }
-                else {
-                    func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_NULLABLE_OPERATOR);
-
-                    func.Name.SetId(name);
-                    func.Name.SetType(type);
-                }
-                if (argComp.IsValid()) {
-                    func.AddParam(argComp);
-                }
-            }
-        }
         public void buildFirstTernaryOperator()
         {
             int type;
@@ -609,6 +607,7 @@ namespace Dsl.Common
             argComp.FirstComments.Clear();
 
             mStatementSemanticStack.Push(_statement);
+            mPairTypeStack.Push(PairTypeEnum.QuestionColon);
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
@@ -619,7 +618,7 @@ namespace Dsl.Common
                     func.LowerOrderFunction.AddParam(argComp);
                 }
 
-                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);                      
+                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
             }
         }
         public void buildSecondTernaryOperator()
@@ -634,6 +633,8 @@ namespace Dsl.Common
                 statement = getCurStatement();
                 Debug.Assert(null != statement);
             }
+
+            mPairTypeStack.Pop();
 
             FunctionData newFunc = new FunctionData();
             ValueData nname = new ValueData();
@@ -697,6 +698,33 @@ namespace Dsl.Common
                 mOnSetFunctionId(ref this, name, stm, func);
             }
         }
+        public void buildNullableOperator()
+        {
+            int type;
+            string name = pop(out type);
+
+            FunctionData func = getLastFunction();
+            if (name == "?")
+                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_NULLABLE_OPERATOR);
+            else
+                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR);
+
+            if (null != mOnBeforeBuildHighOrder) {
+                StatementData stm = getCurStatement();
+                Debug.Assert(null != stm);
+                mOnBeforeBuildHighOrder(ref this, stm, func);
+                func = getLastFunction();
+            }
+            FunctionData temp = new FunctionData();
+            temp.CopyFrom(func);
+            func.Clear();
+            func.LowerOrderFunction = temp;
+            if (null != mOnBuildHighOrder) {
+                StatementData stm = getCurStatement();
+                Debug.Assert(null != stm);
+                mOnBuildHighOrder(ref this, stm, func);
+            }
+        }
         public void buildHighOrderFunction()
         {
             //Higher-order function construction (the current function returns another function).
@@ -722,12 +750,14 @@ namespace Dsl.Common
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+            mPairTypeStack.Push(PairTypeEnum.Parenthesis);
         }
         public void markBracketParam()
         {
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
+            mPairTypeStack.Push(PairTypeEnum.Bracket);
         }
         public void markPeriodParam()
         {
@@ -748,6 +778,7 @@ namespace Dsl.Common
             }
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT);
+            mPairTypeStack.Push(PairTypeEnum.Brace);
         }
         public void markExternScript()
         {
@@ -768,36 +799,43 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON);
+            mPairTypeStack.Push(PairTypeEnum.BracketColon);
         }
         public void markParenthesisColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
+            mPairTypeStack.Push(PairTypeEnum.ParenthesisColon);
         }        
         public void markAngleBracketColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON);
+            mPairTypeStack.Push(PairTypeEnum.AngleBracketColon);
         }
         public void markBracePercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT);
+            mPairTypeStack.Push(PairTypeEnum.BracePercent);
         }
         public void markBracketPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT);
+            mPairTypeStack.Push(PairTypeEnum.BracketPercent);
         }
         public void markParenthesisPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
+            mPairTypeStack.Push(PairTypeEnum.ParenthesisPercent);
         }
         public void markAngleBracketPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT);
+            mPairTypeStack.Push(PairTypeEnum.BracketPercent);
         }
         public void markColonColonParam()
         {
@@ -1294,6 +1332,7 @@ namespace Dsl.Common
         private List<ISyntaxComponent> mScriptDatas;
         private Stack<SemanticInfo> mSemanticStack;
         private Stack<StatementData> mStatementSemanticStack;
+        private Stack<PairTypeEnum> mPairTypeStack;
 
         private static List<string> s_EmptyList = new List<string>();
 

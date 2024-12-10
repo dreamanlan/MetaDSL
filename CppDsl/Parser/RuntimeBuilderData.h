@@ -45,6 +45,7 @@ public:
 private:
     using TokenStack = DequeT<TokenInfo, STACKSIZE>;
     using SemanticStack = DequeT<DslParser::StatementData*, STACKSIZE>;
+    using PairTypeStack = DequeT<int, STACKSIZE>;
 public:
     RuntimeBuilderData();
 public:
@@ -56,9 +57,15 @@ public:
     DslParser::StatementData* getCurStatement()const;
     DslParser::FunctionData* getLastFunction()const;
     void setLastFunction(DslParser::FunctionData* p)const;
+    int peekPairType()const;
+    void pushPairType(int pairType);
+    int popPairType();
+    const PairTypeStack& getPairTypeStack()const;
+    PairTypeStack& getPairTypeStack();
 private:
     TokenStack		mTokenStack;
     SemanticStack	mSemanticStack;
+    PairTypeStack   mPairTypeStack;
 public:
     static DslParser::FunctionData*& GetNullFunctionPtrRef()
     {

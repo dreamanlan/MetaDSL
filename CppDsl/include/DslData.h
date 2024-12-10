@@ -462,9 +462,13 @@ namespace DslData
         {
             m_ParamClass = (int)PARAM_CLASS_OPERATOR;
         }
-        void SetNullableOperatorParamClass()
+        void SetQuestionNullableOperatorParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_NULLABLE_OPERATOR;
+            m_ParamClass = (int)PARAM_CLASS_QUESTION_NULLABLE_OPERATOR;
+        }
+        void SetExclamationNullableOperatorParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR;
         }
         void SetTernaryOperatorParamClass()
         {
@@ -531,10 +535,15 @@ namespace DslData
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_OPERATOR;
         }
-        bool IsNullableOperatorParamClass()const
+        bool IsQuestionNullableOperatorParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_NULLABLE_OPERATOR;
+            return paramClass == (int)PARAM_CLASS_QUESTION_NULLABLE_OPERATOR;
+        }
+        bool IsExclamationNullableOperatorParamClass()const
+        {
+            int paramClass = GetParamClassUnmasked();
+            return paramClass == (int)PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR;
         }
         bool IsTernaryOperatorParamClass()const
         {
