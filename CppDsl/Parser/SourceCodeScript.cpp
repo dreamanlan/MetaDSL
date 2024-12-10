@@ -541,6 +541,13 @@ namespace DslParser
             return IDslSyntaxCommon::PAIR_TYPE_NONE;
         return m_Impl->peekPairTypeStack();
     }
+    int DslActionApi::peekPairTypeStack(uint32_t& tag)const
+    {
+        tag = 0;
+        if (!m_Impl)
+            return IDslSyntaxCommon::PAIR_TYPE_NONE;
+        return m_Impl->peekPairTypeStack(tag);
+    }
     int DslActionApi::getPairTypeStackSize()const
     {
         if (!m_Impl)
@@ -552,6 +559,13 @@ namespace DslParser
         if (!m_Impl)
             return IDslSyntaxCommon::PAIR_TYPE_NONE;
         return m_Impl->peekPairTypeStack(ix);
+    }
+    int DslActionApi::peekPairTypeStack(int ix, uint32_t& tag)const
+    {
+        tag = 0;
+        if (!m_Impl)
+            return IDslSyntaxCommon::PAIR_TYPE_NONE;
+        return m_Impl->peekPairTypeStack(ix, tag);
     }
     //------------------------------------------------------------------------------------------------------
     bool Mac2Unix(char* buf, int len)

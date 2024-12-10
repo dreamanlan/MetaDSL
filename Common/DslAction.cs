@@ -16,25 +16,25 @@ namespace Dsl.Common
     */
     public enum OperatorCategoryEnum
     {
-        NormalOperator = 0,
-        TernaryOperator,
-        MaxNum
+        OPERATOR_CATEGORY_NORMAL = 0,
+        OPERATOR_CATEGORY_TERNARY,
+        OPERATOR_CATEGORY_MAXNUM
     }
     public enum PairTypeEnum
     {
-        None = -1,
-        QuestionColon = 0,
-        Parenthesis,
-        Bracket,
-        Brace,
-        BracketColon,
-        ParenthesisColon,
-        AngleBracketColon,
-        BracePercent,
-        BracketPercent,
-        ParenthesisPercent,
-        AngleBracketPercent,
-        MaxNum
+        PAIR_TYPE_NONE = 0,
+        PAIR_TYPE_QUESTION_COLON,
+        PAIR_TYPE_PARENTHESIS,
+        PAIR_TYPE_BRACKET,
+        PAIR_TYPE_BRACE,
+        PAIR_TYPE_BRACKET_COLON,
+        PAIR_TYPE_PARENTHESIS_COLON,
+        PAIR_TYPE_ANGLE_BRACKET_COLON,
+        PAIR_TYPE_BRACE_PERCENT,
+        PAIR_TYPE_BRACKET_PERCENT,
+        PAIR_TYPE_PARENTHESIS_PERCENT,
+        PAIR_TYPE_ANGLE_BRACKET_PERCENT,
+        PAIR_TYPE_MAXNUM
     }
     public delegate bool TokenCanEatCharDelegation(StringBuilder tokenBuilder, char c);
     public delegate bool GetCppTokenDelegation(ref DslAction dslAction, ref CppToken dslToken, ref string tok, ref short val, ref int line);
@@ -84,7 +84,8 @@ namespace Dsl.Common
 
             mSemanticStack = new Stack<SemanticInfo>();
             mStatementSemanticStack = new Stack<StatementData>();
-            mPairTypeStack = new Stack<PairTypeEnum>();
+            mPairTypeStack = new Stack<uint>();
+            mNameTags = null;
 
             mGetLastToken = null;
             mGetLastLineNumber = null;
@@ -327,7 +328,7 @@ namespace Dsl.Common
                     case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
                     case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
                     case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
-                        mPairTypeStack.Pop();
+                        PopPairType();
                         break;
                 }
             }
@@ -496,17 +497,64 @@ namespace Dsl.Common
             endStatementImpl(true);
         }
 
-        public PairTypeEnum PeekPairType()
+        public void SetNameTags(Dictionary<string, uint> tags)
         {
-            var ret = PairTypeEnum.None;
+            mNameTags = tags;
+        }
+        public PairTypeEnum PeekPairTypeStack()
+        {
+            return PeekPairTypeStack(out var tag);
+        }
+        public PairTypeEnum PeekPairTypeStack(out uint tag)
+        {
+            var ret = PairTypeEnum.PAIR_TYPE_NONE;
+            tag = 0;
             if (mPairTypeStack.Count > 0) {
-                ret = mPairTypeStack.Peek();
+                uint v = mPairTypeStack.Peek();
+                tag = (v >> 8);
+                ret = (PairTypeEnum)(v & 0x0ff);
             }
             return ret;
         }
-        public IEnumerable<PairTypeEnum> GetPairTypeStack()
+        public int GetPairTypeStackSize()
         {
-            return mPairTypeStack;
+            return mPairTypeStack.Count;
+        }
+        public PairTypeEnum PeekPairTypeStack(int ix)
+        {
+            return PeekPairTypeStack(ix, out var tag);
+        }
+        public PairTypeEnum PeekPairTypeStack(int ix, out uint tag)
+        {
+            var ret = PairTypeEnum.PAIR_TYPE_NONE;
+            tag = 0;
+            if (ix >= 0 && ix < mPairTypeStack.Count) {
+                int i = 0;
+                foreach(var v in mPairTypeStack) {
+                    if (i == ix) {
+                        tag = (v >> 8);
+                        ret = (PairTypeEnum)(v & 0x0ff);
+                        break;
+                    }
+                    ++i;
+                }
+            }
+            return ret;
+        }
+        private void PushPairType(PairTypeEnum pairType)
+        {
+            PushPairType(pairType, 0);
+        }
+        private void PushPairType(PairTypeEnum pairType, uint tag)
+        {
+            uint v = (tag << 8) + (uint)pairType;
+            mPairTypeStack.Push(v);
+        }
+        private void PopPairType()
+        {
+            if (mPairTypeStack.Count > 0) {
+                mPairTypeStack.Pop();
+            }
         }
 
         public void markSeparator()
@@ -536,11 +584,11 @@ namespace Dsl.Common
             StatementData arg = getCurStatement();
             Debug.Assert(null != arg);
             if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.NormalOperator, name, arg);
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.OPERATOR_CATEGORY_NORMAL, name, arg);
             }
             arg = popStatement();
             if (null != mOnBuildOperator) {
-                mOnBuildOperator(ref this, OperatorCategoryEnum.NormalOperator, name, ref arg);
+                mOnBuildOperator(ref this, OperatorCategoryEnum.OPERATOR_CATEGORY_NORMAL, name, ref arg);
                 Debug.Assert(null != arg);
             }
 
@@ -585,11 +633,11 @@ namespace Dsl.Common
             StatementData arg = getCurStatement();
             Debug.Assert(null != arg);
             if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.TernaryOperator, name, arg);
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.OPERATOR_CATEGORY_TERNARY, name, arg);
             }
             arg = popStatement();
             if (null != mOnBuildOperator) {
-                mOnBuildOperator(ref this, OperatorCategoryEnum.TernaryOperator, name, ref arg);
+                mOnBuildOperator(ref this, OperatorCategoryEnum.OPERATOR_CATEGORY_TERNARY, name, ref arg);
                 Debug.Assert(null != arg);
             }
 
@@ -607,7 +655,7 @@ namespace Dsl.Common
             argComp.FirstComments.Clear();
 
             mStatementSemanticStack.Push(_statement);
-            mPairTypeStack.Push(PairTypeEnum.QuestionColon);
+            PushPairType(PairTypeEnum.PAIR_TYPE_QUESTION_COLON);
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
@@ -629,12 +677,12 @@ namespace Dsl.Common
             StatementData statement = getCurStatement();
             Debug.Assert(null != statement);
             if (null != mOnBeforeBuildOperator) {
-                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.TernaryOperator, name, statement);
+                mOnBeforeBuildOperator(ref this, OperatorCategoryEnum.OPERATOR_CATEGORY_TERNARY, name, statement);
                 statement = getCurStatement();
                 Debug.Assert(null != statement);
             }
 
-            mPairTypeStack.Pop();
+            PopPairType();
 
             FunctionData newFunc = new FunctionData();
             ValueData nname = new ValueData();
@@ -750,14 +798,22 @@ namespace Dsl.Common
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
-            mPairTypeStack.Push(PairTypeEnum.Parenthesis);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS, tag);
         }
         public void markBracketParam()
         {
             FunctionData func = getLastFunction();
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
-            mPairTypeStack.Push(PairTypeEnum.Bracket);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_BRACKET, tag);
         }
         public void markPeriodParam()
         {
@@ -778,7 +834,11 @@ namespace Dsl.Common
             }
 
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT);
-            mPairTypeStack.Push(PairTypeEnum.Brace);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_BRACE, tag);
         }
         public void markExternScript()
         {
@@ -799,43 +859,71 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON);
-            mPairTypeStack.Push(PairTypeEnum.BracketColon);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_BRACKET_COLON, tag);
         }
         public void markParenthesisColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
-            mPairTypeStack.Push(PairTypeEnum.ParenthesisColon);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS_COLON, tag);
         }        
         public void markAngleBracketColonParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON);
-            mPairTypeStack.Push(PairTypeEnum.AngleBracketColon);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_ANGLE_BRACKET_COLON, tag);
         }
         public void markBracePercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT);
-            mPairTypeStack.Push(PairTypeEnum.BracePercent);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_BRACE_PERCENT, tag);
         }
         public void markBracketPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT);
-            mPairTypeStack.Push(PairTypeEnum.BracketPercent);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_BRACKET_PERCENT, tag);
         }
         public void markParenthesisPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
-            mPairTypeStack.Push(PairTypeEnum.ParenthesisPercent);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS_PERCENT, tag);
         }
         public void markAngleBracketPercentParam()
         {
             FunctionData func = getLastFunction();
             func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT);
-            mPairTypeStack.Push(PairTypeEnum.BracketPercent);
+            uint tag = 0;
+            if (null != mNameTags) {
+                mNameTags.TryGetValue(func.GetId(), out tag);
+            }
+            PushPairType(PairTypeEnum.PAIR_TYPE_ANGLE_BRACKET_PERCENT, tag);
         }
         public void markColonColonParam()
         {
@@ -1313,7 +1401,7 @@ namespace Dsl.Common
 
         private DslActionType mActionType;
         private DslLog mLog;
-        
+
         private GetLastTokenDelegation mGetLastToken;
         private GetLastLineNumberDelegation mGetLastLineNumber;
         private GetCommentsDelegation mGetComments;
@@ -1332,7 +1420,8 @@ namespace Dsl.Common
         private List<ISyntaxComponent> mScriptDatas;
         private Stack<SemanticInfo> mSemanticStack;
         private Stack<StatementData> mStatementSemanticStack;
-        private Stack<PairTypeEnum> mPairTypeStack;
+        private Stack<uint> mPairTypeStack;
+        private Dictionary<string, uint> mNameTags;
 
         private static List<string> s_EmptyList = new List<string>();
 

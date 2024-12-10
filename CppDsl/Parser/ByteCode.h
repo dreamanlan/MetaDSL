@@ -50,9 +50,15 @@ namespace DslParser
         inline void    markPeriodStarParam();
         inline void    markPointerStarParam();
     public:
-        inline int     peekPairTypeStack()const;
+        inline int     peekPairTypeStack()const { uint32_t tag = 0; return peekPairTypeStack(tag); }
+        inline int     peekPairTypeStack(uint32_t& tag)const;
         inline int     getPairTypeStackSize()const;
-        inline int     peekPairTypeStack(int ix)const;
+        inline int     peekPairTypeStack(int ix)const { uint32_t tag = 0; return peekPairTypeStack(ix, tag); }
+        inline int     peekPairTypeStack(int ix, uint32_t& tag)const;
+    private:
+        inline void    pushPairType(int type) { pushPairType(type, 0); };
+        inline void    pushPairType(int type, uint32_t tag);
+        inline void    popPairType();
     public:
         RuntimeBuilderData& getRuntimeBuilderData() { return mData; }
         const RuntimeBuilderData& getRuntimeBuilderData()const { return mData; }

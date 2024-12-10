@@ -1264,6 +1264,8 @@ namespace Dsl
             tokens.OnGetToken = mOnGetToken;
             tokens.OnTokenCanEatChar = mOnTokenCanEatChar;
 
+            action.SetNameTags(mNameTags);
+
             action.onGetLastToken = () => { return tokens.getLastToken(); };
             action.onGetLastLineNumber = () => { return tokens.getLastLineNumber(); };
             action.onGetComment = (out bool commentOnNewLine) => { commentOnNewLine = tokens.IsCommentOnNewLine(); List<string> ret = new List<string>(); ret.AddRange(tokens.GetComments()); tokens.ResetComments(); return ret; };
@@ -1547,6 +1549,12 @@ namespace Dsl
             return LoadFromString(transformedContent, logCallback);
         }
 
+        public void SetNameTags(Dictionary<string, uint> tags)
+        {
+            mNameTags = tags;
+        }
+        public Dictionary<string, uint> NameTags
+        { get { return mNameTags; } }
         public void SetStringDelimiter(string begin, string end)
         {
             mStringBeginDelimiter = begin;
@@ -1940,6 +1948,7 @@ namespace Dsl
             }
         }
 
+        private Dictionary<string, uint> mNameTags = null;
         private MyStringComparer mStringComparer = null;
         private List<ISyntaxComponent> mDslInfos = new List<ISyntaxComponent>();
         private bool mNullableSyntaxEnabled = true;

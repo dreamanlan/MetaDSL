@@ -132,7 +132,7 @@ namespace DslParser
         argComp.ClearFirstComments();
 
         mData.pushStatement(pStatement);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_QUESTION_COLON);
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_QUESTION_COLON);
 
         FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
@@ -170,7 +170,7 @@ namespace DslParser
                 statement = mData.getCurStatement();
             }
 
-            mData.popPairType();
+            popPairType();
 
             if (0 != statement) {
                 FunctionData* p = mDataFile->AddNewFunctionComponent();
@@ -281,7 +281,7 @@ namespace DslParser
             case IDslSyntaxCommon::PARAM_CLASS_BRACKET_PERCENT:
             case IDslSyntaxCommon::PARAM_CLASS_BRACE_PERCENT:
             case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
-                mData.getPairTypeStack().PopBack();
+                popPairType();
                 break;
             }
         }
@@ -606,7 +606,16 @@ namespace DslParser
         FunctionData& call = *p;
 
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketParam()
@@ -618,7 +627,16 @@ namespace DslParser
         FunctionData& call = *p;
 
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodParam()
@@ -655,7 +673,16 @@ namespace DslParser
         mThis->resetComments();
 
         p->SetParamClass(FunctionData::PARAM_CLASS_STATEMENT);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE);
+        auto&& pID = p->GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markExternScript()
@@ -692,7 +719,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_COLON);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_COLON);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_COLON, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisColonParam()
@@ -703,7 +739,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_COLON);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_COLON);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_COLON, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markAngleBracketColonParam()
@@ -714,7 +759,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_COLON);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_COLON);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_COLON, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracePercentParam()
@@ -725,7 +779,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACE_PERCENT);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE_PERCENT);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE_PERCENT, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketPercentParam()
@@ -736,7 +799,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_BRACKET_PERCENT);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_PERCENT);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_PERCENT, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParam()
@@ -747,7 +819,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_PERCENT);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_PERCENT);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_PERCENT, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markAngleBracketPercentParam()
@@ -758,7 +839,16 @@ namespace DslParser
             return;
         FunctionData& call = *p;
         call.SetParamClass(FunctionData::PARAM_CLASS_ANGLE_BRACKET_PERCENT);
-        mData.pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_PERCENT);
+        auto&& pID = call.GetId();
+        uint32_t tag = 0;
+        if (pID) {
+            auto&& tags = mDataFile->NameTagsRef();
+            auto&& tagIt = tags.find(pID);
+            if (tagIt != tags.end()) {
+                tag = tagIt->second;
+            }
+        }
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_PERCENT, tag);
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markColonColonParam()
@@ -912,9 +1002,11 @@ namespace DslParser
         }
     }
     template<class RealTypeT> inline
-        int RuntimeBuilderT<RealTypeT>::peekPairTypeStack()const
+        int RuntimeBuilderT<RealTypeT>::peekPairTypeStack(uint32_t& tag)const
     {
-        return mData.peekPairType();
+        uint32_t v =  mData.peekPairType();
+        tag = (v >> 8);
+        return static_cast<int>(v & 0xff);
     }
     template<class RealTypeT> inline
         int RuntimeBuilderT<RealTypeT>::getPairTypeStackSize()const
@@ -922,14 +1014,33 @@ namespace DslParser
         return mData.getPairTypeStack().Size();
     }
     template<class RealTypeT> inline
-        int RuntimeBuilderT<RealTypeT>::peekPairTypeStack(int ix)const
+        int RuntimeBuilderT<RealTypeT>::peekPairTypeStack(int ix, uint32_t& tag)const
     {
-        auto&& stack = mData.getPairTypeStack();
-        int id = stack.BackID();
-        for (int i = 0; i < ix; ++i) {
-            id = stack.PrevID(id);
+        if (ix >= 0 && ix < getPairTypeStackSize()) {
+            auto&& stack = mData.getPairTypeStack();
+            int id = stack.BackID();
+            for (int i = 0; i < ix; ++i) {
+                id = stack.PrevID(id);
+            }
+            uint32_t v = stack[id];
+            tag = (v >> 8);
+            return static_cast<int>(v & 0xff);
         }
-        return stack[id];
+        else {
+            tag = 0;
+            return IDslSyntaxCommon::PAIR_TYPE_NONE;
+        }
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::pushPairType(int type, uint32_t tag)
+    {
+        uint32_t v = (tag << 8) + static_cast<uint32_t>(type & 0xff);
+        mData.pushPairType(v);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::popPairType()
+    {
+        mData.popPairType();
     }
 }
 //--------------------------------------------------------------------------------------

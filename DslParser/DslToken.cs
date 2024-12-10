@@ -1042,7 +1042,10 @@ namespace Dsl.Common
                     val = DslConstants.OP_TOKEN_2_;
                 }
                 else if (c0 == ':' && c1 == '\0') {
-                     val = DslConstants.OP_TOKEN_COLON_;
+                    if (mAction.PeekPairTypeStack() == PairTypeEnum.PAIR_TYPE_QUESTION_COLON)
+                        val = DslConstants.OP_TOKEN_QUESTION_COLON_;
+                    else
+                        val = DslConstants.OP_TOKEN_COLON_;
                 }
                 else if (c0 == '?' && c1 == '\0') {
                     val = DslConstants.OP_TOKEN_QUESTION_;

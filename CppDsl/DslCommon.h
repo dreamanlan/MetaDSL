@@ -62,8 +62,8 @@ public:
     };
     enum
     {
-        PAIR_TYPE_NONE = -1,
-        PAIR_TYPE_QUESTION_COLON = 0,
+        PAIR_TYPE_NONE = 0,
+        PAIR_TYPE_QUESTION_COLON,
         PAIR_TYPE_PARENTHESIS,
         PAIR_TYPE_BRACKET,
         PAIR_TYPE_BRACE,
@@ -74,7 +74,7 @@ public:
         PAIR_TYPE_BRACKET_PERCENT,
         PAIR_TYPE_PARENTHESIS_PERCENT,
         PAIR_TYPE_ANGLE_BRACKET_PERCENT,
-        PAIR_TYPE_MAXNUM,
+        PAIR_TYPE_MAXNUM
     };
 public:
     virtual ~IDslSyntaxCommon() {}

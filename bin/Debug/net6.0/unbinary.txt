@@ -1,6 +1,6 @@
 for(i = 0; i < 9; ++ i )
 {
-	echo("test\"test", i?.a  );
+	echo("test\"test", i?.a ? 123 : 0 );
 	a->{} ;
 	a->[] ;
 	a->() ;

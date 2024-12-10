@@ -10,8 +10,11 @@ calc.h
 #include "BaseType.h"
 #include "Delegation.h"
 #include "DslCommon.h"
+#include <cstdint>
 #include <new>
+#include <string>
 #include <vector>
+#include <unordered_map>
 
 class SlkToken;
 class ActionForSourceCodeScript;
@@ -1532,8 +1535,10 @@ namespace DslParser
         FunctionData* getLastFunction()const;
         void setLastFunction(FunctionData* p)const;
         int peekPairTypeStack()const;
+        int peekPairTypeStack(uint32_t& tag)const;
         int getPairTypeStackSize()const;
         int peekPairTypeStack(int ix)const;
+        int peekPairTypeStack(int ix, uint32_t& tag)const;
     public:
         inline DslActionApi() :m_Impl(0) {}
         inline void SetImpl(ActionForSourceCodeScript* p) { m_Impl = p; }
@@ -1549,6 +1554,7 @@ namespace DslParser
     class DslFile final
     {
         using SyntaxComponentPtr = ISyntaxComponent*;
+        using NameTags = std::unordered_map<std::string, uint32_t>;
     public:
         using TokenCanEatCharDelegation = Delegation<bool(const char*, int, char)>;
         using GetTokenDelegation = Delegation<bool(const DslActionApi&, const DslTokenApi&, char*&, short&, int&)>;
@@ -1586,6 +1592,9 @@ namespace DslParser
     public:
         void LoadBinaryCode(const char* buffer, int bufferSize, std::vector<const char*>& reuseKeyBuffer, std::vector<const char*>& reuseIdBuffer);
         void SaveBinaryFile(FILE* fp) const;
+    public:
+        NameTags& NameTagsRef() { return m_NameTags; }
+        const NameTags& NameTagsRef()const { return m_NameTags; }
     public:
         void SetNullableSyntax(bool enabled);
         void SetStringDelimiter(const char* begin, const char* end);
@@ -1666,6 +1675,7 @@ namespace DslParser
     private:
         IDslStringAndObjectBuffer& m_Buffer;
     private:
+        NameTags m_NameTags;
         SyntaxComponentPtr* m_DslInfos;
         int m_DslInfoNum;
         int m_DslInfoSpace;

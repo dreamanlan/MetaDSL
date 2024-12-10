@@ -104,17 +104,17 @@ void RuntimeBuilderData::setLastFunction(DslParser::FunctionData* p)const
         f = p;
     }
 }
-int RuntimeBuilderData::peekPairType()const
+uint32_t RuntimeBuilderData::peekPairType()const
 {
     if (mPairTypeStack.Empty())
         return IDslSyntaxCommon::PAIR_TYPE_NONE;
     return mPairTypeStack.Back();
 }
-void RuntimeBuilderData::pushPairType(int pairType)
+void RuntimeBuilderData::pushPairType(uint32_t pairType)
 {
     mPairTypeStack.PushBack(pairType);
 }
-int RuntimeBuilderData::popPairType()
+uint32_t RuntimeBuilderData::popPairType()
 {
     if (mPairTypeStack.Empty())
         return IDslSyntaxCommon::PAIR_TYPE_NONE;
