@@ -1,7 +1,7 @@
 # DSL
 DSL is a scripting language similar to XML/JSON. Compared with XML/JSON, it can be used not only to describe data, but also to describe logic. It is also easier to write and read in form. DSL is closer to the structure of a programming language than XML/JSON. The description based on DSL can easily build an interpreter, making it easy to build a domain-specific language (DSL). This is the reason why it is directly named DSL, which means that it is a meta-language that can be easily used to construct DSL.
 
-PDF Document (Chinese):[《MetaDSL and its application in Unity game development"》]([https://github.com/dreamanlan/MetaDSL/blob/master/MetaDSL%20and%20its%20application%20in%20Unity%20game%20development.pdf] "MetaDSL及在Unity游戏开发中的应用")
+PDF Document (Chinese):[《MetaDSL and its application in Unity game development"》](https://github.com/dreamanlan/MetaDSL/blob/master/MetaDSL%20and%20its%20application%20in%20Unity%20game%20development.pdf "MetaDSL及在Unity游戏开发中的应用")
 
 pptx file compression zip (Chinese):[《MetaDSL and its application in Unity game development"》 pptx]( https://github.com/dreamanlan/MetaDSL/blob/master/MetaDSL%E5%8F%8A%E5%9C%A8Unity%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91%E7%9A%84%E5%BA%94%E7%94%A8.zip "MetaDSL及在Unity游戏开发中的应用 pptx")
 
