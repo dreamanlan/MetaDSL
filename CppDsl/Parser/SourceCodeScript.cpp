@@ -419,6 +419,12 @@ namespace DslParser
             return;
         m_Impl->markParenthesisParam();
     }
+    void DslActionApi::markParenthesisParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markParenthesisParamEnd();
+    }
     void DslActionApi::buildHighOrderFunction()const
     {
         if (!m_Impl)
@@ -431,11 +437,23 @@ namespace DslParser
             return;
         m_Impl->markBracketParam();
     }
+    void DslActionApi::markBracketParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracketParamEnd();
+    }
     void DslActionApi::markStatement()const
     {
         if (!m_Impl)
             return;
         m_Impl->markStatement();
+    }
+    void DslActionApi::markStatementEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markStatementEnd();
     }
     void DslActionApi::markExternScript()const
     {
@@ -449,11 +467,23 @@ namespace DslParser
             return;
         m_Impl->markBracketColonParam();
     }
+    void DslActionApi::markBracketColonParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracketColonParamEnd();
+    }
     void DslActionApi::markParenthesisColonParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markParenthesisColonParam();
+    }
+    void DslActionApi::markParenthesisColonParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markParenthesisColonParamEnd();
     }
     void DslActionApi::markAngleBracketColonParam()const
     {
@@ -461,11 +491,23 @@ namespace DslParser
             return;
         m_Impl->markAngleBracketColonParam();
     }
+    void DslActionApi::markAngleBracketColonParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markAngleBracketColonParamEnd();
+    }
     void DslActionApi::markBracePercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markBracePercentParam();
+    }
+    void DslActionApi::markBracePercentParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracePercentParamEnd();
     }
     void DslActionApi::markBracketPercentParam()const
     {
@@ -473,17 +515,35 @@ namespace DslParser
             return;
         m_Impl->markBracketPercentParam();
     }
+    void DslActionApi::markBracketPercentParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markBracketPercentParamEnd();
+    }
     void DslActionApi::markParenthesisPercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markParenthesisPercentParam();
     }
+    void DslActionApi::markParenthesisPercentParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markParenthesisPercentParamEnd();
+    }
     void DslActionApi::markAngleBracketPercentParam()const
     {
         if (!m_Impl)
             return;
         m_Impl->markAngleBracketPercentParam();
+    }
+    void DslActionApi::markAngleBracketPercentParamEnd()const
+    {
+        if (!m_Impl)
+            return;
+        m_Impl->markAngleBracketPercentParamEnd();
     }
     void DslActionApi::markColonColonParam()const
     {
