@@ -228,28 +228,38 @@ namespace Dsl.Common
                 case 9: setFunctionId(); break;
                 case 10: buildNullableOperator(); break;
                 case 11: markParenthesisParam(); break;
-                case 12: buildHighOrderFunction(); break;
-                case 13: markBracketParam(); break;
-                case 14: markStatement(); break;
-                case 15: markExternScript(); break;
-                case 16: setExternScript(); break;
-                case 17: markBracketColonParam(); break;
-                case 18: markParenthesisColonParam(); break;
-                case 19: markAngleBracketColonParam(); break;
-                case 20: markBracePercentParam(); break;
-                case 21: markBracketPercentParam(); break;
-                case 22: markParenthesisPercentParam(); break;
-                case 23: markAngleBracketPercentParam(); break;
-                case 24: markColonColonParam(); break;
-                case 25: markPeriodParam(); break;
-                case 26: markPointerParam(); break;
-                case 27: markPeriodStarParam(); break;
-                case 28: markPointerStarParam(); break;
-                case 29: pushStr(); break;
-                case 30: pushNum(); break;
-                case 31: pushDollarStr(); break;
-                case 32: pushComma(); break;
-                case 33: pushSemiColon(); break;
+                case 12: markParenthesisParamEnd(); break;
+                case 13: buildHighOrderFunction(); break;
+                case 14: markBracketParam(); break;
+                case 15: markBracketParamEnd(); break;
+                case 16: markStatement(); break;
+                case 17: markStatementEnd(); break;
+                case 18: markExternScript(); break;
+                case 19: setExternScript(); break;
+                case 20: markBracketColonParam(); break;
+                case 21: markBracketColonParamEnd(); break;
+                case 22: markParenthesisColonParam(); break;
+                case 23: markParenthesisColonParamEnd(); break;
+                case 24: markAngleBracketColonParam(); break;
+                case 25: markAngleBracketColonParamEnd(); break;
+                case 26: markBracePercentParam(); break;
+                case 27: markBracePercentParamEnd(); break;
+                case 28: markBracketPercentParam(); break;
+                case 29: markBracketPercentParamEnd(); break;
+                case 30: markParenthesisPercentParam(); break;
+                case 31: markParenthesisPercentParamEnd(); break;
+                case 32: markAngleBracketPercentParam(); break;
+                case 33: markAngleBracketPercentParamEnd(); break;
+                case 34: markColonColonParam(); break;
+                case 35: markPeriodParam(); break;
+                case 36: markPointerParam(); break;
+                case 37: markPeriodStarParam(); break;
+                case 38: markPointerStarParam(); break;
+                case 39: pushStr(); break;
+                case 40: pushNum(); break;
+                case 41: pushDollarStr(); break;
+                case 42: pushComma(); break;
+                case 43: pushSemiColon(); break;
             }
         }
         private void executeLua(int number)
@@ -315,23 +325,6 @@ namespace Dsl.Common
                 mOnBeforeEndStatement(ref this, stm);
             }
             StatementData statement = popStatement();
-            var lastFunc = statement.Last.AsFunction;
-            if (null != lastFunc) {
-                switch (lastFunc.GetParamClassUnmasked()) {
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
-                    case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
-                        PopPairType();
-                        break;
-                }
-            }
             if (null != mOnEndStatement) {
                 mOnEndStatement(ref this, ref statement);
                 Debug.Assert(null != statement);
@@ -804,6 +797,10 @@ namespace Dsl.Common
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS, tag);
         }
+        public void markParenthesisParamEnd()
+        {
+            PopPairType();
+        }
         public void markBracketParam()
         {
             FunctionData func = getLastFunction();
@@ -814,6 +811,10 @@ namespace Dsl.Common
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_BRACKET, tag);
+        }
+        public void markBracketParamEnd()
+        {
+            PopPairType();
         }
         public void markPeriodParam()
         {
@@ -840,6 +841,10 @@ namespace Dsl.Common
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_BRACE, tag);
         }
+        public void markStatementEnd()
+        {
+            PopPairType();
+        }
         public void markExternScript()
         {
             FunctionData func = getLastFunction();
@@ -865,6 +870,10 @@ namespace Dsl.Common
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_BRACKET_COLON, tag);
         }
+        public void markBracketColonParamEnd()
+        {
+            PopPairType();
+        }
         public void markParenthesisColonParam()
         {
             FunctionData func = getLastFunction();
@@ -874,7 +883,11 @@ namespace Dsl.Common
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS_COLON, tag);
-        }        
+        }
+        public void markParenthesisColonParamEnd()
+        {
+            PopPairType();
+        }
         public void markAngleBracketColonParam()
         {
             FunctionData func = getLastFunction();
@@ -884,6 +897,10 @@ namespace Dsl.Common
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_ANGLE_BRACKET_COLON, tag);
+        }
+        public void markAngleBracketColonParamEnd()
+        {
+            PopPairType();
         }
         public void markBracePercentParam()
         {
@@ -895,6 +912,10 @@ namespace Dsl.Common
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_BRACE_PERCENT, tag);
         }
+        public void markBracePercentParamEnd()
+        {
+            PopPairType();
+        }
         public void markBracketPercentParam()
         {
             FunctionData func = getLastFunction();
@@ -904,6 +925,10 @@ namespace Dsl.Common
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_BRACKET_PERCENT, tag);
+        }
+        public void markBracketPercentParamEnd()
+        {
+            PopPairType();
         }
         public void markParenthesisPercentParam()
         {
@@ -915,6 +940,10 @@ namespace Dsl.Common
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS_PERCENT, tag);
         }
+        public void markParenthesisPercentParamEnd()
+        {
+            PopPairType();
+        }
         public void markAngleBracketPercentParam()
         {
             FunctionData func = getLastFunction();
@@ -924,6 +953,10 @@ namespace Dsl.Common
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
             PushPairType(PairTypeEnum.PAIR_TYPE_ANGLE_BRACKET_PERCENT, tag);
+        }
+        public void markAngleBracketPercentParamEnd()
+        {
+            PopPairType();
         }
         public void markColonColonParam()
         {

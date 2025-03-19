@@ -5,7 +5,7 @@
 #include "SlkParse.h"
 #include "ByteCode.h"
 
-#define MAX_ACTION_NUM	34
+#define MAX_ACTION_NUM	44
 
 //--------------------------------------------------------------------------------------
 class ActionForSourceCodeScript : public SlkAction, public RuntimeBuilderT<ActionForSourceCodeScript>
@@ -158,28 +158,38 @@ inline void ActionForSourceCodeScript::initialize_table()
     Action[9] = &ActionForSourceCodeScript::setFunctionId;
     Action[10] = &ActionForSourceCodeScript::buildNullableOperator;
     Action[11] = &ActionForSourceCodeScript::markParenthesisParam;
-    Action[12] = &ActionForSourceCodeScript::buildHighOrderFunction;
-    Action[13] = &ActionForSourceCodeScript::markBracketParam;
-    Action[14] = &ActionForSourceCodeScript::markStatement;
-    Action[15] = &ActionForSourceCodeScript::markExternScript;
-    Action[16] = &ActionForSourceCodeScript::setExternScript;
-    Action[17] = &ActionForSourceCodeScript::markBracketColonParam;
-    Action[18] = &ActionForSourceCodeScript::markParenthesisColonParam;
-    Action[19] = &ActionForSourceCodeScript::markAngleBracketColonParam;
-    Action[20] = &ActionForSourceCodeScript::markBracePercentParam;
-    Action[21] = &ActionForSourceCodeScript::markBracketPercentParam;
-    Action[22] = &ActionForSourceCodeScript::markParenthesisPercentParam;
-    Action[23] = &ActionForSourceCodeScript::markAngleBracketPercentParam;
-    Action[24] = &ActionForSourceCodeScript::markColonColonParam;
-    Action[25] = &ActionForSourceCodeScript::markPeriodParam;
-    Action[26] = &ActionForSourceCodeScript::markPointerParam;
-    Action[27] = &ActionForSourceCodeScript::markPeriodStarParam;
-    Action[28] = &ActionForSourceCodeScript::markPointerStarParam;
-    Action[29] = &ActionForSourceCodeScript::pushStr;
-    Action[30] = &ActionForSourceCodeScript::pushNum;
-    Action[31] = &ActionForSourceCodeScript::pushDollarStr;
-    Action[32] = &ActionForSourceCodeScript::pushComma;
-    Action[33] = &ActionForSourceCodeScript::pushSemiColon;
+    Action[12] = &ActionForSourceCodeScript::markParenthesisParamEnd;
+    Action[13] = &ActionForSourceCodeScript::buildHighOrderFunction;
+    Action[14] = &ActionForSourceCodeScript::markBracketParam;
+    Action[15] = &ActionForSourceCodeScript::markBracketParamEnd;
+    Action[16] = &ActionForSourceCodeScript::markStatement;
+    Action[17] = &ActionForSourceCodeScript::markStatementEnd;
+    Action[18] = &ActionForSourceCodeScript::markExternScript;
+    Action[19] = &ActionForSourceCodeScript::setExternScript;
+    Action[20] = &ActionForSourceCodeScript::markBracketColonParam;
+    Action[21] = &ActionForSourceCodeScript::markBracketColonParamEnd;
+    Action[22] = &ActionForSourceCodeScript::markParenthesisColonParam;
+    Action[23] = &ActionForSourceCodeScript::markParenthesisColonParamEnd;
+    Action[24] = &ActionForSourceCodeScript::markAngleBracketColonParam;
+    Action[25] = &ActionForSourceCodeScript::markAngleBracketColonParamEnd;
+    Action[26] = &ActionForSourceCodeScript::markBracePercentParam;
+    Action[27] = &ActionForSourceCodeScript::markBracePercentParamEnd;
+    Action[28] = &ActionForSourceCodeScript::markBracketPercentParam;
+    Action[29] = &ActionForSourceCodeScript::markBracketPercentParamEnd;
+    Action[30] = &ActionForSourceCodeScript::markParenthesisPercentParam;
+    Action[31] = &ActionForSourceCodeScript::markParenthesisPercentParamEnd;
+    Action[32] = &ActionForSourceCodeScript::markAngleBracketPercentParam;
+    Action[33] = &ActionForSourceCodeScript::markAngleBracketPercentParamEnd;
+    Action[34] = &ActionForSourceCodeScript::markColonColonParam;
+    Action[35] = &ActionForSourceCodeScript::markPeriodParam;
+    Action[36] = &ActionForSourceCodeScript::markPointerParam;
+    Action[37] = &ActionForSourceCodeScript::markPeriodStarParam;
+    Action[38] = &ActionForSourceCodeScript::markPointerStarParam;
+    Action[39] = &ActionForSourceCodeScript::pushStr;
+    Action[40] = &ActionForSourceCodeScript::pushNum;
+    Action[41] = &ActionForSourceCodeScript::pushDollarStr;
+    Action[42] = &ActionForSourceCodeScript::pushComma;
+    Action[43] = &ActionForSourceCodeScript::pushSemiColon;
 }
 //--------------------------------------------------------------------------------------
 

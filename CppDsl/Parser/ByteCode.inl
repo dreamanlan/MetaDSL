@@ -268,24 +268,6 @@ namespace DslParser
         if (0 == statement)
             return;
 
-        auto&& lastFunc = statement->GetLast()->AsFunction();
-        if (nullptr != lastFunc) {
-            switch (lastFunc->GetParamClassUnmasked()) {
-            case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS:
-            case IDslSyntaxCommon::PARAM_CLASS_BRACKET:
-            case IDslSyntaxCommon::PARAM_CLASS_STATEMENT:
-            case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_COLON:
-            case IDslSyntaxCommon::PARAM_CLASS_BRACKET_COLON:
-            case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_COLON:
-            case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_PERCENT:
-            case IDslSyntaxCommon::PARAM_CLASS_BRACKET_PERCENT:
-            case IDslSyntaxCommon::PARAM_CLASS_BRACE_PERCENT:
-            case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
-                popPairType();
-                break;
-            }
-        }
-
         if (!mDataFile->OnEndStatement.isNull()) {
             mDataFile->OnEndStatement(mApi, statement);
             if (0 == statement)
@@ -618,6 +600,11 @@ namespace DslParser
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS, tag);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markParenthesisParamEnd()
+    {
+        popPairType();
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketParam()
     {
         if (!preconditionCheck())return;
@@ -637,6 +624,11 @@ namespace DslParser
             }
         }
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET, tag);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markBracketParamEnd()
+    {
+        popPairType();
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markPeriodParam()
@@ -685,6 +677,11 @@ namespace DslParser
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE, tag);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markStatementEnd()
+    {
+        popPairType();
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markExternScript()
     {
         if (!preconditionCheck())return;
@@ -731,6 +728,11 @@ namespace DslParser
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_COLON, tag);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markBracketColonParamEnd()
+    {
+        popPairType();
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisColonParam()
     {
         if (!preconditionCheck())return;
@@ -749,6 +751,11 @@ namespace DslParser
             }
         }
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_COLON, tag);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markParenthesisColonParamEnd()
+    {
+        popPairType();
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markAngleBracketColonParam()
@@ -771,6 +778,11 @@ namespace DslParser
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_COLON, tag);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markAngleBracketColonParamEnd()
+    {
+        popPairType();
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracePercentParam()
     {
         if (!preconditionCheck())return;
@@ -789,6 +801,11 @@ namespace DslParser
             }
         }
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACE_PERCENT, tag);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markBracePercentParamEnd()
+    {
+        popPairType();
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markBracketPercentParam()
@@ -811,6 +828,11 @@ namespace DslParser
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_BRACKET_PERCENT, tag);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markBracketPercentParamEnd()
+    {
+        popPairType();
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParam()
     {
         if (!preconditionCheck())return;
@@ -831,6 +853,11 @@ namespace DslParser
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_PERCENT, tag);
     }
     template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParamEnd()
+    {
+        popPairType();
+    }
+    template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markAngleBracketPercentParam()
     {
         if (!preconditionCheck())return;
@@ -849,6 +876,11 @@ namespace DslParser
             }
         }
         pushPairType(IDslSyntaxCommon::PAIR_TYPE_ANGLE_BRACKET_PERCENT, tag);
+    }
+    template<class RealTypeT> inline
+        void RuntimeBuilderT<RealTypeT>::markAngleBracketPercentParamEnd()
+    {
+        popPairType();
     }
     template<class RealTypeT> inline
         void RuntimeBuilderT<RealTypeT>::markColonColonParam()
