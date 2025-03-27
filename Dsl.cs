@@ -460,15 +460,19 @@ namespace Dsl
         }
         public override int GetLine()
         {
-            if (null != m_Name)
+            if (null != m_Name) {
                 return m_Name.GetLine();
-            else if (null != m_LowerOrderFunction)
+            }
+            else if (null != m_LowerOrderFunction) {
                 return m_LowerOrderFunction.GetLine();
+            }
             else {
-                foreach (var p in m_Params) {
-                    int line = p.GetLine();
-                    if (line >= 0)
-                        return line;
+                if (null != m_Params && m_Params.Count > 0) {
+                    foreach (var p in m_Params) {
+                        int line = p.GetLine();
+                        if (line >= 0)
+                            return line;
+                    }
                 }
                 return -1;
             }
