@@ -46,7 +46,6 @@ namespace Dsl.Common
     public delegate bool BeforeBuildOperatorDelegation(ref DslAction dslAction, OperatorCategoryEnum category, string op, StatementData statement);
     public delegate bool BuildOperatorDelegation(ref DslAction dslAction, OperatorCategoryEnum category, string op, ref StatementData statement);
     public delegate bool SetFunctionIdDelegation(ref DslAction dslAction, string name, StatementData statement, FunctionData function);
-    public delegate bool SetMemberIdDelegation(ref DslAction dslAction, string name, StatementData statement, FunctionData function);
     public delegate bool BeforeBuildHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
     public delegate bool BuildHighOrderDelegation(ref DslAction dslAction, StatementData statement, FunctionData function);
 
@@ -480,7 +479,7 @@ namespace Dsl.Common
 
                 if (addSep && func.GetParamNum() > 0) {
                     var lastParam = func.GetParam(func.GetParamNum()-1);
-                    lastParam.SetSeparator(func.GetParamClassUnmasked() == (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT ? AbstractSyntaxComponent.SEPARATOR_SEMICOLON : AbstractSyntaxComponent.SEPARATOR_COMMA);
+                    lastParam.SetSeparator(func.GetParamClassUnmasked() == (int)ParamClassEnum.PARAM_CLASS_STATEMENT ? AbstractSyntaxComponent.SEPARATOR_SEMICOLON : AbstractSyntaxComponent.SEPARATOR_COMMA);
                 }
                 func.AddParam(statementSyntax);
             }
@@ -602,13 +601,13 @@ namespace Dsl.Common
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
                 if (name.Length > 0 && name[0] == '`') {
-                    func.SetParamClass((int)(FunctionData.ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR));
+                    func.SetParamClass((int)(ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | ParamClassEnum.PARAM_CLASS_OPERATOR));
 
                     func.Name.SetId(name.Substring(1));
                     func.Name.SetType(type);
                 }
                 else {
-                    func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR);
+                    func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_OPERATOR);
 
                     func.Name.SetId(name);
                     func.Name.SetType(type);
@@ -652,14 +651,14 @@ namespace Dsl.Common
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.LowerOrderFunction.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+                func.LowerOrderFunction.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS);
                 func.LowerOrderFunction.Name.SetId(name);
                 func.LowerOrderFunction.Name.SetType(type);
                 if (argComp.IsValid()) {
                     func.LowerOrderFunction.AddParam(argComp);
                 }
 
-                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
+                func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
             }
         }
         public void buildSecondTernaryOperator()
@@ -684,7 +683,7 @@ namespace Dsl.Common
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
+                func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR);
                 func.Name.SetId(name);
                 func.Name.SetType(type);
                 func.Name.SetLine(getLastLineNumber());
@@ -746,9 +745,9 @@ namespace Dsl.Common
 
             FunctionData func = getLastFunction();
             if (name == "?")
-                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_QUESTION_NULLABLE_OPERATOR);
+                func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_QUESTION_NULLABLE_OPERATOR);
             else
-                func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR);
+                func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR);
 
             if (null != mOnBeforeBuildHighOrder) {
                 StatementData stm = getCurStatement();
@@ -790,7 +789,7 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
 
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -805,7 +804,7 @@ namespace Dsl.Common
         {
             FunctionData func = getLastFunction();
 
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_BRACKET);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -819,7 +818,7 @@ namespace Dsl.Common
         public void markPeriodParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PERIOD);
         }
         public void markStatement()
         {
@@ -834,7 +833,7 @@ namespace Dsl.Common
                     func.Comments.AddRange(cmts);
             }
 
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_STATEMENT);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -858,12 +857,12 @@ namespace Dsl.Common
                     func.Comments.AddRange(cmts);
             }
 
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT);
         }
         public void markBracketColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_BRACKET_COLON);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -877,7 +876,7 @@ namespace Dsl.Common
         public void markParenthesisColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -891,7 +890,7 @@ namespace Dsl.Common
         public void markAngleBracketColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -905,7 +904,7 @@ namespace Dsl.Common
         public void markBracePercentParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_BRACE_PERCENT);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -919,7 +918,7 @@ namespace Dsl.Common
         public void markBracketPercentParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -933,7 +932,7 @@ namespace Dsl.Common
         public void markParenthesisPercentParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -947,7 +946,7 @@ namespace Dsl.Common
         public void markAngleBracketPercentParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
@@ -961,7 +960,7 @@ namespace Dsl.Common
         public void markColonColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_COLON_COLON);
         }
         public void setExternScript()
         {
@@ -971,17 +970,17 @@ namespace Dsl.Common
         public void markPointerParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_POINTER);
         }
         public void markPeriodStarParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR);
         }
         public void markPointerStarParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_POINTER_STAR);
         }
         private void pushId()
         {
@@ -1071,8 +1070,8 @@ namespace Dsl.Common
                     var p = func.GetParam(i);
                     var f = p as Dsl.FunctionData;
                     if (null != f &&
-                        f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD &&
-                        f.GetParamClass() != (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET) {
+                        f.GetParamClass() != (int)Dsl.ParamClassEnum.PARAM_CLASS_PERIOD &&
+                        f.GetParamClass() != (int)Dsl.ParamClassEnum.PARAM_CLASS_BRACKET) {
                         mLog.Error("[error] Can only assignment to left value. {0}:{1} last token:{2} line {3}", f.GetLine(), f.ToScriptString(false), getLastToken(), getLastLineNumber());
                     }
                 }
@@ -1185,7 +1184,7 @@ namespace Dsl.Common
                         curStatement.Functions[curStatement.Functions.Count - 1] = last.LowerOrderFunction;
                     }
                     else {
-                        last.SetParamClass((int)FunctionData.ParamClassEnum.PARAM_CLASS_NOTHING);
+                        last.SetParamClass((int)ParamClassEnum.PARAM_CLASS_NOTHING);
                         last.Params.Clear();
                     }
                     endStatement();
@@ -1282,7 +1281,7 @@ namespace Dsl.Common
             Debug.Assert(null != statement);
             return statement.Last.AsFunction;
         }
-        public StatementData newStatementWithOneFunction()
+        public static StatementData newStatementWithOneFunction()
         {
             StatementData data = new StatementData();
             FunctionData func = new FunctionData();
@@ -1291,12 +1290,12 @@ namespace Dsl.Common
             data.Functions.Add(func);
             return data;
         }
-        public StatementData newStatementWithoutFunction()
+        public static StatementData newStatementWithoutFunction()
         {
             StatementData data = new StatementData();
             return data;
         }
-        public FunctionData newFunctionOfStatement(StatementData data)
+        public static FunctionData newFunctionOfStatement(StatementData data)
         {
             FunctionData func = new FunctionData();
             ValueData name = new ValueData();
@@ -1304,7 +1303,7 @@ namespace Dsl.Common
             data.Functions.Add(func);
             return func;
         }
-        private AbstractSyntaxComponent simplifyStatement(StatementData data)
+        private static AbstractSyntaxComponent simplifyStatement(StatementData data)
         {
             //Simplify statements (during the process of syntax analysis, they are constructed
             //using complete StatementData for convenience, but here they are simplified to their original
@@ -1331,7 +1330,7 @@ namespace Dsl.Common
             }
             return data;
         }
-        private ValueOrFunctionData simplifyStatement(FunctionData data)
+        private static ValueOrFunctionData simplifyStatement(FunctionData data)
         {
             //Note that in order to save memory, comments are not included in ValueData.
             //The related interfaces have no actual effect!!!
@@ -1375,7 +1374,7 @@ namespace Dsl.Common
                 return data;
             }
         }
-        private void simplifyFunction(FunctionData data)
+        private static void simplifyFunction(FunctionData data)
         {
             // When the last statement is epsilon and the only parameter is epsilon, delete this statement and parameter.
             // This ensures correct parsing of for(;;){}.

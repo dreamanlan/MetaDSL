@@ -1565,7 +1565,6 @@ namespace DslParser
         using BeforeBuildOperatorDelegation = Delegation<bool(const DslActionApi&, int, const char*, StatementData*)>;
         using BuildOperatorDelegation = Delegation<bool(const DslActionApi&, int, const char*, StatementData*&)>;
         using SetFunctionIdDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)>;
-        using SetMemberIdDelegation = Delegation<bool(const DslActionApi&, const char*, StatementData*, FunctionData*)>;
         using BeforeBuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
         using BuildHighOrderDelegation = Delegation<bool(const DslActionApi&, StatementData*, FunctionData*)>;
     public:
@@ -1615,7 +1614,6 @@ namespace DslParser
         BeforeBuildOperatorDelegation OnBeforeBuildOperator;
         BuildOperatorDelegation OnBuildOperator;
         SetFunctionIdDelegation OnSetFunctionId;
-        SetMemberIdDelegation OnSetMemberId;
         BeforeBuildHighOrderDelegation OnBeforeBuildHighOrder;
         BuildHighOrderDelegation OnBuildHighOrder;
     private:

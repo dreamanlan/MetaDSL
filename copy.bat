@@ -33,6 +33,12 @@ copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\CSharpGameFramework\ExternalL
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\GameDemo\GameLibrary\ExternLibrary\Dsl.dll
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\GameDemo\GameLibrary\ExternLibrary\Dsl.pdb
 
+copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\Hlsl2Numpy\deps\Dsl.dll
+copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\Hlsl2Numpy\deps\Dsl.pdb
+
+copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\Hlsl2Python\deps\Dsl.dll
+copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\Hlsl2Python\deps\Dsl.pdb
+
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\BatchCommandApp\Assets\Plugins\Dsl.dll
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\CSharpGameFramework\Unity3d\Assets\Plugins\Dsl.dll
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\GameDemo\Unity3dProject\Assets\Plugins\game\Dsl.dll

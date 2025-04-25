@@ -11,6 +11,7 @@ CppDsl/build/build_ios
 CppDsl/build/build_osx
 CppDsl/build/build.Android*
 CppDsl/build/build_*
+target
 pg/Debug
 pg/Release
 pg/x64/Debug

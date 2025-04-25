@@ -8,6 +8,34 @@ using System.Text;
 namespace Dsl
 {
     public delegate void DslLogDelegation(string msg);
+    public enum ParamClassEnum
+    {
+        PARAM_CLASS_MIN = 0,
+        PARAM_CLASS_NOTHING = PARAM_CLASS_MIN,
+        PARAM_CLASS_PARENTHESIS,
+        PARAM_CLASS_BRACKET,
+        PARAM_CLASS_PERIOD,
+        PARAM_CLASS_POINTER,
+        PARAM_CLASS_STATEMENT,
+        PARAM_CLASS_EXTERN_SCRIPT,
+        PARAM_CLASS_PARENTHESIS_COLON,
+        PARAM_CLASS_BRACKET_COLON,
+        PARAM_CLASS_ANGLE_BRACKET_COLON,
+        PARAM_CLASS_PARENTHESIS_PERCENT,
+        PARAM_CLASS_BRACKET_PERCENT,
+        PARAM_CLASS_BRACE_PERCENT,
+        PARAM_CLASS_ANGLE_BRACKET_PERCENT,
+        PARAM_CLASS_COLON_COLON,
+        PARAM_CLASS_PERIOD_STAR,
+        PARAM_CLASS_POINTER_STAR,
+        PARAM_CLASS_OPERATOR,
+        PARAM_CLASS_TERNARY_OPERATOR,
+        PARAM_CLASS_QUESTION_NULLABLE_OPERATOR,
+        PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR,
+        PARAM_CLASS_MAX,
+        PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x20,
+        PARAM_CLASS_UNMASK = 0x1F,
+    }
     internal enum DslBinaryCode
     {
         BeginStatement = 1,
@@ -408,34 +436,6 @@ namespace Dsl
     /// </summary>
     public class FunctionData : ValueOrFunctionData
     {
-        public enum ParamClassEnum
-        {
-            PARAM_CLASS_MIN = 0,
-            PARAM_CLASS_NOTHING = PARAM_CLASS_MIN,
-            PARAM_CLASS_PARENTHESIS,
-            PARAM_CLASS_BRACKET,
-            PARAM_CLASS_PERIOD,
-            PARAM_CLASS_POINTER,
-            PARAM_CLASS_STATEMENT,
-            PARAM_CLASS_EXTERN_SCRIPT,
-            PARAM_CLASS_PARENTHESIS_COLON,
-            PARAM_CLASS_BRACKET_COLON,
-            PARAM_CLASS_ANGLE_BRACKET_COLON,
-            PARAM_CLASS_PARENTHESIS_PERCENT,
-            PARAM_CLASS_BRACKET_PERCENT,
-            PARAM_CLASS_BRACE_PERCENT,
-            PARAM_CLASS_ANGLE_BRACKET_PERCENT,
-            PARAM_CLASS_COLON_COLON,
-            PARAM_CLASS_PERIOD_STAR,
-            PARAM_CLASS_POINTER_STAR,
-            PARAM_CLASS_OPERATOR,
-            PARAM_CLASS_TERNARY_OPERATOR,
-            PARAM_CLASS_QUESTION_NULLABLE_OPERATOR,
-            PARAM_CLASS_EXCLAMATION_NULLABLE_OPERATOR,
-            PARAM_CLASS_MAX,
-            PARAM_CLASS_WRAP_INFIX_CALL_MASK = 0x20,
-            PARAM_CLASS_UNMASK = 0x1F,
-        }
         public override bool IsValid()
         {
             return HaveId() || HaveParamOrStatement();
@@ -1287,9 +1287,7 @@ namespace Dsl
 
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
-                for (int i = 0; i < mDslInfos.Count; i++) {
-                    mDslInfos.Clear();
-                }
+                mDslInfos.Clear();
             }
             if (!string.IsNullOrEmpty(tokens.StringBeginDelimiter)) {
                 mStringBeginDelimiter = tokens.StringBeginDelimiter;
@@ -2269,59 +2267,59 @@ namespace Dsl
                         string rbracket = string.Empty;
                         int paramClass = data.GetParamClassUnmasked();
                         switch (paramClass) {
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS:
                                 lbracket = "(";
                                 rbracket = ")";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET:
+                            case (int)ParamClassEnum.PARAM_CLASS_BRACKET:
                                 lbracket = "[";
                                 rbracket = "]";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD:
+                            case (int)ParamClassEnum.PARAM_CLASS_PERIOD:
                                 lbracket = ".";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON:
+                            case (int)ParamClassEnum.PARAM_CLASS_COLON_COLON:
                                 lbracket = "::";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
+                            case (int)ParamClassEnum.PARAM_CLASS_POINTER:
                                 lbracket = "->";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
+                            case (int)ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
                                 lbracket = "[:";
                                 rbracket = ":]";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
+                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
                                 lbracket = "(:";
                                 rbracket = ":)";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
+                            case (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
                                 lbracket = "<:";
                                 rbracket = ":>";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
+                            case (int)ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
                                 lbracket = "{%";
                                 rbracket = "%}";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
+                            case (int)ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
                                 lbracket = "[%";
                                 rbracket = "%]";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
                                 lbracket = "(%";
                                 rbracket = "%)";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                            case (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
                                 lbracket = "<%";
                                 rbracket = "%>";
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
+                            case (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                                 lbracket = ".*";
                                 rbracket = string.Empty;
                                 break;
-                            case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
+                            case (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR:
                                 lbracket = "->*";
                                 rbracket = string.Empty;
                                 break;
@@ -2334,10 +2332,10 @@ namespace Dsl
                             }
                             ISyntaxComponent param = data.GetParam(i);
                             char sep = param.GetSepChar();
-                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
+                            if ((int)ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                                 || (int)ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                                 || (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                                 || (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                                 stream.Append(param.ToScriptString(true));
                             else
                                 writeSyntaxComponent(stream, param, indent, true, false, delim);
@@ -2558,74 +2556,74 @@ namespace Dsl
                     string rbracket = string.Empty;
                     int paramClass = data.GetParamClassUnmasked();
                     switch (paramClass) {
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS:
                             lbracket = "(";
                             rbracket = ")";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET:
+                        case (int)ParamClassEnum.PARAM_CLASS_BRACKET:
                             lbracket = "[";
                             rbracket = "]";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD:
+                        case (int)ParamClassEnum.PARAM_CLASS_PERIOD:
                             lbracket = ".";
                             rbracket = string.Empty;
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_COLON_COLON:
+                        case (int)ParamClassEnum.PARAM_CLASS_COLON_COLON:
                             lbracket = "::";
                             rbracket = string.Empty;
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER:
+                        case (int)ParamClassEnum.PARAM_CLASS_POINTER:
                             lbracket = "->";
                             rbracket = string.Empty;
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_STATEMENT:
+                        case (int)ParamClassEnum.PARAM_CLASS_STATEMENT:
                             lbracket = "{";
                             rbracket = "}";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT:
+                        case (int)ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT:
                             lbracket = "{:";
                             rbracket = ":}";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
+                        case (int)ParamClassEnum.PARAM_CLASS_BRACKET_COLON:
                             lbracket = "[:";
                             rbracket = ":]";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
+                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
                             lbracket = "(:";
                             rbracket = ":)";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
+                        case (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON:
                             lbracket = "<:";
                             rbracket = ":>";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
+                        case (int)ParamClassEnum.PARAM_CLASS_BRACE_PERCENT:
                             lbracket = "{%";
                             rbracket = "%}";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
+                        case (int)ParamClassEnum.PARAM_CLASS_BRACKET_PERCENT:
                             lbracket = "[%";
                             rbracket = "%]";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
                             lbracket = "(%";
                             rbracket = "%)";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
+                        case (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_PERCENT:
                             lbracket = "<%";
                             rbracket = "%>";
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
+                        case (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR:
                             lbracket = ".*";
                             rbracket = string.Empty;
                             break;
-                        case (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR:
+                        case (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR:
                             lbracket = "->*";
                             rbracket = string.Empty;
                             break;
                     }
                     StringBuilder stream = new StringBuilder();
                     stream.Append(lbracket);
-                    if (paramClass == (int)FunctionData.ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT) {
+                    if (paramClass == (int)ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT) {
                         stream.Append(data.GetParamId(0));
                     }
                     else {
@@ -2635,10 +2633,10 @@ namespace Dsl
                                 stream.Append(",");
                             }
                             ISyntaxComponent param = data.GetParam(i);
-                            if ((int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
-                                 || (int)FunctionData.ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
+                            if ((int)ParamClassEnum.PARAM_CLASS_PERIOD == paramClass
+                                 || (int)ParamClassEnum.PARAM_CLASS_POINTER == paramClass
+                                 || (int)ParamClassEnum.PARAM_CLASS_PERIOD_STAR == paramClass
+                                 || (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR == paramClass)
                                 stream.Append(param.ToScriptString(includeComment));
                             else
                                 stream.Append(param.ToScriptString(includeComment));
