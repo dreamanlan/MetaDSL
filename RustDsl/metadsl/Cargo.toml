@@ -1,0 +1,20 @@
+[package]
+name = "metadsl"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+lazy_static = "1.4.0"
+once_cell = "1.17.1"
+chrono = "0.4.19"
+cfg-if = "1.0"
+regex = "1"
+metadsl_macros = { path = "../metadsl_macros" }
+
+[features]
+default = ["full_version"]
+full_version = []
+
+[[bin]]
+name = "metadsl"
+path = "src/main.rs"
