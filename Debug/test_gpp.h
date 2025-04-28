@@ -13,7 +13,7 @@ main ()
     unsigned int len;
   };
 =:}=;
-@@if(1 )
+@@if(1)
 {
 	@@code
 	={:=
@@ -32,7 +32,7 @@ main ()
 };
 
 =:}=;
-@@define(xxx 1 );
+@@define(xxx 1);
 @@code
 ={:=
 
@@ -40,4 +40,4 @@ abc(()abcd);
 
 =:}=;
 @@define("xxx2 test();
-	test2();" );
+	test2();");

@@ -1,83 +1,83 @@
-skill(kkk )
+skill(kkk)
 {
-	section(80 )
+	section(80)
 	{
 		ok("		yyyy yyyy yyyy
-" );
-		ok("yyyy yyyy yyyy" );
+");
+		ok("yyyy yyyy yyyy");
 		a = "yyyy yyyy yyyy";
-		attr(1005 ) = (attr(1001 ) + attr(1002 ) * attr(2001 ) ) * (1 + attr(1003 ) ) + attr(1004 );
+		attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
 		a > b ? 1 : 0;
 		a + b * c;
 		test();
-		test(123, 345, 678 );
+		test(123, 345, 678);
 	};
-	script(sss )
+	script(sss)
 	{:
 		ok, this is a test, "yeah!!!";
 	:};
-	script(ttt : string, tt2 : int )
+	script(ttt : string, tt2 : int)
 	{: abcd :};
-	(:attr :)
-	script(ttt )
+	(:attr:)
+	script(ttt)
 	{::};
-	[:attr :]
-	script(ttt )
+	[:attr:]
+	script(ttt)
 	{:
   abcdef;
   defg;
 	:};
 	a = "b";
 	a = " abcd ";
-	template<:a, b, c :>class A;
-	a::b ::c ;
-	a::b (abcd );
-	a::(abcd ) ;
-	b::[abcd ] ;
+	template<:a, b, c:>class A;
+	a::b::c;
+	a::b(abcd);
+	a::(abcd);
+	b::[abcd];
 	c::
 	{
-		abcd 
-	} ;
-	{%abcd %};
-	[%abcd %];
-	(%abcd %);
-	<%abcd %>;
+		abcd
+	};
+	{%abcd%};
+	[%abcd%];
+	(%abcd%);
+	<%abcd%>;
 	a->
 	{
-	} ;
-	a->[] ;
-	a->() ;
-	a->*b ;
-	a->func ();
-	a?.*p ();
-	a?.b ;
-	a.b ;
-	a.*p ();
+	};
+	a->[];
+	a->();
+	a->*b;
+	a->func();
+	a?.*p();
+	a?.b;
+	a.b;
+	a.*p();
 };
-skill(ttt : string, tt2 : int )
+skill(ttt : string, tt2 : int)
 {
 };
-namespace(GamePlay );
-import(Brace.Base .Io  );
-interace(ICurly )
+namespace(GamePlay);
+import(Brace.Base.Io);
+interace(ICurly)
 {
-	Exec(str : string )int;
+	Exec(str : string)int;
 };
-class(Player )extends(Character )
-implements(ICurly )
+class(Player)extends(Character)
+implements(ICurly)
 {
 	public
 	{
-		Entry(str : string )
+		Entry(str : string)
 		int
 		{
-			print(str );
-			return <- (0 );
+			print(str);
+			return <- (0);
 		};
-		Exec(str : string )
+		Exec(str : string)
 		int
 		{
-			return <- (atoi(str ) );
+			return <- (atoi(str));
 		};
 	};
 	private
@@ -85,18 +85,18 @@ implements(ICurly )
 		m_Abc : int;
 	};
 };
-externsion(ifndef )
-extends(Statement )
+externsion(ifndef)
+extends(Statement)
 {
 };
 main()
 int
 {
 	@ct += 2;
-	echo("@ct:", @ct );
-	echo("inc\":", ++ @ct );
-	echo("dec:", -- @ct );
-	echo("positive:", + @ct );
-	echo("negative:\"--", - @ct );
+	echo("@ct:", @ct);
+	echo("inc\":", ++ @ct);
+	echo("dec:", -- @ct);
+	echo("positive:", + @ct);
+	echo("negative:\"--", - @ct);
 	return <- a * b + 4;
 };

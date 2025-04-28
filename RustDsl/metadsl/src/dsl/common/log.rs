@@ -12,7 +12,7 @@ impl DslLog
 {
     pub fn new(on_log: DslLogDelegationBox) -> Self
     {
-        DslLog {
+        Self {
             m_on_log: Some(on_log),
             m_has_error: false,
         }
@@ -23,13 +23,13 @@ impl DslLog
         return self.m_has_error;
     }
 
-    pub fn info(&self, info: &String)
+    pub fn info(&self, info: &str)
     {
         if let Some(on_log) = &self.m_on_log {
             on_log(info);
         }
     }
-    pub fn error(&mut self, info: &String)
+    pub fn error(&mut self, info: &str)
     {
         self.m_has_error = true;
         if let Some(on_log) = &self.m_on_log {

@@ -141,7 +141,12 @@ dependencies = [
  "metadsl_macros",
  "once_cell",
  "regex",
+ "syn",
 ]
+
+[[package]]
+name = "metadsl_calculator"
+version = "0.1.0"
 
 [[package]]
 name = "metadsl_macros"

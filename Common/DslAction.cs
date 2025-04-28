@@ -117,7 +117,7 @@ namespace Dsl.Common
             get { return mGetLastLineNumber; }
             set { mGetLastLineNumber = value; }
         }
-        internal GetCommentsDelegation onGetComment
+        internal GetCommentsDelegation onGetComments
         {
             get { return mGetComments; }
             set { mGetComments = value; }
@@ -1072,7 +1072,7 @@ namespace Dsl.Common
                     if (null != f &&
                         f.GetParamClass() != (int)Dsl.ParamClassEnum.PARAM_CLASS_PERIOD &&
                         f.GetParamClass() != (int)Dsl.ParamClassEnum.PARAM_CLASS_BRACKET) {
-                        mLog.Error("[error] Can only assignment to left value. {0}:{1} last token:{2} line {3}", f.GetLine(), f.ToScriptString(false), getLastToken(), getLastLineNumber());
+                        mLog.Error("[error] Can only assignment to left value. {0}:{1} last token:{2} line {3}", f.GetLine(), f.ToScriptString(false, DelimiterInfo.Default), getLastToken(), getLastLineNumber());
                     }
                 }
             }

@@ -21,7 +21,7 @@ main ()
     unsigned int len;
   };
 =:}=;
-@@if(1 )
+@@if(1)
 {
 	@@code
 	={:=
@@ -32,18 +32,22 @@ main ()
 
   ;
 	=:}=;
-	@@define("ABC abc
-fdef" );
+	@@define(
+	={:=
+ABC abc
+fdef=:}=);
 	@@code
 	={:=
 
 	=:}=;
-	@@define("DEF abc(abc)" );
+	@@define(
+	={:=DEF abc(abc)=:}=);
 	@@code
 	={:=
 
 	=:}=;
-	@@define("XXX 1 > 2 ? 1 : 0" );
+	@@define(
+	={:=XXX 1 > 2 ? 1 : 0=:}=);
 	@@code
 	={:=
 
@@ -56,7 +60,7 @@ fdef" );
 };
 
 =:}=;
-@@define(xxx 1 );
+@@define(xxx 1);
 @@code
 ={:=
 

@@ -1,13 +1,108 @@
-for(i = 0; i < 9; ++ i )
+@@delimiter(string, "[[", "]]");
+@@delimiter(script, "BEGIN_SCRIPT", "END_SCRIPT");
+skill(kkk)
 {
-	echo("test\"test", i?.a ? 123 : 0 );
-	a->{} ;
-	a->[] ;
-	a->() ;
-	a->*b ;
-	a->func ();
-	a?.*p ();
-	a?.b ;
-	a.b ;
-	a.*p ();
+	section(80)	//fdafds	#fdafdsa
+	{
+		//fdfdasfdsa;
+		ok([[		yyyy yyyy yyyy
+]]);	#fdafdsa
+		ok([[yyyy yyyy yyyy]]);
+		a = [[yyyy yyyy yyyy]];
+		attr(1005) = (attr(1001) + attr(1002) * attr(2001)) * (1 + attr(1003)) + attr(1004);
+		a > b ? 1 : 0;
+		a + b * c;
+		//animation(abc);
+		test();
+		test(123, 345, 678);	//fdasfdas
+	};	//fdafdas
+	script(sss)
+	BEGIN_SCRIPT
+		ok, this is a test, "yeah!!!";
+	END_SCRIPT;
+	script(ttt : string, tt2 : int)
+	BEGIN_SCRIPT abcd END_SCRIPT;
+	(:attr:)
+	script(ttt)
+	BEGIN_SCRIPTEND_SCRIPT;
+	[:attr:]
+	script(ttt)
+	BEGIN_SCRIPT
+  abcdef;
+  defg;
+	END_SCRIPT;
+	a = [[b]];
+	a = [[ abcd ]];
+	template<:a, b, c:>class A;
+	a::b::c;
+	a::b(abcd);
+	a::(abcd);
+	b::[abcd];
+	c::
+	{
+		abcd
+	};
+	{%abcd%};
+	[%abcd%];
+	(%abcd%);
+	<%abcd%>;
+	a->{};
+	a->[];
+	a->();
+	a->*b;
+	a->func();
+	a?.*p();
+	a?.b;
+	a.b;
+	a.*p();
+};	//test test test
+skill(ttt : string, tt2 : int)
+{
+};
+namespace(GamePlay);
+import(Brace.Base.Io);
+interace(ICurly)
+{
+	Exec(str : string)int;
+};
+class(Player)extends(Character)
+implements(ICurly)
+{
+	public
+	{
+		Entry(str : string)
+		int
+		{
+			print(str);
+			return <- (0);
+		};
+		Exec(str : string)
+		int
+		{
+			return <- (atoi(str));
+		};
+	};
+	private
+	{
+		m_Abc : int;
+	};
+};
+externsion(ifndef)
+extends(Statement)
+{
+};
+main()
+int
+{
+	@ct += 2;
+	echo([[@ct:]], @ct);
+	echo([[inc:]], ++ @ct);
+	echo([[dec:]], -- @ct);
+	echo([[positive:]], + @ct);
+	echo([[negative:]], - @ct);
+	for(int i = 0; i < 9; ++ i)
+	{
+		echo(i);
+	};
+	return <- a * b + 4;
 };

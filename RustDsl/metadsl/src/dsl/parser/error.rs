@@ -13,7 +13,7 @@ impl<'a> DslError<'a>
 {
     pub fn new(log: &'a DslLogCell) -> Self
     {
-        DslError {
+        Self {
             m_log: log
         }
     }
@@ -36,7 +36,7 @@ impl<'a> DslError<'a>
         self.m_log.borrow_mut().error(&format!("[error] input left, last token {} line {}, cur token {} line {}", dsl_token.borrow().get_last_token(), dsl_token.borrow().get_last_line_number(), dsl_token.borrow().get_cur_token(), dsl_token.borrow().get_line_number()));
     }
 
-    pub fn message(&self, message: &String, dsl_token: &DslTokenCell)
+    pub fn message(&self, message: &str, dsl_token: &DslTokenCell)
     {
         self.m_log.borrow_mut().error(&format!("[info] {}, last token {} line {}, cur token {} line {}", message, dsl_token.borrow().get_last_token(), dsl_token.borrow().get_last_line_number(), dsl_token.borrow().get_cur_token(), dsl_token.borrow().get_line_number()));
     }

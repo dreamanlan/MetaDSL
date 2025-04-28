@@ -411,7 +411,7 @@ pub fn parse (action: &DslActionCell,
         top -= 1;
         stack [top as usize] = _start_symbol;
     } else {
-        error.borrow_mut().message (&String::from("DslParse: stack overflow\n"), tokens); return;
+        error.borrow_mut().message ("DslParse: stack overflow\n", tokens); return;
     }
     token = tokens.borrow_mut().get();
     new_token = token;
@@ -462,7 +462,7 @@ pub fn parse (action: &DslActionCell,
                             top -= 1;
                             stack [top as usize] = PRODUCTION [index as usize];
                         } else {
-                            error.borrow().message (&String::from("DslParse: stack overflow\n"), tokens); return;
+                            error.borrow().message ("DslParse: stack overflow\n", tokens); return;
                         }
                         index -= 1;
                     }
@@ -480,7 +480,7 @@ pub fn parse (action: &DslActionCell,
                 new_token = error.borrow().mismatch ( symbol, token, &tokens );
             }
         } else {
-            error.borrow().message ( &String::from("\n parser error: symbol value 0\n"), tokens );
+            error.borrow().message ( "\n parser error: symbol value 0\n", tokens );
         }
         if token != new_token {
             if new_token != 0 {

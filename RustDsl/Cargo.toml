@@ -1,2 +1,3 @@
 [workspace]
-members = ["metadsl", "metadsl_macros"]
+resolver = "1"
+members = ["metadsl", "metadsl_calculator", "metadsl_macros"]

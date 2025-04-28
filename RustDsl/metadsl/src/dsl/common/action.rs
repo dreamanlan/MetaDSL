@@ -11,8 +11,7 @@ use crate::dsl::{
     SyntaxComponent,
     ValueData,
     FunctionData,
-    StatementData,
-    EMPTY_STRING
+    StatementData
 };
 use crate::dsl;
 
@@ -52,7 +51,7 @@ pub type BeforeEndStatementDelegation<'a> = dyn Fn(&mut DslAction) -> bool + 'a;
 pub type EndStatementDelegation<'a> = dyn Fn(&mut DslAction, &mut StatementData) -> bool + 'a;
 pub type BeforeBuildOperatorDelegation<'a> = dyn Fn(&mut DslAction, i32, String, Option<&mut StatementData>) -> bool + 'a;
 pub type BuildOperatorDelegation<'a> = dyn Fn(&mut DslAction, i32, String, &mut StatementData) -> bool + 'a;
-pub type SetFunctionIdDelegation<'a> = dyn Fn(&mut DslAction, String) -> bool + 'a;
+pub type SetFunctionIdDelegation<'a> = dyn Fn(&mut DslAction) -> bool + 'a;
 pub type BeforeBuildHighOrderDelegation<'a> = dyn Fn(&mut DslAction) -> bool + 'a;
 pub type BuildHighOrderDelegation<'a> = dyn Fn(&mut DslAction) -> bool + 'a;
 
@@ -112,7 +111,7 @@ impl<'a> DslAction<'a>
 {
     pub fn new(log: &'a DslLogCell) -> Self
     {
-        DslAction {
+        Self {
             m_log: log,
             m_dsl_token: None,
             m_script_datas: Vec::new(),
@@ -138,11 +137,11 @@ impl<'a> DslAction<'a>
     {
         return &mut self.m_script_datas;
     }
-    pub fn info(&self, info: &String)
+    pub fn info(&self, info: &str)
     {
         self.m_log.borrow().info(info);
     }
-    pub fn error(&self, info: &String)
+    pub fn error(&self, info: &str)
     {
         self.m_log.borrow_mut().error(info);
     }
@@ -220,7 +219,7 @@ impl<'a> DslAction<'a>
         self.m_on_build_high_order = Some(value);
     }
 
-    pub fn predict(&self, _production_number: i16, _nonterminal: i16, _token: i16, _level: i32, _last_tok: &String, _last_line_no: i32, _cur_tok: &String, _line_no: i32)
+    pub fn predict(&self, _production_number: i16, _nonterminal: i16, _token: i16, _level: i32, _last_tok: &str, _last_line_no: i32, _cur_tok: &str, _line_no: i32)
     {
         //mLog.Log("{0} [production: {1} nonterminal: {2} token symbol: {3} last token: {4} line: {5} cur token: {6} line: {7} ]", Dsl.Parser.DslString.GetProductionName(productionNumber), productionNumber, nonterminal, Dsl.Parser.DslString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
     }
@@ -286,8 +285,7 @@ impl<'a> DslAction<'a>
             let fnum = statement.get_function_num();
             if let Some(v_or_f) = statement.first() {
                 if let ValueOrFunction::Function(func) = &v_or_f {
-                    let call: &dyn ISyntaxComponent = func;
-                    if fnum == 1 && call.get_id() == "@@delimiter" &&
+                    if fnum == 1 && func.get_id() == "@@delimiter" &&
                         (func.get_param_num() == 1 || func.get_param_num() == 3) &&
                         !func.is_high_order() {
                         let r#type = func.get_param_id(0).unwrap();
@@ -306,10 +304,10 @@ impl<'a> DslAction<'a>
                         }
                         else {
                             if r#type == "string" {
-                                self.set_string_delimiter(EMPTY_STRING.clone(), EMPTY_STRING.clone());
+                                self.set_string_delimiter(String::new(), String::new());
                             }
                             else if r#type == "script" {
-                                self.set_script_delimiter(EMPTY_STRING.clone(), EMPTY_STRING.clone());
+                                self.set_script_delimiter(String::new(), String::new());
                             }
                             else {
                                 //invalid
@@ -336,10 +334,10 @@ impl<'a> DslAction<'a>
                 }
             }
 
-            if self.m_statement_semantic_stack.len() == 0 {
+            if self.m_statement_semantic_stack.is_empty() {
                 //Simplification only needs to handle the first level, and the parameters and statement parts
                 //should have already been processed when added to the statement.
-                let r = Self::simplify_statement(&mut statement);
+                let r = Self::simplify_statement_s(&mut statement);
                 let mut statement_syntax;
                 if let Some(syn) = r {
                     statement_syntax = syn;
@@ -347,10 +345,10 @@ impl<'a> DslAction<'a>
                 else {
                     statement_syntax = SyntaxComponent::Statement(statement);
                 }
+                let len = self.m_script_datas.len();
                 if !statement_syntax.is_valid() {
                     //The "epsilon" expression has no statement semantics.
-                    if self.m_script_datas.len() > 0 {
-                        let len = self.m_script_datas.len();
+                    if len > 0 {
                         let last = &mut self.m_script_datas[len - 1];
                         let mut new_line = false;
                         if let Some(tcmts) = last.last_comments_mut() {
@@ -372,8 +370,7 @@ impl<'a> DslAction<'a>
                 }
                 else if let SyntaxComponent::Value(_v) = &statement_syntax {
                     //If the statement is a regular value, move the comment to the previous statement.
-                    if self.m_script_datas.len() > 0 {
-                        let len = self.m_script_datas.len();
+                    if len > 0 {
                         let last = &mut self.m_script_datas[len - 1];
                         let mut new_line = false;
                         if let Some(tcmts) = last.last_comments_mut() {
@@ -394,7 +391,6 @@ impl<'a> DslAction<'a>
                 }
                 else {
                     //Move the comment from the previous line of code to the line above.
-                    let len = self.m_script_datas.len();
                     if len > 0 && !statement_syntax.first_comment_on_new_line() {
                         if let Some(cmts) = statement_syntax.first_comments_mut() {
                             if cmts.len() > 0 {
@@ -417,8 +413,7 @@ impl<'a> DslAction<'a>
                     }
                 }
                 //Top-level element ends.
-                if add_sep && self.m_script_datas.len() > 0 {
-                    let len = self.m_script_datas.len();
+                if add_sep && len > 0 {
                     let last_stm = &mut self.m_script_datas[len - 1];
                     last_stm.set_seperator(dsl::SEPARATOR_SEMICOLON);
                 }
@@ -427,7 +422,7 @@ impl<'a> DslAction<'a>
             else {
                 //Simplification only needs to handle the first level. The parameters and statement parts
                 //should have already been processed when added to the statement.
-                let r = Self::simplify_statement(&mut statement);
+                let r = Self::simplify_statement_s(&mut statement);
                 let mut statement_syntax;
                 if let Some(syn) = r {
                     statement_syntax = syn;
@@ -437,32 +432,33 @@ impl<'a> DslAction<'a>
                 }
                 if let Some(v_or_f) = self.get_last_function_mut() {
                     if let ValueOrFunction::Function(func) = v_or_f {
+                        let num = func.get_param_num();
                         if func.have_param() {
                             //If it is a comment within the parameters, keep it as it is. Comments on regular values
                             //will be discarded, and if embedded comments are moved to the end of the line, it may
                             //appear inexplicable.
-                            //if (!statementSyntax.is_valid())
+                            //if !statementSyntax.is_valid() {
                             //    return;
+                            //}
                         }
                         else if !statement_syntax.is_valid() {
                             //The "epsilon" expression has no statement semantics.
-                            let num = func.get_param_num();
                             if num > 0 {
                                 if let Some(cmts1) = statement_syntax.first_comments() {
                                     if cmts1.len() > 0 {
-                                        if let Some(cmts2) = statement_syntax.last_comments() {
-                                            if let Some(last) = func.get_param_mut(num- 1) {
-                                                let mut new_line = false;
-                                                if let Some(tcmts) = last.last_comments_mut() {
-                                                    if tcmts.len() <= 0 {
-                                                        new_line = true;
-                                                    }
-                                                    tcmts.append(&mut cmts1.clone());
+                                        if let Some(last) = func.get_param_mut(num- 1) {
+                                            let mut new_line = false;
+                                            if let Some(tcmts) = last.last_comments_mut() {
+                                                if tcmts.len() <= 0 {
+                                                    new_line = true;
+                                                }
+                                                tcmts.append(&mut cmts1.clone());
+                                                if let Some(cmts2) = statement_syntax.last_comments() {
                                                     tcmts.append(&mut cmts2.clone());
                                                 }
-                                                if new_line {
-                                                    last.set_last_comment_on_new_line(statement_syntax.first_comment_on_new_line());
-                                                }
+                                            }
+                                            if new_line {
+                                                last.set_last_comment_on_new_line(statement_syntax.first_comment_on_new_line());
                                             }
                                         }
                                     }
@@ -472,7 +468,6 @@ impl<'a> DslAction<'a>
                         }
                         else if let SyntaxComponent::Value(_v) = &statement_syntax {
                             //If the statement is a regular value, move the comment to the previous statement.
-                            let num = func.get_param_num();
                             if num > 0 {
                                 if let Some(last) = func.get_param_mut(num- 1) {
                                     let mut new_line = false;
@@ -504,52 +499,42 @@ impl<'a> DslAction<'a>
                         else {
                             //Move the comment from the previous line of code to the line above.
                             if !statement_syntax.first_comment_on_new_line() {
-                                let mut modify_statement = false;
-                                if let Some(cmts) = statement_syntax.first_comments() {
+                                if let Some(cmts) = statement_syntax.first_comments_mut() {
                                     if cmts.len() > 0 {
-                                        if let Some(cmts) = statement_syntax.first_comments() {
-                                            let cmt = &cmts[0];
-                                            modify_statement = true;
-                                            let num = func.get_param_num();
-                                            if num > 0 {
-                                                if let Some(last) = func.get_param_mut(num - 1) {
-                                                    let mut new_line = false;
-                                                    if let Some(tcmts) = last.last_comments_mut() {
-                                                        if tcmts.len() <= 0 {
-                                                            new_line = true;
-                                                        }
-                                                        tcmts.push(cmt.clone());
+                                        let cmt = std::mem::take(&mut cmts[0]);
+                                        cmts.remove(0);
+                                        statement_syntax.set_first_comment_on_new_line(true);
+                                        if num > 0 {
+                                            if let Some(last) = func.get_param_mut(num - 1) {
+                                                let mut new_line = false;
+                                                if let Some(tcmts) = last.last_comments_mut() {
+                                                    if tcmts.len() <= 0 {
+                                                        new_line = true;
                                                     }
-                                                    if new_line {
-                                                        last.set_last_comment_on_new_line(false);
-                                                    }
+                                                    tcmts.push(cmt);
                                                 }
-                                            }
-                                            else if func.is_high_order() {
-                                                if let Some(lf) = func.lower_order_function_mut() {
-                                                    if let Some(tcmts) = lf.comments_mut() {
-                                                        tcmts.push(cmt.clone());
-                                                    }
+                                                if new_line {
+                                                    last.set_last_comment_on_new_line(false);
                                                 }
-                                            }
-                                            else if let Some(tcmts) = func.comments_mut() {
-                                                tcmts.push(cmt.clone());
                                             }
                                         }
+                                        else if func.is_high_order() {
+                                            if let Some(lf) = func.lower_order_function_mut() {
+                                                if let Some(tcmts) = lf.comments_mut() {
+                                                    tcmts.push(cmt);
+                                                }
+                                            }
+                                        }
+                                        else if let Some(tcmts) = func.comments_mut() {
+                                            tcmts.push(cmt);
+                                        }
                                     }
-                                }
-                                if modify_statement {
-                                    if let Some(fcmts) = statement_syntax.first_comments_mut() {
-                                        fcmts.remove(0);
-                                    }
-                                    statement_syntax.set_first_comment_on_new_line(true);
                                 }
                             }
                         }
 
-                        let num = func.get_param_num();
                         if add_sep && num > 0 {
-                            let sep = if func.get_param_class_unmasked() == dsl::PARAM_CLASS_STATEMENT { dsl::SEPARATOR_SEMICOLON } else { dsl::SEPARATOR_COMMA } as i32;
+                            let sep = if func.get_param_class_unmasked() == dsl::PARAM_CLASS_STATEMENT { dsl::SEPARATOR_SEMICOLON } else { dsl::SEPARATOR_COMMA };
                             if let Some(last_param) = func.get_param_mut(num - 1) {
                                 last_param.set_seperator(sep);
                             }
@@ -634,7 +619,7 @@ impl<'a> DslAction<'a>
 
         if self.m_statement_semantic_stack.len() == 0 {
             if let Some(dsl_info) = self.m_script_datas.last_mut() {
-                dsl_info.set_seperator(Self::calc_separator(name));
+                dsl_info.set_seperator(Self::calc_separator_s(name));
             }
         }
         else {
@@ -643,7 +628,7 @@ impl<'a> DslAction<'a>
                     let num = last_func.get_param_num();
                     if num > 0 {
                         if let Some(last_param) = last_func.get_param_mut(num - 1) {
-                            last_param.set_seperator(Self::calc_separator(name));
+                            last_param.set_seperator(Self::calc_separator_s(name));
                         }
                     }
                 }
@@ -663,7 +648,7 @@ impl<'a> DslAction<'a>
                 on_build_operator(self, OPERATOR_CATEGORY_NORMAL, name.clone(), &mut arg);
             }
 
-            let r = Self::simplify_statement(&mut arg);
+            let r = Self::simplify_statement_s(&mut arg);
             let mut arg_comp;
             if let Some(syn) = r {
                 arg_comp = syn;
@@ -672,7 +657,7 @@ impl<'a> DslAction<'a>
                 arg_comp = SyntaxComponent::Statement(arg);
             }
 
-            let mut _statement = Self::new_statement_with_one_function();
+            let mut _statement = Self::new_statement_with_one_function_s();
             if let Some(first) = _statement.first_mut() {
                 match first {
                     ValueOrFunction::Value(v) => {
@@ -696,7 +681,7 @@ impl<'a> DslAction<'a>
             if let Some(v_or_f) = self.get_last_function_mut() {
                 if let ValueOrFunction::Function(func) = v_or_f {
                     if !func.is_valid() {
-                        if name.len() > 0 && name.chars().nth(0).unwrap() == '`' {
+                        if name.len() > 0 && name.chars().next() == Some('`') {
                             func.set_param_class(dsl::PARAM_CLASS_WRAP_INFIX_CALL_MASK | dsl::PARAM_CLASS_OPERATOR);
 
                             if let Some(fname) = func.name_mut() {
@@ -705,10 +690,10 @@ impl<'a> DslAction<'a>
                             }
                         }
                         else {
-                            func.set_param_class(dsl::PARAM_CLASS_OPERATOR as i32);
+                            func.set_param_class(dsl::PARAM_CLASS_OPERATOR);
 
                             if let Some(fname) = func.name_mut() {
-                                fname.set_id(name.clone());
+                                fname.set_id(name);
                                 fname.set_type(r#type);
                             }
                         }
@@ -733,7 +718,7 @@ impl<'a> DslAction<'a>
                 on_build_operator(self, OPERATOR_CATEGORY_TERNARY, name.clone(), &mut arg);
             }
 
-            let r = Self::simplify_statement(&mut arg);
+            let r = Self::simplify_statement_s(&mut arg);
             let mut arg_comp;
             if let Some(syn) = r {
                 arg_comp = syn;
@@ -742,7 +727,7 @@ impl<'a> DslAction<'a>
                 arg_comp = SyntaxComponent::Statement(arg);
             }
 
-            let mut _statement = Self::new_statement_with_one_function();
+            let mut _statement = Self::new_statement_with_one_function_s();
             if let Some(mut first) = _statement.first_mut() {
                 if let ValueOrFunction::Function(f_func) = &mut first {
                     //The ternary operator is represented as op1(cond)(true_val)op2(false_val)
@@ -765,7 +750,7 @@ impl<'a> DslAction<'a>
                 if let ValueOrFunction::Function(l_func) = v_or_f {
                     if !l_func.is_valid() {
                         if let Some(lo_func) = l_func.lower_order_function_mut() {
-                            lo_func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS as i32);
+                            lo_func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS);
                             if let Some(fname) = lo_func.name_mut() {
                                 fname.set_id(name);
                                 fname.set_type(r#type);
@@ -774,7 +759,7 @@ impl<'a> DslAction<'a>
                                 lo_func.add_syntax_component_param(arg_comp);
                             }
                         }
-                        l_func.set_param_class(dsl::PARAM_CLASS_TERNARY_OPERATOR as i32);
+                        l_func.set_param_class(dsl::PARAM_CLASS_TERNARY_OPERATOR);
                     }
                 }
             }
@@ -806,7 +791,7 @@ impl<'a> DslAction<'a>
         if let Some(v_or_f) = self.get_last_function_mut() {
             if let ValueOrFunction::Function(func) = v_or_f {
                 if !func.is_valid() {
-                    func.set_param_class(dsl::PARAM_CLASS_TERNARY_OPERATOR as i32);
+                    func.set_param_class(dsl::PARAM_CLASS_TERNARY_OPERATOR);
                     if let Some(fname) = func.name_mut() {
                         fname.set_id(name);
                         fname.set_type(r#type);
@@ -818,7 +803,7 @@ impl<'a> DslAction<'a>
     }
     pub fn begin_statement(&mut self)
     {
-        let mut statement = Self::new_statement_without_function();
+        let mut statement = Self::new_statement_without_function_s();
 
         let mut comment_on_new_line = false;
         if let Some(cmts) = self.get_comments(&mut comment_on_new_line) {
@@ -848,7 +833,7 @@ impl<'a> DslAction<'a>
             on_before_add_function(self);
         }
         if let Some(statement) = self.get_cur_statement_mut() {
-            Self::add_new_function_to_statement(statement);
+            Self::add_new_function_to_statement_s(statement);
         }
         if let Some(on_add_function) = self.m_on_add_function {
             on_add_function(self);
@@ -863,7 +848,7 @@ impl<'a> DslAction<'a>
             if let ValueOrFunction::Function(func) = v_or_f {
                 if !func.is_valid() {
                     if let Some(fname) = func.name_mut() {
-                        fname.set_id(name.clone());
+                        fname.set_id(name);
                         fname.set_type(r#type);
                         fname.set_line(last_line_number);
                     }
@@ -871,7 +856,7 @@ impl<'a> DslAction<'a>
             }
         }
         if let Some(on_set_function_id) = self.m_on_set_function_id {
-            on_set_function_id(self, name);
+            on_set_function_id(self);
         }
     }
     pub fn build_nullable_operator(&mut self)
@@ -961,17 +946,12 @@ impl<'a> DslAction<'a>
     }
     pub fn mark_statement(&mut self)
     {
-        let mut cmts_clone: Option<Vec<String>> = None;
         let mut comment_on_new_line = false;
-        if let Some(cmts) = self.get_comments(&mut comment_on_new_line) {
-            if cmts.len() > 0 {
-                cmts_clone = Some(cmts.clone());
-            }
-        }
+        let cmts_moved: Option<Vec<String>> = self.get_comments(&mut comment_on_new_line);
 
-        if let Some(mut cmts) = cmts_clone {
-            if let Some(v_or_f) = self.get_last_function_mut() {
-                if let ValueOrFunction::Function(func) = v_or_f {
+        if let Some(v_or_f) = self.get_last_function_mut() {
+            if let ValueOrFunction::Function(func) = v_or_f {
+                if let Some(mut cmts) = cmts_moved {
                     if func.is_high_order() {
                         if let Some(lo_func) = func.lower_order_function_mut() {
                             if let Some(tcmts) = lo_func.comments_mut() {
@@ -984,8 +964,8 @@ impl<'a> DslAction<'a>
                             tcmts.append(&mut cmts);
                         }
                     }
-                    func.set_param_class(dsl::PARAM_CLASS_STATEMENT);
                 }
+                func.set_param_class(dsl::PARAM_CLASS_STATEMENT);
             }
         }
 
@@ -998,17 +978,12 @@ impl<'a> DslAction<'a>
     }
     pub fn mark_extern_script(&mut self)
     {
-        let mut cmts_clone: Option<Vec<String>> = None;
         let mut comment_on_new_line = false;
-        if let Some(cmts) = self.get_comments(&mut comment_on_new_line) {
-            if cmts.len() > 0 {
-                cmts_clone = Some(cmts.clone());
-            }
-        }
+        let cmts_moved: Option<Vec<String>> = self.get_comments(&mut comment_on_new_line);
 
-        if let Some(mut cmts) = cmts_clone {
-            if let Some(v_or_f) = self.get_last_function_mut() {
-                if let ValueOrFunction::Function(func) = v_or_f {
+        if let Some(v_or_f) = self.get_last_function_mut() {
+            if let ValueOrFunction::Function(func) = v_or_f {
+                if let Some(mut cmts) = cmts_moved {
                     if func.is_high_order() {
                         if let Some(lo_func) = func.lower_order_function_mut() {
                             if let Some(tcmts) = lo_func.comments_mut() {
@@ -1021,8 +996,8 @@ impl<'a> DslAction<'a>
                             tcmts.append(&mut cmts);
                         }
                     }
-                    func.set_param_class(dsl::PARAM_CLASS_EXTERN_SCRIPT);
                 }
+                func.set_param_class(dsl::PARAM_CLASS_EXTERN_SCRIPT);
             }
         }
     }
@@ -1206,10 +1181,10 @@ impl<'a> DslAction<'a>
         let tok: String;
         if let Some(info) = self.m_semantic_stack.pop_back() {
             *val = info.value;
-            tok = info.token.clone();
+            tok = info.token;
         }
         else {
-            tok = EMPTY_STRING.clone();
+            tok = String::new();
         }
         return tok;
     }
@@ -1323,7 +1298,52 @@ impl<'a> DslAction<'a>
         }
         return tag;
     }
-    pub fn new_statement_with_one_function() -> StatementData
+
+    fn get_last_token(&self) -> String
+    {
+        if let Some(tokens) = self.m_dsl_token {
+            return tokens.borrow().get_last_token().clone();
+        }
+        else {
+            return String::new();
+        }
+    }
+    fn get_last_line_number(&self) -> i32
+    {
+        if let Some(tokens) = self.m_dsl_token {
+            return tokens.borrow().get_last_line_number();
+        }
+        else {
+            return -1;
+        }
+    }
+    fn get_comments(&self, comment_on_new_line: &mut bool) -> Option<Vec<String>>
+    {
+        if let Some(tokens) = self.m_dsl_token {
+            *comment_on_new_line = tokens.borrow().is_comment_on_new_line();
+            let cmts = std::mem::take(tokens.borrow_mut().get_comments_mut());
+            tokens.borrow_mut().reset_comments();
+            return Some(cmts);
+        }
+        else {
+            *comment_on_new_line = false;
+            return None;
+        }
+    }
+    fn set_string_delimiter(&mut self, begin: String, end: String)
+    {
+        if let Some(tokens) = self.m_dsl_token {
+            tokens.borrow_mut().set_string_delimiter(begin, end);
+        }
+    }
+    fn set_script_delimiter(&mut self, begin: String, end: String)
+    {
+        if let Some(tokens) = self.m_dsl_token {
+            tokens.borrow_mut().set_script_delimiter(begin, end);
+        }
+    }
+
+    pub fn new_statement_with_one_function_s() -> StatementData
     {
         let mut data = StatementData::new();
         let mut func = FunctionData::new();
@@ -1332,19 +1352,20 @@ impl<'a> DslAction<'a>
         data.add_function(ValueOrFunction::Function(func));
         return data;
     }
-    pub fn new_statement_without_function() -> StatementData
+    pub fn new_statement_without_function_s() -> StatementData
     {
         let data = StatementData::new();
         return data;
     }
-    pub fn add_new_function_to_statement(data: &mut StatementData)
+    pub fn add_new_function_to_statement_s(data: &mut StatementData)
     {
         let mut func = FunctionData::new();
         let name = ValueData::new();
         func.set_name(Some(Box::new(name)));
         data.add_function(ValueOrFunction::Function(func));
     }
-    fn simplify_statement(data: &mut StatementData) -> Option<SyntaxComponent>
+
+    fn simplify_statement_s(data: &mut StatementData) -> Option<SyntaxComponent>
     {
         //Simplify statements (during the process of syntax analysis, they are constructed
         //using complete StatementData for convenience, but here they are simplified to their original
@@ -1353,17 +1374,14 @@ impl<'a> DslAction<'a>
         if data.get_function_num() == 1 {
             //Statements with only one function are reduced to the function itself
             //(and further reduced according to the function).
-            if let Some(vf) = data.get_function(0) {
+            if let Some(vf) = data.get_function_mut(0) {
                 match vf {
                     ValueOrFunction::Value(v) => {
-                        let mut cv = v.clone();
-                        cv.copy_comments(v);
+                        let cv = std::mem::take(v);
                         return Some(SyntaxComponent::Value(cv));
                     }
                     ValueOrFunction::Function(f) => {
-                        let mut cf = f.clone();
-                        cf.copy_comments(f);
-                        if let Some(r) = Self::simplify_function(&mut cf) {
+                        if let Some(r) = Self::simplify_function_s(f) {
                             match r {
                                 ValueOrFunction::Value(rv) => {
                                     return Some(SyntaxComponent::Value(rv));
@@ -1378,38 +1396,24 @@ impl<'a> DslAction<'a>
             }
         }
         else {
-            let mut data_copy: Option<SyntaxComponent> = None;
             let mut i = 0;
             while i < data.get_function_num() {
-                let mut nf: Option<ValueOrFunction> = None;
                 if let Some(func) = data.get_function_mut(i) {
                     match func {
                         ValueOrFunction::Function(f) => {
-                            if let Some(v_or_f) = Self::simplify_function(f) {
-                                nf = Some(v_or_f);
+                            if let Some(v_or_f) = Self::simplify_function_s(f) {
+                                *func = v_or_f;
                             }
                         }
                         _ => {}
                     }
                 }
-                if let Some(nvf) = nf {
-                    if let Some(dat) = &mut data_copy {
-                        if let SyntaxComponent::Statement(s) = dat {
-                            s.set_function(i, nvf);
-                        }
-                    }
-                    else {
-                        let new_dat = data.clone();
-                        data_copy = Some(SyntaxComponent::Statement(new_dat));
-                    }
-                }
                 i += 1;
             }
-            return data_copy;
         }
         return None;
     }
-    fn simplify_function(data: &mut FunctionData) -> Option<ValueOrFunction>
+    fn simplify_function_s(data: &mut FunctionData) -> Option<ValueOrFunction>
     {
         //Note that in order to save memory, comments are not included in ValueData.
         //The related interfaces have no actual effect!!!
@@ -1417,17 +1421,19 @@ impl<'a> DslAction<'a>
             //Calls without parameters are reduced to basic value data.
             if data.is_high_order() {
                 //This situation should not occur.
-                return Some(ValueOrFunction::Function(data.clone()));
+                let data_moved = std::mem::take(data);
+                return Some(ValueOrFunction::Function(data_moved));
             }
             else {
-                if let Some(val) = data.name() {
-                    return Some(ValueOrFunction::Value(val.as_ref().clone()));
+                if let Some(val) = data.name_mut() {
+                    let val_moved = std::mem::take(val.as_mut());
+                    return Some(ValueOrFunction::Value(val_moved));
                 }
             }
         }
 
         //Handling epsilon statements and parameters.
-        Self::simplify_function_inplace(data);
+        Self::simplify_function_inplace_s(data);
 
         if data.get_id() == "-" && data.get_param_num() == 1 {
             if let Some(sc) = data.get_param(0) {
@@ -1440,10 +1446,11 @@ impl<'a> DslAction<'a>
             }
         }
         else if data.get_id() == "+" && data.get_param_num() == 1 {
-            if let Some(sc) = data.get_param(0) {
+            if let Some(sc) = data.get_param_mut(0) {
                 if let SyntaxComponent::Value(val) = sc {
                     if val.is_number() {
-                        let ret = ValueData::from_string_type(val.get_id().clone(), dsl::NUM_TOKEN);
+                        let id_moved = std::mem::take(val.get_id_mut());
+                        let ret = ValueData::from_string_type(id_moved, dsl::NUM_TOKEN);
                         return Some(ValueOrFunction::Value(ret));
                     }
                 }
@@ -1451,17 +1458,17 @@ impl<'a> DslAction<'a>
         }
         return None;
     }
-    fn simplify_function_inplace(data: &mut FunctionData)
+    fn simplify_function_inplace_s(data: &mut FunctionData)
     {
-        // When the last statement is epsilon and the only parameter is epsilon, delete self statement and parameter.
+        // When the last statement is epsilon and the only parameter is epsilon, delete this statement and parameter.
         // This ensures correct parsing of for(;;){}.
         // Currently, {} is used for non-block statement cases, so there should be no need for the last parameter to be empty
         // (allowing preceding parameters to be empty is already allowed). The side effect is that the statement list
         // also allows other statements to be empty except for the last one that is not terminated by a semicolon.
-        // The higher-level application needs to handle self case when further parsing.
+        // The higher-level application needs to handle this case when further parsing.
         if data.is_high_order() {
             if let Some(lower_order_function) = data.lower_order_function_mut() {
-                Self::simplify_function_inplace(&mut lower_order_function.as_mut());
+                Self::simplify_function_inplace_s(&mut lower_order_function.as_mut());
             }
         }
         let mut remove_last = false;
@@ -1482,50 +1489,7 @@ impl<'a> DslAction<'a>
             }
         }
     }
-
-    fn get_last_token(&self) -> String
-    {
-        if let Some(tokens) = self.m_dsl_token {
-            return tokens.borrow().get_last_token().clone();
-        }
-        else {
-            return EMPTY_STRING.clone();
-        }
-    }
-    fn get_last_line_number(&self) -> i32
-    {
-        if let Some(tokens) = self.m_dsl_token {
-            return tokens.borrow().get_last_line_number();
-        }
-        else {
-            return -1;
-        }
-    }
-    fn get_comments(&self, comment_on_new_line: &mut bool) -> Option<Vec<String>>
-    {
-        if let Some(tokens) = self.m_dsl_token {
-            *comment_on_new_line = tokens.borrow().is_comment_on_new_line();
-            return Some(tokens.borrow_mut().get_comments().clone());
-        }
-        else {
-            *comment_on_new_line = false;
-            return None;
-        }
-    }
-    fn set_string_delimiter(&mut self, begin: String, end: String)
-    {
-        if let Some(tokens) = self.m_dsl_token {
-            tokens.borrow_mut().set_string_delimiter(begin, end);
-        }
-    }
-    fn set_script_delimiter(&mut self, begin: String, end: String)
-    {
-        if let Some(tokens) = self.m_dsl_token {
-            tokens.borrow_mut().set_script_delimiter(begin, end);
-        }
-    }
-
-    fn calc_separator(tok: String) -> i32
+    fn calc_separator_s(tok: String) -> i32
     {
         if tok == "," {
             return dsl::SEPARATOR_COMMA;

@@ -392,7 +392,7 @@ namespace DslFileReadWrite
         else if (data.IsValid()) {
             WriteId(fp, StrPolicy::ToCStr(data.GetId()), firstLineNoIndent ? 0 : indent);
         }
-        if (isLastOfStatement) {
+        if (isLastOfStatement && !data.IsEmptySeparator()) {
             fwrite(data.GetSepChar(), 1, 1, fp);
         }
         WriteLastCommentsToFile(fp, indent, isLastOfStatement, data);
@@ -518,9 +518,12 @@ namespace DslFileReadWrite
                         fwrite(" ", 1, 1, fp);
                     }
                     auto& component = *data.GetParam(ix);
+                    bool isEmptySep = component.IsEmptySeparator();
                     const char* sep = component.GetSepChar();
                     WriteComponent(fp, component, indent, TRUE, FALSE, delim);
-                    fwrite(sep, 1, 1, fp);
+                    if (!isEmptySep) {
+                        fwrite(sep, 1, 1, fp);
+                    }
                 }
                 switch (paramClass) {
                 case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS:
@@ -651,7 +654,7 @@ namespace DslFileReadWrite
                 }
             }
         }
-        if (isLastOfStatement) {
+        if (isLastOfStatement && !data.IsEmptySeparator()) {
             fwrite(data.GetSepChar(), 1, 1, fp);
         }
         WriteLastCommentsToFile(fp, indent, isLastOfStatement, data);

@@ -4,7 +4,7 @@ use std::vec::Vec;
 use std::collections::{BTreeMap, HashMap};
 use std::fs;
 use std::io::{Cursor, Write};
-use regex::Regex;
+use once_cell::sync::Lazy;
 use metadsl_macros::{add_abstract_syntax_component_fields, impl_abstract_syntax_component};
 use cfg_if::cfg_if;
 
@@ -60,8 +60,7 @@ impl SyntaxComponentCommentsInfo
 {
     fn new() -> Self
     {
-        return SyntaxComponentCommentsInfo
-        {
+        return Self {
             m_first_comments: Vec::new(),
             m_first_comment_on_new_line: false,
             m_last_comments: Vec::new(),
@@ -107,7 +106,7 @@ pub const PARAM_CLASS_WRAP_INFIX_CALL_MASK: i32 = 0x20;
 pub const PARAM_CLASS_UNMASK: i32 = 0x1F;
 
 pub static EMPTY_STRING: String = String::new();
-pub static mut NONE_MUT: Option<SyntaxComponentCommentsInfo> = None;
+pub static DEFAULT_DELIM: Lazy<DelimiterInfo> = Lazy::new(||{DelimiterInfo::new_def()});
 
 /// <summary>
 /// A scripting data parsing tool based on function-style syntax. Can be used as a DSL meta-language.
@@ -135,9 +134,9 @@ pub trait ISyntaxComponent
     {
         return self.impl_get_line();
     }
-    fn to_script_string(&self, include_comment: bool) -> String
+    fn to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String
     {
-        return self.impl_to_script_string(include_comment);
+        return self.impl_to_script_string(include_comment, delim);
     }
     fn have_id(&self) -> bool
     {
@@ -335,7 +334,7 @@ pub trait ISyntaxComponent
     fn impl_get_id(&self) -> &String;
     fn impl_get_id_type(&self) -> i32;
     fn impl_get_line(&self) -> i32;
-    fn impl_to_script_string(&self, include_comment: bool) -> String;
+    fn impl_to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String;
     fn impl_have_id(&self) -> bool;
 
     fn impl_set_seperator(&mut self, sep: i32);
@@ -394,11 +393,11 @@ impl ISyntaxComponent for SyntaxComponent
             SyntaxComponent::Statement(s) => s.impl_get_line(),
         };
     }
-    fn impl_to_script_string(&self, include_comment: bool) -> String {
+    fn impl_to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String {
         return match self {
-            SyntaxComponent::Value(v) => v.impl_to_script_string(include_comment),
-            SyntaxComponent::Function(f) => f.impl_to_script_string(include_comment),
-            SyntaxComponent::Statement(s) => s.impl_to_script_string(include_comment),
+            SyntaxComponent::Value(v) => v.impl_to_script_string(include_comment, delim),
+            SyntaxComponent::Function(f) => f.impl_to_script_string(include_comment, delim),
+            SyntaxComponent::Statement(s) => s.impl_to_script_string(include_comment, delim),
         }
     }
     fn impl_have_id(&self) -> bool {
@@ -525,10 +524,10 @@ impl ISyntaxComponent for ValueOrFunction
             ValueOrFunction::Function(f) => f.impl_get_line(),
         };
     }
-    fn impl_to_script_string(&self, include_comment: bool) -> String {
+    fn impl_to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String {
         return match self {
-            ValueOrFunction::Value(v) => v.impl_to_script_string(include_comment),
-            ValueOrFunction::Function(f) => f.impl_to_script_string(include_comment),
+            ValueOrFunction::Value(v) => v.impl_to_script_string(include_comment, delim),
+            ValueOrFunction::Function(f) => f.impl_to_script_string(include_comment, delim),
         }
     }
     fn impl_have_id(&self) -> bool {
@@ -620,6 +619,13 @@ pub struct ValueData
 
     m_comments_info: Option<SyntaxComponentCommentsInfo>,
 }
+impl Default for ValueData
+{
+    fn default() -> Self
+    {
+        return Self::new();
+    }
+}
 impl Clone for ValueData
 {
     fn clone(&self) -> Self
@@ -647,15 +653,15 @@ impl ISyntaxComponent for ValueData
     {
         return self.m_line;
     }
-    fn impl_to_script_string(&self, include_comment: bool) -> String
+    fn impl_to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String
     {
 cfg_if!{
     if #[cfg(feature="full_version")] {
         if include_comment {
-            return self.calc_first_comment() + &Utility::quote_str_with_str_def_delim(&self.m_id, self.m_type) + &self.calc_last_comment();
+            return self.calc_first_comment() + &Utility::quote_value_with_delim(&self.m_id, self.m_type, delim) + &self.calc_last_comment();
         }
         else {
-            return Utility::quote_str_with_str_def_delim(&self.m_id, self.m_type);
+            return Utility::quote_value_with_delim(&self.m_id, self.m_type, delim);
         }
     }
     else{
@@ -681,6 +687,10 @@ cfg_if!{
 }
 impl ValueData
 {
+    pub fn get_id_mut(&mut self) -> &mut String
+    {
+        return &mut self.m_id;
+    }
     pub fn set_id(&mut self, id: String)
     {
         self.m_id = id;
@@ -730,7 +740,7 @@ impl ValueData
 
     pub fn new() -> Self
     {
-        ValueData {
+        Self {
             m_type : ID_TOKEN,
             m_id : String::new(),
             m_line : -1,
@@ -758,7 +768,7 @@ impl ValueData
             _type = ID_TOKEN;
         }
 
-        ValueData {
+        Self {
             m_type : _type,
             m_id : val,
             m_line : -1,
@@ -768,7 +778,7 @@ impl ValueData
     }
     pub fn from_string_type(val: String, _type: i32) -> Self
     {
-        ValueData {
+        Self {
             m_type : _type,
             m_id : val,
             m_line : -1,
@@ -791,6 +801,13 @@ pub struct FunctionData
 
     m_comments_info: Option<SyntaxComponentCommentsInfo>,
     m_comments: Option<Vec<String>>,
+}
+impl Default for FunctionData
+{
+    fn default() -> Self
+    {
+        return Self::new();
+    }
 }
 impl Clone for FunctionData
 {
@@ -862,15 +879,15 @@ impl ISyntaxComponent for FunctionData
             return -1;
         }
     }
-    fn impl_to_script_string(&self, include_comment: bool) -> String
+    fn impl_to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String
     {
 cfg_if! {
     if #[cfg(feature="full_version")] {
         if include_comment {
-            return self.calc_first_comment() + &Utility::get_func_str_with_str_def_delim(self, true) + &self.calc_comment() + &self.calc_last_comment();
+            return self.calc_first_comment() + &Utility::get_func_str(self, true, delim) + &self.calc_comment() + &self.calc_last_comment();
         }
         else {
-            return Utility::get_func_str_with_str_def_delim(self, true);
+            return Utility::get_func_str(self, true, delim);
         }
     }
     else {
@@ -1361,8 +1378,8 @@ impl FunctionData
         if let Some(params) = &mut self.m_params {
             params.push(SyntaxComponent::Value(ValueData::from_string(id)));
         }
-        if PARAM_CLASS_NOTHING as i32 == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS as i32;
+        if PARAM_CLASS_NOTHING == self.m_param_class {
+            self.m_param_class = PARAM_CLASS_PARENTHESIS;
         }
     }
     pub fn add_string_type_param(&mut self, id: String, r#type: i32)
@@ -1371,8 +1388,8 @@ impl FunctionData
         if let Some(params) = &mut self.m_params {
             params.push(SyntaxComponent::Value(ValueData::from_string_type(id, r#type)));
         }
-        if PARAM_CLASS_NOTHING as i32 == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS as i32;
+        if PARAM_CLASS_NOTHING == self.m_param_class {
+            self.m_param_class = PARAM_CLASS_PARENTHESIS;
         }
     }
     pub fn add_value_param(&mut self, param: ValueData)
@@ -1381,8 +1398,8 @@ impl FunctionData
         if let Some(params) = &mut self.m_params {
             params.push(SyntaxComponent::Value(param));
         }
-        if PARAM_CLASS_NOTHING as i32 == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS as i32;
+        if PARAM_CLASS_NOTHING == self.m_param_class {
+            self.m_param_class = PARAM_CLASS_PARENTHESIS;
         }
     }
     pub fn add_function_param(&mut self, param: FunctionData)
@@ -1391,8 +1408,8 @@ impl FunctionData
         if let Some(params) = &mut self.m_params {
             params.push(SyntaxComponent::Function(param));
         }
-        if PARAM_CLASS_NOTHING as i32 == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS as i32;
+        if PARAM_CLASS_NOTHING == self.m_param_class {
+            self.m_param_class = PARAM_CLASS_PARENTHESIS;
         }
     }
     pub fn add_statement_param(&mut self, param: StatementData)
@@ -1401,8 +1418,8 @@ impl FunctionData
         if let Some(params) = &mut self.m_params {
             params.push(SyntaxComponent::Statement(param));
         }
-        if PARAM_CLASS_NOTHING as i32 == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS as i32;
+        if PARAM_CLASS_NOTHING == self.m_param_class {
+            self.m_param_class = PARAM_CLASS_PARENTHESIS;
         }
     }
     pub fn add_syntax_component_param(&mut self, param: SyntaxComponent)
@@ -1411,8 +1428,8 @@ impl FunctionData
         if let Some(params) = &mut self.m_params {
             params.push(param);
         }
-        if PARAM_CLASS_NOTHING as i32 == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS as i32;
+        if PARAM_CLASS_NOTHING == self.m_param_class {
+            self.m_param_class = PARAM_CLASS_PARENTHESIS;
         }
     }
     pub fn clear(&mut self)
@@ -1475,7 +1492,7 @@ impl FunctionData
 
     pub fn new() -> Self
     {
-        FunctionData {
+        Self {
             m_is_high_order: false,
             m_name: None,
             m_lower_order_function: None,
@@ -1532,6 +1549,9 @@ impl ISyntaxComponent for StatementData
                     }
                 }
             }
+        }
+        else {
+            ret = false;
         }
         return ret;
     }
@@ -1602,7 +1622,7 @@ impl ISyntaxComponent for StatementData
         }
         return -1;
     }
-    fn impl_to_script_string(&self, include_comment: bool) -> String
+    fn impl_to_script_string(&self, include_comment: bool, delim: &DelimiterInfo) -> String
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
@@ -1621,8 +1641,8 @@ cfg_if! {
                                 if let Some(v_or_f2) = self.second() {
                                     if let ValueOrFunction::Function(f2) = v_or_f2 {
                                         if f2.have_id() && f2.have_param_or_statement() {
-                                            line = format!("{} {} {}", &call_data.get_param(0).unwrap().to_script_string(include_comment), call_data.get_id(), &f.get_param(0).unwrap().to_script_string(include_comment));
-                                            line = format!("{} {} {}", &line, f2.get_id(), &f2.get_param(0).unwrap().to_script_string(include_comment));
+                                            line = format!("{} {} {}", &call_data.get_param(0).unwrap().to_script_string(include_comment, delim), call_data.get_id(), &f.get_param(0).unwrap().to_script_string(include_comment, delim));
+                                            line = format!("{} {} {}", &line, f2.get_id(), &f2.get_param(0).unwrap().to_script_string(include_comment, delim));
                                         }
                                     }
                                 }
@@ -1652,7 +1672,7 @@ cfg_if! {
         }
         if let Some(v_or_fs) = self.functions() {
             for f in v_or_fs {
-                str_builder.extend(f.to_script_string(include_comment).chars());
+                str_builder.extend(f.to_script_string(include_comment, delim).chars());
             }
         }
         if include_comment {
@@ -1874,7 +1894,7 @@ impl StatementData
 
     pub fn new() -> Self
     {
-        StatementData {
+        Self {
             m_value_or_functions: None,
             m_comments_info: None,
 
@@ -1925,11 +1945,14 @@ impl<'a> DslFile<'a>
         self.m_dsl_infos.clear();
     }
 
-    pub fn load(&mut self, file: String, log_callback: DslLogDelegationBox) -> bool
+    pub fn load(&mut self, file: &str, log_callback: DslLogDelegationBox) -> bool
     {
         if let Ok(content) = fs::read_to_string(file) {
-            //logCallback(format!("DslFile.Load {0}:\n{1}", file, content));
+            //logCallback(format!("DslFile.Load {:?}:\n{:?}", file, content));
             return self.load_from_string(content, log_callback);
+        }
+        else {
+            log_callback(&format!("DslFile.Load {:?}, {:?}", file, "Can't read file"));
         }
         return false;
     }
@@ -1991,20 +2014,20 @@ impl<'a> DslFile<'a>
             self.m_dsl_infos.extend(std::mem::take(action.borrow_mut().get_script_datas()));
         }
         if !tokens.borrow().string_begin_delimiter().is_empty() {
-            self.m_string_begin_delimiter = tokens.borrow().string_begin_delimiter().clone();
+            self.m_string_begin_delimiter = std::mem::take(tokens.borrow_mut().string_begin_delimiter_mut());
         }
         if !tokens.borrow().string_end_delimiter().is_empty() {
-            self.m_string_end_delimiter = tokens.borrow().string_end_delimiter().clone();
+            self.m_string_end_delimiter = std::mem::take(tokens.borrow_mut().string_end_delimiter_mut());
         }
         if !tokens.borrow().script_begin_delimiter().is_empty() {
-            self.m_script_begin_delimiter = tokens.borrow().script_begin_delimiter().clone();
+            self.m_script_begin_delimiter = std::mem::take(tokens.borrow_mut().script_begin_delimiter_mut());
         }
         if !tokens.borrow().script_end_delimiter().is_empty() {
-            self.m_script_end_delimiter = tokens.borrow().script_end_delimiter().clone();
+            self.m_script_end_delimiter = std::mem::take(tokens.borrow_mut().script_end_delimiter_mut());
         }
         return !log.borrow().has_error();
     }
-    pub fn save(&self, file: String)
+    pub fn save(&self, file: &str)
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
@@ -2047,7 +2070,7 @@ cfg_if! {
 }
     }
 
-    pub fn load_binary_file(&mut self, file: &String, reuse_key_buffer: &mut Vec<String>, reuse_id_buffer: &mut Vec<String>)
+    pub fn load_binary_file(&mut self, file: &str, reuse_key_buffer: &mut Vec<String>, reuse_id_buffer: &mut Vec<String>)
     {
         if let Ok(code) = fs::read(file) {
             self.load_binary_code(&code, reuse_key_buffer, reuse_id_buffer);
@@ -2116,7 +2139,7 @@ cfg_if! {
         let infos = Utility::read_binary(binary_code, bytes_start, bytes_len, identifiers);
         self.m_dsl_infos.extend(infos);
     }
-    pub fn save_binary_file(&self, file: String)
+    pub fn save_binary_file(&self, file: &str)
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
@@ -2292,7 +2315,7 @@ cfg_if! {
 
     pub fn new() -> Self
     {
-        DslFile {
+        Self {
             m_name_tags: HashMap::new(),
             m_dsl_infos: Vec::new(),
             m_nullable_syntax_enabled: true,
@@ -2344,23 +2367,21 @@ cfg_if! {
         return r;
     }
 
-    pub fn mac_2_unix(txt: &String) -> String
+    pub fn mac_2_unix(txt: &str) -> String
     {
-        let re = Regex::new(r"\r(?!\n)").unwrap();
-        let txt = re.replace_all(txt, "\n").replace("\r\n", "n");
+        let txt = txt.replace("\r\n", "\n").replace('\r', "\n");
         return txt;
     }
-    pub fn text_2_dos(txt: &String) -> String
+    pub fn text_2_dos(txt: &str) -> String
     {
-        let re = Regex::new(r"(?<!\r)\n").unwrap();
-        let txt = re.replace_all(txt, "\r\n").replace('r', "\r\n");
+        let txt = txt.replace("\r\n", "\n").replace('\n', "\r\n");
         return txt;
     }
-    pub fn text_2_unix(txt: String) -> String
+    pub fn text_2_unix(txt: &str) -> String
     {
         return txt.replace("\r\n", "\n").replace('\r', "\n");
     }
-    pub fn text_2_mac(txt: String) -> String
+    pub fn text_2_mac(txt: &str) -> String
     {
         return txt.replace("\r\n", "\r").replace('\n', "\r");
     }
@@ -2377,7 +2398,7 @@ impl<'a> DelimiterInfo<'a>
 {
     pub fn new_def() -> Self
     {
-        DelimiterInfo {
+        Self {
             string_begin_delimiter: &"\"",
             string_end_delimiter: &"\"",
             script_begin_delimiter: &"{:",
@@ -2386,7 +2407,7 @@ impl<'a> DelimiterInfo<'a>
     }
     pub fn new(str_begin_delim: &'a String, str_end_delim: &'a String, scp_begin_delim: &'a String, scp_end_delim: &'a String) -> Self
     {
-        DelimiterInfo {
+        Self {
             string_begin_delimiter: str_begin_delim,
             string_end_delimiter: str_end_delim,
             script_begin_delimiter: scp_begin_delim,
@@ -2504,7 +2525,7 @@ cfg_if! {
     if #[cfg(feature = "full_version")] {
         match data {
             SyntaxComponent::Value(val) => {
-                Self::write_value_data(stream, val, indent, first_line_no_indent, is_last_of_statement);
+                Self::write_value_data(stream, val, indent, first_line_no_indent, is_last_of_statement, delim);
             }
             SyntaxComponent::Function(call) => {
                 Self::write_function_data(stream, call, indent, first_line_no_indent, is_last_of_statement, delim);
@@ -2517,13 +2538,13 @@ cfg_if! {
 }
     }
 
-    pub fn write_value_data(stream: &mut String, data: &ValueData, indent: i32, first_line_no_indent: bool, is_last_of_statement: bool)
+    pub fn write_value_data(stream: &mut String, data: &ValueData, indent: i32, first_line_no_indent: bool, is_last_of_statement: bool, delim: &DelimiterInfo)
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
         Self::write_first_comments(stream, data, indent, first_line_no_indent);
-        Self::write_text(stream, &data.to_script_string(false), if first_line_no_indent { 0 } else { indent });
-        if is_last_of_statement {
+        Self::write_text(stream, &data.to_script_string(false, delim), if first_line_no_indent { 0 } else { indent });
+        if is_last_of_statement && !data.is_empty_separator() {
             stream.push(data.get_sep_char());
         }
         Self::write_last_comments(stream, data, indent, is_last_of_statement);
@@ -2701,17 +2722,20 @@ cfg_if! {
                             stream.push(' ');
                         }
                         if let Some(param) = data.get_param(i) {
+                            let is_empty_sep = param.is_empty_separator();
                             let sep = param.get_sep_char();
                             if PARAM_CLASS_PERIOD == param_class
                                     || PARAM_CLASS_POINTER == param_class
                                     || PARAM_CLASS_PERIOD_STAR == param_class
                                     || PARAM_CLASS_POINTER_STAR == param_class {
-                                stream.push_str(&param.to_script_string(true));
+                                stream.push_str(&param.to_script_string(true, delim));
                             }
                             else {
                                 Self::write_syntax_component(stream, param, indent, true, false, delim);
                             }
-                            stream.push(sep);
+                            if !is_empty_sep {
+                                stream.push(sep);
+                            }
                         }
                         i += 1;
                     }
@@ -2730,7 +2754,7 @@ cfg_if! {
                 Self::write_text(stream, &line, if first_line_no_indent { 0 } else { indent });
             }
         }
-        if is_last_of_statement {
+        if is_last_of_statement && !data.is_empty_separator() {
             stream.push(data.get_sep_char());
         }
         if let Some(cmts) = data.comments() {
@@ -2754,7 +2778,7 @@ cfg_if! {
         if let Some(v_or_f) = data.first() {
             if let ValueOrFunction::Function(f) = v_or_f {
                 if let Some(p0) = f.get_param(0) {
-                    scp_str = p0.to_script_string(true);
+                    scp_str = p0.to_script_string(true, delim);
                 }
                 if f.is_ternary_operator_param_class() {
                     if let Some(lo_func) = f.lower_order_function() {
@@ -2774,10 +2798,10 @@ cfg_if! {
                                 let mut p0_str = String::new();
                                 let mut f0_str = String::new();
                                 if let Some(p0) = call_data.get_param(0) {
-                                    p0_str = p0.to_script_string(true);
+                                    p0_str = p0.to_script_string(true, delim);
                                 }
                                 if let Some(f0) = func_data.get_param(0) {
-                                    f0_str = f0.to_script_string(true);
+                                    f0_str = f0.to_script_string(true, delim);
                                 }
                                 let mut line = format!("{0} {1} {2}", p0_str, call_data.get_id(), &scp_str);
                                 line = format!("{0} {1} {2}", line, func_data.get_id(), f0_str);
@@ -2814,7 +2838,7 @@ cfg_if! {
                                     no_indent = false;
                                 }
                             }
-                            Self::write_value_data(stream, val, indent, first_line_no_indent && i == 0 || no_indent, false);
+                            Self::write_value_data(stream, val, indent, first_line_no_indent && i == 0 || no_indent, false, delim);
                             last_func_no_param = true;
                             last_func_no_statement = true;
                         }
@@ -2844,7 +2868,7 @@ cfg_if! {
                 i += 1;
             }
         }
-        if is_last_of_statement {
+        if is_last_of_statement && !data.is_empty_separator() {
             stream.push(data.get_sep_char());
         }
         Self::write_last_comments(stream, data, indent, is_last_of_statement);
@@ -2877,9 +2901,9 @@ cfg_if! {
         return false;
     }
 
-    fn quote_str_with_str_def_delim(str: &str, _type: i32) -> String
+    fn quote_value_with_delim(str: &str, _type: i32, delim: &DelimiterInfo) -> String
     {
-        return Self::quote_value(str, _type, "\"", "\"");
+        return Self::quote_value(str, _type, delim.string_begin_delimiter, delim.string_end_delimiter);
     }
     fn quote_value(str: &str, _type: i32, str_begin_delim: &str, str_end_delim: &str) -> String
     {
@@ -2925,11 +2949,7 @@ cfg_if! {
         return sb;
     }
 
-    fn get_func_str_with_str_def_delim(data: &FunctionData, include_comment: bool) -> String
-    {
-        return Self::get_func_str(data, include_comment, &String::from("\""), &String::from("\""));
-    }
-    fn get_func_str(data: &FunctionData, include_comment: bool, str_begin_delim: &String, str_end_delim: &String) -> String
+    fn get_func_str(data: &FunctionData, include_comment: bool, delim: &DelimiterInfo) -> String
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
@@ -2937,16 +2957,16 @@ cfg_if! {
         let mut line = String::new();
         if data.is_high_order() {
             if let Some(func) = data.lower_order_function() {
-                line = Self::get_func_str(func.as_ref(), include_comment, &str_begin_delim, &str_end_delim);
+                line = Self::get_func_str(func.as_ref(), include_comment, delim);
             }
         }
         else if data.have_id() {
             if data.have_param_class_infix_flag() {
                 let op = String::from("`") + data.get_id();
-                line = Self::quote_value(&op, data.get_id_type(), &str_begin_delim, &str_end_delim);
+                line = Self::quote_value_with_delim(&op, data.get_id_type(), delim);
             }
             else {
-                line = Self::quote_value(data.get_id(), data.get_id_type(), &str_begin_delim, &str_end_delim);
+                line = Self::quote_value_with_delim(data.get_id(), data.get_id_type(), delim);
             }
         }
         if data.have_param_or_statement() {
@@ -2957,13 +2977,13 @@ cfg_if! {
                         if let Some(param) = data.get_param(0) {
                             match param {
                                 SyntaxComponent::Value(v) => {
-                                    p1 = v.to_script_string(include_comment);
+                                    p1 = v.to_script_string(include_comment, delim);
                                 }
                                 SyntaxComponent::Function(f) => {
-                                    p1 = f.to_script_string(include_comment);
+                                    p1 = f.to_script_string(include_comment, delim);
                                 }
                                 SyntaxComponent::Statement(s) => {
-                                    p1 = s.to_script_string(include_comment);
+                                    p1 = s.to_script_string(include_comment, delim);
                                 }
                             }
                         }
@@ -2974,13 +2994,13 @@ cfg_if! {
                         if let Some(param) = data.get_param(0) {
                             match param {
                                 SyntaxComponent::Value(v) => {
-                                    p1 = v.to_script_string(include_comment);
+                                    p1 = v.to_script_string(include_comment, delim);
                                 }
                                 SyntaxComponent::Function(f) => {
-                                    p1 = f.to_script_string(include_comment);
+                                    p1 = f.to_script_string(include_comment, delim);
                                 }
                                 SyntaxComponent::Statement(s) => {
-                                    p1 = s.to_script_string(include_comment);
+                                    p1 = s.to_script_string(include_comment, delim);
                                 }
                             }
                         }
@@ -2988,13 +3008,13 @@ cfg_if! {
                         if let Some(param) = data.get_param(1) {
                             match param {
                                 SyntaxComponent::Value(v) => {
-                                    p2 = v.to_script_string(include_comment);
+                                    p2 = v.to_script_string(include_comment, delim);
                                 }
                                 SyntaxComponent::Function(f) => {
-                                    p2 = f.to_script_string(include_comment);
+                                    p2 = f.to_script_string(include_comment, delim);
                                 }
                                 SyntaxComponent::Statement(s) => {
-                                    p2 = s.to_script_string(include_comment);
+                                    p2 = s.to_script_string(include_comment, delim);
                                 }
                             }
                         }
@@ -3007,18 +3027,18 @@ cfg_if! {
             }
             else if data.is_question_nullable_operator_param_class() {
                 if let Some(param) = data.get_param(0) {
-                    return format!("{0}{1}?", param.to_script_string(include_comment), line);
+                    return format!("{0}{1}?", param.to_script_string(include_comment, delim), line);
                 }
                 else {
-                    return EMPTY_STRING.clone();
+                    return format!("{0}?", line);
                 }
             }
             else if data.is_exclamation_nullable_operator_param_class() {
                 if let Some(param) = data.get_param(0) {
-                    return format!("{0}{1}!", param.to_script_string(include_comment), line);
+                    return format!("{0}{1}!", param.to_script_string(include_comment, delim), line);
                 }
                 else {
-                    return EMPTY_STRING.clone();
+                    return format!("{0}!", line);
                 }
             }
             else {
@@ -3114,10 +3134,10 @@ cfg_if! {
                                 || PARAM_CLASS_POINTER == param_class
                                 || PARAM_CLASS_PERIOD_STAR == param_class
                                 || PARAM_CLASS_POINTER_STAR == param_class {
-                                stream.push_str(&param.to_script_string(include_comment));
+                                stream.push_str(&param.to_script_string(include_comment, delim));
                             }
                             else {
-                                stream.push_str(&param.to_script_string(include_comment));
+                                stream.push_str(&param.to_script_string(include_comment, delim));
                             }
                         }
                         if data.have_statement() {
@@ -3135,7 +3155,7 @@ cfg_if! {
         }
     }
     else {
-        return EMPTY_STRING.clone();
+        return std::type_name::<FunctionData>();
     }
 }
     }
@@ -3146,7 +3166,7 @@ cfg_if! {
     if #[cfg(feature = "full_version")] {
         let mut indent = _indent;
         if data.have_statement() {
-            Self::write_text(stream, &EMPTY_STRING, 0);
+            Self::write_line(stream, &EMPTY_STRING, 0);
             Self::write_line(stream, "{", indent);
             indent += 1;
 

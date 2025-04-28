@@ -1,5 +1,5 @@
 @@delimiter(script, "={:=", "=:}=");
-[[13 ] ]int main()
+[[13]]int main()
 {
 	struct index_st
 	{
@@ -10,8 +10,8 @@
 	typedef struct index_st index_t;
 	int x,
 	y;
-	x = offsetof(struct index_st, len );
-	y = offsetof(index_t, num );
+	x = offsetof(struct index_st, len);
+	y = offsetof(index_t, num);
 	return 0;
 };
-abc(()abcd );
+abc(()abcd);

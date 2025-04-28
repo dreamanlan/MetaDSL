@@ -65,6 +65,8 @@ pub struct DslToken<'a>
     m_action: &'a DslActionCell<'a>,
     m_log: &'a DslLogCell,
     m_input: Vec<char>,
+    m_char_byte_index: Vec<usize>,
+    m_byte_char_index: Vec<usize>,
     m_input_str: String,
     m_iterator: usize,
     m_cur_token: String,
@@ -100,10 +102,12 @@ impl<'a> DslToken<'a>
 {
     pub fn new(action: &'a DslActionCell<'a>, log: &'a DslLogCell, input: String, nullable_syntax_enabled: bool) -> Self
     {
-        DslToken {
+        Self {
             m_action: action,
             m_log: log,
             m_input: input.chars().collect(),
+            m_char_byte_index: Self::build_char_byte_index(&input),
+            m_byte_char_index: Self::build_byte_char_index(&input),
             m_input_str: input,
             m_iterator: 0,
 
@@ -128,6 +132,29 @@ impl<'a> DslToken<'a>
             m_on_get_token: None,
             m_on_token_can_eat_char: None,
         }
+    }
+    fn build_char_byte_index(input: &str) -> Vec<usize>
+    {
+        let char_to_byte: Vec<usize> = input.char_indices().map(|(b, _)| b).collect();
+        return char_to_byte;
+    }
+    fn build_byte_char_index(input: &str) -> Vec<usize>
+    {
+        let mut byte_to_char = vec![0; input.len()];
+        for (char_idx, (byte_idx, _)) in input.char_indices().enumerate() {
+            byte_to_char[byte_idx] = char_idx;
+        }
+
+        let mut last = 0;
+        for i in 0..byte_to_char.len() {
+            if byte_to_char[i] != 0 || i == 0 {
+                last = byte_to_char[i];
+            } else {
+                byte_to_char[i] = last;
+            }
+        }
+
+        return byte_to_char;
     }
 
     pub fn get(&mut self) -> i16
@@ -218,7 +245,9 @@ impl<'a> DslToken<'a>
             self.m_iterator += self.string_begin_delimiter().chars().count();
             let mut iter: usize = 0;
             let mut line: i32 = 0;
-            self.m_cur_token = self.get_block_string(&self.m_string_end_delimiter, &mut iter, &mut line);
+            self.m_cur_token = self.get_block_string(self.string_end_delimiter(), &mut iter, &mut line);
+            self.m_iterator = iter;
+            self.m_line_number = line;
             return constants::STRING_;
         }
         else if !self.script_begin_delimiter().is_empty() && !self.script_end_delimiter().is_empty() && self.is_begin(self.script_begin_delimiter()) {
@@ -226,6 +255,8 @@ impl<'a> DslToken<'a>
             let mut iter: usize = 0;
             let mut line: i32 = 0;
             self.m_cur_token = self.get_block_string(self.script_end_delimiter(), &mut iter, &mut line);
+            self.m_iterator = iter;
+            self.m_line_number = line;
             return constants::SCRIPT_CONTENT_;
         }
         else if self.cur_char() == '{' && self.next_char() == ':' {
@@ -259,7 +290,7 @@ impl<'a> DslToken<'a>
                 self.m_log.borrow().info(&format!("[error][line {}]: ExternScript can't finish! \n", line));
             }
             let str = std::mem::take(&mut self.m_token_builder);
-            self.m_cur_token = self.remove_first_and_last_empty_line(str);
+            self.m_cur_token = self.remove_first_and_last_empty_line(&str);
             return constants::SCRIPT_CONTENT_;
         }
         else if self.cur_char() == '[' && self.next_char() == ':' {
@@ -365,7 +396,7 @@ impl<'a> DslToken<'a>
             self.m_iterator += 1;
             self.m_cur_token = String::from("::");
 
-            let (ct, last_char, last_char2) = Self::get_last_2_chars(&self.m_last_token);
+            let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
             if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 return self.get_operator_token_value();
@@ -379,7 +410,7 @@ impl<'a> DslToken<'a>
             return constants::COLON_COLON_;
         }
         else if self.cur_char() == '?' || self.cur_char() == '!' {
-            let (ct, last_char, last_char2) = Self::get_last_2_chars(&self.m_last_token);
+            let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
             if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 self.get_operator_token();
@@ -435,7 +466,7 @@ impl<'a> DslToken<'a>
                     self.m_iterator += 1;
                     self.m_cur_token = String::from("->*");
 
-                    let (ct, last_char, last_char2) = Self::get_last_2_chars(&self.m_last_token);
+                    let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
                     if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
                         (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                         return self.get_operator_token_value();
@@ -451,7 +482,7 @@ impl<'a> DslToken<'a>
                 else {
                     self.m_cur_token = String::from("->");
 
-                    let (ct, last_char, last_char2) = Self::get_last_2_chars(&self.m_last_token);
+                    let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
                     if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
                         (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                         return self.get_operator_token_value();
@@ -475,7 +506,7 @@ impl<'a> DslToken<'a>
             self.m_iterator += 1;
             self.m_cur_token = String::from(".*");
 
-            let (ct, last_char, last_char2) = Self::get_last_2_chars(&self.m_last_token);
+            let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
             if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 return self.get_operator_token_value();
@@ -505,14 +536,14 @@ impl<'a> DslToken<'a>
             self.get_operator_token();
             return self.get_operator_token_value();
         }
-        else if self.cur_char() == '.' && !Self::is_digit(self.next_char(), false) {
+        else if self.cur_char() == '.' && !Self::is_digit_s(self.next_char(), false) {
             let c = self.cur_char();
             self.m_iterator += 1;
 
             self.m_token_builder.push(c);
             self.m_cur_token = std::mem::take(&mut self.m_token_builder);
 
-            let (ct, last_char, last_char2) = Self::get_last_2_chars(&self.m_last_token);
+            let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
             if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 return self.get_operator_token_value();
@@ -650,7 +681,7 @@ impl<'a> DslToken<'a>
                         else if self.cur_char() == 'f' {
                             self.m_token_builder.push('\x0C');
                         }
-                        else if self.cur_char() == 'u' && Self::is_digit(self.next_char(), true) && Self::is_digit(self.peek_char(2), true) && Self::is_digit(self.peek_char(3), true) {
+                        else if self.cur_char() == 'u' && Self::is_digit_s(self.next_char(), true) && Self::is_digit_s(self.peek_char(2), true) && Self::is_digit_s(self.peek_char(3), true) {
                             self.m_iterator += 1;
                             //4 digits HEX
                             let h1 = self.cur_char();
@@ -660,15 +691,15 @@ impl<'a> DslToken<'a>
                             let h3 = self.cur_char();
                             self.m_iterator += 1;
                             let h4 = self.cur_char();
-                            if let Some(c) = char::from_u32(((Self::char_2_int(h1) << 12) + (Self::char_2_int(h2) << 8) + (Self::char_2_int(h3) << 4) + Self::char_2_int(h4)) as u32) {
+                            if let Some(c) = char::from_u32(((Self::char_2_int_s(h1) << 12) + (Self::char_2_int_s(h2) << 8) + (Self::char_2_int_s(h3) << 4) + Self::char_2_int_s(h4)) as u32) {
                                 self.m_token_builder.push(c);
                             }
                             else {
                                 //error
                             }
                         }
-                        else if self.cur_char() == 'U' && Self::is_digit(self.next_char(), true) && Self::is_digit(self.peek_char(2), true) && Self::is_digit(self.peek_char(3), true)
-                            && Self::is_digit(self.peek_char(4), true) && Self::is_digit(self.peek_char(5), true) && Self::is_digit(self.peek_char(6), true) && Self::is_digit(self.peek_char(7), true) {
+                        else if self.cur_char() == 'U' && Self::is_digit_s(self.next_char(), true) && Self::is_digit_s(self.peek_char(2), true) && Self::is_digit_s(self.peek_char(3), true)
+                            && Self::is_digit_s(self.peek_char(4), true) && Self::is_digit_s(self.peek_char(5), true) && Self::is_digit_s(self.peek_char(6), true) && Self::is_digit_s(self.peek_char(7), true) {
                             self.m_iterator += 1;
                             //8 digits HEX
                             let h1 = self.cur_char();
@@ -686,8 +717,8 @@ impl<'a> DslToken<'a>
                             let h7 = self.cur_char();
                             self.m_iterator += 1;
                             let h8 = self.cur_char();
-                            if let Some(c1) = char::from_u32(((Self::char_2_int(h5) << 12) + (Self::char_2_int(h6) << 8) + (Self::char_2_int(h7) << 4) + Self::char_2_int(h8)) as u32) {
-                                if let Some(c2) = char::from_u32(((Self::char_2_int(h1) << 12) + (Self::char_2_int(h2) << 8) + (Self::char_2_int(h3) << 4) + Self::char_2_int(h4)) as u32) {
+                            if let Some(c1) = char::from_u32(((Self::char_2_int_s(h5) << 12) + (Self::char_2_int_s(h6) << 8) + (Self::char_2_int_s(h7) << 4) + Self::char_2_int_s(h8)) as u32) {
+                                if let Some(c2) = char::from_u32(((Self::char_2_int_s(h1) << 12) + (Self::char_2_int_s(h2) << 8) + (Self::char_2_int_s(h3) << 4) + Self::char_2_int_s(h4)) as u32) {
                                     self.m_token_builder.push(c1);
                                     self.m_token_builder.push(c2);
                                 }
@@ -699,14 +730,14 @@ impl<'a> DslToken<'a>
                                 //error
                             }
                         }
-                        else if self.cur_char() == 'x' && Self::is_digit(self.next_char(), true) {
+                        else if self.cur_char() == 'x' && Self::is_digit_s(self.next_char(), true) {
                             self.m_iterator += 1;
                             //1~2 digits HEX
                             let h1 = self.cur_char();
-                            if Self::is_digit(self.next_char(), true) {
+                            if Self::is_digit_s(self.next_char(), true) {
                                 self.m_iterator += 1;
                                 let h2 = self.cur_char();
-                                if let Some(nc) = char::from_u32(((Self::char_2_int(h1) << 4) + Self::char_2_int(h2)) as u32) {
+                                if let Some(nc) = char::from_u32(((Self::char_2_int_s(h1) << 4) + Self::char_2_int_s(h2)) as u32) {
                                     self.m_token_builder.push(nc);
                                 }
                                 else {
@@ -714,7 +745,7 @@ impl<'a> DslToken<'a>
                                 }
                             }
                             else {
-                                if let Some(nc) = char::from_u32(Self::char_2_int(h1) as u32) {
+                                if let Some(nc) = char::from_u32(Self::char_2_int_s(h1) as u32) {
                                     self.m_token_builder.push(nc);
                                 }
                                 else {
@@ -722,16 +753,16 @@ impl<'a> DslToken<'a>
                                 }
                             }
                         }
-                        else if Self::is_digit(self.cur_char(), false) {
+                        else if Self::is_digit_s(self.cur_char(), false) {
                             //1~3 digits OCT
                             let o1 = self.cur_char();
-                            if Self::is_digit(self.next_char(), false) {
+                            if Self::is_digit_s(self.next_char(), false) {
                                 self.m_iterator += 1;
                                 let o2 = self.cur_char();
-                                if Self::is_digit(self.next_char(), false) {
+                                if Self::is_digit_s(self.next_char(), false) {
                                     self.m_iterator += 1;
                                     let o3 = self.cur_char();
-                                    if let Some(nc) = char::from_u32(((Self::char_2_int(o1) << 6) + (Self::char_2_int(o2) * 3) + Self::char_2_int(o3)) as u32) {
+                                    if let Some(nc) = char::from_u32(((Self::char_2_int_s(o1) << 6) + (Self::char_2_int_s(o2) * 3) + Self::char_2_int_s(o3)) as u32) {
                                         self.m_token_builder.push(nc);
                                     }
                                     else {
@@ -739,7 +770,7 @@ impl<'a> DslToken<'a>
                                     }
                                 }
                                 else {
-                                    if let Some(nc) = char::from_u32(((Self::char_2_int(o1) << 3) + Self::char_2_int(o2)) as u32) {
+                                    if let Some(nc) = char::from_u32(((Self::char_2_int_s(o1) << 3) + Self::char_2_int_s(o2)) as u32) {
                                         self.m_token_builder.push(nc);
                                     }
                                     else {
@@ -748,7 +779,7 @@ impl<'a> DslToken<'a>
                                 }
                             }
                             else {
-                                if let Some(nc) = char::from_u32(Self::char_2_int(o1) as u32) {
+                                if let Some(nc) = char::from_u32(Self::char_2_int_s(o1) as u32) {
                                     self.m_token_builder.push(nc);
                                 }
                                 else {
@@ -808,7 +839,7 @@ impl<'a> DslToken<'a>
                     self.m_iterator += 1;
                 }
                 let mut char_ct = 0;
-                while self.cur_char() == '?' || self.cur_char() == '\'' || is_num && Self::is_digit2(self.cur_char(), is_hex, include_epart, include_add_sub) || !self.is_special_char(self.cur_char()) {
+                while self.cur_char() == '?' || self.cur_char() == '\'' || is_num && Self::is_digit2_s(self.cur_char(), is_hex, include_epart, include_add_sub) || !self.is_special_char(self.cur_char()) {
                     if self.cur_char() == '#' {
                         break;
                     }
@@ -829,7 +860,7 @@ impl<'a> DslToken<'a>
                             break;
                         }
                         else {
-                            if self.next_char() != '\0' && !Self::is_digit2(self.next_char(), is_hex, include_epart, include_add_sub) {
+                            if self.next_char() != '\0' && !Self::is_digit2_s(self.next_char(), is_hex, include_epart, include_add_sub) {
                                 break;
                             }
                             self.m_iterator += 1;
@@ -843,7 +874,7 @@ impl<'a> DslToken<'a>
                         else {
                             if self.next_char() == 'b' || self.next_char() == 'B' || self.next_char() == 'f' || self.next_char() == 'F' || self.next_char() == 'l' || self.next_char() == 'L' {
                             }
-                            else if self.next_char() != '\0' && !Self::is_digit2(self.next_char(), is_hex, include_epart, include_add_sub) {
+                            else if self.next_char() != '\0' && !Self::is_digit2_s(self.next_char(), is_hex, include_epart, include_add_sub) {
                                 let c = self.peek_next_valid_char(1);
                                 if !self.is_special_char(c) {
                                     break;
@@ -860,7 +891,7 @@ impl<'a> DslToken<'a>
                         }
                         else if dot_ct == 0 && char_ct > 0 && (self.cur_char() == 'l' || self.cur_char() == 'L' || self.cur_char() == 'u' || self.cur_char() == 'U' || self.cur_char() == 'z' || self.cur_char() == 'Z') {
                         }
-                        else if !Self::is_digit2(self.cur_char(), is_hex, include_epart, include_add_sub) {
+                        else if !Self::is_digit2_s(self.cur_char(), is_hex, include_epart, include_add_sub) {
                             is_num = false;
                         }
                     }
@@ -894,7 +925,7 @@ impl<'a> DslToken<'a>
     pub fn peek(&self, _level: i32) -> i16// scan next token without consuming it
     {
         let token = 0;
-        self.m_log.borrow().info(&String::from("[info] peek_token is not called in an LL(1) grammar\n"));
+        self.m_log.borrow().info("[info] peek_token is not called in an LL(1) grammar\n");
         return token;
     }
 
@@ -971,6 +1002,22 @@ impl<'a> DslToken<'a>
     {
         return &self.m_script_end_delimiter;
     }
+    pub fn string_begin_delimiter_mut(&mut self) -> &mut String
+    {
+        return &mut self.m_string_begin_delimiter;
+    }
+    pub fn string_end_delimiter_mut(&mut self) -> &mut String
+    {
+        return &mut self.m_string_end_delimiter;
+    }
+    pub fn script_begin_delimiter_mut(&mut self) -> &mut String
+    {
+        return &mut self.m_script_begin_delimiter;
+    }
+    pub fn script_end_delimiter_mut(&mut self) -> &mut String
+    {
+        return &mut self.m_script_end_delimiter;
+    }
     pub fn on_get_token(&self) -> Option<&'a GetTokenDelegationBox>
     {
         return self.m_on_get_token;
@@ -988,51 +1035,79 @@ impl<'a> DslToken<'a>
         self.m_on_token_can_eat_char = Some(value);
     }
 
-    fn is_begin(&self, delimiter: &String) -> bool
+    fn is_begin(&self, delimiter: &str) -> bool
     {
         let mut ret = false;
         if !delimiter.is_empty() {
-            let start = self.m_iterator as usize;
-            let end = start + delimiter.chars().count();
-            let pos = self.m_input_str[start..end].find(delimiter);
-            if start + delimiter.len() <= self.m_input.len() && Some(start) == pos {
-                ret = true;
+            let mut iter = delimiter.chars();
+            let mut pos = self.m_iterator as usize;
+            while pos < self.m_input.len() {
+                if let Some(c) = iter.next() {
+                    let c2 = self.m_input[pos];
+                    pos += 1;
+                    if c != c2 {
+                        break;
+                    }
+                }
+                else {
+                    ret = true;
+                    break;
+                }
             }
         }
         return ret;
     }
-    fn get_block_string(&self, delimiter: &String, iter: &mut usize, line: &mut i32) -> String
+    fn get_block_string(&self, delimiter: &str, iter: &mut usize, line: &mut i32) -> String
     {
         *line = self.m_line_number;
-        let start = self.m_iterator;
-        let res = Self::str_find(&self.m_input_str, delimiter, start);
-        if let Some(end) = res {
-            *iter = end + delimiter.chars().count();
-            let mut line_start = Self::vec_char_find2(&self.m_input, '\n', start, end - start);
-            while line_start != None {
-                let ls = line_start.unwrap();
-                *line += 1;
-                line_start = Self::vec_char_find2(&self.m_input, '\n', ls + 1, end - ls - 1);
+        if let Some(start) = self.char_to_byte_index(self.m_iterator) {
+            if let Some(len) = self.m_input_str[start..].find(delimiter) {
+                let end = start + len;
+                let mut char_end = 0;
+                if let Some(char_ix) = self.byte_to_char_index(end) {
+                    char_end = char_ix;
+                    *iter = char_ix + delimiter.chars().count();
+                }
+                else {
+                    assert!(false);
+                }
+                let mut pos = start;
+                loop {
+                    if let Some(line_end) = Self::vec_char_find2_s(&self.m_input, '\n', pos, char_end - pos) {
+                        pos = line_end + 1;
+                        *line += 1;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                return self.remove_first_and_last_empty_line(&self.m_input_str[start..end]);
             }
-            return self.remove_first_and_last_empty_line(self.m_input[start..end].iter().collect());
+            else {
+                self.m_log.borrow().info(&format!("[error][line {:?}]: block can't finish, delimiter: {:?}！\n", self.m_line_number, delimiter));
+                return String::new();
+            }
         }
-        else {
-            self.m_log.borrow().info(&format!("[error][line {}]: block can't finish, delimiter: {}！\n", self.m_line_number, delimiter));
-            return String::new();
-        }
+        return String::new();
     }
-    fn remove_first_and_last_empty_line(&self, str: String) -> String
+    fn remove_first_and_last_empty_line(&self, str: &str) -> String
     {
         let mut start = 0;
         let ct = str.chars().count();
-        let mut iter = str.chars().skip(start);
-        while start < ct && self.is_white_space(iter.nth(0).unwrap()) && iter.nth(0) != Some('\n') {
-            start += 1;
-            iter.next();
+        let mut iter = str.chars();
+        if let Some(mut c) = iter.next() {
+            while start < ct && self.is_white_space(c) && c != '\n' {
+                start += 1;
+                if let Some(nc) = iter.next() {
+                    c = nc;
+                }
+                else {
+                    break;
+                }
+            }
         }
-        if start < ct && iter.nth(0) == Some('\n') {
+        if start < ct && iter.next() == Some('\n') {
             start += 1;
-            iter.next();
         }
         else {
             //If there is no newline at the beginning of the line, preserve the white space.
@@ -1040,11 +1115,18 @@ impl<'a> DslToken<'a>
         }
         let mut end = ct - 1;
         let mut riter = str.chars().rev();
-        while end > 0 && self.is_white_space(riter.nth(0).unwrap()) && riter.nth(0) != Some('\n') {
-            end -= 1;
-            riter.next();
+        if let Some(mut c) = riter.next() {
+            while end > 0 && self.is_white_space(c) && c != '\n' {
+                end -= 1;
+                if let Some(nc) = riter.next() {
+                    c = nc;
+                }
+                else {
+                    break;
+                }
+            }
         }
-        if end > 0 && riter.nth(0) != Some('\n') {
+        if end > 0 && riter.next() != Some('\n') {
             //If there is no newline at the end of the line, preserve the white space; otherwise, remove the white space but keep the newline.
             end = ct - 1;
         }
@@ -1052,7 +1134,7 @@ impl<'a> DslToken<'a>
             return str[start..end].chars().collect();
         }
         else {
-            return str;
+            return String::from(str);
         }
     }
 
@@ -1183,7 +1265,7 @@ impl<'a> DslToken<'a>
         let mut last_is_operator = true;
         if last_token.len() > 0 {
             let mut last_char = '\0';
-            if let Some(c) = last_token.chars().nth(0) {
+            if let Some(c) = last_token.chars().next() {
                 last_char = c;
             }
             if self.is_delimiter(last_char) {
@@ -1198,22 +1280,23 @@ impl<'a> DslToken<'a>
         }
         let mut val = constants::OP_TOKEN_2_;
         if cur_operator.len() > 0 {
-            let c0 = cur_operator.chars().nth(0);
+            let mut iter = cur_operator.chars();
+            let c0 = iter.next();
             let mut c1 = None as Option<char>;
             let mut c2 = None as Option<char>;
             let mut c3 = None as Option<char>;
             let mut c4 = None as Option<char>;
             if cur_operator.len() > 1 {
-                c1 = cur_operator.chars().nth(1);
+                c1 = iter.next();
             }
             if cur_operator.len() > 2 {
-                c2 = cur_operator.chars().nth(2);
+                c2 = iter.next();
             }
             if cur_operator.len() > 3 {
-                c3 = cur_operator.chars().nth(3);
+                c3 = iter.next();
             }
             if cur_operator.len() > 4 {
-                c4 = cur_operator.chars().nth(4);
+                c4 = iter.next();
             }
             if c0 == Some('=') && c1 == None {
                 val = constants::OP_TOKEN_1_;
@@ -1313,7 +1396,7 @@ impl<'a> DslToken<'a>
            return false;
         }
         else {
-            return !Self::is_letter(c) && c != '_' && c != '@' && c != '$';
+            return !Self::is_letter_s(c) && c != '_' && c != '@' && c != '$';
         }
     }
     pub fn is_not_identifier_and_begin_parenthesis(&self, c: char) -> bool
@@ -1322,7 +1405,7 @@ impl<'a> DslToken<'a>
            return false;
         }
         else {
-            return BEGIN_PARENTHESES.find(c) == None && !Self::is_letter(c) && c != '_' && c != '@' && c != '$';
+            return BEGIN_PARENTHESES.find(c) == None && !Self::is_letter_s(c) && c != '_' && c != '@' && c != '$';
         }
     }
     pub fn is_not_identifier_and_number_and_end_parenthesis(&self, c: char) -> bool
@@ -1331,7 +1414,7 @@ impl<'a> DslToken<'a>
             return false;
         }
         else {
-            return END_PARENTHESES.find(c) == None && !Self::is_letter_or_digit(c) && c != '_' && c != '@' && c != '$';
+            return END_PARENTHESES.find(c) == None && !Self::is_letter_or_digit_s(c) && c != '_' && c != '@' && c != '$';
         }
     }
     pub fn is_white_space(&self, c: char) -> bool
@@ -1437,37 +1520,35 @@ impl<'a> DslToken<'a>
         }
         return next_char;
     }
+    pub fn char_to_byte_index(&self, char_index: usize) -> Option<usize>
+    {
+        if char_index >= self.m_char_byte_index.len() {
+            return None;
+        }
+        else{
+            return Some(self.m_char_byte_index[char_index]);
+        }
+    }
+    pub fn byte_to_char_index(&self, byte_index: usize) -> Option<usize>
+    {
+        if byte_index >= self.m_byte_char_index.len() {
+            return None;
+        }
+        else{
+            return Some(self.m_byte_char_index[byte_index]);
+        }
+    }
 
-    pub fn str_find(s: &str, substr: &str, start: usize) -> Option<usize>
+    pub fn char_to_byte_index_s(s: &str, char_index: usize) -> Option<usize>
     {
-        if substr.len() == 0 {
-            return Some(0);
+        if let Some((ix, _c)) = s.char_indices().nth(char_index) {
+            return Some(ix);
         }
-        let src_str = &s[start..];
-        let pos = src_str.find(substr);
-        if let Some(p) = pos {
-            if let Some(cp) = Self::byte_to_char_index(s, p + start) {
-                return Some(cp);
-            }
+        else {
+            return None;
         }
-        return None;
     }
-    pub fn str_find2(s: &str, substr: &str, start: usize, len: usize) -> Option<usize>
-    {
-        if substr.len() == 0 {
-            return Some(0);
-        }
-        let end = start + len;
-        let src_str = &s[start..end];
-        let pos = src_str.find(substr);
-        if let Some(p) = pos {
-            if let Some(cp) = Self::byte_to_char_index(s, p + start) {
-                return Some(cp);
-            }
-        }
-        return None;
-    }
-    pub fn byte_to_char_index(s: &str, byte_index: usize) -> Option<usize>
+    pub fn byte_to_char_index_s(s: &str, byte_index: usize) -> Option<usize>
     {
         if byte_index > s.len() {
             return None;
@@ -1490,7 +1571,7 @@ impl<'a> DslToken<'a>
 
         None
     }
-    pub fn vec_char_find(vec: &Vec<char>, c: char, start: usize) -> Option<usize>
+    pub fn vec_char_find_s(vec: &Vec<char>, c: char, start: usize) -> Option<usize>
     {
         for (i, v) in vec.iter().skip(start).enumerate() {
             if c == *v {
@@ -1499,7 +1580,7 @@ impl<'a> DslToken<'a>
         }
         return None;
     }
-    pub fn vec_char_find2(vec: &Vec<char>, c: char, start: usize, len: usize) -> Option<usize>
+    pub fn vec_char_find2_s(vec: &Vec<char>, c: char, start: usize, len: usize) -> Option<usize>
     {
         for (i, v) in vec.iter().skip(start).enumerate() {
             if i >= len {
@@ -1511,7 +1592,7 @@ impl<'a> DslToken<'a>
         }
         return None;
     }
-    pub fn get_last_char(str: &String) -> (usize, char)
+    pub fn get_last_char_s(str: &str) -> (usize, char)
     {
         let ct = str.chars().count();
         let mut rchars = str.chars().rev();
@@ -1522,7 +1603,7 @@ impl<'a> DslToken<'a>
             return (ct, '\0');
         }
     }
-    pub fn get_last_2_chars(str: &String) -> (usize, char, char)
+    pub fn get_last_2_chars_s(str: &str) -> (usize, char, char)
     {
         let ct = str.chars().count();
         let mut rchars = str.chars().rev();
@@ -1538,11 +1619,11 @@ impl<'a> DslToken<'a>
             return (ct, '\0', '\0');
         }
     }
-    pub fn is_digit(c: char, is_hex: bool) -> bool
+    pub fn is_digit_s(c: char, is_hex: bool) -> bool
     {
-        return Self::is_digit2(c, is_hex, false, false);
+        return Self::is_digit2_s(c, is_hex, false, false);
     }
-    pub fn is_digit2(c: char, is_hex: bool, include_epart: bool, include_add_sub: bool) -> bool
+    pub fn is_digit2_s(c: char, is_hex: bool, include_epart: bool, include_add_sub: bool) -> bool
     {
         let ret;
         if is_hex {
@@ -1575,7 +1656,7 @@ impl<'a> DslToken<'a>
         }
         return ret;
     }
-    pub fn char_2_int(c: char) -> u32
+    pub fn char_2_int_s(c: char) -> u32
     {
         if c >= '0' && c <= '9' {
             return c as u32 - '0' as u32;
@@ -1597,14 +1678,14 @@ impl<'a> DslToken<'a>
             _ => false,
         }
     }
-    pub fn is_letter(c : char) -> bool
+    pub fn is_letter_s(c : char) -> bool
     {
         match c {
             'a'..='z' | 'A'..='Z' => true,
             _ => false,
         }
     }
-    pub fn is_letter_or_digit(c : char) -> bool
+    pub fn is_letter_or_digit_s(c : char) -> bool
     {
         match c {
             'a'..='z' | 'A'..='Z' | '0'..='9' => true,

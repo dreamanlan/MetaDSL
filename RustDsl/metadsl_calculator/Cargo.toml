@@ -1,0 +1,14 @@
+[package]
+name = "metadsl_calculator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[lib]
+name = "metadsl_calculator"
+path = "src/lib.rs"
+
+[[bin]]
+name = "metadsl_calculator"
+path = "src/main.rs"

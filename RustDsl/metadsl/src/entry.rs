@@ -17,8 +17,10 @@ pub fn get_local_milliseconds() -> u128
 
 pub fn main(_args: Vec<String>)
 {
+    println!("cur dir:{:?}", std::env::current_dir().unwrap().display());
+
     let log_callback: DslLogDelegationBox = Box::new(|msg| {
-        println!("{0}", msg);
+        println!("{:?}", msg);
     });
 
     let mut key_buffer: Vec<String> = Vec::new();
@@ -45,17 +47,17 @@ pub fn main(_args: Vec<String>)
         }
         return true;
     }));
-    file.load(String::from("test.txt"), log_callback);
+    file.load("test.txt", log_callback);
 
-    file.save(String::from("copy.txt"));
-    file.save_binary_file(String::from("binary.txt"));
+    file.save("copy.txt");
+    file.save_binary_file("binary.txt");
 
     file.clear();
 
     if let Ok(code) = fs::read("binary.txt") {
         file.load_binary_code(&code, &mut key_buffer, &mut id_buffer);
 
-        file.save(String::from("unbinary.txt"));
+        file.save("unbinary.txt");
 
         let t1 = get_local_milliseconds();
         let mut i = 0;
