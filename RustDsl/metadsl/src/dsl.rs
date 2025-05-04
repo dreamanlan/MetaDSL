@@ -17,8 +17,8 @@ use crate::dsl::parser::token::{DslToken, DslTokenCell};
 pub mod common;
 pub mod parser;
 
-pub type DslLogDelegation = dyn Fn(&str);
-pub type DslLogDelegationBox = Box<DslLogDelegation>;
+pub type DslLogDelegation<'a> = dyn Fn(&str) + 'a;
+pub type DslLogDelegationBox<'a> = Box<DslLogDelegation<'a>>;
 
 pub type SyntaxComponentBox = Box<SyntaxComponent>;
 pub type ValueDataBox = Box<ValueData>;
@@ -631,7 +631,7 @@ impl Clone for ValueData
     fn clone(&self) -> Self
     {
         let mut new = Self::new();
-        new.copy_form(&self);
+        new.copy_from(&self);
         return new;
     }
 }
@@ -725,7 +725,7 @@ impl ValueData
         self.m_id = String::new();
         self.m_line = -1;
     }
-    pub fn copy_form(&mut self, other: &ValueData)
+    pub fn copy_from(&mut self, other: &ValueData)
     {
         self.m_type = other.m_type;
         self.m_id = other.m_id.clone();
@@ -814,7 +814,7 @@ impl Clone for FunctionData
     fn clone(&self) -> Self
     {
         let mut new = Self::new();
-        new.copy_form(&self);
+        new.copy_from(&self);
         return new;
     }
 }
@@ -1003,9 +1003,9 @@ impl FunctionData
     {
         return &mut self.m_name;
     }
-    pub fn set_name(&mut self, value: Option<ValueDataBox>)
+    pub fn set_name(&mut self, value: ValueDataBox)
     {
-        self.m_name = value;
+        self.m_name = Some(value);
         self.m_lower_order_function = None;
         self.m_is_high_order = false;
     }
@@ -1017,9 +1017,9 @@ impl FunctionData
     {
         return &mut self.m_lower_order_function;
     }
-    pub fn set_lower_order_function(&mut self, value: Option<FunctionDataBox>) {
+    pub fn set_lower_order_function(&mut self, value: FunctionDataBox) {
         self.m_name = None;
-        self.m_lower_order_function = value;
+        self.m_lower_order_function = Some(value);
         self.m_is_high_order = true;
     }
     pub fn thir_or_lower_order_call(&self) -> Option<&FunctionData>
@@ -1345,25 +1345,25 @@ impl FunctionData
         }
         return None;
     }
-    pub fn get_param_id(&self, index: usize) -> Option<&String>
+    pub fn get_param_id(&self, index: usize) -> &String
     {
         if let Some(params) = &self.m_params {
             if index < params.len() {
                 let param = &params[index];
                 match param {
                     SyntaxComponent::Value(param) => {
-                        return Some(param.get_id());
+                        return param.get_id();
                     }
                     SyntaxComponent::Function(param) => {
-                        return Some(param.get_id());
+                        return param.get_id();
                     }
                     SyntaxComponent::Statement(param) => {
-                        return Some(param.get_id());
+                        return param.get_id();
                     }
                 }
             }
         }
-        return None;
+        return &EMPTY_STRING;
     }
     pub fn clear_params(&mut self)
     {
@@ -1442,7 +1442,7 @@ impl FunctionData
 
         self.m_comments_info = None;
     }
-    pub fn copy_form(&mut self, other: &FunctionData)
+    pub fn copy_from(&mut self, other: &FunctionData)
     {
         self.m_is_high_order = other.m_is_high_order;
         if let Some(v) = &other.m_name {
@@ -1524,7 +1524,7 @@ impl Clone for StatementData
     fn clone(&self) -> Self
     {
         let mut new = Self::new();
-        new.copy_form(&self);
+        new.copy_from(&self);
         return new;
     }
 }
@@ -1863,7 +1863,7 @@ impl StatementData
         self.m_value_or_functions = None;
         self.m_comments_info = None;
     }
-    pub fn copy_form(&mut self, other: &StatementData)
+    pub fn copy_from(&mut self, other: &StatementData)
     {
         if let Some(other_value_or_functions) = &other.m_value_or_functions {
             self.prepare_value_or_functions();
@@ -1913,17 +1913,17 @@ pub struct DslFile<'a>
     m_script_begin_delimiter: String,
     m_script_end_delimiter: String,
 
-    m_on_token_can_eat_char: Option<TokenCanEatCharDelegationBox<'a>>,
-    m_on_get_token: Option<GetTokenDelegationBox<'a>>,
-    m_on_before_add_function: Option<BeforeAddFunctionDelegationBox<'a>>,
-    m_on_add_function: Option<AddFunctionDelegationBox<'a>>,
-    m_on_before_end_statement: Option<BeforeEndStatementDelegationBox<'a>>,
-    m_on_end_statement: Option<EndStatementDelegationBox<'a>>,
-    m_on_before_build_operator: Option<BeforeBuildOperatorDelegationBox<'a>>,
-    m_on_build_operator: Option<BuildOperatorDelegationBox<'a>>,
-    m_on_set_function_id: Option<SetFunctionIdDelegationBox<'a>>,
-    m_on_before_build_high_order: Option<BeforeBuildHighOrderDelegationBox<'a>>,
-    m_on_build_high_order: Option<BuildHighOrderDelegationBox<'a>>,
+    m_on_token_can_eat_char: Option<&'a TokenCanEatCharDelegationBox<'a>>,
+    m_on_get_token: Option<&'a GetTokenDelegationBox<'a>>,
+    m_on_before_add_function: Option<&'a BeforeAddFunctionDelegationBox<'a>>,
+    m_on_add_function: Option<&'a AddFunctionDelegationBox<'a>>,
+    m_on_before_end_statement: Option<&'a BeforeEndStatementDelegationBox<'a>>,
+    m_on_end_statement: Option<&'a EndStatementDelegationBox<'a>>,
+    m_on_before_build_operator: Option<&'a BeforeBuildOperatorDelegationBox<'a>>,
+    m_on_build_operator: Option<&'a BuildOperatorDelegationBox<'a>>,
+    m_on_set_function_id: Option<&'a SetFunctionIdDelegationBox<'a>>,
+    m_on_before_build_high_order: Option<&'a BeforeBuildHighOrderDelegationBox<'a>>,
+    m_on_build_high_order: Option<&'a BuildHighOrderDelegationBox<'a>>,
 }
 
 pub const BINARY_IDENTITY: &str = "BDSL";
@@ -1936,6 +1936,10 @@ impl<'a> DslFile<'a>
     {
         return &self.m_dsl_infos;
     }
+    pub fn dsl_infos_mut(&mut self) -> &mut Vec<SyntaxComponent>
+    {
+        return &mut self.m_dsl_infos;
+    }
     pub fn add_dsl_info(&mut self, data: SyntaxComponent)
     {
         self.m_dsl_infos.push(data);
@@ -1945,7 +1949,7 @@ impl<'a> DslFile<'a>
         self.m_dsl_infos.clear();
     }
 
-    pub fn load(&mut self, file: &str, log_callback: DslLogDelegationBox) -> bool
+    pub fn load(&mut self, file: &str, log_callback: &DslLogDelegationBox<'a>) -> bool
     {
         if let Ok(content) = fs::read_to_string(file) {
             //logCallback(format!("DslFile.Load {:?}:\n{:?}", file, content));
@@ -1956,7 +1960,7 @@ impl<'a> DslFile<'a>
         }
         return false;
     }
-    pub fn load_from_string(&mut self, _content: String, log_callback: DslLogDelegationBox) -> bool
+    pub fn load_from_string(&mut self, _content: String, log_callback: &DslLogDelegationBox<'a>) -> bool
     {
         let content = DslFile::mac_2_unix(&_content);
 
@@ -2224,91 +2228,91 @@ cfg_if! {
     {
         return &self.m_script_end_delimiter;
     }
-    pub fn on_token_can_eat_char(&self) -> &Option<TokenCanEatCharDelegationBox<'a>>
+    pub fn on_token_can_eat_char(&self) -> &Option<&TokenCanEatCharDelegationBox>
     {
         return &self.m_on_token_can_eat_char;
     }
-    pub fn set_on_token_can_eat_char(&mut self, value: TokenCanEatCharDelegationBox<'a>)
+    pub fn set_on_token_can_eat_char(&mut self, value: &'a TokenCanEatCharDelegationBox)
     {
         self.m_on_token_can_eat_char = Some(value);
     }
-    pub fn on_get_token(&self) -> &Option<GetTokenDelegationBox<'a>>
+    pub fn on_get_token(&self) -> &Option<&GetTokenDelegationBox>
     {
         return &self.m_on_get_token;
     }
-    pub fn set_on_get_token(&mut self, value: GetTokenDelegationBox<'a>)
+    pub fn set_on_get_token(&mut self, value: &'a GetTokenDelegationBox)
     {
         self.m_on_get_token = Some(value);
     }
-    pub fn on_before_add_function(&self) -> &Option<BeforeAddFunctionDelegationBox<'a>>
+    pub fn on_before_add_function(&self) -> &Option<&BeforeAddFunctionDelegationBox>
     {
         return &self.m_on_before_add_function;
     }
-    pub fn set_on_before_add_function(&mut self, value: BeforeAddFunctionDelegationBox<'a>)
+    pub fn set_on_before_add_function(&mut self, value: &'a BeforeAddFunctionDelegationBox)
     {
         self.m_on_before_add_function = Some(value);
     }
-    pub fn on_add_function(&self) -> &Option<AddFunctionDelegationBox<'a>>
+    pub fn on_add_function(&self) -> &Option<&AddFunctionDelegationBox>
     {
         return &self.m_on_add_function;
     }
-    pub fn set_on_add_function(&mut self, value: AddFunctionDelegationBox<'a>)
+    pub fn set_on_add_function(&mut self, value: &'a AddFunctionDelegationBox)
     {
         self.m_on_add_function = Some(value);
     }
-    pub fn on_before_end_statement(&self) -> &Option<BeforeEndStatementDelegationBox<'a>>
+    pub fn on_before_end_statement(&self) -> &Option<&BeforeEndStatementDelegationBox>
     {
         return &self.m_on_before_end_statement;
     }
-    pub fn set_on_before_end_statement(&mut self, value: BeforeEndStatementDelegationBox<'a>)
+    pub fn set_on_before_end_statement(&mut self, value: &'a BeforeEndStatementDelegationBox)
     {
         self.m_on_before_end_statement = Some(value);
     }
-    pub fn on_end_statement(&self) -> &Option<EndStatementDelegationBox<'a>>
+    pub fn on_end_statement(&self) -> &Option<&EndStatementDelegationBox>
     {
         return &self.m_on_end_statement;
     }
-    pub fn set_on_end_statement(&mut self, value: EndStatementDelegationBox<'a>)
+    pub fn set_on_end_statement(&mut self, value: &'a EndStatementDelegationBox)
     {
         self.m_on_end_statement = Some(value);
     }
-    pub fn on_before_build_operator(&self) -> &Option<BeforeBuildOperatorDelegationBox<'a>>
+    pub fn on_before_build_operator(&self) -> &Option<&BeforeBuildOperatorDelegationBox>
     {
         return &self.m_on_before_build_operator;
     }
-    pub fn set_on_before_build_operator(&mut self, value: BeforeBuildOperatorDelegationBox<'a>)
+    pub fn set_on_before_build_operator(&mut self, value: &'a BeforeBuildOperatorDelegationBox)
     {
         self.m_on_before_build_operator = Some(value);
     }
-    pub fn on_build_operator(&self) -> &Option<BuildOperatorDelegationBox<'a>>
+    pub fn on_build_operator(&self) -> &Option<&BuildOperatorDelegationBox>
     {
         return &self.m_on_build_operator;
     }
-    pub fn set_on_build_operator(&mut self, value: BuildOperatorDelegationBox<'a>)
+    pub fn set_on_build_operator(&mut self, value: &'a BuildOperatorDelegationBox)
     {
         self.m_on_build_operator = Some(value);
     }
-    pub fn on_set_function_id(&self) -> &Option<SetFunctionIdDelegationBox<'a>>
+    pub fn on_set_function_id(&self) -> &Option<&SetFunctionIdDelegationBox>
     {
         return &self.m_on_set_function_id;
     }
-    pub fn set_on_set_function_id(&mut self, value: SetFunctionIdDelegationBox<'a>)
+    pub fn set_on_set_function_id(&mut self, value: &'a SetFunctionIdDelegationBox)
     {
         self.m_on_set_function_id = Some(value);
     }
-    pub fn on_before_build_high_order(&self) -> &Option<BeforeBuildHighOrderDelegationBox<'a>>
+    pub fn on_before_build_high_order(&self) -> &Option<&BeforeBuildHighOrderDelegationBox>
     {
         return &self.m_on_before_build_high_order;
     }
-    pub fn set_on_before_build_high_order(&mut self, value: BeforeBuildHighOrderDelegationBox<'a>)
+    pub fn set_on_before_build_high_order(&mut self, value: &'a BeforeBuildHighOrderDelegationBox)
     {
         self.m_on_before_build_high_order = Some(value);
     }
-    pub fn on_build_high_order(&self) -> &Option<BuildHighOrderDelegationBox<'a>>
+    pub fn on_build_high_order(&self) -> &Option<&BuildHighOrderDelegationBox>
     {
         return &self.m_on_build_high_order;
     }
-    pub fn set_on_build_high_order(&mut self, value: BuildHighOrderDelegationBox<'a>)
+    pub fn set_on_build_high_order(&mut self, value: &'a BuildHighOrderDelegationBox)
     {
         self.m_on_build_high_order = Some(value);
     }
@@ -2446,19 +2450,19 @@ impl Utility
     fn clone_value(val: &ValueData) -> ValueData
     {
         let mut nval = ValueData::new();
-        nval.copy_form(val);
+        nval.copy_from(val);
         return nval;
     }
     fn clone_function(func: &FunctionData) -> FunctionData
     {
         let mut nfunc = FunctionData::new();
-        nfunc.copy_form(func);
+        nfunc.copy_from(func);
         return nfunc;
     }
     fn clone_statement(stm: &StatementData) -> StatementData
     {
         let mut nstm = StatementData::new();
-        nstm.copy_form(stm);
+        nstm.copy_from(stm);
         return nstm;
     }
     fn read_int(bytes: &[u8], pos: usize) -> i32
@@ -3118,7 +3122,8 @@ cfg_if! {
                 let mut stream = String::new();
                 stream.push_str(lbracket);
                 if param_class == PARAM_CLASS_EXTERN_SCRIPT {
-                    if let Some(id) = data.get_param_id(0) {
+                    let id = data.get_param_id(0);
+                    if id.len() > 0 {
                         stream.push_str(id);
                     }
                 }
@@ -3184,20 +3189,19 @@ cfg_if! {
         }
         else if data.have_extern_script() {
             Self::write_line(stream, "", 0);
-            if let Some(script) = data.get_param_id(0) {
-                if !script.find('\n').is_none() {
-                    Self::write_line(stream, delim.script_begin_delimiter, indent);
-                }
-                else {
-                    Self::write_text(stream, delim.script_begin_delimiter, indent);
-                }
-                stream.push_str(script);
-                if script.chars().last() == Some('\n') {
-                    Self::write_text(stream, delim.script_end_delimiter, indent);
-                }
-                else {
-                    stream.push_str(delim.script_end_delimiter);
-                }
+            let script = data.get_param_id(0);
+            if !script.find('\n').is_none() {
+                Self::write_line(stream, delim.script_begin_delimiter, indent);
+            }
+            else {
+                Self::write_text(stream, delim.script_begin_delimiter, indent);
+            }
+            stream.push_str(script);
+            if script.chars().last() == Some('\n') {
+                Self::write_text(stream, delim.script_end_delimiter, indent);
+            }
+            else {
+                stream.push_str(delim.script_end_delimiter);
             }
         }
     }
@@ -3414,12 +3418,12 @@ cfg_if! {
             if code == DSL_BINARY_CODE_BEGIN_VALUE as u8 {
                 let mut value_data = ValueData::new();
                 Self::read_binary_value(bytes, start, cur_code_index, identifiers, cur_id_index, &mut value_data);
-                data.set_name(Some(Box::new(value_data)));
+                data.set_name(Box::new(value_data));
             }
             else if code == DSL_BINARY_CODE_BEGIN_FUNCTION as u8 {
                 let mut call_data = FunctionData::new();
                 Self::read_binary_function(bytes, start, cur_code_index, identifiers, cur_id_index, &mut call_data);
-                data.set_lower_order_function(Some(Box::new(call_data)));
+                data.set_lower_order_function(Box::new(call_data));
             }
             loop {
                 code = Self::read_byte(bytes, start + *cur_code_index);

@@ -63,7 +63,7 @@ pub type DslTokenCell<'a> = RefCell<DslToken<'a>>;
 pub struct DslToken<'a>
 {
     m_action: &'a DslActionCell<'a>,
-    m_log: &'a DslLogCell,
+    m_log: &'a DslLogCell<'a>,
     m_input: Vec<char>,
     m_char_byte_index: Vec<usize>,
     m_byte_char_index: Vec<usize>,
@@ -100,7 +100,7 @@ struct TokenInfo
 
 impl<'a> DslToken<'a>
 {
-    pub fn new(action: &'a DslActionCell<'a>, log: &'a DslLogCell, input: String, nullable_syntax_enabled: bool) -> Self
+    pub fn new(action: &'a DslActionCell<'a>, log: &'a DslLogCell<'a>, input: String, nullable_syntax_enabled: bool) -> Self
     {
         Self {
             m_action: action,

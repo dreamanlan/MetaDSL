@@ -1,16 +1,16 @@
 ﻿use std::cell::RefCell;
 use crate::dsl::DslLogDelegationBox;
 
-pub type DslLogCell = RefCell<DslLog>;
-pub struct DslLog
+pub type DslLogCell<'a> = RefCell<DslLog<'a>>;
+pub struct DslLog<'a>
 {
-    m_on_log: Option<DslLogDelegationBox>,
+    m_on_log: Option<&'a DslLogDelegationBox<'a>>,
     m_has_error: bool,
 }
 
-impl DslLog
+impl<'a> DslLog<'a>
 {
-    pub fn new(on_log: DslLogDelegationBox) -> Self
+    pub fn new(on_log: &'a DslLogDelegationBox<'a>) -> Self
     {
         Self {
             m_on_log: Some(on_log),

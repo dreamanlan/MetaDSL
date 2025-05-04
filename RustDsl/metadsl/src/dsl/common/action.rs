@@ -87,7 +87,7 @@ impl SemanticInfo
 
 pub struct DslAction<'a>
 {
-    m_log: &'a DslLogCell,
+    m_log: &'a DslLogCell<'a>,
     m_dsl_token: Option<&'a DslTokenCell<'a>>,
 
     m_on_before_add_function: Option<&'a BeforeAddFunctionDelegationBox<'a>>,
@@ -109,7 +109,7 @@ pub struct DslAction<'a>
 
 impl<'a> DslAction<'a>
 {
-    pub fn new(log: &'a DslLogCell) -> Self
+    pub fn new(log: &'a DslLogCell<'a>) -> Self
     {
         Self {
             m_log: log,
@@ -150,7 +150,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_before_add_function;
     }
-    pub fn set_on_before_add_function(&mut self, value: &'a BeforeAddFunctionDelegationBox<'a>)
+    pub fn set_on_before_add_function(&mut self, value: &'a BeforeAddFunctionDelegationBox)
     {
         self.m_on_before_add_function = Some(value);
     }
@@ -158,15 +158,15 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_add_function;
     }
-    pub fn set_on_add_function(&mut self, value: &'a AddFunctionDelegationBox<'a>)
+    pub fn set_on_add_function(&mut self, value: &'a AddFunctionDelegationBox)
     {
         self.m_on_add_function = Some(value);
     }
-    pub fn on_before_end_statement(&self) -> Option<&'a BeforeEndStatementDelegationBox<'a>>
+    pub fn on_before_end_statement(&self) -> Option<&'a BeforeEndStatementDelegationBox>
     {
         return self.m_on_before_end_statement;
     }
-    pub fn set_on_before_end_statement(&mut self, value: &'a BeforeEndStatementDelegationBox<'a>)
+    pub fn set_on_before_end_statement(&mut self, value: &'a BeforeEndStatementDelegationBox)
     {
         self.m_on_before_end_statement = Some(value);
     }
@@ -174,7 +174,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_end_statement;
     }
-    pub fn set_on_end_statement(&mut self, value: &'a EndStatementDelegationBox<'a>)
+    pub fn set_on_end_statement(&mut self, value: &'a EndStatementDelegationBox)
     {
         self.m_on_end_statement = Some(value);
     }
@@ -182,7 +182,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_before_build_operator;
     }
-    pub fn set_on_before_build_operator(&mut self, value: &'a BeforeBuildOperatorDelegationBox<'a>)
+    pub fn set_on_before_build_operator(&mut self, value: &'a BeforeBuildOperatorDelegationBox)
     {
         self.m_on_before_build_operator = Some(value);
     }
@@ -190,7 +190,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_build_operator;
     }
-    pub fn set_on_build_operator(&mut self, value: &'a BuildOperatorDelegationBox<'a>)
+    pub fn set_on_build_operator(&mut self, value: &'a BuildOperatorDelegationBox)
     {
         self.m_on_build_operator = Some(value);
     }
@@ -198,7 +198,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_set_function_id;
     }
-    pub fn set_on_set_function_id(&mut self, value: &'a SetFunctionIdDelegationBox<'a>)
+    pub fn set_on_set_function_id(&mut self, value: &'a SetFunctionIdDelegationBox)
     {
         self.m_on_set_function_id = Some(value);
     }
@@ -206,7 +206,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_before_build_high_order;
     }
-    pub fn set_on_before_build_high_order(&mut self, value: &'a BeforeBuildHighOrderDelegationBox<'a>)
+    pub fn set_on_before_build_high_order(&mut self, value: &'a BeforeBuildHighOrderDelegationBox)
     {
         self.m_on_before_build_high_order = Some(value);
     }
@@ -214,7 +214,7 @@ impl<'a> DslAction<'a>
     {
         return &self.m_on_build_high_order;
     }
-    pub fn set_on_build_high_order(&mut self, value: &'a BuildHighOrderDelegationBox<'a>)
+    pub fn set_on_build_high_order(&mut self, value: &'a BuildHighOrderDelegationBox)
     {
         self.m_on_build_high_order = Some(value);
     }
@@ -288,10 +288,10 @@ impl<'a> DslAction<'a>
                     if fnum == 1 && func.get_id() == "@@delimiter" &&
                         (func.get_param_num() == 1 || func.get_param_num() == 3) &&
                         !func.is_high_order() {
-                        let r#type = func.get_param_id(0).unwrap();
+                        let r#type = func.get_param_id(0);
                         if func.get_param_num() == 3 {
-                            let begin = func.get_param_id(1).unwrap();
-                            let end = func.get_param_id(2).unwrap();
+                            let begin = func.get_param_id(1);
+                            let end = func.get_param_id(2);
                             if r#type == "string" {
                                 self.set_string_delimiter(begin.clone(), end.clone());
                             }
@@ -734,8 +734,8 @@ impl<'a> DslAction<'a>
                     let mut lo_func = FunctionData::new();
                     let mut fname = ValueData::new();
                     fname.set_line(self.get_last_line_number());
-                    lo_func.set_name(Some(Box::new(fname)));
-                    f_func.set_lower_order_function(Some(Box::new(lo_func)));
+                    lo_func.set_name(Box::new(fname));
+                    f_func.set_lower_order_function(Box::new(lo_func));
                 }
             }
             _statement.copy_first_comments(&arg_comp);
@@ -779,7 +779,7 @@ impl<'a> DslAction<'a>
 
             let mut new_func = FunctionData::new();
             let nfname = ValueData::new();
-            new_func.set_name(Some(Box::new(nfname)));
+            new_func.set_name(Box::new(nfname));
             statement.add_function(ValueOrFunction::Function(new_func));
         }
 
@@ -881,9 +881,9 @@ impl<'a> DslAction<'a>
         if let Some(v_or_f) = self.get_last_function_mut() {
             if let ValueOrFunction::Function(func) = v_or_f {
                 let mut temp = FunctionData::new();
-                temp.copy_form(func);
+                temp.copy_from(func);
                 func.clear();
-                func.set_lower_order_function(Some(Box::new(temp)));
+                func.set_lower_order_function(Box::new(temp));
             }
         }
         if let Some(on_build_high_order) = self.m_on_build_high_order {
@@ -899,9 +899,9 @@ impl<'a> DslAction<'a>
         if let Some(v_or_f) = self.get_last_function_mut() {
             if let ValueOrFunction::Function(func) = v_or_f {
                 let mut temp = FunctionData::new();
-                temp.copy_form(func);
+                temp.copy_from(func);
                 func.clear();
-                func.set_lower_order_function(Some(Box::new(temp)));
+                func.set_lower_order_function(Box::new(temp));
             }
         }
         if let Some(on_build_high_order) = self.m_on_build_high_order {
@@ -1348,7 +1348,7 @@ impl<'a> DslAction<'a>
         let mut data = StatementData::new();
         let mut func = FunctionData::new();
         let name = ValueData::new();
-        func.set_name(Some(Box::new(name)));
+        func.set_name(Box::new(name));
         data.add_function(ValueOrFunction::Function(func));
         return data;
     }
@@ -1361,7 +1361,7 @@ impl<'a> DslAction<'a>
     {
         let mut func = FunctionData::new();
         let name = ValueData::new();
-        func.set_name(Some(Box::new(name)));
+        func.set_name(Box::new(name));
         data.add_function(ValueOrFunction::Function(func));
     }
 

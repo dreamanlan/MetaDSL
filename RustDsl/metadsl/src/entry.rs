@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use std::time::Instant;
 use std::fs;
-use crate::dsl::common::action::DslActionCell;
+use crate::dsl::common::action::{DslActionCell, GetTokenDelegationBox};
 use crate::dsl::DslLogDelegationBox;
 use crate::dsl::DslFile;
 use crate::dsl::parser::token::DslToken;
@@ -29,7 +29,7 @@ pub fn main(_args: Vec<String>)
     let mut file = DslFile::new();
     //Modify the return statement to the 'return <-' syntax, ensuring that the return is at a shallow level
     //of semantic data for easier subsequent processing.
-    file.set_on_get_token(Box::new(|_action: &DslActionCell, dsl_token: &mut DslToken, tok: &mut str, _val: &mut i16, line:&mut i32| {
+    let token_callback: GetTokenDelegationBox = Box::new(|_action: &DslActionCell, dsl_token: &mut DslToken, tok: &mut str, _val: &mut i16, line:&mut i32| {
         if tok == "return" {
             let old_cur_token = dsl_token.get_cur_token().clone();
             let old_last_token = dsl_token.get_last_token().clone();
@@ -46,8 +46,9 @@ pub fn main(_args: Vec<String>)
             dsl_token.set_last_token(old_last_token);
         }
         return true;
-    }));
-    file.load("test.txt", log_callback);
+    });
+    file.set_on_get_token(&token_callback);
+    file.load("test.txt", &log_callback);
 
     file.save("copy.txt");
     file.save_binary_file("binary.txt");

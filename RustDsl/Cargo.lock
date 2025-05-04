@@ -147,6 +147,10 @@ dependencies = [
 [[package]]
 name = "metadsl_calculator"
 version = "0.1.0"
+dependencies = [
+ "metadsl",
+ "metadsl_macros",
+]
 
 [[package]]
 name = "metadsl_macros"

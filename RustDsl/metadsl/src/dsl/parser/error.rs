@@ -6,12 +6,12 @@ use crate::dsl::parser::string::{get_symbol_name, get_production_name};
 pub type DslErrorCell<'a> = RefCell<DslError<'a>>;
 pub struct DslError<'a>
 {
-    m_log: &'a DslLogCell
+    m_log: &'a DslLogCell<'a>
 }
 
 impl<'a> DslError<'a>
 {
-    pub fn new(log: &'a DslLogCell) -> Self
+    pub fn new(log: &'a DslLogCell<'a>) -> Self
     {
         Self {
             m_log: log

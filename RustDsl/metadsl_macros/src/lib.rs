@@ -82,3 +82,167 @@ pub fn impl_abstract_syntax_component(_input: TokenStream) -> TokenStream {
 
     TokenStream::from(expanded)
 }
+
+#[proc_macro_attribute]
+pub fn add_abstract_expression_fields(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemStruct);
+
+    let name = input.ident;
+    let fields = input.fields;
+
+    let expanded = if let Fields::Named(fields_named) = fields {
+        let existing_fields = fields_named.named;
+
+        quote! {
+            pub struct #name<'a> {
+                #existing_fields
+                m_calculator: Option<&'a DslCalculatorCell<'a>>,
+                m_dsl: Option<SyntaxComponent>,
+            }
+        }
+    } else {
+        quote! {
+            compile_error!("add_field can only be used with structs with named fields");
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro_attribute]
+pub fn add_abstract_and_simple_expression_fields(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemStruct);
+
+    let name = input.ident;
+    let fields = input.fields;
+
+    let expanded = if let Fields::Named(fields_named) = fields {
+        let existing_fields = fields_named.named;
+
+        quote! {
+            pub struct #name<'a> {
+                #existing_fields
+                m_calculator: Option<&'a DslCalculatorCell<'a>>,
+                m_dsl: Option<SyntaxComponent>,
+                m_exps: Vec<ExpressionBox<'a>>,
+            }
+        }
+    } else {
+        quote! {
+            compile_error!("add_field can only be used with structs with named fields");
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn impl_abstract_expression(_input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+        fn impl_calculator(&self) -> &'a DslCalculatorCell<'a>
+        {
+            return self.m_calculator.unwrap();
+        }
+        fn impl_syntax_component(&self) -> &SyntaxComponent
+        {
+            if let Some(dsl) = &self.m_dsl {
+                return dsl;
+            }
+            panic!("no syntax component");
+        }
+        fn impl_set_calculator(&mut self, calculator: &'a DslCalculatorCell<'a>)
+        {
+            self.m_calculator = Some(calculator);
+        }
+        fn impl_set_syntax_component(&mut self, dsl: SyntaxComponent)
+        {
+            self.m_dsl = Some(dsl);
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn impl_simple_expression(_input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+        fn impl_get_expressions(&self) -> &Vec<ExpressionBox<'a>>
+        {
+            return &self.m_exps;
+        }
+        fn impl_get_expressions_mut(&mut self) -> &mut Vec<ExpressionBox<'a>>
+        {
+            return &mut self.m_exps;
+        }
+        fn impl_set_expressions(&mut self, exps: Vec<ExpressionBox<'a>>)
+        {
+            self.m_exps = exps;
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn impl_expression_with_abstract(_input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+        fn calc(&mut self) -> DslCalculatorValue<'a>
+        {
+            return AbstractExpression::calc(self);
+        }
+        fn load(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool
+        {
+            return AbstractExpression::load(self, dsl, calculator);
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn impl_abstract_with_simple(_input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+        fn do_calc(&mut self) -> DslCalculatorValue<'a>
+        {
+            return SimpleExpressionBase::do_calc(self);
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+
+//---------------------------------------------------------------------------------------
+#[proc_macro_attribute]
+pub fn add_fields_template(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemStruct);
+
+    let name = input.ident;
+    let fields = input.fields;
+
+    let expanded = if let Fields::Named(fields_named) = fields {
+        let existing_fields = fields_named.named;
+
+        quote! {
+            pub struct #name<'a> {
+                #existing_fields
+
+            }
+        }
+    } else {
+        quote! {
+            compile_error!("add_field can only be used with structs with named fields");
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
+#[proc_macro]
+pub fn impl_template(_input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+    };
+
+    TokenStream::from(expanded)
+}
+//---------------------------------------------------------------------------------------

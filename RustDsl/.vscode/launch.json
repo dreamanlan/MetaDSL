@@ -11,6 +11,14 @@
             "program": "${workspaceFolder}/target/debug/metadsl",
             "cwd": "${workspaceFolder}/target/debug/",
             "args": [],
+        },
+        {
+            "name": "Launch-calculator",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/target/debug/metadsl_calculator",
+            "cwd": "${workspaceFolder}/target/debug/",
+            "args": [],
         }
     ]
 }

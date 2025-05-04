@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+metadsl_macros = { path = "../metadsl_macros" }
+metadsl = { path = "../metadsl" }
 
 [lib]
 name = "metadsl_calculator"
