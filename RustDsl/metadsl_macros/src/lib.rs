@@ -186,13 +186,29 @@ pub fn impl_simple_expression(_input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn impl_expression_with_abstract(_input: TokenStream) -> TokenStream {
     let expanded = quote! {
-        fn calc(&mut self) -> DslCalculatorValue<'a>
+        fn calc(&mut self) -> DslCalculatorValue
         {
             return AbstractExpression::calc(self);
         }
-        fn load(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool
         {
-            return AbstractExpression::load(self, dsl, calculator);
+            return AbstractExpression::load_syntax_component(self, dsl, calculator);
+        }
+        fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: &'a DslCalculatorCell<'a>) -> bool
+        {
+            return AbstractExpression::load_value_or_function(self, dsl, calculator);
+        }
+        fn load_value_syntax(&mut self, dsl: &ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        {
+            return AbstractExpression::load_value_syntax(self, dsl, calculator);
+        }
+        fn load_function_syntax(&mut self, dsl: &FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        {
+            return AbstractExpression::load_function_syntax(self, dsl, calculator);
+        }
+        fn load_statement_syntax(&mut self, dsl: &StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        {
+            return AbstractExpression::load_statement_syntax(self, dsl, calculator);
         }
     };
 
@@ -202,7 +218,7 @@ pub fn impl_expression_with_abstract(_input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn impl_abstract_with_simple(_input: TokenStream) -> TokenStream {
     let expanded = quote! {
-        fn do_calc(&mut self) -> DslCalculatorValue<'a>
+        fn do_calc(&mut self) -> DslCalculatorValue
         {
             return SimpleExpressionBase::do_calc(self);
         }
