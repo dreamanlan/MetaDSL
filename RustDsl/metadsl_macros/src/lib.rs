@@ -198,15 +198,15 @@ pub fn impl_expression_with_abstract(_input: TokenStream) -> TokenStream {
         {
             return AbstractExpression::load_value_or_function(self, dsl, calculator);
         }
-        fn load_value_syntax(&mut self, dsl: &ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_value_syntax(&mut self, dsl: ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
         {
             return AbstractExpression::load_value_syntax(self, dsl, calculator);
         }
-        fn load_function_syntax(&mut self, dsl: &FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_function_syntax(&mut self, dsl: FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
         {
             return AbstractExpression::load_function_syntax(self, dsl, calculator);
         }
-        fn load_statement_syntax(&mut self, dsl: &StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_statement_syntax(&mut self, dsl: StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
         {
             return AbstractExpression::load_statement_syntax(self, dsl, calculator);
         }

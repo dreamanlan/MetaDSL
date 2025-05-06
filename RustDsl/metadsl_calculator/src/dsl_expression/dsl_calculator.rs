@@ -1,9 +1,7 @@
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::hash::{Hash, Hasher};
 use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::collections::hash_map::Keys;
-use std::sync::Arc;
 use metadsl::dsl::{self, FunctionData, StatementData, ValueData, ValueOrFunction};
 use metadsl::dsl::{
     ISyntaxComponent,
@@ -464,9 +462,9 @@ pub trait IExpression<'a>
     fn calc(&mut self) -> DslCalculatorValue;
     fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool;
     fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_value_syntax(&mut self, dsl: &ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_function_syntax(&mut self, dsl: &FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_statement_syntax(&mut self, dsl: &StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool;
+    fn load_value_syntax(&mut self, dsl: ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool;
+    fn load_function_syntax(&mut self, dsl: FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool;
+    fn load_statement_syntax(&mut self, dsl: StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool;
 }
 pub trait AbstractExpression<'a> : IExpression<'a>
 {
@@ -479,13 +477,13 @@ pub trait AbstractExpression<'a> : IExpression<'a>
     {
         match dsl {
             SyntaxComponent::Value(value_data) => {
-                return AbstractExpression::load_value_syntax(self, value_data, calculator);
+                return AbstractExpression::load_value_syntax(self, value_data.clone(), calculator);
             }
             SyntaxComponent::Function(func_data) => {
-                return AbstractExpression::load_function_syntax(self, func_data, calculator);
+                return AbstractExpression::load_function_syntax(self, func_data.clone(), calculator);
             }
             SyntaxComponent::Statement(statement_data) => {
-                return AbstractExpression::load_statement_syntax(self, statement_data, calculator);
+                return AbstractExpression::load_statement_syntax(self, statement_data.clone(), calculator);
             }
         }
     }
@@ -493,32 +491,40 @@ pub trait AbstractExpression<'a> : IExpression<'a>
     {
         match dsl {
             ValueOrFunction::Value(value_data) => {
-                return AbstractExpression::load_value_syntax(self, value_data, calculator);
+                return AbstractExpression::load_value_syntax(self, value_data.clone(), calculator);
             }
             ValueOrFunction::Function(func_data) => {
-                return AbstractExpression::load_function_syntax(self, func_data, calculator);
+                return AbstractExpression::load_function_syntax(self, func_data.clone(), calculator);
             }
         }
 
     }
-    fn load_value_syntax(&mut self, value_data: &ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_value_syntax(&mut self, value_data: ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
     {
         self.impl_set_calculator(calculator);
-        self.impl_set_syntax_component(SyntaxComponent::Value(value_data.clone()));
-        return self.load_value(&value_data);
+        self.impl_set_syntax_component(SyntaxComponent::Value(value_data));
+        return self.load_value();
     }
-    fn load_function_syntax(&mut self, func_data: &FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_function_syntax(&mut self, func_data: FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
     {
         self.impl_set_calculator(calculator);
-        self.impl_set_syntax_component(SyntaxComponent::Function(func_data.clone()));
-        if func_data.have_param() {
-            let ret = self.load_function(func_data);
+        self.impl_set_syntax_component(SyntaxComponent::Function(func_data));
+        let mut have_param = false;
+        if let SyntaxComponent::Function(owned_func_data) = self.syntax_component() {
+            if owned_func_data.have_param() {
+                have_param = true;
+            }
+        }
+        if have_param {
+            let ret = self.load_function();
             if !ret {
                 let mut args: Vec<ExpressionBox> = Vec::new();
-                if let Some(ps) = func_data.params() {
-                    for param in ps.iter() {
-                        if let Some(syn) = self.calculator().borrow_mut().load_syntax_component(param) {
-                            args.push(syn);
+                if let SyntaxComponent::Function(owned_func_data) = self.syntax_component() {
+                    if let Some(ps) = owned_func_data.params() {
+                        for param in ps.iter() {
+                            if let Some(syn) = self.calculator().borrow_mut().load_syntax_component(param) {
+                                args.push(syn);
+                            }
                         }
                     }
                 }
@@ -527,23 +533,23 @@ pub trait AbstractExpression<'a> : IExpression<'a>
             return ret;
         }
         else {
-            return self.load_function(func_data);
+            return self.load_function();
         }
     }
-    fn load_statement_syntax(&mut self, statement_data: &StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_statement_syntax(&mut self, statement_data: StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
     {
         self.impl_set_calculator(calculator);
-        self.impl_set_syntax_component(SyntaxComponent::Statement(statement_data.clone()));
-        return self.load_statement(statement_data);
+        self.impl_set_syntax_component(SyntaxComponent::Statement(statement_data));
+        return self.load_statement();
     }
     fn to_string(&self) -> String
     {
         return format!("{} line:{}", std::any::type_name::<Self>(), self.syntax_component().get_line());
     }
-    fn load_value(&mut self, _val: &ValueData) -> bool { return false; }
+    fn load_value(&mut self) -> bool { return false; }
     fn load_expressions(&mut self, _exps: &mut Vec<ExpressionBox>) -> bool { return false; }
-    fn load_function(&mut self, _func: &FunctionData) -> bool { return false; }
-    fn load_statement(&mut self, _statement: &StatementData) -> bool { return false; }
+    fn load_function(&mut self) -> bool { return false; }
+    fn load_statement(&mut self) -> bool { return false; }
     fn do_calc(&mut self) -> DslCalculatorValue;
 
     fn calculator(&self) -> &'a DslCalculatorCell<'a>
@@ -615,7 +621,7 @@ impl<'a> AbstractExpression<'a> for ArgsGet<'a>
         }
         return DslCalculatorValue::Null;
     }
-    fn load_function(&mut self, _func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
         return true;
     }
@@ -662,12 +668,15 @@ impl<'a> AbstractExpression<'a> for ArgGet<'a>
         }
         return ret;
     }
-    fn load_function(&mut self, func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
-        if let Some(arg) = func_data.get_param(0) {
-            let v = self.calculator().borrow_mut().load_syntax_component(arg);
-            self.m_arg_index = v;
+        let mut v = None;
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            if let Some(arg) = func_data.get_param(0) {
+                v = self.calculator().borrow_mut().load_syntax_component(arg);
+            }
         }
+        self.m_arg_index = v;
         return true;
     }
 
@@ -700,7 +709,7 @@ impl<'a> AbstractExpression<'a> for ArgNumGet<'a>
         }
         return DslCalculatorValue::Null;
     }
-    fn load_function(&mut self, _func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
         return true;
     }
@@ -757,17 +766,23 @@ impl<'a> AbstractExpression<'a> for GlobalVarSet<'a>
         }
         return v;
     }
-    fn load_function(&mut self, func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
-        let param1 = func_data.get_param(0);
-        let param2 = func_data.get_param(1);
-        if let Some(p1) = param1 {
-            self.m_var_id = Some(String::from(p1.get_id()));
+        let mut var_id = None;
+        let mut op = None;
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            let param1 = func_data.get_param(0);
+            let param2 = func_data.get_param(1);
+            if let Some(p1) = param1 {
+                var_id = Some(String::from(p1.get_id()));
+            }
+            if let Some(p2) = param2 {
+                let v = self.calculator().borrow_mut().load_syntax_component(p2);
+                op = v;
+            }
         }
-        if let Some(p2) = param2 {
-            let v = self.calculator().borrow_mut().load_syntax_component(p2);
-            self.m_op = v;
-        }
+        self.m_var_id = var_id;
+        self.m_op = op;
         return true;
     }
 
@@ -841,9 +856,13 @@ impl<'a> AbstractExpression<'a> for GlobalVarGet<'a>
         }
         return ret;
     }
-    fn load_value(&mut self, val_data: &ValueData) -> bool
+    fn load_value(&mut self) -> bool
     {
-        self.m_var_id = Some(String::from(val_data.get_id()));
+        let mut var_id = None;
+        if let SyntaxComponent::Value(val_data) = self.syntax_component() {
+            var_id = Some(String::from(val_data.get_id()));
+        }
+        self.m_var_id = var_id;
         return true;
     }
 
@@ -902,15 +921,20 @@ impl<'a> AbstractExpression<'a> for LocalVarSet<'a>
         }
         return v;
     }
-    fn load_function(&mut self, func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
-        if let Some(param1) = func_data.get_param(0) {
-            if let Some(param2) = func_data.get_param(1) {
-                self.m_var_id = Some(String::from(param1.get_id()));
-                let op = self.calculator().borrow_mut().load_syntax_component(param2);
-                self.m_op = op;
+        let mut var_id = None;
+        let mut op = None;
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            if let Some(param1) = func_data.get_param(0) {
+                if let Some(param2) = func_data.get_param(1) {
+                    var_id = Some(String::from(param1.get_id()));
+                    op = self.calculator().borrow_mut().load_syntax_component(param2);
+                }
             }
         }
+        self.m_var_id = var_id;
+        self.m_op = op;
         return true;
     }
 
@@ -968,9 +992,13 @@ impl<'a> AbstractExpression<'a> for LocalVarGet<'a>
         }
         return ret;
     }
-    fn load_value(&mut self, val_data: &ValueData) -> bool
+    fn load_value(&mut self) -> bool
     {
-        self.m_var_id = Some(String::from(val_data.get_id()));
+        let mut var_id = None;
+        if let SyntaxComponent::Value(val_data) = self.syntax_component() {
+            var_id = Some(String::from(val_data.get_id()));
+        }
+        self.m_var_id = var_id;
         return true;
     }
 
@@ -1004,35 +1032,39 @@ impl<'a> AbstractExpression<'a> for ConstGet<'a>
         let v = &self.m_val;
         return v.clone();
     }
-    fn load_value(&mut self, val_data: &ValueData) -> bool
+    fn load_value(&mut self) -> bool
     {
-        let id = val_data.get_id();
-        let id_type = val_data.get_id_type();
-        if id_type == dsl::NUM_TOKEN {
-            //TryParseNumeric(id, out m_Val);
-            if let Ok(v) = id.parse::<f64>() {
-                self.m_val = DslCalculatorValue::Double(v);
-            }
-            else if let Ok(v) = id.parse::<i64>() {
-                self.m_val = DslCalculatorValue::Long(v);
-            }
-            else if let Ok(v) = id.parse::<u64>() {
-                self.m_val = DslCalculatorValue::Ulong(v);
-            }
-        }
-        else {
-            if id_type == dsl::ID_TOKEN {
-                if id == "true" || id=="false" || id=="True" || id=="False" {
-                    self.m_val = DslCalculatorValue::Bool(id=="true" || id=="True");
+        let mut val = DslCalculatorValue::Null;
+        if let SyntaxComponent::Value(val_data) = self.syntax_component() {
+            let id = val_data.get_id();
+            let id_type = val_data.get_id_type();
+            if id_type == dsl::NUM_TOKEN {
+                //TryParseNumeric(id, out m_Val);
+                if let Ok(v) = id.parse::<f64>() {
+                    val = DslCalculatorValue::Double(v);
                 }
-                else {
-                    self.m_val = DslCalculatorValue::String(id.clone());
+                else if let Ok(v) = id.parse::<i64>() {
+                    val = DslCalculatorValue::Long(v);
+                }
+                else if let Ok(v) = id.parse::<u64>() {
+                    val = DslCalculatorValue::Ulong(v);
                 }
             }
             else {
-                self.m_val = DslCalculatorValue::String(id.clone());
+                if id_type == dsl::ID_TOKEN {
+                    if id == "true" || id=="false" || id=="True" || id=="False" {
+                        val = DslCalculatorValue::Bool(id=="true" || id=="True");
+                    }
+                    else {
+                        val = DslCalculatorValue::String(id.clone());
+                    }
+                }
+                else {
+                    val = DslCalculatorValue::String(id.clone());
+                }
             }
         }
+        self.m_val = val;
         return true;
     }
 
@@ -1044,7 +1076,7 @@ pub struct FunctionCall<'a>
 {
     m_func: Option<String>,
 
-    m_args: Vec<ExpressionBox<'a>>,
+    m_args: Option<Vec<ExpressionBox<'a>>>,
 }
 impl<'a> Default for FunctionCall<'a>
 {
@@ -1052,7 +1084,7 @@ impl<'a> Default for FunctionCall<'a>
     {
         FunctionCall {
             m_func: None,
-            m_args: Vec::new(),
+            m_args: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -1068,9 +1100,11 @@ impl<'a> AbstractExpression<'a> for FunctionCall<'a>
     fn do_calc(&mut self) -> DslCalculatorValue
     {
         let mut args = self.calculator().borrow_mut().new_calculator_value_list();
-        for arg in self.m_args.iter_mut() {
-            let o = arg.calc();
-            args.push(o);
+        if let Some(margs) = &mut self.m_args {
+            for arg in margs.iter_mut() {
+                let o = arg.calc();
+                args.push(o);
+            }
         }
         let mut r = DslCalculatorValue::Null;
         if let Some(func) = &self.m_func {
@@ -1079,21 +1113,28 @@ impl<'a> AbstractExpression<'a> for FunctionCall<'a>
         self.calculator().borrow_mut().recycle_calculator_value_list(args);
         return r;
     }
-    fn load_function(&mut self, func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
-        if !func_data.is_high_order() && func_data.have_param() {
-            self.m_func = Some(String::from(func_data.get_id()));
-            if let Some(ps) = func_data.params() {
-                for p in ps.iter() {
-                    let vopt = self.calculator().borrow_mut().load_syntax_component(p);
-                    if let Some(v) = vopt {
-                        self.m_args.push(v);
+        let mut ret= false;
+        let mut func = None;
+        let mut vs = Vec::new();
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            if !func_data.is_high_order() && func_data.have_param() {
+                func = Some(String::from(func_data.get_id()));
+                if let Some(ps) = func_data.params() {
+                    for p in ps.iter() {
+                        let vopt = self.calculator().borrow_mut().load_syntax_component(p);
+                        if let Some(v) = vopt {
+                            vs.push(v);
+                        }
                     }
                 }
+                ret = true;
             }
-            return true;
         }
-        return false;
+        self.m_func = func;
+        self.m_args = Some(vs);
+        return ret;
     }
 
     impl_abstract_expression!();
@@ -1101,14 +1142,14 @@ impl<'a> AbstractExpression<'a> for FunctionCall<'a>
 #[add_abstract_expression_fields]
 pub struct ParenthesisExp<'a>
 {
-    m_expressions: Vec<ExpressionBox<'a>>,
+    m_expressions: Option<Vec<ExpressionBox<'a>>>,
 }
 impl<'a> Default for ParenthesisExp<'a>
 {
     fn default() -> Self
     {
         ParenthesisExp {
-            m_expressions: Vec::new(),
+            m_expressions: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -1124,21 +1165,27 @@ impl<'a> AbstractExpression<'a> for ParenthesisExp<'a>
     fn do_calc(&mut self) -> DslCalculatorValue
     {
         let mut v = DslCalculatorValue::Null;
-        for exp in self.m_expressions.iter_mut() {
-            v = exp.calc();
+        if let Some(exps) = &mut self.m_expressions {
+            for exp in exps.iter_mut() {
+                v = exp.calc();
+            }
         }
         return v;
     }
-    fn load_function(&mut self, func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
-        if let Some(ps) = func_data.params() {
-            for p in ps.iter() {
-                let vopt = self.calculator().borrow_mut().load_syntax_component(p);
-                if let Some(v) = vopt {
-                    self.m_expressions.push(v);
+        let mut vs = Vec::new();
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            if let Some(ps) = func_data.params() {
+                for p in ps.iter() {
+                    let vopt = self.calculator().borrow_mut().load_syntax_component(p);
+                    if let Some(v) = vopt {
+                        vs.push(v);
+                    }
                 }
             }
         }
+        self.m_expressions = Some(vs);
         return true;
     }
 
@@ -1185,14 +1232,14 @@ impl<'a> SimpleExpressionBase<'a> for ArrayExp<'a>
 #[add_abstract_expression_fields]
 pub struct HashtableExp<'a>
 {
-    m_expressions: Vec<ExpressionBox<'a>>,
+    m_expressions: Option<Vec<ExpressionBox<'a>>>,
 }
 impl<'a> Default for HashtableExp<'a>
 {
     fn default() -> Self
     {
         HashtableExp {
-            m_expressions: Vec::new(),
+            m_expressions: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -1209,37 +1256,43 @@ impl<'a> AbstractExpression<'a> for HashtableExp<'a>
     {
         let mut dict = HashMap::<DslCalculatorValue, DslCalculatorValue>::new();
         let mut i = 0;
-        while i + 1 < self.m_expressions.len() {
-            let key = self.m_expressions[i].calc();
-            let val = self.m_expressions[i + 1].calc();
-            dict.insert(key, val);
-            i += 2;
+        if let Some(exps) = &mut self.m_expressions {
+            while i + 1 < exps.len() {
+                let key = exps[i].calc();
+                let val = exps[i + 1].calc();
+                dict.insert(key, val);
+                i += 2;
+            }
         }
         let r = DslCalculatorValue::HashMap(dict);
         return r;
     }
-    fn load_function(&mut self, func_data: &FunctionData) -> bool
+    fn load_function(&mut self) -> bool
     {
-        if let Some(ps) = func_data.params() {
-            for p in ps.iter() {
-                if let SyntaxComponent::Function(fd) = &p {
-                    if fd.get_param_num() == 2 {
-                        if let Some(p) = fd.get_param(0) {
-                            let exp_key = self.calculator().borrow_mut().load_syntax_component(p);
-                            if let Some(key) = exp_key {
-                                self.m_expressions.push(key);
+        let mut vs = Vec::new();
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            if let Some(ps) = func_data.params() {
+                for p in ps.iter() {
+                    if let SyntaxComponent::Function(fd) = &p {
+                        if fd.get_param_num() == 2 {
+                            if let Some(p) = fd.get_param(0) {
+                                let exp_key = self.calculator().borrow_mut().load_syntax_component(p);
+                                if let Some(key) = exp_key {
+                                    vs.push(key);
+                                }
                             }
-                        }
-                        if let Some(p) = fd.get_param(1) {
-                            let exp_val = self.calculator().borrow_mut().load_syntax_component(p);
-                            if let Some(val) = exp_val {
-                                self.m_expressions.push(val);
+                            if let Some(p) = fd.get_param(1) {
+                                let exp_val = self.calculator().borrow_mut().load_syntax_component(p);
+                                if let Some(val) = exp_val {
+                                    vs.push(val);
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        self.m_expressions = Some(vs);
         return true;
     }
 
@@ -1940,7 +1993,7 @@ impl<'a> DslCalculator<'a>
                 }
                 fd.set_parenthesis_param_class();
                 if let Some(cell) = self.m_self_cell {
-                    if !p.load_function_syntax(&fd, cell) {
+                    if !p.load_function_syntax(fd, cell) {
                         //error
                         self.error(&format!("DslCalculator error, {0} line {1}", value_data.to_script_string(false, &dsl::DEFAULT_DELIM), value_data.get_line()));
                     }
@@ -1950,21 +2003,21 @@ impl<'a> DslCalculator<'a>
             else if id == "true" || id == "false" {
                 let mut const_exp = ConstGet::<'a>::default();
                 if let Some(cell) = self.m_self_cell {
-                    AbstractExpression::load_value_syntax(&mut const_exp, value_data, cell);
+                    AbstractExpression::load_value_syntax(&mut const_exp, value_data.clone(), cell);
                 }
                 return Some(Box::new(const_exp));
             }
             else if id.len() > 0 && id.chars().next() == Some('$') {
                 let mut var_exp = LocalVarGet::default();
                 if let Some(cell) = self.m_self_cell {
-                    AbstractExpression::load_value_syntax(&mut var_exp, value_data, cell);
+                    AbstractExpression::load_value_syntax(&mut var_exp, value_data.clone(), cell);
                 }
                 return Some(Box::new(var_exp));
             }
             else {
                 let mut var_exp = GlobalVarGet::default();
                 if let Some(cell) = self.m_self_cell {
-                    AbstractExpression::load_value_syntax(&mut var_exp, value_data, cell);
+                    AbstractExpression::load_value_syntax(&mut var_exp, value_data.clone(), cell);
                 }
                 return Some(Box::new(var_exp));
             }
@@ -1972,7 +2025,7 @@ impl<'a> DslCalculator<'a>
         else {
             let mut const_exp = ConstGet::default();
             if let Some(cell) = self.m_self_cell {
-                AbstractExpression::load_value_syntax(&mut const_exp, value_data, cell);
+                AbstractExpression::load_value_syntax(&mut const_exp, value_data.clone(), cell);
             }
             return Some(Box::new(const_exp));
         }
@@ -1995,7 +2048,7 @@ impl<'a> DslCalculator<'a>
                         else {
                             let mut exp = ParenthesisExp::default();
                             if let Some(cell) = self.m_self_cell {
-                                AbstractExpression::load_function_syntax(&mut exp, func_data, cell);
+                                AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
                             }
                             return Some(Box::new(exp));
                         }
@@ -2003,7 +2056,7 @@ impl<'a> DslCalculator<'a>
                     dsl::PARAM_CLASS_BRACKET => {
                             let mut exp = ArrayExp::default();
                             if let Some(cell) = self.m_self_cell {
-                                AbstractExpression::load_function_syntax(&mut exp, func_data, cell);
+                                AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
                             }
                             return Some(Box::new(exp));
                         }
@@ -2068,12 +2121,12 @@ impl<'a> DslCalculator<'a>
                     if let Some(cell) = self.m_self_cell {
                         if name.len() > 0 && name.chars().next() == Some('$') {
                             let mut exp = LocalVarSet::default();
-                            AbstractExpression::load_function_syntax(&mut exp, func_data, cell);
+                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
                             return Some(Box::new(exp));
                         }
                         else {
                             let mut exp = GlobalVarSet::default();
-                            AbstractExpression::load_function_syntax(&mut exp, func_data, cell);
+                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
                             return Some(Box::new(exp));
                         }
                     }
@@ -2169,7 +2222,7 @@ impl<'a> DslCalculator<'a>
                 if !func_data.have_id() && !func_data.is_high_order() {
                     let mut exp = HashtableExp::default();
                     if let Some(cell) = self.m_self_cell {
-                        AbstractExpression::load_function_syntax(&mut exp, func_data, cell);
+                        AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
                     }
                     return Some(Box::new(exp));
                 }
@@ -2183,7 +2236,7 @@ impl<'a> DslCalculator<'a>
         }
         if let Some(mut ret) = self.create_api(func_data.get_id()) {
             if let Some(cell) = self.m_self_cell {
-                if ret.load_function_syntax(func_data, cell) {
+                if ret.load_function_syntax(func_data.clone(), cell) {
                     return Some(ret);
                 }
             }
@@ -2214,13 +2267,13 @@ impl<'a> DslCalculator<'a>
             //Convert command line syntax into function call syntax.
             if let Some(fd) = DslSyntaxTransformer::try_transform_command_line_like_syntax(statement_data) {
                 if let Some(cell) = self.m_self_cell {
-                    if ret.load_function_syntax(&fd, cell) {
+                    if ret.load_function_syntax(fd, cell) {
                         return Some(ret);
                     }
                 }
             }
             if let Some(cell) = self.m_self_cell {
-                if ret.load_statement_syntax(statement_data, cell) {
+                if ret.load_statement_syntax(statement_data.clone(), cell) {
                     return Some(ret);
                 }
             }
