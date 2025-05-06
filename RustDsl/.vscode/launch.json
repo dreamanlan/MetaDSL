@@ -11,6 +11,10 @@
             "program": "${workspaceFolder}/target/debug/metadsl",
             "cwd": "${workspaceFolder}/target/debug/",
             "args": [],
+            "env": {
+                "RUST_BACKTRACE": "1",
+                "RUST_LOG": "debug"
+            },
         },
         {
             "name": "Launch-calculator",
@@ -19,6 +23,10 @@
             "program": "${workspaceFolder}/target/debug/metadsl_calculator",
             "cwd": "${workspaceFolder}/target/debug/",
             "args": [],
+            "env": {
+                "RUST_BACKTRACE": "1",
+                "RUST_LOG": "debug"
+            },
         }
     ]
 }

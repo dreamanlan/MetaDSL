@@ -1391,6 +1391,9 @@ impl<'a> DslAction<'a>
                                 }
                             }
                         }
+                        else {
+                            return Some(SyntaxComponent::Function(f.clone()));
+                        }
                     }
                 }
             }

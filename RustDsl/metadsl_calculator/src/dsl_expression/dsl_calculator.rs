@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::rc::Rc;
 use std::hash::{Hash, Hasher};
 use std::collections::{BTreeMap, HashMap, VecDeque};
 use std::collections::hash_map::Keys;
@@ -29,9 +30,9 @@ pub type DslCalculatorCell<'a> = RefCell<DslCalculator<'a>>;
 
 pub type GetVariableDelegation<'a> = dyn Fn(&str) -> Option<&'a DslCalculatorValue>;
 pub type SetVariableDelegation<'a> = dyn FnMut(&str, DslCalculatorValue) -> bool;
-pub type LoadValueFailbackDelegation<'a> = dyn Fn(&ValueData, &DslCalculator<'a>) -> Option<ExpressionBox<'a>>;
-pub type LoadFunctionFailbackDelegation<'a> = dyn Fn(&FunctionData, &DslCalculator<'a>) -> Option<ExpressionBox<'a>>;
-pub type LoadStatementFailbackDelegation<'a> = dyn Fn(&StatementData, &DslCalculator<'a>) -> Option<ExpressionBox<'a>>;
+pub type LoadValueFailbackDelegation<'a> = dyn Fn(&ValueData, &DslCalculatorCell<'a>) -> Option<ExpressionBox<'a>>;
+pub type LoadFunctionFailbackDelegation<'a> = dyn Fn(&FunctionData, &DslCalculatorCell<'a>) -> Option<ExpressionBox<'a>>;
+pub type LoadStatementFailbackDelegation<'a> = dyn Fn(&StatementData, &DslCalculatorCell<'a>) -> Option<ExpressionBox<'a>>;
 
 pub type GetVariableDelegationBox<'a> = Box<GetVariableDelegation<'a>>;
 pub type SetVariableDelegationBox<'a> = Box<SetVariableDelegation<'a>>;
@@ -460,11 +461,11 @@ pub trait IObjectDispatch
 pub trait IExpression<'a>
 {
     fn calc(&mut self) -> DslCalculatorValue;
-    fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_value_syntax(&mut self, dsl: ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_function_syntax(&mut self, dsl: FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool;
-    fn load_statement_syntax(&mut self, dsl: StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool;
+    fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: Rc<DslCalculatorCell<'a>>) -> bool;
+    fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: Rc<DslCalculatorCell<'a>>) -> bool;
+    fn load_value_syntax(&mut self, dsl: ValueData, calculator: Rc<DslCalculatorCell<'a>>) -> bool;
+    fn load_function_syntax(&mut self, dsl: FunctionData, calculator: Rc<DslCalculatorCell<'a>>) -> bool;
+    fn load_statement_syntax(&mut self, dsl: StatementData, calculator: Rc<DslCalculatorCell<'a>>) -> bool;
 }
 pub trait AbstractExpression<'a> : IExpression<'a>
 {
@@ -473,7 +474,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
         let ret = self.do_calc();
         return ret;
     }
-    fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
         match dsl {
             SyntaxComponent::Value(value_data) => {
@@ -487,7 +488,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
             }
         }
     }
-    fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
         match dsl {
             ValueOrFunction::Value(value_data) => {
@@ -499,13 +500,13 @@ pub trait AbstractExpression<'a> : IExpression<'a>
         }
 
     }
-    fn load_value_syntax(&mut self, value_data: ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_value_syntax(&mut self, value_data: ValueData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
         self.impl_set_calculator(calculator);
         self.impl_set_syntax_component(SyntaxComponent::Value(value_data));
         return self.load_value();
     }
-    fn load_function_syntax(&mut self, func_data: FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_function_syntax(&mut self, func_data: FunctionData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
         self.impl_set_calculator(calculator);
         self.impl_set_syntax_component(SyntaxComponent::Function(func_data));
@@ -522,7 +523,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
                 if let SyntaxComponent::Function(owned_func_data) = self.syntax_component() {
                     if let Some(ps) = owned_func_data.params() {
                         for param in ps.iter() {
-                            if let Some(syn) = self.calculator().borrow_mut().load_syntax_component(param) {
+                            if let Some(syn) = DslCalculator::load_syntax_component(self.calculator(), param) {
                                 args.push(syn);
                             }
                         }
@@ -536,7 +537,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
             return self.load_function();
         }
     }
-    fn load_statement_syntax(&mut self, statement_data: StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
+    fn load_statement_syntax(&mut self, statement_data: StatementData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
         self.impl_set_calculator(calculator);
         self.impl_set_syntax_component(SyntaxComponent::Statement(statement_data));
@@ -552,7 +553,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
     fn load_statement(&mut self) -> bool { return false; }
     fn do_calc(&mut self) -> DslCalculatorValue;
 
-    fn calculator(&self) -> &'a DslCalculatorCell<'a>
+    fn calculator(&self) -> &Rc<DslCalculatorCell<'a>>
     {
         return self.impl_calculator();
     }
@@ -561,9 +562,9 @@ pub trait AbstractExpression<'a> : IExpression<'a>
         return self.impl_syntax_component();
     }
 
-    fn impl_calculator(&self) -> &'a DslCalculatorCell<'a>;
+    fn impl_calculator(&self) -> &Rc<DslCalculatorCell<'a>>;
     fn impl_syntax_component(&self) -> &SyntaxComponent;
-    fn impl_set_calculator(&mut self, calculator: &'a DslCalculatorCell<'a>);
+    fn impl_set_calculator(&mut self, calculator: Rc<DslCalculatorCell<'a>>);
     fn impl_set_syntax_component(&mut self, dsl: SyntaxComponent);
 }
 
@@ -673,7 +674,7 @@ impl<'a> AbstractExpression<'a> for ArgGet<'a>
         let mut v = None;
         if let SyntaxComponent::Function(func_data) = self.syntax_component() {
             if let Some(arg) = func_data.get_param(0) {
-                v = self.calculator().borrow_mut().load_syntax_component(arg);
+                v = DslCalculator::load_syntax_component(self.calculator(), arg);
             }
         }
         self.m_arg_index = v;
@@ -777,7 +778,7 @@ impl<'a> AbstractExpression<'a> for GlobalVarSet<'a>
                 var_id = Some(String::from(p1.get_id()));
             }
             if let Some(p2) = param2 {
-                let v = self.calculator().borrow_mut().load_syntax_component(p2);
+                let v = DslCalculator::load_syntax_component(self.calculator(), p2);
                 op = v;
             }
         }
@@ -929,7 +930,7 @@ impl<'a> AbstractExpression<'a> for LocalVarSet<'a>
             if let Some(param1) = func_data.get_param(0) {
                 if let Some(param2) = func_data.get_param(1) {
                     var_id = Some(String::from(param1.get_id()));
-                    op = self.calculator().borrow_mut().load_syntax_component(param2);
+                    op = DslCalculator::load_syntax_component(self.calculator(), param2);
                 }
             }
         }
@@ -1123,7 +1124,7 @@ impl<'a> AbstractExpression<'a> for FunctionCall<'a>
                 func = Some(String::from(func_data.get_id()));
                 if let Some(ps) = func_data.params() {
                     for p in ps.iter() {
-                        let vopt = self.calculator().borrow_mut().load_syntax_component(p);
+                        let vopt = DslCalculator::load_syntax_component(self.calculator(), p);
                         if let Some(v) = vopt {
                             vs.push(v);
                         }
@@ -1178,7 +1179,7 @@ impl<'a> AbstractExpression<'a> for ParenthesisExp<'a>
         if let SyntaxComponent::Function(func_data) = self.syntax_component() {
             if let Some(ps) = func_data.params() {
                 for p in ps.iter() {
-                    let vopt = self.calculator().borrow_mut().load_syntax_component(p);
+                    let vopt = DslCalculator::load_syntax_component(self.calculator(), p);
                     if let Some(v) = vopt {
                         vs.push(v);
                     }
@@ -1276,13 +1277,13 @@ impl<'a> AbstractExpression<'a> for HashtableExp<'a>
                     if let SyntaxComponent::Function(fd) = &p {
                         if fd.get_param_num() == 2 {
                             if let Some(p) = fd.get_param(0) {
-                                let exp_key = self.calculator().borrow_mut().load_syntax_component(p);
+                                let exp_key = DslCalculator::load_syntax_component(self.calculator(), p);
                                 if let Some(key) = exp_key {
                                     vs.push(key);
                                 }
                             }
                             if let Some(p) = fd.get_param(1) {
-                                let exp_val = self.calculator().borrow_mut().load_syntax_component(p);
+                                let exp_val = DslCalculator::load_syntax_component(self.calculator(), p);
                                 if let Some(val) = exp_val {
                                     vs.push(val);
                                 }
@@ -1396,7 +1397,7 @@ pub struct DslCalculator<'a>
     m_func_calls: Vec<FunctionData>,
     m_value_list_pool: RefCell<SimpleObjectPool<Vec<DslCalculatorValue>>>,
     m_stack_info_pool: RefCell<SimpleObjectPool<StackInfo>>,
-    m_self_cell: Option<&'a DslCalculatorCell<'a>>,
+    m_self_cell: Option<Rc<DslCalculatorCell<'a>>>,
 }
 impl<'a> DslCalculator<'a>
 {
@@ -1404,10 +1405,10 @@ impl<'a> DslCalculator<'a>
     {
         return self.m_inited;
     }
-    pub fn init(&mut self, cell: &'a DslCalculatorCell<'a>)
+    pub fn init(&mut self, self_cell: Rc<DslCalculatorCell<'a>>)
     {
         self.m_inited = true;
-        self.m_self_cell = Some(cell);
+        self.m_self_cell = Some(self_cell);
 
         self.register_api("args", "args() api", create_expression_factory::<ArgsGet>());
         self.register_api("arg", "arg(ix) api", create_expression_factory::<ArgGet>());
@@ -1435,6 +1436,13 @@ impl<'a> DslCalculator<'a>
         self.register_api("!", "logical not operator", create_expression_factory::<NotExp>());
         self.register_api("?", "conditional expression", create_expression_factory::<CondExp>());
         self.register_api("if", "if(cond)func(args); or if(cond){...}[elseif/elif(cond){...}else{...}]; statement", create_expression_factory::<IfExp>());
+        self.register_api("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", create_expression_factory::<WhileExp>());
+        self.register_api("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", create_expression_factory::<LoopExp>());
+        self.register_api("looplist", "looplist(list)func(args); or looplist(list){...}; statement, iterator is $$", create_expression_factory::<LoopListExp>());
+        self.register_api("foreach", "foreach(args)func(args); or foreach(args){...}; statement, iterator is $$", create_expression_factory::<ForeachExp>());
+        self.register_api("array", "[v1,v2,...] or array(v1,v2,...) object", create_expression_factory::<ArrayExp>());
+        self.register_api("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) object", create_expression_factory::<HashtableExp>());
+        self.register_api("echo", "echo(arg1,arg2,...) api", create_expression_factory::<EchoExp>());
         /*
         self.register_api("max", "max(v1,v2) api", create_expression_factory::<MaxExp>());
         self.register_api("min", "min(v1,v2) api", create_expression_factory::<MinExp>());
@@ -1497,10 +1505,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("nextpoweroftwo", "nextpoweroftwo(v) api", create_expression_factory::<NextPowerOfTwoExp>());
         self.register_api("dist", "dist(x1,y1,x2,y2) api", create_expression_factory::<DistExp>());
         self.register_api("distsqr", "distsqr(x1,y1,x2,y2) api", create_expression_factory::<DistSqrExp>());
-        self.register_api("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", create_expression_factory::<WhileExp>());
-        self.register_api("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", create_expression_factory::<LoopExp>());
-        self.register_api("looplist", "looplist(list)func(args); or looplist(list){...}; statement, iterator is $$", create_expression_factory::<LoopListExp>());
-        self.register_api("foreach", "foreach(args)func(args); or foreach(args){...}; statement, iterator is $$", create_expression_factory::<ForeachExp>());
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
         self.register_api("gettypeassemblyname", "gettypeassemblyname(obj) api", create_expression_factory::<GetTypeAssemblyNameExp>());
         self.register_api("gettypefullname", "gettypefullname(obj) api", create_expression_factory::<GetTypeFullNameExp>());
@@ -1560,7 +1564,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("shortdatestr", "shortdatestr() api", create_expression_factory::<ShortDateStrExp>());
         self.register_api("shorttimestr", "shorttimestr() api", create_expression_factory::<ShortTimeStrExp>());
         self.register_api("isnullorempty", "isnullorempty(str) api", create_expression_factory::<IsNullOrEmptyExp>());
-        self.register_api("array", "[v1,v2,...] or array(v1,v2,...) object", create_expression_factory::<ArrayExp>());
         self.register_api("toarray", "toarray(list) api", create_expression_factory::<ToArrayExp>());
         self.register_api("listsize", "listsize(list) api", create_expression_factory::<ListSizeExp>());
         self.register_api("list", "list(v1,v2,...) object", create_expression_factory::<ListExp>());
@@ -1574,7 +1577,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("listclear", "listclear(list) api", create_expression_factory::<ListClearExp>());
         self.register_api("listsplit", "listsplit(list,ct) api, return list of list", create_expression_factory::<ListSplitExp>());
         self.register_api("hashtablesize", "hashtablesize(hash) api", create_expression_factory::<HashtableSizeExp>());
-        self.register_api("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) object", create_expression_factory::<HashtableExp>());
         self.register_api("hashtableget", "hashtableget(hash,key[,defval]) api", create_expression_factory::<HashtableGetExp>());
         self.register_api("hashtableset", "hashtableset(hash,key,val) api", create_expression_factory::<HashtableSetExp>());
         self.register_api("hashtableadd", "hashtableadd(hash,key,val) api", create_expression_factory::<HashtableAddExp>());
@@ -1723,108 +1725,6 @@ impl<'a> DslCalculator<'a>
             self.m_named_global_variable_indexes.insert(String::from(v), ix as i32);
             self.m_global_variables.push(val);
             return true;
-        }
-    }
-    pub fn load_dsl_file(&mut self, dsl_file: &str)
-    {
-        if let Some(callback) = self.on_log {
-            let mut file = DslFile::new();
-            if file.load(dsl_file, callback) {
-                for info in file.dsl_infos().iter() {
-                    self.load_dsl_info(info);
-                }
-            }
-        }
-    }
-    pub fn load_dsl_info(&mut self, info: &SyntaxComponent)
-    {
-        if info.get_id() != "script" {
-            return;
-        }
-        let mut is_valid = false;
-        let mut id: &str = "";
-        let mut func: Option<&FunctionData> = None;
-        let mut func_info: FuncInfo<'a> = FuncInfo::new();
-        match info {
-            SyntaxComponent::Function(f) => {
-                if f.is_high_order() {
-                    id = f.get_id();
-                    func = Some(f);
-                    is_valid = true;
-                }
-            }
-            SyntaxComponent::Statement(statement) => {
-                if statement.get_function_num() == 2 {
-                    if let Some(vf) = statement.first() {
-                        if let ValueOrFunction::Function(f) = vf {
-                            id = f.get_param_id(0);
-                        }
-                    }
-                    if let Some(vf) = statement.second() {
-                        if let ValueOrFunction::Function(f) = vf {
-                            func = Some(f);
-                            is_valid = true;
-                            if f.get_id() == "args" && f.is_high_order() {
-                                if let Some(lf) = f.lower_order_function() {
-                                    if let Some(ps) = lf.params() {
-                                        for p in ps.iter() {
-                                            let arg_name = p.get_id();
-                                            func_info.add_arg_name_index(arg_name);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            _ => {
-                return;
-            }
-        };
-
-        if !is_valid {
-            return;
-        }
-
-        if let Some(f) = func {
-            if let Some(ps) = f.params() {
-                for comp in ps.iter() {
-                    if let Some(exp) = self.load_syntax_component(comp) {
-                        func_info.codes.push(exp);
-                    }
-                }
-            }
-        }
-        self.m_funcs.remove(id);
-        self.m_funcs.insert(String::from(id), RefCell::new(func_info));
-    }
-    pub fn load_dsl_func(&mut self, func: &str, dsl_func: &FunctionData)
-    {
-        self.load_dsl_func_with_args(func, None, dsl_func);
-    }
-    pub fn load_dsl_func_with_args(&mut self, func: &str, arg_names: Option<&'a Vec<String>>, dsl_func: &FunctionData)
-    {
-        let mut func_info = FuncInfo::new();
-        if let Some(names) = arg_names {
-            if names.len() > 0 {
-                func_info.build_arg_name_indexes(names);
-            }
-        }
-        if let Some(ps) = dsl_func.params() {
-            self.load_dsl_statements(ps, &mut func_info.codes);
-        }
-        self.m_funcs.remove(func);
-        self.m_funcs.insert(String::from(func), RefCell::new(func_info));
-    }
-    pub fn load_dsl_statements(&mut self, statements: &Vec<SyntaxComponent>, exps: &mut Vec<ExpressionBox<'a>>)
-    {
-        for comp in statements.iter() {
-            if comp.is_valid() {
-                if let Some(exp) = self.load_syntax_component(comp) {
-                    exps.push(exp);
-                }
-            }
         }
     }
     pub fn check_func_xrefs(&self)
@@ -1977,352 +1877,6 @@ impl<'a> DslCalculator<'a>
             }
             else {
                 self.set_global_variable(v, val);
-            }
-        }
-    }
-    pub fn load_value_syntax(&mut self, value_data: &ValueData) -> Option<ExpressionBox<'a>>
-    {
-        let id_type = value_data.get_id_type();
-        if id_type == dsl::ID_TOKEN {
-            let id = value_data.get_id();
-            if let Some(mut p) = self.create_api(id) {
-                //Convert a parameterless name into a parameterless function call.
-                let mut fd = FunctionData::new();
-                if let Some(name) = fd.name_mut() {
-                    name.copy_from(value_data);
-                }
-                fd.set_parenthesis_param_class();
-                if let Some(cell) = self.m_self_cell {
-                    if !p.load_function_syntax(fd, cell) {
-                        //error
-                        self.error(&format!("DslCalculator error, {0} line {1}", value_data.to_script_string(false, &dsl::DEFAULT_DELIM), value_data.get_line()));
-                    }
-                }
-                return Some(p);
-            }
-            else if id == "true" || id == "false" {
-                let mut const_exp = ConstGet::<'a>::default();
-                if let Some(cell) = self.m_self_cell {
-                    AbstractExpression::load_value_syntax(&mut const_exp, value_data.clone(), cell);
-                }
-                return Some(Box::new(const_exp));
-            }
-            else if id.len() > 0 && id.chars().next() == Some('$') {
-                let mut var_exp = LocalVarGet::default();
-                if let Some(cell) = self.m_self_cell {
-                    AbstractExpression::load_value_syntax(&mut var_exp, value_data.clone(), cell);
-                }
-                return Some(Box::new(var_exp));
-            }
-            else {
-                let mut var_exp = GlobalVarGet::default();
-                if let Some(cell) = self.m_self_cell {
-                    AbstractExpression::load_value_syntax(&mut var_exp, value_data.clone(), cell);
-                }
-                return Some(Box::new(var_exp));
-            }
-        }
-        else {
-            let mut const_exp = ConstGet::default();
-            if let Some(cell) = self.m_self_cell {
-                AbstractExpression::load_value_syntax(&mut const_exp, value_data.clone(), cell);
-            }
-            return Some(Box::new(const_exp));
-        }
-    }
-    pub fn load_function_syntax(&mut self, func_data: &FunctionData) -> Option<ExpressionBox<'a>>
-    {
-        if func_data.have_param() {
-            if !func_data.have_id() && !func_data.is_high_order() && (func_data.get_param_class() == dsl::PARAM_CLASS_PARENTHESIS || func_data.get_param_class() == dsl::PARAM_CLASS_BRACKET) {
-                match func_data.get_param_class() {
-                    dsl::PARAM_CLASS_PARENTHESIS => {
-                        let num = func_data.get_param_num();
-                        if num == 1 {
-                            if let Some(param) = func_data.get_param(0) {
-                                return self.load_syntax_component(param);
-                            }
-                            else {
-                                return None;
-                            }
-                        }
-                        else {
-                            let mut exp = ParenthesisExp::default();
-                            if let Some(cell) = self.m_self_cell {
-                                AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
-                            }
-                            return Some(Box::new(exp));
-                        }
-                    }
-                    dsl::PARAM_CLASS_BRACKET => {
-                            let mut exp = ArrayExp::default();
-                            if let Some(cell) = self.m_self_cell {
-                                AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
-                            }
-                            return Some(Box::new(exp));
-                        }
-                    _ => {
-                        return None;
-                    }
-                }
-            }
-            else if !func_data.have_param() {
-                //degeneration
-                if let Some(value_data) = func_data.name() {
-                    return self.load_value_syntax(&value_data);
-                }
-                return None;
-            }
-            else {
-                let param_class = func_data.get_param_class();
-                let op = func_data.get_id();
-                if op == "=" {//assignment
-                    if let Some(syn) = func_data.get_param(0) {
-                        if let SyntaxComponent::Function(inner_call) = syn {
-                            //obj.property = val -> objectset(obj, property, val)
-                            let inner_param_class = inner_call.get_param_class();
-                            if inner_param_class == dsl::PARAM_CLASS_PERIOD ||
-                                inner_param_class == dsl::PARAM_CLASS_BRACKET {
-                                let mut new_call = FunctionData::new();
-                                if inner_param_class == dsl::PARAM_CLASS_PERIOD {
-                                    new_call.set_name(Box::new(ValueData::from_string_type(String::from("objectset"), dsl::ID_TOKEN)));
-                                }
-                                else {
-                                    new_call.set_name(Box::new(ValueData::from_string_type(String::from("collectionset"), dsl::ID_TOKEN)));
-                                }
-                                new_call.set_parenthesis_param_class();
-                                if inner_call.is_high_order() {
-                                    if let Some(f) = inner_call.lower_order_function() {
-                                        new_call.add_function_param(f.as_ref().clone());
-                                    }
-                                    if let Some(param) = inner_call.get_param(0) {
-                                        new_call.add_syntax_component_param(self.convert_member(param.clone(), inner_call.get_param_class()));
-                                    }
-                                    if let Some(param) = inner_call.get_param(1) {
-                                        new_call.add_syntax_component_param(param.clone());
-                                    }
-                                }
-                                else {
-                                    if let Some(v) = inner_call.name() {
-                                        new_call.add_value_param(v.as_ref().clone());
-                                    }
-                                    if let Some(param) = inner_call.get_param(0) {
-                                        new_call.add_syntax_component_param(self.convert_member(param.clone(), inner_call.get_param_class()));
-                                    }
-                                    if let Some(param) = inner_call.get_param(1) {
-                                        new_call.add_syntax_component_param(param.clone());
-                                    }
-                                }
-
-                                return self.load_syntax_component(&SyntaxComponent::Function(new_call));
-                            }
-                        }
-                    }
-                    let name = func_data.get_param_id(0);
-                    if let Some(cell) = self.m_self_cell {
-                        if name.len() > 0 && name.chars().next() == Some('$') {
-                            let mut exp = LocalVarSet::default();
-                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
-                            return Some(Box::new(exp));
-                        }
-                        else {
-                            let mut exp = GlobalVarSet::default();
-                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
-                            return Some(Box::new(exp));
-                        }
-                    }
-                    //error
-                    self.error(&format!("DslCalculator error, {0} line {1}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
-                    return None;
-                }
-                else {
-                    if func_data.is_high_order() {
-                        if let Some(inner_call) = func_data.lower_order_function() {
-                            let inner_param_class = inner_call.get_param_class();
-                            if param_class == dsl::PARAM_CLASS_PARENTHESIS && (inner_param_class == dsl::PARAM_CLASS_PERIOD || inner_param_class == dsl::PARAM_CLASS_BRACKET) {
-                                //obj.member(a,b,...) or obj[member](a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> objectcall(obj,member,a,b,...)
-                                let api_name;
-                                let member = inner_call.get_param_id(0);
-                                if member == "orderby" || member == "orderbydesc" || member == "where" || member == "top" {
-                                    api_name = "linq";
-                                }
-                                else if inner_param_class == dsl::PARAM_CLASS_PERIOD {
-                                    api_name = "objectcall";
-                                }
-                                else {
-                                    api_name = "collectioncall";
-                                }
-                                let mut new_call = FunctionData::new();
-                                new_call.set_name(Box::new(ValueData::from_string_type(String::from(api_name), dsl::ID_TOKEN)));
-                                new_call.set_parenthesis_param_class();
-                                if inner_call.is_high_order() {
-                                    if let Some(f) = inner_call.lower_order_function() {
-                                        new_call.add_function_param(f.as_ref().clone());
-                                    }
-                                    if let Some(param) = inner_call.get_param(0) {
-                                        new_call.add_syntax_component_param(self.convert_member(param.clone(), inner_call.get_param_class()));
-                                    }
-                                    if let Some(ps) = func_data.params() {
-                                        for p in ps.iter() {
-                                            new_call.add_syntax_component_param(p.clone());
-                                        }
-                                    }
-                                }
-                                else {
-                                    if let Some(v) = inner_call.name() {
-                                        new_call.add_value_param(v.as_ref().clone());
-                                    }
-                                    if let Some(param) = inner_call.get_param(0) {
-                                        new_call.add_syntax_component_param(self.convert_member(param.clone(), inner_call.get_param_class()));
-                                    }
-                                    if let Some(ps) = func_data.params() {
-                                        for p in ps.iter() {
-                                            new_call.add_syntax_component_param(p.clone());
-                                        }
-                                    }
-                                }
-
-                                return self.load_function_syntax(&new_call);
-                            }
-                        }
-                    }
-                    if param_class == dsl::PARAM_CLASS_PERIOD || param_class == dsl::PARAM_CLASS_BRACKET {
-                        //obj.property or obj[property] or obj.(property) or obj.[property] or obj.{property} -> objectget(obj,property)
-                        let mut new_call = FunctionData::new();
-                        if param_class == dsl::PARAM_CLASS_PERIOD {
-                            new_call.set_name(Box::new(ValueData::from_string_type(String::from("objectget"), dsl::ID_TOKEN)));
-                        }
-                        else {
-                            new_call.set_name(Box::new(ValueData::from_string_type(String::from("collectionget"), dsl::ID_TOKEN)));
-                        }
-                        new_call.set_parenthesis_param_class();
-                        if func_data.is_high_order() {
-                            if let Some(f) = func_data.lower_order_function() {
-                                new_call.add_function_param(f.as_ref().clone());
-                            }
-                            if let Some(param) = func_data.get_param(0) {
-                                new_call.add_syntax_component_param(self.convert_member(param.clone(), func_data.get_param_class()));
-                            }
-                        }
-                        else {
-                            if let Some(v) = func_data.name() {
-                                new_call.add_value_param(v.as_ref().clone());
-                            }
-                            if let Some(param) = func_data.get_param(0) {
-                                new_call.add_syntax_component_param(self.convert_member(param.clone(), func_data.get_param_class()));
-                            }
-                        }
-
-                        return self.load_function_syntax(&new_call);
-                    }
-                }
-            }
-        }
-        else {
-            if func_data.have_statement() {
-                if !func_data.have_id() && !func_data.is_high_order() {
-                    let mut exp = HashtableExp::default();
-                    if let Some(cell) = self.m_self_cell {
-                        AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell);
-                    }
-                    return Some(Box::new(exp));
-                }
-            }
-            else if !func_data.have_extern_script() {
-                //degeneration
-                if let Some(value_data) = func_data.name() {
-                    return self.load_value_syntax(&value_data);
-                }
-            }
-        }
-        if let Some(mut ret) = self.create_api(func_data.get_id()) {
-            if let Some(cell) = self.m_self_cell {
-                if ret.load_function_syntax(func_data.clone(), cell) {
-                    return Some(ret);
-                }
-            }
-            //error
-            self.error(&format!("DslCalculator error, {0} line {1}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
-            return None;
-        }
-        // We enable the function to be called before it is defined, so failover is done first
-        if let Some(on_load_failback) = self.on_load_function_failback {
-            if let Some(exp) = on_load_failback(func_data, self) {
-                return Some(exp);
-            }
-        }
-        if !func_data.is_high_order() {
-            let fc: Box<FunctionCall<'a>> = Box::new(FunctionCall::<'a>::default());
-            self.m_func_calls.push(func_data.clone());
-            return Some(fc);
-        }
-        else {
-            //error
-            self.error(&format!("DslCalculator error, {0} line {1}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
-        }
-        return None;
-    }
-    pub fn load_statement_syntax(&mut self, statement_data: &StatementData) -> Option<ExpressionBox<'a>>
-    {
-        if let Some(mut ret) = self.create_api(statement_data.get_id()) {
-            //Convert command line syntax into function call syntax.
-            if let Some(fd) = DslSyntaxTransformer::try_transform_command_line_like_syntax(statement_data) {
-                if let Some(cell) = self.m_self_cell {
-                    if ret.load_function_syntax(fd, cell) {
-                        return Some(ret);
-                    }
-                }
-            }
-            if let Some(cell) = self.m_self_cell {
-                if ret.load_statement_syntax(statement_data.clone(), cell) {
-                    return Some(ret);
-                }
-            }
-            //error
-            self.error(&format!("DslCalculator error, {0} line {1}", statement_data.to_script_string(false, &dsl::DEFAULT_DELIM), statement_data.get_line()));
-            return None;
-        }
-        // We enable the function to be called before it is defined, so failover is done first
-        if let Some(on_load_failback) = self.on_load_statement_failback {
-            if let Some(exp) = on_load_failback(statement_data, self) {
-                return Some(exp);
-            }
-        }
-        //Convert command line syntax into function call syntax.
-        if let Some(func_data) = DslSyntaxTransformer::try_transform_command_line_like_syntax(statement_data) {
-            if !func_data.is_high_order() {
-                let fc: Box<FunctionCall<'a>> = Box::new(FunctionCall::<'a>::default());
-                self.m_func_calls.push(func_data.clone());
-                return Some(fc);
-            }
-            else {
-                //error
-                self.error(&format!("DslCalculator error, {0} line {1}", statement_data.to_script_string(false, &dsl::DEFAULT_DELIM), statement_data.get_line()));
-            }
-        }
-        return None;
-    }
-    pub fn load_syntax_component(&mut self, comp: &SyntaxComponent) -> Option<ExpressionBox<'a>>
-    {
-        match comp {
-            SyntaxComponent::Value(value_data) => {
-                return self.load_value_syntax(value_data);
-            }
-            SyntaxComponent::Function(func_data) => {
-                return self.load_function_syntax(func_data);
-            }
-            SyntaxComponent::Statement(st_data) => {
-                return self.load_statement_syntax(st_data);
-            }
-        }
-    }
-    pub fn load_value_or_function(&mut self, comp: &ValueOrFunction) -> Option<ExpressionBox<'a>>
-    {
-        match comp {
-            ValueOrFunction::Value(value_data) => {
-                return self.load_value_syntax(value_data);
-            }
-            ValueOrFunction::Function(func_data) => {
-                return self.load_function_syntax(func_data);
             }
         }
     }
@@ -2541,9 +2095,437 @@ impl<'a> DslCalculator<'a>
         self.m_stack_info_pool.borrow_mut().recycle(si);
     }
 
-    pub fn new_cell() -> DslCalculatorCell<'a>
+    pub fn load_dsl_file(cell: &Rc<DslCalculatorCell<'a>>, dsl_file: &str)
     {
-        let cell = RefCell::new(Self::new());
+        if let Some(callback) = cell.borrow().on_log {
+            let mut file = DslFile::new();
+            if file.load(dsl_file, callback) {
+                for info in file.dsl_infos().iter() {
+                    Self::load_dsl_info(cell, info);
+                }
+            }
+        }
+    }
+    pub fn load_dsl_info(cell: &Rc<DslCalculatorCell<'a>>, info: &SyntaxComponent)
+    {
+        if info.get_id() != "script" {
+            return;
+        }
+        let mut is_valid = false;
+        let mut id: &str = "";
+        let mut func: Option<&FunctionData> = None;
+        let mut func_info: FuncInfo<'a> = FuncInfo::new();
+        match info {
+            SyntaxComponent::Function(f) => {
+                if f.is_high_order() {
+                    if let Some(lf) = f.lower_order_function() {
+                        id = lf.get_param_id(0);
+                    }
+                    func = Some(f);
+                    is_valid = true;
+                }
+            }
+            SyntaxComponent::Statement(statement) => {
+                if statement.get_function_num() == 2 {
+                    if let Some(vf) = statement.first() {
+                        if let ValueOrFunction::Function(f) = vf {
+                            id = f.get_param_id(0);
+                        }
+                    }
+                    if let Some(vf) = statement.second() {
+                        if let ValueOrFunction::Function(f) = vf {
+                            func = Some(f);
+                            is_valid = true;
+                            if f.get_id() == "args" && f.is_high_order() {
+                                if let Some(lf) = f.lower_order_function() {
+                                    if let Some(ps) = lf.params() {
+                                        for p in ps.iter() {
+                                            let arg_name = p.get_id();
+                                            func_info.add_arg_name_index(arg_name);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            _ => {
+                return;
+            }
+        };
+
+        if !is_valid {
+            return;
+        }
+
+        if let Some(f) = func {
+            if let Some(ps) = f.params() {
+                for comp in ps.iter() {
+                    if let Some(exp) = Self::load_syntax_component(cell, comp) {
+                        func_info.codes.push(exp);
+                    }
+                }
+            }
+        }
+        cell.borrow_mut().m_funcs.remove(id);
+        cell.borrow_mut().m_funcs.insert(String::from(id), RefCell::new(func_info));
+    }
+    pub fn load_dsl_func(cell: &Rc<DslCalculatorCell<'a>>, func: &str, dsl_func: &FunctionData)
+    {
+        Self::load_dsl_func_with_args(cell, func, None, dsl_func);
+    }
+    pub fn load_dsl_func_with_args(cell: &Rc<DslCalculatorCell<'a>>, func: &str, arg_names: Option<&'a Vec<String>>, dsl_func: &FunctionData)
+    {
+        let mut func_info = FuncInfo::new();
+        if let Some(names) = arg_names {
+            if names.len() > 0 {
+                func_info.build_arg_name_indexes(names);
+            }
+        }
+        if let Some(ps) = dsl_func.params() {
+            Self::load_dsl_statements(cell, ps, &mut func_info.codes);
+        }
+        cell.borrow_mut().m_funcs.remove(func);
+        cell.borrow_mut().m_funcs.insert(String::from(func), RefCell::new(func_info));
+    }
+    pub fn load_dsl_statements(cell: &Rc<DslCalculatorCell<'a>>, statements: &Vec<SyntaxComponent>, exps: &mut Vec<ExpressionBox<'a>>)
+    {
+        for comp in statements.iter() {
+            if comp.is_valid() {
+                if let Some(exp) = Self::load_syntax_component(cell, comp) {
+                    exps.push(exp);
+                }
+            }
+        }
+    }
+    pub fn load_value_syntax(cell: &Rc<DslCalculatorCell<'a>>, value_data: &ValueData) -> Option<ExpressionBox<'a>>
+    {
+        let id_type = value_data.get_id_type();
+        if id_type == dsl::ID_TOKEN {
+            let id = value_data.get_id();
+            if let Some(mut p) = cell.borrow().create_api(id) {
+                //Convert a parameterless name into a parameterless function call.
+                let mut fd = FunctionData::new();
+                if let Some(name) = fd.name_mut() {
+                    name.copy_from(value_data);
+                }
+                fd.set_parenthesis_param_class();
+                if !p.load_function_syntax(fd, cell.clone()) {
+                    //error
+                    cell.borrow().error(&format!("DslCalculator error, {0} line {1}", value_data.to_script_string(false, &dsl::DEFAULT_DELIM), value_data.get_line()));
+                }
+                return Some(p);
+            }
+            else if id == "true" || id == "false" {
+                let mut const_exp = ConstGet::<'a>::default();
+                AbstractExpression::load_value_syntax(&mut const_exp, value_data.clone(), cell.clone());
+                return Some(Box::new(const_exp));
+            }
+            else if id.len() > 0 && id.chars().next() == Some('$') {
+                let mut var_exp = LocalVarGet::default();
+                AbstractExpression::load_value_syntax(&mut var_exp, value_data.clone(), cell.clone());
+                return Some(Box::new(var_exp));
+            }
+            else {
+                let mut var_exp = GlobalVarGet::default();
+                AbstractExpression::load_value_syntax(&mut var_exp, value_data.clone(), cell.clone());
+                return Some(Box::new(var_exp));
+            }
+        }
+        else {
+            let mut const_exp = ConstGet::default();
+            AbstractExpression::load_value_syntax(&mut const_exp, value_data.clone(), cell.clone());
+            return Some(Box::new(const_exp));
+        }
+    }
+    pub fn load_function_syntax(cell: &Rc<DslCalculatorCell<'a>>, func_data: &FunctionData) -> Option<ExpressionBox<'a>>
+    {
+        if func_data.have_param() {
+            if !func_data.have_id() && !func_data.is_high_order() && (func_data.get_param_class() == dsl::PARAM_CLASS_PARENTHESIS || func_data.get_param_class() == dsl::PARAM_CLASS_BRACKET) {
+                match func_data.get_param_class() {
+                    dsl::PARAM_CLASS_PARENTHESIS => {
+                        let num = func_data.get_param_num();
+                        if num == 1 {
+                            if let Some(param) = func_data.get_param(0) {
+                                return Self::load_syntax_component(cell, param);
+                            }
+                            else {
+                                return None;
+                            }
+                        }
+                        else {
+                            let mut exp = ParenthesisExp::default();
+                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
+                            return Some(Box::new(exp));
+                        }
+                    }
+                    dsl::PARAM_CLASS_BRACKET => {
+                            let mut exp = ArrayExp::default();
+                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
+                            return Some(Box::new(exp));
+                        }
+                    _ => {
+                        return None;
+                    }
+                }
+            }
+            else if !func_data.have_param() {
+                //degeneration
+                if let Some(value_data) = func_data.name() {
+                    return Self::load_value_syntax(cell, &value_data);
+                }
+                return None;
+            }
+            else {
+                let param_class = func_data.get_param_class();
+                let op = func_data.get_id();
+                if op == "=" {//assignment
+                    if let Some(syn) = func_data.get_param(0) {
+                        if let SyntaxComponent::Function(inner_call) = syn {
+                            //obj.property = val -> objectset(obj, property, val)
+                            let inner_param_class = inner_call.get_param_class();
+                            if inner_param_class == dsl::PARAM_CLASS_PERIOD ||
+                                inner_param_class == dsl::PARAM_CLASS_BRACKET {
+                                let mut new_call = FunctionData::new();
+                                if inner_param_class == dsl::PARAM_CLASS_PERIOD {
+                                    new_call.set_name(Box::new(ValueData::from_string_type(String::from("objectset"), dsl::ID_TOKEN)));
+                                }
+                                else {
+                                    new_call.set_name(Box::new(ValueData::from_string_type(String::from("collectionset"), dsl::ID_TOKEN)));
+                                }
+                                new_call.set_parenthesis_param_class();
+                                if inner_call.is_high_order() {
+                                    if let Some(f) = inner_call.lower_order_function() {
+                                        new_call.add_function_param(f.as_ref().clone());
+                                    }
+                                    if let Some(param) = inner_call.get_param(0) {
+                                        new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), inner_call.get_param_class()));
+                                    }
+                                    if let Some(param) = inner_call.get_param(1) {
+                                        new_call.add_syntax_component_param(param.clone());
+                                    }
+                                }
+                                else {
+                                    if let Some(v) = inner_call.name() {
+                                        new_call.add_value_param(v.as_ref().clone());
+                                    }
+                                    if let Some(param) = inner_call.get_param(0) {
+                                        new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), inner_call.get_param_class()));
+                                    }
+                                    if let Some(param) = inner_call.get_param(1) {
+                                        new_call.add_syntax_component_param(param.clone());
+                                    }
+                                }
+
+                                return Self::load_syntax_component(cell, &SyntaxComponent::Function(new_call));
+                            }
+                        }
+                    }
+                    let name = func_data.get_param_id(0);
+                    if name.len() > 0 {
+                        if name.chars().next() == Some('$') {
+                            let mut exp = LocalVarSet::default();
+                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
+                            return Some(Box::new(exp));
+                        }
+                        else {
+                            let mut exp = GlobalVarSet::default();
+                            AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
+                            return Some(Box::new(exp));
+                        }
+                    }
+                    //error
+                    cell.borrow().error(&format!("DslCalculator error, {0} line {1}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
+                    return None;
+                }
+                else {
+                    if func_data.is_high_order() {
+                        if let Some(inner_call) = func_data.lower_order_function() {
+                            let inner_param_class = inner_call.get_param_class();
+                            if param_class == dsl::PARAM_CLASS_PARENTHESIS && (inner_param_class == dsl::PARAM_CLASS_PERIOD || inner_param_class == dsl::PARAM_CLASS_BRACKET) {
+                                //obj.member(a,b,...) or obj[member](a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> objectcall(obj,member,a,b,...)
+                                let api_name;
+                                let member = inner_call.get_param_id(0);
+                                if member == "orderby" || member == "orderbydesc" || member == "where" || member == "top" {
+                                    api_name = "linq";
+                                }
+                                else if inner_param_class == dsl::PARAM_CLASS_PERIOD {
+                                    api_name = "objectcall";
+                                }
+                                else {
+                                    api_name = "collectioncall";
+                                }
+                                let mut new_call = FunctionData::new();
+                                new_call.set_name(Box::new(ValueData::from_string_type(String::from(api_name), dsl::ID_TOKEN)));
+                                new_call.set_parenthesis_param_class();
+                                if inner_call.is_high_order() {
+                                    if let Some(f) = inner_call.lower_order_function() {
+                                        new_call.add_function_param(f.as_ref().clone());
+                                    }
+                                    if let Some(param) = inner_call.get_param(0) {
+                                        new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), inner_call.get_param_class()));
+                                    }
+                                    if let Some(ps) = func_data.params() {
+                                        for p in ps.iter() {
+                                            new_call.add_syntax_component_param(p.clone());
+                                        }
+                                    }
+                                }
+                                else {
+                                    if let Some(v) = inner_call.name() {
+                                        new_call.add_value_param(v.as_ref().clone());
+                                    }
+                                    if let Some(param) = inner_call.get_param(0) {
+                                        new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), inner_call.get_param_class()));
+                                    }
+                                    if let Some(ps) = func_data.params() {
+                                        for p in ps.iter() {
+                                            new_call.add_syntax_component_param(p.clone());
+                                        }
+                                    }
+                                }
+
+                                return Self::load_function_syntax(cell, &new_call);
+                            }
+                        }
+                    }
+                    if param_class == dsl::PARAM_CLASS_PERIOD || param_class == dsl::PARAM_CLASS_BRACKET {
+                        //obj.property or obj[property] or obj.(property) or obj.[property] or obj.{property} -> objectget(obj,property)
+                        let mut new_call = FunctionData::new();
+                        if param_class == dsl::PARAM_CLASS_PERIOD {
+                            new_call.set_name(Box::new(ValueData::from_string_type(String::from("objectget"), dsl::ID_TOKEN)));
+                        }
+                        else {
+                            new_call.set_name(Box::new(ValueData::from_string_type(String::from("collectionget"), dsl::ID_TOKEN)));
+                        }
+                        new_call.set_parenthesis_param_class();
+                        if func_data.is_high_order() {
+                            if let Some(f) = func_data.lower_order_function() {
+                                new_call.add_function_param(f.as_ref().clone());
+                            }
+                            if let Some(param) = func_data.get_param(0) {
+                                new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), func_data.get_param_class()));
+                            }
+                        }
+                        else {
+                            if let Some(v) = func_data.name() {
+                                new_call.add_value_param(v.as_ref().clone());
+                            }
+                            if let Some(param) = func_data.get_param(0) {
+                                new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), func_data.get_param_class()));
+                            }
+                        }
+
+                        return Self::load_function_syntax(cell, &new_call);
+                    }
+                }
+            }
+        }
+        else {
+            if func_data.have_statement() {
+                if !func_data.have_id() && !func_data.is_high_order() {
+                    let mut exp = HashtableExp::default();
+                    AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
+                    return Some(Box::new(exp));
+                }
+            }
+            else if !func_data.have_extern_script() {
+                //degeneration
+                if let Some(value_data) = func_data.name() {
+                    return Self::load_value_syntax(cell, &value_data);
+                }
+            }
+        }
+        if let Some(mut ret) = cell.borrow().create_api(func_data.get_id()) {
+            if ret.load_function_syntax(func_data.clone(), cell.clone()) {
+                return Some(ret);
+            }
+            //error
+            cell.borrow().error(&format!("DslCalculator error, {0} line {1}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
+            return None;
+        }
+        // We enable the function to be called before it is defined, so failover is done first
+        if let Some(on_load_failback) = cell.borrow().on_load_function_failback {
+            if let Some(exp) = on_load_failback(func_data, cell) {
+                return Some(exp);
+            }
+        }
+        if !func_data.is_high_order() {
+            let fc: Box<FunctionCall<'a>> = Box::new(FunctionCall::<'a>::default());
+            cell.borrow_mut().m_func_calls.push(func_data.clone());
+            return Some(fc);
+        }
+        else {
+            //error
+            cell.borrow().error(&format!("DslCalculator error, {0} line {1}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
+        }
+        return None;
+    }
+    pub fn load_statement_syntax(cell: &Rc<DslCalculatorCell<'a>>, statement_data: &StatementData) -> Option<ExpressionBox<'a>>
+    {
+        if let Some(mut ret) = cell.borrow_mut().create_api(statement_data.get_id()) {
+            //Convert command line syntax into function call syntax.
+            if let Some(fd) = DslSyntaxTransformer::try_transform_command_line_like_syntax(statement_data) {
+                if ret.load_function_syntax(fd, cell.clone()) {
+                    return Some(ret);
+                }
+            }
+            if ret.load_statement_syntax(statement_data.clone(), cell.clone()) {
+                return Some(ret);
+            }
+            //error
+            cell.borrow().error(&format!("DslCalculator error, {0} line {1}", statement_data.to_script_string(false, &dsl::DEFAULT_DELIM), statement_data.get_line()));
+            return None;
+        }
+        // We enable the function to be called before it is defined, so failover is done first
+        if let Some(on_load_failback) = cell.borrow().on_load_statement_failback {
+            if let Some(exp) = on_load_failback(statement_data, cell) {
+                return Some(exp);
+            }
+        }
+        //Convert command line syntax into function call syntax.
+        if let Some(func_data) = DslSyntaxTransformer::try_transform_command_line_like_syntax(statement_data) {
+            if !func_data.is_high_order() {
+                let fc: Box<FunctionCall<'a>> = Box::new(FunctionCall::<'a>::default());
+                cell.borrow_mut().m_func_calls.push(func_data.clone());
+                return Some(fc);
+            }
+            else {
+                //error
+                cell.borrow().error(&format!("DslCalculator error, {0} line {1}", statement_data.to_script_string(false, &dsl::DEFAULT_DELIM), statement_data.get_line()));
+            }
+        }
+        return None;
+    }
+    pub fn load_syntax_component(cell: &Rc<DslCalculatorCell<'a>>, comp: &SyntaxComponent) -> Option<ExpressionBox<'a>>
+    {
+        match comp {
+            SyntaxComponent::Value(value_data) => {
+                return Self::load_value_syntax(cell, value_data);
+            }
+            SyntaxComponent::Function(func_data) => {
+                return Self::load_function_syntax(cell, func_data);
+            }
+            SyntaxComponent::Statement(st_data) => {
+                return Self::load_statement_syntax(cell, st_data);
+            }
+        }
+    }
+    pub fn load_value_or_function(cell: &Rc<DslCalculatorCell<'a>>, comp: &ValueOrFunction) -> Option<ExpressionBox<'a>>
+    {
+        match comp {
+            ValueOrFunction::Value(value_data) => {
+                return Self::load_value_syntax(cell, value_data);
+            }
+            ValueOrFunction::Function(func_data) => {
+                return Self::load_function_syntax(cell, func_data);
+            }
+        }
+    }
+    pub fn new_cell() -> Rc<DslCalculatorCell<'a>>
+    {
+        let cell = Rc::new(RefCell::new(Self::new()));
         return cell;
     }
     fn new() -> Self {

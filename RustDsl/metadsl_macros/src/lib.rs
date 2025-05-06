@@ -96,7 +96,7 @@ pub fn add_abstract_expression_fields(_attr: TokenStream, item: TokenStream) -> 
         quote! {
             pub struct #name<'a> {
                 #existing_fields
-                m_calculator: Option<&'a DslCalculatorCell<'a>>,
+                m_calculator: Option<Rc<DslCalculatorCell<'a>>>,
                 m_dsl: Option<SyntaxComponent>,
             }
         }
@@ -122,7 +122,7 @@ pub fn add_abstract_and_simple_expression_fields(_attr: TokenStream, item: Token
         quote! {
             pub struct #name<'a> {
                 #existing_fields
-                m_calculator: Option<&'a DslCalculatorCell<'a>>,
+                m_calculator: Option<Rc<DslCalculatorCell<'a>>>,
                 m_dsl: Option<SyntaxComponent>,
                 m_exps: Vec<ExpressionBox<'a>>,
             }
@@ -139,9 +139,12 @@ pub fn add_abstract_and_simple_expression_fields(_attr: TokenStream, item: Token
 #[proc_macro]
 pub fn impl_abstract_expression(_input: TokenStream) -> TokenStream {
     let expanded = quote! {
-        fn impl_calculator(&self) -> &'a DslCalculatorCell<'a>
+        fn impl_calculator(&self) -> &Rc<DslCalculatorCell<'a>>
         {
-            return self.m_calculator.unwrap();
+            if let Some(calculator) = &self.m_calculator {
+                return calculator;
+            }
+            panic!("no calculator");
         }
         fn impl_syntax_component(&self) -> &SyntaxComponent
         {
@@ -150,7 +153,7 @@ pub fn impl_abstract_expression(_input: TokenStream) -> TokenStream {
             }
             panic!("no syntax component");
         }
-        fn impl_set_calculator(&mut self, calculator: &'a DslCalculatorCell<'a>)
+        fn impl_set_calculator(&mut self, calculator: Rc<DslCalculatorCell<'a>>)
         {
             self.m_calculator = Some(calculator);
         }
@@ -190,23 +193,23 @@ pub fn impl_expression_with_abstract(_input: TokenStream) -> TokenStream {
         {
             return AbstractExpression::calc(self);
         }
-        fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_syntax_component(&mut self, dsl: &SyntaxComponent, calculator: Rc<DslCalculatorCell<'a>>) -> bool
         {
             return AbstractExpression::load_syntax_component(self, dsl, calculator);
         }
-        fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_value_or_function(&mut self, dsl: &ValueOrFunction, calculator: Rc<DslCalculatorCell<'a>>) -> bool
         {
             return AbstractExpression::load_value_or_function(self, dsl, calculator);
         }
-        fn load_value_syntax(&mut self, dsl: ValueData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_value_syntax(&mut self, dsl: ValueData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
         {
             return AbstractExpression::load_value_syntax(self, dsl, calculator);
         }
-        fn load_function_syntax(&mut self, dsl: FunctionData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_function_syntax(&mut self, dsl: FunctionData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
         {
             return AbstractExpression::load_function_syntax(self, dsl, calculator);
         }
-        fn load_statement_syntax(&mut self, dsl: StatementData, calculator: &'a DslCalculatorCell<'a>) -> bool
+        fn load_statement_syntax(&mut self, dsl: StatementData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
         {
             return AbstractExpression::load_statement_syntax(self, dsl, calculator);
         }

@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::rc::Rc;
 use metadsl::dsl::{
     self, FunctionData, ISyntaxComponent, StatementData, SyntaxComponent, ValueData, ValueOrFunction
 };
@@ -11,6 +12,7 @@ use metadsl_macros::{
     impl_simple_expression,
 };
 use crate::dsl_expression::dsl_calculator::{
+    DslCalculator,
     DslCalculatorCell,
     DslCalculatorValue,
     IExpression,
@@ -1025,13 +1027,13 @@ impl<'a> AbstractExpression<'a> for CondExp<'a>
                             if func_data1.is_high_order() && func_data1.have_lower_order_param() && func_data2.get_id() == ":" && func_data2.have_param_or_statement() {
                                 if let Some(lf) = func_data1.lower_order_function() {
                                     if let Some(p) = lf.get_param(0) {
-                                        op1 = self.calculator().borrow_mut().load_syntax_component(p);
+                                        op1 = DslCalculator::load_syntax_component(self.calculator(), p);
                                     }
                                     if let Some(p) = func_data1.get_param(0) {
-                                        op2 = self.calculator().borrow_mut().load_syntax_component(p);
+                                        op2 = DslCalculator::load_syntax_component(self.calculator(), p);
                                     }
                                     if let Some(p) = func_data2.get_param(0) {
-                                        op3 = self.calculator().borrow_mut().load_syntax_component(p);
+                                        op3 = DslCalculator::load_syntax_component(self.calculator(), p);
                                     }
                                 }
                             }
@@ -1052,16 +1054,16 @@ impl<'a> AbstractExpression<'a> for CondExp<'a>
 
     impl_abstract_expression!();
 }
-struct IfClause<'a>
+struct ExpAndClause<'a>
 {
     pub condition: Option<ExpressionBox<'a>>,
     pub expressions: Vec<ExpressionBox<'a>>,
 }
-impl<'a> IfClause<'a>
+impl<'a> ExpAndClause<'a>
 {
     pub fn new() -> Self
     {
-        IfClause {
+        ExpAndClause {
             condition: None,
             expressions: Vec::new(),
         }
@@ -1070,7 +1072,7 @@ impl<'a> IfClause<'a>
 #[add_abstract_expression_fields]
 pub struct IfExp<'a>
 {
-    m_clauses: Option<Vec<RefCell<IfClause<'a>>>>,
+    m_clauses: Option<Vec<RefCell<ExpAndClause<'a>>>>,
 }
 impl<'a> Default for IfExp<'a>
 {
@@ -1126,36 +1128,39 @@ impl<'a> AbstractExpression<'a> for IfExp<'a>
     }
     fn load_function(&mut self) -> bool
     {
-        let mut clauses = Vec::new();
+        let mut clauses = None;
         if let SyntaxComponent::Function(func) = self.syntax_component() {
             if func.is_high_order() {
-                let mut item = IfClause::new();
+                let mut item = ExpAndClause::new();
                 if let Some(lf) = func.lower_order_function() {
                     if let Some(cond) = lf.get_param(0) {
-                        item.condition = self.calculator().borrow_mut().load_syntax_component(cond);
+                        item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
                     }
                 }
                 if let Some(ps) = func.params() {
                     for p in ps.iter() {
-                        if let Some(sub_exp) = self.calculator().borrow_mut().load_syntax_component(p) {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
                             item.expressions.push(sub_exp);
                         }
                     }
                 }
-                clauses.push(RefCell::new(item));
+                let mut items = Vec::new();
+                items.push(RefCell::new(item));
+                clauses = Some(items);
             }
             else {
                 //error
                 self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
             }
         }
-        self.m_clauses = Some(clauses);
+        self.m_clauses = clauses;
         return true;
     }
     fn load_statement(&mut self) -> bool
     {
         //the handling of the simple syntax 'if(exp) func(args);'.
-        let mut clauses = Vec::new();
+        let mut ret= false;
+        let mut clauses = None;
         if let SyntaxComponent::Statement(statement) = self.syntax_component() {
             let func_num = statement.get_function_num();
             if func_num == 2 {
@@ -1167,80 +1172,87 @@ impl<'a> AbstractExpression<'a> for IfExp<'a>
                                 let second_id = second.get_id();
                                 if first_id == "if" && !first.have_statement() && !first.have_extern_script() &&
                                         second_id.len() > 0 && !second.have_statement() && !second.have_extern_script() {
-                                    let mut item = IfClause::new();
+                                    let mut item = ExpAndClause::new();
                                     if first.get_param_num() > 0 {
                                         if let Some(cond) = first.get_param(0) {
-                                            item.condition = self.calculator().borrow_mut().load_syntax_component(cond);
+                                            item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
                                         }
                                     }
                                     else {
                                         //error
                                         self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", first.to_script_string(false, &dsl::DEFAULT_DELIM), first.get_line()));
                                     }
-                                    if let Some(sub_exp) = self.calculator().borrow_mut().load_function_syntax(second) {
+                                    if let Some(sub_exp) = DslCalculator::load_function_syntax(self.calculator(), second) {
                                         item.expressions.push(sub_exp);
                                     }
-                                    clauses.push(RefCell::new(item));
-                                    return true;
+                                    let mut items = Vec::new();
+                                    items.push(RefCell::new(item));
+                                    clauses = Some(items);
+                                    ret = true;
                                 }
                             }
                         }
                     }
                 }
             }
-            //the handling of the standard if syntax
-            if let Some(fs) = statement.functions() {
-                let mut ix = 0;
-                for fd in fs {
-                    if let ValueOrFunction::Function(func_data) = fd {
-                        if func_data.get_id() == "if" || func_data.get_id() == "elseif" || func_data.get_id() == "elif" {
-                            let mut item = IfClause::new();
-                            if let Some(lf) = func_data.lower_order_function() {
-                                if let Some(cond) = lf.get_param(0) {
-                                    item.condition = self.calculator().borrow_mut().load_syntax_component(cond);
-                                }
-                            }
-                            else {
-                                //error
-                                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
-                            }
-                            if let Some(ps) = func_data.params() {
-                                for p in ps.iter() {
-                                    if let Some(sub_exp) = self.calculator().borrow_mut().load_syntax_component(p) {
-                                        item.expressions.push(sub_exp);
+            if !ret {
+                //the handling of the standard if syntax
+                if let Some(fs) = statement.functions() {
+                    let mut items = Vec::new();
+                    let mut ix = 0;
+                    for fd in fs {
+                        if let ValueOrFunction::Function(func_data) = fd {
+                            if func_data.get_id() == "if" || func_data.get_id() == "elseif" || func_data.get_id() == "elif" {
+                                let mut item = ExpAndClause::new();
+                                if let Some(lf) = func_data.lower_order_function() {
+                                    if let Some(cond) = lf.get_param(0) {
+                                        item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
                                     }
                                 }
-                            }
-                            clauses.push(RefCell::new(item));
-                        }
-                        else if func_data.get_id() == "else" {
-                            if ix < fs.len() - 1 {
-                                //error
-                                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
-                            }
-                            else {
-                                let mut item = IfClause::new();
+                                else {
+                                    //error
+                                    self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
+                                }
                                 if let Some(ps) = func_data.params() {
                                     for p in ps.iter() {
-                                        if let Some(sub_exp) = self.calculator().borrow_mut().load_syntax_component(p) {
+                                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
                                             item.expressions.push(sub_exp);
                                         }
                                     }
                                 }
-                                clauses.push(RefCell::new(item));
+                                items.push(RefCell::new(item));
+                            }
+                            else if func_data.get_id() == "else" {
+                                if ix < fs.len() - 1 {
+                                    //error
+                                    self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
+                                }
+                                else {
+                                    let mut item = ExpAndClause::new();
+                                    if let Some(ps) = func_data.params() {
+                                        for p in ps.iter() {
+                                            if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                                                item.expressions.push(sub_exp);
+                                            }
+                                        }
+                                    }
+                                    items.push(RefCell::new(item));
+                                }
+                            }
+                            else {
+                                //error
+                                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
                             }
                         }
-                        else {
-                            //error
-                            self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func_data.to_script_string(false, &dsl::DEFAULT_DELIM), func_data.get_line()));
-                        }
+                        ix += 1;
                     }
-                    ix += 1;
+                    ret = items.len() > 1;
+                    clauses = Some(items);
                 }
             }
         }
-        self.m_clauses = Some(clauses);
-        return true;
+        self.m_clauses = clauses;
+        return ret;
     }
 
     impl_abstract_expression!();
@@ -1250,6 +1262,607 @@ impl<'a> IfExp<'a>
     fn need_return(&self) -> bool
     {
         if self.calculator().borrow().run_state() != &RunStateEnum::Normal {
+            return true;
+        }
+        return false;
+    }
+}
+#[add_abstract_expression_fields]
+pub struct WhileExp<'a>
+{
+    m_clause: Option<RefCell<ExpAndClause<'a>>>,
+}
+impl<'a> Default for WhileExp<'a>
+{
+    fn default() -> Self
+    {
+        WhileExp {
+            m_clause: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for WhileExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for WhileExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        let mut v = DslCalculatorValue::Null;
+        if let Some(clause) = &self.m_clause {
+            loop {
+                if let Some(cond) = &mut clause.borrow_mut().condition {
+                    let cond_val = cond.calc();
+                    if cond_val.to_i64() != 0 {
+                        let ct = clause.borrow_mut().expressions.len();
+                        let mut exp_ix = 0;
+                        while exp_ix < ct {
+                            let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                            v = exp.calc();
+                            if self.need_continue() {
+                                break;
+                            }
+                            else if self.need_return() {
+                                return v;
+                            }
+                            exp_ix += 1;
+                        }
+                    }
+                    else{
+                        break;
+                    }
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        return v;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        let mut clause = None;
+        if let SyntaxComponent::Function(func) = self.syntax_component() {
+            if func.is_high_order() {
+                let mut item = ExpAndClause::new();
+                if let Some(lf) = func.lower_order_function() {
+                    if let Some(cond) = lf.get_param(0) {
+                        item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
+                    }
+                }
+                if let Some(ps) = func.params() {
+                    for p in ps.iter() {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                            item.expressions.push(sub_exp);
+                        }
+                    }
+                }
+                clause = Some(RefCell::new(item));
+            }
+            else {
+                //error
+                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
+            }
+        }
+        self.m_clause = clause;
+        return true;
+    }
+    fn load_statement(&mut self) -> bool
+    {
+        //the handling of the simple syntax 'while(exp) func(args);'
+        let mut ret= false;
+        let mut clause = None;
+        if let SyntaxComponent::Statement(statement) = self.syntax_component() {
+            let func_num = statement.get_function_num();
+            if func_num == 2 {
+                if let Some(fir) = statement.first() {
+                    if let Some(sec) = statement.second() {
+                        if let ValueOrFunction::Function(first) = fir {
+                            if let ValueOrFunction::Function(second) = sec {
+                                let first_id = first.get_id();
+                                let second_id = second.get_id();
+                                if first_id == "while" && !first.have_statement() && !first.have_extern_script() &&
+                                        second_id.len() > 0 && !second.have_statement() && !second.have_extern_script() {
+                                    let mut item = ExpAndClause::new();
+                                    if first.get_param_num() > 0 {
+                                        if let Some(cond) = first.get_param(0) {
+                                            item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
+                                        }
+                                    }
+                                    else {
+                                        //error
+                                        self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", first.to_script_string(false, &dsl::DEFAULT_DELIM), first.get_line()));
+                                    }
+                                    if let Some(sub_exp) = DslCalculator::load_function_syntax(self.calculator(), second) {
+                                        item.expressions.push(sub_exp);
+                                    }
+                                    clause = Some(RefCell::new(item));
+                                    ret = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        self.m_clause = clause;
+        return ret;
+    }
+
+    impl_abstract_expression!();
+}
+impl<'a> WhileExp<'a>
+{
+    fn need_continue(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() == &RunStateEnum::Continue {
+            self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            return true;
+        }
+        return false;
+    }
+    fn need_return(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() != &RunStateEnum::Normal {
+            if self.calculator().borrow().run_state() == &RunStateEnum::Break {
+                self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            }
+            return true;
+        }
+        return false;
+    }
+}
+#[add_abstract_expression_fields]
+pub struct LoopExp<'a>
+{
+    m_clause: Option<RefCell<ExpAndClause<'a>>>,
+}
+impl<'a> Default for LoopExp<'a>
+{
+    fn default() -> Self
+    {
+        LoopExp {
+            m_clause: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LoopExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LoopExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        let mut v = DslCalculatorValue::Null;
+        if let Some(clause) = &self.m_clause {
+            if let Some(cond) = &mut clause.borrow_mut().condition {
+                let cond_val = cond.calc();
+                let loop_ct = cond_val.to_i64();
+                let mut loop_ix = 0;
+                while loop_ix < loop_ct {
+                    self.calculator().borrow_mut().set_variable(&"$$", DslCalculatorValue::Long(loop_ix));
+                    let ct = clause.borrow_mut().expressions.len();
+                    let mut exp_ix = 0;
+                    while exp_ix < ct {
+                        let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                        v = exp.calc();
+                        if self.need_continue() {
+                            break;
+                        }
+                        else if self.need_return() {
+                            return v;
+                        }
+                        exp_ix += 1;
+                    }
+                    loop_ix += 1;
+                }
+            }
+        }
+        return v;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        let mut clause = None;
+        if let SyntaxComponent::Function(func) = self.syntax_component() {
+            if func.is_high_order() {
+                let mut item = ExpAndClause::new();
+                if let Some(lf) = func.lower_order_function() {
+                    if let Some(cond) = lf.get_param(0) {
+                        item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
+                    }
+                }
+                if let Some(ps) = func.params() {
+                    for p in ps.iter() {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                            item.expressions.push(sub_exp);
+                        }
+                    }
+                }
+                clause = Some(RefCell::new(item));
+            }
+            else {
+                //error
+                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
+            }
+        }
+        self.m_clause = clause;
+        return true;
+    }
+    fn load_statement(&mut self) -> bool
+    {
+        //the handling of the simple syntax 'loop(exp) func(args);'
+        let mut ret= false;
+        let mut clause = None;
+        if let SyntaxComponent::Statement(statement) = self.syntax_component() {
+            let func_num = statement.get_function_num();
+            if func_num == 2 {
+                if let Some(fir) = statement.first() {
+                    if let Some(sec) = statement.second() {
+                        if let ValueOrFunction::Function(first) = fir {
+                            if let ValueOrFunction::Function(second) = sec {
+                                let first_id = first.get_id();
+                                let second_id = second.get_id();
+                                if first_id == "loop" && !first.have_statement() && !first.have_extern_script() &&
+                                        second_id.len() > 0 && !second.have_statement() && !second.have_extern_script() {
+                                    let mut item = ExpAndClause::new();
+                                    if first.get_param_num() > 0 {
+                                        if let Some(cond) = first.get_param(0) {
+                                            item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
+                                        }
+                                    }
+                                    else {
+                                        //error
+                                        self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", first.to_script_string(false, &dsl::DEFAULT_DELIM), first.get_line()));
+                                    }
+                                    if let Some(sub_exp) = DslCalculator::load_function_syntax(self.calculator(), second) {
+                                        item.expressions.push(sub_exp);
+                                    }
+                                    clause = Some(RefCell::new(item));
+                                    ret = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        self.m_clause = clause;
+        return ret;
+    }
+
+    impl_abstract_expression!();
+}
+impl<'a> LoopExp<'a>
+{
+    fn need_continue(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() == &RunStateEnum::Continue {
+            self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            return true;
+        }
+        return false;
+    }
+    fn need_return(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() != &RunStateEnum::Normal {
+            if self.calculator().borrow().run_state() == &RunStateEnum::Break {
+                self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            }
+            return true;
+        }
+        return false;
+    }
+}
+#[add_abstract_expression_fields]
+pub struct LoopListExp<'a>
+{
+    m_clause: Option<RefCell<ExpAndClause<'a>>>,
+}
+impl<'a> Default for LoopListExp<'a>
+{
+    fn default() -> Self
+    {
+        LoopListExp {
+            m_clause: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LoopListExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LoopListExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        let mut v = DslCalculatorValue::Null;
+        if let Some(clause) = &self.m_clause {
+            if let Some(cond) = &mut clause.borrow_mut().condition {
+                let cond_val = cond.calc();
+                if let DslCalculatorValue::Array(vec) = cond_val {
+                    for iter_v in vec.iter() {
+                        self.calculator().borrow_mut().set_variable(&"$$", iter_v.clone());
+                        let ct = clause.borrow_mut().expressions.len();
+                        let mut exp_ix = 0;
+                        while exp_ix < ct {
+                            let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                            v = exp.calc();
+                            if self.need_continue() {
+                                break;
+                            }
+                            else if self.need_return() {
+                                return v;
+                            }
+                            exp_ix += 1;
+                        }
+                    }
+                }
+            }
+        }
+        return v;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        let mut clause = None;
+        if let SyntaxComponent::Function(func) = self.syntax_component() {
+            if func.is_high_order() {
+                let mut item = ExpAndClause::new();
+                if let Some(lf) = func.lower_order_function() {
+                    if let Some(cond) = lf.get_param(0) {
+                        item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
+                    }
+                }
+                if let Some(ps) = func.params() {
+                    for p in ps.iter() {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                            item.expressions.push(sub_exp);
+                        }
+                    }
+                }
+                clause = Some(RefCell::new(item));
+            }
+            else {
+                //error
+                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
+            }
+        }
+        self.m_clause = clause;
+        return true;
+    }
+    fn load_statement(&mut self) -> bool
+    {
+        //the handling of the simple syntax 'loop(exp) func(args);'
+        let mut ret= false;
+        let mut clause = None;
+        if let SyntaxComponent::Statement(statement) = self.syntax_component() {
+            let func_num = statement.get_function_num();
+            if func_num == 2 {
+                if let Some(fir) = statement.first() {
+                    if let Some(sec) = statement.second() {
+                        if let ValueOrFunction::Function(first) = fir {
+                            if let ValueOrFunction::Function(second) = sec {
+                                let first_id = first.get_id();
+                                let second_id = second.get_id();
+                                if first_id == "loop" && !first.have_statement() && !first.have_extern_script() &&
+                                        second_id.len() > 0 && !second.have_statement() && !second.have_extern_script() {
+                                    let mut item = ExpAndClause::new();
+                                    if first.get_param_num() > 0 {
+                                        if let Some(cond) = first.get_param(0) {
+                                            item.condition = DslCalculator::load_syntax_component(self.calculator(), cond);
+                                        }
+                                    }
+                                    else {
+                                        //error
+                                        self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", first.to_script_string(false, &dsl::DEFAULT_DELIM), first.get_line()));
+                                    }
+                                    if let Some(sub_exp) = DslCalculator::load_function_syntax(self.calculator(), second) {
+                                        item.expressions.push(sub_exp);
+                                    }
+                                    clause = Some(RefCell::new(item));
+                                    ret = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        self.m_clause = clause;
+        return ret;
+    }
+
+    impl_abstract_expression!();
+}
+impl<'a> LoopListExp<'a>
+{
+    fn need_continue(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() == &RunStateEnum::Continue {
+            self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            return true;
+        }
+        return false;
+    }
+    fn need_return(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() != &RunStateEnum::Normal {
+            if self.calculator().borrow().run_state() == &RunStateEnum::Break {
+                self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            }
+            return true;
+        }
+        return false;
+    }
+}
+struct ListAndClause<'a>
+{
+    pub list: Vec<ExpressionBox<'a>>,
+    pub expressions: Vec<ExpressionBox<'a>>,
+}
+impl<'a> ListAndClause<'a>
+{
+    pub fn new() -> Self
+    {
+        ListAndClause {
+            list: Vec::new(),
+            expressions: Vec::new(),
+        }
+    }
+}
+#[add_abstract_expression_fields]
+pub struct ForeachExp<'a>
+{
+    m_clause: Option<RefCell<ListAndClause<'a>>>,
+}
+impl<'a> Default for ForeachExp<'a>
+{
+    fn default() -> Self
+    {
+        ForeachExp {
+            m_clause: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ForeachExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ForeachExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        let mut v = DslCalculatorValue::Null;
+        if let Some(clause) = &self.m_clause {
+            for iter_exp in &mut clause.borrow_mut().list {
+                let iter_v = iter_exp.calc();
+                self.calculator().borrow_mut().set_variable(&"$$", iter_v);
+                let ct = clause.borrow_mut().expressions.len();
+                let mut exp_ix = 0;
+                while exp_ix < ct {
+                    let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                    v = exp.calc();
+                    if self.need_continue() {
+                        break;
+                    }
+                    else if self.need_return() {
+                        return v;
+                    }
+                    exp_ix += 1;
+                }
+            }
+        }
+        return v;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        let mut clause = None;
+        if let SyntaxComponent::Function(func) = self.syntax_component() {
+            if func.is_high_order() {
+                let mut item = ListAndClause::new();
+                if let Some(lf) = func.lower_order_function() {
+                    if let Some(ps) = lf.params() {
+                        for p in ps.iter() {
+                            if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                                item.list.push(sub_exp);
+                            }
+                        }
+                    }
+                }
+                if let Some(ps) = func.params() {
+                    for p in ps.iter() {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                            item.expressions.push(sub_exp);
+                        }
+                    }
+                }
+                clause = Some(RefCell::new(item));
+            }
+            else {
+                //error
+                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
+            }
+        }
+        self.m_clause = clause;
+        return true;
+    }
+    fn load_statement(&mut self) -> bool
+    {
+        //the handling of the simple syntax 'loop(exp) func(args);'
+        let mut ret= false;
+        let mut clause = None;
+        if let SyntaxComponent::Statement(statement) = self.syntax_component() {
+            let func_num = statement.get_function_num();
+            if func_num == 2 {
+                if let Some(fir) = statement.first() {
+                    if let Some(sec) = statement.second() {
+                        if let ValueOrFunction::Function(first) = fir {
+                            if let ValueOrFunction::Function(second) = sec {
+                                let first_id = first.get_id();
+                                let second_id = second.get_id();
+                                if first_id == "loop" && !first.have_statement() && !first.have_extern_script() &&
+                                        second_id.len() > 0 && !second.have_statement() && !second.have_extern_script() {
+                                    let mut item = ListAndClause::new();
+                                    if first.get_param_num() > 0 {
+                                        if let Some(ps) = first.params() {
+                                            for p in ps.iter() {
+                                                if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                                                    item.list.push(sub_exp);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        //error
+                                        self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", first.to_script_string(false, &dsl::DEFAULT_DELIM), first.get_line()));
+                                    }
+                                    if let Some(sub_exp) = DslCalculator::load_function_syntax(self.calculator(), second) {
+                                        item.expressions.push(sub_exp);
+                                    }
+                                    clause = Some(RefCell::new(item));
+                                    ret = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        self.m_clause = clause;
+        return ret;
+    }
+
+    impl_abstract_expression!();
+}
+impl<'a> ForeachExp<'a>
+{
+    fn need_continue(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() == &RunStateEnum::Continue {
+            self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            return true;
+        }
+        return false;
+    }
+    fn need_return(&self) -> bool
+    {
+        if self.calculator().borrow().run_state() != &RunStateEnum::Normal {
+            if self.calculator().borrow().run_state() == &RunStateEnum::Break {
+                self.calculator().borrow_mut().set_run_state(RunStateEnum::Normal);
+            }
             return true;
         }
         return false;
