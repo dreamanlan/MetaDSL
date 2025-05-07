@@ -10,7 +10,7 @@ fn main() {
     let calculator = DslCalculator::new_cell();
     {
         calculator.borrow_mut().on_log = Some(&log_callback);
-        calculator.borrow_mut().init(calculator.clone());
+        calculator.borrow_mut().init();
         let mut dsl_file = DslFile::new();
         let content = "script(main){echo('1+2*3=',1+2*3,'\n');};";
         dsl_file.load_from_string(String::from(content), &log_callback);

@@ -1412,7 +1412,6 @@ pub struct DslCalculator<'a>
     m_func_calls: Vec<FunctionData>,
     m_value_list_pool: RefCell<SimpleObjectPool<Vec<DslCalculatorValue>>>,
     m_stack_info_pool: RefCell<SimpleObjectPool<StackInfo>>,
-    m_self_cell: Option<Rc<DslCalculatorCell<'a>>>,
 }
 impl<'a> DslCalculator<'a>
 {
@@ -1420,10 +1419,9 @@ impl<'a> DslCalculator<'a>
     {
         return self.m_inited;
     }
-    pub fn init(&mut self, self_cell: Rc<DslCalculatorCell<'a>>)
+    pub fn init(&mut self)
     {
         self.m_inited = true;
-        self.m_self_cell = Some(self_cell);
 
         self.register_api("args", "args() api", create_expression_factory::<ArgsGet>());
         self.register_api("arg", "arg(ix) api", create_expression_factory::<ArgGet>());
@@ -2568,7 +2566,6 @@ impl<'a> DslCalculator<'a>
             m_func_calls: Vec::new(),
             m_value_list_pool: RefCell::new(SimpleObjectPool::new_with_size(32)),
             m_stack_info_pool: RefCell::new(SimpleObjectPool::new_with_size(32)),
-            m_self_cell: None,
         }
     }
 }
