@@ -315,6 +315,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => val.to_string(),
             DslCalculatorValue::I128(val) => val.to_string(),
             DslCalculatorValue::U128(val) => val.to_string(),
+            DslCalculatorValue::Float(val) => val.to_string(),
+            DslCalculatorValue::Double(val) => val.to_string(),
             DslCalculatorValue::String(val) => val.clone(),
             DslCalculatorValue::Bool(val) => val.to_string(),
             DslCalculatorValue::Char(val) => val.to_string(),
@@ -334,6 +336,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => *val as i64,
             DslCalculatorValue::I128(val) => *val as i64,
             DslCalculatorValue::U128(val) => *val as i64,
+            DslCalculatorValue::Float(val) => *val as i64,
+            DslCalculatorValue::Double(val) => *val as i64,
             DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<i64>() { v } else { 0 },
             DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
             DslCalculatorValue::Char(val) => *val as i64,
@@ -353,6 +357,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => *val as u64,
             DslCalculatorValue::I128(val) => *val as u64,
             DslCalculatorValue::U128(val) => *val as u64,
+            DslCalculatorValue::Float(val) => *val as u64,
+            DslCalculatorValue::Double(val) => *val as u64,
             DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<u64>() { v } else { 0 },
             DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
             DslCalculatorValue::Char(val) => *val as u64,
@@ -372,6 +378,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => *val as f64,
             DslCalculatorValue::I128(val) => *val as f64,
             DslCalculatorValue::U128(val) => *val as f64,
+            DslCalculatorValue::Float(val) => *val as f64,
+            DslCalculatorValue::Double(val) => *val as f64,
             DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<f64>() { v } else { 0.0 },
             DslCalculatorValue::Bool(val) => if *val { 1.0 } else { 0.0 },
             DslCalculatorValue::Char(val) => (*val as i64) as f64,
@@ -391,6 +399,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => *val as i128,
             DslCalculatorValue::I128(val) => *val as i128,
             DslCalculatorValue::U128(val) => *val as i128,
+            DslCalculatorValue::Float(val) => *val as i128,
+            DslCalculatorValue::Double(val) => *val as i128,
             DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<i128>() { v } else { 0 },
             DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
             DslCalculatorValue::Char(val) => *val as i128,
@@ -410,6 +420,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => *val as u128,
             DslCalculatorValue::I128(val) => *val as u128,
             DslCalculatorValue::U128(val) => *val as u128,
+            DslCalculatorValue::Float(val) => *val as u128,
+            DslCalculatorValue::Double(val) => *val as u128,
             DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<u128>() { v } else { 0 },
             DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
             DslCalculatorValue::Char(val) => *val as u128,
@@ -429,6 +441,8 @@ impl DslCalculatorValue
             DslCalculatorValue::Ulong(val) => *val != 0,
             DslCalculatorValue::I128(val) => *val != 0,
             DslCalculatorValue::U128(val) => *val != 0,
+            DslCalculatorValue::Float(val) => (*val).abs() > std::f32::EPSILON,
+            DslCalculatorValue::Double(val) => (*val).abs() > std::f64::EPSILON,
             DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<u128>() { v != 0 } else { false },
             DslCalculatorValue::Bool(val) => *val,
             DslCalculatorValue::Char(val) => *val != '\0',
@@ -504,7 +518,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
     {
         self.impl_set_calculator(calculator);
         self.impl_set_syntax_component(SyntaxComponent::Value(value_data));
-        return self.load_value();
+        return self.as_dyn().load_value();
     }
     fn load_function_syntax(&mut self, func_data: FunctionData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
@@ -517,7 +531,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
             }
         }
         if have_param {
-            let ret = self.load_function();
+            let ret = self.as_dyn().load_function();
             if !ret {
                 let mut args: Vec<ExpressionBox> = Vec::new();
                 if let SyntaxComponent::Function(owned_func_data) = self.syntax_component() {
@@ -529,26 +543,26 @@ pub trait AbstractExpression<'a> : IExpression<'a>
                         }
                     }
                 }
-                return self.load_expressions(&mut args);
+                return self.as_dyn().load_expressions(&mut args);
             }
             return ret;
         }
         else {
-            return self.load_function();
+            return self.as_dyn().load_function();
         }
     }
     fn load_statement_syntax(&mut self, statement_data: StatementData, calculator: Rc<DslCalculatorCell<'a>>) -> bool
     {
         self.impl_set_calculator(calculator);
         self.impl_set_syntax_component(SyntaxComponent::Statement(statement_data));
-        return self.load_statement();
+        return self.as_dyn().load_statement();
     }
     fn to_string(&self) -> String
     {
         return format!("{} line:{}", std::any::type_name::<Self>(), self.syntax_component().get_line());
     }
     fn load_value(&mut self) -> bool { return false; }
-    fn load_expressions(&mut self, _exps: &mut Vec<ExpressionBox>) -> bool { return false; }
+    fn load_expressions(&mut self, _exps: &mut Vec<ExpressionBox<'a>>) -> bool { return false; }
     fn load_function(&mut self) -> bool { return false; }
     fn load_statement(&mut self) -> bool { return false; }
     fn do_calc(&mut self) -> DslCalculatorValue;
@@ -561,6 +575,7 @@ pub trait AbstractExpression<'a> : IExpression<'a>
     {
         return self.impl_syntax_component();
     }
+    fn as_dyn(&mut self) -> &mut dyn AbstractExpression<'a>;
 
     fn impl_calculator(&self) -> &Rc<DslCalculatorCell<'a>>;
     fn impl_syntax_component(&self) -> &SyntaxComponent;
@@ -581,7 +596,7 @@ pub trait SimpleExpressionBase<'a> : AbstractExpression<'a>
         self.calculator().borrow_mut().recycle_calculator_value_list(operands);
         return r;
     }
-    fn load_expressions(&mut self, exps: &'a mut Vec<ExpressionBox<'a>>) -> bool
+    fn load_expressions(&mut self, exps: &mut Vec<ExpressionBox<'a>>) -> bool
     {
         let exps_moved = std::mem::take(exps);
         self.impl_set_expressions(exps_moved);
@@ -1109,7 +1124,7 @@ impl<'a> AbstractExpression<'a> for FunctionCall<'a>
         }
         let mut r = DslCalculatorValue::Null;
         if let Some(func) = &self.m_func {
-            r = self.calculator().borrow_mut().calc_n(func, &mut args);
+            r = DslCalculator::calc_n(self.calculator(), func, &mut args);
         }
         self.calculator().borrow_mut().recycle_calculator_value_list(args);
         return r;
@@ -1388,7 +1403,7 @@ pub struct DslCalculator<'a>
 
     m_inited: bool,
     m_run_state: RunStateEnum,
-    m_funcs: HashMap<String, FuncInfoCell<'a>>,
+    m_funcs: HashMap<String, Rc<FuncInfoCell<'a>>>,
     m_stack: VecDeque<StackInfo>,
     m_named_global_variable_indexes: HashMap<String, i32>,
     m_global_variables: Vec<DslCalculatorValue>,
@@ -1746,82 +1761,6 @@ impl<'a> DslCalculator<'a>
         list.clear();
         self.m_value_list_pool.borrow_mut().recycle(list);
     }
-    pub fn calc_0(&mut self, func: &'a str) -> DslCalculatorValue
-    {
-        let mut args = self.m_value_list_pool.borrow_mut().alloc();
-        let r = self.calc_n(func, &mut args);
-        args.clear();
-        self.m_value_list_pool.borrow_mut().recycle(args);
-        return r;
-    }
-    pub fn calc_1(&mut self, func: &'a str, arg1: DslCalculatorValue) -> DslCalculatorValue
-    {
-        let mut args = self.new_calculator_value_list();
-        args.push(arg1);
-        let r = self.calc_n(func, &mut args);
-        self.recycle_calculator_value_list(args);
-        return r;
-    }
-    pub fn calc_2(&mut self, func: &'a str, arg1: DslCalculatorValue, arg2: DslCalculatorValue) -> DslCalculatorValue
-    {
-        let mut args = self.new_calculator_value_list();
-        args.push(arg1);
-        args.push(arg2);
-        let r = self.calc_n(func, &mut args);
-        self.recycle_calculator_value_list(args);
-        return r;
-    }
-    pub fn calc_3(&mut self, func: &'a str, arg1: DslCalculatorValue, arg2: DslCalculatorValue, arg3: DslCalculatorValue) -> DslCalculatorValue
-    {
-        let mut args = self.new_calculator_value_list();
-        args.push(arg1);
-        args.push(arg2);
-        args.push(arg3);
-        let r = self.calc_n(func, &mut args);
-        self.recycle_calculator_value_list(args);
-        return r;
-    }
-    pub fn calc_n(&mut self, func: &str, args: &mut Vec<DslCalculatorValue>) -> DslCalculatorValue
-    {
-        self.local_stack_push(func, Some(args));
-        let mut ret = DslCalculatorValue::Null;
-        if let Some(func_info) = self.m_funcs.get(func) {
-            for exp in func_info.borrow_mut().codes.iter_mut() {
-                ret = exp.calc();
-                if self.m_run_state == RunStateEnum::Return {
-                    self.m_run_state = RunStateEnum::Normal;
-                    break;
-                }
-                else if self.m_run_state == RunStateEnum::Redirect {
-                    break;
-                }
-            }
-        }
-        else {
-            //error
-            self.error(&format!("DslCalculator error, unknown func {}", func));
-            return DslCalculatorValue::Null;
-        }
-        self.local_stack_pop();
-        return ret;
-    }
-    pub fn calc_in_current_context(&mut self, func: &str) -> DslCalculatorValue
-    {
-        let mut ret = DslCalculatorValue::Null;
-        if let Some(func_info) = self.m_funcs.get(func) {
-            for exp in func_info.borrow_mut().codes.iter_mut() {
-                ret = exp.calc();
-                if self.m_run_state == RunStateEnum::Return {
-                    self.m_run_state = RunStateEnum::Normal;
-                    break;
-                }
-                else if self.m_run_state == RunStateEnum::Redirect {
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
     pub fn run_state(&self) -> &RunStateEnum
     {
         return &self.m_run_state;
@@ -2169,7 +2108,7 @@ impl<'a> DslCalculator<'a>
             }
         }
         cell.borrow_mut().m_funcs.remove(id);
-        cell.borrow_mut().m_funcs.insert(String::from(id), RefCell::new(func_info));
+        cell.borrow_mut().m_funcs.insert(String::from(id), Rc::new(RefCell::new(func_info)));
     }
     pub fn load_dsl_func(cell: &Rc<DslCalculatorCell<'a>>, func: &str, dsl_func: &FunctionData)
     {
@@ -2187,7 +2126,7 @@ impl<'a> DslCalculator<'a>
             Self::load_dsl_statements(cell, ps, &mut func_info.codes);
         }
         cell.borrow_mut().m_funcs.remove(func);
-        cell.borrow_mut().m_funcs.insert(String::from(func), RefCell::new(func_info));
+        cell.borrow_mut().m_funcs.insert(String::from(func), Rc::new(RefCell::new(func_info)));
     }
     pub fn load_dsl_statements(cell: &Rc<DslCalculatorCell<'a>>, statements: &Vec<SyntaxComponent>, exps: &mut Vec<ExpressionBox<'a>>)
     {
@@ -2198,6 +2137,86 @@ impl<'a> DslCalculator<'a>
                 }
             }
         }
+    }
+    pub fn calc_0(cell: &Rc<DslCalculatorCell<'a>>, func: &'a str) -> DslCalculatorValue
+    {
+        let mut args = cell.borrow().m_value_list_pool.borrow_mut().alloc();
+        let r = Self::calc_n(cell, func, &mut args);
+        args.clear();
+        cell.borrow().m_value_list_pool.borrow_mut().recycle(args);
+        return r;
+    }
+    pub fn calc_1(cell: &Rc<DslCalculatorCell<'a>>, func: &'a str, arg1: DslCalculatorValue) -> DslCalculatorValue
+    {
+        let mut args = cell.borrow().new_calculator_value_list();
+        args.push(arg1);
+        let r = Self::calc_n(cell, func, &mut args);
+        cell.borrow().recycle_calculator_value_list(args);
+        return r;
+    }
+    pub fn calc_2(cell: &Rc<DslCalculatorCell<'a>>, func: &'a str, arg1: DslCalculatorValue, arg2: DslCalculatorValue) -> DslCalculatorValue
+    {
+        let mut args = cell.borrow().new_calculator_value_list();
+        args.push(arg1);
+        args.push(arg2);
+        let r = Self::calc_n(cell, func, &mut args);
+        cell.borrow().recycle_calculator_value_list(args);
+        return r;
+    }
+    pub fn calc_3(cell: &Rc<DslCalculatorCell<'a>>, func: &'a str, arg1: DslCalculatorValue, arg2: DslCalculatorValue, arg3: DslCalculatorValue) -> DslCalculatorValue
+    {
+        let mut args = cell.borrow().new_calculator_value_list();
+        args.push(arg1);
+        args.push(arg2);
+        args.push(arg3);
+        let r = Self::calc_n(cell, func, &mut args);
+        cell.borrow().recycle_calculator_value_list(args);
+        return r;
+    }
+    pub fn calc_n(cell: &Rc<DslCalculatorCell<'a>>, func: &str, args: &mut Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        cell.borrow_mut().local_stack_push(func, Some(args));
+        let mut ret = DslCalculatorValue::Null;
+        let mut func_info_opt = None;
+        if let Some(func_info_ref) = cell.borrow().m_funcs.get(func) {
+            func_info_opt = Some(func_info_ref.clone());
+        }
+        if let Some(func_info) = func_info_opt {
+            for exp in func_info.borrow_mut().codes.iter_mut() {
+                ret = exp.calc();
+                if cell.borrow().m_run_state == RunStateEnum::Return {
+                    cell.borrow_mut().m_run_state = RunStateEnum::Normal;
+                    break;
+                }
+                else if cell.borrow().m_run_state == RunStateEnum::Redirect {
+                    break;
+                }
+            }
+        }
+        else {
+            //error
+            cell.borrow().error(&format!("DslCalculator error, unknown func {}", func));
+            return DslCalculatorValue::Null;
+        }
+        cell.borrow_mut().local_stack_pop();
+        return ret;
+    }
+    pub fn calc_in_current_context(cell: &Rc<DslCalculatorCell<'a>>, func: &str) -> DslCalculatorValue
+    {
+        let mut ret = DslCalculatorValue::Null;
+        if let Some(func_info) = cell.borrow().m_funcs.get(func) {
+            for exp in func_info.borrow_mut().codes.iter_mut() {
+                ret = exp.calc();
+                if cell.borrow().m_run_state == RunStateEnum::Return {
+                    cell.borrow_mut().m_run_state = RunStateEnum::Normal;
+                    break;
+                }
+                else if cell.borrow().m_run_state == RunStateEnum::Redirect {
+                    break;
+                }
+            }
+        }
+        return ret;
     }
     pub fn load_value_syntax(cell: &Rc<DslCalculatorCell<'a>>, value_data: &ValueData) -> Option<ExpressionBox<'a>>
     {
@@ -2437,7 +2456,8 @@ impl<'a> DslCalculator<'a>
                 }
             }
         }
-        if let Some(mut ret) = cell.borrow().create_api(func_data.get_id()) {
+        let api = cell.borrow().create_api(func_data.get_id());
+        if let Some(mut ret) = api {
             if ret.load_function_syntax(func_data.clone(), cell.clone()) {
                 return Some(ret);
             }

@@ -12,11 +12,11 @@ fn main() {
         calculator.borrow_mut().on_log = Some(&log_callback);
         calculator.borrow_mut().init(calculator.clone());
         let mut dsl_file = DslFile::new();
-        let content = "script(main){echo(1+2*3);};";
+        let content = "script(main){echo('1+2*3=',1+2*3,'\n');};";
         dsl_file.load_from_string(String::from(content), &log_callback);
         if let Some(info) = dsl_file.dsl_infos().last() {
             DslCalculator::load_dsl_info(&calculator, info);
-            calculator.borrow_mut().calc_0(&"main");
+            DslCalculator::calc_0(&calculator, &"main");
         }
         println!("Hello, world!");
     }

@@ -139,6 +139,10 @@ pub fn add_abstract_and_simple_expression_fields(_attr: TokenStream, item: Token
 #[proc_macro]
 pub fn impl_abstract_expression(_input: TokenStream) -> TokenStream {
     let expanded = quote! {
+        fn as_dyn(&mut self) -> &mut dyn AbstractExpression<'a>
+        {
+            self
+        }
         fn impl_calculator(&self) -> &Rc<DslCalculatorCell<'a>>
         {
             if let Some(calculator) = &self.m_calculator {
@@ -224,6 +228,10 @@ pub fn impl_abstract_with_simple(_input: TokenStream) -> TokenStream {
         fn do_calc(&mut self) -> DslCalculatorValue
         {
             return SimpleExpressionBase::do_calc(self);
+        }
+        fn load_expressions(&mut self, exps: &mut Vec<ExpressionBox<'a>>) -> bool
+        {
+            return SimpleExpressionBase::load_expressions(self, exps);
         }
     };
 
