@@ -1055,9 +1055,15 @@ impl<'a> AbstractExpression<'a> for ConstGet<'a>
             let id = val_data.get_id();
             let id_type = val_data.get_id_type();
             if id_type == dsl::NUM_TOKEN {
-                //TryParseNumeric(id, out m_Val);
-                if let Ok(v) = id.parse::<f64>() {
-                    val = DslCalculatorValue::Double(v);
+                if id.find('.').is_some() {
+                    if let Ok(v) = id.parse::<f64>() {
+                        val = DslCalculatorValue::Double(v);
+                    }
+                }
+                else if id.chars().last() == Some('u') {
+                    if let Ok(v) = id.parse::<u64>() {
+                        val = DslCalculatorValue::Ulong(v);
+                    }
                 }
                 else if let Ok(v) = id.parse::<i64>() {
                     val = DslCalculatorValue::Long(v);
@@ -1456,6 +1462,9 @@ impl<'a> DslCalculator<'a>
         self.register_api("array", "[v1,v2,...] or array(v1,v2,...) object", create_expression_factory::<ArrayExp>());
         self.register_api("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) object", create_expression_factory::<HashtableExp>());
         self.register_api("echo", "echo(arg1,arg2,...) api", create_expression_factory::<EchoExp>());
+        self.register_api("call", "call(func_name,arg1,arg2,...) api", create_expression_factory::<CallExp>());
+        self.register_api("return", "return([val]) api", create_expression_factory::<ReturnExp>());
+        self.register_api("redirect", "redirect(arg1,arg2,...) api", create_expression_factory::<RedirectExp>());
         /*
         self.register_api("max", "max(v1,v2) api", create_expression_factory::<MaxExp>());
         self.register_api("min", "min(v1,v2) api", create_expression_factory::<MinExp>());
@@ -1640,9 +1649,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("debugwarning", "debugwarning(fmt,arg1,arg2,...) api", create_expression_factory::<DebugWarningExp>());
         self.register_api("debugerror", "debugerror(fmt,arg1,arg2,...) api", create_expression_factory::<DebugErrorExp>());
         self.register_api("callstack", "callstack() api", create_expression_factory::<CallStackExp>());
-        self.register_api("call", "call(func_name,arg1,arg2,...) api", create_expression_factory::<CallExp>());
-        self.register_api("return", "return([val]) api", create_expression_factory::<ReturnExp>());
-        self.register_api("redirect", "redirect(arg1,arg2,...) api", create_expression_factory::<RedirectExp>());
 
         self.register_api("direxist", "direxist(dir) api", create_expression_factory::<DirectoryExistExp>());
         self.register_api("fileexist", "fileexist(file) api", create_expression_factory::<FileExistExp>());

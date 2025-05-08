@@ -18,6 +18,6 @@ fn main() {
             DslCalculator::load_dsl_info(&calculator, info);
             DslCalculator::calc_0(&calculator, &"main");
         }
-        println!("Hello, world!");
+        println!("done.");
     }
 }

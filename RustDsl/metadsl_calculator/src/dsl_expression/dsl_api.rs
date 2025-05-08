@@ -1958,3 +1958,130 @@ impl<'a> SimpleExpressionBase<'a> for EchoExp<'a>
 
     impl_simple_expression!();
 }
+
+#[add_abstract_and_simple_expression_fields]
+struct CallExp
+{
+
+}
+impl<'a> Default for CallExp<'a>
+{
+    fn default() -> Self
+    {
+        CallExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for CallExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for CallExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for CallExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        let mut r = DslCalculatorValue::Null;
+        if operands.len() >= 1 {
+            let mut args = self.calculator().borrow_mut().new_calculator_value_list();
+            for oper in operands.iter().skip(1) {
+                args.push(oper.clone());
+            }
+            if let DslCalculatorValue::String(func) = &operands[0] {
+                r = DslCalculator::calc_n(self.calculator(), func, &mut args);
+            }
+            self.calculator().borrow_mut().recycle_calculator_value_list(args);
+        }
+        return r;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct ReturnExp
+{
+
+}
+impl<'a> Default for ReturnExp<'a>
+{
+    fn default() -> Self
+    {
+        ReturnExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ReturnExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ReturnExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ReturnExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        self.calculator().borrow_mut().set_run_state(RunStateEnum::Return);
+        let mut r = DslCalculatorValue::Null;
+        if operands.len() >= 1 {
+            r = operands[0].clone();
+        }
+        return r;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RedirectExp
+{
+
+}
+impl<'a> Default for RedirectExp<'a>
+{
+    fn default() -> Self
+    {
+        RedirectExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RedirectExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RedirectExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RedirectExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        self.calculator().borrow_mut().set_run_state(RunStateEnum::Redirect);
+        if operands.len() >= 1 {
+            let args = operands.clone();
+            return DslCalculatorValue::Array(args);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
