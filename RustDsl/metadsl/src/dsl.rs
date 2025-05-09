@@ -2,11 +2,13 @@
 use std::boxed::Box;
 use std::vec::Vec;
 use std::collections::{BTreeMap, HashMap};
-use std::fs;
-use std::io::{Cursor, Write};
 use once_cell::sync::Lazy;
-use metadsl_macros::{add_abstract_syntax_component_fields, impl_abstract_syntax_component};
 use cfg_if::cfg_if;
+use std::io::{Cursor, Write};
+#[cfg(not(target_arch = "wasm32"))]
+use std::fs;
+
+use metadsl_macros::{add_abstract_syntax_component_fields, impl_abstract_syntax_component};
 
 use crate::dsl::common::action::*;
 use crate::dsl::parser::parser::*;
@@ -1949,7 +1951,8 @@ impl<'a> DslFile<'a>
         self.m_dsl_infos.clear();
     }
 
-    pub fn load(&mut self, file: &str, log_callback: &DslLogDelegationBox<'a>) -> bool
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn load_from_file(&mut self, file: &str, log_callback: &DslLogDelegationBox<'a>) -> bool
     {
         if let Ok(content) = fs::read_to_string(file) {
             //logCallback(format!("DslFile.Load {:?}:\n{:?}", file, content));
@@ -2031,7 +2034,7 @@ impl<'a> DslFile<'a>
         }
         return !log.borrow().has_error();
     }
-    pub fn save(&self, file: &str)
+    pub fn save_to_string(&self) -> String
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
@@ -2047,11 +2050,15 @@ cfg_if! {
         for info in &self.m_dsl_infos {
             Utility::write_syntax_component(&mut sb, &info, 0, true, true, &DelimiterInfo::new(&self.m_string_begin_delimiter, &self.m_string_end_delimiter, &self.m_script_begin_delimiter, &self.m_script_end_delimiter));
         }
-        if let Result::Err(_e) = fs::write(file, sb) {
-
-        }
+        return sb;
     }
 }
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn save_to_file(&self, file: &str) -> Result<(), std::io::Error>
+    {
+        let sb = self.save_to_string();
+        return fs::write(file, sb);
     }
     pub fn to_script_string(&self) -> String
     {
@@ -2074,6 +2081,7 @@ cfg_if! {
 }
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn load_binary_file(&mut self, file: &str, reuse_key_buffer: &mut Vec<String>, reuse_id_buffer: &mut Vec<String>)
     {
         if let Ok(code) = fs::read(file) {
@@ -2143,7 +2151,7 @@ cfg_if! {
         let infos = Utility::read_binary(binary_code, bytes_start, bytes_len, identifiers);
         self.m_dsl_infos.extend(infos);
     }
-    pub fn save_binary_file(&self, file: &str)
+    pub fn save_binary_code(&self) -> Vec<u8>
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
@@ -2181,9 +2189,15 @@ cfg_if! {
             Utility::write_7bit_encoded_int(&mut bdsl, bstr.len());
             let _ = bdsl.write(bstr);
         }
-        let _ = fs::write(file, bdsl.get_ref());
+        return bdsl.into_inner();
     }
 }
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn save_binary_file(&self, file: &str) -> std::io::Result<()>
+    {
+        let bytes = self.save_binary_code();
+        return fs::write(file, bytes);
     }
 
     pub fn set_name_tags(&mut self, tags: HashMap<String, u32>)

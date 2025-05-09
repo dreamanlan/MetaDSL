@@ -7,6 +7,9 @@ edition = "2024"
 metadsl_macros = { path = "../metadsl_macros" }
 metadsl = { path = "../metadsl" }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+rustyline = "13"
+
 [lib]
 name = "metadsl_calculator"
 path = "src/lib.rs"

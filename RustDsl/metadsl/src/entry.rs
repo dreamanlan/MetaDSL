@@ -15,6 +15,7 @@ pub fn get_local_milliseconds() -> u128
     return g_time.elapsed().as_millis();
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn main(_args: Vec<String>)
 {
     println!("cur dir:{:?}", std::env::current_dir().unwrap().display());
@@ -48,17 +49,17 @@ pub fn main(_args: Vec<String>)
         return true;
     });
     file.set_on_get_token(&token_callback);
-    file.load("test.txt", &log_callback);
+    file.load_from_file("test.txt", &log_callback);
 
-    file.save("copy.txt");
-    file.save_binary_file("binary.txt");
+    let _ = file.save_to_file("copy.txt");
+    let _ = file.save_binary_file("binary.txt");
 
     file.clear();
 
     if let Ok(code) = fs::read("binary.txt") {
         file.load_binary_code(&code, &mut key_buffer, &mut id_buffer);
 
-        file.save("unbinary.txt");
+        let _ = file.save_binary_file("unbinary.txt");
 
         let t1 = get_local_milliseconds();
         let mut i = 0;

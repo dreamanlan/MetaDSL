@@ -7,9 +7,10 @@ use metadsl::dsl::{self, FunctionData, StatementData, ValueData, ValueOrFunction
 use metadsl::dsl::{
     ISyntaxComponent,
     SyntaxComponent,
-    DslFile,
     DslLogDelegationBox
 };
+#[cfg(not(target_arch = "wasm32"))]
+use metadsl::dsl::DslFile;
 use metadsl_macros::{
     add_abstract_expression_fields,
     impl_expression_with_abstract,
@@ -30,9 +31,9 @@ pub type DslCalculatorCell<'a> = RefCell<DslCalculator<'a>>;
 
 pub type GetVariableDelegation<'a> = dyn Fn(&str) -> Option<&'a DslCalculatorValue>;
 pub type SetVariableDelegation<'a> = dyn FnMut(&str, DslCalculatorValue) -> bool;
-pub type LoadValueFailbackDelegation<'a> = dyn Fn(&ValueData, &DslCalculatorCell<'a>) -> Option<ExpressionBox<'a>>;
-pub type LoadFunctionFailbackDelegation<'a> = dyn Fn(&FunctionData, &DslCalculatorCell<'a>) -> Option<ExpressionBox<'a>>;
-pub type LoadStatementFailbackDelegation<'a> = dyn Fn(&StatementData, &DslCalculatorCell<'a>) -> Option<ExpressionBox<'a>>;
+pub type LoadValueFailbackDelegation<'a> = dyn Fn(&ValueData, &Rc<DslCalculatorCell<'a>>) -> Option<ExpressionBox<'a>>;
+pub type LoadFunctionFailbackDelegation<'a> = dyn Fn(&FunctionData, &Rc<DslCalculatorCell<'a>>) -> Option<ExpressionBox<'a>>;
+pub type LoadStatementFailbackDelegation<'a> = dyn Fn(&StatementData, &Rc<DslCalculatorCell<'a>>) -> Option<ExpressionBox<'a>>;
 
 pub type GetVariableDelegationBox<'a> = Box<GetVariableDelegation<'a>>;
 pub type SetVariableDelegationBox<'a> = Box<SetVariableDelegation<'a>>;
@@ -2038,11 +2039,12 @@ impl<'a> DslCalculator<'a>
         self.m_stack_info_pool.borrow_mut().recycle(si);
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn load_dsl_file(cell: &Rc<DslCalculatorCell<'a>>, dsl_file: &str)
     {
         if let Some(callback) = cell.borrow().on_log {
             let mut file = DslFile::new();
-            if file.load(dsl_file, callback) {
+            if file.load_from_file(dsl_file, callback) {
                 for info in file.dsl_infos().iter() {
                     Self::load_dsl_info(cell, info);
                 }
