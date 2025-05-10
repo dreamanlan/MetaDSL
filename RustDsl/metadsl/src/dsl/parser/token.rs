@@ -1131,7 +1131,7 @@ impl<'a> DslToken<'a>
             end = ct - 1;
         }
         if start > 0 || end < ct - 1 {
-            return str[start..end].chars().collect();
+            return str[start..=end].chars().collect();
         }
         else {
             return String::from(str);

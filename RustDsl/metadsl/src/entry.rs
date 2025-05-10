@@ -61,7 +61,7 @@ pub fn impl_main(_args: Vec<String>)
     if let Ok(code) = fs::read("binary.txt") {
         file.load_binary_code(&code, &mut key_buffer, &mut id_buffer);
 
-        let _ = file.save_binary_file("unbinary.txt");
+        let _ = file.save_to_file("unbinary.txt");
 
         let t1 = get_local_milliseconds();
         let mut i = 0;
