@@ -1,3 +1,6 @@
+#[cfg(not(target_arch = "wasm32"))]
+mod impl_mod {
+
 use lazy_static::lazy_static;
 use std::time::Instant;
 use std::fs;
@@ -10,13 +13,12 @@ lazy_static! {
     static ref g_time: Instant = Instant::now();
 }
 
-pub fn get_local_milliseconds() -> u128
+fn get_local_milliseconds() -> u128
 {
     return g_time.elapsed().as_millis();
 }
 
-#[cfg(not(target_arch = "wasm32"))]
-pub fn main(_args: Vec<String>)
+pub fn impl_main(_args: Vec<String>)
 {
     println!("cur dir:{:?}", std::env::current_dir().unwrap().display());
 
@@ -70,4 +72,11 @@ pub fn main(_args: Vec<String>)
         let t2 = get_local_milliseconds();
         println!("time:{}", t2 - t1);
     }
+}
+}
+
+pub fn main(_args: Vec<String>)
+{
+    #[cfg(not(target_arch = "wasm32"))]
+    impl_mod::impl_main(_args);
 }

@@ -1,7 +1,7 @@
-﻿use std::env;
-
-pub mod dsl;
+﻿pub mod dsl;
 mod entry;
+
+use std::env;
 
 pub fn main()
 {

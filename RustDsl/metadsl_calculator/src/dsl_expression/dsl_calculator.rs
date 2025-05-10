@@ -303,6 +303,20 @@ impl DslCalculatorValue
             _ => false,
         }
     }
+    pub fn is_single_float(&self) -> bool
+    {
+        match &self {
+            DslCalculatorValue::Float(_) => true,
+            _ => false,
+        }
+    }
+    pub fn is_double_float(&self) -> bool
+    {
+        match &self {
+            DslCalculatorValue::Double(_) => true,
+            _ => false,
+        }
+    }
     pub fn to_string(&self) -> String
     {
         match &self {
@@ -322,6 +336,132 @@ impl DslCalculatorValue
             DslCalculatorValue::Bool(val) => val.to_string(),
             DslCalculatorValue::Char(val) => val.to_string(),
             _ => String::new(),
+        }
+    }
+    pub fn to_i8(&self) -> i8
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as i8,
+            DslCalculatorValue::Ubyte(val) => *val as i8,
+            DslCalculatorValue::Short(val) => *val as i8,
+            DslCalculatorValue::Ushort(val) => *val as i8,
+            DslCalculatorValue::Int(val) => *val as i8,
+            DslCalculatorValue::Uint(val) => *val as i8,
+            DslCalculatorValue::Long(val) => *val as i8,
+            DslCalculatorValue::Ulong(val) => *val as i8,
+            DslCalculatorValue::I128(val) => *val as i8,
+            DslCalculatorValue::U128(val) => *val as i8,
+            DslCalculatorValue::Float(val) => *val as i8,
+            DslCalculatorValue::Double(val) => *val as i8,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<i8>() { v } else { 0 },
+            DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
+            DslCalculatorValue::Char(val) => *val as i8,
+            _ => 0,
+        }
+    }
+    pub fn to_u8(&self) -> u8
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as u8,
+            DslCalculatorValue::Ubyte(val) => *val as u8,
+            DslCalculatorValue::Short(val) => *val as u8,
+            DslCalculatorValue::Ushort(val) => *val as u8,
+            DslCalculatorValue::Int(val) => *val as u8,
+            DslCalculatorValue::Uint(val) => *val as u8,
+            DslCalculatorValue::Long(val) => *val as u8,
+            DslCalculatorValue::Ulong(val) => *val as u8,
+            DslCalculatorValue::I128(val) => *val as u8,
+            DslCalculatorValue::U128(val) => *val as u8,
+            DslCalculatorValue::Float(val) => *val as u8,
+            DslCalculatorValue::Double(val) => *val as u8,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<u8>() { v } else { 0 },
+            DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
+            DslCalculatorValue::Char(val) => *val as u8,
+            _ => 0,
+        }
+    }
+    pub fn to_i16(&self) -> i16
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as i16,
+            DslCalculatorValue::Ubyte(val) => *val as i16,
+            DslCalculatorValue::Short(val) => *val as i16,
+            DslCalculatorValue::Ushort(val) => *val as i16,
+            DslCalculatorValue::Int(val) => *val as i16,
+            DslCalculatorValue::Uint(val) => *val as i16,
+            DslCalculatorValue::Long(val) => *val as i16,
+            DslCalculatorValue::Ulong(val) => *val as i16,
+            DslCalculatorValue::I128(val) => *val as i16,
+            DslCalculatorValue::U128(val) => *val as i16,
+            DslCalculatorValue::Float(val) => *val as i16,
+            DslCalculatorValue::Double(val) => *val as i16,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<i16>() { v } else { 0 },
+            DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
+            DslCalculatorValue::Char(val) => *val as i16,
+            _ => 0,
+        }
+    }
+    pub fn to_u16(&self) -> u16
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as u16,
+            DslCalculatorValue::Ubyte(val) => *val as u16,
+            DslCalculatorValue::Short(val) => *val as u16,
+            DslCalculatorValue::Ushort(val) => *val as u16,
+            DslCalculatorValue::Int(val) => *val as u16,
+            DslCalculatorValue::Uint(val) => *val as u16,
+            DslCalculatorValue::Long(val) => *val as u16,
+            DslCalculatorValue::Ulong(val) => *val as u16,
+            DslCalculatorValue::I128(val) => *val as u16,
+            DslCalculatorValue::U128(val) => *val as u16,
+            DslCalculatorValue::Float(val) => *val as u16,
+            DslCalculatorValue::Double(val) => *val as u16,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<u16>() { v } else { 0 },
+            DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
+            DslCalculatorValue::Char(val) => *val as u16,
+            _ => 0,
+        }
+    }
+    pub fn to_i32(&self) -> i32
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as i32,
+            DslCalculatorValue::Ubyte(val) => *val as i32,
+            DslCalculatorValue::Short(val) => *val as i32,
+            DslCalculatorValue::Ushort(val) => *val as i32,
+            DslCalculatorValue::Int(val) => *val as i32,
+            DslCalculatorValue::Uint(val) => *val as i32,
+            DslCalculatorValue::Long(val) => *val as i32,
+            DslCalculatorValue::Ulong(val) => *val as i32,
+            DslCalculatorValue::I128(val) => *val as i32,
+            DslCalculatorValue::U128(val) => *val as i32,
+            DslCalculatorValue::Float(val) => *val as i32,
+            DslCalculatorValue::Double(val) => *val as i32,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<i32>() { v } else { 0 },
+            DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
+            DslCalculatorValue::Char(val) => *val as i32,
+            _ => 0,
+        }
+    }
+    pub fn to_u32(&self) -> u32
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as u32,
+            DslCalculatorValue::Ubyte(val) => *val as u32,
+            DslCalculatorValue::Short(val) => *val as u32,
+            DslCalculatorValue::Ushort(val) => *val as u32,
+            DslCalculatorValue::Int(val) => *val as u32,
+            DslCalculatorValue::Uint(val) => *val as u32,
+            DslCalculatorValue::Long(val) => *val as u32,
+            DslCalculatorValue::Ulong(val) => *val as u32,
+            DslCalculatorValue::I128(val) => *val as u32,
+            DslCalculatorValue::U128(val) => *val as u32,
+            DslCalculatorValue::Float(val) => *val as u32,
+            DslCalculatorValue::Double(val) => *val as u32,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<u32>() { v } else { 0 },
+            DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
+            DslCalculatorValue::Char(val) => *val as u32,
+            _ => 0,
         }
     }
     pub fn to_i64(&self) -> i64
@@ -364,6 +504,27 @@ impl DslCalculatorValue
             DslCalculatorValue::Bool(val) => if *val { 1 } else { 0 },
             DslCalculatorValue::Char(val) => *val as u64,
             _ => 0,
+        }
+    }
+    pub fn to_f32(&self) -> f32
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as f32,
+            DslCalculatorValue::Ubyte(val) => *val as f32,
+            DslCalculatorValue::Short(val) => *val as f32,
+            DslCalculatorValue::Ushort(val) => *val as f32,
+            DslCalculatorValue::Int(val) => *val as f32,
+            DslCalculatorValue::Uint(val) => *val as f32,
+            DslCalculatorValue::Long(val) => *val as f32,
+            DslCalculatorValue::Ulong(val) => *val as f32,
+            DslCalculatorValue::I128(val) => *val as f32,
+            DslCalculatorValue::U128(val) => *val as f32,
+            DslCalculatorValue::Float(val) => *val as f32,
+            DslCalculatorValue::Double(val) => *val as f32,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<f32>() { v } else { 0.0 },
+            DslCalculatorValue::Bool(val) => if *val { 1.0 } else { 0.0 },
+            DslCalculatorValue::Char(val) => (*val as i32) as f32,
+            _ => 0.0,
         }
     }
     pub fn to_f64(&self) -> f64
@@ -448,6 +609,27 @@ impl DslCalculatorValue
             DslCalculatorValue::Bool(val) => *val,
             DslCalculatorValue::Char(val) => *val != '\0',
             _ => false,
+        }
+    }
+    pub fn to_char(&self) -> char
+    {
+        match &self {
+            DslCalculatorValue::Sbyte(val) => *val as u8 as char,
+            DslCalculatorValue::Ubyte(val) => *val as char,
+            DslCalculatorValue::Short(val) => *val as u8 as char,
+            DslCalculatorValue::Ushort(val) => *val as u8 as char,
+            DslCalculatorValue::Int(val) => *val as u8 as char,
+            DslCalculatorValue::Uint(val) => *val as u8 as char,
+            DslCalculatorValue::Long(val) => *val as u8 as char,
+            DslCalculatorValue::Ulong(val) => *val as u8 as char,
+            DslCalculatorValue::I128(val) => *val as u8 as char,
+            DslCalculatorValue::U128(val) => *val as u8 as char,
+            DslCalculatorValue::Float(val) => *val as u8 as char,
+            DslCalculatorValue::Double(val) => *val as u8 as char,
+            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<char>() { v } else { '\0' },
+            DslCalculatorValue::Bool(val) => if *val { 'T' } else { '\0' },
+            DslCalculatorValue::Char(val) => *val,
+            _ => '\0',
         }
     }
     pub fn get_bool(&self) -> bool
@@ -1455,17 +1637,60 @@ impl<'a> DslCalculator<'a>
         self.register_api("||", "logical or operator", create_expression_factory::<OrExp>());
         self.register_api("!", "logical not operator", create_expression_factory::<NotExp>());
         self.register_api("?", "conditional expression", create_expression_factory::<CondExp>());
+
         self.register_api("if", "if(cond)func(args); or if(cond){...}[elseif/elif(cond){...}else{...}]; statement", create_expression_factory::<IfExp>());
         self.register_api("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", create_expression_factory::<WhileExp>());
         self.register_api("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", create_expression_factory::<LoopExp>());
         self.register_api("looplist", "looplist(list)func(args); or looplist(list){...}; statement, iterator is $$", create_expression_factory::<LoopListExp>());
         self.register_api("foreach", "foreach(args)func(args); or foreach(args){...}; statement, iterator is $$", create_expression_factory::<ForeachExp>());
+
         self.register_api("array", "[v1,v2,...] or array(v1,v2,...) object", create_expression_factory::<ArrayExp>());
         self.register_api("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) object", create_expression_factory::<HashtableExp>());
         self.register_api("echo", "echo(arg1,arg2,...) api", create_expression_factory::<EchoExp>());
         self.register_api("call", "call(func_name,arg1,arg2,...) api", create_expression_factory::<CallExp>());
         self.register_api("return", "return([val]) api", create_expression_factory::<ReturnExp>());
         self.register_api("redirect", "redirect(arg1,arg2,...) api", create_expression_factory::<RedirectExp>());
+
+        self.register_api("bool", "bool(v) api", create_expression_factory::<BoolExp>());
+        self.register_api("char", "char(v) api", create_expression_factory::<CharExp>());
+        self.register_api("sbyte", "sbyte(v) api", create_expression_factory::<SbyteExp>());
+        self.register_api("byte", "byte(v) api", create_expression_factory::<UbyteExp>());
+        self.register_api("short", "short(v) api", create_expression_factory::<ShortExp>());
+        self.register_api("ushort", "ushort(v) api", create_expression_factory::<UshortExp>());
+        self.register_api("int", "int(v) api", create_expression_factory::<IntExp>());
+        self.register_api("uint", "uint(v) api", create_expression_factory::<UintExp>());
+        self.register_api("long", "long(v) api", create_expression_factory::<LongExp>());
+        self.register_api("ulong", "ulong(v) api", create_expression_factory::<UlongExp>());
+        self.register_api("float", "float(v) api", create_expression_factory::<FloatExp>());
+        self.register_api("double", "double(v) api", create_expression_factory::<DoubleExp>());
+        self.register_api("tostring", "tostring(v) api", create_expression_factory::<ToStringExp>());
+        self.register_api("gettypestr", "gettypestr(v) api", create_expression_factory::<GetTypeStrExp>());
+        self.register_api("ftoi", "ftoi(v) api", create_expression_factory::<FtoiExp>());
+        self.register_api("itof", "itof(v) api", create_expression_factory::<ItofExp>());
+        self.register_api("ftou", "ftou(v) api", create_expression_factory::<FtouExp>());
+        self.register_api("utof", "utof(v) api", create_expression_factory::<UtofExp>());
+        self.register_api("dtol", "dtol(v) api", create_expression_factory::<DtolExp>());
+        self.register_api("ltod", "ltod(v) api", create_expression_factory::<LtodExp>());
+        self.register_api("dtou", "dtou(v) api", create_expression_factory::<DtouExp>());
+        self.register_api("utod", "utod(v) api", create_expression_factory::<UtodExp>());
+        self.register_api("isnull", "isnull(v) api", create_expression_factory::<IsNullExp>());
+        self.register_api("null", "null() api", create_expression_factory::<NullExp>());
+        self.register_api("isarray", "isarray(v) api", create_expression_factory::<IsArrayExp>());
+        self.register_api("ishashmap", "ishashmap(v) api", create_expression_factory::<IsHashmapExp>());
+        self.register_api("isobject", "isobject(v) api", create_expression_factory::<IsObjectExp>());
+        self.register_api("isstring", "isstring(v) api", create_expression_factory::<IsStringExp>());
+        self.register_api("isbool", "isbool(v) api", create_expression_factory::<IsBoolExp>());
+        self.register_api("ischar", "ischar(v) api", create_expression_factory::<IsCharExp>());
+        self.register_api("isinteger", "isinteger(v) api", create_expression_factory::<IsIntegerExp>());
+        self.register_api("issigned", "issigned(v) api", create_expression_factory::<IsSignedExp>());
+        self.register_api("isunsigned", "isunsigned(v) api", create_expression_factory::<IsUnsignedExp>());
+        self.register_api("isinteger128", "isinteger128(v) api", create_expression_factory::<IsInteger128Exp>());
+        self.register_api("issigned128", "issigned128(v) api", create_expression_factory::<IsSigned128Exp>());
+        self.register_api("isunsigned128", "isunsigned128(v) api", create_expression_factory::<IsUnsigned128Exp>());
+        self.register_api("isfloat", "isfloat(v) api", create_expression_factory::<IsFloatExp>());
+        self.register_api("issinglefloat", "issinglefloat(v) api", create_expression_factory::<IsSingleFloatExp>());
+        self.register_api("isdoublefloat", "isdoublefloat(v) api", create_expression_factory::<IsDoubleFloatExp>());
+
         /*
         self.register_api("max", "max(v1,v2) api", create_expression_factory::<MaxExp>());
         self.register_api("min", "min(v1,v2) api", create_expression_factory::<MinExp>());
@@ -1495,27 +1720,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("floortoint", "floortoint(v) api", create_expression_factory::<FloorToIntExp>());
         self.register_api("ceilingtoint", "ceilingtoint(v) api", create_expression_factory::<CeilingToIntExp>());
         self.register_api("roundtoint", "roundtoint(v) api", create_expression_factory::<RoundToIntExp>());
-        self.register_api("bool", "bool(v) api", create_expression_factory::<BoolExp>());
-        self.register_api("sbyte", "sbyte(v) api", create_expression_factory::<SByteExp>());
-        self.register_api("byte", "byte(v) api", create_expression_factory::<ByteExp>());
-        self.register_api("char", "char(v) api", create_expression_factory::<CharExp>());
-        self.register_api("short", "short(v) api", create_expression_factory::<ShortExp>());
-        self.register_api("ushort", "ushort(v) api", create_expression_factory::<UShortExp>());
-        self.register_api("int", "int(v) api", create_expression_factory::<IntExp>());
-        self.register_api("uint", "uint(v) api", create_expression_factory::<UIntExp>());
-        self.register_api("long", "long(v) api", create_expression_factory::<LongExp>());
-        self.register_api("ulong", "ulong(v) api", create_expression_factory::<ULongExp>());
-        self.register_api("float", "float(v) api", create_expression_factory::<FloatExp>());
-        self.register_api("double", "double(v) api", create_expression_factory::<DoubleExp>());
-        self.register_api("decimal", "decimal(v) api", create_expression_factory::<DecimalExp>());
-        self.register_api("ftoi", "ftoi(v) api", create_expression_factory::<FtoiExp>());
-        self.register_api("itof", "itof(v) api", create_expression_factory::<ItofExp>());
-        self.register_api("ftou", "ftou(v) api", create_expression_factory::<FtouExp>());
-        self.register_api("utof", "utof(v) api", create_expression_factory::<UtofExp>());
-        self.register_api("dtol", "dtol(v) api", create_expression_factory::<DtolExp>());
-        self.register_api("ltod", "ltod(v) api", create_expression_factory::<LtodExp>());
-        self.register_api("dtou", "dtou(v) api", create_expression_factory::<DtouExp>());
-        self.register_api("utod", "utod(v) api", create_expression_factory::<UtodExp>());
         self.register_api("lerp", "lerp(a,b,t) api", create_expression_factory::<LerpExp>());
         self.register_api("lerpunclamped", "lerpunclamped(a,b,t) api", create_expression_factory::<LerpUnclampedExp>());
         self.register_api("lerpangle", "lerpangle(a,b,t) api", create_expression_factory::<LerpAngleExp>());
@@ -1529,12 +1733,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("dist", "dist(x1,y1,x2,y2) api", create_expression_factory::<DistExp>());
         self.register_api("distsqr", "distsqr(x1,y1,x2,y2) api", create_expression_factory::<DistSqrExp>());
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
-        self.register_api("gettypeassemblyname", "gettypeassemblyname(obj) api", create_expression_factory::<GetTypeAssemblyNameExp>());
-        self.register_api("gettypefullname", "gettypefullname(obj) api", create_expression_factory::<GetTypeFullNameExp>());
-        self.register_api("gettypename", "gettypename(obj) api", create_expression_factory::<GetTypeNameExp>());
-        self.register_api("gettype", "gettype(type_str) api", create_expression_factory::<GetTypeExp>());
-        self.register_api("changetype", "changetype(obj,type_str) api", create_expression_factory::<ChangeTypeExp>());
-        self.register_api("parseenum", "parseenum(type_str,val_str) api", create_expression_factory::<ParseEnumExp>());
         self.register_api("objectcall", "objectcall api, fn implementation, using csharp object syntax", create_expression_factory::<DotnetCallExp>());
         self.register_api("objectset", "objectset api, fn implementation, using csharp object syntax", create_expression_factory::<DotnetSetExp>());
         self.register_api("objectget", "objectget api, fn implementation, using csharp object syntax", create_expression_factory::<DotnetGetExp>());
@@ -1542,16 +1740,8 @@ impl<'a> DslCalculator<'a>
         self.register_api("collectionset", "collectionset api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionSetExp>());
         self.register_api("collectionget", "collectionget api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionGetExp>());
         self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
-        self.register_api("isnull", "isnull(obj) api", create_expression_factory::<IsNullExp>());
-        self.register_api("null", "null() api", create_expression_factory::<NullExp>());
-        self.register_api("equalsnull", "equalsnull(obj) api", create_expression_factory::<EqualsNullExp>());
         self.register_api("objectload", "objectload(dll_path) api", create_expression_factory::<DotnetLoadExp>());
         self.register_api("objectnew", "objectnew(assembly,type_name,arg1,arg2,...) api", create_expression_factory::<DotnetNewExp>());
-        self.register_api("destroyobject", "destroyobject(obj[,bool_modify_asset]) api", create_expression_factory::<DestroyObjectExp>());
-        self.register_api("getcomponent", "getcomponent(obj,type) api", create_expression_factory::<GetComponentExp>());
-        self.register_api("getcomponents", "getcomponents(obj,type) api", create_expression_factory::<GetComponentsExp>());
-        self.register_api("getcomponentinchildren", "getcomponentinchildren(obj,type) api", create_expression_factory::<GetComponentInChildrenExp>());
-        self.register_api("getcomponentsinchildren", "getcomponentsinchildren(obj,type) api", create_expression_factory::<GetComponentsInChildrenExp>());
         self.register_api("substring", "substring(str[,start,len]) function", create_expression_factory::<SubstringExp>());
         self.register_api("newstringbuilder", "newstringbuilder() api", create_expression_factory::<NewStringBuilderExp>());
         self.register_api("appendformat", "appendformat(sb,fmt,arg1,arg2,...) api", create_expression_factory::<AppendFormatExp>());
@@ -1620,17 +1810,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("enqueue", "enqueue(queue,v) api", create_expression_factory::<EnqueueExp>());
         self.register_api("dequeue", "dequeue(queue) api", create_expression_factory::<DequeueExp>());
         self.register_api("queueclear", "queueclear(queue) api", create_expression_factory::<QueueClearExp>());
-        self.register_api("setenv", "setenv(k,v) api", create_expression_factory::<SetEnvironmentExp>());
-        self.register_api("getenv", "getenv(k) api", create_expression_factory::<GetEnvironmentExp>());
-        self.register_api("expand", "expand(str) api", create_expression_factory::<ExpandEnvironmentsExp>());
-        self.register_api("envs", "envs() api", create_expression_factory::<EnvironmentsExp>());
-        self.register_api("cd", "cd(path) api", create_expression_factory::<SetCurrentDirectoryExp>());
-        self.register_api("pwd", "pwd() api", create_expression_factory::<GetCurrentDirectoryExp>());
-        self.register_api("cmdline", "cmdline() api", create_expression_factory::<CommandLineExp>());
-        self.register_api("cmdlineargs", "cmdlineargs(prev_arg) or cmdlineargs() api, first return next arg, second return array of arg", create_expression_factory::<CommandLineArgsExp>());
-        self.register_api("os", "os() api", create_expression_factory::<OsExp>());
-        self.register_api("osplatform", "osplatform() api", create_expression_factory::<OsPlatformExp>());
-        self.register_api("osversion", "osversion() api", create_expression_factory::<OsVersionExp>());
+
         self.register_api("getfullpath", "getfullpath(path) api", create_expression_factory::<GetFullPathExp>());
         self.register_api("getpathroot", "getpathroot(path) api", create_expression_factory::<GetPathRootExp>());
         self.register_api("getrandomfilename", "getrandomfilename() api", create_expression_factory::<GetRandomFileNameExp>());
@@ -1645,11 +1825,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("combinepath", "combinepath(path1,path2) api", create_expression_factory::<CombinePathExp>());
         self.register_api("changeextension", "changeextension(path,ext) api", create_expression_factory::<ChangeExtensionExp>());
         self.register_api("quotepath", "quotepath(path[,only_needed,single_quote]) api", create_expression_factory::<QuotePathExp>());
-        self.register_api("debugbreak", "debugbreak() api", create_expression_factory::<DebugBreakExp>());
-        self.register_api("debuglog", "debuglog(fmt,arg1,arg2,...) api", create_expression_factory::<DebugLogExp>());
-        self.register_api("debugwarning", "debugwarning(fmt,arg1,arg2,...) api", create_expression_factory::<DebugWarningExp>());
-        self.register_api("debugerror", "debugerror(fmt,arg1,arg2,...) api", create_expression_factory::<DebugErrorExp>());
-        self.register_api("callstack", "callstack() api", create_expression_factory::<CallStackExp>());
 
         self.register_api("direxist", "direxist(dir) api", create_expression_factory::<DirectoryExistExp>());
         self.register_api("fileexist", "fileexist(file) api", create_expression_factory::<FileExistExp>());
@@ -1675,18 +1850,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("writealllines", "writealllines(file,lines[,encoding]) api", create_expression_factory::<WriteAllLinesExp>());
         self.register_api("readalltext", "readalltext(file[,encoding]) api", create_expression_factory::<ReadAllTextExp>());
         self.register_api("writealltext", "writealltext(file,txt[,encoding]) api", create_expression_factory::<WriteAllTextExp>());
-        self.register_api("process", "process(file,arg_str) or process(file,arg_str){[options;]} api", create_expression_factory::<CommandExp>());
-        self.register_api("command", "command{win{:cmd_str:};unix{:cmd_str:};common{:cmd_str:};[options;]} api", create_expression_factory::<CommandExp>());
-        self.register_api("kill", "kill(name_or_pid) api", create_expression_factory::<KillExp>());
-        self.register_api("killme", "killme([exit_code]) api", create_expression_factory::<KillMeExp>());
-        self.register_api("pid", "pid() api", create_expression_factory::<GetCurrentProcessIdExp>());
-        self.register_api("plist", "plist([filter]) api, return list", create_expression_factory::<ListProcessesExp>());
-        self.register_api("wait", "wait(time) api", create_expression_factory::<WaitExp>());
-        self.register_api("waitall", "waitall([timeout]) api, wait all task to exit", create_expression_factory::<WaitAllExp>());
-        self.register_api("waitstartinterval", "waitstartinterval(time) or waitstartinterval() api, used in Task.Wait for process/command", create_expression_factory::<WaitStartIntervalExp>());
-        self.register_api("cleanupcompletedtasks", "cleanupcompletedtasks() api", create_expression_factory::<CleanupCompletedTasksExp>());
-        self.register_api("gettaskcount", "gettaskcount() api", create_expression_factory::<GetTaskCountExp>());
-        self.register_api("calcmd5", "calcmd5(file) api", create_expression_factory::<CalcMd5Exp>());
         */
     }
     pub fn register_api(&mut self, name: &'a str, doc: &'a str, factory: ExpressionFactoryBox<'a>)
