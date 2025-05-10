@@ -1654,7 +1654,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("bool", "bool(v) api", create_expression_factory::<BoolExp>());
         self.register_api("char", "char(v) api", create_expression_factory::<CharExp>());
         self.register_api("sbyte", "sbyte(v) api", create_expression_factory::<SbyteExp>());
-        self.register_api("byte", "byte(v) api", create_expression_factory::<UbyteExp>());
+        self.register_api("ubyte", "ubyte(v) api", create_expression_factory::<UbyteExp>());
         self.register_api("short", "short(v) api", create_expression_factory::<ShortExp>());
         self.register_api("ushort", "ushort(v) api", create_expression_factory::<UshortExp>());
         self.register_api("int", "int(v) api", create_expression_factory::<IntExp>());
