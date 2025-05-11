@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+use rand::Rng;
 use metadsl::dsl::{
     self, FunctionData, ISyntaxComponent, StatementData, SyntaxComponent, ValueData, ValueOrFunction
 };
@@ -3673,6 +3674,2700 @@ impl<'a> SimpleExpressionBase<'a> for UtodExp<'a>
             return DslCalculatorValue::Double(fv);
         }
         return DslCalculatorValue::Double(0.0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RndIntExp
+{
+
+}
+impl<'a> Default for RndIntExp<'a>
+{
+    fn default() -> Self
+    {
+        RndIntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RndIntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RndIntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RndIntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+			let v1 = operands[0].to_i64();
+			let v2 = operands[1].to_i64();
+            let mut rnd = rand::thread_rng();
+            let v = rnd.gen_range(v1..v2);
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RndFloatExp
+{
+
+}
+impl<'a> Default for RndFloatExp<'a>
+{
+    fn default() -> Self
+    {
+        RndFloatExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RndFloatExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RndFloatExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RndFloatExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+			let v1 = operands[0].to_f64();
+			let v2 = operands[1].to_f64();
+            let mut rnd = rand::thread_rng();
+            let v = rnd.gen_range(v1..v2);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct PowExp
+{
+
+}
+impl<'a> Default for PowExp<'a>
+{
+    fn default() -> Self
+    {
+        PowExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for PowExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for PowExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for PowExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            if opd0.is_integer() && opd1.is_integer() {
+                let v1 = opd0.to_i64();
+                let v2 = opd1.to_u32();
+                let v = v1.pow(v2);
+                return DslCalculatorValue::Long(v);
+            }
+            else {
+                let v1 = opd0.to_f64();
+                let v2 = opd1.to_f64();
+                let v = v1.powf(v2);
+                return DslCalculatorValue::Double(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct SqrtExp
+{
+
+}
+impl<'a> Default for SqrtExp<'a>
+{
+    fn default() -> Self
+    {
+        SqrtExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SqrtExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SqrtExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SqrtExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if opd0.is_integer() {
+                let v1 = opd0.to_i64();
+                let v = v1.isqrt();
+                return DslCalculatorValue::Long(v);
+            }
+            else {
+                let v1 = opd0.to_f64();
+                let v = v1.sqrt();
+                return DslCalculatorValue::Double(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct ExpExp
+{
+
+}
+impl<'a> Default for ExpExp<'a>
+{
+    fn default() -> Self
+    {
+        ExpExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ExpExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ExpExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ExpExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.exp();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Exp2Exp
+{
+
+}
+impl<'a> Default for Exp2Exp<'a>
+{
+    fn default() -> Self
+    {
+        Exp2Exp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Exp2Exp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Exp2Exp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Exp2Exp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.exp2();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct ExpM1Exp
+{
+
+}
+impl<'a> Default for ExpM1Exp<'a>
+{
+    fn default() -> Self
+    {
+        ExpM1Exp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ExpM1Exp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ExpM1Exp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ExpM1Exp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.exp_m1();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct LnExp
+{
+
+}
+impl<'a> Default for LnExp<'a>
+{
+    fn default() -> Self
+    {
+        LnExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LnExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LnExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for LnExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.ln();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Ln1pExp
+{
+
+}
+impl<'a> Default for Ln1pExp<'a>
+{
+    fn default() -> Self
+    {
+        Ln1pExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Ln1pExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Ln1pExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Ln1pExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.ln_1p();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct LogExp
+{
+
+}
+impl<'a> Default for LogExp<'a>
+{
+    fn default() -> Self
+    {
+        LogExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LogExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LogExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for LogExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let v1 = opd0.to_f64();
+            let v2 = opd1.to_f64();
+            let v = v1.log(v2);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Log10Exp
+{
+
+}
+impl<'a> Default for Log10Exp<'a>
+{
+    fn default() -> Self
+    {
+        Log10Exp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Log10Exp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Log10Exp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Log10Exp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.log10();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Log2Exp
+{
+
+}
+impl<'a> Default for Log2Exp<'a>
+{
+    fn default() -> Self
+    {
+        Log2Exp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Log2Exp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Log2Exp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Log2Exp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.log2();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct MaxExp
+{
+
+}
+impl<'a> Default for MaxExp<'a>
+{
+    fn default() -> Self
+    {
+        MaxExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for MaxExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for MaxExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for MaxExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let mut is_integer = true;
+            for opd in operands {
+                if !opd.is_integer() {
+                    is_integer = false;
+                    break;
+                }
+            }
+            if is_integer {
+                let mut v = std::i64::MIN;
+                for opd in operands {
+                    if !opd.is_integer() {
+                        v = opd.to_i64().max(v);
+                    }
+                }
+                return DslCalculatorValue::Long(v);
+            }
+            else {
+                let mut v = std::f64::MIN;
+                for opd in operands {
+                    if !opd.is_integer() {
+                        v = opd.to_f64().max(v);
+                    }
+                }
+                return DslCalculatorValue::Double(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct MinExp
+{
+
+}
+impl<'a> Default for MinExp<'a>
+{
+    fn default() -> Self
+    {
+        MinExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for MinExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for MinExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for MinExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let mut is_integer = true;
+            for opd in operands {
+                if !opd.is_integer() {
+                    is_integer = false;
+                    break;
+                }
+            }
+            if is_integer {
+                let mut v = std::i64::MAX;
+                for opd in operands {
+                    if !opd.is_integer() {
+                        v = opd.to_i64().min(v);
+                    }
+                }
+                return DslCalculatorValue::Long(v);
+            }
+            else {
+                let mut v = std::f64::MAX;
+                for opd in operands {
+                    if !opd.is_integer() {
+                        v = opd.to_f64().min(v);
+                    }
+                }
+                return DslCalculatorValue::Double(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AbsExp
+{
+
+}
+impl<'a> Default for AbsExp<'a>
+{
+    fn default() -> Self
+    {
+        AbsExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AbsExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AbsExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AbsExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if opd0.is_integer() {
+                let v1 = opd0.to_i64();
+                let v = v1.abs();
+                return DslCalculatorValue::Long(v);
+            }
+            else {
+                let v1 = opd0.to_f64();
+                let v = v1.abs();
+                return DslCalculatorValue::Double(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AbsDiffExp
+{
+
+}
+impl<'a> Default for AbsDiffExp<'a>
+{
+    fn default() -> Self
+    {
+        AbsDiffExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AbsDiffExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AbsDiffExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AbsDiffExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            if opd0.is_integer() && opd1.is_integer() {
+                let v1 = opd0.to_i64();
+                let v2 = opd1.to_i64();
+                let v = v1.abs_diff(v2);
+                return DslCalculatorValue::Ulong(v);
+            }
+            else {
+                let v1 = opd0.to_i128();
+                let v2 = opd1.to_i128();
+                let v = v1.abs_diff(v2);
+                return DslCalculatorValue::U128(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct SigNumExp
+{
+
+}
+impl<'a> Default for SigNumExp<'a>
+{
+    fn default() -> Self
+    {
+        SigNumExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SigNumExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SigNumExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SigNumExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if opd0.is_integer() {
+                let v1 = opd0.to_i64();
+                let v = v1.signum();
+                return DslCalculatorValue::Long(v);
+            }
+            else {
+                let v1 = opd0.to_f64();
+                let v = v1.signum();
+                return DslCalculatorValue::Double(v);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct FloorExp
+{
+
+}
+impl<'a> Default for FloorExp<'a>
+{
+    fn default() -> Self
+    {
+        FloorExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for FloorExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for FloorExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for FloorExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.floor();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct CeilingExp
+{
+
+}
+impl<'a> Default for CeilingExp<'a>
+{
+    fn default() -> Self
+    {
+        CeilingExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for CeilingExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for CeilingExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for CeilingExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.ceil();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RoundExp
+{
+
+}
+impl<'a> Default for RoundExp<'a>
+{
+    fn default() -> Self
+    {
+        RoundExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RoundExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RoundExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RoundExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.round();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RoundEvenExp
+{
+
+}
+impl<'a> Default for RoundEvenExp<'a>
+{
+    fn default() -> Self
+    {
+        RoundEvenExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RoundEvenExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RoundEvenExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RoundEvenExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.round_ties_even();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct FloorToIntExp
+{
+
+}
+impl<'a> Default for FloorToIntExp<'a>
+{
+    fn default() -> Self
+    {
+        FloorToIntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for FloorToIntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for FloorToIntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for FloorToIntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.floor() as i64;
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct CeilingToIntExp
+{
+
+}
+impl<'a> Default for CeilingToIntExp<'a>
+{
+    fn default() -> Self
+    {
+        CeilingToIntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for CeilingToIntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for CeilingToIntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for CeilingToIntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.ceil() as i64;
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RoundToIntExp
+{
+
+}
+impl<'a> Default for RoundToIntExp<'a>
+{
+    fn default() -> Self
+    {
+        RoundToIntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RoundToIntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RoundToIntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RoundToIntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.round() as i64;
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct RoundEvenToIntExp
+{
+
+}
+impl<'a> Default for RoundEvenToIntExp<'a>
+{
+    fn default() -> Self
+    {
+        RoundEvenToIntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for RoundEvenToIntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for RoundEvenToIntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for RoundEvenToIntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.round_ties_even() as i64;
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct SinExp
+{
+
+}
+impl<'a> Default for SinExp<'a>
+{
+    fn default() -> Self
+    {
+        SinExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SinExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SinExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SinExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.sin();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct CosExp
+{
+
+}
+impl<'a> Default for CosExp<'a>
+{
+    fn default() -> Self
+    {
+        CosExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for CosExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for CosExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for CosExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.cos();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct TanExp
+{
+
+}
+impl<'a> Default for TanExp<'a>
+{
+    fn default() -> Self
+    {
+        TanExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for TanExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for TanExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for TanExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.tan();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AsinExp
+{
+
+}
+impl<'a> Default for AsinExp<'a>
+{
+    fn default() -> Self
+    {
+        AsinExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AsinExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AsinExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AsinExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.asin();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AcosExp
+{
+
+}
+impl<'a> Default for AcosExp<'a>
+{
+    fn default() -> Self
+    {
+        AcosExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AcosExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AcosExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AcosExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.acos();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AtanExp
+{
+
+}
+impl<'a> Default for AtanExp<'a>
+{
+    fn default() -> Self
+    {
+        AtanExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AtanExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AtanExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AtanExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.atan();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Atan2Exp
+{
+
+}
+impl<'a> Default for Atan2Exp<'a>
+{
+    fn default() -> Self
+    {
+        Atan2Exp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Atan2Exp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Atan2Exp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Atan2Exp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let v1 = opd0.to_f64();
+            let v2 = opd1.to_f64();
+            let v = v1.atan2(v2);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct SinhExp
+{
+
+}
+impl<'a> Default for SinhExp<'a>
+{
+    fn default() -> Self
+    {
+        SinhExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SinhExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SinhExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SinhExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.sinh();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct CoshExp
+{
+
+}
+impl<'a> Default for CoshExp<'a>
+{
+    fn default() -> Self
+    {
+        CoshExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for CoshExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for CoshExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for CoshExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.cosh();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct TanhExp
+{
+
+}
+impl<'a> Default for TanhExp<'a>
+{
+    fn default() -> Self
+    {
+        TanhExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for TanhExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for TanhExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for TanhExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.tanh();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AsinhExp
+{
+
+}
+impl<'a> Default for AsinhExp<'a>
+{
+    fn default() -> Self
+    {
+        AsinhExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AsinhExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AsinhExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AsinhExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.asinh();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AcoshExp
+{
+
+}
+impl<'a> Default for AcoshExp<'a>
+{
+    fn default() -> Self
+    {
+        AcoshExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AcoshExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AcoshExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AcoshExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.acosh();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct AtanhExp
+{
+
+}
+impl<'a> Default for AtanhExp<'a>
+{
+    fn default() -> Self
+    {
+        AtanhExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for AtanhExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for AtanhExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for AtanhExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.atanh();
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct ClampExp
+{
+
+}
+impl<'a> Default for ClampExp<'a>
+{
+    fn default() -> Self
+    {
+        ClampExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ClampExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ClampExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ClampExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let v1 = opd0.to_f64();
+            let v2 = opd1.to_f64();
+            let v3 = opd2.to_f64();
+            let v = v1.clamp(v2, v3);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Clamp01Exp
+{
+
+}
+impl<'a> Default for Clamp01Exp<'a>
+{
+    fn default() -> Self
+    {
+        Clamp01Exp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Clamp01Exp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Clamp01Exp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Clamp01Exp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.clamp(0.0, 1.0);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct LerpExp
+{
+
+}
+impl<'a> Default for LerpExp<'a>
+{
+    fn default() -> Self
+    {
+        LerpExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LerpExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LerpExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for LerpExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let a = opd0.to_f64();
+            let b = opd1.to_f64();
+            let t = opd2.to_f64();
+            let v = a + (b - a) * t.clamp(0.0, 1.0);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct LerpUnclampedExp
+{
+
+}
+impl<'a> Default for LerpUnclampedExp<'a>
+{
+    fn default() -> Self
+    {
+        LerpUnclampedExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LerpUnclampedExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LerpUnclampedExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for LerpUnclampedExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let a = opd0.to_f64();
+            let b = opd1.to_f64();
+            let t = opd2.to_f64();
+            let v = a + (b - a) * t;
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct LerpAngleExp
+{
+
+}
+impl<'a> Default for LerpAngleExp<'a>
+{
+    fn default() -> Self
+    {
+        LerpAngleExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for LerpAngleExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for LerpAngleExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for LerpAngleExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let a = opd0.to_f64();
+            let b = opd1.to_f64();
+            let t = opd2.to_f64();
+            let mut num = Self::repeat(b - a, 360.0);
+            if num > 180.0 {
+                num -= 360.0;
+            }
+            let v = a + num * t.clamp(0.0, 1.0);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> LerpAngleExp<'a>
+{
+    pub fn repeat(t: f64, length: f64) -> f64
+    {
+        return (t - (t / length).floor() * length).clamp(0.0, length);
+    }
+}
+#[add_abstract_and_simple_expression_fields]
+struct SmoothStepExp
+{
+
+}
+impl<'a> Default for SmoothStepExp<'a>
+{
+    fn default() -> Self
+    {
+        SmoothStepExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SmoothStepExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SmoothStepExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SmoothStepExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let from = opd0.to_f64();
+            let to = opd1.to_f64();
+            let mut t = opd2.to_f64();
+            t = t.clamp(0.0, 1.0);
+            t = -2.0 * t * t * t + 3.0 * t * t;
+            let v = to * t + from * (1.0 - t);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct ApproximatelyExp
+{
+
+}
+impl<'a> Default for ApproximatelyExp<'a>
+{
+    fn default() -> Self
+    {
+        ApproximatelyExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ApproximatelyExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ApproximatelyExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ApproximatelyExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let a = opd0.to_f64();
+            let b = opd1.to_f64();
+            let v = Self::approximately(a, b);
+            return DslCalculatorValue::Bool(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> ApproximatelyExp<'a>
+{
+    pub fn approximately(a: f64, b: f64) -> bool
+    {
+        return (b - a).abs() < (1E-06 * a.abs().max(b.abs())).max(std::f64::EPSILON * 8.0);
+    }
+}
+#[add_abstract_and_simple_expression_fields]
+struct IsPowerOfTwoExp
+{
+
+}
+impl<'a> Default for IsPowerOfTwoExp<'a>
+{
+    fn default() -> Self
+    {
+        IsPowerOfTwoExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for IsPowerOfTwoExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for IsPowerOfTwoExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for IsPowerOfTwoExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_i64();
+            let v = Self::is_power_of_two(v1);
+            return DslCalculatorValue::Bool(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> IsPowerOfTwoExp<'a>
+{
+    pub fn is_power_of_two(iv: i64) -> bool
+    {
+        let v = iv as f64;
+        let n = v.log2().round() as u32;
+        return 2_i64.pow(n) == iv;
+    }
+}
+#[add_abstract_and_simple_expression_fields]
+struct ClosestPowerOfTwoExp
+{
+
+}
+impl<'a> Default for ClosestPowerOfTwoExp<'a>
+{
+    fn default() -> Self
+    {
+        ClosestPowerOfTwoExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ClosestPowerOfTwoExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ClosestPowerOfTwoExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ClosestPowerOfTwoExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_i64();
+            let v = Self::closest_power_of_two(v1);
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> ClosestPowerOfTwoExp<'a>
+{
+    pub fn closest_power_of_two(iv: i64) -> i64
+    {
+        let v = iv as f64;
+        let n = v.log2().round() as u32;
+        return 2_i64.pow(n);
+    }
+}
+#[add_abstract_and_simple_expression_fields]
+struct NextPowerOfTwoExp
+{
+
+}
+impl<'a> Default for NextPowerOfTwoExp<'a>
+{
+    fn default() -> Self
+    {
+        NextPowerOfTwoExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for NextPowerOfTwoExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for NextPowerOfTwoExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for NextPowerOfTwoExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_i64();
+            let v = Self::next_power_of_two(v1);
+            return DslCalculatorValue::Long(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> NextPowerOfTwoExp<'a>
+{
+    pub fn next_power_of_two(iv: i64) -> i64
+    {
+        let v = iv as f64;
+        let n = v.log2().ceil() as u32;
+        return 2_i64.pow(n);
+    }
+}
+#[add_abstract_and_simple_expression_fields]
+struct DistExp
+{
+
+}
+impl<'a> Default for DistExp<'a>
+{
+    fn default() -> Self
+    {
+        DistExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for DistExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for DistExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for DistExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let v1 = opd0.to_f64();
+            let v2 = opd1.to_f64();
+            let v3 = opd2.to_f64();
+            let v = v1.clamp(v2, v3);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct DistSqrExp
+{
+
+}
+impl<'a> Default for DistSqrExp<'a>
+{
+    fn default() -> Self
+    {
+        DistSqrExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for DistSqrExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for DistSqrExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for DistSqrExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 4 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            let opd3 = &operands[3];
+            let x1 = opd0.to_f64();
+            let y1 = opd1.to_f64();
+            let x2 = opd2.to_f64();
+            let y2 = opd3.to_f64();
+            let v = (x1-x2).powi(2) + (y1-y2).powi(2);
+            return DslCalculatorValue::Double(v);
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct IsEmptyExp
+{
+
+}
+impl<'a> Default for IsEmptyExp<'a>
+{
+    fn default() -> Self
+    {
+        IsEmptyExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for IsEmptyExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for IsEmptyExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for IsEmptyExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                let v = v1.len() == 0;
+                return DslCalculatorValue::Bool(v);
+            }
+        }
+        return DslCalculatorValue::Bool(true);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Str2IntExp
+{
+
+}
+impl<'a> Default for Str2IntExp<'a>
+{
+    fn default() -> Self
+    {
+        Str2IntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Str2IntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Str2IntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Str2IntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                if let Result::Ok(v) = v1.parse::<i32>() {
+                    return DslCalculatorValue::Int(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Int(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Str2UintExp
+{
+
+}
+impl<'a> Default for Str2UintExp<'a>
+{
+    fn default() -> Self
+    {
+        Str2UintExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Str2UintExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Str2UintExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Str2UintExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                if let Result::Ok(v) = v1.parse::<u32>() {
+                    return DslCalculatorValue::Uint(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Uint(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Str2LongExp
+{
+
+}
+impl<'a> Default for Str2LongExp<'a>
+{
+    fn default() -> Self
+    {
+        Str2LongExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Str2LongExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Str2LongExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Str2LongExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                if let Result::Ok(v) = v1.parse::<i64>() {
+                    return DslCalculatorValue::Long(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Long(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Str2UlongExp
+{
+
+}
+impl<'a> Default for Str2UlongExp<'a>
+{
+    fn default() -> Self
+    {
+        Str2UlongExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Str2UlongExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Str2UlongExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Str2UlongExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                if let Result::Ok(v) = v1.parse::<u64>() {
+                    return DslCalculatorValue::Ulong(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Ulong(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Str2FloatExp
+{
+
+}
+impl<'a> Default for Str2FloatExp<'a>
+{
+    fn default() -> Self
+    {
+        Str2FloatExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Str2FloatExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Str2FloatExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Str2FloatExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                if let Result::Ok(v) = v1.parse::<f32>() {
+                    return DslCalculatorValue::Float(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Float(0.0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Str2DoubleExp
+{
+
+}
+impl<'a> Default for Str2DoubleExp<'a>
+{
+    fn default() -> Self
+    {
+        Str2DoubleExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Str2DoubleExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Str2DoubleExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Str2DoubleExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                if let Result::Ok(v) = v1.parse::<f64>() {
+                    return DslCalculatorValue::Double(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Double(0.0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Hex2IntExp
+{
+
+}
+impl<'a> Default for Hex2IntExp<'a>
+{
+    fn default() -> Self
+    {
+        Hex2IntExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Hex2IntExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Hex2IntExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Hex2IntExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                let hex_str = v1.trim_start_matches("0x");
+                if let Result::Ok(v) = i32::from_str_radix(hex_str, 16) {
+                    return DslCalculatorValue::Int(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Int(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Hex2UintExp
+{
+
+}
+impl<'a> Default for Hex2UintExp<'a>
+{
+    fn default() -> Self
+    {
+        Hex2UintExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Hex2UintExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Hex2UintExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Hex2UintExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                let hex_str = v1.trim_start_matches("0x");
+                if let Result::Ok(v) = u32::from_str_radix(hex_str, 16) {
+                    return DslCalculatorValue::Uint(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Uint(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Hex2LongExp
+{
+
+}
+impl<'a> Default for Hex2LongExp<'a>
+{
+    fn default() -> Self
+    {
+        Hex2LongExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Hex2LongExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Hex2LongExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Hex2LongExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                let hex_str = v1.trim_start_matches("0x");
+                if let Result::Ok(v) = i64::from_str_radix(hex_str, 16) {
+                    return DslCalculatorValue::Long(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Long(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct Hex2UlongExp
+{
+
+}
+impl<'a> Default for Hex2UlongExp<'a>
+{
+    fn default() -> Self
+    {
+        Hex2UlongExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for Hex2UlongExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for Hex2UlongExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for Hex2UlongExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(v1) = opd0 {
+                let hex_str = v1.trim_start_matches("0x");
+                if let Result::Ok(v) = u64::from_str_radix(hex_str, 16) {
+                    return DslCalculatorValue::Ulong(v);
+                }
+            }
+        }
+        return DslCalculatorValue::Ulong(0);
     }
 
     impl_simple_expression!();
