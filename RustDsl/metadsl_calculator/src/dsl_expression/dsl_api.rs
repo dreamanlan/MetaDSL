@@ -6372,3 +6372,92 @@ impl<'a> SimpleExpressionBase<'a> for Hex2UlongExp<'a>
 
     impl_simple_expression!();
 }
+
+#[add_abstract_and_simple_expression_fields]
+struct StrConcatExp
+{
+
+}
+impl<'a> Default for StrConcatExp<'a>
+{
+    fn default() -> Self
+    {
+        StrConcatExp {
+            m_exps: Vec::new(),
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StrConcatExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StrConcatExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StrConcatExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        let mut sb = String::new();
+        for oper in operands.iter()
+        {
+            match oper {
+                DslCalculatorValue::Sbyte(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Ubyte(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Short(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Ushort(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Int(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Uint(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Long(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Ulong(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::I128(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::U128(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Float(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::Double(val) => {
+                    sb.extend(format!("{}", val).chars());
+                },
+                DslCalculatorValue::String(val) => {
+                    sb.extend(format!("{}", val).chars());
+                }
+                DslCalculatorValue::Bool(val) => {
+                    sb.extend(format!("{}", val).chars());
+                }
+                DslCalculatorValue::Char(val) => {
+                    sb.extend(format!("{}", val).chars());
+                }
+                _ => {
+                }
+            };
+        }
+        return DslCalculatorValue::String(sb);
+    }
+
+    impl_simple_expression!();
+}

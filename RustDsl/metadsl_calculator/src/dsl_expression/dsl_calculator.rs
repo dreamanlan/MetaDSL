@@ -1751,6 +1751,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("hex2uint", "hex2uint(str) api", create_expression_factory::<Hex2UintExp>());
         self.register_api("hex2long", "hex2long(str) api", create_expression_factory::<Hex2LongExp>());
         self.register_api("hex2ulong", "hex2ulong(str) api", create_expression_factory::<Hex2UlongExp>());
+        self.register_api("strconcat", "strconcat(arg1,arg2,...) api", create_expression_factory::<StrConcatExp>());
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
@@ -1763,11 +1764,11 @@ impl<'a> DslCalculator<'a>
         self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
         self.register_api("objectload", "objectload(dll_path) api", create_expression_factory::<DotnetLoadExp>());
         self.register_api("objectnew", "objectnew(assembly,type_name,arg1,arg2,...) api", create_expression_factory::<DotnetNewExp>());
+
         self.register_api("substring", "substring(str[,start,len]) function", create_expression_factory::<SubstringExp>());
-        self.register_api("newstringbuilder", "newstringbuilder() api", create_expression_factory::<NewStringBuilderExp>());
-        self.register_api("appendformat", "appendformat(sb,fmt,arg1,arg2,...) api", create_expression_factory::<AppendFormatExp>());
-        self.register_api("appendformatline", "appendformatline(sb,fmt,arg1,arg2,...) api", create_expression_factory::<AppendFormatLineExp>());
-        self.register_api("stringbuilder_tostring", "stringbuilder_tostring(sb)", create_expression_factory::<StringBuilderToStringExp>());
+        self.register_api("newstring", "newstring() api", create_expression_factory::<NewStringExp>());
+        self.register_api("stringappend", "stringappend(sb,fmt,arg1,arg2,...) api", create_expression_factory::<StringAppendExp>());
+        self.register_api("stringappendline", "stringappendline(sb,fmt,arg1,arg2,...) api", create_expression_factory::<StringAppendLineExp>());
         self.register_api("stringjoin", "stringjoin(sep,list) api", create_expression_factory::<StringJoinExp>());
         self.register_api("stringsplit", "stringsplit(str,sep_list) api", create_expression_factory::<StringSplitExp>());
         self.register_api("stringtrim", "stringtrim(str) api", create_expression_factory::<StringTrimExp>());
