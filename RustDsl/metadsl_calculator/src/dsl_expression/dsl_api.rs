@@ -1298,27 +1298,22 @@ impl<'a> AbstractExpression<'a> for WhileExp<'a>
             loop {
                 if let Some(cond) = &mut clause.borrow_mut().condition {
                     let cond_val = cond.calc();
-                    if cond_val.to_i64() != 0 {
-                        let ct = clause.borrow_mut().expressions.len();
-                        let mut exp_ix = 0;
-                        while exp_ix < ct {
-                            let exp = &mut clause.borrow_mut().expressions[exp_ix];
-                            v = exp.calc();
-                            if self.need_continue() {
-                                break;
-                            }
-                            else if self.need_return() {
-                                return v;
-                            }
-                            exp_ix += 1;
-                        }
-                    }
-                    else{
+                    if cond_val.to_i64() == 0 {
                         break;
                     }
                 }
-                else{
-                    break;
+                let ct = clause.borrow_mut().expressions.len();
+                let mut exp_ix = 0;
+                while exp_ix < ct {
+                    let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                    v = exp.calc();
+                    if self.need_continue() {
+                        break;
+                    }
+                    else if self.need_return() {
+                        return v;
+                    }
+                    exp_ix += 1;
                 }
             }
         }
@@ -1444,27 +1439,28 @@ impl<'a> AbstractExpression<'a> for LoopExp<'a>
     {
         let mut v = DslCalculatorValue::Null;
         if let Some(clause) = &self.m_clause {
+            let mut loop_ct = 0;
             if let Some(cond) = &mut clause.borrow_mut().condition {
                 let cond_val = cond.calc();
-                let loop_ct = cond_val.to_i64();
-                let mut loop_ix = 0;
-                while loop_ix < loop_ct {
-                    self.calculator().borrow_mut().set_variable(&"$$", DslCalculatorValue::Long(loop_ix));
-                    let ct = clause.borrow_mut().expressions.len();
-                    let mut exp_ix = 0;
-                    while exp_ix < ct {
-                        let exp = &mut clause.borrow_mut().expressions[exp_ix];
-                        v = exp.calc();
-                        if self.need_continue() {
-                            break;
-                        }
-                        else if self.need_return() {
-                            return v;
-                        }
-                        exp_ix += 1;
+                loop_ct = cond_val.to_i64();
+            }
+            let mut loop_ix = 0;
+            while loop_ix < loop_ct {
+                self.calculator().borrow_mut().set_variable(&"$$", DslCalculatorValue::Long(loop_ix));
+                let ct = clause.borrow_mut().expressions.len();
+                let mut exp_ix = 0;
+                while exp_ix < ct {
+                    let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                    v = exp.calc();
+                    if self.need_continue() {
+                        break;
                     }
-                    loop_ix += 1;
+                    else if self.need_return() {
+                        return v;
+                    }
+                    exp_ix += 1;
                 }
+                loop_ix += 1;
             }
         }
         return v;
@@ -1589,24 +1585,25 @@ impl<'a> AbstractExpression<'a> for LoopListExp<'a>
     {
         let mut v = DslCalculatorValue::Null;
         if let Some(clause) = &self.m_clause {
+            let mut cond_val = DslCalculatorValue::Null;
             if let Some(cond) = &mut clause.borrow_mut().condition {
-                let cond_val = cond.calc();
-                if let DslCalculatorValue::Array(vec) = cond_val {
-                    for iter_v in vec.iter() {
-                        self.calculator().borrow_mut().set_variable(&"$$", iter_v.clone());
-                        let ct = clause.borrow_mut().expressions.len();
-                        let mut exp_ix = 0;
-                        while exp_ix < ct {
-                            let exp = &mut clause.borrow_mut().expressions[exp_ix];
-                            v = exp.calc();
-                            if self.need_continue() {
-                                break;
-                            }
-                            else if self.need_return() {
-                                return v;
-                            }
-                            exp_ix += 1;
+                cond_val = cond.calc();
+            }
+            if let DslCalculatorValue::Array(vec) = cond_val {
+                for iter_v in vec.iter() {
+                    self.calculator().borrow_mut().set_variable(&"$$", iter_v.clone());
+                    let ct = clause.borrow_mut().expressions.len();
+                    let mut exp_ix = 0;
+                    while exp_ix < ct {
+                        let exp = &mut clause.borrow_mut().expressions[exp_ix];
+                        v = exp.calc();
+                        if self.need_continue() {
+                            break;
                         }
+                        else if self.need_return() {
+                            return v;
+                        }
+                        exp_ix += 1;
                     }
                 }
             }
@@ -1748,8 +1745,12 @@ impl<'a> AbstractExpression<'a> for ForeachExp<'a>
     {
         let mut v = DslCalculatorValue::Null;
         if let Some(clause) = &self.m_clause {
-            for iter_exp in &mut clause.borrow_mut().list {
-                let iter_v = iter_exp.calc();
+            let val_ct = clause.borrow().list.len();
+            for val_ix in 0..val_ct {
+                let mut iter_v = DslCalculatorValue::Null;
+                if let Some(iter_exp) = clause.borrow_mut().list.get_mut(val_ix) {
+                    iter_v = iter_exp.calc();
+                }
                 self.calculator().borrow_mut().set_variable(&"$$", iter_v);
                 let ct = clause.borrow_mut().expressions.len();
                 let mut exp_ix = 0;

@@ -2023,8 +2023,11 @@ impl<'a> DslCalculator<'a>
                 }
             }
         }
-        let mut ix = std::i32::MAX;
-        if self.m_named_global_variable_indexes.get(name).is_none() {
+        let ix;
+        if let Some(v) = self.m_named_global_variable_indexes.get(name) {
+            ix = *v;
+        }
+        else {
             ix = self.m_named_global_variable_indexes.len() as i32;
             self.m_named_global_variable_indexes.insert(String::from(name), ix);
             self.m_global_variables.push(DslCalculatorValue::Null);
@@ -2036,7 +2039,10 @@ impl<'a> DslCalculator<'a>
         let mut ix = std::i32::MAX;
         if let Some(func_info) = self.func_info() {
             let local_var_indexes = &func_info.local_var_indexes;
-            if local_var_indexes.borrow().get(name).is_none() {
+            if let Some(v) = local_var_indexes.borrow().get(name) {
+                ix = *v;
+            }
+            else {
                 ix = local_var_indexes.borrow().len() as i32;
                 local_var_indexes.borrow_mut().insert(String::from(name), ix);
                 if let Some(vars) = self.local_variables_mut() {
