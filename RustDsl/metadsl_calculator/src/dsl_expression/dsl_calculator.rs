@@ -1752,6 +1752,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("hex2uint", "hex2uint(str) api", create_expression_factory::<Hex2UintExp>());
         self.register_api("hex2long", "hex2long(str) api", create_expression_factory::<Hex2LongExp>());
         self.register_api("hex2ulong", "hex2ulong(str) api", create_expression_factory::<Hex2UlongExp>());
+        self.register_api("tohex", "tohex(num[,bool_upper_case]) api", create_expression_factory::<ToHexExp>());
         self.register_api("strconcat", "strconcat(arg1,arg2,...) api", create_expression_factory::<StrConcatExp>());
         self.register_api("substring", "substring(str,start[,len]) function", create_expression_factory::<SubStringExp>());
         self.register_api("stringappend", "stringappend(sb,arg1,arg2,...) api", create_expression_factory::<StringAppendExp>());

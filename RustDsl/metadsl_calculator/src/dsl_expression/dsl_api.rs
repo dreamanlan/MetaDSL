@@ -3295,7 +3295,7 @@ impl<'a> SimpleExpressionBase<'a> for ToStringExp<'a>
         if operands.len() >= 1 {
             return DslCalculatorValue::String(operands[0].to_string());
         }
-        return DslCalculatorValue::String(String::new());
+        return DslCalculatorValue::Null;
     }
 
     impl_simple_expression!();
@@ -6368,6 +6368,140 @@ impl<'a> SimpleExpressionBase<'a> for Hex2UlongExp<'a>
             }
         }
         return DslCalculatorValue::Ulong(0);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct ToHexExp
+{
+
+}
+impl<'a> Default for ToHexExp<'a>
+{
+    fn default() -> Self
+    {
+        ToHexExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ToHexExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ToHexExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for ToHexExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let mut upper_case = false;
+            if operands.len() >= 2 {
+                upper_case = operands[1].to_bool();
+            }
+            let s = match opd0 {
+                DslCalculatorValue::Sbyte(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Ubyte(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Short(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Ushort(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Int(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Uint(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Long(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::Ulong(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::I128(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                DslCalculatorValue::U128(v1) => {
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+                _ => {
+                    let v1 = opd0.to_i64();
+                    if upper_case {
+                        format!("{:X}", v1)
+                    }
+                    else {
+                        format!("{:x}", v1)
+                    }
+                }
+            };
+            return DslCalculatorValue::String(s);
+        }
+        return DslCalculatorValue::Null;
     }
 
     impl_simple_expression!();
