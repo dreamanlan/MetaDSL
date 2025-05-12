@@ -2450,7 +2450,8 @@ impl<'a> DslCalculator<'a>
         let id_type = value_data.get_id_type();
         if id_type == dsl::ID_TOKEN {
             let id = value_data.get_id();
-            if let Some(mut p) = cell.borrow().create_api(id) {
+            let api = cell.borrow().create_api(id);
+            if let Some(mut p) = api {
                 //Convert a parameterless name into a parameterless function call.
                 let mut fd = FunctionData::new();
                 if let Some(name) = fd.name_mut() {
@@ -2711,7 +2712,8 @@ impl<'a> DslCalculator<'a>
     }
     pub fn load_statement_syntax(cell: &Rc<DslCalculatorCell<'a>>, statement_data: &StatementData) -> Option<ExpressionBox<'a>>
     {
-        if let Some(mut ret) = cell.borrow_mut().create_api(statement_data.get_id()) {
+        let api = cell.borrow().create_api(statement_data.get_id());
+        if let Some(mut ret) = api {
             //Convert command line syntax into function call syntax.
             if let Some(fd) = DslSyntaxTransformer::try_transform_command_line_like_syntax(statement_data) {
                 if ret.load_function_syntax(fd, cell.clone()) {

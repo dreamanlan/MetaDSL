@@ -87,6 +87,13 @@ fn main() {
                     echo("while:",$ix,"<",$ct,'\n');
                     $ix = $ix + 1;
                 };
+                $a=$ix;
+                $b=$ct;
+                if($a<$b){
+                    echo($a,"<",$b,"=>yes",'\n');
+                }else{
+                    echo($a,"<",$b,"=>no",'\n');
+                };
             };
         "#;
         dsl_file.load_from_string(String::from(content), &log_callback);
