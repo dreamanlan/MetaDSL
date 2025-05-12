@@ -67,7 +67,7 @@ fn main() {
         calculator.borrow_mut().on_log = Some(&log_callback);
         calculator.borrow_mut().init();
         let mut dsl_file = DslFile::new();
-        let content = "script(main){echo('1+2*3=',1+2*3,'\n');};";
+        let content = "script(main){@a=456;$b=789;echo('1+2*3=',1+2*3,' a:',@a,' b:',$b,'\n');};";
         dsl_file.load_from_string(String::from(content), &log_callback);
         if let Some(info) = dsl_file.dsl_infos().last() {
             DslCalculator::load_dsl_info(&calculator, info);

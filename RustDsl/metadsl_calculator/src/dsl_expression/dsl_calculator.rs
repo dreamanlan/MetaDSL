@@ -26,7 +26,6 @@ pub type ExpressionFactory<'a> = dyn Fn() -> ExpressionBox<'a> + 'a;
 pub type ExpressionFactoryBox<'a> = Box<ExpressionFactory<'a>>;
 
 pub type ExpressionBox<'a> = Box<dyn IExpression<'a> + 'a>;
-pub type FuncInfoCell<'a> = RefCell<FuncInfo<'a>>;
 pub type DslCalculatorCell<'a> = RefCell<DslCalculator<'a>>;
 
 pub type GetVariableDelegation<'a> = dyn Fn(&str) -> Option<&'a DslCalculatorValue>;
@@ -931,7 +930,7 @@ impl<'a> Default for GlobalVarSet<'a>
         GlobalVarSet {
             m_var_id: None,
             m_op: None,
-            m_var_ix: 0,
+            m_var_ix: std::i32::MAX,
 
             m_calculator: None,
             m_dsl: None,
@@ -1001,7 +1000,7 @@ impl<'a> Default for GlobalVarGet<'a>
     {
         GlobalVarGet {
             m_var_id: None,
-            m_var_ix: 0,
+            m_var_ix: std::i32::MAX,
 
             m_calculator: None,
             m_dsl: None,
@@ -1083,7 +1082,7 @@ impl<'a> Default for LocalVarSet<'a>
         LocalVarSet {
             m_var_id: None,
             m_op: None,
-            m_var_ix: 0,
+            m_var_ix: std::i32::MAX,
 
             m_calculator: None,
             m_dsl: None,
@@ -1153,7 +1152,7 @@ impl<'a> Default for LocalVarGet<'a>
     {
         LocalVarGet {
             m_var_id: None,
-            m_var_ix: 0,
+            m_var_ix: std::i32::MAX,
 
             m_calculator: None,
             m_dsl: None,
@@ -1516,22 +1515,22 @@ pub enum RunStateEnum
 }
 pub struct FuncInfo<'a>
 {
-    pub local_var_indexes: HashMap<String, i32>,
-    pub codes: Vec<ExpressionBox<'a>>,
+    pub local_var_indexes: RefCell<HashMap<String, i32>>,
+    pub codes: RefCell<Vec<ExpressionBox<'a>>>,
 }
 impl<'a> FuncInfo<'a>
 {
-    pub fn clear(&mut self)
+    pub fn clear(&self)
     {
-        self.local_var_indexes.clear();
-        self.codes.clear();
+        self.local_var_indexes.borrow_mut().clear();
+        self.codes.borrow_mut().clear();
     }
-    pub fn add_arg_name_index(&mut self, arg_name: &str)
+    pub fn add_arg_name_index(&self, arg_name: &str)
     {
-        let ix = self.local_var_indexes.len() as i32;
-        self.local_var_indexes.insert(String::from(arg_name), -1 - ix);
+        let ix = self.local_var_indexes.borrow().len() as i32;
+        self.local_var_indexes.borrow_mut().insert(String::from(arg_name), -1 - ix);
     }
-    pub fn build_arg_name_indexes(&mut self, arg_names: &'a Vec<String>)
+    pub fn build_arg_name_indexes(&self, arg_names: &'a Vec<String>)
     {
         let mut ix = 0;
         while ix < arg_names.len() {
@@ -1542,8 +1541,8 @@ impl<'a> FuncInfo<'a>
     pub fn new() -> Self
     {
         Self {
-            local_var_indexes: HashMap::new(),
-            codes: Vec::new(),
+            local_var_indexes: RefCell::new(HashMap::new()),
+            codes: RefCell::new(Vec::new()),
         }
     }
 }
@@ -1566,10 +1565,10 @@ impl Default for StackInfo
 }
 impl<'a> StackInfo
 {
-    pub fn init(&mut self, func_name: &str, func_info: &FuncInfoCell<'a>)
+    pub fn init(&mut self, func_name: &str, func_info: &FuncInfo<'a>)
     {
         self.func_name = Some(String::from(func_name));
-        let len = func_info.borrow().local_var_indexes.len();
+        let len = func_info.local_var_indexes.borrow().len();
         let mut ix = 0;
         while ix < len {
             self.local_vars.push(DslCalculatorValue::Null);
@@ -1594,7 +1593,7 @@ pub struct DslCalculator<'a>
 
     m_inited: bool,
     m_run_state: RunStateEnum,
-    m_funcs: HashMap<String, Rc<FuncInfoCell<'a>>>,
+    m_funcs: HashMap<String, Rc<FuncInfo<'a>>>,
     m_stack: VecDeque<StackInfo>,
     m_named_global_variable_indexes: HashMap<String, i32>,
     m_global_variables: Vec<DslCalculatorValue>,
@@ -2035,9 +2034,10 @@ impl<'a> DslCalculator<'a>
     {
         let mut ix = std::i32::MAX;
         if let Some(func_info) = self.func_info() {
-            if func_info.borrow().local_var_indexes.get(name).is_none() {
-                ix = func_info.borrow().local_var_indexes.len() as i32;
-                func_info.borrow_mut().local_var_indexes.insert(String::from(name), ix);
+            let local_var_indexes = &func_info.local_var_indexes;
+            if local_var_indexes.borrow().get(name).is_none() {
+                ix = local_var_indexes.borrow().len() as i32;
+                local_var_indexes.borrow_mut().insert(String::from(name), ix);
                 if let Some(vars) = self.local_variables_mut() {
                     vars.push(DslCalculatorValue::Null);
                 }
@@ -2057,7 +2057,7 @@ impl<'a> DslCalculator<'a>
     {
         let mut ix = std::i32::MAX;
         if let Some(func_info) = self.func_info() {
-            if let Some(i) = func_info.borrow().local_var_indexes.get(name) {
+            if let Some(i) = func_info.local_var_indexes.borrow().get(name) {
                 ix = *i;
             }
         }
@@ -2185,7 +2185,7 @@ impl<'a> DslCalculator<'a>
     fn get_local_variable(&self, v: &str) -> Option<&DslCalculatorValue>
     {
         if let Some(func_info) = self.func_info() {
-            if let Some(index) = func_info.borrow().local_var_indexes.get(v) {
+            if let Some(index) = func_info.local_var_indexes.borrow().get(v) {
                 if let Some(val) = self.get_local_varaible_by_index(*index) {
                     return Some(val);
                 }
@@ -2197,12 +2197,12 @@ impl<'a> DslCalculator<'a>
     {
         let mut index = std::i32::MAX;
         if let Some(func_info) = self.func_info() {
-            if let Some(ix) = func_info.borrow().local_var_indexes.get(v) {
+            if let Some(ix) = func_info.local_var_indexes.borrow().get(v) {
                 index = *ix;
             }
             else {
-                let ix = func_info.borrow().local_var_indexes.len() as i32;
-                func_info.borrow_mut().local_var_indexes.insert(String::from(v), ix);
+                let ix = func_info.local_var_indexes.borrow().len() as i32;
+                func_info.local_var_indexes.borrow_mut().insert(String::from(v), ix);
             }
         }
         else {
@@ -2217,7 +2217,7 @@ impl<'a> DslCalculator<'a>
             self.set_local_varaible_by_index(index, val);
         }
     }
-    fn func_info(&self) -> Option<&Rc<FuncInfoCell<'a>>>
+    fn func_info(&self) -> Option<&Rc<FuncInfo<'a>>>
     {
         if let Some(stack_info) = self.m_stack.back() {
             if let Some(fname) = &stack_info.func_name {
@@ -2273,7 +2273,7 @@ impl<'a> DslCalculator<'a>
         let mut is_valid = false;
         let mut id: &str = "";
         let mut func: Option<&FunctionData> = None;
-        let mut func_info: FuncInfo<'a> = FuncInfo::new();
+        let func_info: FuncInfo<'a> = FuncInfo::new();
         match info {
             SyntaxComponent::Function(f) => {
                 if f.is_high_order() {
@@ -2322,13 +2322,13 @@ impl<'a> DslCalculator<'a>
             if let Some(ps) = f.params() {
                 for comp in ps.iter() {
                     if let Some(exp) = Self::load_syntax_component(cell, comp) {
-                        func_info.codes.push(exp);
+                        func_info.codes.borrow_mut().push(exp);
                     }
                 }
             }
         }
         cell.borrow_mut().m_funcs.remove(id);
-        cell.borrow_mut().m_funcs.insert(String::from(id), Rc::new(RefCell::new(func_info)));
+        cell.borrow_mut().m_funcs.insert(String::from(id), Rc::new(func_info));
     }
     pub fn load_dsl_func(cell: &Rc<DslCalculatorCell<'a>>, func: &str, dsl_func: &FunctionData)
     {
@@ -2336,17 +2336,17 @@ impl<'a> DslCalculator<'a>
     }
     pub fn load_dsl_func_with_args(cell: &Rc<DslCalculatorCell<'a>>, func: &str, arg_names: Option<&'a Vec<String>>, dsl_func: &FunctionData)
     {
-        let mut func_info = FuncInfo::new();
+        let func_info = FuncInfo::new();
         if let Some(names) = arg_names {
             if names.len() > 0 {
                 func_info.build_arg_name_indexes(names);
             }
         }
         if let Some(ps) = dsl_func.params() {
-            Self::load_dsl_statements(cell, ps, &mut func_info.codes);
+            Self::load_dsl_statements(cell, ps, &mut func_info.codes.borrow_mut());
         }
         cell.borrow_mut().m_funcs.remove(func);
-        cell.borrow_mut().m_funcs.insert(String::from(func), Rc::new(RefCell::new(func_info)));
+        cell.borrow_mut().m_funcs.insert(String::from(func), Rc::new(func_info));
     }
     pub fn load_dsl_statements(cell: &Rc<DslCalculatorCell<'a>>, statements: &Vec<SyntaxComponent>, exps: &mut Vec<ExpressionBox<'a>>)
     {
@@ -2402,7 +2402,7 @@ impl<'a> DslCalculator<'a>
             func_info_opt = Some(func_info_ref.clone());
         }
         if let Some(func_info) = func_info_opt {
-            for exp in func_info.borrow_mut().codes.iter_mut() {
+            for exp in func_info.codes.borrow_mut().iter_mut() {
                 ret = exp.calc();
                 if cell.borrow().m_run_state == RunStateEnum::Return {
                     cell.borrow_mut().m_run_state = RunStateEnum::Normal;
@@ -2425,7 +2425,7 @@ impl<'a> DslCalculator<'a>
     {
         let mut ret = DslCalculatorValue::Null;
         if let Some(func_info) = cell.borrow().m_funcs.get(func) {
-            for exp in func_info.borrow_mut().codes.iter_mut() {
+            for exp in func_info.codes.borrow_mut().iter_mut() {
                 ret = exp.calc();
                 if cell.borrow().m_run_state == RunStateEnum::Return {
                     cell.borrow_mut().m_run_state = RunStateEnum::Normal;
