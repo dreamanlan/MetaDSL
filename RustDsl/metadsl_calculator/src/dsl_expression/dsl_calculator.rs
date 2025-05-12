@@ -771,9 +771,11 @@ pub trait SimpleExpressionBase<'a> : AbstractExpression<'a>
     fn do_calc(&mut self) -> DslCalculatorValue
     {
         let mut operands = self.calculator().borrow_mut().new_calculator_value_list();
-        for exp in self.impl_get_expressions_mut().iter_mut() {
-            let v = exp.calc();
-            operands.push(v);
+        if let Some(exps) = self.impl_get_expressions_mut() {
+            for exp in exps.iter_mut() {
+                let v = exp.calc();
+                operands.push(v);
+            }
         }
         let r = self.on_calc(&mut operands);
         self.calculator().borrow_mut().recycle_calculator_value_list(operands);
@@ -787,8 +789,8 @@ pub trait SimpleExpressionBase<'a> : AbstractExpression<'a>
     }
     fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue;
 
-    fn impl_get_expressions(&self) -> &Vec<ExpressionBox<'a>>;
-    fn impl_get_expressions_mut(&mut self) -> &mut Vec<ExpressionBox<'a>>;
+    fn impl_get_expressions(&self) -> &Option<Vec<ExpressionBox<'a>>>;
+    fn impl_get_expressions_mut(&mut self) -> &mut Option<Vec<ExpressionBox<'a>>>;
     fn impl_set_expressions(&mut self, exps: Vec<ExpressionBox<'a>>);
 }
 
@@ -1405,7 +1407,7 @@ impl<'a> Default for ArrayExp<'a>
     fn default() -> Self
     {
         ArrayExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -1752,6 +1754,9 @@ impl<'a> DslCalculator<'a>
         self.register_api("hex2long", "hex2long(str) api", create_expression_factory::<Hex2LongExp>());
         self.register_api("hex2ulong", "hex2ulong(str) api", create_expression_factory::<Hex2UlongExp>());
         self.register_api("strconcat", "strconcat(arg1,arg2,...) api", create_expression_factory::<StrConcatExp>());
+        self.register_api("substring", "substring(str,start[,len]) function", create_expression_factory::<SubStringExp>());
+        self.register_api("stringappend", "stringappend(sb,arg1,arg2,...) api", create_expression_factory::<StringAppendExp>());
+        self.register_api("stringappendline", "stringappendline(sb,arg1,arg2,...) api", create_expression_factory::<StringAppendLineExp>());
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
@@ -2000,7 +2005,7 @@ impl<'a> DslCalculator<'a>
             }
         }
     }
-    fn alloc_global_variable_index(&mut self, name: &str) -> i32
+    pub fn alloc_global_variable_index(&mut self, name: &str) -> i32
     {
         if let Some(callback) = self.on_get_variable {
             if let Some(val) = callback(name) {
@@ -2017,7 +2022,7 @@ impl<'a> DslCalculator<'a>
         }
         return ix;
     }
-    fn alloc_local_variable_index(&mut self, name: &str) -> i32
+    pub fn alloc_local_variable_index(&mut self, name: &str) -> i32
     {
         let mut ix = std::i32::MAX;
         if let Some(func_info) = self.func_info() {
@@ -2031,7 +2036,7 @@ impl<'a> DslCalculator<'a>
         }
         return ix;
     }
-    fn get_global_variable_index(&self, name: &str) -> i32
+    pub fn get_global_variable_index(&self, name: &str) -> i32
     {
         let mut ix = std::i32::MAX;
         if let Some(i) = self.m_named_global_variable_indexes.get(name) {
@@ -2039,7 +2044,7 @@ impl<'a> DslCalculator<'a>
         }
         return ix;
     }
-    fn get_local_variable_index(&self, name: &str) -> i32
+    pub fn get_local_variable_index(&self, name: &str) -> i32
     {
         let mut ix = std::i32::MAX;
         if let Some(func_info) = self.func_info() {
@@ -2049,14 +2054,14 @@ impl<'a> DslCalculator<'a>
         }
         return ix;
     }
-    fn get_global_varaible_by_index(&self, ix: i32) -> Option<&DslCalculatorValue>
+    pub fn get_global_varaible_by_index(&self, ix: i32) -> Option<&DslCalculatorValue>
     {
         if ix >= 0 && (ix as usize) < self.m_global_variables.len() {
             return Some(&self.m_global_variables[ix as usize]);
         }
         return None;
     }
-    fn get_local_varaible_by_index(&self, ix: i32) -> Option<&DslCalculatorValue>
+    pub fn get_local_varaible_by_index(&self, ix: i32) -> Option<&DslCalculatorValue>
     {
         if ix >= 0 {
             if let Some(vars) = self.local_variables() {
@@ -2073,13 +2078,37 @@ impl<'a> DslCalculator<'a>
         }
         return None;
     }
-    fn set_global_varaible_by_index(&mut self, ix: i32, val: DslCalculatorValue)
+    pub fn get_global_varaible_by_index_mut(&mut self, ix: i32) -> Option<&mut DslCalculatorValue>
+    {
+        if ix >= 0 && (ix as usize) < self.m_global_variables.len() {
+            return Some(&mut self.m_global_variables[ix as usize]);
+        }
+        return None;
+    }
+    pub fn get_local_varaible_by_index_mut(&mut self, ix: i32) -> Option<&mut DslCalculatorValue>
+    {
+        if ix >= 0 {
+            if let Some(vars) = self.local_variables_mut() {
+                if (ix as usize) < vars.len() {
+                    return Some(&mut vars[ix as usize]);
+                }
+            }
+        }
+        else if let Some(args) = self.arguments_mut() {
+            let arg_ix = -1 - ix;
+            if arg_ix >= 0 && (arg_ix as usize) < args.len() {
+                return Some(&mut args[arg_ix as usize]);
+            }
+        }
+        return None;
+    }
+    pub fn set_global_varaible_by_index(&mut self, ix: i32, val: DslCalculatorValue)
     {
         if ix >= 0 && (ix as usize) < self.m_global_variables.len() {
             self.m_global_variables[ix as usize] = val;
         }
     }
-    fn set_local_varaible_by_index(&mut self, ix: i32, val: DslCalculatorValue)
+    pub fn set_local_varaible_by_index(&mut self, ix: i32, val: DslCalculatorValue)
     {
         if ix >= 0 {
             if let Some(vars) = self.local_variables_mut() {

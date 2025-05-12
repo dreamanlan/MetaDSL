@@ -124,7 +124,7 @@ pub fn add_abstract_and_simple_expression_fields(_attr: TokenStream, item: Token
                 #existing_fields
                 m_calculator: Option<Rc<DslCalculatorCell<'a>>>,
                 m_dsl: Option<SyntaxComponent>,
-                m_exps: Vec<ExpressionBox<'a>>,
+                m_exps: Option<Vec<ExpressionBox<'a>>>,
             }
         }
     } else {
@@ -173,17 +173,17 @@ pub fn impl_abstract_expression(_input: TokenStream) -> TokenStream {
 #[proc_macro]
 pub fn impl_simple_expression(_input: TokenStream) -> TokenStream {
     let expanded = quote! {
-        fn impl_get_expressions(&self) -> &Vec<ExpressionBox<'a>>
+        fn impl_get_expressions(&self) -> &Option<Vec<ExpressionBox<'a>>>
         {
             return &self.m_exps;
         }
-        fn impl_get_expressions_mut(&mut self) -> &mut Vec<ExpressionBox<'a>>
+        fn impl_get_expressions_mut(&mut self) -> &mut Option<Vec<ExpressionBox<'a>>>
         {
             return &mut self.m_exps;
         }
         fn impl_set_expressions(&mut self, exps: Vec<ExpressionBox<'a>>)
         {
-            self.m_exps = exps;
+            self.m_exps = Some(exps);
         }
     };
 

@@ -33,7 +33,7 @@ impl<'a> Default for DummyExp<'a>
     fn default() -> Self
     {
         DummyExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -67,7 +67,7 @@ impl<'a> Default for AddExp<'a>
     fn default() -> Self
     {
         AddExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -116,7 +116,7 @@ impl<'a> Default for SubExp<'a>
     fn default() -> Self
     {
         SubExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -162,7 +162,7 @@ impl<'a> Default for MulExp<'a>
     fn default() -> Self
     {
         MulExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -208,7 +208,7 @@ impl<'a> Default for DivExp<'a>
     fn default() -> Self
     {
         DivExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -254,7 +254,7 @@ impl<'a> Default for ModExp<'a>
     fn default() -> Self
     {
         ModExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -300,7 +300,7 @@ impl<'a> Default for BitAndExp<'a>
     fn default() -> Self
     {
         BitAndExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -343,7 +343,7 @@ impl<'a> Default for BitOrExp<'a>
     fn default() -> Self
     {
         BitOrExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -386,7 +386,7 @@ impl<'a> Default for BitXorExp<'a>
     fn default() -> Self
     {
         BitXorExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -429,7 +429,7 @@ impl<'a> Default for BitNotExp<'a>
     fn default() -> Self
     {
         BitNotExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -472,7 +472,7 @@ impl<'a> Default for LShiftExp<'a>
     fn default() -> Self
     {
         LShiftExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -515,7 +515,7 @@ impl<'a> Default for RShiftExp<'a>
     fn default() -> Self
     {
         RShiftExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -559,7 +559,7 @@ impl<'a> Default for GreatExp<'a>
     fn default() -> Self
     {
         GreatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -608,7 +608,7 @@ impl<'a> Default for GreatEqualExp<'a>
     fn default() -> Self
     {
         GreatEqualExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -657,7 +657,7 @@ impl<'a> Default for LessExp<'a>
     fn default() -> Self
     {
         LessExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -706,7 +706,7 @@ impl<'a> Default for LessEqualExp<'a>
     fn default() -> Self
     {
         LessEqualExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -755,7 +755,7 @@ impl<'a> Default for EqualExp<'a>
     fn default() -> Self
     {
         EqualExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -804,7 +804,7 @@ impl<'a> Default for NotEqualExp<'a>
     fn default() -> Self
     {
         NotEqualExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -854,7 +854,7 @@ impl<'a> Default for AndExp<'a>
     fn default() -> Self
     {
         AndExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -897,7 +897,7 @@ impl<'a> Default for OrExp<'a>
     fn default() -> Self
     {
         OrExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -940,7 +940,7 @@ impl<'a> Default for NotExp<'a>
     fn default() -> Self
     {
         NotExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -1880,7 +1880,7 @@ impl<'a> Default for EchoExp<'a>
     fn default() -> Self
     {
         EchoExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -1970,7 +1970,7 @@ impl<'a> Default for CallExp<'a>
     fn default() -> Self
     {
         CallExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2016,7 +2016,7 @@ impl<'a> Default for ReturnExp<'a>
     fn default() -> Self
     {
         ReturnExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2056,7 +2056,7 @@ impl<'a> Default for RedirectExp<'a>
     fn default() -> Self
     {
         RedirectExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2097,7 +2097,7 @@ impl<'a> Default for IsNullExp<'a>
     fn default() -> Self
     {
         IsNullExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2136,7 +2136,7 @@ impl<'a> Default for NullExp<'a>
     fn default() -> Self
     {
         NullExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2171,7 +2171,7 @@ impl<'a> Default for IsStringExp<'a>
     fn default() -> Self
     {
         IsStringExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2209,7 +2209,7 @@ impl<'a> Default for IsArrayExp<'a>
     fn default() -> Self
     {
         IsArrayExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2247,7 +2247,7 @@ impl<'a> Default for IsHashmapExp<'a>
     fn default() -> Self
     {
         IsHashmapExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2285,7 +2285,7 @@ impl<'a> Default for IsObjectExp<'a>
     fn default() -> Self
     {
         IsObjectExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2323,7 +2323,7 @@ impl<'a> Default for IsBoolExp<'a>
     fn default() -> Self
     {
         IsBoolExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2361,7 +2361,7 @@ impl<'a> Default for IsCharExp<'a>
     fn default() -> Self
     {
         IsCharExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2399,7 +2399,7 @@ impl<'a> Default for IsIntegerExp<'a>
     fn default() -> Self
     {
         IsIntegerExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2437,7 +2437,7 @@ impl<'a> Default for IsSignedExp<'a>
     fn default() -> Self
     {
         IsSignedExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2475,7 +2475,7 @@ impl<'a> Default for IsUnsignedExp<'a>
     fn default() -> Self
     {
         IsUnsignedExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2513,7 +2513,7 @@ impl<'a> Default for IsInteger128Exp<'a>
     fn default() -> Self
     {
         IsInteger128Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2551,7 +2551,7 @@ impl<'a> Default for IsSigned128Exp<'a>
     fn default() -> Self
     {
         IsSigned128Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2589,7 +2589,7 @@ impl<'a> Default for IsUnsigned128Exp<'a>
     fn default() -> Self
     {
         IsUnsigned128Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2627,7 +2627,7 @@ impl<'a> Default for IsFloatExp<'a>
     fn default() -> Self
     {
         IsFloatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2665,7 +2665,7 @@ impl<'a> Default for IsSingleFloatExp<'a>
     fn default() -> Self
     {
         IsSingleFloatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2703,7 +2703,7 @@ impl<'a> Default for IsDoubleFloatExp<'a>
     fn default() -> Self
     {
         IsDoubleFloatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2741,7 +2741,7 @@ impl<'a> Default for BoolExp<'a>
     fn default() -> Self
     {
         BoolExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2779,7 +2779,7 @@ impl<'a> Default for CharExp<'a>
     fn default() -> Self
     {
         CharExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2817,7 +2817,7 @@ impl<'a> Default for SbyteExp<'a>
     fn default() -> Self
     {
         SbyteExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2855,7 +2855,7 @@ impl<'a> Default for UbyteExp<'a>
     fn default() -> Self
     {
         UbyteExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2893,7 +2893,7 @@ impl<'a> Default for ShortExp<'a>
     fn default() -> Self
     {
         ShortExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2931,7 +2931,7 @@ impl<'a> Default for UshortExp<'a>
     fn default() -> Self
     {
         UshortExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -2969,7 +2969,7 @@ impl<'a> Default for IntExp<'a>
     fn default() -> Self
     {
         IntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3007,7 +3007,7 @@ impl<'a> Default for UintExp<'a>
     fn default() -> Self
     {
         UintExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3045,7 +3045,7 @@ impl<'a> Default for LongExp<'a>
     fn default() -> Self
     {
         LongExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3083,7 +3083,7 @@ impl<'a> Default for UlongExp<'a>
     fn default() -> Self
     {
         UlongExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3121,7 +3121,7 @@ impl<'a> Default for I128Exp<'a>
     fn default() -> Self
     {
         I128Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3159,7 +3159,7 @@ impl<'a> Default for U128Exp<'a>
     fn default() -> Self
     {
         U128Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3196,7 +3196,7 @@ impl<'a> Default for FloatExp<'a>
     fn default() -> Self
     {
         FloatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3234,7 +3234,7 @@ impl<'a> Default for DoubleExp<'a>
     fn default() -> Self
     {
         DoubleExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3272,7 +3272,7 @@ impl<'a> Default for ToStringExp<'a>
     fn default() -> Self
     {
         ToStringExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3310,7 +3310,7 @@ impl<'a> Default for GetTypeStrExp<'a>
     fn default() -> Self
     {
         GetTypeStrExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3368,7 +3368,7 @@ impl<'a> Default for FtoiExp<'a>
     fn default() -> Self
     {
         FtoiExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3408,7 +3408,7 @@ impl<'a> Default for ItofExp<'a>
     fn default() -> Self
     {
         ItofExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3448,7 +3448,7 @@ impl<'a> Default for FtouExp<'a>
     fn default() -> Self
     {
         FtouExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3488,7 +3488,7 @@ impl<'a> Default for UtofExp<'a>
     fn default() -> Self
     {
         UtofExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3528,7 +3528,7 @@ impl<'a> Default for DtolExp<'a>
     fn default() -> Self
     {
         DtolExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3568,7 +3568,7 @@ impl<'a> Default for LtodExp<'a>
     fn default() -> Self
     {
         LtodExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3608,7 +3608,7 @@ impl<'a> Default for DtouExp<'a>
     fn default() -> Self
     {
         DtouExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3648,7 +3648,7 @@ impl<'a> Default for UtodExp<'a>
     fn default() -> Self
     {
         UtodExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3688,7 +3688,7 @@ impl<'a> Default for RndIntExp<'a>
     fn default() -> Self
     {
         RndIntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3730,7 +3730,7 @@ impl<'a> Default for RndFloatExp<'a>
     fn default() -> Self
     {
         RndFloatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3772,7 +3772,7 @@ impl<'a> Default for PowExp<'a>
     fn default() -> Self
     {
         PowExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3823,7 +3823,7 @@ impl<'a> Default for SqrtExp<'a>
     fn default() -> Self
     {
         SqrtExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3871,7 +3871,7 @@ impl<'a> Default for ExpExp<'a>
     fn default() -> Self
     {
         ExpExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3912,7 +3912,7 @@ impl<'a> Default for Exp2Exp<'a>
     fn default() -> Self
     {
         Exp2Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3953,7 +3953,7 @@ impl<'a> Default for ExpM1Exp<'a>
     fn default() -> Self
     {
         ExpM1Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -3994,7 +3994,7 @@ impl<'a> Default for LnExp<'a>
     fn default() -> Self
     {
         LnExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4035,7 +4035,7 @@ impl<'a> Default for Ln1pExp<'a>
     fn default() -> Self
     {
         Ln1pExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4076,7 +4076,7 @@ impl<'a> Default for LogExp<'a>
     fn default() -> Self
     {
         LogExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4119,7 +4119,7 @@ impl<'a> Default for Log10Exp<'a>
     fn default() -> Self
     {
         Log10Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4160,7 +4160,7 @@ impl<'a> Default for Log2Exp<'a>
     fn default() -> Self
     {
         Log2Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4201,7 +4201,7 @@ impl<'a> Default for MaxExp<'a>
     fn default() -> Self
     {
         MaxExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4263,7 +4263,7 @@ impl<'a> Default for MinExp<'a>
     fn default() -> Self
     {
         MinExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4325,7 +4325,7 @@ impl<'a> Default for AbsExp<'a>
     fn default() -> Self
     {
         AbsExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4373,7 +4373,7 @@ impl<'a> Default for AbsDiffExp<'a>
     fn default() -> Self
     {
         AbsDiffExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4424,7 +4424,7 @@ impl<'a> Default for SigNumExp<'a>
     fn default() -> Self
     {
         SigNumExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4472,7 +4472,7 @@ impl<'a> Default for FloorExp<'a>
     fn default() -> Self
     {
         FloorExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4513,7 +4513,7 @@ impl<'a> Default for CeilingExp<'a>
     fn default() -> Self
     {
         CeilingExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4554,7 +4554,7 @@ impl<'a> Default for RoundExp<'a>
     fn default() -> Self
     {
         RoundExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4595,7 +4595,7 @@ impl<'a> Default for RoundEvenExp<'a>
     fn default() -> Self
     {
         RoundEvenExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4636,7 +4636,7 @@ impl<'a> Default for FloorToIntExp<'a>
     fn default() -> Self
     {
         FloorToIntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4677,7 +4677,7 @@ impl<'a> Default for CeilingToIntExp<'a>
     fn default() -> Self
     {
         CeilingToIntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4718,7 +4718,7 @@ impl<'a> Default for RoundToIntExp<'a>
     fn default() -> Self
     {
         RoundToIntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4759,7 +4759,7 @@ impl<'a> Default for RoundEvenToIntExp<'a>
     fn default() -> Self
     {
         RoundEvenToIntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4800,7 +4800,7 @@ impl<'a> Default for SinExp<'a>
     fn default() -> Self
     {
         SinExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4841,7 +4841,7 @@ impl<'a> Default for CosExp<'a>
     fn default() -> Self
     {
         CosExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4882,7 +4882,7 @@ impl<'a> Default for TanExp<'a>
     fn default() -> Self
     {
         TanExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4923,7 +4923,7 @@ impl<'a> Default for AsinExp<'a>
     fn default() -> Self
     {
         AsinExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -4964,7 +4964,7 @@ impl<'a> Default for AcosExp<'a>
     fn default() -> Self
     {
         AcosExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5005,7 +5005,7 @@ impl<'a> Default for AtanExp<'a>
     fn default() -> Self
     {
         AtanExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5046,7 +5046,7 @@ impl<'a> Default for Atan2Exp<'a>
     fn default() -> Self
     {
         Atan2Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5089,7 +5089,7 @@ impl<'a> Default for SinhExp<'a>
     fn default() -> Self
     {
         SinhExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5130,7 +5130,7 @@ impl<'a> Default for CoshExp<'a>
     fn default() -> Self
     {
         CoshExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5171,7 +5171,7 @@ impl<'a> Default for TanhExp<'a>
     fn default() -> Self
     {
         TanhExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5212,7 +5212,7 @@ impl<'a> Default for AsinhExp<'a>
     fn default() -> Self
     {
         AsinhExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5253,7 +5253,7 @@ impl<'a> Default for AcoshExp<'a>
     fn default() -> Self
     {
         AcoshExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5294,7 +5294,7 @@ impl<'a> Default for AtanhExp<'a>
     fn default() -> Self
     {
         AtanhExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5335,7 +5335,7 @@ impl<'a> Default for ClampExp<'a>
     fn default() -> Self
     {
         ClampExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5380,7 +5380,7 @@ impl<'a> Default for Clamp01Exp<'a>
     fn default() -> Self
     {
         Clamp01Exp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5421,7 +5421,7 @@ impl<'a> Default for LerpExp<'a>
     fn default() -> Self
     {
         LerpExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5466,7 +5466,7 @@ impl<'a> Default for LerpUnclampedExp<'a>
     fn default() -> Self
     {
         LerpUnclampedExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5511,7 +5511,7 @@ impl<'a> Default for LerpAngleExp<'a>
     fn default() -> Self
     {
         LerpAngleExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5567,7 +5567,7 @@ impl<'a> Default for SmoothStepExp<'a>
     fn default() -> Self
     {
         SmoothStepExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5614,7 +5614,7 @@ impl<'a> Default for ApproximatelyExp<'a>
     fn default() -> Self
     {
         ApproximatelyExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5664,7 +5664,7 @@ impl<'a> Default for IsPowerOfTwoExp<'a>
     fn default() -> Self
     {
         IsPowerOfTwoExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5714,7 +5714,7 @@ impl<'a> Default for ClosestPowerOfTwoExp<'a>
     fn default() -> Self
     {
         ClosestPowerOfTwoExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5764,7 +5764,7 @@ impl<'a> Default for NextPowerOfTwoExp<'a>
     fn default() -> Self
     {
         NextPowerOfTwoExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5814,7 +5814,7 @@ impl<'a> Default for DistExp<'a>
     fn default() -> Self
     {
         DistExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5859,7 +5859,7 @@ impl<'a> Default for DistSqrExp<'a>
     fn default() -> Self
     {
         DistSqrExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5906,7 +5906,7 @@ impl<'a> Default for IsEmptyExp<'a>
     fn default() -> Self
     {
         IsEmptyExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5948,7 +5948,7 @@ impl<'a> Default for Str2IntExp<'a>
     fn default() -> Self
     {
         Str2IntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -5991,7 +5991,7 @@ impl<'a> Default for Str2UintExp<'a>
     fn default() -> Self
     {
         Str2UintExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6034,7 +6034,7 @@ impl<'a> Default for Str2LongExp<'a>
     fn default() -> Self
     {
         Str2LongExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6077,7 +6077,7 @@ impl<'a> Default for Str2UlongExp<'a>
     fn default() -> Self
     {
         Str2UlongExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6120,7 +6120,7 @@ impl<'a> Default for Str2FloatExp<'a>
     fn default() -> Self
     {
         Str2FloatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6163,7 +6163,7 @@ impl<'a> Default for Str2DoubleExp<'a>
     fn default() -> Self
     {
         Str2DoubleExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6206,7 +6206,7 @@ impl<'a> Default for Hex2IntExp<'a>
     fn default() -> Self
     {
         Hex2IntExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6250,7 +6250,7 @@ impl<'a> Default for Hex2UintExp<'a>
     fn default() -> Self
     {
         Hex2UintExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6294,7 +6294,7 @@ impl<'a> Default for Hex2LongExp<'a>
     fn default() -> Self
     {
         Hex2LongExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6338,7 +6338,7 @@ impl<'a> Default for Hex2UlongExp<'a>
     fn default() -> Self
     {
         Hex2UlongExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6373,6 +6373,61 @@ impl<'a> SimpleExpressionBase<'a> for Hex2UlongExp<'a>
     impl_simple_expression!();
 }
 
+fn append_vals_to_string(sb: &mut String, vals: &Vec<DslCalculatorValue>)
+{
+    for oper in vals.iter()
+    {
+        match oper {
+            DslCalculatorValue::Sbyte(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Ubyte(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Short(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Ushort(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Int(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Uint(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Long(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Ulong(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::I128(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::U128(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Float(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::Double(val) => {
+                sb.extend(format!("{}", val).chars());
+            },
+            DslCalculatorValue::String(val) => {
+                sb.extend(format!("{}", val).chars());
+            }
+            DslCalculatorValue::Bool(val) => {
+                sb.extend(format!("{}", val).chars());
+            }
+            DslCalculatorValue::Char(val) => {
+                sb.extend(format!("{}", val).chars());
+            }
+            _ => {
+            }
+        };
+    }
+}
 #[add_abstract_and_simple_expression_fields]
 struct StrConcatExp
 {
@@ -6383,7 +6438,7 @@ impl<'a> Default for StrConcatExp<'a>
     fn default() -> Self
     {
         StrConcatExp {
-            m_exps: Vec::new(),
+            m_exps: None,
 
             m_calculator: None,
             m_dsl: None,
@@ -6404,60 +6459,262 @@ impl<'a> SimpleExpressionBase<'a> for StrConcatExp<'a>
     fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
     {
         let mut sb = String::new();
-        for oper in operands.iter()
-        {
-            match oper {
-                DslCalculatorValue::Sbyte(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Ubyte(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Short(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Ushort(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Int(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Uint(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Long(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Ulong(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::I128(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::U128(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Float(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::Double(val) => {
-                    sb.extend(format!("{}", val).chars());
-                },
-                DslCalculatorValue::String(val) => {
-                    sb.extend(format!("{}", val).chars());
-                }
-                DslCalculatorValue::Bool(val) => {
-                    sb.extend(format!("{}", val).chars());
-                }
-                DslCalculatorValue::Char(val) => {
-                    sb.extend(format!("{}", val).chars());
-                }
-                _ => {
-                }
-            };
-        }
+        append_vals_to_string(&mut sb, operands);
         return DslCalculatorValue::String(sb);
     }
 
     impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct SubStringExp
+{
+
+}
+impl<'a> Default for SubStringExp<'a>
+{
+    fn default() -> Self
+    {
+        SubStringExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SubStringExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SubStringExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SubStringExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            if let DslCalculatorValue::String(s) = opd0 {
+                let start = opd1.to_u32() as usize;
+                let mut end = s.len();
+                if operands.len() >= 3 {
+                    end = start + operands[2].to_u32() as usize;
+                }
+                return DslCalculatorValue::String(s[start..end].to_string());
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_expression_fields]
+pub struct StringAppendExp<'a>
+{
+    m_var_id: Option<String>,
+    m_var_ix: i32,
+    m_is_global: bool,
+    m_exps: Option<Vec<ExpressionBox<'a>>>,
+}
+impl<'a> Default for StringAppendExp<'a>
+{
+    fn default() -> Self
+    {
+        StringAppendExp {
+            m_var_id: None,
+            m_var_ix: std::i32::MAX,
+            m_is_global: false,
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringAppendExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringAppendExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        if self.m_var_ix == std::i32::MAX {
+            let mut var_ix = std::i32::MAX;
+            let mut is_global = false;
+            if let Some(var_id) = &self.m_var_id {
+                var_ix = self.calculator().borrow().get_local_variable_index(var_id);
+                if var_ix == std::i32::MAX {
+                    var_ix = self.calculator().borrow().get_global_variable_index(var_id);
+                    if var_ix < std::i32::MAX {
+                        is_global = true;
+                    }
+                }
+                if var_ix == std::i32::MAX {
+                    self.calculator().borrow().error(&format!("unassigned local/global var '{0}'", var_id));
+                    return DslCalculatorValue::Null;
+                }
+            }
+            self.m_var_ix = var_ix;
+            self.m_is_global = is_global;
+        }
+        let mut vals = Vec::new();
+        if let Some(exps) = &mut self.m_exps {
+            for iter_exp in exps {
+                let iter_v = iter_exp.calc();
+                vals.push(iter_v);
+            }
+        }
+        if self.m_is_global {
+            if let Some(r) = self.calculator().borrow_mut().get_global_varaible_by_index_mut(self.m_var_ix) {
+                if let DslCalculatorValue::String(s) = r {
+                    append_vals_to_string(s, &vals);
+                }
+            }
+        }
+        else {
+            if let Some(r) = self.calculator().borrow_mut().get_local_varaible_by_index_mut(self.m_var_ix) {
+                if let DslCalculatorValue::String(s) = r {
+                    append_vals_to_string(s, &vals);
+                }
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        if let SyntaxComponent::Function(func) = self.syntax_component() {
+            if func.is_high_order() {
+                //error
+                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
+            }
+            else {
+                let mut var_id = None;
+                let mut exps = Vec::new();
+                if let Some(ps) = func.params() {
+                    if ps.len() > 0 {
+                        var_id = Some(ps[0].get_id().clone());
+                    }
+                    for p in ps.iter().skip(1) {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                            exps.push(sub_exp);
+                        }
+                    }
+                }
+                self.m_var_id = var_id;
+                self.m_exps = Some(exps);
+            }
+        }
+        return true;
+    }
+
+    impl_abstract_expression!();
+}
+#[add_abstract_expression_fields]
+pub struct StringAppendLineExp<'a>
+{
+    m_var_id: Option<String>,
+    m_var_ix: i32,
+    m_is_global: bool,
+    m_exps: Option<Vec<ExpressionBox<'a>>>,
+}
+impl<'a> Default for StringAppendLineExp<'a>
+{
+    fn default() -> Self
+    {
+        StringAppendLineExp {
+            m_var_id: None,
+            m_var_ix: std::i32::MAX,
+            m_is_global: false,
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringAppendLineExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringAppendLineExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        if self.m_var_ix == std::i32::MAX {
+            let mut var_ix = std::i32::MAX;
+            let mut is_global = false;
+            if let Some(var_id) = &self.m_var_id {
+                var_ix = self.calculator().borrow().get_local_variable_index(var_id);
+                if var_ix == std::i32::MAX {
+                    var_ix = self.calculator().borrow().get_global_variable_index(var_id);
+                    if var_ix < std::i32::MAX {
+                        is_global = true;
+                    }
+                }
+                if var_ix == std::i32::MAX {
+                    self.calculator().borrow().error(&format!("unassigned local/global var '{0}'", var_id));
+                    return DslCalculatorValue::Null;
+                }
+            }
+            self.m_var_ix = var_ix;
+            self.m_is_global = is_global;
+        }
+        let mut vals = Vec::new();
+        if let Some(exps) = &mut self.m_exps {
+            for iter_exp in exps {
+                let iter_v = iter_exp.calc();
+                vals.push(iter_v);
+            }
+        }
+        if self.m_is_global {
+            if let Some(r) = self.calculator().borrow_mut().get_global_varaible_by_index_mut(self.m_var_ix) {
+                if let DslCalculatorValue::String(s) = r {
+                    append_vals_to_string(s, &vals);
+                    s.push('\n');
+                }
+            }
+        }
+        else {
+            if let Some(r) = self.calculator().borrow_mut().get_local_varaible_by_index_mut(self.m_var_ix) {
+                if let DslCalculatorValue::String(s) = r {
+                    append_vals_to_string(s, &vals);
+                    s.push('\n');
+                }
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        if let SyntaxComponent::Function(func) = self.syntax_component() {
+            if func.is_high_order() {
+                //error
+                self.calculator().borrow().error(&format!("DslCalculator error, {} line {}", func.to_script_string(false, &dsl::DEFAULT_DELIM), func.get_line()));
+            }
+            else {
+                let mut var_id = None;
+                let mut exps = Vec::new();
+                if let Some(ps) = func.params() {
+                    if ps.len() > 0 {
+                        var_id = Some(ps[0].get_id().clone());
+                    }
+                    for p in ps.iter().skip(1) {
+                        if let Some(sub_exp) = DslCalculator::load_syntax_component(self.calculator(), p) {
+                            exps.push(sub_exp);
+                        }
+                    }
+                }
+                self.m_var_id = var_id;
+                self.m_exps = Some(exps);
+            }
+        }
+        return true;
+    }
+
+    impl_abstract_expression!();
 }
