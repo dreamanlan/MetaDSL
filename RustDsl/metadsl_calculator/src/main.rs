@@ -91,8 +91,10 @@ fn main() {
                 $b=$ct;
                 if($a<$b){
                     echo($a,"<",$b,"=>yes",'\n');
+                }elif($a==$b){
+                    echo($a,"==",$b,"=>yes",'\n');
                 }else{
-                    echo($a,"<",$b,"=>no",'\n');
+                    echo($a,"<=",$b,"=>no",'\n');
                 };
             };
         "#;
