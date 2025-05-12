@@ -1884,15 +1884,24 @@ impl<'a> DslCalculator<'a>
     }
     pub fn clear(&mut self)
     {
-        self.m_funcs.clear();
-        self.m_stack.clear();
-        self.m_named_global_variable_indexes.clear();
-        self.m_global_variables.clear();
+        self.clear_global_variables();
+        self.clear_funcs();
+        self.clear_stacks();
     }
     pub fn clear_global_variables(&mut self)
     {
         self.m_named_global_variable_indexes.clear();
         self.m_global_variables.clear();
+    }
+    pub fn clear_funcs(&mut self)
+    {
+        self.m_funcs.clear();
+        self.m_func_calls.clear();
+    }
+    pub fn clear_stacks(&mut self)
+    {
+        self.m_stack.clear();
+        self.m_run_state = RunStateEnum::Normal;
     }
     pub fn global_variable_names(&self) -> Keys<String, i32>
     {
@@ -2208,12 +2217,12 @@ impl<'a> DslCalculator<'a>
             self.set_local_varaible_by_index(index, val);
         }
     }
-    fn func_info(&self) -> Option<&FuncInfoCell<'a>>
+    fn func_info(&self) -> Option<&Rc<FuncInfoCell<'a>>>
     {
         if let Some(stack_info) = self.m_stack.back() {
             if let Some(fname) = &stack_info.func_name {
                 if let Some(func_info) = self.m_funcs.get(fname) {
-                    return Some(&func_info);
+                    return Some(func_info);
                 }
             }
         }

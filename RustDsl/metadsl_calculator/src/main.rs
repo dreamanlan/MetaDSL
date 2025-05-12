@@ -32,7 +32,7 @@ pub fn interactive_execution(calculator: &Rc<DslCalculatorCell>, log_callback: &
                             let content = format!("script(main){{{}}};", s);
                             dsl_file.load_from_string(String::from(content), &log_callback);
                             if let Some(info) = dsl_file.dsl_infos().last() {
-                                calculator.borrow_mut().clear();
+                                calculator.borrow_mut().clear_stacks();
                                 DslCalculator::load_dsl_info(&calculator, info);
                                 let ret = DslCalculator::calc_0(&calculator, &"main");
                                 println!("result:{}", ret.to_string());
