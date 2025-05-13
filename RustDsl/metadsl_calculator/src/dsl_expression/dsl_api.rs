@@ -7220,3 +7220,85 @@ impl<'a> SimpleExpressionBase<'a> for StringTrimEndMatchesExp<'a>
 
     impl_simple_expression!();
 }
+#[add_abstract_and_simple_expression_fields]
+struct StringToLowerExp
+{
+
+}
+impl<'a> Default for StringToLowerExp<'a>
+{
+    fn default() -> Self
+    {
+        StringToLowerExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringToLowerExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringToLowerExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringToLowerExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(s) = opd0 {
+                return DslCalculatorValue::String(s.to_lowercase());
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringToUpperExp
+{
+
+}
+impl<'a> Default for StringToUpperExp<'a>
+{
+    fn default() -> Self
+    {
+        StringToUpperExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringToUpperExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringToUpperExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringToUpperExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(s) = opd0 {
+                return DslCalculatorValue::String(s.to_uppercase());
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}

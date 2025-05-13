@@ -1759,6 +1759,8 @@ impl<'a> DslCalculator<'a>
         self.register_api("stringtrimmatches", "stringtrimmatches(str,pattern) api", create_expression_factory::<StringTrimMatchesExp>());
         self.register_api("stringtrimstartmatches", "stringtrimstartmatches(str,pattern) api", create_expression_factory::<StringTrimStartMatchesExp>());
         self.register_api("stringtrimendmatches", "stringtrimendmatches(str,pattern) api", create_expression_factory::<StringTrimEndMatchesExp>());
+        self.register_api("stringtolower", "stringtolower(str) api", create_expression_factory::<StringToLowerExp>());
+        self.register_api("stringtoupper", "stringtoupper(str) api", create_expression_factory::<StringToUpperExp>());
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
