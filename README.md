@@ -22,7 +22,7 @@ skill(100001)
 };
 ```
 
-## Example 2: Used for plot scripts. A dialogue 5 is displayed at the beginning of the plot. After the dialogue is completed, a bunch of NPCs are created. The number of remaining NPCs is updated every time an NPC is killed. When all are killed, the completed dialogue 6 is displayed. After the dialogue is completed, the plot script ends. (In addition, it is necessary to logically implement the interpretation and execution of the plot script based on the parser [which can be in the form of a command queue])
+## Example 2: Used for story scripts. A dialogue 5 is displayed at the beginning of the story. After the dialogue is completed, a bunch of NPCs are created. The number of remaining NPCs is updated every time an NPC is killed. When all are killed, the completed dialogue 6 is displayed. After the dialogue is completed, the story script ends. (In addition, it is necessary to logically implement the interpretation and execution of the story script based on the parser [which can be in the form of a command queue])
 
 ```
 story(main)
@@ -110,7 +110,7 @@ From this perspective, the structure of DSL can be a sufficiently abstract and u
 - Script interpreter with several hundred lines of code: https://github.com/dreamanlan/ScriptInterpreterByDsl0 与 https://github.com/dreamanlan/ScriptInterpreterByDsl
 - Unity3d terrain generation based on DSL:https://github.com/dreamanlan/TerrainGenByDsl
 - Unity3d game course Demo uses DSL to implement a command queue-based script and is used to write game logic:https://github.com/dreamanlan/GameDemo
-- A relatively complete client and server architecture based on c# and unity3d. DSL is used to implement high-level game logic and various editor tools as well as the description of the plot, skills, and matching tables mentioned earlier: https://github.com/dreamanlan/CSharpGameFramework
+- A relatively complete client and server architecture based on c# and unity3d. DSL is used to implement high-level game logic and various editor tools as well as the description of the story, skills, and matching tables mentioned earlier: https://github.com/dreamanlan/CSharpGameFramework
 - A cross-platform batch script interpreter: https://github.com/dreamanlan/BatchCommand
 - C# rewriting tool based on roslyn (insert specified function calls at the beginning and end of functions containing new, which can be used to profile memory), using DSL as the configuration language:https://github.com/dreamanlan/CSharpHookRewriter
 - C# useless class analysis tool based on roslyn (can be used to clean up abandoned code), using DSL as the configuration language: https://github.com/dreamanlan/UnusedClass
