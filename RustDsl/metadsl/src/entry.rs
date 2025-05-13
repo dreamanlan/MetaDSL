@@ -64,10 +64,8 @@ pub fn impl_main(_args: Vec<String>)
         let _ = file.save_to_file("unbinary.txt");
 
         let t1 = get_local_milliseconds();
-        let mut i = 0;
-        while i < 1000 {
+        for _ in 0..1000 {
             file.load_binary_code(&code, &mut key_buffer, &mut id_buffer);
-            i += 1;
         }
         let t2 = get_local_milliseconds();
         println!("time:{}", t2 - t1);

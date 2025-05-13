@@ -1399,8 +1399,7 @@ impl<'a> DslAction<'a>
             }
         }
         else {
-            let mut i = 0;
-            while i < data.get_function_num() {
+            for i in 0..data.get_function_num() {
                 if let Some(func) = data.get_function_mut(i) {
                     match func {
                         ValueOrFunction::Function(f) => {
@@ -1411,7 +1410,6 @@ impl<'a> DslAction<'a>
                         _ => {}
                     }
                 }
-                i += 1;
             }
         }
         return None;

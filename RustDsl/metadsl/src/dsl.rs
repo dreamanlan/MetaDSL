@@ -2110,8 +2110,7 @@ cfg_if! {
         reuse_key_buffer.clear();
         let keys = reuse_key_buffer;
         pos = key_start;
-        let mut i = 0;
-        while i < key_count {
+        for _ in 0..key_count {
             let mut byte_count = 0;
             let len = Utility::read_7bit_encoded_int(binary_code, pos, &mut byte_count);
             if len >= 0 {
@@ -2123,7 +2122,6 @@ cfg_if! {
             else {
                 break;
             }
-            i += 1;
         }
         if reuse_id_buffer.capacity() < bytes2_len as usize {
             reuse_id_buffer.reserve(bytes2_len as usize - reuse_id_buffer.capacity());
@@ -2734,8 +2732,7 @@ cfg_if! {
                     }
                     stream.push_str(lbracket);
                     let ct = data.get_param_num();
-                    let mut i = 0;
-                    while i < ct {
+                    for i in 0..ct {
                         if i > 0 {
                             stream.push(' ');
                         }
@@ -2755,7 +2752,6 @@ cfg_if! {
                                 stream.push(sep);
                             }
                         }
-                        i += 1;
                     }
                     stream.push_str(rbracket);
                 }
@@ -2837,8 +2833,7 @@ cfg_if! {
         else {
             let mut last_func_no_param = false;
             let mut last_func_no_statement = false;
-            let mut i = 0;
-            while i < func_num {
+            for i in 0..func_num {
                 if let Some(v_or_f) = data.get_function(i) {
                     match v_or_f {
                         ValueOrFunction::Value(val) => {
@@ -2883,7 +2878,6 @@ cfg_if! {
                         }
                     }
                 }
-                i += 1;
             }
         }
         if is_last_of_statement && !data.is_empty_separator() {
@@ -3143,8 +3137,7 @@ cfg_if! {
                 }
                 else {
                     let ct = data.get_param_num();
-                    let mut i = 0;
-                    while i < ct {
+                    for i in 0..ct {
                         if data.have_param() && i > 0 {
                             stream.push_str(",");
                         }
@@ -3162,7 +3155,6 @@ cfg_if! {
                         if data.have_statement() {
                             stream.push_str(";");
                         }
-                        i += 1;
                     }
                 }
                 stream.push_str(rbracket);
@@ -3190,12 +3182,10 @@ cfg_if! {
             indent += 1;
 
             let ct = data.get_param_num();
-            let mut i = 0;
-            while i < ct {
+            for i in 0..ct {
                 if let Some(temp_data) = data.get_param(i) {
                     Self::write_syntax_component(stream, temp_data, indent, false, true, delim);
                 }
-                i += 1;
             }
 
             indent -= 1;
@@ -3289,10 +3279,8 @@ cfg_if! {
     {
 cfg_if! {
     if #[cfg(feature = "full_version")] {
-        let mut i = 0;
-        while i < indent {
+        for _ in 0..indent {
             stream.push('\t');
-            i += 1;
         }
         stream.push_str(line);
     }

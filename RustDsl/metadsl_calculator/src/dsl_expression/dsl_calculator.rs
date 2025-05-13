@@ -1461,13 +1461,11 @@ impl<'a> AbstractExpression<'a> for HashtableExp<'a>
     fn do_calc(&mut self) -> DslCalculatorValue
     {
         let mut dict = HashMap::<DslCalculatorValue, DslCalculatorValue>::new();
-        let mut i = 0;
         if let Some(exps) = &mut self.m_expressions {
-            while i + 1 < exps.len() {
+            for i in  (0..exps.len()).step_by(2) {
                 let key = exps[i].calc();
                 let val = exps[i + 1].calc();
                 dict.insert(key, val);
-                i += 2;
             }
         }
         let r = DslCalculatorValue::HashMap(dict);
@@ -1532,10 +1530,8 @@ impl<'a> FuncInfo<'a>
     }
     pub fn build_arg_name_indexes(&self, arg_names: &'a Vec<String>)
     {
-        let mut ix = 0;
-        while ix < arg_names.len() {
+        for ix in 0..arg_names.len() {
             self.add_arg_name_index(&arg_names[ix]);
-            ix += 1;
         }
     }
     pub fn new() -> Self
@@ -1569,10 +1565,8 @@ impl<'a> StackInfo
     {
         self.func_name = Some(String::from(func_name));
         let len = func_info.local_var_indexes.borrow().len();
-        let mut ix = 0;
-        while ix < len {
+        for _ in 0..len {
             self.local_vars.push(DslCalculatorValue::Null);
-            ix += 1;
         }
     }
     pub fn clear(&mut self)
@@ -1770,10 +1764,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("objectload", "objectload(dll_path) api", create_expression_factory::<DotnetLoadExp>());
         self.register_api("objectnew", "objectnew(assembly,type_name,arg1,arg2,...) api", create_expression_factory::<DotnetNewExp>());
 
-        self.register_api("substring", "substring(str[,start,len]) function", create_expression_factory::<SubstringExp>());
-        self.register_api("newstring", "newstring() api", create_expression_factory::<NewStringExp>());
-        self.register_api("stringappend", "stringappend(sb,fmt,arg1,arg2,...) api", create_expression_factory::<StringAppendExp>());
-        self.register_api("stringappendline", "stringappendline(sb,fmt,arg1,arg2,...) api", create_expression_factory::<StringAppendLineExp>());
         self.register_api("stringjoin", "stringjoin(sep,list) api", create_expression_factory::<StringJoinExp>());
         self.register_api("stringsplit", "stringsplit(str,sep_list) api", create_expression_factory::<StringSplitExp>());
         self.register_api("stringtrim", "stringtrim(str) api", create_expression_factory::<StringTrimExp>());

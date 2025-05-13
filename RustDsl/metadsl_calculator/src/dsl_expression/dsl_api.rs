@@ -1096,9 +1096,8 @@ impl<'a> AbstractExpression<'a> for IfExp<'a>
     fn do_calc(&mut self) -> DslCalculatorValue
     {
         let mut v = DslCalculatorValue::Null;
-        let mut ix = 0;
         if let Some(clauses) = &self.m_clauses {
-            while ix < clauses.len() {
+            for ix in 0..clauses.len() {
                 let mut need_run = false;
                 if let Some(cond) = &mut clauses[ix].borrow_mut().condition {
                     let cond_val = cond.calc();
@@ -1111,18 +1110,15 @@ impl<'a> AbstractExpression<'a> for IfExp<'a>
                 }
                 if need_run {
                     let ct = clauses[ix].borrow_mut().expressions.len();
-                    let mut exp_ix = 0;
-                    while exp_ix < ct {
+                    for exp_ix in 0..ct {
                         let exp = &mut clauses[ix].borrow_mut().expressions[exp_ix];
                         v = exp.calc();
                         if self.need_return() {
                             return v;
                         }
-                        exp_ix += 1;
                     }
                     break;
                 }
-                ix += 1;
             }
         }
         return v;
@@ -1303,8 +1299,7 @@ impl<'a> AbstractExpression<'a> for WhileExp<'a>
                     }
                 }
                 let ct = clause.borrow_mut().expressions.len();
-                let mut exp_ix = 0;
-                while exp_ix < ct {
+                for exp_ix in 0..ct {
                     let exp = &mut clause.borrow_mut().expressions[exp_ix];
                     v = exp.calc();
                     if self.need_continue() {
@@ -1313,7 +1308,6 @@ impl<'a> AbstractExpression<'a> for WhileExp<'a>
                     else if self.need_return() {
                         return v;
                     }
-                    exp_ix += 1;
                 }
             }
         }
@@ -1444,12 +1438,10 @@ impl<'a> AbstractExpression<'a> for LoopExp<'a>
                 let cond_val = cond.calc();
                 loop_ct = cond_val.to_i64();
             }
-            let mut loop_ix = 0;
-            while loop_ix < loop_ct {
+            for loop_ix in 0..loop_ct {
                 self.calculator().borrow_mut().set_variable(&"$$", DslCalculatorValue::Long(loop_ix));
                 let ct = clause.borrow_mut().expressions.len();
-                let mut exp_ix = 0;
-                while exp_ix < ct {
+                for exp_ix in 0..ct {
                     let exp = &mut clause.borrow_mut().expressions[exp_ix];
                     v = exp.calc();
                     if self.need_continue() {
@@ -1458,9 +1450,7 @@ impl<'a> AbstractExpression<'a> for LoopExp<'a>
                     else if self.need_return() {
                         return v;
                     }
-                    exp_ix += 1;
                 }
-                loop_ix += 1;
             }
         }
         return v;
@@ -1593,8 +1583,7 @@ impl<'a> AbstractExpression<'a> for LoopListExp<'a>
                 for iter_v in vec.iter() {
                     self.calculator().borrow_mut().set_variable(&"$$", iter_v.clone());
                     let ct = clause.borrow_mut().expressions.len();
-                    let mut exp_ix = 0;
-                    while exp_ix < ct {
+                    for exp_ix in 0..ct {
                         let exp = &mut clause.borrow_mut().expressions[exp_ix];
                         v = exp.calc();
                         if self.need_continue() {
@@ -1603,7 +1592,6 @@ impl<'a> AbstractExpression<'a> for LoopListExp<'a>
                         else if self.need_return() {
                             return v;
                         }
-                        exp_ix += 1;
                     }
                 }
             }
@@ -1753,8 +1741,7 @@ impl<'a> AbstractExpression<'a> for ForeachExp<'a>
                 }
                 self.calculator().borrow_mut().set_variable(&"$$", iter_v);
                 let ct = clause.borrow_mut().expressions.len();
-                let mut exp_ix = 0;
-                while exp_ix < ct {
+                for exp_ix in 0..ct {
                     let exp = &mut clause.borrow_mut().expressions[exp_ix];
                     v = exp.calc();
                     if self.need_continue() {
@@ -1763,7 +1750,6 @@ impl<'a> AbstractExpression<'a> for ForeachExp<'a>
                     else if self.need_return() {
                         return v;
                     }
-                    exp_ix += 1;
                 }
             }
         }
