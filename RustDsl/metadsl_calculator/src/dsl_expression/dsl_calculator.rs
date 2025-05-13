@@ -1753,6 +1753,12 @@ impl<'a> DslCalculator<'a>
         self.register_api("stringappendline", "stringappendline(sb,arg1,arg2,...) api", create_expression_factory::<StringAppendLineExp>());
         self.register_api("stringjoin", "stringjoin(sep,list) api", create_expression_factory::<StringJoinExp>());
         self.register_api("stringsplit", "stringsplit(str,sep_list) api", create_expression_factory::<StringSplitExp>());
+        self.register_api("stringtrim", "stringtrim(str) api", create_expression_factory::<StringTrimExp>());
+        self.register_api("stringtrimstart", "stringtrimstart(str) api", create_expression_factory::<StringTrimStartExp>());
+        self.register_api("stringtrimend", "stringtrimend(str) api", create_expression_factory::<StringTrimEndExp>());
+        self.register_api("stringtrimmatches", "stringtrimmatches(str,pattern) api", create_expression_factory::<StringTrimMatchesExp>());
+        self.register_api("stringtrimstartmatches", "stringtrimstartmatches(str,pattern) api", create_expression_factory::<StringTrimStartMatchesExp>());
+        self.register_api("stringtrimendmatches", "stringtrimendmatches(str,pattern) api", create_expression_factory::<StringTrimEndMatchesExp>());
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
@@ -1766,9 +1772,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("objectload", "objectload(dll_path) api", create_expression_factory::<DotnetLoadExp>());
         self.register_api("objectnew", "objectnew(assembly,type_name,arg1,arg2,...) api", create_expression_factory::<DotnetNewExp>());
 
-        self.register_api("stringtrim", "stringtrim(str) api", create_expression_factory::<StringTrimExp>());
-        self.register_api("stringtrimstart", "stringtrimstart(str) api", create_expression_factory::<StringTrimStartExp>());
-        self.register_api("stringtrimend", "stringtrimend(str) api", create_expression_factory::<StringTrimEndExp>());
         self.register_api("stringtolower", "stringtolower(str) api", create_expression_factory::<StringToLowerExp>());
         self.register_api("stringtoupper", "stringtoupper(str) api", create_expression_factory::<StringToUpperExp>());
         self.register_api("stringreplace", "stringreplace(str,key,rep_str) api", create_expression_factory::<StringReplaceExp>());

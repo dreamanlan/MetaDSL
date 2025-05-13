@@ -6962,4 +6962,261 @@ impl<'a> StringSplitExp<'a>
         return false;
     }
 }
+#[add_abstract_and_simple_expression_fields]
+struct StringTrimExp
+{
 
+}
+impl<'a> Default for StringTrimExp<'a>
+{
+    fn default() -> Self
+    {
+        StringTrimExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringTrimExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringTrimExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringTrimExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(s) = opd0 {
+                return DslCalculatorValue::String(s.trim().to_string());
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringTrimStartExp
+{
+
+}
+impl<'a> Default for StringTrimStartExp<'a>
+{
+    fn default() -> Self
+    {
+        StringTrimStartExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringTrimStartExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringTrimStartExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringTrimStartExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(s) = opd0 {
+                return DslCalculatorValue::String(s.trim_start().to_string());
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringTrimEndExp
+{
+
+}
+impl<'a> Default for StringTrimEndExp<'a>
+{
+    fn default() -> Self
+    {
+        StringTrimEndExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringTrimEndExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringTrimEndExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringTrimEndExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(s) = opd0 {
+                return DslCalculatorValue::String(s.trim_end().to_string());
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringTrimMatchesExp
+{
+
+}
+impl<'a> Default for StringTrimMatchesExp<'a>
+{
+    fn default() -> Self
+    {
+        StringTrimMatchesExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringTrimMatchesExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringTrimMatchesExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringTrimMatchesExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            if let DslCalculatorValue::String(s) = opd0 {
+                if let DslCalculatorValue::String(p) = opd1 {
+                    let pattern: Vec<char> = p.chars().collect();
+                    return DslCalculatorValue::String(s.trim_matches(&pattern[..]).to_string());
+                }
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringTrimStartMatchesExp
+{
+
+}
+impl<'a> Default for StringTrimStartMatchesExp<'a>
+{
+    fn default() -> Self
+    {
+        StringTrimStartMatchesExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringTrimStartMatchesExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringTrimStartMatchesExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringTrimStartMatchesExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            if let DslCalculatorValue::String(s) = opd0 {
+                if let DslCalculatorValue::String(p) = opd1 {
+                    let pattern: Vec<char> = p.chars().collect();
+                    return DslCalculatorValue::String(s.trim_start_matches(&pattern[..]).to_string());
+                }
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringTrimEndMatchesExp
+{
+
+}
+impl<'a> Default for StringTrimEndMatchesExp<'a>
+{
+    fn default() -> Self
+    {
+        StringTrimEndMatchesExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringTrimEndMatchesExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringTrimEndMatchesExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringTrimEndMatchesExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            if let DslCalculatorValue::String(s) = opd0 {
+                if let DslCalculatorValue::String(p) = opd1 {
+                    let pattern: Vec<char> = p.chars().collect();
+                    return DslCalculatorValue::String(s.trim_end_matches(&pattern[..]).to_string());
+                }
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
