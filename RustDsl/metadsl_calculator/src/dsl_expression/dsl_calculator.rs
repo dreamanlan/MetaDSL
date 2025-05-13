@@ -1771,11 +1771,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("collectionset", "collectionset api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionSetExp>());
         self.register_api("collectionget", "collectionget api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionGetExp>());
         self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
-        self.register_api("objectload", "objectload(dll_path) api", create_expression_factory::<DotnetLoadExp>());
-        self.register_api("objectnew", "objectnew(assembly,type_name,arg1,arg2,...) api", create_expression_factory::<DotnetNewExp>());
 
-        self.register_api("stringtolower", "stringtolower(str) api", create_expression_factory::<StringToLowerExp>());
-        self.register_api("stringtoupper", "stringtoupper(str) api", create_expression_factory::<StringToUpperExp>());
         self.register_api("stringreplace", "stringreplace(str,key,rep_str) api", create_expression_factory::<StringReplaceExp>());
         self.register_api("stringreplacechar", "stringreplacechar(str,key,char_as_str) api", create_expression_factory::<StringReplaceCharExp>());
         self.register_api("makestring", "makestring(char1_as_str_or_int,char2_as_str_or_int,...) api", create_expression_factory::<MakeStringExp>());
