@@ -1,4 +1,6 @@
 use std::cell::RefCell;
+use std::slice::Iter;
+use std::iter::Skip;
 use std::rc::Rc;
 use rand::Rng;
 use metadsl::dsl::{
@@ -6839,3 +6841,125 @@ impl<'a> AbstractExpression<'a> for StringAppendLineExp<'a>
 
     impl_abstract_expression!();
 }
+#[add_abstract_and_simple_expression_fields]
+struct StringJoinExp
+{
+
+}
+impl<'a> Default for StringJoinExp<'a>
+{
+    fn default() -> Self
+    {
+        StringJoinExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringJoinExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringJoinExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringJoinExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(sep) = opd0 {
+                let s = operands.iter().skip(1).flat_map(Self::variant_to_strings).collect::<Vec<String>>().join(sep);
+                return DslCalculatorValue::String(s);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> StringJoinExp<'a>
+{
+    fn variant_to_strings(variant: &DslCalculatorValue) -> Vec<String> {
+        match variant {
+            DslCalculatorValue::String(s) => vec![s.clone()],
+            DslCalculatorValue::Array(arr) => arr.iter().flat_map(Self::variant_to_strings).collect(),
+            _ => vec![variant.to_string()],
+        }
+    }
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringSplitExp
+{
+
+}
+impl<'a> Default for StringSplitExp<'a>
+{
+    fn default() -> Self
+    {
+        StringSplitExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringSplitExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringSplitExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringSplitExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(s) = opd0 {
+                let arr = s.split(|c|Self::is_sep(c, operands.iter().skip(1))).map(|elem|DslCalculatorValue::String(String::from(elem))).collect();
+                return DslCalculatorValue::Array(arr);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+impl<'a> StringSplitExp<'a>
+{
+    fn is_sep(c: char, iter: Skip<Iter<'_, DslCalculatorValue>>) -> bool {
+        for opd in iter {
+            match opd {
+                DslCalculatorValue::String(s) => {
+                    if let Some(sc) = s.chars().next() {
+                        if sc == c {
+                            return true;
+                        }
+                    }
+                }
+                DslCalculatorValue::Char(sc) => {
+                    if *sc == c {
+                        return true;
+                    }
+                }
+                _ => {
+                    if opd.to_char() == c {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}
+

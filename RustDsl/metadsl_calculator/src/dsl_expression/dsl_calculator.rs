@@ -1751,6 +1751,8 @@ impl<'a> DslCalculator<'a>
         self.register_api("substring", "substring(str,start[,len]) function", create_expression_factory::<SubStringExp>());
         self.register_api("stringappend", "stringappend(sb,arg1,arg2,...) api", create_expression_factory::<StringAppendExp>());
         self.register_api("stringappendline", "stringappendline(sb,arg1,arg2,...) api", create_expression_factory::<StringAppendLineExp>());
+        self.register_api("stringjoin", "stringjoin(sep,list) api", create_expression_factory::<StringJoinExp>());
+        self.register_api("stringsplit", "stringsplit(str,sep_list) api", create_expression_factory::<StringSplitExp>());
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
@@ -1764,8 +1766,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("objectload", "objectload(dll_path) api", create_expression_factory::<DotnetLoadExp>());
         self.register_api("objectnew", "objectnew(assembly,type_name,arg1,arg2,...) api", create_expression_factory::<DotnetNewExp>());
 
-        self.register_api("stringjoin", "stringjoin(sep,list) api", create_expression_factory::<StringJoinExp>());
-        self.register_api("stringsplit", "stringsplit(str,sep_list) api", create_expression_factory::<StringSplitExp>());
         self.register_api("stringtrim", "stringtrim(str) api", create_expression_factory::<StringTrimExp>());
         self.register_api("stringtrimstart", "stringtrimstart(str) api", create_expression_factory::<StringTrimStartExp>());
         self.register_api("stringtrimend", "stringtrimend(str) api", create_expression_factory::<StringTrimEndExp>());
