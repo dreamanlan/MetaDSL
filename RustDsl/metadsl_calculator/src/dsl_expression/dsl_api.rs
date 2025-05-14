@@ -2265,6 +2265,44 @@ impl<'a> SimpleExpressionBase<'a> for IsHashmapExp<'a>
     impl_simple_expression!();
 }
 #[add_abstract_and_simple_expression_fields]
+struct IsDequeExp
+{
+
+}
+impl<'a> Default for IsDequeExp<'a>
+{
+    fn default() -> Self
+    {
+        IsDequeExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for IsDequeExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for IsDequeExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for IsDequeExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            return DslCalculatorValue::Bool(operands[0].is_deque());
+        }
+        return DslCalculatorValue::Bool(false);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
 struct IsObjectExp
 {
 

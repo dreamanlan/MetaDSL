@@ -65,7 +65,16 @@ pub enum DslCalculatorValue
     Char(char),
     Array(Vec<DslCalculatorValue>),
     HashMap(HashMap<DslCalculatorValue, DslCalculatorValue>),
+    Deque(VecDeque<DslCalculatorValue>),
     Object(u32),
+    Tuple2(Box<(DslCalculatorValue, DslCalculatorValue)>),
+    Tuple3(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
+    Tuple4(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
+    Tuple5(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
+    Tuple6(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
+    Tuple7(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
+    Tuple8(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
+    Tuple9(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
 }
 impl Hash for DslCalculatorValue
 {
@@ -151,9 +160,84 @@ impl Hash for DslCalculatorValue
                     val.hash(state);
                 }
             },
-            DslCalculatorValue::Object(val) => {
+            DslCalculatorValue::Deque(val) => {
                 state.write_u8(18);
+                state.write_u32(val.len() as u32);
+                for val in val.iter() {
+                    val.hash(state);
+                }
+            },
+            DslCalculatorValue::Object(val) => {
+                state.write_u8(19);
                 state.write_u32(*val);
+            },
+            DslCalculatorValue::Tuple2(val) => {
+                state.write_u8(20);
+                val.0.hash(state);
+                val.1.hash(state);
+            },
+            DslCalculatorValue::Tuple3(val) => {
+                state.write_u8(21);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+            },
+            DslCalculatorValue::Tuple4(val) => {
+                state.write_u8(22);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+                val.3.hash(state);
+            },
+            DslCalculatorValue::Tuple5(val) => {
+                state.write_u8(23);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+                val.3.hash(state);
+                val.4.hash(state);
+            },
+            DslCalculatorValue::Tuple6(val) => {
+                state.write_u8(24);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+                val.3.hash(state);
+                val.4.hash(state);
+                val.5.hash(state);
+            },
+            DslCalculatorValue::Tuple7(val) => {
+                state.write_u8(25);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+                val.3.hash(state);
+                val.4.hash(state);
+                val.5.hash(state);
+                val.6.hash(state);
+            },
+            DslCalculatorValue::Tuple8(val) => {
+                state.write_u8(26);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+                val.3.hash(state);
+                val.4.hash(state);
+                val.5.hash(state);
+                val.6.hash(state);
+                val.7.hash(state);
+            },
+            DslCalculatorValue::Tuple9(val) => {
+                state.write_u8(27);
+                val.0.hash(state);
+                val.1.hash(state);
+                val.2.hash(state);
+                val.3.hash(state);
+                val.4.hash(state);
+                val.5.hash(state);
+                val.6.hash(state);
+                val.7.hash(state);
+                val.8.hash(state);
             },
         }
     }
@@ -181,6 +265,15 @@ impl PartialEq for DslCalculatorValue
             (DslCalculatorValue::Char(val1), DslCalculatorValue::Char(val2)) => val1 == val2,
             (DslCalculatorValue::Array(val1), DslCalculatorValue::Array(val2)) => val1 == val2,
             (DslCalculatorValue::HashMap(_val1), DslCalculatorValue::HashMap(_val2)) => false,
+            (DslCalculatorValue::Deque(val1), DslCalculatorValue::Deque(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple2(val1), DslCalculatorValue::Tuple2(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple3(val1), DslCalculatorValue::Tuple3(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple4(val1), DslCalculatorValue::Tuple4(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple5(val1), DslCalculatorValue::Tuple5(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple6(val1), DslCalculatorValue::Tuple6(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple7(val1), DslCalculatorValue::Tuple7(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple8(val1), DslCalculatorValue::Tuple8(val2)) => val1 == val2,
+            (DslCalculatorValue::Tuple9(val1), DslCalculatorValue::Tuple9(val2)) => val1 == val2,
             (_, _) => false,
         };
         return ret;
@@ -210,6 +303,13 @@ impl DslCalculatorValue
     {
         match &self {
             DslCalculatorValue::HashMap(_) => true,
+            _ => false,
+        }
+    }
+    pub fn is_deque(&self) -> bool
+    {
+        match &self {
+            DslCalculatorValue::Deque(_) => true,
             _ => false,
         }
     }
@@ -1373,8 +1473,29 @@ impl<'a> AbstractExpression<'a> for ParenthesisExp<'a>
     {
         let mut v = DslCalculatorValue::Null;
         if let Some(exps) = &mut self.m_expressions {
-            for exp in exps.iter_mut() {
-                v = exp.calc();
+            let num = exps.len();
+            if num == 0 {
+                //do nothing
+            }
+            else if num == 1 {
+                v = exps[0].calc();
+            }
+            else {
+                let mut vs = Vec::new();
+                for exp in exps.iter_mut() {
+                    let temp = exp.calc();
+                    vs.push(temp);
+                }
+                match num {
+                    2 => { v = DslCalculatorValue::Tuple2(Box::new((vs.remove(0), vs.remove(0)))) }
+                    3 => { v = DslCalculatorValue::Tuple3(Box::new((vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                    4 => { v = DslCalculatorValue::Tuple4(Box::new((vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                    5 => { v = DslCalculatorValue::Tuple5(Box::new((vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                    6 => { v = DslCalculatorValue::Tuple6(Box::new((vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                    7 => { v = DslCalculatorValue::Tuple7(Box::new((vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                    8 => { v = DslCalculatorValue::Tuple8(Box::new((vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                    _ => { v = DslCalculatorValue::Tuple9(Box::new((vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0), vs.remove(0)))) }
+                }
             }
         }
         return v;
@@ -1393,6 +1514,158 @@ impl<'a> AbstractExpression<'a> for ParenthesisExp<'a>
             }
         }
         self.m_expressions = Some(vs);
+        return true;
+    }
+
+    impl_abstract_expression!();
+}
+#[add_abstract_expression_fields]
+pub struct ParenthesisSetExp<'a>
+{
+    m_var_ids: Option<Vec<String>>,
+    m_op: Option<ExpressionBox<'a>>,
+}
+impl<'a> Default for ParenthesisSetExp<'a>
+{
+    fn default() -> Self
+    {
+        ParenthesisSetExp {
+            m_var_ids: None,
+            m_op: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for ParenthesisSetExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for ParenthesisSetExp<'a>
+{
+    fn do_calc(&mut self) -> DslCalculatorValue
+    {
+        let mut v = DslCalculatorValue::Null;
+        if let Some(op) = &mut self.m_op {
+            v = op.calc();
+        }
+        if let Some(var_ids) = &self.m_var_ids {
+            let num = var_ids.len();
+            match num {
+                1 => {
+                    let id = &var_ids[0];
+                    self.calculator().borrow_mut().set_variable(&id, v.clone());
+                }
+                2 => {
+                    if let DslCalculatorValue::Tuple2(val) = v.clone() {
+                        let (v1, v2) = (val.0, val.1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                    }
+                }
+                3 => {
+                    if let DslCalculatorValue::Tuple3(val) = v.clone() {
+                        let (v1, v2, v3) = (val.0, val.1, val.2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                    }
+                }
+                4 => {
+                    if let DslCalculatorValue::Tuple4(val) = v.clone() {
+                        let (v1, v2, v3, v4) = (val.0, val.1, val.2, val.3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[3], v4);
+                    }
+                }
+                5 => {
+                    if let DslCalculatorValue::Tuple5(val) = v.clone() {
+                        let (v1, v2, v3, v4, v5) = (val.0, val.1, val.2, val.3, val.4);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[3], v4);
+                        self.calculator().borrow_mut().set_variable(&var_ids[4], v5);
+                    }
+                }
+                6 => {
+                    if let DslCalculatorValue::Tuple6(val) = v.clone() {
+                        let (v1, v2, v3, v4, v5, v6) = (val.0, val.1, val.2, val.3, val.4, val.5);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[3], v4);
+                        self.calculator().borrow_mut().set_variable(&var_ids[4], v5);
+                        self.calculator().borrow_mut().set_variable(&var_ids[5], v6);
+                    }
+                }
+                7 => {
+                    if let DslCalculatorValue::Tuple7(val) = v.clone() {
+                        let (v1, v2, v3, v4, v5, v6, v7) = (val.0, val.1, val.2, val.3, val.4, val.5, val.6);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[3], v4);
+                        self.calculator().borrow_mut().set_variable(&var_ids[4], v5);
+                        self.calculator().borrow_mut().set_variable(&var_ids[5], v6);
+                        self.calculator().borrow_mut().set_variable(&var_ids[6], v7);
+                    }
+                }
+                8 => {
+                    if let DslCalculatorValue::Tuple8(val) = v.clone() {
+                        let (v1, v2, v3, v4, v5, v6, v7, v8) = (val.0, val.1, val.2, val.3, val.4, val.5, val.6, val.7);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[3], v4);
+                        self.calculator().borrow_mut().set_variable(&var_ids[4], v5);
+                        self.calculator().borrow_mut().set_variable(&var_ids[5], v6);
+                        self.calculator().borrow_mut().set_variable(&var_ids[6], v7);
+                        self.calculator().borrow_mut().set_variable(&var_ids[7], v8);
+                    }
+                }
+                _ => {
+                    if let DslCalculatorValue::Tuple9(val) = v.clone() {
+                        let (v1, v2, v3, v4, v5, v6, v7, v8, v9) = (val.0, val.1, val.2, val.3, val.4, val.5, val.6, val.7, val.8);
+                        self.calculator().borrow_mut().set_variable(&var_ids[0], v1);
+                        self.calculator().borrow_mut().set_variable(&var_ids[1], v2);
+                        self.calculator().borrow_mut().set_variable(&var_ids[2], v3);
+                        self.calculator().borrow_mut().set_variable(&var_ids[3], v4);
+                        self.calculator().borrow_mut().set_variable(&var_ids[4], v5);
+                        self.calculator().borrow_mut().set_variable(&var_ids[5], v6);
+                        self.calculator().borrow_mut().set_variable(&var_ids[6], v7);
+                        self.calculator().borrow_mut().set_variable(&var_ids[7], v8);
+                        self.calculator().borrow_mut().set_variable(&var_ids[8], v9);
+                    }
+                }
+            }
+        }
+        return v;
+    }
+    fn load_function(&mut self) -> bool
+    {
+        let mut vs = Vec::new();
+        let mut op = None;
+        if let SyntaxComponent::Function(func_data) = self.syntax_component() {
+            if let Some(param1) = func_data.get_param(0) {
+                if let SyntaxComponent::Function(tuple_data) = param1 {
+                    if let Some(ps) = tuple_data.params() {
+                        for p in ps.iter() {
+                            let id = p.get_id();
+                            vs.push(id.clone());
+                        }
+                    }
+                }
+            }
+            if let Some(param2) = func_data.get_param(1) {
+                op = DslCalculator::load_syntax_component(self.calculator(), param2);
+            }
+        }
+        self.m_var_ids = Some(vs);
+        self.m_op = op;
         return true;
     }
 
@@ -1673,6 +1946,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("null", "null() api", create_expression_factory::<NullExp>());
         self.register_api("isarray", "isarray(v) api", create_expression_factory::<IsArrayExp>());
         self.register_api("ishashmap", "ishashmap(v) api", create_expression_factory::<IsHashmapExp>());
+        self.register_api("isdeque", "isdeque(v) api", create_expression_factory::<IsDequeExp>());
         self.register_api("isobject", "isobject(v) api", create_expression_factory::<IsObjectExp>());
         self.register_api("isstring", "isstring(v) api", create_expression_factory::<IsStringExp>());
         self.register_api("isbool", "isbool(v) api", create_expression_factory::<IsBoolExp>());
@@ -1772,15 +2046,14 @@ impl<'a> DslCalculator<'a>
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
-        self.register_api("objectcall", "objectcall api, fn implementation, using csharp object syntax", create_expression_factory::<DotnetCallExp>());
-        self.register_api("objectset", "objectset api, fn implementation, using csharp object syntax", create_expression_factory::<DotnetSetExp>());
-        self.register_api("objectget", "objectget api, fn implementation, using csharp object syntax", create_expression_factory::<DotnetGetExp>());
-        self.register_api("collectioncall", "collectioncall api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionCallExp>());
-        self.register_api("collectionset", "collectionset api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionSetExp>());
-        self.register_api("collectionget", "collectionget api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionGetExp>());
+        self.register_api("objectcall", "objectcall api, fn implementation, using object syntax", create_expression_factory::<DotnetCallExp>());
+        self.register_api("objectset", "objectset api, fn implementation, using object syntax", create_expression_factory::<DotnetSetExp>());
+        self.register_api("objectget", "objectget api, fn implementation, using object syntax", create_expression_factory::<DotnetGetExp>());
+        self.register_api("collectioncall", "collectioncall api, fn implementation, using object syntax", create_expression_factory::<CollectionCallExp>());
+        self.register_api("collectionset", "collectionset api, fn implementation, using object syntax", create_expression_factory::<CollectionSetExp>());
+        self.register_api("collectionget", "collectionget api, fn implementation, using object syntax", create_expression_factory::<CollectionGetExp>());
         self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
 
-        self.register_api("toarray", "toarray(list) api", create_expression_factory::<ToArrayExp>());
         self.register_api("listsize", "listsize(list) api", create_expression_factory::<ListSizeExp>());
         self.register_api("list", "list(v1,v2,...) object", create_expression_factory::<ListExp>());
         self.register_api("listget", "listget(list,index[,defval]) api", create_expression_factory::<ListGetExp>());
@@ -1792,6 +2065,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("listremoveat", "listremoveat(list,index) api", create_expression_factory::<ListRemoveAtExp>());
         self.register_api("listclear", "listclear(list) api", create_expression_factory::<ListClearExp>());
         self.register_api("listsplit", "listsplit(list,ct) api, return list of list", create_expression_factory::<ListSplitExp>());
+
         self.register_api("hashtablesize", "hashtablesize(hash) api", create_expression_factory::<HashtableSizeExp>());
         self.register_api("hashtableget", "hashtableget(hash,key[,defval]) api", create_expression_factory::<HashtableGetExp>());
         self.register_api("hashtableset", "hashtableset(hash,key,val) api", create_expression_factory::<HashtableSetExp>());
@@ -1802,17 +2076,16 @@ impl<'a> DslCalculator<'a>
         self.register_api("hashtablevalues", "hashtablevalues(hash) api", create_expression_factory::<HashtableValuesExp>());
         self.register_api("listhashtable", "listhashtable(hash) api, return list of pair", create_expression_factory::<ListHashtableExp>());
         self.register_api("hashtablesplit", "hashtablesplit(hash,ct) api, return list of hashtable", create_expression_factory::<HashtableSplitExp>());
-        self.register_api("peek", "peek(queue_or_stack) api", create_expression_factory::<PeekExp>());
-        self.register_api("stacksize", "stacksize(stack) api", create_expression_factory::<StackSizeExp>());
-        self.register_api("stack", "stack(v1,v2,...) object", create_expression_factory::<StackExp>());
-        self.register_api("push", "push(stack,v) api", create_expression_factory::<PushExp>());
-        self.register_api("pop", "pop(stack) api", create_expression_factory::<PopExp>());
-        self.register_api("stackclear", "stackclear(stack) api", create_expression_factory::<StackClearExp>());
-        self.register_api("queuesize", "queuesize(queue) api", create_expression_factory::<QueueSizeExp>());
-        self.register_api("queue", "queue(v1,v2,...) object", create_expression_factory::<QueueExp>());
-        self.register_api("enqueue", "enqueue(queue,v) api", create_expression_factory::<EnqueueExp>());
-        self.register_api("dequeue", "dequeue(queue) api", create_expression_factory::<DequeueExp>());
-        self.register_api("queueclear", "queueclear(queue) api", create_expression_factory::<QueueClearExp>());
+
+        self.register_api("dequesize", "dequesize(deque) api", create_expression_factory::<DequeSizeExp>());
+        self.register_api("deque", "deque(v1,v2,...) object", create_expression_factory::<DequeExp>());
+        self.register_api("front", "front(deque) api", create_expression_factory::<FrontExp>());
+        self.register_api("back", "back(deque) api", create_expression_factory::<BackExp>());
+        self.register_api("pushback", "pushback(deque,v) api", create_expression_factory::<PushBackExp>());
+        self.register_api("popback", "popback(deque) api", create_expression_factory::<PopBackExp>());
+        self.register_api("pushfront", "pushfront(deque,v) api", create_expression_factory::<PushFrontExp>());
+        self.register_api("popfront", "popfront(deque) api", create_expression_factory::<PopFrontExp>());
+        self.register_api("dequeclear", "dequeclear(queue) api", create_expression_factory::<DequeClearExp>());
 
         self.register_api("datetimestr", "datetimestr(fmt) api", create_expression_factory::<DatetimeStrExp>());
         self.register_api("longdatestr", "longdatestr() api", create_expression_factory::<LongDateStrExp>());
@@ -2521,10 +2794,11 @@ impl<'a> DslCalculator<'a>
                 if op == "=" {//assignment
                     if let Some(syn) = func_data.get_param(0) {
                         if let SyntaxComponent::Function(inner_call) = syn {
-                            //obj.property = val -> objectset(obj, property, val)
                             let inner_param_class = inner_call.get_param_class();
                             if inner_param_class == dsl::PARAM_CLASS_PERIOD ||
                                 inner_param_class == dsl::PARAM_CLASS_BRACKET {
+                                //obj.property = val -> objectset(obj, property, val)
+                                //obj[property] = val -> collectionset(obj, property, val)
                                 let mut new_call = FunctionData::new();
                                 if inner_param_class == dsl::PARAM_CLASS_PERIOD {
                                     new_call.set_name(Box::new(ValueData::from_string_type(String::from("objectset"), dsl::ID_TOKEN)));
@@ -2558,6 +2832,12 @@ impl<'a> DslCalculator<'a>
 
                                 return Self::load_syntax_component(cell, &SyntaxComponent::Function(new_call));
                             }
+                            else if inner_param_class == dsl::PARAM_CLASS_PARENTHESIS && !inner_call.have_id() {
+                                //(a,b,c) = val
+                                let mut exp = ParenthesisSetExp::default();
+                                AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
+                                return Some(Box::new(exp));
+                            }
                         }
                     }
                     let name = func_data.get_param_id(0);
@@ -2582,7 +2862,8 @@ impl<'a> DslCalculator<'a>
                         if let Some(inner_call) = func_data.lower_order_function() {
                             let inner_param_class = inner_call.get_param_class();
                             if param_class == dsl::PARAM_CLASS_PARENTHESIS && (inner_param_class == dsl::PARAM_CLASS_PERIOD || inner_param_class == dsl::PARAM_CLASS_BRACKET) {
-                                //obj.member(a,b,...) or obj[member](a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> objectcall(obj,member,a,b,...)
+                                //obj.member(a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> objectcall(obj,member,a,b,...)
+                                //obj[member](a,b,...) -> collectioncall(obj,member,a,b,...)
                                 let api_name;
                                 let member = inner_call.get_param_id(0);
                                 if member == "orderby" || member == "orderbydesc" || member == "where" || member == "top" {
@@ -2629,7 +2910,8 @@ impl<'a> DslCalculator<'a>
                         }
                     }
                     if param_class == dsl::PARAM_CLASS_PERIOD || param_class == dsl::PARAM_CLASS_BRACKET {
-                        //obj.property or obj[property] or obj.(property) or obj.[property] or obj.{property} -> objectget(obj,property)
+                        //obj.property or obj.(property) or obj.[property] or obj.{property} -> objectget(obj,property)
+                        //obj[property] -> collectionget(obj,property)
                         let mut new_call = FunctionData::new();
                         if param_class == dsl::PARAM_CLASS_PERIOD {
                             new_call.set_name(Box::new(ValueData::from_string_type(String::from("objectget"), dsl::ID_TOKEN)));
