@@ -7302,3 +7302,424 @@ impl<'a> SimpleExpressionBase<'a> for StringToUpperExp<'a>
 
     impl_simple_expression!();
 }
+#[add_abstract_and_simple_expression_fields]
+struct StringReplaceExp
+{
+
+}
+impl<'a> Default for StringReplaceExp<'a>
+{
+    fn default() -> Self
+    {
+        StringReplaceExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringReplaceExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringReplaceExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringReplaceExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            if let DslCalculatorValue::String(s) = opd0 {
+                if let DslCalculatorValue::String(from) = opd1 {
+                    if let DslCalculatorValue::String(to) = opd2 {
+                        return DslCalculatorValue::String(s.replace(from, to));
+                    }
+                }
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringReplaceCharExp
+{
+
+}
+impl<'a> Default for StringReplaceCharExp<'a>
+{
+    fn default() -> Self
+    {
+        StringReplaceCharExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringReplaceCharExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringReplaceCharExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringReplaceCharExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 3 {
+            let opd0 = &operands[0];
+            let opd1 = &operands[1];
+            let opd2 = &operands[2];
+            if let DslCalculatorValue::String(s) = opd0 {
+                let mut from = '\0';
+                let mut to = '\0';
+                match opd1 {
+                    DslCalculatorValue::Char(c) => {
+                        from = *c;
+                    }
+                    DslCalculatorValue::String(s) => {
+                        if let Some(c) = s.chars().next() {
+                            from = c;
+                        }
+                    }
+                    _ => {
+                        from = opd1.to_char();
+                    }
+                }
+                match opd2 {
+                    DslCalculatorValue::Char(c) => {
+                        to = *c;
+                    }
+                    DslCalculatorValue::String(s) => {
+                        if let Some(c) = s.chars().next() {
+                            to = c;
+                        }
+                    }
+                    _ => {
+                        to = opd2.to_char();
+                    }
+                }
+                return DslCalculatorValue::String(s.replace(from, &to.to_string()));
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct MakeStringExp
+{
+
+}
+impl<'a> Default for MakeStringExp<'a>
+{
+    fn default() -> Self
+    {
+        MakeStringExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for MakeStringExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for MakeStringExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for MakeStringExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        let mut s = String::new();
+        for opd in operands.iter() {
+            let mut ch = '\0';
+            match opd {
+                DslCalculatorValue::Char(c) => {
+                    ch = *c;
+                }
+                DslCalculatorValue::String(s) => {
+                    if let Some(c) = s.chars().next() {
+                        ch = c;
+                    }
+                }
+                _ => {
+                    ch = opd.to_char();
+                }
+            }
+            s.push(ch);
+        }
+        return DslCalculatorValue::String(s);
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringContainsExp
+{
+
+}
+impl<'a> Default for StringContainsExp<'a>
+{
+    fn default() -> Self
+    {
+        StringContainsExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringContainsExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringContainsExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringContainsExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(src) = opd0 {
+                for opd in operands.iter().skip(1) {
+                    if let DslCalculatorValue::Array(arr) = opd {
+                        for val in arr.iter() {
+                            if let DslCalculatorValue::String(s) = val {
+                                if s.len() > 0 && !src.contains(s) {
+                                    return DslCalculatorValue::Bool(false);
+                                }
+                            }
+                        }
+                    }
+                    else if let DslCalculatorValue::String(s) = opd {
+                        if s.len() > 0 && !src.contains(s) {
+                            return DslCalculatorValue::Bool(false);
+                        }
+                    }
+                }
+                return DslCalculatorValue::Bool(true);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringNotContainsExp
+{
+
+}
+impl<'a> Default for StringNotContainsExp<'a>
+{
+    fn default() -> Self
+    {
+        StringNotContainsExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringNotContainsExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringNotContainsExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringNotContainsExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(src) = opd0 {
+                for opd in operands.iter().skip(1) {
+                    if let DslCalculatorValue::Array(arr) = opd {
+                        for val in arr.iter() {
+                            if let DslCalculatorValue::String(s) = val {
+                                if s.len() > 0 && src.contains(s) {
+                                    return DslCalculatorValue::Bool(false);
+                                }
+                            }
+                        }
+                    }
+                    else if let DslCalculatorValue::String(s) = opd {
+                        if s.len() > 0 && src.contains(s) {
+                            return DslCalculatorValue::Bool(false);
+                        }
+                    }
+                }
+                return DslCalculatorValue::Bool(true);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringContainsAnyExp
+{
+
+}
+impl<'a> Default for StringContainsAnyExp<'a>
+{
+    fn default() -> Self
+    {
+        StringContainsAnyExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringContainsAnyExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringContainsAnyExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringContainsAnyExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(src) = opd0 {
+                let mut ret = true;
+                for opd in operands.iter().skip(1) {
+                    if let DslCalculatorValue::Array(arr) = opd {
+                        for val in arr.iter() {
+                            if let DslCalculatorValue::String(s) = val {
+                                if s.len() > 0 {
+                                    if src.contains(s) {
+                                        return DslCalculatorValue::Bool(true);
+                                    }
+                                    else {
+                                        ret = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if let DslCalculatorValue::String(s) = opd {
+                        if s.len() > 0 {
+                            if src.contains(s) {
+                                return DslCalculatorValue::Bool(true);
+                            }
+                            else {
+                                ret = false;
+                            }
+                        }
+                    }
+                }
+                return DslCalculatorValue::Bool(ret);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
+struct StringNotContainsAnyExp
+{
+
+}
+impl<'a> Default for StringNotContainsAnyExp<'a>
+{
+    fn default() -> Self
+    {
+        StringNotContainsAnyExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for StringNotContainsAnyExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for StringNotContainsAnyExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for StringNotContainsAnyExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 2 {
+            let opd0 = &operands[0];
+            if let DslCalculatorValue::String(src) = opd0 {
+                let mut ret = true;
+                for opd in operands.iter().skip(1) {
+                    if let DslCalculatorValue::Array(arr) = opd {
+                        for val in arr.iter() {
+                            if let DslCalculatorValue::String(s) = val {
+                                if s.len() > 0 {
+                                    if !src.contains(s) {
+                                        return DslCalculatorValue::Bool(true);
+                                    }
+                                    else {
+                                        ret = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if let DslCalculatorValue::String(s) = opd {
+                        if s.len() > 0 {
+                            if !src.contains(s) {
+                                return DslCalculatorValue::Bool(true);
+                            }
+                            else {
+                                ret = false;
+                            }
+                        }
+                    }
+                }
+                return DslCalculatorValue::Bool(ret);
+            }
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}

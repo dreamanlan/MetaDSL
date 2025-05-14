@@ -625,7 +625,7 @@ impl DslCalculatorValue
             DslCalculatorValue::U128(val) => *val as u8 as char,
             DslCalculatorValue::Float(val) => *val as u8 as char,
             DslCalculatorValue::Double(val) => *val as u8 as char,
-            DslCalculatorValue::String(val) => if let Ok(v) = val.parse::<char>() { v } else { '\0' },
+            DslCalculatorValue::String(val) => if let Some(v) = val.chars().next() { v } else { '\0' },
             DslCalculatorValue::Bool(val) => if *val { 'T' } else { '\0' },
             DslCalculatorValue::Char(val) => *val,
             _ => '\0',
@@ -642,6 +642,7 @@ impl DslCalculatorValue
     {
         match &self {
             DslCalculatorValue::Char(val) => *val,
+            DslCalculatorValue::String(val) => if let Some(v) = val.chars().next() { v } else { '\0' },
             _ => '\0',
         }
     }
@@ -1761,6 +1762,13 @@ impl<'a> DslCalculator<'a>
         self.register_api("stringtrimendmatches", "stringtrimendmatches(str,pattern) api", create_expression_factory::<StringTrimEndMatchesExp>());
         self.register_api("stringtolower", "stringtolower(str) api", create_expression_factory::<StringToLowerExp>());
         self.register_api("stringtoupper", "stringtoupper(str) api", create_expression_factory::<StringToUpperExp>());
+        self.register_api("stringreplace", "stringreplace(str,key,rep_str) api", create_expression_factory::<StringReplaceExp>());
+        self.register_api("stringreplacechar", "stringreplacechar(str,key,char_as_str) api", create_expression_factory::<StringReplaceCharExp>());
+        self.register_api("makestring", "makestring(char1_as_str_or_int,char2_as_str_or_int,...) api", create_expression_factory::<MakeStringExp>());
+        self.register_api("stringcontains", "stringcontains(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringContainsExp>());
+        self.register_api("stringnotcontains", "stringnotcontains(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringNotContainsExp>());
+        self.register_api("stringcontainsany", "stringcontainsany(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringContainsAnyExp>());
+        self.register_api("stringnotcontainsany", "stringnotcontainsany(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringNotContainsAnyExp>());
 
         /*
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
@@ -1771,14 +1779,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("collectionset", "collectionset api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionSetExp>());
         self.register_api("collectionget", "collectionget api, fn implementation, using csharp object syntax", create_expression_factory::<CollectionGetExp>());
         self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
-
-        self.register_api("stringreplace", "stringreplace(str,key,rep_str) api", create_expression_factory::<StringReplaceExp>());
-        self.register_api("stringreplacechar", "stringreplacechar(str,key,char_as_str) api", create_expression_factory::<StringReplaceCharExp>());
-        self.register_api("makestring", "makestring(char1_as_str_or_int,char2_as_str_or_int,...) api", create_expression_factory::<MakeStringExp>());
-        self.register_api("stringcontains", "stringcontains(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringContainsExp>());
-        self.register_api("stringnotcontains", "stringnotcontains(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringNotContainsExp>());
-        self.register_api("stringcontainsany", "stringcontainsany(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringContainsAnyExp>());
-        self.register_api("stringnotcontainsany", "stringnotcontainsany(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringNotContainsAnyExp>());
 
         self.register_api("toarray", "toarray(list) api", create_expression_factory::<ToArrayExp>());
         self.register_api("listsize", "listsize(list) api", create_expression_factory::<ListSizeExp>());
