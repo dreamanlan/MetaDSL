@@ -252,7 +252,7 @@ namespace Brace
     {
         m_Func = nullptr;
         m_Args.clear();
-        m_ArgInfos.clear(); 
+        m_ArgInfos.clear();
         m_ArgAssigns.clear();
         m_ResultInfo = OperandLoadtimeInfo();
         m_ResultAssign = nullptr;
@@ -295,15 +295,15 @@ namespace Brace
     {
         return static_cast<int>(m_ArgInfos.size());
     }
-    const OperandRuntimeInfo* FunctionExecutor::ArgInfo(int ix) const 
+    const OperandRuntimeInfo* FunctionExecutor::ArgInfo(int ix) const
     {
         if (ix < 0 || ix >= static_cast<int>(m_ArgInfos.size()))
-            return nullptr; 
-        return &m_ArgInfos[ix]; 
+            return nullptr;
+        return &m_ArgInfos[ix];
     }
-    const OperandRuntimeInfo* FunctionExecutor::ResultInfo() const 
-    { 
-        return &m_ResultInfo; 
+    const OperandRuntimeInfo* FunctionExecutor::ResultInfo() const
+    {
+        return &m_ResultInfo;
     }
     bool FunctionExecutor::LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor)
     {
@@ -382,7 +382,7 @@ namespace Brace
             auto& srcInfo = m_ArgInfos[ix];
             if (destInfo.IsRef) {
                 if (srcInfo.Type == BRACE_DATA_TYPE_OBJECT) {
-                    
+
                     vars.ReferenceVars[destInfo.VarIndex] = ReferenceInfo::BuildFromRuntimeInfo(srcInfo, srcInfo.IsGlobal ? &gvars : &lastVars);
                 }
                 else {
@@ -742,7 +742,7 @@ namespace Brace
                     objTypeId = GetObjectTypeId(*pFunc->GetParam(1));
             }
             const std::string& varId = nullptr != pFunc ? pFunc->GetParamId(0) : param1->GetId();
-            
+
             OperandLoadtimeInfo argLoadInfo;
             argLoadInfo.Type = varType;
             argLoadInfo.ObjectTypeId = objTypeId;
@@ -1260,7 +1260,7 @@ namespace Brace
         if (!resultInfo.IsTempVar && !m_IsAssignment) {
             m_IsAssignment = true;
         }
-        int resultType = BRACE_DATA_TYPE_UNKNOWN;        
+        int resultType = BRACE_DATA_TYPE_UNKNOWN;
         bool r = BuildExecutor(data, IsReferenceType(argInfo1.Type), IsReferenceType(argInfo2.Type), argInfo1.GetLoadTimeRealType(curFunc), argInfo2.GetLoadTimeRealType(curFunc), resultType, executor);
         if (isAssignment) {
             resultInfo = argInfo1;
@@ -2074,10 +2074,10 @@ namespace Brace
         std::vector<BraceApiExecutor> m_Statements;
         std::vector<int> m_ObjVars;
     };
-    class ParenthesisExp final : public AbstractBraceApi
+    class ParenthesesExp final : public AbstractBraceApi
     {
     public:
-        ParenthesisExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Args(), m_ArgInfos(), m_ResultInfo()
+        ParenthesesExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Args(), m_ArgInfos(), m_ResultInfo()
         {
         }
     protected:
@@ -2097,7 +2097,7 @@ namespace Brace
             for (auto&& argInfo : argLoadInfos) {
                 m_ArgInfos.push_back(argInfo);
             }
-            executor.attach(this, &ParenthesisExp::Execute);
+            executor.attach(this, &ParenthesesExp::Execute);
             return true;
         }
     private:
@@ -2720,7 +2720,7 @@ namespace Brace
                 auto* fd = new DslData::FunctionData();
                 AddSyntaxComponent(fd);
                 fd->SetName(data);
-                fd->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESIS);
+                fd->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESES);
                 if (!p->Load(*fd, resultInfo, executor)) {
                     //error
                     std::stringstream ss;
@@ -2789,16 +2789,16 @@ namespace Brace
         BraceApiExecutor executor;
         if (data.HaveParam()) {
             auto& callData = data;
-            if (!callData.HaveId() && !callData.IsHighOrder() && (callData.GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_PARENTHESIS || callData.GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_BRACKET)) {
+            if (!callData.HaveId() && !callData.IsHighOrder() && (callData.GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_PARENTHESES || callData.GetParamClassUnmasked() == DslData::FunctionData::PARAM_CLASS_BRACKET)) {
                 switch (callData.GetParamClassUnmasked()) {
-                case DslData::FunctionData::PARAM_CLASS_PARENTHESIS: {
+                case DslData::FunctionData::PARAM_CLASS_PARENTHESES: {
                     int num = callData.GetParamNum();
                     if (num == 1) {
                         auto* param = callData.GetParam(0);
                         return Load(*param, resultInfo);
                     }
                     else {
-                        auto* p = new ParenthesisExp(*this);
+                        auto* p = new ParenthesesExp(*this);
                         AddApiInstance(p);
                         p->Load(data, resultInfo, executor);
                         return executor;
@@ -2844,7 +2844,7 @@ namespace Brace
                                     newCall->SetName(DslData::ValueData("memberset", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
                                 else
                                     newCall->SetName(DslData::ValueData("collectionset", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
-                                newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESIS);
+                                newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESES);
                                 if (innerCall->IsHighOrder()) {
                                     newCall->AddParamCopyFrom(innerCall->GetLowerOrderFunction());
                                     auto* p = newCall->AddParamCopyFrom(*innerCall->GetParam(0));
@@ -2855,7 +2855,7 @@ namespace Brace
                                     else {
                                         auto* newCalc = newCall->AddFunctionParam();
                                         newCalc->SetName(DslData::ValueData(op.substr(0, op.length() - 1), DslData::ValueData::VALUE_TYPE_IDENTIFIER));
-                                        
+
                                         auto* newGet = newCalc->AddFunctionParam();
                                         if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD)
                                             newGet->SetName(DslData::ValueData("memberget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
@@ -2880,7 +2880,7 @@ namespace Brace
                                     else {
                                         auto* newCalc = newCall->AddFunctionParam();
                                         newCalc->SetName(DslData::ValueData(op.substr(0, op.length() - 1), DslData::ValueData::VALUE_TYPE_IDENTIFIER));
-                                        
+
                                         auto* newGet = newCalc->AddFunctionParam();
                                         if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD)
                                             newGet->SetName(DslData::ValueData("memberget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
@@ -2975,7 +2975,7 @@ namespace Brace
                     if (callData.IsHighOrder()) {
                         auto& innerCall = callData.GetLowerOrderFunction();
                         int innerParamClass = innerCall.GetParamClassUnmasked();
-                        if (paramClass == DslData::FunctionData::PARAM_CLASS_PARENTHESIS && (
+                        if (paramClass == DslData::FunctionData::PARAM_CLASS_PARENTHESES && (
                             innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD ||
                             innerParamClass == DslData::FunctionData::PARAM_CLASS_BRACKET)) {
                             //obj.member(a,b,...) or obj[member](a,b,...) -> membercall(obj,member,a,b,...)
@@ -2993,7 +2993,7 @@ namespace Brace
                             auto* newCall = new DslData::FunctionData();
                             AddSyntaxComponent(newCall);
                             newCall->SetName(DslData::ValueData(apiName, DslData::ValueData::VALUE_TYPE_IDENTIFIER));
-                            newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESIS);
+                            newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESES);
                             if (innerCall.IsHighOrder()) {
                                 newCall->AddParamCopyFrom(innerCall.GetLowerOrderFunction());
                                 auto* p = newCall->AddParamCopyFrom(*innerCall.GetParam(0));
@@ -3024,7 +3024,7 @@ namespace Brace
                             newCall->SetName(DslData::ValueData("memberget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
                         else
                             newCall->SetName(DslData::ValueData("collectionget", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
-                        newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESIS);
+                        newCall->SetParamClass(DslData::FunctionData::PARAM_CLASS_PARENTHESES);
                         if (callData.IsHighOrder()) {
                             newCall->AddParamCopyFrom(callData.GetLowerOrderFunction());
                             [[maybe_unused]] auto* p = newCall->AddParamCopyFrom(*callData.GetParam(0));
@@ -3147,7 +3147,7 @@ namespace Brace
             return OnLoadStatementFailed(data, resultInfo, executor);
         return false;
     }
-    
+
     void BraceScript::RegisterInnerApis()
     {
         RegisterApi("+", "add operator", new BraceApiFactoryWithArgs<AddExp, bool>(false));

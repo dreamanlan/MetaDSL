@@ -94,7 +94,7 @@ Error for symbol FUNCTION_EX_CALL_SPECIAL token NUMBER lhs PROGRAM production PR
 Error for symbol FUNCTION_EX_CALL_SPECIAL token , lhs PROGRAM production PROGRAM --> STATEMENTS
 Error for symbol FUNCTION_EX_CALL_SPECIAL token ; lhs PROGRAM production PROGRAM --> STATEMENTS
 Error for symbol FUNCTION_EX_CALL_SPECIAL token END_OF_SLK_INPUT lhs FUNCTION_EX_CALL_* production FUNCTION_EX_CALL_* -->
-Success for symbol FUNCTION_PARAMS token ( production FUNCTION_PARAMS --> _action_markParenthesisParam ( STATEMENTS ) FUNCTION_PARAMS_2_opt
+Success for symbol FUNCTION_PARAMS token ( production FUNCTION_PARAMS --> _action_markParenthesesParam ( STATEMENTS ) FUNCTION_PARAMS_2_opt
 Error for symbol FUNCTION_PARAMS token )
 Success for symbol FUNCTION_PARAMS token [ production FUNCTION_PARAMS --> _action_markBracketParam [ STATEMENTS ] FUNCTION_PARAMS_3_opt
 Error for symbol FUNCTION_PARAMS token ]
@@ -107,7 +107,7 @@ Error for symbol FUNCTION_PARAMS token , lhs SEP production SEP --> ;
 Error for symbol FUNCTION_PARAMS token ;
 Error for symbol FUNCTION_PARAMS token END_OF_SLK_INPUT
 Error for symbol FUNCTION_ID token ( lhs SEP_STATEMENT_* production SEP_STATEMENT_* -->
-Error for symbol FUNCTION_ID token ) lhs FUNCTION_PARAMS production FUNCTION_PARAMS --> _action_markParenthesisParam ( STATEMENTS ) FUNCTION_PARAMS_2_opt
+Error for symbol FUNCTION_ID token ) lhs FUNCTION_PARAMS production FUNCTION_PARAMS --> _action_markParenthesesParam ( STATEMENTS ) FUNCTION_PARAMS_2_opt
 Error for symbol FUNCTION_ID token [
 Error for symbol FUNCTION_ID token ] lhs FUNCTION_PARAMS production FUNCTION_PARAMS --> _action_markBracketParam [ STATEMENTS ] FUNCTION_PARAMS_3_opt
 Error for symbol FUNCTION_ID token {
@@ -119,7 +119,7 @@ Error for symbol FUNCTION_ID token , lhs SEP production SEP --> ,
 Error for symbol FUNCTION_ID token ; lhs SEP production SEP --> ;
 Error for symbol FUNCTION_ID token END_OF_SLK_INPUT
 Error for symbol SEP token ( lhs SEP_STATEMENT_* production SEP_STATEMENT_* -->
-Error for symbol SEP token ) lhs FUNCTION_PARAMS production FUNCTION_PARAMS --> _action_markParenthesisParam ( STATEMENTS ) FUNCTION_PARAMS_2_opt
+Error for symbol SEP token ) lhs FUNCTION_PARAMS production FUNCTION_PARAMS --> _action_markParenthesesParam ( STATEMENTS ) FUNCTION_PARAMS_2_opt
 Error for symbol SEP token [
 Error for symbol SEP token ] lhs FUNCTION_PARAMS production FUNCTION_PARAMS --> _action_markBracketParam [ STATEMENTS ] FUNCTION_PARAMS_3_opt
 Error for symbol SEP token {

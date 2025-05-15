@@ -175,7 +175,7 @@ namespace Dsl
                 return;
             GetCommentsInfo()->m_FirstCommentNum = 0;
         }
-        int GetFirstCommentNum(void) const 
+        int GetFirstCommentNum(void) const
         {
             if (DslOptions::DontLoadComments())
                 return 0;
@@ -456,28 +456,28 @@ namespace Dsl
         enum
         {
             PARAM_CLASS_NOTHING = 0,
-            PARAM_CLASS_PARENTHESIS,
+            PARAM_CLASS_PARENTHESES,
             PARAM_CLASS_BRACKET,
             PARAM_CLASS_PERIOD,
-            PARAM_CLASS_PERIOD_PARENTHESIS,
+            PARAM_CLASS_PERIOD_PARENTHESES,
             PARAM_CLASS_PERIOD_BRACKET,
             PARAM_CLASS_PERIOD_BRACE,
             PARAM_CLASS_QUESTION_PERIOD,
-            PARAM_CLASS_QUESTION_PARENTHESIS,
+            PARAM_CLASS_QUESTION_PARENTHESES,
             PARAM_CLASS_QUESTION_BRACKET,
             PARAM_CLASS_QUESTION_BRACE,
             PARAM_CLASS_POINTER,
             PARAM_CLASS_STATEMENT,
             PARAM_CLASS_EXTERN_SCRIPT,
-            PARAM_CLASS_PARENTHESIS_COLON,
+            PARAM_CLASS_PARENTHESES_COLON,
             PARAM_CLASS_BRACKET_COLON,
             PARAM_CLASS_ANGLE_BRACKET_COLON,
-            PARAM_CLASS_PARENTHESIS_PERCENT,
+            PARAM_CLASS_PARENTHESES_PERCENT,
             PARAM_CLASS_BRACKET_PERCENT,
             PARAM_CLASS_BRACE_PERCENT,
             PARAM_CLASS_ANGLE_BRACKET_PERCENT,
             PARAM_CLASS_COLON_COLON,
-            PARAM_CLASS_COLON_COLON_PARENTHESIS,
+            PARAM_CLASS_COLON_COLON_PARENTHESES,
             PARAM_CLASS_COLON_COLON_BRACKET,
             PARAM_CLASS_COLON_COLON_BRACE,
             PARAM_CLASS_PERIOD_STAR,
@@ -747,7 +747,7 @@ namespace Dsl
         IDslStringAndObjectBuffer& m_Buffer;
         FunctionCommentsInfo* m_pCommentsInfo;
     };
-    
+
     /* 备忘：为什么StatementData的成员不使用ISyntaxComponent[]而是FunctionData[]
      * 1、虽然语法上这里的FunctionData可以退化为ValueData，但不可以是StatementData，这样在概念上不能与ISyntaxComponent等同
      * 2、在设计上，FunctionData应该考虑到退化情形，尽量在退化情形不占用额外空间
@@ -1145,7 +1145,7 @@ namespace Dsl
         void* m_PtrPool[PtrPoolSize];
         int m_PtrNum;
         FreeLinkInfo m_PtrFreeLink[PtrPoolFreeLinkSize];//低32位对应m_PtrPool的索引，高32位是下一个空闲块的索引
-        int m_FreeLinkNum;        
+        int m_FreeLinkNum;
         int m_PtrFreeLinkHeader[PtrPoolFreeLinkHeaderSize];//以数组大小为索引的各size空闲链表头的位置
         int m_FreedFreeLinkHeader;//空闲的空闲块链表的头
     private:
@@ -1153,7 +1153,7 @@ namespace Dsl
         FunctionData m_NullFunction;
         FunctionData* m_pNullFunction;
     };
-    
+
     class IScriptSource;
     class DslFile
     {

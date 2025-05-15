@@ -157,8 +157,8 @@ inline void ActionForSourceCodeScript::initialize_table()
     Action[8] = &ActionForSourceCodeScript::addFunction;
     Action[9] = &ActionForSourceCodeScript::setFunctionId;
     Action[10] = &ActionForSourceCodeScript::buildNullableOperator;
-    Action[11] = &ActionForSourceCodeScript::markParenthesisParam;
-    Action[12] = &ActionForSourceCodeScript::markParenthesisParamEnd;
+    Action[11] = &ActionForSourceCodeScript::markParenthesesParam;
+    Action[12] = &ActionForSourceCodeScript::markParenthesesParamEnd;
     Action[13] = &ActionForSourceCodeScript::buildHighOrderFunction;
     Action[14] = &ActionForSourceCodeScript::markBracketParam;
     Action[15] = &ActionForSourceCodeScript::markBracketParamEnd;
@@ -168,16 +168,16 @@ inline void ActionForSourceCodeScript::initialize_table()
     Action[19] = &ActionForSourceCodeScript::setExternScript;
     Action[20] = &ActionForSourceCodeScript::markBracketColonParam;
     Action[21] = &ActionForSourceCodeScript::markBracketColonParamEnd;
-    Action[22] = &ActionForSourceCodeScript::markParenthesisColonParam;
-    Action[23] = &ActionForSourceCodeScript::markParenthesisColonParamEnd;
+    Action[22] = &ActionForSourceCodeScript::markParenthesesColonParam;
+    Action[23] = &ActionForSourceCodeScript::markParenthesesColonParamEnd;
     Action[24] = &ActionForSourceCodeScript::markAngleBracketColonParam;
     Action[25] = &ActionForSourceCodeScript::markAngleBracketColonParamEnd;
     Action[26] = &ActionForSourceCodeScript::markBracePercentParam;
     Action[27] = &ActionForSourceCodeScript::markBracePercentParamEnd;
     Action[28] = &ActionForSourceCodeScript::markBracketPercentParam;
     Action[29] = &ActionForSourceCodeScript::markBracketPercentParamEnd;
-    Action[30] = &ActionForSourceCodeScript::markParenthesisPercentParam;
-    Action[31] = &ActionForSourceCodeScript::markParenthesisPercentParamEnd;
+    Action[30] = &ActionForSourceCodeScript::markParenthesesPercentParam;
+    Action[31] = &ActionForSourceCodeScript::markParenthesesPercentParamEnd;
     Action[32] = &ActionForSourceCodeScript::markAngleBracketPercentParam;
     Action[33] = &ActionForSourceCodeScript::markAngleBracketPercentParamEnd;
     Action[34] = &ActionForSourceCodeScript::markColonColonParam;
@@ -304,17 +304,17 @@ namespace DslParser
             return 0;
         return m_Impl->isNotIdentifier(c);
     }
-    int DslTokenApi::isNotIdentifierAndBeginParenthesis(char c)const
+    int DslTokenApi::isNotIdentifierAndBeginParentheses(char c)const
     {
         if (!m_Impl)
             return 0;
-        return m_Impl->isNotIdentifierAndBeginParenthesis(c);
+        return m_Impl->isNotIdentifierAndBeginParentheses(c);
     }
-    int DslTokenApi::isNotIdentifierAndNumberAndEndParenthesis(char c)const
+    int DslTokenApi::isNotIdentifierAndNumberAndEndParentheses(char c)const
     {
         if (!m_Impl)
             return 0;
-        return m_Impl->isNotIdentifierAndNumberAndEndParenthesis(c);
+        return m_Impl->isNotIdentifierAndNumberAndEndParentheses(c);
     }
     int DslTokenApi::isWhiteSpace(char c) const
     {
@@ -413,17 +413,17 @@ namespace DslParser
             return;
         m_Impl->setFunctionId();
     }
-    void DslActionApi::markParenthesisParam()const
+    void DslActionApi::markParenthesesParam()const
     {
         if (!m_Impl)
             return;
-        m_Impl->markParenthesisParam();
+        m_Impl->markParenthesesParam();
     }
-    void DslActionApi::markParenthesisParamEnd()const
+    void DslActionApi::markParenthesesParamEnd()const
     {
         if (!m_Impl)
             return;
-        m_Impl->markParenthesisParamEnd();
+        m_Impl->markParenthesesParamEnd();
     }
     void DslActionApi::buildHighOrderFunction()const
     {
@@ -473,17 +473,17 @@ namespace DslParser
             return;
         m_Impl->markBracketColonParamEnd();
     }
-    void DslActionApi::markParenthesisColonParam()const
+    void DslActionApi::markParenthesesColonParam()const
     {
         if (!m_Impl)
             return;
-        m_Impl->markParenthesisColonParam();
+        m_Impl->markParenthesesColonParam();
     }
-    void DslActionApi::markParenthesisColonParamEnd()const
+    void DslActionApi::markParenthesesColonParamEnd()const
     {
         if (!m_Impl)
             return;
-        m_Impl->markParenthesisColonParamEnd();
+        m_Impl->markParenthesesColonParamEnd();
     }
     void DslActionApi::markAngleBracketColonParam()const
     {
@@ -521,17 +521,17 @@ namespace DslParser
             return;
         m_Impl->markBracketPercentParamEnd();
     }
-    void DslActionApi::markParenthesisPercentParam()const
+    void DslActionApi::markParenthesesPercentParam()const
     {
         if (!m_Impl)
             return;
-        m_Impl->markParenthesisPercentParam();
+        m_Impl->markParenthesesPercentParam();
     }
-    void DslActionApi::markParenthesisPercentParamEnd()const
+    void DslActionApi::markParenthesesPercentParamEnd()const
     {
         if (!m_Impl)
             return;
-        m_Impl->markParenthesisPercentParamEnd();
+        m_Impl->markParenthesesPercentParamEnd();
     }
     void DslActionApi::markAngleBracketPercentParam()const
     {

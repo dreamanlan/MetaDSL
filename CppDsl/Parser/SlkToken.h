@@ -73,8 +73,8 @@ public:
     void getOperatorToken();
     short getOperatorTokenValue()const;
     int isNotIdentifier(char c)const;
-    int isNotIdentifierAndBeginParenthesis(char c)const;
-    int isNotIdentifierAndNumberAndEndParenthesis(char c)const;
+    int isNotIdentifierAndBeginParentheses(char c)const;
+    int isNotIdentifierAndNumberAndEndParentheses(char c)const;
     int isWhiteSpace(char c) const;
     int isDelimiter(char c) const;
     int isBeginParentheses(char c) const;

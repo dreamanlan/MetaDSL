@@ -3,9 +3,9 @@ PROGRAM:
 
 STATEMENTS:
 	STATEMENT { SEP _action_markSeparator STATEMENT }
-	
+
 STATEMENT:
-	OPERATOR_STATEMENT_DESC_0 _action_endStatement	
+	OPERATOR_STATEMENT_DESC_0 _action_endStatement
 
 //OPERATOR_STATEMENT_0:
 //	OPERATOR_STATEMENT_DESC_0 _action_endStatement
@@ -57,11 +57,11 @@ OPERATOR_STATEMENT_14:
 
 //OPERATOR_STATEMENT_15:
 //	OPERATOR_STATEMENT_DESC_15 _action_endStatement
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_0:
 	OPERATOR_STATEMENT_DESC_1 { OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 }
-	
+
 //Right Associative (assignment, condition expression)
 OPERATOR_STATEMENT_DESC_1:
 	OPERATOR_STATEMENT_DESC_2 [ OPERATOR_STATEMENT_DESC_ASSIGNMENT_OR_QUESTION_COLON ]
@@ -73,122 +73,122 @@ OPERATOR_STATEMENT_DESC_ASSIGNMENT_OR_QUESTION_COLON:
 //Right Associative (=>, <-)
 OPERATOR_STATEMENT_DESC_2:
 	OPERATOR_STATEMENT_DESC_COLON [ OP_TOKEN_2 _action_pushId _action_buildOperator OPERATOR_STATEMENT_2 ]
-	
+
 //Right Associative (type info)
 OPERATOR_STATEMENT_DESC_COLON:
 	OPERATOR_STATEMENT_DESC_3 [ OP_TOKEN_COLON _action_pushId _action_buildOperator OPERATOR_STATEMENT_COLON ]
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_3:
 	OPERATOR_STATEMENT_DESC_4 { OP_TOKEN_3 _action_pushId _action_buildOperator OPERATOR_STATEMENT_4 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_4:
-	OPERATOR_STATEMENT_DESC_5 { OP_TOKEN_4 _action_pushId _action_buildOperator OPERATOR_STATEMENT_5 }	
-	
+	OPERATOR_STATEMENT_DESC_5 { OP_TOKEN_4 _action_pushId _action_buildOperator OPERATOR_STATEMENT_5 }
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_5:
 	OPERATOR_STATEMENT_DESC_6 { OP_TOKEN_5 _action_pushId _action_buildOperator OPERATOR_STATEMENT_6 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_6:
 	OPERATOR_STATEMENT_DESC_7 { OP_TOKEN_6 _action_pushId _action_buildOperator OPERATOR_STATEMENT_7 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_7:
 	OPERATOR_STATEMENT_DESC_8 { OP_TOKEN_7 _action_pushId _action_buildOperator OPERATOR_STATEMENT_8 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_8:
 	OPERATOR_STATEMENT_DESC_9 { OP_TOKEN_8 _action_pushId _action_buildOperator OPERATOR_STATEMENT_9 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_9:
 	OPERATOR_STATEMENT_DESC_10 { OP_TOKEN_9 _action_pushId _action_buildOperator OPERATOR_STATEMENT_10 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_10:
 	OPERATOR_STATEMENT_DESC_11 { OP_TOKEN_10 _action_pushId _action_buildOperator OPERATOR_STATEMENT_11 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_11:
 	OPERATOR_STATEMENT_DESC_12 { OP_TOKEN_11 _action_pushId _action_buildOperator OPERATOR_STATEMENT_12 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_12:
 	OPERATOR_STATEMENT_DESC_13 { OP_TOKEN_12 _action_pushId _action_buildOperator OPERATOR_STATEMENT_13 }
-	
+
 //Left Associative
 OPERATOR_STATEMENT_DESC_13:
 	OPERATOR_STATEMENT_DESC_14 { OP_TOKEN_13 _action_pushId _action_buildOperator OPERATOR_STATEMENT_14 }
-	
+
 //Right Associative (unary operator)
 OPERATOR_STATEMENT_DESC_14:
 	OPERATOR_STATEMENT_DESC_15 [ OP_TOKEN_14 _action_pushId _action_buildOperator OPERATOR_STATEMENT_14 ]
-	
+
 //Left Associative (member operator like)
 OPERATOR_STATEMENT_DESC_15:
 	FUNCTION_STATEMENT_DESC { OP_TOKEN_15 _action_pushId _action_buildOperator FUNCTION_STATEMENT }
-		
+
 FUNCTION_STATEMENT:
 	FUNCTION_STATEMENT_DESC _action_endStatement
 
 FUNCTION_STATEMENT_DESC:
 	_action_beginStatement FUNCTION_CALLS
-	
+
 FUNCTION_CALLS:
 	{ _action_addFunction FUNCTION_EX_CALL }
 	_action_addFunction FUNCTION_EX_CALL_SPECIAL { _action_addFunction FUNCTION_EX_CALL }
-	
+
 FUNCTION_EX_CALL:
 	FUNCTION_ID _action_setFunctionId [ NULLABLE_FUNCTION_PARAMS ]
-	
+
 FUNCTION_EX_CALL_SPECIAL:
 	FUNCTION_PARAMS
-	
+
 NULLABLE_FUNCTION_PARAMS:
 	OP_TOKEN_NULLABLE _action_pushId _action_buildNullableOperator FUNCTION_PARAMS
 	FUNCTION_PARAMS
 
-FUNCTION_PARAMS: 
-	PARENTHESIS_PARAMS
+FUNCTION_PARAMS:
+	PARENTHESES_PARAMS
 	MEMBER
 
-PARENTHESIS_PARAMS:
-	_action_markParenthesisParam ( STATEMENTS _action_markParenthesisParamEnd ) [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
-	_action_markBracketParam \[ STATEMENTS _action_markBracketParamEnd \] [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
+PARENTHESES_PARAMS:
+	_action_markParenthesesParam ( STATEMENTS _action_markParenthesesParamEnd ) [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markBracketParam \[ STATEMENTS _action_markBracketParamEnd \] [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
 	_action_markStatement \{ STATEMENTS _action_markStatementEnd \} [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
 	_action_markExternScript SCRIPT_CONTENT _action_setExternScript [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
-	_action_markBracketColonParam BRACKET_COLON_BEGIN STATEMENTS _action_markBracketColonParamEnd BRACKET_COLON_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markParenthesisColonParam PARENTHESIS_COLON_BEGIN STATEMENTS _action_markParenthesisColonParamEnd PARENTHESIS_COLON_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markAngleBracketColonParam ANGLE_BRACKET_COLON_BEGIN STATEMENTS _action_markAngleBracketColonParamEnd ANGLE_BRACKET_COLON_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markBracePercentParam BRACE_PERCENT_BEGIN STATEMENTS _action_markBracePercentParamEnd BRACE_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markBracketPercentParam BRACKET_PERCENT_BEGIN STATEMENTS _action_markBracketPercentParamEnd BRACKET_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markParenthesisPercentParam PARENTHESIS_PERCENT_BEGIN STATEMENTS _action_markParenthesisPercentParamEnd PARENTHESIS_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markAngleBracketPercentParam ANGLE_BRACKET_PERCENT_BEGIN STATEMENTS _action_markAngleBracketPercentParamEnd ANGLE_BRACKET_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
+	_action_markBracketColonParam BRACKET_COLON_BEGIN STATEMENTS _action_markBracketColonParamEnd BRACKET_COLON_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markParenthesesColonParam PARENTHESES_COLON_BEGIN STATEMENTS _action_markParenthesesColonParamEnd PARENTHESES_COLON_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markAngleBracketColonParam ANGLE_BRACKET_COLON_BEGIN STATEMENTS _action_markAngleBracketColonParamEnd ANGLE_BRACKET_COLON_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markBracePercentParam BRACE_PERCENT_BEGIN STATEMENTS _action_markBracePercentParamEnd BRACE_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markBracketPercentParam BRACKET_PERCENT_BEGIN STATEMENTS _action_markBracketPercentParamEnd BRACKET_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markParenthesesPercentParam PARENTHESES_PERCENT_BEGIN STATEMENTS _action_markParenthesesPercentParamEnd PARENTHESES_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markAngleBracketPercentParam ANGLE_BRACKET_PERCENT_BEGIN STATEMENTS _action_markAngleBracketPercentParamEnd ANGLE_BRACKET_PERCENT_END [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
 
 MEMBER:
-	_action_markColonColonParam :: MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markPeriodParam . MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markPointerParam POINTER MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markPeriodStarParam PERIOD_STAR MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
-	_action_markPointerStarParam POINTER_STAR MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ] 
+	_action_markColonColonParam :: MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markPeriodParam . MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markPointerParam POINTER MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markPeriodStarParam PERIOD_STAR MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
+	_action_markPointerStarParam POINTER_STAR MEMBER_PARAM [ _action_buildHighOrderFunction NULLABLE_FUNCTION_PARAMS ]
 
 MEMBER_PARAM:
 	_action_beginStatement _action_addFunction MEMBER_PARAM_DETAIL _action_endStatement
 
 MEMBER_PARAM_DETAIL:
 	FUNCTION_ID _action_setFunctionId
-	_action_markParenthesisParam ( STATEMENTS _action_markParenthesisParamEnd )
+	_action_markParenthesesParam ( STATEMENTS _action_markParenthesesParamEnd )
 	_action_markBracketParam \[ STATEMENTS _action_markBracketParamEnd \]
 	_action_markStatement \{ STATEMENTS _action_markStatementEnd \}
 	_action_markExternScript SCRIPT_CONTENT _action_setExternScript
 	_action_markBracketColonParam BRACKET_COLON_BEGIN STATEMENTS _action_markBracketColonParamEnd BRACKET_COLON_END
-	_action_markParenthesisColonParam PARENTHESIS_COLON_BEGIN STATEMENTS _action_markParenthesisColonParamEnd PARENTHESIS_COLON_END
+	_action_markParenthesesColonParam PARENTHESES_COLON_BEGIN STATEMENTS _action_markParenthesesColonParamEnd PARENTHESES_COLON_END
 	_action_markAngleBracketColonParam ANGLE_BRACKET_COLON_BEGIN STATEMENTS _action_markAngleBracketColonParamEnd ANGLE_BRACKET_COLON_END
 	_action_markBracePercentParam BRACE_PERCENT_BEGIN STATEMENTS _action_markBracePercentParamEnd BRACE_PERCENT_END
 	_action_markBracketPercentParam BRACKET_PERCENT_BEGIN STATEMENTS _action_markBracketPercentParamEnd BRACKET_PERCENT_END
-	_action_markParenthesisPercentParam PARENTHESIS_PERCENT_BEGIN STATEMENTS _action_markParenthesisPercentParamEnd PARENTHESIS_PERCENT_END
+	_action_markParenthesesPercentParam PARENTHESES_PERCENT_BEGIN STATEMENTS _action_markParenthesesPercentParamEnd PARENTHESES_PERCENT_END
 	_action_markAngleBracketPercentParam ANGLE_BRACKET_PERCENT_BEGIN STATEMENTS _action_markAngleBracketPercentParamEnd ANGLE_BRACKET_PERCENT_END
 
 FUNCTION_ID:
@@ -196,7 +196,7 @@ FUNCTION_ID:
 	STRING	_action_pushStr
 	NUMBER _action_pushNum
 	DOLLAR_STRING	_action_pushDollarStr
-	
+
 SEP:
 	, _action_pushComma
 	; _action_pushSemiColon

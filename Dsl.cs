@@ -12,16 +12,16 @@ namespace Dsl
     {
         PARAM_CLASS_MIN = 0,
         PARAM_CLASS_NOTHING = PARAM_CLASS_MIN,
-        PARAM_CLASS_PARENTHESIS,
+        PARAM_CLASS_PARENTHESES,
         PARAM_CLASS_BRACKET,
         PARAM_CLASS_PERIOD,
         PARAM_CLASS_POINTER,
         PARAM_CLASS_STATEMENT,
         PARAM_CLASS_EXTERN_SCRIPT,
-        PARAM_CLASS_PARENTHESIS_COLON,
+        PARAM_CLASS_PARENTHESES_COLON,
         PARAM_CLASS_BRACKET_COLON,
         PARAM_CLASS_ANGLE_BRACKET_COLON,
-        PARAM_CLASS_PARENTHESIS_PERCENT,
+        PARAM_CLASS_PARENTHESES_PERCENT,
         PARAM_CLASS_BRACKET_PERCENT,
         PARAM_CLASS_BRACE_PERCENT,
         PARAM_CLASS_ANGLE_BRACKET_PERCENT,
@@ -566,7 +566,7 @@ namespace Dsl
                 }
                 else if (m_Params.Count > 0) {
                     if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                        m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                        m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
                     }
                 }
             }
@@ -692,9 +692,9 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR;
         }
-        public void SetParenthesisParamClass()
+        public void SetParenthesesParamClass()
         {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
         }
         public void SetBracketParamClass()
         {
@@ -720,9 +720,9 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
         }
-        public void SetParenthesisColonParamClass()
+        public void SetParenthesesColonParamClass()
         {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON;
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_COLON;
         }
         public void SetBracketColonParamClass()
         {
@@ -732,9 +732,9 @@ namespace Dsl
         {
             m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON;
         }
-        public void SetParenthesisPercentParamClass()
+        public void SetParenthesesPercentParamClass()
         {
-            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT;
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_PERCENT;
         }
         public void SetBracketPercentParamClass()
         {
@@ -768,10 +768,10 @@ namespace Dsl
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_TERNARY_OPERATOR;
         }
-        public bool IsParenthesisParamClass()
+        public bool IsParenthesesParamClass()
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
         }
         public bool IsBracketParamClass()
         {
@@ -803,10 +803,10 @@ namespace Dsl
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
         }
-        public bool IsParenthesisColonParamClass()
+        public bool IsParenthesesColonParamClass()
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON;
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_COLON;
         }
         public bool IsBracketColonParamClass()
         {
@@ -818,10 +818,10 @@ namespace Dsl
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)ParamClassEnum.PARAM_CLASS_ANGLE_BRACKET_COLON;
         }
-        public bool IsParenthesisPercentParamClass()
+        public bool IsParenthesesPercentParamClass()
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT;
+            return paramClass == (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_PERCENT;
         }
         public bool IsBracketPercentParamClass()
         {
@@ -903,7 +903,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Add(new ValueData(id));
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
             }
         }
         public void AddParam(string id, int type)
@@ -911,7 +911,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Add(new ValueData(id, type));
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
             }
         }
         public void AddParam(ValueData param)
@@ -919,7 +919,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
             }
         }
         public void AddParam(FunctionData param)
@@ -927,7 +927,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
             }
         }
         public void AddParam(StatementData param)
@@ -935,7 +935,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
             }
         }
         public void AddParam(ISyntaxComponent param)
@@ -943,7 +943,7 @@ namespace Dsl
             PrepareParams();
             m_Params.Add(param);
             if ((int)ParamClassEnum.PARAM_CLASS_NOTHING == m_ParamClass) {
-                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS;
+                m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_PARENTHESES;
             }
         }
         public void Clear()
@@ -1033,7 +1033,7 @@ namespace Dsl
     /// A statement data consists of multiple function items connected together.
     /// </summary>
     /// <remarks>
-    /// Note: Why do the members of StatementData use FunctionData[] instead of ISyntaxComponent[]? 
+    /// Note: Why do the members of StatementData use FunctionData[] instead of ISyntaxComponent[]?
     /// 1. Although FunctionData can be reduced to ValueData syntactically, it cannot be StatementData. Thus, conceptually, it cannot be equivalent to ISyntaxComponent.
     /// 2. In terms of design, FunctionData should take into account the reduction scenario and try not to occupy additional space when reduced.
     /// </remarks>
@@ -2280,7 +2280,7 @@ namespace Dsl
                         string rbracket = string.Empty;
                         int paramClass = data.GetParamClassUnmasked();
                         switch (paramClass) {
-                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESES:
                                 lbracket = "(";
                                 rbracket = ")";
                                 break;
@@ -2304,7 +2304,7 @@ namespace Dsl
                                 lbracket = "[:";
                                 rbracket = ":]";
                                 break;
-                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
+                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_COLON:
                                 lbracket = "(:";
                                 rbracket = ":)";
                                 break;
@@ -2320,7 +2320,7 @@ namespace Dsl
                                 lbracket = "[%";
                                 rbracket = "%]";
                                 break;
-                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                            case (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_PERCENT:
                                 lbracket = "(%";
                                 rbracket = "%)";
                                 break;
@@ -2567,7 +2567,7 @@ namespace Dsl
                     string rbracket = string.Empty;
                     int paramClass = data.GetParamClassUnmasked();
                     switch (paramClass) {
-                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS:
+                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESES:
                             lbracket = "(";
                             rbracket = ")";
                             break;
@@ -2599,7 +2599,7 @@ namespace Dsl
                             lbracket = "[:";
                             rbracket = ":]";
                             break;
-                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON:
+                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_COLON:
                             lbracket = "(:";
                             rbracket = ":)";
                             break;
@@ -2615,7 +2615,7 @@ namespace Dsl
                             lbracket = "[%";
                             rbracket = "%]";
                             break;
-                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT:
+                        case (int)ParamClassEnum.PARAM_CLASS_PARENTHESES_PERCENT:
                             lbracket = "(%";
                             rbracket = "%)";
                             break;

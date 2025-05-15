@@ -474,9 +474,9 @@ namespace DslData
         {
             m_ParamClass = (int)PARAM_CLASS_TERNARY_OPERATOR;
         }
-        void SetParenthesisParamClass()
+        void SetParenthesesParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS;
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESES;
         }
         void SetBracketParamClass()
         {
@@ -502,9 +502,9 @@ namespace DslData
         {
             m_ParamClass = (int)PARAM_CLASS_POINTER_STAR;
         }
-        void SetParenthesisColonParamClass()
+        void SetParenthesesColonParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_COLON;
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESES_COLON;
         }
         void SetBracketColonParamClass()
         {
@@ -514,9 +514,9 @@ namespace DslData
         {
             m_ParamClass = (int)PARAM_CLASS_ANGLE_BRACKET_COLON;
         }
-        void SetParenthesisPercentParamClass()
+        void SetParenthesesPercentParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_PERCENT;
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESES_PERCENT;
         }
         void SetBracketPercentParamClass()
         {
@@ -550,10 +550,10 @@ namespace DslData
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_TERNARY_OPERATOR;
         }
-        bool IsParenthesisParamClass()const
+        bool IsParenthesesParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PARENTHESIS;
+            return paramClass == (int)PARAM_CLASS_PARENTHESES;
         }
         bool IsBracketParamClass()const
         {
@@ -585,10 +585,10 @@ namespace DslData
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_POINTER_STAR;
         }
-        bool IsParenthesisColonParamClass()const
+        bool IsParenthesesColonParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PARENTHESIS_COLON;
+            return paramClass == (int)PARAM_CLASS_PARENTHESES_COLON;
         }
         bool IsBracketColonParamClass()const
         {
@@ -600,10 +600,10 @@ namespace DslData
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_ANGLE_BRACKET_COLON;
         }
-        bool IsParenthesisPercentParamClass()const
+        bool IsParenthesesPercentParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PARENTHESIS_PERCENT;
+            return paramClass == (int)PARAM_CLASS_PARENTHESES_PERCENT;
         }
         bool IsBracketPercentParamClass()const
         {

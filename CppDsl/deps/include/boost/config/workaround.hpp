@@ -272,7 +272,7 @@
        ((symbol ## _WORKAROUND_GUARD + 0 == 0) &&     \
        (symbol != 0) && (1 % (( (symbol test) ) + 1)))
 //                              ^ ^           ^ ^
-// The extra level of parenthesis nesting above, along with the
+// The extra level of parentheses nesting above, along with the
 // BOOST_OPEN_PAREN indirection below, is required to satisfy the
 // broken preprocessor in MWCW 8.3 and earlier.
 //

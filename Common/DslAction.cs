@@ -24,15 +24,15 @@ namespace Dsl.Common
     {
         PAIR_TYPE_NONE = 0,
         PAIR_TYPE_QUESTION_COLON,
-        PAIR_TYPE_PARENTHESIS,
+        PAIR_TYPE_PARENTHESES,
         PAIR_TYPE_BRACKET,
         PAIR_TYPE_BRACE,
         PAIR_TYPE_BRACKET_COLON,
-        PAIR_TYPE_PARENTHESIS_COLON,
+        PAIR_TYPE_PARENTHESES_COLON,
         PAIR_TYPE_ANGLE_BRACKET_COLON,
         PAIR_TYPE_BRACE_PERCENT,
         PAIR_TYPE_BRACKET_PERCENT,
-        PAIR_TYPE_PARENTHESIS_PERCENT,
+        PAIR_TYPE_PARENTHESES_PERCENT,
         PAIR_TYPE_ANGLE_BRACKET_PERCENT,
         PAIR_TYPE_MAXNUM
     }
@@ -189,7 +189,7 @@ namespace Dsl.Common
                     break;
                 case DslActionType.Cpp:
                     //mLog.Log("{0} [production: {1} nonterminal: {2} token symbol: {3} last token: {4} line: {5} cur token: {6} line: {7} ]", Dsl.Parser.CppString.GetProductionName(productionNumber), productionNumber, nonterminal, Dsl.Parser.CppString.GetSymbolName(token), lastTok, lastLineNo, curTok, lineNo);
-                    
+
                     //var list = Dsl.Parser.CppParser.GetProductionArray(productionNumber);
                     //mLog.Log("\tproduction length:{0}|{1}=>", list[0], list[1]);
                     //for (int i = 2; i <= list[0] && i < list.Length; ++i) {
@@ -226,8 +226,8 @@ namespace Dsl.Common
                 case 8: addFunction(); break;
                 case 9: setFunctionId(); break;
                 case 10: buildNullableOperator(); break;
-                case 11: markParenthesisParam(); break;
-                case 12: markParenthesisParamEnd(); break;
+                case 11: markParenthesesParam(); break;
+                case 12: markParenthesesParamEnd(); break;
                 case 13: buildHighOrderFunction(); break;
                 case 14: markBracketParam(); break;
                 case 15: markBracketParamEnd(); break;
@@ -237,16 +237,16 @@ namespace Dsl.Common
                 case 19: setExternScript(); break;
                 case 20: markBracketColonParam(); break;
                 case 21: markBracketColonParamEnd(); break;
-                case 22: markParenthesisColonParam(); break;
-                case 23: markParenthesisColonParamEnd(); break;
+                case 22: markParenthesesColonParam(); break;
+                case 23: markParenthesesColonParamEnd(); break;
                 case 24: markAngleBracketColonParam(); break;
                 case 25: markAngleBracketColonParamEnd(); break;
                 case 26: markBracePercentParam(); break;
                 case 27: markBracePercentParamEnd(); break;
                 case 28: markBracketPercentParam(); break;
                 case 29: markBracketPercentParamEnd(); break;
-                case 30: markParenthesisPercentParam(); break;
-                case 31: markParenthesisPercentParamEnd(); break;
+                case 30: markParenthesesPercentParam(); break;
+                case 31: markParenthesesPercentParamEnd(); break;
                 case 32: markAngleBracketPercentParam(); break;
                 case 33: markAngleBracketPercentParamEnd(); break;
                 case 34: markColonColonParam(); break;
@@ -269,7 +269,7 @@ namespace Dsl.Common
                 case 3: pushId(); break;
                 case 4: setFunctionId(); break;
                 case 5: markStatement(); break;
-                case 6: markParenthesisParam(); break;
+                case 6: markParenthesesParam(); break;
                 case 7: endStatementLua(); break;
                 case 8: pushLuaList(); break;
                 case 9: checkLuaList(); break;
@@ -287,7 +287,7 @@ namespace Dsl.Common
                 case 21: pushLuaArgs(); break;
                 case 22: buildOperator(); break;
                 case 23: markBracketParam(); break;
-                case 24: markParenthesisColonParam(); break;
+                case 24: markParenthesesColonParam(); break;
                 case 25: markPeriodParam(); break;
                 case 26: markPointerParam(); break;
                 case 27: pushStr(); break;
@@ -304,7 +304,7 @@ namespace Dsl.Common
                 case 5: addFunction(); break;
                 case 6: cppOnFunctionEnd(); break;
                 case 7: setFunctionId(); break;
-                case 8: markParenthesisParam(); break;
+                case 8: markParenthesesParam(); break;
                 case 9: buildHighOrderFunction(); break;
                 case 10: markBracketParam(); break;
                 case 11: markStatement(); break;
@@ -651,7 +651,7 @@ namespace Dsl.Common
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                func.LowerOrderFunction.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+                func.LowerOrderFunction.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESES);
                 func.LowerOrderFunction.Name.SetId(name);
                 func.LowerOrderFunction.Name.SetType(type);
                 if (argComp.IsValid()) {
@@ -785,18 +785,18 @@ namespace Dsl.Common
                 mOnBuildHighOrder(ref this, stm, func);
             }
         }
-        public void markParenthesisParam()
+        public void markParenthesesParam()
         {
             FunctionData func = getLastFunction();
 
-            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESES);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
-            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS, tag);
+            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESES, tag);
         }
-        public void markParenthesisParamEnd()
+        public void markParenthesesParamEnd()
         {
             PopPairType();
         }
@@ -873,17 +873,17 @@ namespace Dsl.Common
         {
             PopPairType();
         }
-        public void markParenthesisColonParam()
+        public void markParenthesesColonParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_COLON);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESES_COLON);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
-            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS_COLON, tag);
+            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESES_COLON, tag);
         }
-        public void markParenthesisColonParamEnd()
+        public void markParenthesesColonParamEnd()
         {
             PopPairType();
         }
@@ -929,17 +929,17 @@ namespace Dsl.Common
         {
             PopPairType();
         }
-        public void markParenthesisPercentParam()
+        public void markParenthesesPercentParam()
         {
             FunctionData func = getLastFunction();
-            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESIS_PERCENT);
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESES_PERCENT);
             uint tag = 0;
             if (null != mNameTags) {
                 mNameTags.TryGetValue(func.GetId(), out tag);
             }
-            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESIS_PERCENT, tag);
+            PushPairType(PairTypeEnum.PAIR_TYPE_PARENTHESES_PERCENT, tag);
         }
-        public void markParenthesisPercentParamEnd()
+        public void markParenthesesPercentParamEnd()
         {
             PopPairType();
         }
@@ -1167,7 +1167,7 @@ namespace Dsl.Common
             }
             //Convert constructor initialization lists to a parameter list of ":".
             if (IsCppConstructor(statement, true)) {
-                markParenthesisParam();
+                markParenthesesParam();
                 beginStatement();
                 return;
             }

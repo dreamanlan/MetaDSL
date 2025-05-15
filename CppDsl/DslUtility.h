@@ -470,7 +470,7 @@ namespace DslFileReadWrite
             else if (data.HaveParam()) {
                 int paramClass = data.GetParamClassUnmasked();
                 switch (paramClass) {
-                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS:
+                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESES:
                     fwrite("(", 1, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_BRACKET:
@@ -488,7 +488,7 @@ namespace DslFileReadWrite
                 case IDslSyntaxCommon::PARAM_CLASS_BRACKET_COLON:
                     fwrite("[:", 2, 1, fp);
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_COLON:
+                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESES_COLON:
                     fwrite("(:", 2, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_COLON:
@@ -500,7 +500,7 @@ namespace DslFileReadWrite
                 case IDslSyntaxCommon::PARAM_CLASS_BRACKET_PERCENT:
                     fwrite("[%", 2, 1, fp);
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_PERCENT:
+                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESES_PERCENT:
                     fwrite("(%", 2, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
@@ -526,7 +526,7 @@ namespace DslFileReadWrite
                     }
                 }
                 switch (paramClass) {
-                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS:
+                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESES:
                     fwrite(")", 1, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_BRACKET:
@@ -541,7 +541,7 @@ namespace DslFileReadWrite
                 case IDslSyntaxCommon::PARAM_CLASS_BRACKET_COLON:
                     fwrite(":]", 2, 1, fp);
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_COLON:
+                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESES_COLON:
                     fwrite(":)", 2, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_COLON:
@@ -553,7 +553,7 @@ namespace DslFileReadWrite
                 case IDslSyntaxCommon::PARAM_CLASS_BRACKET_PERCENT:
                     fwrite("%]", 2, 1, fp);
                     break;
-                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESIS_PERCENT:
+                case IDslSyntaxCommon::PARAM_CLASS_PARENTHESES_PERCENT:
                     fwrite("%)", 2, 1, fp);
                     break;
                 case IDslSyntaxCommon::PARAM_CLASS_ANGLE_BRACKET_PERCENT:
@@ -699,7 +699,7 @@ namespace DslFileReadWrite
     {
         s.push_back(0); s[pos++] = (char)BinCode_BeginValue;
         s.push_back(0); s[pos++] = (char)((int)BinCode_ValueTypeBegin + data.GetIdType());
-        StrPolicy::Push(identifiers, data.GetId()); 
+        StrPolicy::Push(identifiers, data.GetId());
         idCount++;
         write7BitEncodedInt(s, pos, data.GetLine());
         s.push_back(0); s[pos++] = getBinaryEndCode((char)BinCode_EndValue, data.GetSeparator());

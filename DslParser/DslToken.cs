@@ -169,13 +169,13 @@ namespace Dsl.Common
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "(:";
-                return DslConstants.PARENTHESIS_COLON_BEGIN_;
+                return DslConstants.PARENTHESES_COLON_BEGIN_;
             }
             else if (CurChar == ':' && NextChar == ')') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = ":)";
-                return DslConstants.PARENTHESIS_COLON_END_;
+                return DslConstants.PARENTHESES_COLON_END_;
             }
             else if (CurChar == '<' && NextChar == ':') {
                 ++mIterator;
@@ -231,13 +231,13 @@ namespace Dsl.Common
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "(%";
-                return DslConstants.PARENTHESIS_PERCENT_BEGIN_;
+                return DslConstants.PARENTHESES_PERCENT_BEGIN_;
             }
             else if (CurChar == '%' && NextChar == ')') {
                 ++mIterator;
                 ++mIterator;
                 mCurToken = "%)";
-                return DslConstants.PARENTHESIS_PERCENT_END_;
+                return DslConstants.PARENTHESES_PERCENT_END_;
             }
             else if (CurChar == '<' && NextChar == '%') {
                 ++mIterator;
@@ -256,19 +256,19 @@ namespace Dsl.Common
                 ++mIterator;
                 mCurToken = "::";
 
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParentheses(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
                     (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
                 char nextChar2 = PeekNextValidChar(1);
                 char nextChar3 = PeekNextValidChar(2);
-                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
+                if (isNotIdentifierAndBeginParentheses(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.COLON_COLON_;
             }
             else if (CurChar == '?' || CurChar == '!') {
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParentheses(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
                     (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>')))) {
                     getOperatorToken();
                     return getOperatorTokenValue();
@@ -323,13 +323,13 @@ namespace Dsl.Common
                         ++mIterator;
                         mCurToken = "->*";
 
-                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParentheses(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
                             (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                             return getOperatorTokenValue();
                         char nextChar = PeekNextValidChar(0);
                         char nextChar2 = PeekNextValidChar(1);
                         char nextChar3 = PeekNextValidChar(2);
-                        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
+                        if (isNotIdentifierAndBeginParentheses(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                             return getOperatorTokenValue();
                         }
                         return DslConstants.POINTER_STAR_;
@@ -337,13 +337,13 @@ namespace Dsl.Common
                     else {
                         mCurToken = "->";
 
-                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                        if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParentheses(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
                             (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                             return getOperatorTokenValue();
                         char nextChar = PeekNextValidChar(0);
                         char nextChar2 = PeekNextValidChar(1);
                         char nextChar3 = PeekNextValidChar(2);
-                        if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
+                        if (isNotIdentifierAndBeginParentheses(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                             return getOperatorTokenValue();
                         }
                         return DslConstants.POINTER_;
@@ -359,13 +359,13 @@ namespace Dsl.Common
                 ++mIterator;
                 mCurToken = ".*";
 
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParentheses(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
                     (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
                 char nextChar2 = PeekNextValidChar(1);
                 char nextChar3 = PeekNextValidChar(2);
-                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
+                if (isNotIdentifierAndBeginParentheses(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.PERIOD_STAR_;
@@ -394,13 +394,13 @@ namespace Dsl.Common
                 mTokenBuilder.Append(c);
                 mCurToken = mTokenBuilder.ToString();
 
-                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParenthesis(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
+                if (mLastToken.Length > 0 && isNotIdentifierAndNumberAndEndParentheses(mLastToken[mLastToken.Length - 1]) && mLastToken[mLastToken.Length - 1] != '?' && mLastToken[mLastToken.Length - 1] != '!' &&
                     (mLastToken.Length != 2 || (!(mLastToken[mLastToken.Length - 2] == ':' && mLastToken[mLastToken.Length - 1] == '>') && !(mLastToken[mLastToken.Length - 2] == '%' && mLastToken[mLastToken.Length - 1] == '>'))))
                     return getOperatorTokenValue();
                 char nextChar = PeekNextValidChar(0);
                 char nextChar2 = PeekNextValidChar(1);
                 char nextChar3 = PeekNextValidChar(2);
-                if (isNotIdentifierAndBeginParenthesis(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
+                if (isNotIdentifierAndBeginParentheses(nextChar) && !(nextChar == '<' && nextChar2 == ':' && char.IsWhiteSpace(nextChar3)) && !(nextChar == '<' && nextChar2 == '%' && char.IsWhiteSpace(nextChar3))) {
                     return getOperatorTokenValue();
                 }
                 return DslConstants.DOT_;
@@ -727,7 +727,7 @@ namespace Dsl.Common
             mLog.Log("[info] peek_token is not called in an LL(1) grammar\n");
             return token;
         }
-        
+
         public void setCurToken(string tok)
         {
             mCurToken = tok;
@@ -1098,8 +1098,8 @@ namespace Dsl.Common
                 else if (c0 == '`' && c1 != '\0') {
                     val = DslConstants.OP_TOKEN_3_;
                 }
-                else if (c0 == '-' && c1 == '>' && (c2 == '\0' || c2 == '*' && c3 == '\0') || 
-                    c0 == '.' && (c1 == '\0' || c1 == '*' && c2 == '\0') || 
+                else if (c0 == '-' && c1 == '>' && (c2 == '\0' || c2 == '*' && c3 == '\0') ||
+                    c0 == '.' && (c1 == '\0' || c1 == '*' && c2 == '\0') ||
                     (c0 == ':' && c1 == ':' && c2 == '\0')
                     ) {
                     mLog.Log("[warning][line {0}]: Member access operation '{1}' should not appear in operators", mLineNumber, mCurToken);
@@ -1118,14 +1118,14 @@ namespace Dsl.Common
             else
                 return !char.IsLetter(c) && c != '_' && c != '@' && c != '$';
         }
-        public bool isNotIdentifierAndBeginParenthesis(char c)
+        public bool isNotIdentifierAndBeginParentheses(char c)
         {
             if (0 == c)
                 return false;
             else
                 return mBeginParentheses.IndexOf(c) < 0 && !char.IsLetter(c) && c != '_' && c != '@' && c != '$';
         }
-        public bool isNotIdentifierAndNumberAndEndParenthesis(char c)
+        public bool isNotIdentifierAndNumberAndEndParentheses(char c)
         {
             if (0 == c)
                 return false;
@@ -1234,7 +1234,7 @@ namespace Dsl.Common
                 if (includeEPart && (c == 'P' || c == 'p'))
                     ret = true;
                 else if (includeAddSub && (c == '+' || c == '-'))
-                    ret = true; 
+                    ret = true;
                 else if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
                     ret = true;
                 else
@@ -1263,7 +1263,7 @@ namespace Dsl.Common
             else
                 return 0;
         }
-		
+
         private struct TokenInfo
         {
             internal string Token;

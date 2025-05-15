@@ -140,7 +140,7 @@ namespace DslParser
             FunctionData* lowerOrderFunction = mDataFile->AddNewFunctionComponent();
             p->GetName().SetFunction(lowerOrderFunction);
             p->SetParamClass(FunctionData::PARAM_CLASS_TERNARY_OPERATOR);
-            lowerOrderFunction->SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
+            lowerOrderFunction->SetParamClass(FunctionData::PARAM_CLASS_PARENTHESES);
 
             ValueData op(tokenInfo.mString, ValueData::VALUE_TYPE_IDENTIFIER);
             op.SetLine(mThis->getLastLineNumber());
@@ -579,7 +579,7 @@ namespace DslParser
         }
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisParam()
+        void RuntimeBuilderT<RealTypeT>::markParenthesesParam()
     {
         if (!preconditionCheck())return;
         FunctionData* p = mData.getLastFunction();
@@ -587,7 +587,7 @@ namespace DslParser
             return;
         FunctionData& call = *p;
 
-        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS);
+        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESES);
         auto&& pID = call.GetId();
         uint32_t tag = 0;
         if (pID) {
@@ -597,10 +597,10 @@ namespace DslParser
                 tag = tagIt->second;
             }
         }
-        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS, tag);
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESES, tag);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisParamEnd()
+        void RuntimeBuilderT<RealTypeT>::markParenthesesParamEnd()
     {
         popPairType();
     }
@@ -733,14 +733,14 @@ namespace DslParser
         popPairType();
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisColonParam()
+        void RuntimeBuilderT<RealTypeT>::markParenthesesColonParam()
     {
         if (!preconditionCheck())return;
         FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_COLON);
+        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESES_COLON);
         auto&& pID = call.GetId();
         uint32_t tag = 0;
         if (pID) {
@@ -750,10 +750,10 @@ namespace DslParser
                 tag = tagIt->second;
             }
         }
-        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_COLON, tag);
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESES_COLON, tag);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisColonParamEnd()
+        void RuntimeBuilderT<RealTypeT>::markParenthesesColonParamEnd()
     {
         popPairType();
     }
@@ -833,14 +833,14 @@ namespace DslParser
         popPairType();
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParam()
+        void RuntimeBuilderT<RealTypeT>::markParenthesesPercentParam()
     {
         if (!preconditionCheck())return;
         FunctionData* p = mData.getLastFunction();
         if (0 == p)
             return;
         FunctionData& call = *p;
-        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESIS_PERCENT);
+        call.SetParamClass(FunctionData::PARAM_CLASS_PARENTHESES_PERCENT);
         auto&& pID = call.GetId();
         uint32_t tag = 0;
         if (pID) {
@@ -850,10 +850,10 @@ namespace DslParser
                 tag = tagIt->second;
             }
         }
-        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESIS_PERCENT, tag);
+        pushPairType(IDslSyntaxCommon::PAIR_TYPE_PARENTHESES_PERCENT, tag);
     }
     template<class RealTypeT> inline
-        void RuntimeBuilderT<RealTypeT>::markParenthesisPercentParamEnd()
+        void RuntimeBuilderT<RealTypeT>::markParenthesesPercentParamEnd()
     {
         popPairType();
     }

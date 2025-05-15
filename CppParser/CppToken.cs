@@ -810,7 +810,7 @@ namespace Dsl.Common
             int ed = mIterator;
             mCurToken = mInput.Substring(st, ed - st);
         }
-        public bool isNotIdentifierAndEndParenthesis(char c)
+        public bool isNotIdentifierAndEndParentheses(char c)
         {
             if (0 == c)
                 return false;

@@ -607,9 +607,9 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_TERNARY_OPERATOR;
         }
-        void SetParenthesisParamClass()
+        void SetParenthesesParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS;
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESES;
         }
         void SetBracketParamClass()
         {
@@ -635,9 +635,9 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_POINTER_STAR;
         }
-        void SetParenthesisColonParamClass()
+        void SetParenthesesColonParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_COLON;
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESES_COLON;
         }
         void SetBracketColonParamClass()
         {
@@ -647,9 +647,9 @@ namespace DslParser
         {
             m_ParamClass = (int)PARAM_CLASS_ANGLE_BRACKET_COLON;
         }
-        void SetParenthesisPercentParamClass()
+        void SetParenthesesPercentParamClass()
         {
-            m_ParamClass = (int)PARAM_CLASS_PARENTHESIS_PERCENT;
+            m_ParamClass = (int)PARAM_CLASS_PARENTHESES_PERCENT;
         }
         void SetBracketPercentParamClass()
         {
@@ -683,10 +683,10 @@ namespace DslParser
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_TERNARY_OPERATOR ? TRUE : FALSE;
         }
-        bool IsParenthesisParamClass()const
+        bool IsParenthesesParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PARENTHESIS;
+            return paramClass == (int)PARAM_CLASS_PARENTHESES;
         }
         bool IsBracketParamClass()const
         {
@@ -718,10 +718,10 @@ namespace DslParser
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_POINTER_STAR;
         }
-        bool IsParenthesisColonParamClass()const
+        bool IsParenthesesColonParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PARENTHESIS_COLON;
+            return paramClass == (int)PARAM_CLASS_PARENTHESES_COLON;
         }
         bool IsBracketColonParamClass()const
         {
@@ -733,10 +733,10 @@ namespace DslParser
             int paramClass = GetParamClassUnmasked();
             return paramClass == (int)PARAM_CLASS_ANGLE_BRACKET_COLON;
         }
-        bool IsParenthesisPercentParamClass()const
+        bool IsParenthesesPercentParamClass()const
         {
             int paramClass = GetParamClassUnmasked();
-            return paramClass == (int)PARAM_CLASS_PARENTHESIS_PERCENT;
+            return paramClass == (int)PARAM_CLASS_PARENTHESES_PERCENT;
         }
         bool IsBracketPercentParamClass()const
         {
@@ -1373,8 +1373,8 @@ namespace DslParser
             m_pStringBuffer(m_StringBuffer),
             m_pUnusedStringPtr(m_StringBuffer),
             m_pUnusedObjectPtr(m_StringBuffer + StringAndObjectBufferSize),
-            m_SyntaxComponentNum(0), 
-            m_SyntaxComponentCommentsInfoNum(0), 
+            m_SyntaxComponentNum(0),
+            m_SyntaxComponentCommentsInfoNum(0),
             m_FunctionCommentsInfoNum(0),
             m_NullSyntax(*this),
             m_NullFunction(*this),
@@ -1439,7 +1439,7 @@ namespace DslParser
             //the total number is equivalent to the number of all syntax components in a dsl file Pointer array buffer,
             //mainly used to allocate syntax component pointer array, PtrPoolSize is equivalent to the number of all
             //syntax components in a dsl file
-        FreeLinkInfo* m_pPtrFreeLink;//The lower 32 bits correspond to the index of m_PtrPool, and the upper 32 bits are 
+        FreeLinkInfo* m_pPtrFreeLink;//The lower 32 bits correspond to the index of m_PtrPool, and the upper 32 bits are
             //the index of the next free block. The number of free blocks. For DSL file parsing, this value should
             //theoretically be very low, approximately equivalent to (the number of times the syntax array is expanded
             //- the number of times the new syntax reuses the array)
@@ -1476,8 +1476,8 @@ namespace DslParser
         void getOperatorToken();
         short getOperatorTokenValue()const;
         int isNotIdentifier(char c)const;
-        int isNotIdentifierAndBeginParenthesis(char c)const;
-        int isNotIdentifierAndNumberAndEndParenthesis(char c)const;
+        int isNotIdentifierAndBeginParentheses(char c)const;
+        int isNotIdentifierAndNumberAndEndParentheses(char c)const;
         int isWhiteSpace(char c) const;
         int isDelimiter(char c) const;
         int isBeginParentheses(char c) const;
@@ -1511,17 +1511,17 @@ namespace DslParser
         void beginStatement()const;
         void addFunction()const;
         void setFunctionId()const;
-        void markParenthesisParam()const;
+        void markParenthesesParam()const;
         void buildHighOrderFunction()const;
         void markBracketParam()const;
         void markStatement()const;
         void markExternScript()const;
         void markBracketColonParam()const;
-        void markParenthesisColonParam()const;
+        void markParenthesesColonParam()const;
         void markAngleBracketColonParam()const;
         void markBracePercentParam()const;
         void markBracketPercentParam()const;
-        void markParenthesisPercentParam()const;
+        void markParenthesesPercentParam()const;
         void markAngleBracketPercentParam()const;
         void markColonColonParam()const;
         void setExternScript()const;
