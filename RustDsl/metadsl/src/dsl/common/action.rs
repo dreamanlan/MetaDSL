@@ -29,15 +29,15 @@ pub const OPERATOR_CATEGORY_MAXNUM: i32 = 2;
 
 pub const PAIR_TYPE_NONE: i32 = 0;
 pub const PAIR_TYPE_QUESTION_COLON: i32 = 1;
-pub const PAIR_TYPE_PARENTHESIS: i32 = 2;
+pub const PAIR_TYPE_PARENTHESES: i32 = 2;
 pub const PAIR_TYPE_BRACKET: i32 = 3;
 pub const PAIR_TYPE_BRACE: i32 = 4;
 pub const PAIR_TYPE_BRACKET_COLON: i32 = 5;
-pub const PAIR_TYPE_PARENTHESIS_COLON: i32 = 6;
+pub const PAIR_TYPE_PARENTHESES_COLON: i32 = 6;
 pub const PAIR_TYPE_ANGLE_BRACKET_COLON: i32 = 7;
 pub const PAIR_TYPE_BRACE_PERCENT: i32 = 8;
 pub const PAIR_TYPE_BRACKET_PERCENT: i32 = 9;
-pub const PAIR_TYPE_PARENTHESIS_PERCENT: i32 = 10;
+pub const PAIR_TYPE_PARENTHESES_PERCENT: i32 = 10;
 pub const PAIR_TYPE_ANGLE_BRACKET_PERCENT: i32 = 11;
 pub const PAIR_TYPE_MAXNUM: i32 = 12;
 
@@ -236,8 +236,8 @@ impl<'a> DslAction<'a>
             8 => { self.add_function(); }
             9 => { self.set_function_id(); }
             10 => { self.build_nullable_operator(); }
-            11 => { self.mark_parenthesis_param(); }
-            12 => { self.mark_parenthesis_param_end(); }
+            11 => { self.mark_parentheses_param(); }
+            12 => { self.mark_parentheses_param_end(); }
             13 => { self.build_high_order_function(); }
             14 => { self.mark_bracket_param(); }
             15 => { self.mark_bracket_param_end(); }
@@ -247,16 +247,16 @@ impl<'a> DslAction<'a>
             19 => { self.set_extern_script(); }
             20 => { self.mark_bracket_colon_param(); }
             21 => { self.mark_bracket_colon_param_end(); }
-            22 => { self.mark_parenthesis_colon_param(); }
-            23 => { self.mark_parenthesis_colon_param_end(); }
+            22 => { self.mark_parentheses_colon_param(); }
+            23 => { self.mark_parentheses_colon_param_end(); }
             24 => { self.mark_angle_bracket_colon_param(); }
             25 => { self.mark_angle_bracket_colon_param_end(); }
             26 => { self.mark_brace_percent_param(); }
             27 => { self.mark_brace_percent_param_end(); }
             28 => { self.mark_bracket_percent_param(); }
             29 => { self.mark_bracket_percent_param_end(); }
-            30 => { self.mark_parenthesis_percent_param(); }
-            31 => { self.mark_parenthesis_percent_param_end(); }
+            30 => { self.mark_parentheses_percent_param(); }
+            31 => { self.mark_parentheses_percent_param_end(); }
             32 => { self.mark_angle_bracket_percent_param(); }
             33 => { self.mark_angle_bracket_percent_param_end(); }
             34 => { self.mark_colon_colon_param(); }
@@ -750,7 +750,7 @@ impl<'a> DslAction<'a>
                 if let ValueOrFunction::Function(l_func) = v_or_f {
                     if !l_func.is_valid() {
                         if let Some(lo_func) = l_func.lower_order_function_mut() {
-                            lo_func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS);
+                            lo_func.set_param_class(dsl::PARAM_CLASS_PARENTHESES);
                             if let Some(fname) = lo_func.name_mut() {
                                 fname.set_id(name);
                                 fname.set_type(r#type);
@@ -908,17 +908,17 @@ impl<'a> DslAction<'a>
            on_build_high_order(self);
         }
     }
-    pub fn mark_parenthesis_param(&mut self)
+    pub fn mark_parentheses_param(&mut self)
     {
         if let Some(v_or_f) = self.get_last_function_mut() {
             if let ValueOrFunction::Function(func) = v_or_f {
-                func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS);
+                func.set_param_class(dsl::PARAM_CLASS_PARENTHESES);
             }
         }
         let tag = self.get_name_tag();
-        self.push_pair_type2(PAIR_TYPE_PARENTHESIS, tag);
+        self.push_pair_type2(PAIR_TYPE_PARENTHESES, tag);
     }
-    pub fn mark_parenthesis_param_end(&mut self)
+    pub fn mark_parentheses_param_end(&mut self)
     {
         self.pop_pair_type();
     }
@@ -1015,17 +1015,17 @@ impl<'a> DslAction<'a>
     {
         self.pop_pair_type();
     }
-    pub fn mark_parenthesis_colon_param(&mut self)
+    pub fn mark_parentheses_colon_param(&mut self)
     {
         if let Some(v_or_f) = self.get_last_function_mut() {
             if let ValueOrFunction::Function(func) = v_or_f {
-                func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS_COLON);
+                func.set_param_class(dsl::PARAM_CLASS_PARENTHESES_COLON);
             }
         }
         let tag = self.get_name_tag();
-        self.push_pair_type2(PAIR_TYPE_PARENTHESIS_COLON, tag);
+        self.push_pair_type2(PAIR_TYPE_PARENTHESES_COLON, tag);
     }
-    pub fn mark_parenthesis_colon_param_end(&mut self)
+    pub fn mark_parentheses_colon_param_end(&mut self)
     {
         self.pop_pair_type();
     }
@@ -1071,17 +1071,17 @@ impl<'a> DslAction<'a>
     {
         self.pop_pair_type();
     }
-    pub fn mark_parenthesis_percent_param(&mut self)
+    pub fn mark_parentheses_percent_param(&mut self)
     {
         if let Some(v_or_f) = self.get_last_function_mut() {
             if let ValueOrFunction::Function(func) = v_or_f {
-                func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS_PERCENT);
+                func.set_param_class(dsl::PARAM_CLASS_PARENTHESES_PERCENT);
             }
         }
         let tag = self.get_name_tag();
-        self.push_pair_type2(PAIR_TYPE_PARENTHESIS_PERCENT, tag);
+        self.push_pair_type2(PAIR_TYPE_PARENTHESES_PERCENT, tag);
     }
-    pub fn mark_parenthesis_percent_param_end(&mut self)
+    pub fn mark_parentheses_percent_param_end(&mut self)
     {
         self.pop_pair_type();
     }

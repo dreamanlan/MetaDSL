@@ -1447,15 +1447,15 @@ impl<'a> AbstractExpression<'a> for FunctionCall<'a>
     impl_abstract_expression!();
 }
 #[add_abstract_expression_fields]
-pub struct ParenthesisExp<'a>
+pub struct ParenthesesExp<'a>
 {
     m_expressions: Option<Vec<ExpressionBox<'a>>>,
 }
-impl<'a> Default for ParenthesisExp<'a>
+impl<'a> Default for ParenthesesExp<'a>
 {
     fn default() -> Self
     {
-        ParenthesisExp {
+        ParenthesesExp {
             m_expressions: None,
 
             m_calculator: None,
@@ -1463,11 +1463,11 @@ impl<'a> Default for ParenthesisExp<'a>
         }
     }
 }
-impl<'a> IExpression<'a> for ParenthesisExp<'a>
+impl<'a> IExpression<'a> for ParenthesesExp<'a>
 {
     impl_expression_with_abstract!();
 }
-impl<'a> AbstractExpression<'a> for ParenthesisExp<'a>
+impl<'a> AbstractExpression<'a> for ParenthesesExp<'a>
 {
     fn do_calc(&mut self) -> DslCalculatorValue
     {
@@ -1520,16 +1520,16 @@ impl<'a> AbstractExpression<'a> for ParenthesisExp<'a>
     impl_abstract_expression!();
 }
 #[add_abstract_expression_fields]
-pub struct ParenthesisSetExp<'a>
+pub struct ParenthesesSetExp<'a>
 {
     m_var_ids: Option<Vec<String>>,
     m_op: Option<ExpressionBox<'a>>,
 }
-impl<'a> Default for ParenthesisSetExp<'a>
+impl<'a> Default for ParenthesesSetExp<'a>
 {
     fn default() -> Self
     {
-        ParenthesisSetExp {
+        ParenthesesSetExp {
             m_var_ids: None,
             m_op: None,
 
@@ -1538,11 +1538,11 @@ impl<'a> Default for ParenthesisSetExp<'a>
         }
     }
 }
-impl<'a> IExpression<'a> for ParenthesisSetExp<'a>
+impl<'a> IExpression<'a> for ParenthesesSetExp<'a>
 {
     impl_expression_with_abstract!();
 }
-impl<'a> AbstractExpression<'a> for ParenthesisSetExp<'a>
+impl<'a> AbstractExpression<'a> for ParenthesesSetExp<'a>
 {
     fn do_calc(&mut self) -> DslCalculatorValue
     {
@@ -1663,6 +1663,9 @@ impl<'a> AbstractExpression<'a> for ParenthesisSetExp<'a>
             if let Some(param2) = func_data.get_param(1) {
                 op = DslCalculator::load_syntax_component(self.calculator(), param2);
             }
+        }
+        if vs.len() > 9 {
+            self.calculator().borrow().error(&format!("max tuple size is 9, we'll discard the rest. code:{} line:{}", self.syntax_component().to_script_string(false, &dsl::DEFAULT_DELIM), self.syntax_component().get_line()));
         }
         self.m_var_ids = Some(vs);
         self.m_op = op;
@@ -2721,7 +2724,7 @@ impl<'a> DslCalculator<'a>
                 if let Some(name) = fd.name_mut() {
                     name.copy_from(value_data);
                 }
-                fd.set_parenthesis_param_class();
+                fd.set_parentheses_param_class();
                 if !p.load_function_syntax(fd, cell.clone()) {
                     //error
                     cell.borrow().error(&format!("DslCalculator error, {0} line {1}", value_data.to_script_string(false, &dsl::DEFAULT_DELIM), value_data.get_line()));
@@ -2753,9 +2756,9 @@ impl<'a> DslCalculator<'a>
     pub fn load_function_syntax(cell: &Rc<DslCalculatorCell<'a>>, func_data: &FunctionData) -> Option<ExpressionBox<'a>>
     {
         if func_data.have_param() {
-            if !func_data.have_id() && !func_data.is_high_order() && (func_data.get_param_class() == dsl::PARAM_CLASS_PARENTHESIS || func_data.get_param_class() == dsl::PARAM_CLASS_BRACKET) {
+            if !func_data.have_id() && !func_data.is_high_order() && (func_data.get_param_class() == dsl::PARAM_CLASS_PARENTHESES || func_data.get_param_class() == dsl::PARAM_CLASS_BRACKET) {
                 match func_data.get_param_class() {
-                    dsl::PARAM_CLASS_PARENTHESIS => {
+                    dsl::PARAM_CLASS_PARENTHESES => {
                         let num = func_data.get_param_num();
                         if num == 1 {
                             if let Some(param) = func_data.get_param(0) {
@@ -2766,7 +2769,7 @@ impl<'a> DslCalculator<'a>
                             }
                         }
                         else {
-                            let mut exp = ParenthesisExp::default();
+                            let mut exp = ParenthesesExp::default();
                             AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
                             return Some(Box::new(exp));
                         }
@@ -2806,7 +2809,7 @@ impl<'a> DslCalculator<'a>
                                 else {
                                     new_call.set_name(Box::new(ValueData::from_string_type(String::from("collectionset"), dsl::ID_TOKEN)));
                                 }
-                                new_call.set_parenthesis_param_class();
+                                new_call.set_parentheses_param_class();
                                 if inner_call.is_high_order() {
                                     if let Some(f) = inner_call.lower_order_function() {
                                         new_call.add_function_param(f.as_ref().clone());
@@ -2832,9 +2835,9 @@ impl<'a> DslCalculator<'a>
 
                                 return Self::load_syntax_component(cell, &SyntaxComponent::Function(new_call));
                             }
-                            else if inner_param_class == dsl::PARAM_CLASS_PARENTHESIS && !inner_call.have_id() {
+                            else if inner_param_class == dsl::PARAM_CLASS_PARENTHESES && !inner_call.have_id() {
                                 //(a,b,c) = val
-                                let mut exp = ParenthesisSetExp::default();
+                                let mut exp = ParenthesesSetExp::default();
                                 AbstractExpression::load_function_syntax(&mut exp, func_data.clone(), cell.clone());
                                 return Some(Box::new(exp));
                             }
@@ -2861,7 +2864,7 @@ impl<'a> DslCalculator<'a>
                     if func_data.is_high_order() {
                         if let Some(inner_call) = func_data.lower_order_function() {
                             let inner_param_class = inner_call.get_param_class();
-                            if param_class == dsl::PARAM_CLASS_PARENTHESIS && (inner_param_class == dsl::PARAM_CLASS_PERIOD || inner_param_class == dsl::PARAM_CLASS_BRACKET) {
+                            if param_class == dsl::PARAM_CLASS_PARENTHESES && (inner_param_class == dsl::PARAM_CLASS_PERIOD || inner_param_class == dsl::PARAM_CLASS_BRACKET) {
                                 //obj.member(a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> objectcall(obj,member,a,b,...)
                                 //obj[member](a,b,...) -> collectioncall(obj,member,a,b,...)
                                 let api_name;
@@ -2877,7 +2880,7 @@ impl<'a> DslCalculator<'a>
                                 }
                                 let mut new_call = FunctionData::new();
                                 new_call.set_name(Box::new(ValueData::from_string_type(String::from(api_name), dsl::ID_TOKEN)));
-                                new_call.set_parenthesis_param_class();
+                                new_call.set_parentheses_param_class();
                                 if inner_call.is_high_order() {
                                     if let Some(f) = inner_call.lower_order_function() {
                                         new_call.add_function_param(f.as_ref().clone());
@@ -2919,7 +2922,7 @@ impl<'a> DslCalculator<'a>
                         else {
                             new_call.set_name(Box::new(ValueData::from_string_type(String::from("collectionget"), dsl::ID_TOKEN)));
                         }
-                        new_call.set_parenthesis_param_class();
+                        new_call.set_parentheses_param_class();
                         if func_data.is_high_order() {
                             if let Some(f) = func_data.lower_order_function() {
                                 new_call.add_function_param(f.as_ref().clone());
@@ -3084,7 +3087,7 @@ impl DslSyntaxTransformer
                     //Convert command line style to function style
                     let mut func = FunctionData::new();
                     func.set_name(Box::new(v.clone()));
-                    func.set_param_class(dsl::PARAM_CLASS_PARENTHESIS);
+                    func.set_param_class(dsl::PARAM_CLASS_PARENTHESES);
                     if let Some(fs) = statement_data.functions() {
                         for f in fs.iter() {
                             match f {

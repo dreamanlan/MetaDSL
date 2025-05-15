@@ -83,16 +83,16 @@ pub const SEPARATOR_SEMICOLON: i32 = 2;
 
 pub const PARAM_CLASS_MIN: i32 = 0;
 pub const PARAM_CLASS_NOTHING: i32 = PARAM_CLASS_MIN;
-pub const PARAM_CLASS_PARENTHESIS: i32 = 1;
+pub const PARAM_CLASS_PARENTHESES: i32 = 1;
 pub const PARAM_CLASS_BRACKET: i32 = 2;
 pub const PARAM_CLASS_PERIOD: i32 = 3;
 pub const PARAM_CLASS_POINTER: i32 = 4;
 pub const PARAM_CLASS_STATEMENT: i32 = 5;
 pub const PARAM_CLASS_EXTERN_SCRIPT: i32 = 6;
-pub const PARAM_CLASS_PARENTHESIS_COLON: i32 = 7;
+pub const PARAM_CLASS_PARENTHESES_COLON: i32 = 7;
 pub const PARAM_CLASS_BRACKET_COLON: i32 = 8;
 pub const PARAM_CLASS_ANGLE_BRACKET_COLON: i32 = 9;
-pub const PARAM_CLASS_PARENTHESIS_PERCENT: i32 = 10;
+pub const PARAM_CLASS_PARENTHESES_PERCENT: i32 = 10;
 pub const PARAM_CLASS_BRACKET_PERCENT: i32 = 11;
 pub const PARAM_CLASS_BRACE_PERCENT: i32 = 12;
 pub const PARAM_CLASS_ANGLE_BRACKET_PERCENT: i32 = 13;
@@ -986,7 +986,7 @@ impl FunctionData
         self.m_params = value;
         if let Some(_params) = &self.m_params {
             if PARAM_CLASS_NOTHING == self.m_param_class {
-                self.m_param_class = PARAM_CLASS_PARENTHESIS;
+                self.m_param_class = PARAM_CLASS_PARENTHESES;
             }
         }
         else {
@@ -1143,9 +1143,9 @@ impl FunctionData
     {
         self.m_param_class = PARAM_CLASS_TERNARY_OPERATOR;
     }
-    pub fn set_parenthesis_param_class(&mut self)
+    pub fn set_parentheses_param_class(&mut self)
     {
-        self.m_param_class = PARAM_CLASS_PARENTHESIS;
+        self.m_param_class = PARAM_CLASS_PARENTHESES;
     }
     pub fn set_bracket_param_class(&mut self)
     {
@@ -1171,9 +1171,9 @@ impl FunctionData
     {
         self.m_param_class = PARAM_CLASS_POINTER_STAR;
     }
-    pub fn set_parenthesis_colon_param_class(&mut self)
+    pub fn set_parentheses_colon_param_class(&mut self)
     {
-        self.m_param_class = PARAM_CLASS_PARENTHESIS_COLON;
+        self.m_param_class = PARAM_CLASS_PARENTHESES_COLON;
     }
     pub fn set_bracket_colon_param_class(&mut self)
     {
@@ -1183,9 +1183,9 @@ impl FunctionData
     {
         self.m_param_class = PARAM_CLASS_ANGLE_BRACKET_COLON;
     }
-    pub fn set_parenthesis_percent_param_class(&mut self)
+    pub fn set_parentheses_percent_param_class(&mut self)
     {
-        self.m_param_class = PARAM_CLASS_PARENTHESIS_PERCENT;
+        self.m_param_class = PARAM_CLASS_PARENTHESES_PERCENT;
     }
     pub fn set_bracket_percent_param_class(&mut self)
     {
@@ -1219,10 +1219,10 @@ impl FunctionData
         let param_class = self.get_param_class_unmasked();
         return param_class == PARAM_CLASS_TERNARY_OPERATOR;
     }
-    pub fn is_parenthesis_param_class(&self) -> bool
+    pub fn is_parentheses_param_class(&self) -> bool
     {
         let param_class = self.get_param_class_unmasked();
-        return param_class == PARAM_CLASS_PARENTHESIS;
+        return param_class == PARAM_CLASS_PARENTHESES;
     }
     pub fn is_bracket_param_class(&self) -> bool
     {
@@ -1254,10 +1254,10 @@ impl FunctionData
         let param_class = self.get_param_class_unmasked();
         return param_class == PARAM_CLASS_POINTER_STAR;
     }
-    pub fn is_parenthesis_colon_param_class(&self) -> bool
+    pub fn is_parentheses_colon_param_class(&self) -> bool
     {
         let param_class = self.get_param_class_unmasked();
-        return param_class == PARAM_CLASS_PARENTHESIS_COLON;
+        return param_class == PARAM_CLASS_PARENTHESES_COLON;
     }
     pub fn is_bracket_colon_param_class(&self) -> bool
     {
@@ -1269,10 +1269,10 @@ impl FunctionData
         let param_class = self.get_param_class_unmasked();
         return param_class == PARAM_CLASS_ANGLE_BRACKET_COLON;
     }
-    pub fn is_parenthesis_percent_param_class(&self) -> bool
+    pub fn is_parentheses_percent_param_class(&self) -> bool
     {
         let param_class = self.get_param_class_unmasked();
-        return param_class == PARAM_CLASS_PARENTHESIS_PERCENT;
+        return param_class == PARAM_CLASS_PARENTHESES_PERCENT;
     }
     pub fn is_bracket_percent_param_class(&self) -> bool
     {
@@ -1381,7 +1381,7 @@ impl FunctionData
             params.push(SyntaxComponent::Value(ValueData::from_string(id)));
         }
         if PARAM_CLASS_NOTHING == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS;
+            self.m_param_class = PARAM_CLASS_PARENTHESES;
         }
     }
     pub fn add_string_type_param(&mut self, id: String, r#type: i32)
@@ -1391,7 +1391,7 @@ impl FunctionData
             params.push(SyntaxComponent::Value(ValueData::from_string_type(id, r#type)));
         }
         if PARAM_CLASS_NOTHING == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS;
+            self.m_param_class = PARAM_CLASS_PARENTHESES;
         }
     }
     pub fn add_value_param(&mut self, param: ValueData)
@@ -1401,7 +1401,7 @@ impl FunctionData
             params.push(SyntaxComponent::Value(param));
         }
         if PARAM_CLASS_NOTHING == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS;
+            self.m_param_class = PARAM_CLASS_PARENTHESES;
         }
     }
     pub fn add_function_param(&mut self, param: FunctionData)
@@ -1411,7 +1411,7 @@ impl FunctionData
             params.push(SyntaxComponent::Function(param));
         }
         if PARAM_CLASS_NOTHING == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS;
+            self.m_param_class = PARAM_CLASS_PARENTHESES;
         }
     }
     pub fn add_statement_param(&mut self, param: StatementData)
@@ -1421,7 +1421,7 @@ impl FunctionData
             params.push(SyntaxComponent::Statement(param));
         }
         if PARAM_CLASS_NOTHING == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS;
+            self.m_param_class = PARAM_CLASS_PARENTHESES;
         }
     }
     pub fn add_syntax_component_param(&mut self, param: SyntaxComponent)
@@ -1431,7 +1431,7 @@ impl FunctionData
             params.push(param);
         }
         if PARAM_CLASS_NOTHING == self.m_param_class {
-            self.m_param_class = PARAM_CLASS_PARENTHESIS;
+            self.m_param_class = PARAM_CLASS_PARENTHESES;
         }
     }
     pub fn clear(&mut self)
@@ -2669,7 +2669,7 @@ cfg_if! {
                     let rbracket;
                     let param_class = data.get_param_class_unmasked();
                     match param_class {
-                        PARAM_CLASS_PARENTHESIS => {
+                        PARAM_CLASS_PARENTHESES => {
                             lbracket = "(";
                             rbracket = ")";
                         }
@@ -2693,7 +2693,7 @@ cfg_if! {
                             lbracket = "[:";
                             rbracket = ":]";
                         }
-                        PARAM_CLASS_PARENTHESIS_COLON => {
+                        PARAM_CLASS_PARENTHESES_COLON => {
                             lbracket = "(:";
                             rbracket = ":)";
                         }
@@ -2709,7 +2709,7 @@ cfg_if! {
                             lbracket = "[%";
                             rbracket = "%]";
                         }
-                        PARAM_CLASS_PARENTHESIS_PERCENT => {
+                        PARAM_CLASS_PARENTHESES_PERCENT => {
                             lbracket = "(%";
                             rbracket = "%)";
                         }
@@ -3058,7 +3058,7 @@ cfg_if! {
                 let rbracket;
                 let param_class = data.get_param_class_unmasked();
                 match param_class {
-                    PARAM_CLASS_PARENTHESIS => {
+                    PARAM_CLASS_PARENTHESES => {
                         lbracket = "(";
                         rbracket = ")";
                     }
@@ -3090,7 +3090,7 @@ cfg_if! {
                         lbracket = "[:";
                         rbracket = ":]";
                     }
-                    PARAM_CLASS_PARENTHESIS_COLON => {
+                    PARAM_CLASS_PARENTHESES_COLON => {
                         lbracket = "(:";
                         rbracket = ":)";
                     }
@@ -3106,7 +3106,7 @@ cfg_if! {
                         lbracket = "[%";
                         rbracket = "%]";
                     }
-                    PARAM_CLASS_PARENTHESIS_PERCENT => {
+                    PARAM_CLASS_PARENTHESES_PERCENT => {
                         lbracket = "(%";
                         rbracket = "%)";
                     }

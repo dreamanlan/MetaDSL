@@ -309,13 +309,13 @@ impl<'a> DslToken<'a>
             self.m_iterator += 1;
             self.m_iterator += 1;
             self.m_cur_token = String::from("(:");
-            return constants::PARENTHESIS_COLON_BEGIN_;
+            return constants::PARENTHESES_COLON_BEGIN_;
         }
         else if self.cur_char() == ':' && self.next_char() == ')' {
             self.m_iterator += 1;
             self.m_iterator += 1;
             self.m_cur_token = String::from(":)");
-            return constants::PARENTHESIS_COLON_END_;
+            return constants::PARENTHESES_COLON_END_;
         }
         else if self.cur_char() == '<' && self.next_char() == ':' {
             self.m_iterator += 1;
@@ -371,13 +371,13 @@ impl<'a> DslToken<'a>
             self.m_iterator += 1;
             self.m_iterator += 1;
             self.m_cur_token = String::from("(%");
-            return constants::PARENTHESIS_PERCENT_BEGIN_;
+            return constants::PARENTHESES_PERCENT_BEGIN_;
         }
         else if self.cur_char() == '%' && self.next_char() == ')' {
             self.m_iterator += 1;
             self.m_iterator += 1;
             self.m_cur_token = String::from("%)");
-            return constants::PARENTHESIS_PERCENT_END_;
+            return constants::PARENTHESES_PERCENT_END_;
         }
         else if self.cur_char() == '<' && self.next_char() == '%' {
             self.m_iterator += 1;
@@ -397,21 +397,21 @@ impl<'a> DslToken<'a>
             self.m_cur_token = String::from("::");
 
             let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
-            if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
+            if ct > 0 && self.is_not_identifier_and_number_and_end_parentheses(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 return self.get_operator_token_value();
             }
             let next_char = self.peek_next_valid_char(0);
             let next_char2 = self.peek_next_valid_char(1);
             let next_char3 = self.peek_next_valid_char(2);
-            if self.is_not_identifier_and_begin_parenthesis(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
+            if self.is_not_identifier_and_begin_parentheses(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
                 return self.get_operator_token_value();
             }
             return constants::COLON_COLON_;
         }
         else if self.cur_char() == '?' || self.cur_char() == '!' {
             let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
-            if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
+            if ct > 0 && self.is_not_identifier_and_number_and_end_parentheses(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 self.get_operator_token();
                 return self.get_operator_token_value();
@@ -467,14 +467,14 @@ impl<'a> DslToken<'a>
                     self.m_cur_token = String::from("->*");
 
                     let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
-                    if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
+                    if ct > 0 && self.is_not_identifier_and_number_and_end_parentheses(last_char) && last_char != '?' && last_char != '!' &&
                         (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                         return self.get_operator_token_value();
                     }
                     let next_char = self.peek_next_valid_char(0);
                     let next_char2 = self.peek_next_valid_char(1);
                     let next_char3 = self.peek_next_valid_char(2);
-                    if self.is_not_identifier_and_begin_parenthesis(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
+                    if self.is_not_identifier_and_begin_parentheses(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
                         return self.get_operator_token_value();
                     }
                     return constants::POINTER_STAR_;
@@ -483,14 +483,14 @@ impl<'a> DslToken<'a>
                     self.m_cur_token = String::from("->");
 
                     let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
-                    if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
+                    if ct > 0 && self.is_not_identifier_and_number_and_end_parentheses(last_char) && last_char != '?' && last_char != '!' &&
                         (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                         return self.get_operator_token_value();
                     }
                     let next_char = self.peek_next_valid_char(0);
                     let next_char2 = self.peek_next_valid_char(1);
                     let next_char3 = self.peek_next_valid_char(2);
-                    if self.is_not_identifier_and_begin_parenthesis(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
+                    if self.is_not_identifier_and_begin_parentheses(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
                         return self.get_operator_token_value();
                     }
                     return constants::POINTER_;
@@ -507,14 +507,14 @@ impl<'a> DslToken<'a>
             self.m_cur_token = String::from(".*");
 
             let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
-            if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
+            if ct > 0 && self.is_not_identifier_and_number_and_end_parentheses(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 return self.get_operator_token_value();
             }
             let next_char = self.peek_next_valid_char(0);
             let next_char2 = self.peek_next_valid_char(1);
             let next_char3 = self.peek_next_valid_char(2);
-            if self.is_not_identifier_and_begin_parenthesis(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
+            if self.is_not_identifier_and_begin_parentheses(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
                 return self.get_operator_token_value();
             }
             return constants::PERIOD_STAR_;
@@ -544,14 +544,14 @@ impl<'a> DslToken<'a>
             self.m_cur_token = std::mem::take(&mut self.m_token_builder);
 
             let (ct, last_char, last_char2) = Self::get_last_2_chars_s(&self.m_last_token);
-            if ct > 0 && self.is_not_identifier_and_number_and_end_parenthesis(last_char) && last_char != '?' && last_char != '!' &&
+            if ct > 0 && self.is_not_identifier_and_number_and_end_parentheses(last_char) && last_char != '?' && last_char != '!' &&
                 (ct != 2 || (!(last_char2 == ':' && last_char == '>') && !(last_char2 == '%' && last_char == '>'))) {
                 return self.get_operator_token_value();
             }
             let next_char = self.peek_next_valid_char(0);
             let next_char2 = self.peek_next_valid_char(1);
             let next_char3 = self.peek_next_valid_char(2);
-            if self.is_not_identifier_and_begin_parenthesis(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
+            if self.is_not_identifier_and_begin_parentheses(next_char) && !(next_char == '<' && next_char2 == ':' && self.is_white_space(next_char3)) && !(next_char == '<' && next_char2 == '%' && self.is_white_space(next_char3)) {
                 return self.get_operator_token_value();
             }
             return constants::DOT_;
@@ -1399,7 +1399,7 @@ impl<'a> DslToken<'a>
             return !Self::is_letter_s(c) && c != '_' && c != '@' && c != '$';
         }
     }
-    pub fn is_not_identifier_and_begin_parenthesis(&self, c: char) -> bool
+    pub fn is_not_identifier_and_begin_parentheses(&self, c: char) -> bool
     {
         if '\0' == c {
            return false;
@@ -1408,7 +1408,7 @@ impl<'a> DslToken<'a>
             return BEGIN_PARENTHESES.find(c) == None && !Self::is_letter_s(c) && c != '_' && c != '@' && c != '$';
         }
     }
-    pub fn is_not_identifier_and_number_and_end_parenthesis(&self, c: char) -> bool
+    pub fn is_not_identifier_and_number_and_end_parentheses(&self, c: char) -> bool
     {
         if '\0' == c {
             return false;
