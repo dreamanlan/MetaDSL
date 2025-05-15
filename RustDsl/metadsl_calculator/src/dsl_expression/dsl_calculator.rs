@@ -1513,6 +1513,9 @@ impl<'a> AbstractExpression<'a> for ParenthesesExp<'a>
                 }
             }
         }
+        if vs.len() > 9 {
+            self.calculator().borrow().error(&format!("max tuple size is 9, we'll discard the rest. code:{} line:{}", self.syntax_component().to_script_string(false, &dsl::DEFAULT_DELIM), self.syntax_component().get_line()));
+        }
         self.m_expressions = Some(vs);
         return true;
     }

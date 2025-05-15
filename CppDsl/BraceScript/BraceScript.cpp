@@ -2074,51 +2074,6 @@ namespace Brace
         std::vector<BraceApiExecutor> m_Statements;
         std::vector<int> m_ObjVars;
     };
-    class ParenthesesExp final : public AbstractBraceApi
-    {
-    public:
-        ParenthesesExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_Args(), m_ArgInfos(), m_ResultInfo()
-        {
-        }
-    protected:
-        virtual bool LoadCall([[maybe_unused]] const FuncInfo& curFunc, [[maybe_unused]] const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
-        {
-            if (argLoadInfos.size() > 0) {
-                auto& lastLoadInfo = argLoadInfos[argLoadInfos.size() - 1];
-                auto lastRealType = lastLoadInfo.GetLoadTimeRealType(curFunc);
-                resultInfo = lastLoadInfo;
-                resultInfo.Type = lastRealType.Type;
-                resultInfo.ObjectTypeId = lastRealType.ObjectTypeId;
-                resultInfo.Name = GenTempVarName();
-                resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
-                m_ResultInfo = resultInfo;
-            }
-            std::swap(m_Args, args);
-            for (auto&& argInfo : argLoadInfos) {
-                m_ArgInfos.push_back(argInfo);
-            }
-            executor.attach(this, &ParenthesesExp::Execute);
-            return true;
-        }
-    private:
-        int Execute(VariableInfo& gvars, VariableInfo& lvars)const
-        {
-            for (auto&& op : m_Args) {
-                if (!op.isNull())
-                    op(gvars, lvars);
-            }
-            if (m_ArgInfos.size() > 0) {
-                auto& info = m_ArgInfos[m_ArgInfos.size() - 1];
-                int64_t v = VarGetI64(info.IsGlobal ? gvars : lvars, info.Type, info.VarIndex);
-                VarSetI64(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v);
-            }
-            return BRACE_FLOW_CONTROL_NORMAL;
-        }
-    private:
-        std::vector<BraceApiExecutor> m_Args;
-        std::vector<OperandRuntimeInfo> m_ArgInfos;
-        OperandRuntimeInfo m_ResultInfo;
-    };
 }
 
 #include "BraceScript_ArithUnit.inl"
@@ -2798,8 +2753,7 @@ namespace Brace
                         return Load(*param, resultInfo);
                     }
                     else {
-                        auto* p = new ParenthesesExp(*this);
-                        AddApiInstance(p);
+                        auto* p = CreateApi("tuple");
                         p->Load(data, resultInfo, executor);
                         return executor;
                     }
@@ -2898,6 +2852,12 @@ namespace Brace
 
                                 newCall->GetName().SetLine(callData.GetLine());
                                 return Load(*newCall, resultInfo);
+                            }
+                            else if (innerParamClass == DslData::FunctionData::PAIR_TYPE_PARENTHESES && !innerCall->HaveId()) {
+                                //(a,b,c) = val;
+                                auto* p = CreateApi("tupleset");
+                                p->Load(data, resultInfo, executor);
+                                return executor;
                             }
                             else if (op.length() == 1 && innerCall->GetId() == ":" && innerCall->GetParamNum() == 2) {
                                 pFunc = innerCall;
@@ -3204,6 +3164,8 @@ namespace Brace
         /// RegisterApi("collectionget", "collectionget api", new BraceApiFactory<CollectionGetExp>());
         /// RegisterApi("linq", "linq statement", new BraceApiFactory<LinqExp>());
         /// RegisterApi("lambda", "lamdba expression", new BraceApiFactory<LambdaExp>());
+        /// RegisterApi("tuple", "(v1,v2,...) or tuple(v1,v2,...) object", new BraceApiFactory<TupleExp>());
+        /// RegisterApi("tupleset", "(var1,var2,...) = (v1,v2,...) or tupleset((var1,var2,...), (v1,v2,...))", new BraceApiFactory<TupleSetExp>());
         /// RegisterApi("array", "array object", new BraceApiFactory<ArrayExp>());
         /// RegisterApi("hashtable", "hashtable object", new BraceApiFactory<HashtableExp>());
         /// RegisterApi("looplist", "looplist statement", new BraceApiFactory<LoopListExp>());
