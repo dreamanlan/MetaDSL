@@ -96,6 +96,12 @@ fn main() {
                 }else{
                     echo($a,"<=",$b,"=>no",'\n');
                 };
+
+                ($v1,$v2,$v3,$v4,$v5,$v6,$v7,$v8,$v9,$v10)=(1,2,3,4,5,6,7,8,9,10);echo($v1,$v2,$v3,$v4,$v5,$v6,$v7,$v8,$v9,$v10,'\n');
+
+                if( ($a1,($b1),($c1))=(3,(5),(4)) ){ echo($a1,$b1,$c1,'\n'); };
+
+                if( ($a2,($b2,$c2))=(3,(5,4)) ){ echo($a2,$b2,$c2,'\n'); };
             };
         "#;
         dsl_file.load_from_string(String::from(content), &log_callback);

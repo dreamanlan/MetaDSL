@@ -313,12 +313,51 @@ impl DslCalculatorValue
             _ => false,
         }
     }
+    pub fn len(&self) -> usize
+    {
+        match &self {
+            DslCalculatorValue::Array(val) => val.len(),
+            DslCalculatorValue::Deque(val) => val.len(),
+            DslCalculatorValue::HashMap(val) => val.len(),
+            _ => 0,
+        }
+    }
     pub fn is_object(&self) -> bool
     {
         match &self {
             DslCalculatorValue::Object(_) => true,
             _ => false,
         }
+    }
+    pub fn is_tuple(&self, dim: usize) -> bool
+    {
+        match &self {
+            DslCalculatorValue::Tuple2(_) => { if dim == 0 || dim == 2 { true } else { false } },
+            DslCalculatorValue::Tuple3(_) => { if dim == 0 || dim == 3 { true } else { false } },
+            DslCalculatorValue::Tuple4(_) => { if dim == 0 || dim == 4 { true } else { false } },
+            DslCalculatorValue::Tuple5(_) => { if dim == 0 || dim == 5 { true } else { false } },
+            DslCalculatorValue::Tuple6(_) => { if dim == 0 || dim == 6 { true } else { false } },
+            DslCalculatorValue::Tuple7(_) => { if dim == 0 || dim == 7 { true } else { false } },
+            DslCalculatorValue::Tuple8(_) => { if dim == 0 || dim == 8 { true } else { false } },
+            DslCalculatorValue::Tuple9(_) => { if dim == 0 || dim == 9 { true } else { false } },
+            _ => false,
+        }
+    }
+    pub fn get_tuple_dim(&self) -> usize
+    {
+        let num;
+        match &self {
+            DslCalculatorValue::Tuple2(_) => { num = 2; },
+            DslCalculatorValue::Tuple3(_) => { num = 3; },
+            DslCalculatorValue::Tuple4(_) => { num = 4; },
+            DslCalculatorValue::Tuple5(_) => { num = 5; },
+            DslCalculatorValue::Tuple6(_) => { num = 6; },
+            DslCalculatorValue::Tuple7(_) => { num = 7; },
+            DslCalculatorValue::Tuple8(_) => { num = 8; },
+            DslCalculatorValue::Tuple9(_) => { num = 9; },
+            _ => { num = 1; },
+        }
+        return num;
     }
     pub fn is_bool(&self) -> bool
     {
@@ -1635,6 +1674,7 @@ impl<'a> AbstractExpression<'a> for TupleSetExp<'a>
     }
     fn load_function(&mut self) -> bool
     {
+        self.m_embedded_vars = Some(RefCell::new(Vec::new()));
         let mut vs = Vec::new();
         let mut op = None;
         if let SyntaxComponent::Function(func_data) = self.syntax_component() {
