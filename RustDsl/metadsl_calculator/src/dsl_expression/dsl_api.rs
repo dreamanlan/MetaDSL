@@ -1582,7 +1582,7 @@ impl<'a> AbstractExpression<'a> for LoopListExp<'a>
                 cond_val = cond.calc();
             }
             if let DslCalculatorValue::Array(vec) = cond_val {
-                for iter_v in vec.iter() {
+                for iter_v in vec.borrow().iter() {
                     self.calculator().borrow_mut().set_variable(&"$$", iter_v.clone());
                     let ct = clause.borrow_mut().expressions.len();
                     for exp_ix in 0..ct {
@@ -2068,7 +2068,7 @@ impl<'a> SimpleExpressionBase<'a> for RedirectExp<'a>
         self.calculator().borrow_mut().set_run_state(RunStateEnum::Redirect);
         if operands.len() >= 1 {
             let args = operands.clone();
-            return DslCalculatorValue::Array(args);
+            return DslCalculatorValue::Array(Rc::new(RefCell::new(args)));
         }
         return DslCalculatorValue::Null;
     }
@@ -4900,6 +4900,47 @@ impl<'a> SimpleExpressionBase<'a> for CosExp<'a>
     impl_simple_expression!();
 }
 #[add_abstract_and_simple_expression_fields]
+struct SinCosExp
+{
+
+}
+impl<'a> Default for SinCosExp<'a>
+{
+    fn default() -> Self
+    {
+        SinCosExp {
+            m_exps: None,
+
+            m_calculator: None,
+            m_dsl: None,
+        }
+    }
+}
+impl<'a> IExpression<'a> for SinCosExp<'a>
+{
+    impl_expression_with_abstract!();
+}
+impl<'a> AbstractExpression<'a> for SinCosExp<'a>
+{
+    impl_abstract_expression!();
+    impl_abstract_with_simple!();
+}
+impl<'a> SimpleExpressionBase<'a> for SinCosExp<'a>
+{
+    fn on_calc(&mut self, operands: &Vec<DslCalculatorValue>) -> DslCalculatorValue
+    {
+        if operands.len() >= 1 {
+            let opd0 = &operands[0];
+            let v1 = opd0.to_f64();
+            let v = v1.sin_cos();
+            return DslCalculatorValue::Tuple2(Box::new((DslCalculatorValue::Double(v.0), DslCalculatorValue::Double(v.1))));
+        }
+        return DslCalculatorValue::Null;
+    }
+
+    impl_simple_expression!();
+}
+#[add_abstract_and_simple_expression_fields]
 struct TanExp
 {
 
@@ -6926,7 +6967,7 @@ impl<'a> StringJoinExp<'a>
     fn variant_to_strings(variant: &DslCalculatorValue) -> Vec<String> {
         match variant {
             DslCalculatorValue::String(s) => vec![s.clone()],
-            DslCalculatorValue::Array(arr) => arr.iter().flat_map(Self::variant_to_strings).collect(),
+            DslCalculatorValue::Array(arr) => arr.borrow().iter().flat_map(Self::variant_to_strings).collect(),
             _ => vec![variant.to_string()],
         }
     }
@@ -6964,8 +7005,10 @@ impl<'a> SimpleExpressionBase<'a> for StringSplitExp<'a>
         if operands.len() >= 2 {
             let opd0 = &operands[0];
             if let DslCalculatorValue::String(s) = opd0 {
-                let arr = s.split(|c|Self::is_sep(c, operands.iter().skip(1))).map(|elem|DslCalculatorValue::String(String::from(elem))).collect();
-                return DslCalculatorValue::Array(arr);
+                let arr = s.split(|c|Self::is_sep(c, operands.iter().skip(1)))
+                    .map(|elem|DslCalculatorValue::String(String::from(elem)))
+                    .collect();
+                return DslCalculatorValue::Array(Rc::new(RefCell::new(arr)));
             }
         }
         return DslCalculatorValue::Null;
@@ -7546,7 +7589,7 @@ impl<'a> SimpleExpressionBase<'a> for StringContainsExp<'a>
             if let DslCalculatorValue::String(src) = opd0 {
                 for opd in operands.iter().skip(1) {
                     if let DslCalculatorValue::Array(arr) = opd {
-                        for val in arr.iter() {
+                        for val in arr.borrow().iter() {
                             if let DslCalculatorValue::String(s) = val {
                                 if s.len() > 0 && !src.contains(s) {
                                     return DslCalculatorValue::Bool(false);
@@ -7603,7 +7646,7 @@ impl<'a> SimpleExpressionBase<'a> for StringNotContainsExp<'a>
             if let DslCalculatorValue::String(src) = opd0 {
                 for opd in operands.iter().skip(1) {
                     if let DslCalculatorValue::Array(arr) = opd {
-                        for val in arr.iter() {
+                        for val in arr.borrow().iter() {
                             if let DslCalculatorValue::String(s) = val {
                                 if s.len() > 0 && src.contains(s) {
                                     return DslCalculatorValue::Bool(false);
@@ -7661,7 +7704,7 @@ impl<'a> SimpleExpressionBase<'a> for StringContainsAnyExp<'a>
                 let mut ret = true;
                 for opd in operands.iter().skip(1) {
                     if let DslCalculatorValue::Array(arr) = opd {
-                        for val in arr.iter() {
+                        for val in arr.borrow().iter() {
                             if let DslCalculatorValue::String(s) = val {
                                 if s.len() > 0 {
                                     if src.contains(s) {
@@ -7729,7 +7772,7 @@ impl<'a> SimpleExpressionBase<'a> for StringNotContainsAnyExp<'a>
                 let mut ret = true;
                 for opd in operands.iter().skip(1) {
                     if let DslCalculatorValue::Array(arr) = opd {
-                        for val in arr.iter() {
+                        for val in arr.borrow().iter() {
                             if let DslCalculatorValue::String(s) = val {
                                 if s.len() > 0 {
                                     if !src.contains(s) {

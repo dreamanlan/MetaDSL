@@ -21,6 +21,8 @@ use metadsl_macros::{
 };
 
 use crate::dsl_expression::dsl_api::*;
+use crate::dsl_expression::dsl_api_collections::*;
+use crate::dsl_expression::dsl_api_objects::*;
 
 pub type ExpressionFactory<'a> = dyn Fn() -> ExpressionBox<'a> + 'a;
 pub type ExpressionFactoryBox<'a> = Box<ExpressionFactory<'a>>;
@@ -63,9 +65,9 @@ pub enum DslCalculatorValue
     String(String),
     Bool(bool),
     Char(char),
-    Array(Vec<DslCalculatorValue>),
-    HashMap(HashMap<DslCalculatorValue, DslCalculatorValue>),
-    Deque(VecDeque<DslCalculatorValue>),
+    Array(Rc<RefCell<Vec<DslCalculatorValue>>>),
+    HashMap(Rc<RefCell<HashMap<DslCalculatorValue, DslCalculatorValue>>>),
+    Deque(Rc<RefCell<VecDeque<DslCalculatorValue>>>),
     Object(u32),
     Tuple2(Box<(DslCalculatorValue, DslCalculatorValue)>),
     Tuple3(Box<(DslCalculatorValue, DslCalculatorValue, DslCalculatorValue)>),
@@ -147,23 +149,23 @@ impl Hash for DslCalculatorValue
             },
             DslCalculatorValue::Array(val) => {
                 state.write_u8(16);
-                state.write_u32(val.len() as u32);
-                for val in val.iter() {
+                state.write_u32(val.borrow().len() as u32);
+                for val in val.borrow().iter() {
                     val.hash(state);
                 }
             },
             DslCalculatorValue::HashMap(val) => {
                 state.write_u8(17);
-                state.write_u32(val.len() as u32);
-                for (key, val) in val.iter() {
+                state.write_u32(val.borrow().len() as u32);
+                for (key, val) in val.borrow().iter() {
                     key.hash(state);
                     val.hash(state);
                 }
             },
             DslCalculatorValue::Deque(val) => {
                 state.write_u8(18);
-                state.write_u32(val.len() as u32);
-                for val in val.iter() {
+                state.write_u32(val.borrow().len() as u32);
+                for val in val.borrow().iter() {
                     val.hash(state);
                 }
             },
@@ -316,9 +318,9 @@ impl DslCalculatorValue
     pub fn len(&self) -> usize
     {
         match &self {
-            DslCalculatorValue::Array(val) => val.len(),
-            DslCalculatorValue::Deque(val) => val.len(),
-            DslCalculatorValue::HashMap(val) => val.len(),
+            DslCalculatorValue::Array(val) => val.borrow().len(),
+            DslCalculatorValue::Deque(val) => val.borrow().len(),
+            DslCalculatorValue::HashMap(val) => val.borrow().len(),
             _ => 0,
         }
     }
@@ -956,7 +958,7 @@ impl<'a> AbstractExpression<'a> for ArgsGet<'a>
     fn do_calc(&mut self) -> DslCalculatorValue
     {
         if let Some(ps) = self.calculator().borrow().arguments() {
-            let ret = DslCalculatorValue::Array(ps.clone());
+            let ret = DslCalculatorValue::Array(Rc::new(RefCell::new(ps.clone())));
             return ret;
         }
         return DslCalculatorValue::Null;
@@ -1898,7 +1900,7 @@ impl<'a> SimpleExpressionBase<'a> for ArrayExp<'a>
         for oper in operands.iter() {
             r.push(oper.clone());
         }
-        return DslCalculatorValue::Array(r);
+        return DslCalculatorValue::Array(Rc::new(RefCell::new(r)));
     }
 
     impl_simple_expression!();
@@ -1936,7 +1938,7 @@ impl<'a> AbstractExpression<'a> for HashtableExp<'a>
                 dict.insert(key, val);
             }
         }
-        let r = DslCalculatorValue::HashMap(dict);
+        let r = DslCalculatorValue::HashMap(Rc::new(RefCell::new(dict)));
         return r;
     }
     fn load_function(&mut self) -> bool
@@ -2183,6 +2185,7 @@ impl<'a> DslCalculator<'a>
         self.register_api("roundeventoint", "roundeventoint(v) api", create_expression_factory::<RoundEvenToIntExp>());
         self.register_api("sin", "sin(v) api", create_expression_factory::<SinExp>());
         self.register_api("cos", "cos(v) api", create_expression_factory::<CosExp>());
+        self.register_api("sincos", "sincos(v) api", create_expression_factory::<SinCosExp>());
         self.register_api("tan", "tan(v) api", create_expression_factory::<TanExp>());
         self.register_api("asin", "asin(v) api", create_expression_factory::<AsinExp>());
         self.register_api("acos", "acos(v) api", create_expression_factory::<AcosExp>());
@@ -2240,18 +2243,8 @@ impl<'a> DslCalculator<'a>
         self.register_api("stringcontainsany", "stringcontainsany(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringContainsAnyExp>());
         self.register_api("stringnotcontainsany", "stringnotcontainsany(str,str_or_list_1,str_or_list_2,...) api", create_expression_factory::<StringNotContainsAnyExp>());
 
-        /*
-        self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
-        self.register_api("objectcall", "objectcall api, fn implementation, using object syntax", create_expression_factory::<DotnetCallExp>());
-        self.register_api("objectset", "objectset api, fn implementation, using object syntax", create_expression_factory::<DotnetSetExp>());
-        self.register_api("objectget", "objectget api, fn implementation, using object syntax", create_expression_factory::<DotnetGetExp>());
-        self.register_api("collectioncall", "collectioncall api, fn implementation, using object syntax", create_expression_factory::<CollectionCallExp>());
-        self.register_api("collectionset", "collectionset api, fn implementation, using object syntax", create_expression_factory::<CollectionSetExp>());
-        self.register_api("collectionget", "collectionget api, fn implementation, using object syntax", create_expression_factory::<CollectionGetExp>());
-        self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
-
+        self.register_api("list", "list(v1,v2,...) object", create_expression_factory::<ArrayExp>());
         self.register_api("listsize", "listsize(list) api", create_expression_factory::<ListSizeExp>());
-        self.register_api("list", "list(v1,v2,...) object", create_expression_factory::<ListExp>());
         self.register_api("listget", "listget(list,index[,defval]) api", create_expression_factory::<ListGetExp>());
         self.register_api("listset", "listset(list,index,val) api", create_expression_factory::<ListSetExp>());
         self.register_api("listindexof", "listindexof(list,val) api", create_expression_factory::<ListIndexOfExp>());
@@ -2261,7 +2254,6 @@ impl<'a> DslCalculator<'a>
         self.register_api("listremoveat", "listremoveat(list,index) api", create_expression_factory::<ListRemoveAtExp>());
         self.register_api("listclear", "listclear(list) api", create_expression_factory::<ListClearExp>());
         self.register_api("listsplit", "listsplit(list,ct) api, return list of list", create_expression_factory::<ListSplitExp>());
-
         self.register_api("hashtablesize", "hashtablesize(hash) api", create_expression_factory::<HashtableSizeExp>());
         self.register_api("hashtableget", "hashtableget(hash,key[,defval]) api", create_expression_factory::<HashtableGetExp>());
         self.register_api("hashtableset", "hashtableset(hash,key,val) api", create_expression_factory::<HashtableSetExp>());
@@ -2272,17 +2264,25 @@ impl<'a> DslCalculator<'a>
         self.register_api("hashtablevalues", "hashtablevalues(hash) api", create_expression_factory::<HashtableValuesExp>());
         self.register_api("listhashtable", "listhashtable(hash) api, return list of pair", create_expression_factory::<ListHashtableExp>());
         self.register_api("hashtablesplit", "hashtablesplit(hash,ct) api, return list of hashtable", create_expression_factory::<HashtableSplitExp>());
-
-        self.register_api("dequesize", "dequesize(deque) api", create_expression_factory::<DequeSizeExp>());
         self.register_api("deque", "deque(v1,v2,...) object", create_expression_factory::<DequeExp>());
-        self.register_api("front", "front(deque) api", create_expression_factory::<FrontExp>());
-        self.register_api("back", "back(deque) api", create_expression_factory::<BackExp>());
-        self.register_api("pushback", "pushback(deque,v) api", create_expression_factory::<PushBackExp>());
-        self.register_api("popback", "popback(deque) api", create_expression_factory::<PopBackExp>());
-        self.register_api("pushfront", "pushfront(deque,v) api", create_expression_factory::<PushFrontExp>());
-        self.register_api("popfront", "popfront(deque) api", create_expression_factory::<PopFrontExp>());
+        self.register_api("dequesize", "dequesize(deque) api", create_expression_factory::<DequeSizeExp>());
+        self.register_api("front", "front(deque) api", create_expression_factory::<DequeFrontExp>());
+        self.register_api("back", "back(deque) api", create_expression_factory::<DequeBackExp>());
+        self.register_api("pushback", "pushback(deque,v) api", create_expression_factory::<DequePushBackExp>());
+        self.register_api("popback", "popback(deque) api", create_expression_factory::<DequePopBackExp>());
+        self.register_api("pushfront", "pushfront(deque,v) api", create_expression_factory::<DequePushFrontExp>());
+        self.register_api("popfront", "popfront(deque) api", create_expression_factory::<DequePopFrontExp>());
         self.register_api("dequeclear", "dequeclear(queue) api", create_expression_factory::<DequeClearExp>());
 
+        self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
+        self.register_api("collectioncall", "collectioncall api, fn implementation, using object syntax", create_expression_factory::<CollectionCallExp>());
+        self.register_api("collectionset", "collectionset api, fn implementation, using object syntax", create_expression_factory::<CollectionSetExp>());
+        self.register_api("collectionget", "collectionget api, fn implementation, using object syntax", create_expression_factory::<CollectionGetExp>());
+        self.register_api("objectcall", "objectcall api, fn implementation, using object syntax", create_expression_factory::<ObjectCallExp>());
+        self.register_api("objectset", "objectset api, fn implementation, using object syntax", create_expression_factory::<ObjectSetExp>());
+        self.register_api("objectget", "objectget api, fn implementation, using object syntax", create_expression_factory::<ObjectGetExp>());
+        self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
+        /*
         self.register_api("datetimestr", "datetimestr(fmt) api", create_expression_factory::<DatetimeStrExp>());
         self.register_api("longdatestr", "longdatestr() api", create_expression_factory::<LongDateStrExp>());
         self.register_api("longtimestr", "longtimestr() api", create_expression_factory::<LongTimeStrExp>());
