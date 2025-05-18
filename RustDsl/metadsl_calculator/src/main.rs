@@ -112,6 +112,9 @@ fn main() {
                 echo($a,",",$b,'\n');
 
                 echo(format("{} {}\n", 1231, 456));
+
+                $a = [13,2,4,5].orderbydesc($$);
+                echo($a[0],",",$a[1],",",$a[2],",",$a[3],'\n');
             };
         "#;
         dsl_file.load_from_string(String::from(content), &log_callback);

@@ -24,11 +24,11 @@ use crate::dsl_expression::dsl_api::*;
 use crate::dsl_expression::dsl_api_collections::*;
 use crate::dsl_expression::dsl_api_objects::*;
 
+pub type DslCalculatorCell<'a> = RefCell<DslCalculator<'a>>;
+
 pub type ExpressionFactory<'a> = dyn Fn() -> ExpressionBox<'a> + 'a;
 pub type ExpressionFactoryBox<'a> = Box<ExpressionFactory<'a>>;
-
 pub type ExpressionBox<'a> = Box<dyn IExpression<'a> + 'a>;
-pub type DslCalculatorCell<'a> = RefCell<DslCalculator<'a>>;
 
 pub type GetVariableDelegation<'a> = dyn Fn(&str) -> Option<&'a DslCalculatorValue>;
 pub type SetVariableDelegation<'a> = dyn FnMut(&str, DslCalculatorValue) -> bool;
@@ -41,6 +41,10 @@ pub type SetVariableDelegationBox<'a> = Box<SetVariableDelegation<'a>>;
 pub type LoadValueFailbackDelegationBox<'a> = Box<LoadValueFailbackDelegation<'a>>;
 pub type LoadFunctionFailbackDelegationBox<'a> = Box<LoadFunctionFailbackDelegation<'a>>;
 pub type LoadStatementFailbackDelegationBox<'a> = Box<LoadStatementFailbackDelegation<'a>>;
+
+pub type ObjectFactory<'a> = dyn Fn() -> ObjectRcCell + 'a;
+pub type ObjectFactoryBox<'a> = Box<ObjectFactory<'a>>;
+pub type ObjectRcCell = Rc<RefCell<dyn IObjectDispatch>>;
 
 pub fn create_expression_factory<'a, T>() -> ExpressionFactoryBox<'a> where T: IExpression<'a> + Default + 'a
 {
@@ -790,11 +794,13 @@ impl DslCalculatorValue
 }
 pub trait IObjectDispatch
 {
-    fn get_type_id(&self) -> u32;
+    fn get_object_id(&self) -> u32;
+    fn set_object_id(&mut self, id: u32);
+    fn get_class_name(&self) -> &str;
     fn get_dispatch_id(&self, name: &str) -> u32;
     fn get_property(&self, disp_id: u32) -> Option<DslCalculatorValue>;
     fn set_property(&mut self, disp_id: u32, val: &DslCalculatorValue);
-    fn invoke_method(&mut self, disp_id: u32, args: &Vec<DslCalculatorValue>) -> Option<DslCalculatorValue>;
+    fn invoke_method(&mut self, disp_id: u32, args: &Vec<&DslCalculatorValue>) -> Option<DslCalculatorValue>;
 }
 pub trait IExpression<'a>
 {
@@ -2061,9 +2067,13 @@ pub struct DslCalculator<'a>
     m_stack: VecDeque<StackInfo>,
     m_named_global_variable_indexes: HashMap<String, i32>,
     m_global_variables: Vec<DslCalculatorValue>,
+    m_func_calls: Vec<FunctionData>,
+    m_objects: HashMap<u32, ObjectRcCell>,
+    m_next_object_id: u32,
+    m_class_factories: HashMap<&'a str, ObjectFactoryBox<'a>>,
+    m_class_docs: BTreeMap<&'a str, &'a str>,
     m_api_factories: HashMap<&'a str, ExpressionFactoryBox<'a>>,
     m_api_docs: BTreeMap<&'a str, &'a str>,
-    m_func_calls: Vec<FunctionData>,
     m_value_list_pool: RefCell<SimpleObjectPool<Vec<DslCalculatorValue>>>,
     m_stack_info_pool: RefCell<SimpleObjectPool<StackInfo>>,
 }
@@ -2275,6 +2285,11 @@ impl<'a> DslCalculator<'a>
         self.register_api("dequeclear", "dequeclear(queue) api", create_expression_factory::<DequeClearExp>());
 
         self.register_api("format", "format(fmt,arg1,arg2,...) api", create_expression_factory::<FormatExp>());
+        self.register_api("objectnew", "objectnew(name)", create_expression_factory::<ObjectNewExp>());
+        self.register_api("objectrelease", "objectrelease(obj)", create_expression_factory::<ObjectReleaseExp>());
+        self.register_api("objnewwithstr", "objnewwithstr(name_str)", create_expression_factory::<ObjNewWithStrExp>());
+        self.register_api("objgetclassname", "objgetclassname(obj)", create_expression_factory::<ObjGetClassNameExp>());
+        self.register_api("objgetdispid", "objgetdispid(obj,member_name)", create_expression_factory::<ObjGetDispIdExp>());
         self.register_api("collectioncall", "collectioncall api, fn implementation, using object syntax", create_expression_factory::<CollectionCallExp>());
         self.register_api("collectionset", "collectionset api, fn implementation, using object syntax", create_expression_factory::<CollectionSetExp>());
         self.register_api("collectionget", "collectionget api, fn implementation, using object syntax", create_expression_factory::<CollectionGetExp>());
@@ -2342,11 +2357,24 @@ impl<'a> DslCalculator<'a>
     {
         return &self.m_api_docs;
     }
+    pub fn register_class(&mut self, name: &'a str, doc: &'a str, factory: ObjectFactoryBox<'a>)
+    {
+        self.m_class_factories.remove(name);
+        self.m_class_factories.insert(name, factory);
+
+        self.m_class_docs.remove(name);
+        self.m_class_docs.insert(name, doc);
+    }
+    pub fn class_docs(&self) -> &BTreeMap<&str, &str>
+    {
+        return &self.m_class_docs;
+    }
     pub fn clear(&mut self)
     {
         self.clear_global_variables();
         self.clear_funcs();
         self.clear_stacks();
+        self.clear_objects();
     }
     pub fn clear_global_variables(&mut self)
     {
@@ -2362,6 +2390,11 @@ impl<'a> DslCalculator<'a>
     {
         self.m_stack.clear();
         self.m_run_state = RunStateEnum::Normal;
+    }
+    pub fn clear_objects(&mut self)
+    {
+        self.m_objects.clear();
+        self.m_next_object_id = 1;
     }
     pub fn global_variable_names(&self) -> Keys<String, i32>
     {
@@ -2396,6 +2429,34 @@ impl<'a> DslCalculator<'a>
             self.m_global_variables.push(val);
             return true;
         }
+    }
+    pub fn new_object(&mut self, name: &str) -> Option<ObjectRcCell>
+    {
+        let mut obj_opt = None;
+        if let Some(factory) = self.m_class_factories.get(name) {
+            let obj = factory();
+            obj_opt = Some(obj);
+        }
+        if let Some(obj) = obj_opt {
+            self.hold_object(&obj);
+            return Some(obj);
+        }
+        return None;
+    }
+    pub fn hold_object(&mut self, obj: &ObjectRcCell)
+    {
+        let id = self.m_next_object_id;
+        self.m_next_object_id += 1;
+        obj.borrow_mut().set_object_id(id);
+        self.m_objects.insert(id, obj.clone());
+    }
+    pub fn unhold_object(&mut self, obj: &ObjectRcCell) -> bool
+    {
+        return self.m_objects.remove(&obj.borrow().get_object_id()).is_some();
+    }
+    pub fn get_object(&self, id: u32) -> Option<&ObjectRcCell>
+    {
+        return self.m_objects.get(&id);
     }
     pub fn check_func_xrefs(&self)
     {
@@ -3261,9 +3322,13 @@ impl<'a> DslCalculator<'a>
             m_stack: VecDeque::new(),
             m_named_global_variable_indexes: HashMap::new(),
             m_global_variables: Vec::new(),
+            m_func_calls: Vec::new(),
+            m_objects: HashMap::new(),
+            m_next_object_id: 1,
+            m_class_factories: HashMap::new(),
+            m_class_docs: BTreeMap::new(),
             m_api_factories: HashMap::new(),
             m_api_docs: BTreeMap::new(),
-            m_func_calls: Vec::new(),
             m_value_list_pool: RefCell::new(SimpleObjectPool::new_with_size(32)),
             m_stack_info_pool: RefCell::new(SimpleObjectPool::new_with_size(32)),
         }

@@ -617,13 +617,8 @@ impl<'a> SimpleExpressionBase<'a> for HashtableSetExp<'a>
             let opd1 = &operands[1];
             let opd2 = &operands[2];
             if let DslCalculatorValue::HashMap(hash) = opd0 {
-                if let Some(v) = hash.borrow_mut().get_mut(opd1) {
-                    *v = opd2.clone();
-                    return DslCalculatorValue::Bool(true);
-                }
-                else {
-                    hash.borrow_mut().insert(opd1.clone(), opd2.clone());
-                    return DslCalculatorValue::Bool(false);
+                if let Some(old_val) = hash.borrow_mut().insert(opd1.clone(), opd2.clone()) {
+                    return old_val;
                 }
             }
         }
@@ -667,11 +662,10 @@ impl<'a> SimpleExpressionBase<'a> for HashtableAddExp<'a>
             let opd1 = &operands[1];
             let opd2 = &operands[2];
             if let DslCalculatorValue::HashMap(hash) = opd0 {
-                if hash.borrow().contains_key(opd1) {
+                if let Some(_old_val) = hash.borrow_mut().insert(opd1.clone(), opd2.clone()) {
                     return DslCalculatorValue::Bool(false);
                 }
                 else {
-                    hash.borrow_mut().insert(opd1.clone(), opd2.clone());
                     return DslCalculatorValue::Bool(true);
                 }
             }
