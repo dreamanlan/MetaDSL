@@ -42,13 +42,17 @@ pub type LoadValueFailbackDelegationBox<'a> = Box<LoadValueFailbackDelegation<'a
 pub type LoadFunctionFailbackDelegationBox<'a> = Box<LoadFunctionFailbackDelegation<'a>>;
 pub type LoadStatementFailbackDelegationBox<'a> = Box<LoadStatementFailbackDelegation<'a>>;
 
-pub type ObjectFactory<'a> = dyn Fn() -> ObjectRcCell + 'a;
+pub type ObjectFactory<'a> = dyn Fn() -> ObjectRcCell<'a> + 'a;
 pub type ObjectFactoryBox<'a> = Box<ObjectFactory<'a>>;
-pub type ObjectRcCell = Rc<RefCell<dyn IObjectDispatch>>;
+pub type ObjectRcCell<'a> = Rc<RefCell<dyn IObjectDispatch<'a> + 'a>>;
 
 pub fn create_expression_factory<'a, T>() -> ExpressionFactoryBox<'a> where T: IExpression<'a> + Default + 'a
 {
     return Box::new(|| Box::new(T::default()));
+}
+pub fn create_class_factory<'a, T>() -> ObjectFactoryBox<'a> where T: IObjectDispatch<'a> + Default + 'a
+{
+    return Box::new(|| Rc::new(RefCell::new(T::default())));
 }
 #[derive(Clone)]
 pub enum DslCalculatorValue
@@ -792,7 +796,7 @@ impl DslCalculatorValue
         }
     }
 }
-pub trait IObjectDispatch
+pub trait IObjectDispatch<'a>
 {
     fn get_object_id(&self) -> u32;
     fn set_object_id(&mut self, id: u32);
@@ -2068,7 +2072,7 @@ pub struct DslCalculator<'a>
     m_named_global_variable_indexes: HashMap<String, i32>,
     m_global_variables: Vec<DslCalculatorValue>,
     m_func_calls: Vec<FunctionData>,
-    m_objects: HashMap<u32, ObjectRcCell>,
+    m_objects: HashMap<u32, ObjectRcCell<'a>>,
     m_next_object_id: u32,
     m_class_factories: HashMap<&'a str, ObjectFactoryBox<'a>>,
     m_class_docs: BTreeMap<&'a str, &'a str>,
@@ -2430,7 +2434,7 @@ impl<'a> DslCalculator<'a>
             return true;
         }
     }
-    pub fn new_object(&mut self, name: &str) -> Option<ObjectRcCell>
+    pub fn new_object(&mut self, name: &str) -> Option<ObjectRcCell<'a>>
     {
         let mut obj_opt = None;
         if let Some(factory) = self.m_class_factories.get(name) {
@@ -2443,7 +2447,7 @@ impl<'a> DslCalculator<'a>
         }
         return None;
     }
-    pub fn hold_object(&mut self, obj: &ObjectRcCell)
+    pub fn hold_object(&mut self, obj: &ObjectRcCell<'a>)
     {
         let id = self.m_next_object_id;
         self.m_next_object_id += 1;
@@ -2454,7 +2458,7 @@ impl<'a> DslCalculator<'a>
     {
         return self.m_objects.remove(&obj.borrow().get_object_id()).is_some();
     }
-    pub fn get_object(&self, id: u32) -> Option<&ObjectRcCell>
+    pub fn get_object(&self, id: u32) -> Option<&ObjectRcCell<'a>>
     {
         return self.m_objects.get(&id);
     }
@@ -3071,7 +3075,7 @@ impl<'a> DslCalculator<'a>
                                     if let Some(param) = inner_call.get_param(0) {
                                         new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), inner_call.get_param_class()));
                                     }
-                                    if let Some(param) = inner_call.get_param(1) {
+                                    if let Some(param) = func_data.get_param(1) {
                                         new_call.add_syntax_component_param(param.clone());
                                     }
                                 }
@@ -3082,7 +3086,7 @@ impl<'a> DslCalculator<'a>
                                     if let Some(param) = inner_call.get_param(0) {
                                         new_call.add_syntax_component_param(cell.borrow().convert_member(param.clone(), inner_call.get_param_class()));
                                     }
-                                    if let Some(param) = inner_call.get_param(1) {
+                                    if let Some(param) = func_data.get_param(1) {
                                         new_call.add_syntax_component_param(param.clone());
                                     }
                                 }

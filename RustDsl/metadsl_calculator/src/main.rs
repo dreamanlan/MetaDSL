@@ -1,17 +1,106 @@
 pub mod dsl_expression;
-
-use dsl_expression::dsl_calculator::DslCalculator;
-use metadsl::dsl::{DslFile, DslLogDelegationBox};
+use dsl_expression::dsl_calculator::create_class_factory;
+use metadsl::dsl::{
+    DslFile,
+    DslLogDelegationBox,
+};
+use crate::dsl_expression::dsl_calculator::{
+    DslCalculator,
+};
 
 #[cfg(not(target_arch = "wasm32"))]
 mod impl_mod {
 use std::io::Write;
 use std::rc::Rc;
+use std::u32;
 use rustyline::{error::ReadlineError, history::FileHistory};
 use rustyline::Editor;
 
-use crate::dsl_expression::dsl_calculator::{DslCalculator, DslCalculatorCell};
-use metadsl::dsl::{DslFile, DslLogDelegationBox};
+use crate::dsl_expression::dsl_calculator::{
+    DslCalculator,
+    DslCalculatorCell,
+    DslCalculatorValue,
+    IObjectDispatch,
+};
+use metadsl::dsl::{
+    DslFile,
+    DslLogDelegationBox,
+};
+use metadsl_macros::{
+    add_object_dispatch_fields,
+    impl_object_dispatch,
+};
+#[add_object_dispatch_fields]
+struct ObjectTest
+{
+    m_test: Option<String>,
+}
+impl Default for ObjectTest
+{
+    fn default() -> Self
+    {
+        ObjectTest {
+            m_test: None,
+
+            m_obj_id: u32::MAX,
+        }
+    }
+}
+impl IObjectDispatch<'_> for ObjectTest
+{
+    fn get_class_name(&self) -> &str
+    {
+        "ObjectTest"
+    }
+    fn get_dispatch_id(&self, name: &str) -> u32
+    {
+        if name == "test" {
+            return 1;
+        }
+        else if name == "test_call" {
+            return 2;
+        }
+        return u32::MAX;
+    }
+    fn get_property(&self, disp_id: u32) -> Option<DslCalculatorValue>
+    {
+        match disp_id {
+            1 => {
+                if let Some(test) = &self.m_test {
+                    return Some(DslCalculatorValue::String(test.clone()));
+                }
+            }
+            _ => {
+            }
+        }
+        return None;
+    }
+    fn set_property(&mut self, disp_id: u32, val: &DslCalculatorValue)
+    {
+        match disp_id {
+            1 => {
+                self.m_test = Some(val.to_string());
+            }
+            _ => {
+            }
+        }
+    }
+    fn invoke_method(&mut self, disp_id: u32, args: &Vec<&DslCalculatorValue>) -> Option<DslCalculatorValue>
+    {
+        match disp_id {
+            2 => {
+                if let Some(test) = &self.m_test {
+                    return Some(DslCalculatorValue::String(args[0].to_string() + ":" + test));
+                }
+            }
+            _ => {
+            }
+        }
+        return None;
+    }
+
+    impl_object_dispatch!();
+}
 
 pub fn interactive_execution(calculator: &Rc<DslCalculatorCell>, log_callback: &DslLogDelegationBox) {
     if let Result::Ok(mut rl) = Editor::<(), FileHistory>::new() {
@@ -66,6 +155,7 @@ fn main() {
     {
         calculator.borrow_mut().on_log = Some(&log_callback);
         calculator.borrow_mut().init();
+        calculator.borrow_mut().register_class("ObjectTest", "test object api", create_class_factory::<impl_mod::ObjectTest>());
         let mut dsl_file = DslFile::new();
         let content = r#"
             script(main){
@@ -115,6 +205,10 @@ fn main() {
 
                 $a = [13,2,4,5].orderbydesc($$);
                 echo($a[0],",",$a[1],",",$a[2],",",$a[3],'\n');
+
+                $obj = objectnew(ObjectTest);
+                $obj.test = "test";
+                echo("call:",$obj.test_call("some info")," get:",$obj.test,'\n');
             };
         "#;
         dsl_file.load_from_string(String::from(content), &log_callback);

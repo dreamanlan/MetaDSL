@@ -136,6 +136,31 @@ pub fn add_abstract_and_simple_expression_fields(_attr: TokenStream, item: Token
     TokenStream::from(expanded)
 }
 
+#[proc_macro_attribute]
+pub fn add_object_dispatch_fields(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemStruct);
+
+    let name = input.ident;
+    let fields = input.fields;
+
+    let expanded = if let Fields::Named(fields_named) = fields {
+        let existing_fields = fields_named.named;
+
+        quote! {
+            pub struct #name {
+                #existing_fields
+                m_obj_id: u32,
+            }
+        }
+    } else {
+        quote! {
+            compile_error!("add_field can only be used with structs with named fields");
+        }
+    };
+
+    TokenStream::from(expanded)
+}
+
 #[proc_macro]
 pub fn impl_abstract_expression(_input: TokenStream) -> TokenStream {
     let expanded = quote! {
@@ -238,6 +263,21 @@ pub fn impl_abstract_with_simple(_input: TokenStream) -> TokenStream {
     TokenStream::from(expanded)
 }
 
+#[proc_macro]
+pub fn impl_object_dispatch(_input: TokenStream) -> TokenStream {
+    let expanded = quote! {
+        fn get_object_id(&self) -> u32
+        {
+            return self.m_obj_id;
+        }
+        fn set_object_id(&mut self, id: u32)
+        {
+            self.m_obj_id = id;
+        }
+    };
+
+    TokenStream::from(expanded)
+}
 
 //---------------------------------------------------------------------------------------
 #[proc_macro_attribute]

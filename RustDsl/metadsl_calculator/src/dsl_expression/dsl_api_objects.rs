@@ -615,14 +615,14 @@ impl<'a> SimpleExpressionBase<'a> for CollectionGetExp<'a>
 #[add_abstract_and_simple_expression_fields]
 struct ObjectCallExp
 {
-    disp_id: u32,
+    m_disp_id: u32,
 }
 impl<'a> Default for ObjectCallExp<'a>
 {
     fn default() -> Self
     {
         ObjectCallExp {
-            disp_id: u32::MAX,
+            m_disp_id: u32::MAX,
             m_exps: None,
 
             m_calculator: None,
@@ -652,14 +652,14 @@ impl<'a> SimpleExpressionBase<'a> for ObjectCallExp<'a>
                     obj_opt = Some(obj.clone());
                 }
                 if let Some(obj) = obj_opt {
-                    if self.disp_id == u32::MAX {
+                    if self.m_disp_id == u32::MAX {
                         if let DslCalculatorValue::String(name) = opd1 {
-                            self.disp_id = obj.borrow().get_dispatch_id(name);
+                            self.m_disp_id = obj.borrow().get_dispatch_id(name);
                         }
                     }
-                    if self.disp_id != u32::MAX {
+                    if self.m_disp_id != u32::MAX {
                         let args = &operands.iter().skip(2).collect::<Vec<&DslCalculatorValue>>();
-                        if let Some(v) = obj.borrow_mut().invoke_method(self.disp_id, args) {
+                        if let Some(v) = obj.borrow_mut().invoke_method(self.m_disp_id, args) {
                             return v;
                         }
                     }
@@ -673,14 +673,14 @@ impl<'a> SimpleExpressionBase<'a> for ObjectCallExp<'a>
 #[add_abstract_and_simple_expression_fields]
 struct ObjectSetExp
 {
-    disp_id: u32,
+    m_disp_id: u32,
 }
 impl<'a> Default for ObjectSetExp<'a>
 {
     fn default() -> Self
     {
         ObjectSetExp {
-            disp_id: u32::MAX,
+            m_disp_id: u32::MAX,
             m_exps: None,
 
             m_calculator: None,
@@ -711,13 +711,13 @@ impl<'a> SimpleExpressionBase<'a> for ObjectSetExp<'a>
                     obj_opt = Some(obj.clone());
                 }
                 if let Some(obj) = obj_opt {
-                    if self.disp_id == u32::MAX {
+                    if self.m_disp_id == u32::MAX {
                         if let DslCalculatorValue::String(name) = opd1 {
-                            self.disp_id = obj.borrow().get_dispatch_id(name);
+                            self.m_disp_id = obj.borrow().get_dispatch_id(name);
                         }
                     }
-                    if self.disp_id != u32::MAX {
-                        obj.borrow_mut().set_property(self.disp_id, opd2);
+                    if self.m_disp_id != u32::MAX {
+                        obj.borrow_mut().set_property(self.m_disp_id, opd2);
                         return DslCalculatorValue::Bool(true);
                     }
                 }
@@ -730,14 +730,14 @@ impl<'a> SimpleExpressionBase<'a> for ObjectSetExp<'a>
 #[add_abstract_and_simple_expression_fields]
 struct ObjectGetExp
 {
-    disp_id: u32,
+    m_disp_id: u32,
 }
 impl<'a> Default for ObjectGetExp<'a>
 {
     fn default() -> Self
     {
         ObjectGetExp {
-            disp_id: u32::MAX,
+            m_disp_id: u32::MAX,
             m_exps: None,
 
             m_calculator: None,
@@ -767,13 +767,13 @@ impl<'a> SimpleExpressionBase<'a> for ObjectGetExp<'a>
                     obj_opt = Some(obj.clone());
                 }
                 if let Some(obj) = obj_opt {
-                    if self.disp_id == u32::MAX {
+                    if self.m_disp_id == u32::MAX {
                         if let DslCalculatorValue::String(name) = opd1 {
-                            self.disp_id = obj.borrow().get_dispatch_id(name);
+                            self.m_disp_id = obj.borrow().get_dispatch_id(name);
                         }
                     }
-                    if self.disp_id != u32::MAX {
-                        if let Some(v) = obj.borrow().get_property(self.disp_id) {
+                    if self.m_disp_id != u32::MAX {
+                        if let Some(v) = obj.borrow().get_property(self.m_disp_id) {
                             return v;
                         }
                     }
