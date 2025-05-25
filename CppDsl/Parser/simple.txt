@@ -62,7 +62,7 @@ OPERATOR_STATEMENT_14:
 OPERATOR_STATEMENT_DESC_0:
 	OPERATOR_STATEMENT_DESC_1 { OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 }
 
-//Right Associative (assignment, condition expression)
+//Right Associative (assignment, condition expression, <-)
 OPERATOR_STATEMENT_DESC_1:
 	OPERATOR_STATEMENT_DESC_2 [ OPERATOR_STATEMENT_DESC_ASSIGNMENT_OR_QUESTION_COLON ]
 
@@ -70,7 +70,7 @@ OPERATOR_STATEMENT_DESC_ASSIGNMENT_OR_QUESTION_COLON:
 	OP_TOKEN_1 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1
 	OP_TOKEN_QUESTION _action_pushId _action_buildFirstTernaryOperator OPERATOR_STATEMENT_1 OP_TOKEN_QUESTION_COLON _action_pushId _action_buildSecondTernaryOperator OPERATOR_STATEMENT_1
 
-//Right Associative (=>, <-)
+//Right Associative (=>)
 OPERATOR_STATEMENT_DESC_2:
 	OPERATOR_STATEMENT_DESC_COLON [ OP_TOKEN_2 _action_pushId _action_buildOperator OPERATOR_STATEMENT_2 ]
 

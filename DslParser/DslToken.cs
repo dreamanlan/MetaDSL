@@ -1026,7 +1026,7 @@ namespace Dsl.Common
                     c3 = curOperator[3];
                 if (curOperator.Length > 4)
                     c4 = curOperator[4];
-                if (c0 == '=' && c1 == '\0') {
+                if (c0 == '=' && c1 == '\0' || c0 == '<' && c1 == '-' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_1_;
                 }
                 else if (c0 != '=' && c0 != '!' && c0 != '>' && c0 != '<' && c1 == '=' && c2 == '\0') {
@@ -1038,7 +1038,7 @@ namespace Dsl.Common
                 else if (c3 == '=' && c4 == '\0') {
                     val = DslConstants.OP_TOKEN_1_;
                 }
-                else if (c0 == '=' && c1 == '>' && c2 == '\0' || c0 == '<' && c1 == '-' && c2 == '\0') {
+                else if (c0 == '=' && c1 == '>' && c2 == '\0') {
                     val = DslConstants.OP_TOKEN_2_;
                 }
                 else if (c0 == ':' && c1 == '\0') {

@@ -300,7 +300,7 @@ short SlkToken::getOperatorTokenValue()const
     }
     short val = OP_TOKEN_2_;
     if (pOperator && pOperator[0]) {
-        if (pOperator[0] == '=' && pOperator[1] == '\0') {
+        if ((pOperator[0] == '=' && pOperator[1] == '\0') || (pOperator[0] == '<' && pOperator[1] == '-' && pOperator[2] == '\0')) {
             val = OP_TOKEN_1_;
         }
         else if (pOperator[0] != '=' && pOperator[0] != '!' && pOperator[0] != '>' && pOperator[0] != '<' && pOperator[1] == '=' && pOperator[2] == '\0') {
@@ -312,7 +312,7 @@ short SlkToken::getOperatorTokenValue()const
         else if (pOperator[1] && pOperator[2] && pOperator[3] == '=' && pOperator[4] == '\0') {
             val = OP_TOKEN_1_;
         }
-        else if ((pOperator[0] == '=' && pOperator[1] == '>' && pOperator[2] == '\0') || (pOperator[0] == '<' && pOperator[1] == '-' && pOperator[2] == '\0')) {
+        else if (pOperator[0] == '=' && pOperator[1] == '>' && pOperator[2] == '\0') {
             val = OP_TOKEN_2_;
         }
         else if (pOperator[0] == ':' && pOperator[1] == '\0') {
