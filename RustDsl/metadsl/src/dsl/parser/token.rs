@@ -1298,7 +1298,7 @@ impl<'a> DslToken<'a>
             if cur_operator.len() > 4 {
                 c4 = iter.next();
             }
-            if c0 == Some('=') && c1 == None {
+            if c0 == Some('=') && c1 == None || c0 == Some('<') && c1 == Some('-') && c2 == None {
                 val = constants::OP_TOKEN_1_;
             }
             else if c0 != Some('=') && c0 != Some('!') && c0 != Some('>') && c0 != Some('<') && c1 == Some('=') && c2 == None {
@@ -1310,7 +1310,7 @@ impl<'a> DslToken<'a>
             else if c3 == Some('=') && c4 == None {
                 val = constants::OP_TOKEN_1_;
             }
-            else if c0 == Some('=') && c1 == Some('>') && c2 == None || c0 == Some('<') && c1 == Some('-') && c2 == None {
+            else if c0 == Some('=') && c1 == Some('>') && c2 == None {
                 val = constants::OP_TOKEN_2_;
             }
             else if c0 == Some(':') && c1 == None {
