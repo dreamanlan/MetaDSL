@@ -1842,7 +1842,7 @@ namespace Dsl
                                     sb.Append(arg);
                                 }
                                 else {
-                                    string quoteArg = Utility.quoteString(arg, Dsl.FunctionData.STRING_TOKEN, beginDelim, endDelim);
+                                    string quoteArg = Utility.quoteString(arg, Dsl.FunctionData.STRING_TOKEN, DelimiterInfo.Default);
                                     sb.Append(quoteArg);
                                 }
                                 sb.Append(')');
