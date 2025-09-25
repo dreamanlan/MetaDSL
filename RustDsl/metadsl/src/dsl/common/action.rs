@@ -681,7 +681,7 @@ impl<'a> DslAction<'a>
             if let Some(v_or_f) = self.get_last_function_mut() {
                 if let ValueOrFunction::Function(func) = v_or_f {
                     if !func.is_valid() {
-                        if name.len() > 0 && name.chars().next() == Some('`') {
+                        if name.len() > 1 && name.chars().next() == Some('`') {
                             func.set_param_class(dsl::PARAM_CLASS_WRAP_INFIX_CALL_MASK | dsl::PARAM_CLASS_OPERATOR);
 
                             if let Some(fname) = func.name_mut() {

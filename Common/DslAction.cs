@@ -600,7 +600,7 @@ namespace Dsl.Common
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                if (name.Length > 0 && name[0] == '`') {
+                if (name.Length > 1 && name[0] == '`') {
                     func.SetParamClass((int)(ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | ParamClassEnum.PARAM_CLASS_OPERATOR));
 
                     func.Name.SetId(name.Substring(1));

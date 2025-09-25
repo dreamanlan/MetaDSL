@@ -629,6 +629,14 @@ namespace DslData
                 paramClass == (int)PARAM_CLASS_POINTER ||
                 paramClass == (int)PARAM_CLASS_POINTER_STAR);
         }
+        void SetStatementParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_STATEMENT;
+        }
+        void SetExternScriptParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_EXTERN_SCRIPT;
+        }
         bool HaveParamOrStatement()const { return m_ParamClass != PARAM_CLASS_NOTHING; }
         bool HaveParam()const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
         bool HaveStatement()const { return m_ParamClass == PARAM_CLASS_STATEMENT; }

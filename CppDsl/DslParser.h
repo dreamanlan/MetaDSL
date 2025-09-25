@@ -762,6 +762,14 @@ namespace DslParser
                 paramClass == (int)PARAM_CLASS_POINTER ||
                 paramClass == (int)PARAM_CLASS_POINTER_STAR) ? TRUE : FALSE;
         }
+        void SetStatementParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_STATEMENT;
+        }
+        void SetExternScriptParamClass()
+        {
+            m_ParamClass = (int)PARAM_CLASS_EXTERN_SCRIPT;
+        }
         int HaveParamOrStatement()const { return m_ParamClass != PARAM_CLASS_NOTHING ? TRUE : FALSE; }
         int HaveParam()const { return HaveParamOrStatement() && !HaveStatement() && !HaveExternScript(); }
         int HaveStatement()const { return m_ParamClass == PARAM_CLASS_STATEMENT ? TRUE : FALSE; }

@@ -1298,6 +1298,14 @@ impl FunctionData
             param_class == PARAM_CLASS_POINTER ||
             param_class == PARAM_CLASS_POINTER_STAR;
     }
+    pub fn set_statement_param_class(&mut self)
+    {
+        self.m_param_class = PARAM_CLASS_STATEMENT;
+    }
+    pub fn set_extern_script_param_class(&mut self)
+    {
+        self.m_param_class = PARAM_CLASS_EXTERN_SCRIPT;
+    }
     pub fn have_param_or_statement(&self) -> bool
     {
         return PARAM_CLASS_NOTHING != self.m_param_class;

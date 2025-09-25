@@ -847,6 +847,14 @@ namespace Dsl
                 paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER ||
                 paramClass == (int)ParamClassEnum.PARAM_CLASS_POINTER_STAR;
         }
+        public void SetStatementParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_STATEMENT;
+        }
+        public void SetExternScriptParamClass()
+        {
+            m_ParamClass = (int)ParamClassEnum.PARAM_CLASS_EXTERN_SCRIPT;
+        }
         public bool HaveParamOrStatement()
         {
             return (int)ParamClassEnum.PARAM_CLASS_NOTHING != m_ParamClass;

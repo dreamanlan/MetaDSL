@@ -74,7 +74,7 @@ namespace DslParser
         FunctionData* p = mDataFile->AddNewFunctionComponent();
         if (0 != p) {
             FunctionData& call = *p;
-            if (0 != tokenInfo.mString && tokenInfo.mString[0] == '`') {
+            if (0 != tokenInfo.mString && tokenInfo.mString[0] == '`' && tokenInfo.mString[1]) {
                 call.SetParamClass(FunctionData::PARAM_CLASS_WRAP_INFIX_CALL_MASK | FunctionData::PARAM_CLASS_OPERATOR);
 
                 ValueData v = call.GetName();
