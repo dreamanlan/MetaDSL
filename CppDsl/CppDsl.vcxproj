@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BraceScript\BraceCoroutine.cpp" />
+    <ClCompile Include="BraceScript\ScriptableDslHelper.cpp" />
     <ClCompile Include="BraceScript\ShareStackCoroutine.cpp" />
     <ClCompile Include="BraceScript\SimpleCoroutine.cpp" />
     <ClCompile Include="BraceScript\BraceScript.cpp" />
@@ -184,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BraceScript\BraceCoroutine.h" />
+    <ClInclude Include="BraceScript\ScriptableDslHelper.h" />
     <ClInclude Include="BraceScript\ShareStackCoroutine.h" />
     <ClInclude Include="BraceScript\SimpleCoroutine.h" />
     <ClInclude Include="BraceScript\BraceScript.h" />

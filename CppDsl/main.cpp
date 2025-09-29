@@ -1,5 +1,6 @@
 ﻿#include "BaseType.h"
 #include "Dsl.h"
+#include "ScriptableDslHelper.h"
 #include "BraceScript.h"
 #include "SimpleCoroutine.h"
 #include "ShareStackCoroutine.h"
@@ -46,7 +47,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     DslParser::DslStringAndObjectBufferT<>* pDslBuffer = new DslParser::DslStringAndObjectBufferT<>();
     {
         DslParser::DslFile dataFile(*pDslBuffer);
+        ScriptableDslHelper::ForBraceScript().SetCallbacks(dataFile);
         //dataFile.EnableDebugInfo();
+        /*
         dataFile.OnGetToken.attach([]([[maybe_unused]] const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, [[maybe_unused]] short& val, int& line) {
             if (0 == strcmp(tok, "return")) {
                 char* oldCurTok = tokenApi.getCurToken();
@@ -90,6 +93,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
             //After the callback, the statement will be simplified and added to the upper level syntax structure.
             return true;
             });
+        */
         dataFile.Parse(p);
 
         FILE* fp3 = fopen("copy.txt", "wb");

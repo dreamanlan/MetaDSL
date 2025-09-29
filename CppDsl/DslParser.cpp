@@ -133,7 +133,9 @@ namespace DslParser
             else
                 return "";
         }
-        return m_StringVal;
+        if (m_StringVal)
+            return m_StringVal;
+        return "";
     }
     int ValueData::GetLine()const
     {

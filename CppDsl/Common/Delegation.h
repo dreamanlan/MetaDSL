@@ -2,6 +2,8 @@
 #define __Delegation_H__
 
 #include <string.h>
+#include <type_traits>
+#include <utility>
 
 #define PTR_BUFFER_NUM	4
 
@@ -138,6 +140,32 @@ private:
     Fptr mFunc;
 };
 
+template<typename Delegation, typename FObj, typename R>
+struct FuncObjInvoker0
+{
+public:
+    using ThisType = FuncObjInvoker0<Delegation, FObj, R>;
+    FuncObjInvoker0(FObj fobj) :mFuncObj(fobj)
+    {
+    }
+    static inline R invoke(const ObjectPlaceHolder* address)
+    {
+        const ThisType* pThis = reinterpret_cast<const ThisType*>(address);
+        auto&& fobj = pThis->mFuncObj;
+        return fobj();
+    }
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
+    {
+        /*Assert(size<=space);*/
+        return (void*)address;
+    }
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
+    {
+    }
+private:
+    FObj mFuncObj;
+};
+
 template<typename R>
 struct Delegation0
 {
@@ -153,6 +181,12 @@ public:
     {
         mObj = other.mObj;
         invoker = other.invoker;
+    }
+    Delegation0(Delegation0&& other)
+    {
+        mObj = other.mObj;
+        invoker = other.invoker;
+        other.detach();
     }
     template<typename T>
     Delegation0(const T* obj, R(T::* fptr)()const)
@@ -170,10 +204,18 @@ public:
     }
     Delegation0& operator=(const Delegation0& other)
     {
-        if (&other == this)
-            return *this;
-        mObj = other.mObj;
-        invoker = other.invoker;
+        if (this != &other) {
+            this->~Delegation0();
+            new(this) Delegation0(other);
+        }
+        return *this;
+    }
+    Delegation0& operator=(Delegation0&& other)
+    {
+        if (this != &other) {
+            this->~Delegation0();
+            new(this) Delegation0(std::move(other));
+        }
         return *this;
     }
     template<typename T>
@@ -187,6 +229,13 @@ public:
     {
         invoker = MemFuncInvoker0<ThisType, T, R>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) MemFuncInvoker0<ThisType, T, R>(obj, fptr);
+    }
+    template<typename T>
+    inline void attach(const T& fobj)
+    {
+        static_assert(sizeof(T) <= sizeof(ObjectPlaceHolder), "size of FuncObj is too large !");
+        invoker = FuncObjInvoker0<ThisType, T, R>::invoke;
+        new(&mObj, sizeof(ObjectPlaceHolder)) FuncObjInvoker0<ThisType, T, R>(fobj);
     }
     inline void attach(R(*fptr)())
     {
@@ -301,6 +350,32 @@ private:
     Fptr mFunc;
 };
 
+template<typename Delegation, typename FObj, typename R, typename P1>
+struct FuncObjInvoker1
+{
+public:
+    using ThisType = FuncObjInvoker1<Delegation, FObj, R, P1>;
+    FuncObjInvoker1(FObj fobj) :mFuncObj(fobj)
+    {
+    }
+    static inline R invoke(const ObjectPlaceHolder* address, P1 p1)
+    {
+        const ThisType* pThis = reinterpret_cast<const ThisType*>(address);
+        auto&& fobj = pThis->mFuncObj;
+        return fobj(p1);
+    }
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
+    {
+        /*Assert(size<=space);*/
+        return (void*)address;
+    }
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
+    {
+    }
+private:
+    FObj mFuncObj;
+};
+
 template<typename R, typename P1>
 struct Delegation1
 {
@@ -316,6 +391,12 @@ public:
     {
         mObj = other.mObj;
         invoker = other.invoker;
+    }
+    Delegation1(Delegation1&& other)
+    {
+        mObj = other.mObj;
+        invoker = other.invoker;
+        other.detach();
     }
     template<typename T>
     Delegation1(const T* obj, R(T::* fptr)(P1)const)
@@ -333,10 +414,18 @@ public:
     }
     Delegation1& operator=(const Delegation1& other)
     {
-        if (&other == this)
-            return *this;
-        mObj = other.mObj;
-        invoker = other.invoker;
+        if (this != &other){
+            this->~Delegation1();
+            new(this) Delegation1(other);
+        }
+        return *this;
+    }
+    Delegation1& operator=(Delegation1&& other)
+    {
+        if (this != &other){
+            this->~Delegation1();
+            new(this) Delegation1(std::move(other));
+        }
         return *this;
     }
     template<typename T>
@@ -350,6 +439,13 @@ public:
     {
         invoker = MemFuncInvoker1<ThisType, T, R, P1>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) MemFuncInvoker1<ThisType, T, R, P1>(obj, fptr);
+    }
+    template<typename T>
+    inline void attach(const T& fobj)
+    {
+        static_assert(sizeof(T) <= sizeof(ObjectPlaceHolder), "size of FuncObj is too large !");
+        invoker = FuncObjInvoker1<ThisType, T, R, P1>::invoke;
+        new(&mObj, sizeof(ObjectPlaceHolder)) FuncObjInvoker1<ThisType, T, R, P1>(fobj);
     }
     inline void attach(R(*fptr)(P1))
     {
@@ -499,6 +595,32 @@ private:\
     Fptr mFunc;\
 };\
 \
+template<typename Delegation, typename FObj, typename R, RepeatArg1_##X(typename P)>\
+struct FuncObjInvoker##X\
+{\
+public:\
+    using ThisType = FuncObjInvoker##X<Delegation, FObj, R, RepeatArg1_##X(P)>;\
+    FuncObjInvoker##X(FObj fobj) :mFuncObj(fobj)\
+    {\
+    }\
+    static inline R invoke(const ObjectPlaceHolder* address, RepeatArg2_##X(P, p))\
+    {\
+        const ThisType* pThis = reinterpret_cast<const ThisType*>(address);\
+        auto&& fobj = pThis->mFuncObj;\
+        return fobj(RepeatArg1_##X(p));\
+    }\
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)\
+    {\
+        /*Assert(size<=space);*/\
+        return (void*)address;\
+    }\
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)\
+    {\
+    }\
+private:\
+    FObj mFuncObj;\
+};\
+\
 template<typename R,RepeatArg1_##X(typename P)>\
 struct Delegation##X\
 {\
@@ -514,6 +636,12 @@ public:\
     {\
         mObj=other.mObj;\
         invoker=other.invoker;\
+    }\
+    Delegation##X(Delegation##X&& other)\
+    {\
+        mObj=other.mObj;\
+        invoker=other.invoker;\
+        other.detach();\
     }\
     template<typename T>\
     Delegation##X(const T* obj,R (T::*fptr)(RepeatArg1_##X(P))const)\
@@ -531,10 +659,18 @@ public:\
     }\
     Delegation##X& operator=(const Delegation##X& other)\
     {\
-        if(&other==this)\
-            return *this;\
-        mObj=other.mObj;\
-        invoker=other.invoker;\
+        if(this != &other){\
+            this->~Delegation##X();\
+            new(this) Delegation##X(other);\
+        }\
+        return *this;\
+    }\
+    Delegation##X& operator=(Delegation##X&& other)\
+    {\
+        if(this != &other){\
+            this->~Delegation##X();\
+            new(this) Delegation##X(std::move(other));\
+        }\
         return *this;\
     }\
     template<typename T>\
@@ -548,6 +684,13 @@ public:\
     {\
         invoker=MemFuncInvoker##X<ThisType,T,R,RepeatArg1_##X(P)>::invoke;\
         new(&mObj,sizeof(ObjectPlaceHolder)) MemFuncInvoker##X<ThisType,T,R,RepeatArg1_##X(P)>(obj,fptr);\
+    }\
+    template<typename T>\
+    inline void attach(const T& fobj)\
+    {\
+        static_assert(sizeof(T) <= sizeof(ObjectPlaceHolder), "size of FuncObj is too large !");\
+        invoker = FuncObjInvoker##X<ThisType, T, R, RepeatArg1_##X(P)>::invoke;\
+        new(&mObj, sizeof(ObjectPlaceHolder)) FuncObjInvoker##X<ThisType, T, R, RepeatArg1_##X(P)>(fobj);\
     }\
     inline void attach(R (*fptr)(RepeatArg1_##X(P)))\
     {\
@@ -687,6 +830,30 @@ private:
     const T* mObj;
     Fptr mFunc;
 };
+template<typename Delegation, typename FObj, typename R, typename... Args>
+struct FuncObjInvoker
+{
+public:
+    using ThisType = FuncObjInvoker<Delegation, FObj, R, Args...>;
+    FuncObjInvoker(FObj fobj):mFuncObj(fobj)
+    { }
+    static inline R invoke(const ObjectPlaceHolder* address, Args... args)
+    {
+        const ThisType* pThis = reinterpret_cast<const ThisType*>(address);
+        auto&& fobj = pThis->mFuncObj;
+        return fobj(args...);
+    }
+    static inline void* operator new ([[maybe_unused]] size_t size, const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
+    {
+        /*Assert(size<=space);*/
+        return (void*)address;
+    }
+    static inline void operator delete(void*, [[maybe_unused]] const ObjectPlaceHolder* address, [[maybe_unused]] size_t space)
+    {
+    }
+private:
+    FObj mFuncObj;
+};
 
 template<typename Fptr>
 struct Delegation
@@ -709,6 +876,12 @@ public:
         mObj = other.mObj;
         invoker = other.invoker;
     }
+    Delegation(Delegation&& other)
+    {
+        mObj = other.mObj;
+        invoker = other.invoker;
+        other.detach();
+    }
     template<typename T>
     Delegation(const T* obj, R(T::* fptr)(Args...)const)
     {
@@ -719,16 +892,29 @@ public:
     {
         attach(obj, fptr);
     }
+    template<typename T>
+    Delegation(T* fobj)
+    {
+        attach(fobj);
+    }
     Delegation(R(*fptr)(Args...))
     {
         attach(fptr);
     }
     Delegation& operator=(const Delegation& other)
     {
-        if (&other == this)
-            return *this;
-        mObj = other.mObj;
-        invoker = other.invoker;
+        if (this != &other) {
+            this->~Delegation();
+            new (this) Delegation(other);
+        }
+        return *this;
+    }
+    Delegation& operator=(Delegation&& other)
+    {
+        if (this != &other) {
+            this->~Delegation();
+            new (this) Delegation(std::move(other));
+        }
         return *this;
     }
     template<typename T>
@@ -742,6 +928,13 @@ public:
     {
         invoker = MemFuncInvoker<ThisType, T, R(Args...)>::invoke;
         new(&mObj, sizeof(ObjectPlaceHolder)) MemFuncInvoker<ThisType, T, R(Args...)>(obj, fptr);
+    }
+    template<typename T>
+    inline void attach(const T& fobj)
+    {
+        static_assert(sizeof(T) <= sizeof(ObjectPlaceHolder), "size of FuncObj is too large !");
+        invoker = FuncObjInvoker<ThisType, T, R, Args...>::invoke;
+        new(&mObj, sizeof(ObjectPlaceHolder)) FuncObjInvoker<ThisType, T, R, Args...>(fobj);
     }
     inline void attach(R(*fptr)(Args...))
     {

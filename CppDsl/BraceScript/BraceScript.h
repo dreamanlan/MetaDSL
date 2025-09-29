@@ -770,6 +770,10 @@ namespace Brace
             int BlockId;
             std::vector<int> ObjVars;
             //Standby for simple VM and DAG optimization implementations, Each basic block is implemented as a BraceApiExecutor
+            //We only use one active basic block for each block, iterating the script once to build all basic blocks, and finally
+            //storing the instructions for the basic block in a BraceApiExecutor instance (this will be done by the IBraceApi).
+            //Note:Need to consider how to distinguish whether an API is a block (In our scenario, the jump does not require a
+            //starting basic block)
             std::vector<Instruction> BasicBlock;
 
             BlockInfo(int blockId) :BlockId(blockId), ObjVars(), BasicBlock()

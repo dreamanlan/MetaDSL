@@ -5,7 +5,7 @@ func(main)params($a:&int32, $b:float)float
 	$t1 = $a + 130;
 	$nv = $t1;
 	echo("t:", $t, " a:", $a, " nv:", $nv);
-	return <- $a * $b + 123;
+	return $a * $b + 123;
 };
 
 @ra = 12345;

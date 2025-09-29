@@ -18,10 +18,10 @@ skill(kkk)
 	:};
 	script(ttt : string, tt2 : int)
 	{: abcd :};
-	(:attr:)
+	(:attr:);
 	script(ttt)
 	{::};
-	[:attr:]
+	[:attr:];
 	script(ttt)
 	{:
   abcdef;
@@ -72,12 +72,12 @@ implements(ICurly)
 		int
 		{
 			print(str);
-			return <- (0);
+			return ` (0);
 		};
 		Exec(str : string)
 		int
 		{
-			return <- (atoi(str));
+			return ` (atoi(str));
 		};
 	};
 	private
@@ -98,5 +98,5 @@ int
 	echo("dec:", -- @ct);
 	echo("positive:", + @ct);
 	echo("negative:\"--", - @ct);
-	return <- a * b + 4;
+	return ` <- a * b + 4;
 };

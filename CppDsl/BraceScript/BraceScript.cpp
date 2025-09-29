@@ -2893,12 +2893,42 @@ namespace Brace
                     p->Load(callData, resultInfo, executor);
                     return executor;
                 }
-                else if (op == "<-") {
-                    //Single-parameter statements, written without parentheses
-                    if (callData.GetParamNum() == 2) {
-                        auto* p = CreateApi(callData.GetParamId(0));
-                        p->Load(callData, resultInfo, executor);
-                        return executor;
+                else if (op == "`") {
+                    //Transform
+                    int paramNum = callData.GetParamNum();
+                    if (paramNum == 2) {
+                        DslData::ISyntaxComponent* param0 = callData.GetParam(0);
+                        DslData::ISyntaxComponent* param1 = callData.GetParam(1);
+                        if (param0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE) {
+                            auto&& vd = static_cast<DslData::ValueData&>(*param0);
+                            if (vd.GetId() == "return") {
+                                //return`exp; => return(exp);
+                                auto* newCall = new DslData::FunctionData();
+                                AddSyntaxComponent(newCall);
+                                newCall->SetName(DslData::ValueData("return", DslData::ValueData::VALUE_TYPE_IDENTIFIER));
+                                newCall->SetParenthesesParamClass();
+                                newCall->AddParamCopyFrom(*param1);
+
+                                newCall->GetName().SetLine(callData.GetLine());
+                                return Load(*newCall, resultInfo);
+                            }
+                        }
+                        else if (param0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
+                            auto&& fd = static_cast<DslData::FunctionData&>(*param0);
+                            //if(cond)`exp; => if(cond){exp;}
+                            //while(cond)`exp; => while(cond){exp;}
+                            //loop(ct)`exp; => loop(ct){exp;}
+                            //looplist(list)`exp; => loop(list){exp;}
+                            //foreach(v1,v2,...)`exp; => foreach(v1,v2,...){exp;}
+                            auto* newCall = new DslData::FunctionData();
+                            AddSyntaxComponent(newCall);
+                            newCall->GetName().SetFunctionCopyFrom(fd);
+                            newCall->SetStatementParamClass();
+                            newCall->AddParamCopyFrom(*param1);
+
+                            newCall->GetName().SetLine(callData.GetLine());
+                            return Load(*newCall, resultInfo);
+                        }
                     }
                 }
                 else if (op == "=>") {

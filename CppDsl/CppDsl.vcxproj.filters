@@ -37,6 +37,7 @@
     <ClCompile Include="BraceScript\SimpleCoroutine.cpp" />
     <ClCompile Include="BraceScript\BraceCoroutine.cpp" />
     <ClCompile Include="BraceScript\ShareStackCoroutine.cpp" />
+    <ClCompile Include="BraceScript\ScriptableDslHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
@@ -107,6 +108,7 @@
     <ClInclude Include="BraceScript\SimpleCoroutine.h" />
     <ClInclude Include="BraceScript\BraceCoroutine.h" />
     <ClInclude Include="BraceScript\ShareStackCoroutine.h" />
+    <ClInclude Include="BraceScript\ScriptableDslHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\ByteCode.inl">

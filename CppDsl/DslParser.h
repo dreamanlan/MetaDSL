@@ -1034,6 +1034,13 @@ namespace DslParser
             m_ValueOrFunctions[m_ValueOrFunctionNum] = pVal;
             ++m_ValueOrFunctionNum;
         }
+        void RemoveLastFunction()
+        {
+            if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
+                return;
+            --m_ValueOrFunctionNum;
+            m_ValueOrFunctions[m_ValueOrFunctionNum] = nullptr;
+        }
         ValueOrFunctionData*& GetLastFunctionRef()const
         {
             if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
