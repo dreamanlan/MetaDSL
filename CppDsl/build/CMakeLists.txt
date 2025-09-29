@@ -88,6 +88,8 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/BraceScript/SimpleCoroutine.cpp
 	${CLIB_SRC_PATH}/BraceScript/ShareStackCoroutine.h
 	${CLIB_SRC_PATH}/BraceScript/ShareStackCoroutine.cpp
+	${CLIB_SRC_PATH}/BraceScript/ScriptableDslHelper.h
+	${CLIB_SRC_PATH}/BraceScript/ScriptableDslHelper.cpp
 )
 
 if (APPLE)
