@@ -1034,6 +1034,13 @@ namespace DslParser
             m_ValueOrFunctions[m_ValueOrFunctionNum] = pVal;
             ++m_ValueOrFunctionNum;
         }
+        void RemoveLastFunction()
+        {
+            if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
+                return;
+            --m_ValueOrFunctionNum;
+            m_ValueOrFunctions[m_ValueOrFunctionNum] = nullptr;
+        }
         ValueOrFunctionData*& GetLastFunctionRef()const
         {
             if (nullptr == m_ValueOrFunctions || 0 == m_ValueOrFunctionNum)
@@ -1520,17 +1527,27 @@ namespace DslParser
         void addFunction()const;
         void setFunctionId()const;
         void markParenthesesParam()const;
+        void markParenthesesParamEnd()const;
         void buildHighOrderFunction()const;
         void markBracketParam()const;
+        void markBracketParamEnd()const;
         void markStatement()const;
+        void markStatementEnd()const;
         void markExternScript()const;
         void markBracketColonParam()const;
+        void markBracketColonParamEnd()const;
         void markParenthesesColonParam()const;
+        void markParenthesesColonParamEnd()const;
         void markAngleBracketColonParam()const;
+        void markAngleBracketColonParamEnd()const;
         void markBracePercentParam()const;
+        void markBracePercentParamEnd()const;
         void markBracketPercentParam()const;
+        void markBracketPercentParamEnd()const;
         void markParenthesesPercentParam()const;
+        void markParenthesesPercentParamEnd()const;
         void markAngleBracketPercentParam()const;
+        void markAngleBracketPercentParamEnd()const;
         void markColonColonParam()const;
         void setExternScript()const;
         void markPeriodParam()const;
