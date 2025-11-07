@@ -24,7 +24,7 @@ skill(kkk)
 	BEGIN_SCRIPT abcd END_SCRIPT;
 	(:attr:);
 	script(ttt)
-	BEGIN_SCRIPTEND_SCRIPT;
+	BEGIN_SCRIPT  END_SCRIPT;
 	[:attr:];
 	script(ttt)
 	BEGIN_SCRIPT
