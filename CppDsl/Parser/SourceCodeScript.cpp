@@ -664,6 +664,16 @@ namespace DslParser
         SlkToken tokens(source, file);
         SlkError error(file);
         ActionForSourceCodeScript action(tokens, file);
+        const char* strBegin = file.GetStringBeginDelimiter();
+        const char* strEnd = file.GetStringEndDelimiter();
+        if (strBegin && strEnd && (strBegin[0] != '"' || (strBegin[0] && strBegin[1]) || strEnd[0] != '"' || (strEnd[0] && strEnd[1]))) {
+            tokens.setStringDelimiter(strBegin, strEnd);
+        }
+        const char* scriptBegin = file.GetScriptBeginDelimiter();
+        const char* scriptEnd = file.GetScriptEndDelimiter();
+        if (scriptBegin && scriptEnd && (scriptBegin[0] != '{' || (scriptBegin[0] && scriptBegin[1] && scriptBegin[1] != ':') || (scriptBegin[0] && scriptBegin[1] && scriptBegin[2]) || scriptEnd[0] != ':' || (scriptEnd[0] && scriptEnd[1] && scriptEnd[1] != '}') || (scriptEnd[0] && scriptEnd[1] && scriptEnd[2]))) {
+            tokens.setScriptDelimiter(scriptBegin, scriptEnd);
+        }
         SlkParse(action, tokens, error, 0);
         if (tokens.getStringBeginDelimiter()[0] && tokens.getStringEndDelimiter()[0]) {
             file.SetStringDelimiter(tokens.getStringBeginDelimiter(), tokens.getStringEndDelimiter());

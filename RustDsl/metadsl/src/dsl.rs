@@ -2020,6 +2020,17 @@ impl<'a> DslFile<'a>
             action.borrow_mut().set_on_build_high_order(on_build_high_order);
         }
 
+        let str_begin = self.string_begin_delimiter();
+        let str_end = self.string_end_delimiter();
+        if !str_begin.is_empty() && !str_end.is_empty() && (str_begin != "\"" || str_end != "\"") {
+            tokens.borrow_mut().set_string_delimiter(str_begin.to_string(), str_end.to_string());
+        }
+        let script_begin = self.script_begin_delimiter();
+        let script_end = self.script_end_delimiter();
+        if !script_begin.is_empty() && !script_end.is_empty() && (script_begin != "{:" || script_end != ":}") {
+            tokens.borrow_mut().set_script_delimiter(script_begin.to_string(), script_end.to_string());
+        }
+
         parse(&action, &tokens, &error, 0);
 
         if log.borrow().has_error() {
@@ -2244,7 +2255,7 @@ cfg_if! {
     {
         return &self.m_script_begin_delimiter;
     }
-    pub fn script_end_delimiter(&mut self) -> &String
+    pub fn script_end_delimiter(&self) -> &String
     {
         return &self.m_script_end_delimiter;
     }

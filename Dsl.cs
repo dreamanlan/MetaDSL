@@ -1322,6 +1322,13 @@ namespace Dsl
             action.onBeforeBuildHighOrder = mOnBeforeBuildHighOrder;
             action.onBuildHighOrder = mOnBuildHighOrder;
 
+            if (!string.IsNullOrEmpty(mStringBeginDelimiter) && !string.IsNullOrEmpty(mStringEndDelimiter) && (mStringBeginDelimiter != "\"" || mStringEndDelimiter != "\"")) {
+                tokens.setStringDelimiter(mStringBeginDelimiter, mStringEndDelimiter);
+            }
+            if (!string.IsNullOrEmpty(mScriptBeginDelimiter) && !string.IsNullOrEmpty(mScriptEndDelimiter) && (mScriptBeginDelimiter != "\"" || mScriptEndDelimiter != "\"")) {
+                tokens.setScriptDelimiter(mScriptBeginDelimiter, mScriptEndDelimiter);
+            }
+
             Parser.DslParser.parse(ref action, ref tokens, ref error, 0);
             if (log.HasError) {
                 mDslInfos.Clear();
