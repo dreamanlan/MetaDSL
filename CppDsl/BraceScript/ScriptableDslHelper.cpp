@@ -61,10 +61,10 @@ m_SuccessorsOfCompoundStatements{
         "struct", {}
     },
     {
-        "script", { "args" }
+        "script", { "params", "args" }
     },
     {
-        "story", { "args" }
+        "story", { "params", "args" }
     }
 },
 m_CompoundStatements{

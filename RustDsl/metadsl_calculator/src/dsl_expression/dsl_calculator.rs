@@ -2003,15 +2003,15 @@ impl<'a> FuncInfo<'a>
         self.local_var_indexes.borrow_mut().clear();
         self.codes.borrow_mut().clear();
     }
-    pub fn add_arg_name_index(&self, arg_name: &str)
+    pub fn add_param_name_index(&self, param_name: &str)
     {
         let ix = self.local_var_indexes.borrow().len() as i32;
-        self.local_var_indexes.borrow_mut().insert(String::from(arg_name), -1 - ix);
+        self.local_var_indexes.borrow_mut().insert(String::from(param_name), -1 - ix);
     }
-    pub fn build_arg_name_indexes(&self, arg_names: &'a Vec<String>)
+    pub fn build_param_name_indexes(&self, param_names: &'a Vec<String>)
     {
-        for ix in 0..arg_names.len() {
-            self.add_arg_name_index(&arg_names[ix]);
+        for ix in 0..param_names.len() {
+            self.add_param_name_index(&param_names[ix]);
         }
     }
     pub fn new() -> Self
@@ -2827,12 +2827,12 @@ impl<'a> DslCalculator<'a>
                         if let ValueOrFunction::Function(f) = vf {
                             func = Some(f);
                             is_valid = true;
-                            if f.get_id() == "args" && f.is_high_order() {
+                            if (f.get_id() == "params" || f.get_id() == "args") && f.is_high_order() {
                                 if let Some(lf) = f.lower_order_function() {
                                     if let Some(ps) = lf.params() {
                                         for p in ps.iter() {
-                                            let arg_name = p.get_id();
-                                            func_info.add_arg_name_index(arg_name);
+                                            let param_name = p.get_id();
+                                            func_info.add_param_name_index(param_name);
                                         }
                                     }
                                 }
@@ -2866,12 +2866,12 @@ impl<'a> DslCalculator<'a>
     {
         Self::load_dsl_func_with_args(cell, func, None, dsl_func);
     }
-    pub fn load_dsl_func_with_args(cell: &Rc<DslCalculatorCell<'a>>, func: &str, arg_names: Option<&'a Vec<String>>, dsl_func: &FunctionData)
+    pub fn load_dsl_func_with_args(cell: &Rc<DslCalculatorCell<'a>>, func: &str, param_names: Option<&'a Vec<String>>, dsl_func: &FunctionData)
     {
         let func_info = FuncInfo::new();
-        if let Some(names) = arg_names {
+        if let Some(names) = param_names {
             if names.len() > 0 {
-                func_info.build_arg_name_indexes(names);
+                func_info.build_param_name_indexes(names);
             }
         }
         if let Some(ps) = dsl_func.params() {

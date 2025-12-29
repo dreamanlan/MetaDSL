@@ -3332,7 +3332,7 @@ namespace Brace
         for (int ix = 0; ix < dslInfos.GetDslInfoNum(); ++ix) {
             auto* p = dslInfos.GetDslInfo(ix);
             if (nullptr != p && p->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_STATEMENT && p->GetId() == "func") {
-                //func(name)params(argname : type, ...)rettype;
+                //func(name)params(paramname : type, ...)rettype;
                 std::string id{};
                 FuncApiTypeInfo tinfo{};
                 auto* pStatement = static_cast<DslData::StatementData*>(p);
