@@ -1,5 +1,6 @@
 #include "ScriptableDslHelper.h"
 #include "DslParser.h"
+#include "SlkConstants.h"
 
 ScriptableDslHelper* ScriptableDslHelper::s_pForBraceScript = nullptr;
 
@@ -121,7 +122,7 @@ void ScriptableDslHelper::SetCallbacks(DslParser::DslFile& dataFile)
 
 bool ScriptableDslHelper::OnGetToken([[maybe_unused]] const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, [[maybe_unused]] short& val, int& line)
 {
-    if (0 == strcmp(tok, "return")) {
+    if (IDENTIFIER_ == val && 0 == strcmp(tok, "return")) {
         char* oldCurTok = tokenApi.getCurToken();
         char* oldLastTok = tokenApi.getLastToken();
         int index;
@@ -135,7 +136,7 @@ bool ScriptableDslHelper::OnGetToken([[maybe_unused]] const DslParser::DslAction
         tokenApi.setLastToken(oldLastTok);
         return true;
     }
-    else if (0 == strcmp(tok, ")")) {
+    else if (RPAREN_ == val && 0 == strcmp(tok, ")")) {
         uint32_t tag;
         if (actionApi.peekPairTypeStack(tag) == IDslSyntaxCommon::PAIR_TYPE_PARENTHESES) {
             if (tag > 0) {

@@ -109,6 +109,7 @@
     <ClInclude Include="BraceScript\BraceCoroutine.h" />
     <ClInclude Include="BraceScript\ShareStackCoroutine.h" />
     <ClInclude Include="BraceScript\ScriptableDslHelper.h" />
+    <ClInclude Include="include\SlkConstants.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Parser\ByteCode.inl">

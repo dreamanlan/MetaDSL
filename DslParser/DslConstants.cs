@@ -4,7 +4,7 @@
 namespace Dsl.Parser
 {
 
-    class DslConstants
+    public class DslConstants
     {
 
 public const short  OP_TOKEN_0_ = 1;

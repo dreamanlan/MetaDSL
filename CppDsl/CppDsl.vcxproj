@@ -200,6 +200,7 @@
     <ClInclude Include="DslParser.h" />
     <ClInclude Include="DslData.h" />
     <ClInclude Include="DslUtility.h" />
+    <ClInclude Include="include\SlkConstants.h" />
     <ClInclude Include="Parser\ByteCode.h" />
     <ClInclude Include="Parser\RuntimeBuilderData.h" />
     <ClInclude Include="Parser\SlkAction.h" />

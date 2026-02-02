@@ -1,4 +1,9 @@
 @echo on
+rem working directory
+
+set driver=%~d0
+set workdir=%~dp0
+cd /d "%workdir%"
 
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\BatchCommand\deps\Dsl.dll
 copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\BatchCommand\deps\Dsl.pdb
