@@ -2462,6 +2462,10 @@ impl<'a> DslCalculator<'a>
     {
         return self.m_objects.get(&id);
     }
+    pub fn get_func(&self, id: &str) -> Option<&Rc<FuncInfo<'a>>>
+    {
+        return self.m_funcs.get(id);
+    }
     pub fn check_func_xrefs(&self)
     {
         for func in self.m_func_calls.iter() {
