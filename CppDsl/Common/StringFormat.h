@@ -145,6 +145,8 @@ namespace StringFormatUtility
         int r = t_snprintf(dest + pos, size - pos, fmt, t);
         if (r >= 0 && pos + r < size)
             pos += r;
+        else if (r < 0)
+            return FALSE;  // Formatting failed, keep pos unchanged
         else
             pos = size - 1;
         return (r >= 0 ? TRUE : FALSE);
@@ -237,6 +239,8 @@ namespace StringFormatUtility
             }
             if (r >= 0 && pos + r < size)
                 pos += r;
+            else if (r < 0)
+                return FALSE;  // Formatting failed, keep pos unchanged
             else
                 pos = size - 1;
             return (r >= 0 ? TRUE : FALSE);
