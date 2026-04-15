@@ -8100,10 +8100,23 @@ namespace BraceScriptInterpreter
                     LogError(ss.str());
                     return false;
                 }
+                auto* p0 = funcData->GetParam(0);
+                auto* p1 = funcData->GetParam(1);
+                DslData::ValueData tmp;
+                if (p0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_VALUE && p0->GetIdType() == DslData::ISyntaxComponent::VALUE_TYPE_IDENTIFIER) {
+                    auto&& id = p0->GetId();
+                    if (id.length() > 0 && (id[0] == '$' || id[0] == '@')) {
+                        // Enable variables with a specified prefix.
+                    }
+                    else {
+                        tmp.SetTypeAndId(DslData::ISyntaxComponent::VALUE_TYPE_STRING, p0->GetId());
+                        p0 = &tmp;
+                    }
+                }
                 Brace::OperandLoadtimeInfo argKeyLoadInfo;
                 Brace::OperandLoadtimeInfo argValLoadInfo;
-                auto p_key = LoadHelper(*funcData->GetParam(0), argKeyLoadInfo);
-                auto p_val = LoadHelper(*funcData->GetParam(1), argValLoadInfo);
+                auto p_key = LoadHelper(*p0, argKeyLoadInfo);
+                auto p_val = LoadHelper(*p1, argValLoadInfo);
                 argKeys.push_back(std::move(p_key));
                 argKeyLoadInfos.push_back(std::move(argKeyLoadInfo));
                 argVals.push_back(std::move(p_val));
