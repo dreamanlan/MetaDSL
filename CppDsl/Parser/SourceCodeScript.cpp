@@ -651,6 +651,16 @@ namespace DslParser
         }
         return r;
     }
+    const char* SkipUtf8Bom(const char* buf, int len)
+    {
+        if (nullptr != buf && len >= 3 &&
+            static_cast<unsigned char>(buf[0]) == 0xEF &&
+            static_cast<unsigned char>(buf[1]) == 0xBB &&
+            static_cast<unsigned char>(buf[2]) == 0xBF) {
+            return buf + 3;
+        }
+        return buf;
+    }
     void Parse(const char* buf, DslFile& file)
     {
         if (0 == buf)

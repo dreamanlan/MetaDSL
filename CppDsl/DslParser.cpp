@@ -406,6 +406,11 @@ namespace DslParser
         return DslParser::Mac2Unix(buf, len);
     }
 
+    const char* DslFile::SkipUtf8Bom(const char* buf, int len)
+    {
+        return DslParser::SkipUtf8Bom(buf, len);
+    }
+
     DslFile::DslFile(IDslStringAndObjectBuffer& buffer) :m_Buffer(buffer), m_IsDebugInfoEnable(FALSE),
         m_DslInfos(nullptr), 
         m_NullableSyntaxEnabled(true),

@@ -1062,6 +1062,7 @@ namespace DslData
         std::vector<std::string> m_ErrorInfo;
     public:
         static bool Mac2Unix(char* buf, int len);
+        static const char* SkipUtf8Bom(const char* buf, int len);
     public:
         static ISyntaxComponent& GetNullSyntax();
         static FunctionData& GetNullFunction();

@@ -1716,6 +1716,7 @@ namespace DslParser
         int m_ErrorNum;
     public:
         static bool Mac2Unix(char* buf, int len);
+        static const char* SkipUtf8Bom(const char* buf, int len);
     };
 
     class IScriptSource

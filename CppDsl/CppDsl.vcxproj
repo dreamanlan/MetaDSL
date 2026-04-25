@@ -169,6 +169,7 @@
     <ClCompile Include="BraceScript\SimpleCoroutine.cpp" />
     <ClCompile Include="BraceScript\BraceScript.cpp" />
     <ClCompile Include="Common\StringFormat.cpp" />
+    <ClCompile Include="Common\EncodingConversion.cpp" />
     <ClCompile Include="Dsl.cpp" />
     <ClCompile Include="DslParser.cpp" />
     <ClCompile Include="DslData.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="Common\StaticCheck.h" />
     <ClInclude Include="Common\StringFormat.h" />
     <ClInclude Include="Common\tsnprintf.h" />
+    <ClInclude Include="Common\EncodingConversion.h" />
     <ClInclude Include="Common\Delegation.h" />
     <ClInclude Include="Common\BaseType.h" />
     <ClInclude Include="Dsl.h" />

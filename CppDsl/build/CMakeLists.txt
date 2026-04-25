@@ -1,7 +1,7 @@
 
 # For MetaDSL cpp proj.
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.11)
 
 if ( WIN32 AND NOT CYGWIN AND NOT ( CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" ) AND NOT ANDROID)
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MD" CACHE STRING "")
@@ -22,6 +22,16 @@ endif ()
 message(${CMAKE_CURRENT_SOURCE_DIR})
 
 project(CppDsl)
+
+# Look for iconv on non-Windows platforms. On glibc-based systems iconv is
+# built into libc and Iconv_LIBRARIES may be empty, which is fine. On macOS,
+# iOS and some BSD/musl systems a separate libiconv is required. On Windows
+# we do not need iconv because Win32 MultiByteToWideChar is used instead.
+# Android NDK exposes iconv only when ANDROID_PLATFORM >= android-28, so we
+# skip the lookup there; EncodingConversion.cpp falls back to a UTF-8 path.
+if (NOT (WIN32 AND NOT CYGWIN) AND NOT ANDROID)
+    find_package(Iconv)
+endif ()
 
 if (APPLE)
     if ( IOS )
@@ -60,6 +70,8 @@ set (CLIB_SRC
 	${CLIB_SRC_PATH}/Common/StringFormat.h
 	${CLIB_SRC_PATH}/Common/StringFormat.cpp
 	${CLIB_SRC_PATH}/Common/tsnprintf.h
+	${CLIB_SRC_PATH}/Common/EncodingConversion.h
+	${CLIB_SRC_PATH}/Common/EncodingConversion.cpp
 	${CLIB_SRC_PATH}/Parser/ByteCode.h
 	${CLIB_SRC_PATH}/Parser/ByteCode.inl
 	${CLIB_SRC_PATH}/Parser/ByteCode.cpp
@@ -181,9 +193,15 @@ elseif (APPLE AND NOT IOS)
         m
         ${THIRDPART_LIB} 
     )
+    if (Iconv_FOUND)
+        target_link_libraries(CppDsl ${Iconv_LIBRARIES})
+    endif ()
 else ()
     target_link_libraries(CppDsl
         m
         ${THIRDPART_LIB} 
     )
+    if (Iconv_FOUND)
+        target_link_libraries(CppDsl ${Iconv_LIBRARIES})
+    endif ()
 endif ()

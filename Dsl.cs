@@ -1293,6 +1293,7 @@ namespace Dsl
         }
         public bool LoadFromString(string content, DslLogDelegation logCallback)
         {
+            content = SkipUtf8Bom(content);
             content = Mac2Unix(content);
 
             mDslInfos.Clear();
@@ -1498,6 +1499,7 @@ namespace Dsl
         }
         public bool LoadLuaFromString(string content, DslLogDelegation logCallback)
         {
+            content = SkipUtf8Bom(content);
             content = Mac2Unix(content);
 
             mDslInfos.Clear();
@@ -1528,6 +1530,7 @@ namespace Dsl
         }
         public bool LoadCppFromString(string content, DslLogDelegation logCallback)
         {
+            content = SkipUtf8Bom(content);
             content = Mac2Unix(content);
 
             mDslInfos.Clear();
@@ -1590,6 +1593,7 @@ namespace Dsl
         }
         public bool LoadGppFromString(string content, DslLogDelegation logCallback, string beginDelim, string endDelim, out string transformedContent)
         {
+            content = SkipUtf8Bom(content);
             content = Mac2Unix(content);
             transformedContent = TransformPreprocess(content, beginDelim, endDelim);
             return LoadFromString(transformedContent, logCallback);
@@ -2046,6 +2050,13 @@ namespace Dsl
             return r;
         }
 
+        public static string SkipUtf8Bom(string txt)
+        {
+            if (!string.IsNullOrEmpty(txt) && txt[0] == '\uFEFF') {
+                return txt.Substring(1);
+            }
+            return txt;
+        }
         public static string Mac2Unix(string txt)
         {
             int ix = txt.IndexOf('\r');

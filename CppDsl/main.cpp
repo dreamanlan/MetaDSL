@@ -5,6 +5,7 @@
 #include "SimpleCoroutine.h"
 #include "ShareStackCoroutine.h"
 #include "BraceCoroutine.h"
+#include "EncodingConversion.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -35,14 +36,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     fclose(fp2);
     char* p2 = pbuf2;
 
-    if (size >= 3 && pbuf[0] == '\xef' && pbuf[1] == '\xbb' && pbuf[2] == '\xbf') {
-        //skip utf-8 bom
-        p += 3;
-    }
-    if (size >= 3 && pbuf2[0] == '\xef' && pbuf2[1] == '\xbb' && pbuf2[2] == '\xbf') {
-        //skip utf-8 bom
-        p2 += 3;
-    }
+    p = const_cast<char*>(DslParser::DslFile::SkipUtf8Bom(p, static_cast<int>(size)));
+    p2 = const_cast<char*>(DslParser::DslFile::SkipUtf8Bom(p2, static_cast<int>(size2)));
     //DslParser::DslOptions::DontLoadComments(true);
     DslParser::DslStringAndObjectBufferT<>* pDslBuffer = new DslParser::DslStringAndObjectBufferT<>();
     {
@@ -152,19 +147,20 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
         }
         ifs.read(pbuf, 1024 * 1024);
         pbuf[ifs.gcount()] = 0;
-        parsedFile.Parse(pbuf);
+        const char* pScp = DslParser::DslFile::SkipUtf8Bom(pbuf, static_cast<int>(ifs.gcount()));
+        parsedFile.Parse(pScp);
         if (parsedFile.HasError()) {
             for (int i = 0; i < parsedFile.GetErrorNum(); ++i) {
-                printf("[Brace Syntax]: %s", parsedFile.GetErrorInfo(i));
+        printf("[Brace Syntax]: %s", Utility::AutoToLocal(parsedFile.GetErrorInfo(i)).c_str());
             }
         }
         else {
             DslData::DslFile dslFile;
             Dsl::Transform(parsedFile, dslFile);
             Brace::BraceScript script;
-            script.OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
-            script.OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", str.c_str()); };
-            script.OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };
+        script.OnInfo = [](auto str) { printf("[Brace Output]: %s\n", Utility::AutoToLocal(str).c_str()); };
+        script.OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", Utility::AutoToLocal(str).c_str()); };
+        script.OnError = [](auto str) { printf("[Brace Error]: %s\n", Utility::AutoToLocal(str).c_str()); };
             script.LoadScript(dslFile);
             script.Run();
 
@@ -327,7 +323,7 @@ public:
         m_pParsedFile->Parse(m_ScriptTxt.c_str());
         if (m_pParsedFile->HasError()) {
             for (int i = 0; i < m_pParsedFile->GetErrorNum(); ++i) {
-                printf("[Brace Syntax]: %s", m_pParsedFile->GetErrorInfo(i));
+        printf("[Brace Syntax]: %s", Utility::AutoToLocal(m_pParsedFile->GetErrorInfo(i)).c_str());
             }
         }
         else {
@@ -336,9 +332,9 @@ public:
             m_pBraceScript->Reset();
             m_pBraceScript->RegisterApi("wait", "wait api", new Brace::BraceApiFactory<WaitExp>());
             m_pBraceScript->RegisterApi("time", "time api", new Brace::BraceApiFactory<TimeExp>());
-            m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", str.c_str()); };
-            m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", str.c_str()); };
-            m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", str.c_str()); };
+        m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", Utility::AutoToLocal(str).c_str()); };
+        m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", Utility::AutoToLocal(str).c_str()); };
+        m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", Utility::AutoToLocal(str).c_str()); };
             m_pBraceScript->LoadScript(*m_pDslFile);
             m_pBraceScript->Run();
         }

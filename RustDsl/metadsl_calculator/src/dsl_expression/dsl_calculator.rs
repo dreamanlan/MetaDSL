@@ -2517,10 +2517,7 @@ impl<'a> DslCalculator<'a>
     {
         let mut result = None;
         if let Some(c) = v.chars().next() {
-            if c == '@' {
-                result = self.get_global_variable(v);
-            }
-            else if c == '$' {
+            if c == '$' {
                 result = self.get_local_variable(v);
             }
             else {
@@ -2532,10 +2529,7 @@ impl<'a> DslCalculator<'a>
     pub fn set_variable(&mut self, v: &str, val: DslCalculatorValue)
     {
         if let Some(c) = v.chars().next() {
-            if c == '@' {
-                self.set_global_variable(v, val);
-            }
-            else if c == '$' {
+            if c == '$' {
                 self.set_local_variable(v, val);
             }
             else {

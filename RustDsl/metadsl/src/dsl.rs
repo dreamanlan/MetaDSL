@@ -1973,7 +1973,7 @@ impl<'a> DslFile<'a>
     }
     pub fn load_from_string(&mut self, _content: String, log_callback: &DslLogDelegationBox<'a>) -> bool
     {
-        let content = DslFile::mac_2_unix(&_content);
+        let content = DslFile::mac_2_unix(DslFile::skip_utf8_bom(&_content));
 
         self.m_dsl_infos.clear();
         let log = DslLogCell::new(DslLog::new(log_callback));
@@ -2402,6 +2402,13 @@ cfg_if! {
         return r;
     }
 
+    pub fn skip_utf8_bom(txt: &str) -> &str
+    {
+        if txt.starts_with('\u{FEFF}') {
+            return &txt['\u{FEFF}'.len_utf8()..];
+        }
+        return txt;
+    }
     pub fn mac_2_unix(txt: &str) -> String
     {
         let txt = txt.replace("\r\n", "\n").replace('\r', "\n");

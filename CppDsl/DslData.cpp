@@ -420,6 +420,10 @@ namespace DslData
     {
         return DslParser::Mac2Unix(buf, len);
     }
+    const char* DslFile::SkipUtf8Bom(const char* buf, int len)
+    {
+        return DslParser::SkipUtf8Bom(buf, len);
+    }
     ISyntaxComponent& DslFile::GetNullSyntax()
     {
         static StatementData s_Null;
