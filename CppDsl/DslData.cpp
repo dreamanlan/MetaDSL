@@ -128,7 +128,7 @@ namespace DslData
             else
                 return false;
         }
-        return !m_StringVal.empty();
+        return !m_StringVal.empty() || m_Type != VALUE_TYPE_IDENTIFIER;
     }
     //------------------------------------------------------------------------------------------------------
     static inline int CalcCapacity(int need, [[maybe_unused]] int init, int max_delta)

@@ -155,7 +155,7 @@ namespace DslParser
             else
                 return FALSE;
         }
-        return 0 != m_StringVal ? TRUE : FALSE;
+        return (0 != m_StringVal && m_StringVal[0] ? TRUE : FALSE) | (m_Type != VALUE_TYPE_IDENTIFIER ? TRUE : FALSE);
     }
     //------------------------------------------------------------------------------------------------------
     static inline int CalcCapacity(int need, [[maybe_unused]] int init, int max_delta)

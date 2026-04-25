@@ -375,7 +375,7 @@ namespace Dsl
         }
         public override bool HaveId()
         {
-            return !string.IsNullOrEmpty(m_Id) || m_Type == STRING_TOKEN;
+            return !string.IsNullOrEmpty(m_Id) || m_Type != ID_TOKEN;
         }
 
         public void SetId(string id)
