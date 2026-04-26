@@ -127,7 +127,7 @@ bool ScriptableDslHelper::OnGetToken([[maybe_unused]] const DslParser::DslAction
         char* oldLastTok = tokenApi.getLastToken();
         int index;
         char nc = tokenApi.peekNextValidChar(0, index);
-        if (nc == ';')
+        if (nc == ',' || nc == ';')
             return false;
         tokenApi.setCurToken(const_cast<char*>("`"));
         tokenApi.setLastToken(oldCurTok);

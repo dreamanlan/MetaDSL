@@ -1,3 +1,5 @@
+//pg -C++ -Ps=65535 simple.txt
+
 PROGRAM:
 	STATEMENTS
 
@@ -7,8 +9,8 @@ STATEMENTS:
 STATEMENT:
 	OPERATOR_STATEMENT_DESC_0 _action_endStatement
 
-//OPERATOR_STATEMENT_0:
-//	OPERATOR_STATEMENT_DESC_0 _action_endStatement
+OPERATOR_STATEMENT_0:
+	OPERATOR_STATEMENT_DESC_0 _action_endStatement
 
 OPERATOR_STATEMENT_1:
 	OPERATOR_STATEMENT_DESC_1 _action_endStatement
@@ -58,9 +60,9 @@ OPERATOR_STATEMENT_14:
 //OPERATOR_STATEMENT_15:
 //	OPERATOR_STATEMENT_DESC_15 _action_endStatement
 
-//Left Associative
+//Right Associative
 OPERATOR_STATEMENT_DESC_0:
-	OPERATOR_STATEMENT_DESC_1 { OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_1 }
+	OPERATOR_STATEMENT_DESC_1 [ OP_TOKEN_0 _action_pushId _action_buildOperator OPERATOR_STATEMENT_0 ]
 
 //Right Associative (assignment, condition expression, <-)
 OPERATOR_STATEMENT_DESC_1:
