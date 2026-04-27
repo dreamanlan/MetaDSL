@@ -20,7 +20,7 @@ short SlkError::mismatch(short terminal, short token, SlkToken& tokens)
     if (mDslFile) {
         char* p = mDslFile->NewErrorInfo();
         if (p)
-            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] expecting '%s' but found '%s' \n",
+            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] expecting '%s' but found '%s'",
                 tokens.getLineNumber(),
                 tokens.getLastToken(),
                 tokens.getCurToken(),
@@ -35,7 +35,7 @@ short SlkError::no_entry([[maybe_unused]] short productionNumber, [[maybe_unused
     if (mDslFile) {
         char* p = mDslFile->NewErrorInfo();
         if (p)
-            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] syntax error: skipping input '%s' \n",
+            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] syntax error: skipping input '%s'",
                 tokens.getLineNumber(),
                 tokens.getLastToken(),
                 tokens.getCurToken(),
@@ -54,7 +54,7 @@ void SlkError::input_left(SlkToken& tokens)
     if (mDslFile) {
         char* p = mDslFile->NewErrorInfo();
         if (p)
-            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] syntax completion, skipping left . \n",
+            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] syntax completion, skipping left",
                 tokens.getLineNumber(),
                 tokens.getLastToken(),
                 tokens.getCurToken());
@@ -66,7 +66,7 @@ void SlkError::message(const char* msg, SlkToken& tokens)
     if (mDslFile) {
         char* p = mDslFile->NewErrorInfo();
         if (p)
-            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] %s . \n",
+            tsnprintf(p, mDslFile->GetSingleErrorInfoCapacity(), "[line:%d last:%s cur:%s] %s",
                 tokens.getLineNumber(),
                 tokens.getLastToken(),
                 tokens.getCurToken(),

@@ -28,7 +28,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     DslParser::DslFile::Mac2Unix(pbuf, static_cast<int>(size));
     fclose(fp);
     char* p = pbuf;
-    
+
     FILE* fp2 = fopen("test.h", "rb");
     size_t size2 = fread(pbuf2, 1, 1024 * 1024, fp2);
     pbuf2[size2] = 0;
@@ -48,7 +48,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
         dataFile.OnGetToken.attach([]([[maybe_unused]] const DslParser::DslActionApi& actionApi, const DslParser::DslTokenApi& tokenApi, char*& tok, [[maybe_unused]] short& val, int& line) {
             if (0 == strcmp(tok, "return")) {
                 char* oldCurTok = tokenApi.getCurToken();
-                char* oldLastTok = tokenApi.getLastToken(); 
+                char* oldLastTok = tokenApi.getLastToken();
                 int index;
                 char nc = tokenApi.peekNextValidChar(0, index);
                 if (nc == '<' && tokenApi.peekChar(index + 1) == '-')
@@ -59,7 +59,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
                 tokenApi.setCurToken(oldCurTok);
                 tokenApi.setLastToken(oldLastTok);
             }
-            return true; 
+            return true;
             });
         dataFile.OnBeforeAddFunction.attach([](auto& api, auto* sd) {
             (void)api;
@@ -151,16 +151,21 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
         parsedFile.Parse(pScp);
         if (parsedFile.HasError()) {
             for (int i = 0; i < parsedFile.GetErrorNum(); ++i) {
-        printf("[Brace Syntax]: %s", Utility::AutoToLocal(parsedFile.GetErrorInfo(i)).c_str());
+                const char* pErr = parsedFile.GetErrorInfo(i);
+                if (pErr) {
+                    auto errStr = Utility::AutoToLocal(pErr);
+                    Brace::TranslateBraceDslError(errStr);
+                    printf("[Brace Syntax]: %s\n", errStr.c_str());
+                }
             }
         }
         else {
             DslData::DslFile dslFile;
             Dsl::Transform(parsedFile, dslFile);
             Brace::BraceScript script;
-        script.OnInfo = [](auto str) { printf("[Brace Output]: %s\n", Utility::AutoToLocal(str).c_str()); };
-        script.OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", Utility::AutoToLocal(str).c_str()); };
-        script.OnError = [](auto str) { printf("[Brace Error]: %s\n", Utility::AutoToLocal(str).c_str()); };
+            script.OnInfo = [](auto str) { printf("[Brace Output]: %s\n", Utility::AutoToLocal(str).c_str()); };
+            script.OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", Utility::AutoToLocal(str).c_str()); };
+            script.OnError = [](auto str) { printf("[Brace Error]: %s\n", Utility::AutoToLocal(str).c_str()); };
             script.LoadScript(dslFile);
             script.Run();
 
@@ -197,7 +202,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
         Tick();
         ///*
         for (int i = 0; i < 100; ++i) {
-            printf("Tick %d", i);
+            printf("Tick %d\n", i);
             Tick();
 #ifdef __LINUX__
             ::usleep(100000);
@@ -250,14 +255,14 @@ protected:
                 if (v <= 60000) {
                     auto cv = sv;
                     while (std::chrono::duration_cast<std::chrono::milliseconds>(cv - sv).count() < static_cast<long long>(v)) {
-                        
+
                         //CoroutineWithLongJmp::Detach();
                         //CoroutineWithShareStack::Detach();
                         CoroutineWithBoostContext::TryYield();
 
                         cv = std::chrono::system_clock::now();
                     }
-                    printf("wait finish.");
+                    printf("wait finish.\n");
                 }
             }
         }
@@ -298,8 +303,9 @@ public:
         m_ScriptTxt = txt;
     }
 public:
-    ScriptEnv():m_pBuffer(nullptr), m_pBraceScript(nullptr), m_pDslFile(nullptr), m_pParsedFile(nullptr)
-    {}
+    ScriptEnv() :m_pBuffer(nullptr), m_pBraceScript(nullptr), m_pDslFile(nullptr), m_pParsedFile(nullptr)
+    {
+    }
     ~ScriptEnv()
     {
         if (nullptr != m_pBraceScript) {
@@ -320,10 +326,16 @@ public:
     {
         m_pBuffer->Reset();
         m_pParsedFile->Reset();
+        ScriptableDslHelper::ForBraceScript().SetCallbacks(*m_pParsedFile);
         m_pParsedFile->Parse(m_ScriptTxt.c_str());
         if (m_pParsedFile->HasError()) {
             for (int i = 0; i < m_pParsedFile->GetErrorNum(); ++i) {
-        printf("[Brace Syntax]: %s", Utility::AutoToLocal(m_pParsedFile->GetErrorInfo(i)).c_str());
+                const char* pErr = m_pParsedFile->GetErrorInfo(i); 
+                if (pErr) {
+                    auto errStr = Utility::AutoToLocal(pErr);
+                    Brace::TranslateBraceDslError(errStr);
+                    printf("[Brace Syntax]: %s\n", errStr.c_str());
+                }
             }
         }
         else {
@@ -332,9 +344,9 @@ public:
             m_pBraceScript->Reset();
             m_pBraceScript->RegisterApi("wait", "wait api", new Brace::BraceApiFactory<WaitExp>());
             m_pBraceScript->RegisterApi("time", "time api", new Brace::BraceApiFactory<TimeExp>());
-        m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", Utility::AutoToLocal(str).c_str()); };
-        m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", Utility::AutoToLocal(str).c_str()); };
-        m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", Utility::AutoToLocal(str).c_str()); };
+            m_pBraceScript->OnInfo = [](auto str) { printf("[Brace Output]: %s\n", Utility::AutoToLocal(str).c_str()); };
+            m_pBraceScript->OnWarn = [](auto str) { printf("[Brace Warn]: %s\n", Utility::AutoToLocal(str).c_str()); };
+            m_pBraceScript->OnError = [](auto str) { printf("[Brace Error]: %s\n", Utility::AutoToLocal(str).c_str()); };
             m_pBraceScript->LoadScript(*m_pDslFile);
             m_pBraceScript->Run();
         }
@@ -352,7 +364,8 @@ class LongJmpRoutine1 : public CoroutineWithLongJmp::Coroutine
 {
 public:
     LongJmpRoutine1(int bufferSize) :CoroutineWithLongJmp::Coroutine(bufferSize)
-    {}
+    {
+    }
 protected:
     virtual void Routine() override
     {
@@ -362,8 +375,9 @@ protected:
 class LongJmpRoutine2 : public CoroutineWithShareStack::Coroutine
 {
 public:
-    LongJmpRoutine2(int bufferSize):CoroutineWithShareStack::Coroutine(bufferSize)
-    {}
+    LongJmpRoutine2(int bufferSize) :CoroutineWithShareStack::Coroutine(bufferSize)
+    {
+    }
 protected:
     virtual void Routine() override
     {
@@ -376,8 +390,9 @@ static LongJmpRoutine2* g_LongJmpRoutine2 = nullptr;
 class BoostContextRoutine : public CoroutineWithBoostContext::Coroutine
 {
 public:
-    BoostContextRoutine(int stackSize):CoroutineWithBoostContext::Coroutine(stackSize)
-    {}
+    BoostContextRoutine(int stackSize) :CoroutineWithBoostContext::Coroutine(stackSize)
+    {
+    }
 protected:
     virtual void Routine()override
     {
@@ -397,11 +412,11 @@ void InitScript(DslParser::IDslStringAndObjectBuffer* pBuffer, const std::string
     }
     if (nullptr == g_LongJmpRoutine2) {
         //CoroutineWithShareStack::TryInit(1024 * 1024);
-        g_LongJmpRoutine2 = new LongJmpRoutine2(1024*1024);
+        g_LongJmpRoutine2 = new LongJmpRoutine2(1024 * 1024);
     }
     if (nullptr == g_BoostContextRoutine) {
         CoroutineWithBoostContext::TryInit();
-        g_BoostContextRoutine = new BoostContextRoutine(1024*1024);
+        g_BoostContextRoutine = new BoostContextRoutine(1024 * 1024);
     }
     g_ScriptEnv->SetScript(pBuffer, txt);
 }
