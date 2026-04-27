@@ -920,4 +920,6 @@ namespace Brace
         AbstractBraceApi* m_FailbackApi;
         std::shared_ptr<void> m_ContextObj;
     };
+
+    void TranslateBraceDslError(std::string& err);
 }

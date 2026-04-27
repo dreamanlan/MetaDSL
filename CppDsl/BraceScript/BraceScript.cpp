@@ -2912,22 +2912,45 @@ namespace Brace
                                 newCall->GetName().SetLine(callData.GetLine());
                                 return Load(*newCall, resultInfo);
                             }
+                            else {
+                                //error
+                                std::stringstream ss;
+                                ss << "BraceScript error, compound statements within an expression cannot be abbreviated to the brace-less form, return statements must be enclosed in parentheses, " << data.GetId() << " line " << data.GetLine();
+                                LogError(ss.str());
+                                return executor;
+                            }
                         }
                         else if (param0->GetSyntaxType() == DslData::ISyntaxComponent::TYPE_FUNCTION) {
                             auto&& fd = static_cast<DslData::FunctionData&>(*param0);
-                            //if(cond)`exp; => if(cond){exp;}
-                            //while(cond)`exp; => while(cond){exp;}
-                            //loop(ct)`exp; => loop(ct){exp;}
-                            //looplist(list)`exp; => loop(list){exp;}
-                            //foreach(v1,v2,...)`exp; => foreach(v1,v2,...){exp;}
-                            auto* newCall = new DslData::FunctionData();
-                            AddSyntaxComponent(newCall);
-                            newCall->GetName().SetFunctionCopyFrom(fd);
-                            newCall->SetStatementParamClass();
-                            newCall->AddParamCopyFrom(*param1);
+                            if (fd.IsOperatorParamClass() || fd.IsTernaryOperatorParamClass()) {
+                                //error
+                                std::stringstream ss;
+                                ss << "BraceScript error, compound statements within an expression cannot be abbreviated to the brace-less form, return statements must be enclosed in parentheses, " << data.GetId() << " line " << data.GetLine();
+                                LogError(ss.str());
+                                return executor;
+                            }
+                            else {
+                                //if(cond)`exp; => if(cond){exp;}
+                                //while(cond)`exp; => while(cond){exp;}
+                                //loop(ct)`exp; => loop(ct){exp;}
+                                //looplist(list)`exp; => loop(list){exp;}
+                                //foreach(v1,v2,...)`exp; => foreach(v1,v2,...){exp;}
+                                auto* newCall = new DslData::FunctionData();
+                                AddSyntaxComponent(newCall);
+                                newCall->GetName().SetFunctionCopyFrom(fd);
+                                newCall->SetStatementParamClass();
+                                newCall->AddParamCopyFrom(*param1);
 
-                            newCall->GetName().SetLine(callData.GetLine());
-                            return Load(*newCall, resultInfo);
+                                newCall->GetName().SetLine(callData.GetLine());
+                                return Load(*newCall, resultInfo);
+                            }
+                        }
+                        else {
+                            //error
+                            std::stringstream ss;
+                            ss << "BraceScript error, compound statements within an expression cannot be abbreviated to the brace-less form, return statements must be enclosed in parentheses, " << data.GetId() << " line " << data.GetLine();
+                            LogError(ss.str());
+                            return executor;
                         }
                     }
                 }
@@ -3450,5 +3473,14 @@ namespace Brace
             return INVALID_INDEX;
         auto* curFunc = m_GlobalFunc;
         return static_cast<int>(curFunc->Codes.size());
+    }
+
+    void TranslateBraceDslError(std::string& err)
+    {
+        if (err.find("OP_TOKEN_0") != std::string::npos) {
+            std::stringstream ss;
+            ss << "BraceScript error, compound statements within an expression cannot be abbreviated to the brace-less form, return statements must be enclosed in parentheses (" << err << ")";
+            err = ss.str();
+        }
     }
 }
