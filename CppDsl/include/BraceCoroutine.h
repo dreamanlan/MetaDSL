@@ -35,4 +35,6 @@ namespace CoroutineWithBoostContext
     extern void FreeStackMemory();
     extern void CleanupPool();
     extern std::size_t StatMemory(std::size_t& count, std::size_t& alloced_size);
+
+    extern void TLSRelease();
 }

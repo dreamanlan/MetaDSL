@@ -81,29 +81,29 @@ namespace CoroutineWithShareStack
         }
     };
 
-    static Task main_task; // the main task
-    static jmp_buf tmp_jmpb; // temporary jump buffer
-    static CoroutineMain g_Main;
-    static Coroutine* g_Current = nullptr;
+    static Task s_main_task; // the main task
+    static jmp_buf s_tmp_jmpb; // temporary jump buffer
+    static CoroutineMain s_Main;
+    static Coroutine* s_pCurrent = nullptr;
 
     void Coroutine::InitSequencing(int main_StackSize)
     {
         Task tmp{};
         tmp.size = INT_MAX;
-        g_Main.m_pData->StackSize = main_StackSize;
+        s_Main.m_pData->StackSize = main_StackSize;
         tmp.next = 0;
-        g_Main.m_pData->MyTask = &tmp;
-        main_task.pred = main_task.suc = &main_task;
-        tmp.MyCoroutine = g_Current = &g_Main;
+        s_Main.m_pData->MyTask = &tmp;
+        s_main_task.pred = s_main_task.suc = &s_main_task;
+        tmp.MyCoroutine = s_pCurrent = &s_Main;
         if (!setjmp(tmp.jmpb))
-            g_Main.Eat();
-        tmp.pred = main_task.pred;
-        tmp.suc = main_task.suc;
-        main_task = tmp;
-        main_task.next->prev = &main_task;
-        g_Main.m_pData->MyTask = &main_task;
-        main_task.used = 1;
-        g_Main.m_pData->Ready = 0;
+            s_Main.Eat();
+        tmp.pred = s_main_task.pred;
+        tmp.suc = s_main_task.suc;
+        s_main_task = tmp;
+        s_main_task.next->prev = &s_main_task;
+        s_Main.m_pData->MyTask = &s_main_task;
+        s_main_task.used = 1;
+        s_Main.m_pData->Ready = 0;
     }
 
     Coroutine::Coroutine(int stackSize)
@@ -127,7 +127,7 @@ namespace CoroutineWithShareStack
     }
     void Coroutine::Reset()
     {
-        if (this == g_Current) {
+        if (this == s_pCurrent) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
         }
@@ -158,25 +158,25 @@ namespace CoroutineWithShareStack
     }
     inline void Coroutine::Enter()
     {
-        if (nullptr == g_Current) {
+        if (nullptr == s_pCurrent) {
             Error("InitSequencing has not been called");
             return;
         }
         if (m_pData->Ready) { // find free block
-            for (m_pData->MyTask = main_task.suc;
-                m_pData->MyTask != &main_task;
+            for (m_pData->MyTask = s_main_task.suc;
+                m_pData->MyTask != &s_main_task;
                 m_pData->MyTask = m_pData->MyTask->suc)
                 if (m_pData->MyTask->size >= m_pData->StackSize + MIN_STACK_SIZE)
                     break;
-            if (m_pData->MyTask == &main_task)
+            if (m_pData->MyTask == &s_main_task)
                 Error("No more space available\n");
             m_pData->MyTask->MyCoroutine = this;
-            if (!setjmp(tmp_jmpb))
+            if (!setjmp(s_tmp_jmpb))
                 longjmp(m_pData->MyTask->jmpb, 1);
             m_pData->Ready = 0;
         }
-        if (!setjmp(g_Current->m_pData->MyTask->jmpb)) { // activate control block
-            g_Current = this;
+        if (!setjmp(s_pCurrent->m_pData->MyTask->jmpb)) { // activate control block
+            s_pCurrent = this;
             longjmp(m_pData->MyTask->jmpb, 1);
         }
     }
@@ -191,9 +191,9 @@ namespace CoroutineWithShareStack
         t.size = m_pData->MyTask->size - d; //set size
         m_pData->MyTask->size = d;
         t.used = 0;
-        t.suc = main_task.suc;
-        t.pred = &main_task;
-        t.suc->pred = main_task.suc = &t;
+        t.suc = s_main_task.suc;
+        t.pred = &s_main_task;
+        t.suc->pred = s_main_task.suc = &t;
         if (m_pData->MyTask->next != &t) {
             t.next = m_pData->MyTask->next; // set link pointers
             m_pData->MyTask->next = &t;
@@ -213,7 +213,7 @@ namespace CoroutineWithShareStack
             t.pred->suc = t.suc;
             t.suc->pred = t.pred;
             if (!setjmp(t.jmpb)) // wait
-                longjmp(tmp_jmpb, 1);
+                longjmp(s_tmp_jmpb, 1);
             t.MyCoroutine->Routine(); // execute Routine
             t.MyCoroutine->m_pData->Terminated = 1;
             t.used = 0; // mark as free
@@ -234,9 +234,9 @@ namespace CoroutineWithShareStack
                     t.next->prev = p;
             }
             else {
-                t.suc = main_task.suc;
-                t.pred = &main_task;
-                t.suc->pred = main_task.suc = &t;
+                t.suc = s_main_task.suc;
+                t.pred = &s_main_task;
+                t.suc->pred = s_main_task.suc = &t;
             }
             if (!setjmp(t.jmpb)) { // save state
                 Detach();
@@ -250,7 +250,7 @@ namespace CoroutineWithShareStack
             Error("Attempt to Resume a non-existing Coroutine");
             return;
         }
-        if (next == g_Current) {
+        if (next == s_pCurrent) {
             return;
         }
         if (next->IsTerminated()) {
@@ -280,12 +280,12 @@ namespace CoroutineWithShareStack
             Error("Attempt to Call an attached Coroutine");
             return;
         }
-        g_Current->m_pData->Callee = next;
-        next->m_pData->Caller = g_Current;
+        s_pCurrent->m_pData->Callee = next;
+        next->m_pData->Caller = s_pCurrent;
         while (next->m_pData->Callee) {
             next = next->m_pData->Callee;
         }
-        if (next == g_Current) {
+        if (next == s_pCurrent) {
             Error("Attempt to Call an operating Coroutine");
             return;
         }
@@ -293,12 +293,12 @@ namespace CoroutineWithShareStack
     }
     void Detach()
     {
-        Coroutine* next = g_Current->m_pData->Caller;
+        Coroutine* next = s_pCurrent->m_pData->Caller;
         if (next) {
-            g_Current->m_pData->Caller = next->m_pData->Callee = nullptr;
+            s_pCurrent->m_pData->Caller = next->m_pData->Callee = nullptr;
         }
         else {
-            next = &g_Main;
+            next = &s_Main;
             while (next->m_pData->Callee) {
                 next = next->m_pData->Callee;
             }
@@ -307,21 +307,21 @@ namespace CoroutineWithShareStack
     }
     bool TryInit(int main_StackSize)
     {
-        if (g_Main.m_pData->StackSize == 0) {
-            g_Main.InitSequencing(main_StackSize);
+        if (s_Main.m_pData->StackSize == 0) {
+            s_Main.InitSequencing(main_StackSize);
         }
-        return !g_Main.IsTerminated();
+        return !s_Main.IsTerminated();
     }
     void TryRelease()
     {
-        g_Main.Release();
+        s_Main.Release();
     }
     Coroutine* CurrentCoroutine()
     {
-        return g_Current;
+        return s_pCurrent;
     }
     Coroutine* MainCoroutine()
     {
-        return &g_Main;
+        return &s_Main;
     }
 }

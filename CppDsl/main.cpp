@@ -222,6 +222,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     delete[] pbuf2;
     //DslStringAndObjectBuffer must be released after all DslFiles are released.
     delete pDslBuffer;
+    CoroutineWithBoostContext::TLSRelease();
     return 0;
 }
 

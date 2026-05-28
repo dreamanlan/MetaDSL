@@ -100,20 +100,46 @@ namespace CoroutineWithBoostContext
         }
     };
 
-    thread_local static my_fixedsize_stack_alloc_pool g_fixedsize_stack_alloc_pool{};
-    thread_local static std::queue<fiber> g_fiber_queue{};
+    thread_local static my_fixedsize_stack_alloc_pool* tls_p_fixedsize_stack_alloc_pool = nullptr;
+    thread_local static std::queue<fiber>* tls_p_fiber_queue = nullptr;
+
+    static my_fixedsize_stack_alloc_pool& fixedsize_stack_alloc_pool()
+    {
+        if (!tls_p_fixedsize_stack_alloc_pool) {
+            tls_p_fixedsize_stack_alloc_pool = new my_fixedsize_stack_alloc_pool();
+        }
+        return *tls_p_fixedsize_stack_alloc_pool;
+    }
+    static std::queue<fiber>& fiber_queue()
+    {
+        if (!tls_p_fiber_queue) {
+            tls_p_fiber_queue = new std::queue<fiber>();
+        }
+        return *tls_p_fiber_queue;
+    }
+    void TLSRelease()
+    {
+        if (tls_p_fixedsize_stack_alloc_pool) {
+            delete tls_p_fixedsize_stack_alloc_pool;
+            tls_p_fixedsize_stack_alloc_pool = nullptr;
+        }
+        if (tls_p_fiber_queue) {
+            delete tls_p_fiber_queue;
+            tls_p_fiber_queue = nullptr;
+        }
+    }
 
     void FreeStackMemory()
     {
-        g_fixedsize_stack_alloc_pool.free_pooled_stacks();
+        fixedsize_stack_alloc_pool().free_pooled_stacks();
     }
     void CleanupPool()
     {
-        g_fixedsize_stack_alloc_pool.cleanup_pool();
+        fixedsize_stack_alloc_pool().cleanup_pool();
     }
     std::size_t StatMemory(std::size_t& count, std::size_t& alloced_size)
     {
-        return g_fixedsize_stack_alloc_pool.stat_memory(count, alloced_size);
+        return fixedsize_stack_alloc_pool().stat_memory(count, alloced_size);
     }
 
     struct my_fixedsize_stack
@@ -126,11 +152,11 @@ namespace CoroutineWithBoostContext
         }
         ctx::stack_context allocate()
         {
-            return g_fixedsize_stack_alloc_pool.alloc_stack(size_);
+            return fixedsize_stack_alloc_pool().alloc_stack(size_);
         }
         void deallocate(ctx::stack_context& sctx) BOOST_NOEXCEPT_OR_NOTHROW
         {
-            g_fixedsize_stack_alloc_pool.recycle_stack(sctx);
+            fixedsize_stack_alloc_pool().recycle_stack(sctx);
         }
     private:
         std::size_t size_;
@@ -142,7 +168,7 @@ namespace CoroutineWithBoostContext
         //exit(0);
     }
 
-    thread_local static Coroutine* g_Current = nullptr;
+    thread_local static Coroutine* tls_pCurrent = nullptr;
 
     struct CoroutineData final
     {
@@ -183,10 +209,10 @@ namespace CoroutineWithBoostContext
             if (ResumeFrom) {
                 return std::move(ResumeFrom);
             }
-            else if (g_fiber_queue.size() > 0) {
+            else if (fiber_queue().size() > 0) {
                 fiber tmp;
-                std::swap(tmp, g_fiber_queue.front());
-                g_fiber_queue.pop();
+                std::swap(tmp, fiber_queue().front());
+                fiber_queue().pop();
                 return std::move(tmp);
             }
             else {
@@ -201,15 +227,23 @@ namespace CoroutineWithBoostContext
     public:
         CoroutineMain() :Coroutine(1024*1024)
         {
-            g_Current = this;
+            tls_pCurrent = this;
         }
         virtual void Routine() override
         {
         }
     };
 
-    thread_local static CoroutineMain g_Main;
-    static std::string g_EmptyId;
+    thread_local static CoroutineMain* tls_pMain = nullptr;
+    static std::string s_EmptyId;
+
+    static CoroutineMain& MainRef()
+    {
+        if (!tls_pMain) {
+            tls_pMain = new CoroutineMain();
+        }
+        return *tls_pMain;
+    }
 
     Coroutine::Coroutine(int stackSize) :m_StackSize(stackSize), m_pData(nullptr)
     {
@@ -234,7 +268,7 @@ namespace CoroutineWithBoostContext
     }
     void Coroutine::Reset()
     {
-        if (this == g_Current) {
+        if (this == tls_pCurrent) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
         }
@@ -246,14 +280,14 @@ namespace CoroutineWithBoostContext
         if (IsTerminated()) {
             Reset();
 
-            Coroutine* pCurrent = g_Current;
-            g_Current = this;
+            Coroutine* pCurrent = tls_pCurrent;
+            tls_pCurrent = this;
             //fiber.resume return suspended fiber, null on exit, or itself or other suspended fiber.
             auto&& suspendedFiber = std::move(m_pData->StartupFiber).resume();
             if (suspendedFiber) {
-                g_fiber_queue.push(std::move(suspendedFiber));
+                fiber_queue().push(std::move(suspendedFiber));
             }
-            g_Current = pCurrent;
+            tls_pCurrent = pCurrent;
             ret = true;
         }
         return false;
@@ -262,42 +296,42 @@ namespace CoroutineWithBoostContext
     bool TryYield()
     {
         bool ret = false;
-        Coroutine* pCurrent = g_Current;
+        Coroutine* pCurrent = tls_pCurrent;
         if (pCurrent->m_pData->ResumeFrom) {
             auto&& suspendedFiber = std::move(pCurrent->m_pData->ResumeFrom).resume();
             if (suspendedFiber) {
-                g_fiber_queue.push(std::move(suspendedFiber));
+                fiber_queue().push(std::move(suspendedFiber));
             }
-            g_Current = pCurrent;
+            tls_pCurrent = pCurrent;
             ret = true;
         }
-        else if (g_fiber_queue.size() > 0) {
+        else if (fiber_queue().size() > 0) {
             fiber tmp;
-            std::swap(tmp, g_fiber_queue.front());
-            g_fiber_queue.pop();
+            std::swap(tmp, fiber_queue().front());
+            fiber_queue().pop();
             auto&& suspendedFiber = std::move(tmp).resume();
             if (suspendedFiber) {
-                g_fiber_queue.push(std::move(suspendedFiber));
+                fiber_queue().push(std::move(suspendedFiber));
             }
-            g_Current = pCurrent;
+            tls_pCurrent = pCurrent;
             ret = true;
         }
         return ret;
     }
     bool TryInit()
     {
-        return !g_Main.IsTerminated();
+        return !MainRef().IsTerminated();
     }
     void TryRelease()
     {
-        g_Main.Release();
+        MainRef().Release();
     }
     Coroutine* CurrentCoroutine()
     {
-        return g_Current;
+        return tls_pCurrent;
     }
     Coroutine* MainCoroutine()
     {
-        return &g_Main;
+        return tls_pMain;
     }
 }

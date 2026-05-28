@@ -37,8 +37,8 @@ namespace CoroutineWithLongJmp
         //exit(0);
     }
 
-    static char* g_StackBottom = nullptr;
-    static Coroutine* g_Current = nullptr;
+    static char* s_pStackBottom = nullptr;
+    static Coroutine* s_pCurrent = nullptr;
 
     struct CoroutineData final
     {
@@ -68,20 +68,20 @@ namespace CoroutineWithLongJmp
     public:
         CoroutineMain() :Coroutine(0)
         {
-            g_Current = this;
+            s_pCurrent = this;
         }
         virtual void Routine() override
         {
         }
     };
 
-    static CoroutineMain g_Main;
+    static CoroutineMain s_Main;
 
     Coroutine::Coroutine(int bufferSize)
     {
         char x{};
-        if (g_StackBottom)
-            if (&x < g_StackBottom ? &x <= (char*)this && (char*)this <= g_StackBottom : &x >= (char*)this && (char*)this >= g_StackBottom)
+        if (s_pStackBottom)
+            if (&x < s_pStackBottom ? &x <= (char*)this && (char*)this <= s_pStackBottom : &x >= (char*)this && (char*)this >= s_pStackBottom)
                 Error("Attempt to allocate a Coroutine on the stack");
         m_pData = new CoroutineData(bufferSize);
     }
@@ -102,7 +102,7 @@ namespace CoroutineWithLongJmp
     }
     void Coroutine::Reset()
     {
-        if (this == g_Current) {
+        if (this == s_pCurrent) {
             Error("Attempt to reset current coroutine, you must call Reset in other coroutine or main");
             return;
         }
@@ -136,21 +136,21 @@ namespace CoroutineWithLongJmp
         char x{};
         if (&x >= m_pData->Low && &x <= m_pData->High)
             RestoreStack();
-        g_Current = this;
+        s_pCurrent = this;
         memcpy(m_pData->Low, m_pData->StackBuffer, m_pData->High - m_pData->Low);
-        longjmp(g_Current->m_pData->Environment, 1);
+        longjmp(s_pCurrent->m_pData->Environment, 1);
     }
     inline void Coroutine::StoreStack()
     {
         if (nullptr == m_pData->Low) {
-            if (nullptr == g_StackBottom) {
+            if (nullptr == s_pStackBottom) {
                 Error("StackBottom is not initialized");
                 return;
             }
-            m_pData->Low = m_pData->High = g_StackBottom;
+            m_pData->Low = m_pData->High = s_pStackBottom;
         }
         char x{};
-        if (&x > g_StackBottom)
+        if (&x > s_pStackBottom)
             m_pData->High = &x;
         else
             m_pData->Low = &x;
@@ -175,17 +175,17 @@ namespace CoroutineWithLongJmp
     }
     inline void Coroutine::Enter()
     {
-        if (!Terminated(g_Current)) {
-            g_Current->StoreStack();
-            if (setjmp(g_Current->m_pData->Environment))
+        if (!Terminated(s_pCurrent)) {
+            s_pCurrent->StoreStack();
+            if (setjmp(s_pCurrent->m_pData->Environment))
                 return;
         }
-        g_Current = this;
+        s_pCurrent = this;
         if (!m_pData->StackBuffer) {
             Routine();
-            delete g_Current->m_pData->StackBuffer;
-            g_Current->m_pData->StackBuffer = nullptr;
-            g_Current->m_pData->IsTerminated = true;
+            delete s_pCurrent->m_pData->StackBuffer;
+            s_pCurrent->m_pData->StackBuffer = nullptr;
+            s_pCurrent->m_pData->IsTerminated = true;
             Detach();
         }
         RestoreStack();
@@ -197,7 +197,7 @@ namespace CoroutineWithLongJmp
             Error("Attempt to Resume a non-existing Coroutine");
             return;
         }
-        if (next == g_Current) {
+        if (next == s_pCurrent) {
             return;
         }
         if (Terminated(next)) {
@@ -227,12 +227,12 @@ namespace CoroutineWithLongJmp
             Error("Attempt to Call an attached Coroutine");
             return;
         }
-        g_Current->m_pData->Callee = next;
-        next->m_pData->Caller = g_Current;
+        s_pCurrent->m_pData->Callee = next;
+        next->m_pData->Caller = s_pCurrent;
         while (next->m_pData->Callee) {
             next = next->m_pData->Callee;
         }
-        if (next == g_Current) {
+        if (next == s_pCurrent) {
             Error("Attempt to Call an operating Coroutine");
             return;
         }
@@ -240,12 +240,12 @@ namespace CoroutineWithLongJmp
     }
     void Detach()
     {
-        Coroutine* next = g_Current->m_pData->Caller;
+        Coroutine* next = s_pCurrent->m_pData->Caller;
         if (next) {
-            g_Current->m_pData->Caller = next->m_pData->Callee = nullptr;
+            s_pCurrent->m_pData->Caller = next->m_pData->Callee = nullptr;
         }
         else {
-            next = &g_Main;
+            next = &s_Main;
             while (next->m_pData->Callee) {
                 next = next->m_pData->Callee;
             }
@@ -254,22 +254,22 @@ namespace CoroutineWithLongJmp
     }
     bool TryInit()
     {
-        if (nullptr == g_StackBottom) {
+        if (nullptr == s_pStackBottom) {
             char _dummy{};
-            g_StackBottom = &_dummy;
+            s_pStackBottom = &_dummy;
         }
-        return !g_Main.IsTerminated();
+        return !s_Main.IsTerminated();
     }
     void TryRelease()
     {
-        g_Main.Release();
+        s_Main.Release();
     }
     Coroutine* CurrentCoroutine()
     { 
-        return g_Current; 
+        return s_pCurrent; 
     }
     Coroutine* MainCoroutine() 
     { 
-        return &g_Main; 
+        return &s_Main; 
     }
 }
