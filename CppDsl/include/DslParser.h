@@ -10,6 +10,7 @@ calc.h
 #include "BaseType.h"
 #include "Delegation.h"
 #include "DslCommon.h"
+#include <cstddef>
 #include <cstdint>
 #include <new>
 #include <string>
@@ -1221,10 +1222,9 @@ namespace DslParser
         virtual SyntaxComponentCommentsInfo* NewSyntaxComponentCommentsInfo() override
         {
             size_t size = sizeof(SyntaxComponentCommentsInfo);
-            if (GetUnusedObjectLength() < static_cast<int>(size))
-                return 0;
-            m_pUnusedObjectPtr -= size;
-            void* pMemory = m_pUnusedObjectPtr;
+            void* pMemory = AllocateAlignedMemory(size, alignof(SyntaxComponentCommentsInfo));
+            if (!pMemory)
+                return nullptr;
             SyntaxComponentCommentsInfo* p = new(pMemory) SyntaxComponentCommentsInfo();
             ++m_SyntaxComponentCommentsInfoNum;
             return p;
@@ -1232,10 +1232,9 @@ namespace DslParser
         virtual FunctionCommentsInfo* NewFunctionCommentsInfo() override
         {
             size_t size = sizeof(FunctionCommentsInfo);
-            if (GetUnusedObjectLength() < static_cast<int>(size))
-                return 0;
-            m_pUnusedObjectPtr -= size;
-            void* pMemory = m_pUnusedObjectPtr;
+            void* pMemory = AllocateAlignedMemory(size, alignof(FunctionCommentsInfo));
+            if (!pMemory)
+                return nullptr;
             FunctionCommentsInfo* p = new(pMemory) FunctionCommentsInfo();
             ++m_FunctionCommentsInfoNum;
             return p;
@@ -1244,10 +1243,9 @@ namespace DslParser
         virtual ValueData* AddNewValueComponent() override
         {
             size_t size = sizeof(ValueData);
-            if (GetUnusedObjectLength() < static_cast<int>(size))
-                return 0;
-            m_pUnusedObjectPtr -= size;
-            void* pMemory = m_pUnusedObjectPtr;
+            void* pMemory = AllocateAlignedMemory(size, alignof(ValueData));
+            if (!pMemory)
+                return nullptr;
             ValueData* p = new(pMemory) ValueData();
             AddSyntaxComponent(p);
             return p;
@@ -1255,10 +1253,9 @@ namespace DslParser
         virtual FunctionData* AddNewFunctionComponent() override
         {
             size_t size = sizeof(FunctionData);
-            if (GetUnusedObjectLength() < static_cast<int>(size))
-                return 0;
-            m_pUnusedObjectPtr -= size;
-            void* pMemory = m_pUnusedObjectPtr;
+            void* pMemory = AllocateAlignedMemory(size, alignof(FunctionData));
+            if (!pMemory)
+                return nullptr;
             FunctionData* p = new(pMemory) FunctionData(*this);
             AddSyntaxComponent(p);
             return p;
@@ -1266,10 +1263,9 @@ namespace DslParser
         virtual StatementData* AddNewStatementComponent() override
         {
             size_t size = sizeof(StatementData);
-            if (GetUnusedObjectLength() < static_cast<int>(size))
-                return 0;
-            m_pUnusedObjectPtr -= size;
-            void* pMemory = m_pUnusedObjectPtr;
+            void* pMemory = AllocateAlignedMemory(size, alignof(StatementData));
+            if (!pMemory)
+                return nullptr;
             StatementData* p = new(pMemory) StatementData(*this);
             AddSyntaxComponent(p);
             return p;
@@ -1277,7 +1273,7 @@ namespace DslParser
         virtual int GetUnusedObjectLength()const override
         {
             MyAssert(m_pUnusedStringPtr);
-            MyAssert(m_pUnusedObjectRef);
+            MyAssert(m_pUnusedObjectPtr);
             return static_cast<int>(m_pUnusedObjectPtr - m_pUnusedStringPtr);
         }
     public:
@@ -1421,6 +1417,25 @@ namespace DslParser
             m_FreedFreeLinkHeader = 0;
         }
     private:
+        // Alignment helper function to ensure proper memory alignment for objects
+        void* AllocateAlignedMemory(size_t size, size_t alignment = alignof(std::max_align_t))
+        {
+            // Calculate required space including alignment padding
+            size_t requiredSpace = size + alignment - 1;
+            if (GetUnusedObjectLength() < static_cast<int>(requiredSpace))
+                return nullptr;
+            
+            // Calculate aligned address
+            char* originalPtr = m_pUnusedObjectPtr - requiredSpace;
+            char* alignedPtr = reinterpret_cast<char*>(
+                (reinterpret_cast<uintptr_t>(originalPtr + alignment - 1) & ~(alignment - 1))
+            );
+            
+            // Update pointer and return aligned address
+            m_pUnusedObjectPtr = alignedPtr;
+            return alignedPtr;
+        }
+        
         void AddSyntaxComponent(ISyntaxComponent* p)
         {
             if (m_SyntaxComponentNum >= SyntaxComponentAndPtrArrayPoolSize)
