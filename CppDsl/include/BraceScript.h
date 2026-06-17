@@ -6,6 +6,7 @@
 #include <deque>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <functional>
 #include <memory>
 #include <type_traits>
@@ -816,6 +817,8 @@ namespace Brace
         /// RegisterApi("hashtable", new BraceApiFactory<HashtableExp>());
         /// RegisterApi("looplist", new BraceApiFactory<LoopListExp>());
         /// -----------------------------------------------------------------------------------------------------------
+        const std::unordered_set<std::string>& GetLinqMethods()const;
+        std::unordered_set<std::string>& GetLinqMethods();
         void RegisterApi(const std::string& id, const std::string& doc, IBraceApiFactory* pApiFactory);
         void RegisterApi(std::string&& id, std::string&& doc, IBraceApiFactory* pApiFactory);
         const std::map<std::string, std::string>& GetApiDocs()const;
@@ -898,6 +901,7 @@ namespace Brace
         BraceScript(BraceScript&&) noexcept = delete;
         BraceScript& operator=(BraceScript&&) noexcept = delete;
     private:
+        std::unordered_set<std::string> m_LinqMethods;
         std::map<std::string, std::string> m_ApiDocs;
         std::unordered_map<std::string, IBraceApiFactory*> m_ApiFactories;
         std::vector<DslData::ISyntaxComponent*> m_AddedSyntaxComponents;
@@ -920,4 +924,6 @@ namespace Brace
         AbstractBraceApi* m_FailbackApi;
         std::shared_ptr<void> m_ContextObj;
     };
+
+    void TranslateBraceDslError(std::string& err);
 }

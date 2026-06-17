@@ -2994,7 +2994,7 @@ namespace Brace
                             //obj.member(a,b,...) or obj[member](a,b,...) -> membercall(obj,member,a,b,...)
                             std::string apiName;
                             std::string member = innerCall.GetParamId(0);
-                            if (member == "orderby" || member == "orderbydesc" || member == "where" || member == "top") {
+                            if (m_LinqMethods.find(member) != m_LinqMethods.end()) {
                                 apiName = "linq";
                             }
                             else if (innerParamClass == DslData::FunctionData::PARAM_CLASS_PERIOD) {
@@ -3291,6 +3291,27 @@ namespace Brace
 
     BraceScript::BraceScript() :m_NextUniqueId(0), m_LastBlockId(0), m_ForceQuit(false), m_HasWarn(false), m_HasError(false), m_GlobalFunc(nullptr), m_GlobalVariables(nullptr), m_LoadTypeInfo(nullptr), m_FailbackApi(nullptr), m_ContextObj(nullptr)
     {
+        m_LinqMethods = {
+            // 1. Filtering & Transformation
+            "where", "filter",
+            "select", "map",
+
+            // 2. Sorting & Truncation
+            "orderby", "orderbydesc",
+            "top", "take", "skip",
+
+            // 3. Set Operations
+            "distinct", "groupby", "concat",
+
+            // 4. Quantifiers & Counting
+            "any", "all", "count",
+
+            // 5. Element Extraction
+            "first", "last",
+
+            // 6. Numerical Aggregation
+            "aggregate", "reduce", "sum", "min", "max", "average"
+        };
         m_LoadTypeInfo = std::bind(&BraceScript::DoLoadTypeInfo, this, std::placeholders::_1, std::placeholders::_2);
         RegisterInnerApis();
         Init();
@@ -3304,6 +3325,14 @@ namespace Brace
             delete pair.second;
         }
         m_ApiFactories.clear();
+    }
+    const std::unordered_set<std::string>& BraceScript::GetLinqMethods()const
+    {
+        return m_LinqMethods;
+    }
+    std::unordered_set<std::string>& BraceScript::GetLinqMethods()
+    {
+        return m_LinqMethods;
     }
     void BraceScript::RegisterApi(const std::string& id, const std::string& doc, IBraceApiFactory* pApiFactory)
     {
