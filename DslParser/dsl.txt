@@ -1,4 +1,8 @@
-//pg -ns=Dsl.Parser -n=Dsl -cs -Ps=65535 dsl.txt
+// pg -ns=Dsl.Parser -n=Dsl -cs -Ps=65535 dsl.txt
+// The syntax of external scripts resembles that of strings, but why retain this form?
+// The primary consideration is that, while external scripts are semantically scripts
+// (even though we cannot parse their syntax and instead read them using string rules),
+// we still want them to behave exactly as if they had been embedded using parentheses.
 
 PROGRAM:
 	STATEMENTS
