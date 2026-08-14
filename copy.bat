@@ -5,8 +5,13 @@ set driver=%~d0
 set workdir=%~dp0
 cd /d "%workdir%"
 
-copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\BatchCommand\deps\Dsl.dll
-copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\BatchCommand\deps\Dsl.pdb
+if exist "e:\GitHub\BatchCommand" (
+    copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll e:\GitHub\BatchCommand\deps\Dsl.dll
+    copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb e:\GitHub\BatchCommand\deps\Dsl.pdb
+) else (
+    copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\BatchCommand\deps\Dsl.dll
+    copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\BatchCommand\deps\Dsl.pdb
+)
 
 rem copy /y DslLib\bin\Debug\netstandard2.0\Dsl.dll ..\Cs2Dsl\dep\Dsl.dll
 rem copy /y DslLib\bin\Debug\netstandard2.0\Dsl.pdb ..\Cs2Dsl\dep\Dsl.pdb
