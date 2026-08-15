@@ -1892,10 +1892,10 @@ namespace Brace
         std::vector<BraceApiExecutor> m_Statements;
         std::vector<int> m_ObjVars;
     };
-    class ForeachExp final : public AbstractBraceApi
+    class ForEachValueExp final : public AbstractBraceApi
     {
     public:
-        ForeachExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_IteratorIsUnsigned(false), m_IteratorIndex(INVALID_INDEX), m_Elements(), m_ElementInfos(), m_Statements()
+        ForEachValueExp(BraceScript& interpreter) :AbstractBraceApi(interpreter), m_IteratorIsUnsigned(false), m_IteratorIndex(INVALID_INDEX), m_Elements(), m_ElementInfos(), m_Statements()
         {
         }
     protected:
@@ -1931,7 +1931,7 @@ namespace Brace
                 iteratorObjTypeId = objTypeId;
                 if (!typeMatch) {
                     std::stringstream ss;
-                    ss << "BraceScript error, foreach list type dismatch, " << callData.GetId() << " line " << callData.GetLine();
+                    ss << "BraceScript error, foreachvalue list type dismatch, " << callData.GetId() << " line " << callData.GetLine();
                     LogError(ss.str());
                     return false;
                 }
@@ -1950,12 +1950,12 @@ namespace Brace
             }
             m_ObjVars = CurBlockObjVars();
             PopBlock();
-            executor.attach(this, &ForeachExp::Execute);
+            executor.attach(this, &ForEachValueExp::Execute);
             return true;
         }
         virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
         {
-            //foreach(exp1,exp2,...) func(args);
+            //foreachvalue(exp1,exp2,...) func(args);
             if (data.GetFunctionNum() == 2) {
                 auto* first = data.GetFirst()->AsFunction();
                 if (!first->HaveStatement() && !first->HaveExternScript()) {
@@ -1989,7 +1989,7 @@ namespace Brace
                             }
                             if (!typeMatch) {
                                 std::stringstream ss;
-                                ss << "BraceScript error, foreach list type dismatch, " << first->GetId() << " line " << first->GetLine();
+                                ss << "BraceScript error, foreachvalue list type dismatch, " << first->GetId() << " line " << first->GetLine();
                                 LogError(ss.str());
                                 return false;
                             }
@@ -2001,7 +2001,7 @@ namespace Brace
                                 m_Statements.push_back(std::move(statement));
                             m_ObjVars = CurBlockObjVars();
                             PopBlock();
-                            executor.attach(this, &ForeachExp::Execute);
+                            executor.attach(this, &ForEachValueExp::Execute);
                             return true;
                         }
                     }
@@ -2934,7 +2934,7 @@ namespace Brace
                                 //while(cond)`exp; => while(cond){exp;}
                                 //loop(ct)`exp; => loop(ct){exp;}
                                 //looplist(list)`exp; => loop(list){exp;}
-                                //foreach(v1,v2,...)`exp; => foreach(v1,v2,...){exp;}
+                                //foreachvalue(v1,v2,...)`exp; => foreachvalue(v1,v2,...){exp;}
                                 auto* newCall = new DslData::FunctionData();
                                 AddSyntaxComponent(newCall);
                                 newCall->GetName().SetFunctionCopyFrom(fd);
@@ -3203,7 +3203,7 @@ namespace Brace
         RegisterApi("if", "if(cond)func(args); or if(cond){...}[elif/elseif(cond){...}else{...}]; statement", new BraceApiFactory<IfExp>());
         RegisterApi("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", new BraceApiFactory<WhileExp>());
         RegisterApi("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", new BraceApiFactory<LoopExp>());
-        RegisterApi("foreach", "foreach(args)func(args); or foreach(args){...}; statement, iterator is $$", new BraceApiFactory<ForeachExp>());
+        RegisterApi("foreachvalue", "foreachvalue(args)func(args); or foreachvalue(args){...}; statement, iterator is $$", new BraceApiFactory<ForEachValueExp>());
         RegisterApi("return", "return(exp); or return <- exp; or return val; statement", new BraceApiFactory<ReturnExp>());
         RegisterApi("func", "func(name){...}; or func(name)params($a:int32,$b:int8,...)int{...}; or func(name)params($a:int32,$b:int8,...){...}; define function", new BraceApiFactory<FunctionDefine>());
 

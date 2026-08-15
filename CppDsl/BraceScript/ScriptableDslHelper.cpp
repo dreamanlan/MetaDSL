@@ -19,14 +19,14 @@ ScriptableDslHelper::ScriptableDslHelper() :
         { "elseif", PAIR_TAG_ELSEIF },
         { "elif", PAIR_TAG_ELIF },
         { "while", PAIR_TAG_WHILE },
-        { "foreach", PAIR_TAG_FOREACH },
+        { "foreachvalue", PAIR_TAG_FOREACH },
         { "loop", PAIR_TAG_LOOP },
         { "looplist", PAIR_TAG_LOOPLIST }
 },
 m_FirstLastKeyOfCompoundStatements{
       { "if", "else" },
       { "while", "while" },
-      { "foreach", "foreach" },
+      { "foreachvalue", "foreachvalue" },
       { "loop", "loop" },
       { "loopi", "loopi" },
       { "loopd", "loopd" },
@@ -50,7 +50,7 @@ m_SuccessorsOfCompoundStatements{
         "while", {}
     },
     {
-        "foreach", {}
+        "foreachvalue", {}
     },
     {
         "loop", {}
@@ -69,7 +69,7 @@ m_SuccessorsOfCompoundStatements{
     }
 },
 m_CompoundStatements{
-        "if", "while", "foreach", "loop", "looplist", "struct", "script", "story"
+        "if", "while", "foreachvalue", "loop", "looplist", "struct", "script", "story"
 }
 {
 }
