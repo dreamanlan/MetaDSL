@@ -1,0 +1,22 @@
+// EBNF arithmetic expressions (from the SLK documentation sample)
+expression:
+additive_expression _action_Finish
+
+additive_expression:
+multiplicative_expression { add_op _action_Push multiplicative_expression _action_Add }
+
+add_op:
++
+-
+
+multiplicative_expression:
+primary_expression { mul_op _action_Push primary_expression _action_Multiply }
+
+mul_op:
+*
+/
+
+primary_expression:
+( additive_expression )
+- primary_expression _action_Negate
+NUMBER _action_Push

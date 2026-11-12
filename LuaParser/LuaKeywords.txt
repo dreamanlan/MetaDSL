@@ -10,6 +10,7 @@ public static string[] name = {
  "REPEAT"
 ,"UNTIL"
 ,"LOCAL"
+,"GLOBAL"
 ,"BREAK"
 ,"GOTO"
 ,"DO"
@@ -22,9 +23,9 @@ public static string[] name = {
 ,"FOR"
 ,"FUNCTION"
 ,"IN"
+,"NAME"
 ,"RETURN"
 ,"TWO_COLON"
-,"NAME"
 ,"THREE_DOT"
 ,"OP_1"
 ,"OP_2"
@@ -50,6 +51,7 @@ public  short[] token = {
  LuaConstants.REPEAT_ 
 ,LuaConstants.UNTIL_ 
 ,LuaConstants.LOCAL_ 
+,LuaConstants.GLOBAL_ 
 ,LuaConstants.BREAK_ 
 ,LuaConstants.GOTO_ 
 ,LuaConstants.DO_ 
@@ -62,9 +64,9 @@ public  short[] token = {
 ,LuaConstants.FOR_ 
 ,LuaConstants.FUNCTION_ 
 ,LuaConstants.IN_ 
+,LuaConstants.NAME_ 
 ,LuaConstants.RETURN_ 
 ,LuaConstants.TWO_COLON_ 
-,LuaConstants.NAME_ 
 ,LuaConstants.THREE_DOT_ 
 ,LuaConstants.OP_1_ 
 ,LuaConstants.OP_2_ 

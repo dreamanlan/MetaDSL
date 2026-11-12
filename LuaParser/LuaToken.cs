@@ -18,6 +18,9 @@ namespace Dsl.Parser
 
             mCurToken = string.Empty;
             mLastToken = string.Empty;
+            mLastLastToken = string.Empty;
+            mAttribListContext = false;
+            mExpectAttribClose = false;
             mCachedToken = null;
 
             mCommentBuilder = new StringBuilder();
@@ -41,6 +44,7 @@ namespace Dsl.Parser
                 { "if", LuaConstants.IF_ },
                 { "in", LuaConstants.IN_ },
                 { "local", LuaConstants.LOCAL_ },
+                { "global", LuaConstants.GLOBAL_ },
                 { "nil", LuaConstants.NIL_ },
                 { "repeat", LuaConstants.REPEAT_ },
                 { "return", LuaConstants.RETURN_ },
@@ -53,8 +57,15 @@ namespace Dsl.Parser
 
         internal short get()
         {
+            mLastLastToken = mLastToken;
             mLastToken = mCurToken;
             mLastLineNumber = mLineNumber;
+            if (mLastToken == "local" || mLastToken == "global") {
+                mAttribListContext = true;
+            }
+            else if (mLastToken == "=" || mNames.ContainsKey(mLastToken)) {
+                mAttribListContext = false;
+            }
             if (null != mCachedToken) {
                 mCurToken = mCachedToken;
                 mCachedToken = null;
@@ -181,6 +192,7 @@ namespace Dsl.Parser
                     return LuaConstants.THREE_DOT_;
                 }
                 else {
+                    // Lua concatenation '..': OP_8, used by EXP_8 (right associative).
                     mCurToken = "..";
                     return LuaConstants.OP_8_;
                 }
@@ -196,6 +208,24 @@ namespace Dsl.Parser
                     mCurToken = ":";
                     return LuaConstants.COLON_;
                 }
+            }
+            else if (CurChar == '*' && mAttribListContext && (mLastToken == "global" || mLastToken == ">")) {
+                // '*' of `global [attrib] '*'`, not multiplication.
+                ++mIterator;
+                mCurToken = "*";
+                return LuaConstants.STAR_;
+            }
+            else if (CurChar == '<' && IsAttribOpenContext()) {
+                ++mIterator;
+                mCurToken = "<";
+                mExpectAttribClose = true;
+                return LuaConstants.LESS_;
+            }
+            else if (CurChar == '>' && mExpectAttribClose) {
+                ++mIterator;
+                mCurToken = ">";
+                mExpectAttribClose = false;
+                return LuaConstants.GREATER_;
             }
             else if (mOperators.IndexOf(CurChar) >= 0) {
                 getOperatorToken();
@@ -486,6 +516,23 @@ namespace Dsl.Parser
             mComments.Clear();
         }
 
+        // True only when '<' can start an attribute of a local/global attnamelist:
+        //   local/global '<' attrib '>' ...
+        private bool IsAttribOpenContext()
+        {
+            if (!mAttribListContext || NextChar == '=' || NextChar == '<')
+                return false;
+            if (mLastToken == "local" || mLastToken == "global" || mLastToken == ",")
+                return true;
+            if (mLastLastToken == "local" || mLastLastToken == "global" || mLastLastToken == "," || mLastLastToken == ">") {
+                return mLastToken.Length > 0 && !mNames.ContainsKey(mLastToken) && !isOperator(mLastToken[0]);
+            }
+            return false;
+        }
+        private bool mAttribListContext;
+        private bool mExpectAttribClose;
+        private string mLastLastToken;
+
         private void getOperatorToken()
         {
             int st = mIterator;
@@ -569,6 +616,12 @@ namespace Dsl.Parser
                     lastIsOperator = isOperator(lastToken[0]);
                 }
             }
+            // Operator tokens and their expression levels in lua.txt:
+            //   OP_1  = or; OP_2 = and; OP_3 = < > <= >= == ~=;
+            //   OP_4  = |; OP_5 = binary ~ (xor); OP_6 = &; OP_7 = << >>;
+            //   OP_8  = .. (concat, right associative); OP_9 = + -;
+            //   OP_10 = * / % //; OP_11 = unary -, not, #, ~;
+            //   OP_12 = ^ (power, right associative).
             short val = LuaConstants.OP_1_;
             if (curOperator.Length > 0) {
                 char c0 = curOperator[0];

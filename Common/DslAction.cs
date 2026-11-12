@@ -84,7 +84,10 @@ namespace Dsl.Common
             mSemanticStack = new Stack<SemanticInfo>();
             mStatementSemanticStack = new Stack<StatementData>();
             mPairTypeStack = new Stack<uint>();
+            mLuaTableScopeDepths = new Stack<int>();
             mNameTags = null;
+            mLuaVarAttrPrefix = string.Empty;
+            mLuaVarAttrSuffix = string.Empty;
 
             mGetLastToken = null;
             mGetLastLineNumber = null;
@@ -279,19 +282,25 @@ namespace Dsl.Common
                 case 13: buildHighOrderFunction(); break;
                 case 14: pushLuaRange(); break;
                 case 15: pushLuaVarAttr(); break;
-                case 16: markBracketColonParam(); break;
-                case 17: removeLuaVarAttr(); break;
-                case 18: markAngleBracketColonParam(); break;
-                case 19: pushDot(); break;
-                case 20: pushColon(); break;
-                case 21: pushLuaArgs(); break;
-                case 22: buildOperator(); break;
-                case 23: markBracketParam(); break;
-                case 24: markParenthesesColonParam(); break;
-                case 25: markPeriodParam(); break;
-                case 26: markPointerParam(); break;
-                case 27: pushStr(); break;
-                case 28: pushNum(); break;
+                case 16: attachLuaVarAttrPrefix(); break;
+                case 17: captureLuaVarAttrPrefix(); break;
+                case 18: captureLuaVarAttrSuffix(); break;
+                case 19: markBracketColonParam(); break;
+                case 20: removeLuaVarAttr(); break;
+                case 21: markAngleBracketColonParam(); break;
+                case 22: pushDot(); break;
+                case 23: pushColon(); break;
+                case 24: pushLuaArgs(); break;
+                case 25: buildLuaNamedVararg(); break;
+                case 26: buildOperator(); break;
+                case 27: markLuaTableStart(); break;
+                case 28: markLuaTableEnd(); break;
+                case 29: markBracketParam(); break;
+                case 30: markParenthesesColonParam(); break;
+                case 31: markPeriodParam(); break;
+                case 32: markPointerParam(); break;
+                case 33: pushStr(); break;
+                case 34: pushNum(); break;
             }
         }
         private void executeCpp(int number)
@@ -409,6 +418,7 @@ namespace Dsl.Common
                     }
                 }
                 //Top-level element ends.
+                setLuaStatementSeparator(statementSyntax);
                 if (addSep && mScriptDatas.Count > 0) {
                     var lastStm = mScriptDatas[mScriptDatas.Count - 1];
                     lastStm.SetSeparator(AbstractSyntaxComponent.SEPARATOR_SEMICOLON);
@@ -479,10 +489,33 @@ namespace Dsl.Common
 
                 if (addSep && func.GetParamNum() > 0) {
                     var lastParam = func.GetParam(func.GetParamNum()-1);
-                    lastParam.SetSeparator(func.GetParamClassUnmasked() == (int)ParamClassEnum.PARAM_CLASS_STATEMENT ? AbstractSyntaxComponent.SEPARATOR_SEMICOLON : AbstractSyntaxComponent.SEPARATOR_COMMA);
+                    lastParam.SetSeparator(IsInLuaTableField() ? AbstractSyntaxComponent.SEPARATOR_COMMA :
+                        func.GetParamClassUnmasked() == (int)ParamClassEnum.PARAM_CLASS_STATEMENT ? AbstractSyntaxComponent.SEPARATOR_SEMICOLON : AbstractSyntaxComponent.SEPARATOR_COMMA);
                 }
+                setLuaStatementSeparator(statementSyntax);
                 func.AddParam(statementSyntax);
             }
+        }
+        // Lua statements may omit ';' in source. Add it only when this is really
+        // a statement, not an expression parameter (which must keep its comma).
+        private void setLuaStatementSeparator(AbstractSyntaxComponent statementSyntax)
+        {
+            if (mActionType != DslActionType.Lua || !statementSyntax.IsEmptySeparator()) {
+                return;
+            }
+            if (mStatementSemanticStack.Count == 0) {
+                statementSyntax.SetSemiColonSeparator();
+            }
+            else {
+                FunctionData parent = getLastFunction();
+                if (parent.GetParamClassUnmasked() == (int)ParamClassEnum.PARAM_CLASS_STATEMENT && !IsInLuaTableField()) {
+                    statementSyntax.SetSemiColonSeparator();
+                }
+            }
+        }
+        private bool IsInLuaTableField()
+        {
+            return mLuaTableScopeDepths.Count > 0 && mLuaTableScopeDepths.Peek() == mStatementSemanticStack.Count;
         }
         private void endStatementLua()
         {
@@ -568,6 +601,33 @@ namespace Dsl.Common
                 }
             }
         }
+        // Returns true when the Lua operator has no direct MetaDSL spelling and
+        // has therefore been handled here. Other operators use the normal path.
+        private bool tryBuildLuaSpecialOperator(FunctionData func, string name, int type, bool isUnary)
+        {
+            if (mActionType != DslActionType.Lua) {
+                return false;
+            }
+            if (name == "#" || name == "^" || name == "//") {
+                // MetaDSL uses '#' and '//' for comments and '^' for bitwise xor.
+                // Keep Lua's distinct operations as explicit calls instead.
+                func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_PARENTHESES);
+                func.Name.SetId(name == "#" ? "lualen" : name == "^" ? "lualpow" : "lualidiv");
+                func.Name.SetType(type);
+                return true;
+            }
+            if (name == "~=") name = "!=";
+            else if (name == "and") name = "&&";
+            else if (name == "or") name = "||";
+            else if (name == "not") name = "!";
+            else if (name == "~") name = isUnary ? "~" : "^";
+            else return false;
+
+            func.SetParamClass((int)ParamClassEnum.PARAM_CLASS_OPERATOR);
+            func.Name.SetId(name);
+            func.Name.SetType(type);
+            return true;
+        }
         public void buildOperator()
         {
             int type;
@@ -600,7 +660,10 @@ namespace Dsl.Common
 
             FunctionData func = getLastFunction();
             if (!func.IsValid()) {
-                if (name.Length > 1 && name[0] == '`') {
+                if (tryBuildLuaSpecialOperator(func, name, type, arg.Functions.Count == 0)) {
+                    // The Lua-specific operator has been built by the dedicated method.
+                }
+                else if (name.Length > 1 && name[0] == '`') {
                     func.SetParamClass((int)(ParamClassEnum.PARAM_CLASS_WRAP_INFIX_CALL_MASK | ParamClassEnum.PARAM_CLASS_OPERATOR));
 
                     func.Name.SetId(name.Substring(1));
@@ -1021,6 +1084,15 @@ namespace Dsl.Common
         }
         private void pushAssignWith()
         {
+            StatementData statement = getCurStatement();
+            if (statement.Functions.Count >= 2) {
+                FunctionData list = statement.Functions[statement.Functions.Count - 2].AsFunction;
+                if (null != list) {
+                    for (int i = 0; i + 1 < list.GetParamNum(); ++i) {
+                        list.GetParam(i).SetCommaSeparator();
+                    }
+                }
+            }
             push("assignwith", FunctionData.ID_TOKEN);
         }
         ///a,b,c = d,e,f => lualist(a,b,c)assignwith(d,e,f)
@@ -1058,6 +1130,13 @@ namespace Dsl.Common
                     }
                 }
             }
+            // Set separators after the list has been folded into its final form.
+            func = statement.First.AsFunction;
+            if (null != func) {
+                for (int i = 0; i + 1 < func.GetParamNum(); ++i) {
+                    func.GetParam(i).SetCommaSeparator();
+                }
+            }
             endStatement();
         }
         private void checkLuaList()
@@ -1087,6 +1166,70 @@ namespace Dsl.Common
         {
             push("luavarattr", FunctionData.ID_TOKEN);
         }
+        private void captureLuaVarAttrPrefix()
+        {
+            int type;
+            mLuaVarAttrPrefix = pop(out type);
+        }
+        private void captureLuaVarAttrSuffix()
+        {
+            int type;
+            mLuaVarAttrSuffix = pop(out type);
+        }
+        private void attachLuaVarAttrPrefix()
+        {
+            FunctionData func = getLastFunction();
+            if (!string.IsNullOrEmpty(mLuaVarAttrPrefix)) {
+                FunctionData prefix = newLuaVarAttr(mLuaVarAttrPrefix);
+                func.Params.Insert(0, prefix);
+                if (func.GetParamNum() > 1) {
+                    prefix.SetCommaSeparator();
+                }
+            }
+            if (!string.IsNullOrEmpty(mLuaVarAttrSuffix)) {
+                if (func.GetParamNum() > 0) {
+                    func.GetParam(func.GetParamNum() - 1).SetCommaSeparator();
+                }
+                func.AddParam(newLuaVarAttr(mLuaVarAttrSuffix));
+            }
+            mLuaVarAttrPrefix = string.Empty;
+            mLuaVarAttrSuffix = string.Empty;
+            endStatement();
+        }
+        private FunctionData newLuaVarAttr(string name)
+        {
+            FunctionData attr = new FunctionData();
+            attr.SetBracketColonParamClass();
+            attr.AddParam(new ValueData(name));
+            return attr;
+        }
+        // `...` with a name becomes a high-order call: ...(name).
+        private void buildLuaNamedVararg()
+        {
+            int type;
+            string name = pop(out type);
+            FunctionData owner = getLastFunction();
+            if (owner.GetParamNum() > 0) {
+                int ix = owner.GetParamNum() - 1;
+                ISyntaxComponent last = owner.GetParam(ix);
+                FunctionData vararg = last as FunctionData;
+                if (null == vararg) {
+                    ValueData value = last as ValueData;
+                    if (null != value) {
+                        vararg = new FunctionData();
+                        vararg.Name = value;
+                    }
+                }
+                if (null != vararg) {
+                    FunctionData high = new FunctionData();
+                    high.LowerOrderFunction = vararg;
+                    high.AddParam(new ValueData(name, type));
+                    owner.Params[ix] = high;
+                }
+            }
+        }
+        private string mLuaVarAttrPrefix;
+        private string mLuaVarAttrSuffix;
         private void removeLuaVarAttr()
         {
             var statement = getCurStatement();
@@ -1128,6 +1271,16 @@ namespace Dsl.Common
         private void pushLuaLabel()
         {
             push("lualabel", FunctionData.ID_TOKEN);
+        }
+        private void markLuaTableStart()
+        {
+            mLuaTableScopeDepths.Push(mStatementSemanticStack.Count);
+        }
+        private void markLuaTableEnd()
+        {
+            if (mLuaTableScopeDepths.Count > 0) {
+                mLuaTableScopeDepths.Pop();
+            }
         }
         /// At the end of each function (which may be in the form of a single identifier, function call, or higher-order function call), the C++ statements are segmented.
         /// This is simpler to handle than defining it precisely in terms of syntax.
@@ -1433,6 +1586,7 @@ namespace Dsl.Common
 
         private DslActionType mActionType;
         private DslLog mLog;
+        private Stack<int> mLuaTableScopeDepths;
 
         private GetLastTokenDelegation mGetLastToken;
         private GetLastLineNumberDelegation mGetLastLineNumber;

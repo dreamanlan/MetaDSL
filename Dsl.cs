@@ -1371,7 +1371,7 @@ namespace Dsl
 #if FULL_VERSION
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mDslInfos.Count; i++) {
-                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, false, new DelimiterInfo(mStringBeginDelimiter, mStringEndDelimiter, mScriptBeginDelimiter, mScriptEndDelimiter));
+                Utility.writeSyntaxComponent(sb, mDslInfos[i], 0, true, true, new DelimiterInfo(mStringBeginDelimiter, mStringEndDelimiter, mScriptBeginDelimiter, mScriptEndDelimiter));
             }
             return sb.ToString();
 #else

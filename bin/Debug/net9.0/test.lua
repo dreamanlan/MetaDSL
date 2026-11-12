@@ -3975,3 +3975,51 @@ end
 require "lualib_valuetypescript"
 require "lualib_basic"
 require "lualib_special"
+
+-- ===== Lua 5.5 additions =====
+global function global_func(a, ...args)
+    return a, args
+end
+
+global <const> gx, gy = 1, 2
+global gz <const> = 3
+global <const> *
+
+local <const> lx = 4
+local ly <const> = 5
+
+local function varargs_demo(a, ...args)
+    return a, args
+end
+
+global function varargs_global(...args)
+    return args
+end
+
+assoc_concat = "a" .. "b" .. "c"
+assoc_pow = 2 ^ 3 ^ 4
+unary_pow = -2 ^ 2
+
+-- ===== require call forms and attribute combinations =====
+require "lualib_require_string"
+require("lualib_require_paren")
+local require_string_result = require "lualib_require_string"
+local require_paren_result = require("lualib_require_paren")
+local require_concat_result = require "lualib_require_concat" .. "_suffix"
+
+global <const> both_attrib_global <const> = 1
+local <const> both_attrib_local <const> = 2
+global <const> multi_prefix_a, multi_prefix_b = 3, 4
+local <const> multi_prefix_c, multi_prefix_d = 5, 6
+
+local function varargs_mixed(a, ...args)
+    return a, args
+end
+
+-- ===== table-call sugar =====
+require { value = 1 }
+local table_call_result = table_sugar_func { value = 2 }
+function table_sugar_host()
+    table_sugar_func { value = 3 }
+end
+local nested_table = { inner = {1, 2} }

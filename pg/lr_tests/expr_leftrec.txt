@@ -1,0 +1,21 @@
+// Classic left-recursive LR arithmetic grammar
+expression:
+expression add_op term _action_Add
+term _action_Finish
+
+add_op:
++
+-
+
+term:
+term mul_op factor _action_Multiply
+factor
+
+mul_op:
+*
+/
+
+factor:
+NUMBER _action_Push
+( expression )
+- factor _action_Negate

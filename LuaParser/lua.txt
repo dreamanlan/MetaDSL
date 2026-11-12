@@ -3,29 +3,30 @@ CHUNK :
 
 BLOCK :
     { STAT_UNAMBIGUOUS_GROUP } [ RETURN_STAT ]
-
+    
 STAT_UNAMBIGUOUS_GROUP :
     FUNCTION_CALL_STAT
     STAT_UNAMBIGUOUS_OR_SEP
-
+    
 STAT_UNAMBIGUOUS_OR_SEP :
     _action_beginStatement _action_addFunction REPEAT _action_pushId _action_setFunctionId _action_markStatement BLOCK _action_addFunction UNTIL _action_pushId _action_setFunctionId _action_markParenthesesParam EXP _action_endStatement EXP_TAIL
     _action_beginStatement _action_addFunction LOCAL _action_pushId _action_setFunctionId _action_markParenthesesParam FUNCTIONDEF_OR_VARDEF
-    STAT_UNAMBIGUOUS
+    _action_beginStatement _action_addFunction GLOBAL _action_pushId _action_setFunctionId _action_markParenthesesParam GLOBALDEF_OR_VARDEF
+    STAT_UNAMBIGUOUS    
     ;
-
+    
 EXP_TAIL :
     EXP_TAIL_FUNCTION_CALL_STAT EXP_TAIL
     STAT_UNAMBIGUOUS_OR_SEP
-
+    
 EXP_TAIL_FUNCTION_CALL_STAT :
-    _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam _action_beginStatement FUNCTION_CALL_WITH_NAME _action_endStatement EXP_TAIL_FUNCTION_CALL_STAT_TAIL
+    _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam _action_beginStatement FUNCTION_CALL_WITH_NAME _action_endStatement EXP_TAIL_FUNCTION_CALL_STAT_TAIL 
 
 EXP_TAIL_FUNCTION_CALL_STAT_TAIL :
     { , _action_beginStatement FUNCTION_CALL _action_endStatement } = _action_checkLuaList _action_addFunction _action_pushAssignWith _action_setFunctionId _action_markParenthesesParam EXPLIST _action_endStatement
     _action_removeLuaList
-
-STAT_UNAMBIGUOUS :
+    
+STAT_UNAMBIGUOUS :    
     _action_beginStatement _action_addFunction _action_pushLuaLabel _action_setFunctionId LABEL _action_endStatement
     _action_beginStatement _action_addFunction BREAK _action_pushId _action_setFunctionId _action_endStatement
     _action_beginStatement _action_addFunction GOTO _action_pushId _action_setFunctionId _action_markParenthesesParam NAME_FOR_ARG _action_endStatement
@@ -36,7 +37,7 @@ STAT_UNAMBIGUOUS :
     _action_beginStatement _action_addFunction FUNCTION _action_pushId _action_setFunctionId _action_markParenthesesParam FUNCNAME _action_addFunction FUNCBODY _action_endStatement
 
 FUNCTION_CALL_STAT :
-    _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam _action_beginStatement FUNCTION_CALL _action_endStatement FUNCTION_CALL_STAT_TAIL
+    _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam _action_beginStatement FUNCTION_CALL _action_endStatement FUNCTION_CALL_STAT_TAIL 
 
 FUNCTION_CALL_STAT_TAIL :
     { , _action_beginStatement FUNCTION_CALL _action_endStatement } = _action_checkLuaList _action_addFunction _action_pushAssignWith _action_setFunctionId _action_markParenthesesParam EXPLIST _action_endStatement EXP_TAIL
@@ -45,22 +46,83 @@ FUNCTION_CALL_STAT_TAIL :
 FUNCTIONDEF_OR_VARDEF :
     _action_beginStatement _action_addFunction FUNCTION _action_pushId _action_setFunctionId _action_markParenthesesParam NAME_FOR_ARG _action_addFunction FUNCBODY _action_endStatement _action_endStatement
     _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam ATTNAMELIST [ = _action_addFunction _action_pushAssignWith _action_setFunctionId _action_markParenthesesParam EXPLIST _action_endStatement ] _action_removeLuaList END_VARDEF EXP_TAIL
+    
+// Lua 5.5: global function Name funcbody | global attnamelist [ = explist ] | global [attrib] *
+// Reuses the same actions as the corresponding local definitions.
+GLOBALDEF_OR_VARDEF :
+    _action_beginStatement _action_addFunction FUNCTION _action_pushId _action_setFunctionId _action_markParenthesesParam NAME_FOR_ARG _action_addFunction FUNCBODY _action_endStatement _action_endStatement
+    GLOBAL_LIST_OR_STAR
+
+// FOR_TAIL must precede pushLuaVarAttr so the action numbers match
+// DslAction.executeLua (pushLuaRange=14, pushLuaVarAttr=15).
+FOR_TAIL :
+    = _action_addFunction _action_pushLuaRange _action_setFunctionId _action_markParenthesesParam EXP , EXP [ , EXP ] DO _action_buildHighOrderFunction _action_markStatement BLOCK END 
+    { , NAME_FOR_ARG } _action_addFunction IN _action_pushId _action_setFunctionId _action_markParenthesesParam EXPLIST DO _action_buildHighOrderFunction _action_markStatement BLOCK END
+
+// LL(1): hoist the common '<' prefix. After ATTRIB_PREFIX, a Name continues an
+// attnamelist, while '*' selects the global [attrib] '*' form.
+GLOBAL_LIST_OR_STAR :
+    GLOBAL_ATTRIB_FIRST GLOBAL_AFTER_PREFIX
+    GLOBAL_PLAIN_LIST
+    GLOBAL_BARE_STAR
+
+// Same statement context as NAME_AND_ATTRIB: the leading attribute must not be
+// emitted as a standalone statement before the name/list is parsed.
+GLOBAL_ATTRIB_FIRST :
+    ATTRIB_PREFIX
+
+GLOBAL_AFTER_PREFIX :
+    GLOBAL_PREFIXED_LIST
+    GLOBAL_PREFIXED_STAR
+
+GLOBAL_PLAIN_LIST :
+    _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam NAME_AND_ATTRIB_NO_LEAD { , NAME_AND_ATTRIB } [ = _action_addFunction _action_pushAssignWith _action_setFunctionId _action_markParenthesesParam EXPLIST _action_endStatement ] _action_removeLuaList END_VARDEF EXP_TAIL
+
+GLOBAL_PREFIXED_LIST :
+    _action_beginStatement _action_addFunction _action_pushLuaList _action_setFunctionId _action_markParenthesesParam NAME_AND_ATTRIB_PREFIXED { , NAME_AND_ATTRIB } [ = _action_addFunction _action_pushAssignWith _action_setFunctionId _action_markParenthesesParam EXPLIST _action_endStatement ] _action_removeLuaList END_VARDEF EXP_TAIL
+
+// `*` takes the place of the name in `global [attrib] '*'`; treat it like a name token.
+STAR_FOR_ARG :
+    _action_beginStatement _action_addFunction * _action_pushId _action_setFunctionId _action_endStatement
+
+// First name of a global attnamelist: the optional leading ATTRIB_PREFIX has
+// already been consumed by GLOBAL_LIST_OR_STAR.
+NAME_AND_ATTRIB_NO_LEAD :
+    _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesesParam NAME_FOR_ARG ATTRIB
 
 END_VARDEF :
     _action_endStatement
 
-FOR_TAIL :
-    = _action_addFunction _action_pushLuaRange _action_setFunctionId _action_markParenthesesParam EXP , EXP [ , EXP ] DO _action_buildHighOrderFunction _action_markStatement BLOCK END
-    { , NAME_FOR_ARG } _action_addFunction IN _action_pushId _action_setFunctionId _action_markParenthesesParam EXPLIST DO _action_buildHighOrderFunction _action_markStatement BLOCK END
-
 ATTNAMELIST :
     NAME_AND_ATTRIB { , NAME_AND_ATTRIB }
-
+    
+// Lua 5.5 attnamelist: [attrib] Name [attrib] {',' Name [attrib]}
+// The prefix/suffix attributes are captured as text and attached by one semantic
+// action after the name has been built, so the name cannot be lost.
 NAME_AND_ATTRIB :
     _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesesParam NAME_FOR_ARG ATTRIB
+    _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesesParam ATTRIB_PREFIX NAME_FOR_ARG ATTRIB_SUFFIX _action_attachLuaVarAttrPrefix
+
+NAME_AND_ATTRIB_PREFIXED :
+    _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesesParam NAME_FOR_ARG ATTRIB_SUFFIX _action_attachLuaVarAttrPrefix
+
+ATTRIB_PREFIX :
+    < NAME _action_pushId _action_captureLuaVarAttrPrefix >
+
+ATTRIB_SUFFIX :
+    [ < NAME _action_pushId _action_captureLuaVarAttrSuffix > ]
 
 ATTRIB :
     [ < _action_beginStatement _action_addFunction _action_markBracketColonParam NAME_FOR_ARG _action_endStatement > _action_endStatement ] _action_removeLuaVarAttr
+
+// Keep these after ATTRIB so the action numbering stays compatible with the
+// hardcoded DslAction.executeLua dispatch (pushLuaRange=15, markBracketColonParam=16,
+// removeLuaVarAttr=17).
+GLOBAL_PREFIXED_STAR :
+    _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesesParam STAR_FOR_ARG ATTRIB_SUFFIX _action_attachLuaVarAttrPrefix END_VARDEF EXP_TAIL
+
+GLOBAL_BARE_STAR :
+    _action_beginStatement _action_addFunction _action_pushLuaVarAttr _action_setFunctionId _action_markParenthesesParam STAR_FOR_ARG _action_removeLuaVarAttr END_VARDEF EXP_TAIL
 
 RETURN_STAT :
     RETSTAT _action_endStatement
@@ -73,31 +135,36 @@ LABEL :
 
 FUNCNAME :
     NAME_FOR_ARG { DOT_FOR_FUNCNAME NAME_FOR_ARG } [ COLON_FOR_FUNCNAME NAME_FOR_ARG ]
-
+    
 NAME_FOR_ARG :
     _action_beginStatement _action_addFunction NAME _action_pushId _action_setFunctionId _action_endStatement
-
+    
 DOT_FOR_FUNCNAME :
     _action_beginStatement _action_addFunction . _action_pushDot _action_setFunctionId _action_endStatement
 
 COLON_FOR_FUNCNAME :
     _action_beginStatement _action_addFunction : _action_pushColon _action_setFunctionId _action_endStatement
-
+    
 FUNCTIONDEF :
     _action_beginStatement _action_addFunction FUNCTION _action_pushId _action_setFunctionId _action_markParenthesesParam _action_addFunction FUNCBODY _action_endStatement
 
 FUNCBODY :
     _action_pushLuaArgs _action_setFunctionId _action_markParenthesesParam ( [ PARLIST ] ) _action_buildHighOrderFunction _action_markStatement BLOCK END
 
-PARLIST :
+PARLIST :    
     NAME_FOR_ARG [ PARLIST_TAIL ]
-    THREE_DOT_FOR_ARG
+    VARARGPARAM
 
+// Lua 5.5 varargparam: '...' [Name] (only valid in a parameter list, not in expressions).
+// The optional name is a parameter of the '...' call, not a sibling argument.
+VARARGPARAM :
+    THREE_DOT_FOR_ARG [ NAME _action_pushId _action_buildLuaNamedVararg ]
+    
 THREE_DOT_FOR_ARG :
     _action_beginStatement _action_addFunction THREE_DOT _action_pushId _action_setFunctionId _action_endStatement
-
+    
 PARLIST_TAIL :
-    , PARLIST
+    , PARLIST 
 
 EXPLIST :
     EXP { , EXP }
@@ -106,53 +173,65 @@ EXP :
     EXP_1 _action_endStatement
     FUNCTIONDEF
     THREE_DOT_FOR_ARG
-
+    
+// Logical or.
 EXP_1 :
     EXP_2 { OP_1 _action_pushId _action_buildOperator EXP_2 _action_endStatement }
 
+// Logical and.
 EXP_2 :
     EXP_3 { OP_2 _action_pushId _action_buildOperator EXP_3 _action_endStatement }
 
+// Comparisons: <, >, <=, >=, ==, ~=.
 EXP_3 :
     EXP_4 { OP_3 _action_pushId _action_buildOperator EXP_4 _action_endStatement }
 
+// Bitwise or: |.
 EXP_4 :
     EXP_5 { OP_4 _action_pushId _action_buildOperator EXP_5 _action_endStatement }
 
+// Bitwise xor: ~.
 EXP_5 :
-    EXP_6 { OP_5 _action_pushId _action_buildOperator EXP_6 _action_endStatement }
+    EXP_6 { OP_5 _action_pushId _action_buildOperator EXP_6 _action_endStatement }   
 
+// Bitwise and: &.
 EXP_6 :
-    EXP_7 { OP_6 _action_pushId _action_buildOperator EXP_7 _action_endStatement }
+    EXP_7 { OP_6 _action_pushId _action_buildOperator EXP_7 _action_endStatement }   
 
+// Bitwise shifts: <<, >>.
 EXP_7 :
-    EXP_8 { OP_7 _action_pushId _action_buildOperator EXP_8 _action_endStatement }
+    EXP_8 { OP_7 _action_pushId _action_buildOperator EXP_8 _action_endStatement }   
 
+// Concatenation (..), right associative.
 EXP_8 :
-    EXP_9 { OP_8 _action_pushId _action_buildOperator EXP_9 _action_endStatement }
+    EXP_9 [ OP_8 _action_pushId _action_buildOperator EXP_8 _action_endStatement ]   
 
+// Addition and subtraction: +, -.
 EXP_9 :
-    EXP_10 { OP_9 _action_pushId _action_buildOperator EXP_10 _action_endStatement }
+    EXP_10 { OP_9 _action_pushId _action_buildOperator EXP_10 _action_endStatement }   
 
+// Multiplication, division, modulo and floor division: *, /, %, //.
 EXP_10 :
-    EXP_11 { OP_10 _action_pushId _action_buildOperator EXP_11 _action_endStatement }
+    EXP_11 { OP_10 _action_pushId _action_buildOperator EXP_11 _action_endStatement }  
 
+// Unary operators: -, not, #, ~.
 EXP_11 :
     _action_beginStatement OP_11 _action_pushId _action_buildOperator EXP_12 _action_endStatement
     EXP_12
 
+// Exponentiation: ^, right associative.
 EXP_12 :
-    _action_beginStatement FUNCTION_CALL { OP_12 _action_pushId _action_buildOperator _action_beginStatement FUNCTION_CALL _action_endStatement }
+    _action_beginStatement FUNCTION_CALL [ OP_12 _action_pushId _action_buildOperator EXP_12 _action_endStatement ] 
 
 /*===========================
 OP_1 :
     OR
-
+    
 OP_2 :
     AND
-
+    
 OP_3 :
-    <
+    <    
     >
     <=
     >=
@@ -161,24 +240,24 @@ OP_3 :
 
 OP_4 :
     |
-
+    
 OP_5 :
     ~
-
+    
 OP_6 :
     &
-
+    
 OP_7 :
     <<
     >>
-
+    
 OP_8 :
     ..
-
-OP_9 :
+    
+OP_9 :        
     +
     -
-
+    
 OP_10 :
     *
     /
@@ -190,16 +269,16 @@ OP_11 :
     NOT
     #
     ~
-
-OP_12 :
+    
+OP_12 :    
     ^
 ===========================*/
-
+    
 FUNCTION_CALL :
     VALUE_JUST_AS_FUNCTION
     FUNCTION_CALL_WITH_NAME
     FUNCTION_CALL_WITHOUT_NAME
-
+    
 VALUE_JUST_AS_FUNCTION:
     _action_addFunction FUNCTION_ID_NOT_NAME _action_setFunctionId
 
@@ -207,38 +286,45 @@ FUNCTION_CALL_WITH_NAME :
     _action_addFunction FUNCTION_ID _action_setFunctionId [ FUNCTION_PARAMS ]
 
 FUNCTION_CALL_WITHOUT_NAME :
-    _action_addFunction FUNCTION_PARAMS_CANBE_HEADER
+    _action_addFunction FUNCTION_PARAM_LIST
+    TABLE_CONSTRUCTOR [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 
-FUNCTION_PARAMS_CANBE_HEADER :
+TABLE_CONSTRUCTOR:
+    _action_addFunction _action_markStatement \{ _action_markLuaTableStart [ FIELD_LIST ] \} _action_markLuaTableEnd
+
+FUNCTION_PARAM_LIST:
     _action_markParenthesesParam ( [ EXPLIST ] ) [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
-    _action_markStatement \{ [ FIELD_LIST ] \} [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
 
 FUNCTION_PARAMS :
-    FUNCTION_PARAMS_CANBE_HEADER
+    FUNCTION_PARAM_LIST
     _action_markBracketParam \[ EXP \] [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     . MEMBER_DESC [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     : MEMBER_DESC2 [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
     _action_markParenthesesColonParam STRING_PARAM [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
-
+    _action_markParenthesesColonParam TABLE_CONSTRUCTOR_PARAM [ _action_buildHighOrderFunction FUNCTION_PARAMS ]
+    
 MEMBER_DESC:
 	_action_markPeriodParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setFunctionId _action_endStatement
-
+	
 MEMBER_DESC2:
 	_action_markPointerParam _action_beginStatement _action_addFunction FUNCTION_ID _action_setFunctionId _action_endStatement
-
+	
 STRING_PARAM:
 	_action_beginStatement _action_addFunction STRING _action_pushStr _action_setFunctionId _action_endStatement
 
+TABLE_CONSTRUCTOR_PARAM:
+    _action_beginStatement TABLE_CONSTRUCTOR _action_endStatement
+
 FIELD_LIST :
     FIELD [ FIELD_LIST_TAIL ]
-
+    
 FIELD_LIST_TAIL :
     FIELD_SEP [ FIELD_LIST ]
 
 FIELD :
     _action_beginStatement _action_addFunction _action_markBracketParam \[ EXP \] = _action_pushId _action_buildOperator EXP _action_endStatement
     FIELD_EXP
-
+    
 FIELD_EXP :
     _action_beginStatement _action_addFunction NAME _action_pushId _action_setFunctionId FIELD_NAME_TAIL
     _action_beginStatement _action_addFunction FUNCTION_ID_NOT_NAME _action_pushId _action_setFunctionId FUNCTION_CALL_AFTER_ID _action_endStatement
@@ -246,24 +332,24 @@ FIELD_EXP :
     _action_beginStatement OP_11 _action_pushId _action_buildOperator EXP_12 _action_endStatement
     FUNCTIONDEF
     THREE_DOT_FOR_ARG
-
+    
 FUNCTION_CALL_WITHOUT_NAME_OP :
     _action_beginStatement FUNCTION_CALL_WITHOUT_NAME { OP_1 _action_pushId _action_buildOperator EXP_2 _action_endStatement }
-
+    
 FIELD_NAME_TAIL :
      = _action_pushId _action_buildOperator EXP _action_endStatement
      FUNCTION_CALL_AFTER_ID _action_endStatement
-
+     
 FUNCTION_CALL_AFTER_ID :
      [ FUNCTION_PARAMS ] { OP_1 _action_pushId _action_buildOperator EXP_2 _action_endStatement }
 
 FIELD_SEP :
     ,
     ;
-
+    
 FUNCTION_ID :
-    NAME _action_pushId
-
+    NAME _action_pushId    
+    
 FUNCTION_ID_NOT_NAME :
     STRING _action_pushStr
     NUMBER _action_pushNum
