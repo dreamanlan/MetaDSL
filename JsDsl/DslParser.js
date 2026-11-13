@@ -452,3 +452,5 @@ parse ( action, tokens, error, start_symbol )
  }
 }
 
+export { parse, START_ACTION, END_ACTION, START_SYMBOL };
+

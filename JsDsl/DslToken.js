@@ -1,9 +1,7 @@
 // DslToken.js - JavaScript port of MetaDSL DslParser/DslToken.cs (DSL lexer).
 
-'use strict';
-
-const { StrBuf } = require('./Dsl.js');
-const { DslConstants } = require('./DslParserWrap.js');
+import { StrBuf } from './Dsl.js';
+import { DslConstants } from './DslParserWrap.js';
 
 const PAIR_TYPE_QUESTION_COLON = 1;
 
@@ -1029,9 +1027,4 @@ class DslToken {
 DslToken.myisdigit = myisdigit;
 DslToken.mychar2int = mychar2int;
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { DslToken, myisdigit, mychar2int };
-}
-if (typeof globalThis !== 'undefined') {
-    globalThis.DslToken = DslToken;
-}
+export { DslToken, myisdigit, mychar2int };

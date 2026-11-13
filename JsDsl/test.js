@@ -2,9 +2,7 @@
 // Run: node test.js
 // Differential tests against the C# implementation live outside the library (e:/tmp).
 
-'use strict';
-
-const Dsl = require('./index.js');
+import * as Dsl from './index.js';
 
 let failures = 0;
 let checks = 0;
@@ -126,7 +124,7 @@ for (const src of samples) {
     file2.LoadBinaryCode(bin1);
     check(file2.DslInfos.length === r1.file.DslInfos.length, 'binary count: ' + src);
     const bin2 = file2.SaveBinaryCode();
-    check(Buffer.from(bin1).equals(Buffer.from(bin2)), 'binary roundtrip: ' + src);
+    check(bin1.length === bin2.length && bin1.every((value, index) => value === bin2[index]), 'binary roundtrip: ' + src);
 }
 
 // Syntax errors must be reported and clear the infos.
@@ -137,5 +135,21 @@ for (const src of ['foo(1', 'foo){', 'foo(1,2))']) {
     check(r.logs.length > 0, 'error logged: ' + src);
 }
 
+// Browser loads must reject Node.js-only file APIs without resolving node:fs.
+if (typeof process === 'undefined' || !process.versions || !process.versions.node) {
+    for (const method of ['Load', 'Save', 'LoadBinaryFile', 'SaveBinaryFile']) {
+        let rejected = false;
+        try {
+            await new Dsl.DslFile()[method]('unused');
+        }
+        catch (error) {
+            rejected = String(error).includes('only available in Node.js');
+        }
+        check(rejected, 'browser rejects Node.js-only API: ' + method);
+    }
+}
+
 console.log(failures === 0 ? `ALL PASS (${checks} checks)` : `FAILURES: ${failures} of ${checks}`);
-process.exitCode = failures === 0 ? 0 : 1;
+if (typeof process !== 'undefined') {
+    process.exitCode = failures === 0 ? 0 : 1;
+}

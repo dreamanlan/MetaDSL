@@ -343,67 +343,67 @@ script(getBinaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
 {
     return(block
     {:
-        int ExecuteGG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGG2G{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGL2G{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGG{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteLL{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGL{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteLG{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.Type, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
@@ -415,26 +415,26 @@ script(getUnaryExecuteCode)args($postfix, $operandType, $varGet, $varSet, $opr)
 {
     return(block
     {:    
-        int ExecuteG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteG2G{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteG{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteL{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.Type, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.Type, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
@@ -445,67 +445,67 @@ script(getBinaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $
 {
     return(block
     {:
-        int ExecuteGG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGG2G{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGL2G{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGG{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteLL{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteGL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteGL{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(lvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteLG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteLG{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             if (!m_Op2.isNull())
-                m_Op2(gvars, lvars);
+                m_Op2(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.VarIndex);
             {% $operandType %} v2 = {% $varGet %}(gvars, m_ArgInfo2.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, v1 {% $opr %} v2);
@@ -517,26 +517,26 @@ script(getUnaryExecuteCodeBoth)args($postfix, $operandType, $varGet, $varSet, $o
 {
     return(block
     {:    
-        int ExecuteG2G{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteG2G{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $varSet %}(gvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteG{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteG{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(gvars, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
         }
-        int ExecuteL{% $postfix %}(Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
+        int ExecuteL{% $postfix %}(Brace::BraceRuntime& runtime, Brace::VariableInfo& gvars, Brace::VariableInfo& lvars) const
         {
             if (!m_Op1.isNull())
-                m_Op1(gvars, lvars);
+                m_Op1(runtime, gvars, lvars);
             {% $operandType %} v1 = {% $varGet %}(lvars, m_ArgInfo1.VarIndex);
             {% $varSet %}(lvars, m_ResultInfo.VarIndex, {% $opr %} v1);
             return BRACE_FLOW_CONTROL_NORMAL;
@@ -959,7 +959,7 @@ script(writeBinaryExp)args($className, $op)
     class {% $className %} final : public BinaryOperatorBaseExp
     {
     public:
-        {% $className %}(BraceScript& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
+        {% $className %}(BraceCodeStructure& interpreter, bool isAssignment) :BinaryOperatorBaseExp(interpreter, isAssignment)
         {
         }
     protected:
@@ -1209,7 +1209,7 @@ script(writeUnaryNumericExp)args($className, $op)
     class {% $className %} final : public UnaryOperatorBaseExp
     {
     public:
-        {% $className %}(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
+        {% $className %}(BraceCodeStructure& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
         {
         }
     protected:
@@ -1237,7 +1237,7 @@ script(writeNotExp)
     class NotExp final : public UnaryOperatorBaseExp
     {
     public:
-        NotExp(BraceScript& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
+        NotExp(BraceCodeStructure& interpreter, bool isAssignment) :UnaryOperatorBaseExp(interpreter, isAssignment)
         {
         }
     protected:

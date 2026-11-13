@@ -1,9 +1,7 @@
 // DslFile.js - JavaScript port of MetaDSL Dsl.cs DslFile (text/binary DSL load/save facade).
 // Lua/Cpp frontends and Gpp preprocessing are intentionally not ported.
 
-'use strict';
-
-const {
+import {
     StrBuf,
     ByteStream,
     DelimiterInfo,
@@ -11,12 +9,19 @@ const {
     Utility,
     utf8Encode,
     utf8Decode,
-} = require('./Dsl.js');
-const { DslLog } = require('./DslLog.js');
-const { DslToken } = require('./DslToken.js');
-const { DslAction } = require('./DslAction.js');
-const { DslError } = require('./DslError.js');
-const DslParserWrap = require('./DslParserWrap.js');
+} from './Dsl.js';
+import { DslLog } from './DslLog.js';
+import { DslToken } from './DslToken.js';
+import { DslAction } from './DslAction.js';
+import { DslError } from './DslError.js';
+import DslParserWrap from './DslParserWrap.js';
+
+async function getNodeFs(apiName) {
+    if (typeof process === 'undefined' || !process.versions || !process.versions.node) {
+        throw new Error(`DslFile.${apiName} is only available in Node.js.`);
+    }
+    return import('node:fs');
+}
 
 class DslFile {
     constructor() {
@@ -44,9 +49,9 @@ class DslFile {
     get DslInfos() { return this.mDslInfos; }
     AddDslInfo(data) { this.mDslInfos.push(data); }
 
-    // Node.js only.
-    Load(file, logCallback) {
-        const fs = require('fs');
+    // Node.js only; browsers reject this Promise before importing node:fs.
+    async Load(file, logCallback) {
+        const fs = await getNodeFs('Load');
         const content = fs.readFileSync(file, 'utf8');
         return this.LoadFromString(content, logCallback);
     }
@@ -106,9 +111,9 @@ class DslFile {
         return !log.HasError;
     }
 
-    // Node.js only.
-    Save(file) {
-        const fs = require('fs');
+    // Node.js only; browsers reject this Promise before importing node:fs.
+    async Save(file) {
+        const fs = await getNodeFs('Save');
         const sb = new StrBuf();
         if (this.mStringBeginDelimiter !== '"' || this.mStringEndDelimiter !== '"') {
             sb.Append(`@@delimiter(string, "${this.mStringBeginDelimiter}", "${this.mStringEndDelimiter}");`);
@@ -138,9 +143,9 @@ class DslFile {
         return new DelimiterInfo(this.mStringBeginDelimiter, this.mStringEndDelimiter, this.mScriptBeginDelimiter, this.mScriptEndDelimiter);
     }
 
-    // Node.js only.
-    LoadBinaryFile(file, reuseKeyBuffer, reuseIdBuffer) {
-        const fs = require('fs');
+    // Node.js only; browsers reject this Promise before importing node:fs.
+    async LoadBinaryFile(file, reuseKeyBuffer, reuseIdBuffer) {
+        const fs = await getNodeFs('LoadBinaryFile');
         const code = fs.readFileSync(file);
         return this.LoadBinaryCode(code, reuseKeyBuffer, reuseIdBuffer);
     }
@@ -243,10 +248,10 @@ class DslFile {
         return bdsl.ToBytes();
     }
 
-    // Node.js only.
-    SaveBinaryFile(file) {
-        const fs = require('fs');
-        fs.writeFileSync(file, Buffer.from(this.SaveBinaryCode()));
+    // Node.js only; browsers reject this Promise before importing node:fs.
+    async SaveBinaryFile(file) {
+        const fs = await getNodeFs('SaveBinaryFile');
+        fs.writeFileSync(file, this.SaveBinaryCode());
     }
 
     SetNameTags(tags) { this.mNameTags = tags; }
@@ -323,9 +328,4 @@ class DslFile {
 DslFile.c_BinaryIdentity = 'BDSL';
 DslFile.BinaryIdentity = utf8Encode(DslFile.c_BinaryIdentity);
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { DslFile };
-}
-if (typeof globalThis !== 'undefined') {
-    globalThis.DslFile = DslFile;
-}
+export { DslFile };

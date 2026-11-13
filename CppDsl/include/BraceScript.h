@@ -436,8 +436,10 @@ namespace Brace
     /// code structure to a linear structure.
     /// We implement first one first.
     class BraceScript;
+    class BraceCodeStructure;
+    class BraceRuntime;
     //We only need a member function to run, not a virtual function
-    using BraceApiExecutor = Delegation<int(VariableInfo&,VariableInfo&)>;
+    using BraceApiExecutor = Delegation<int(BraceRuntime&,VariableInfo&,VariableInfo&)>;
     class IBraceApi
     {
     public:
@@ -480,20 +482,10 @@ namespace Brace
         std::vector<BraceApiExecutor> Codes;
         VariableInfo VarInitInfo;
 
-        VariableInfo* AllocVariableInfo()const;
-        void RecycleVariableInfo(VariableInfo* p)const;
-        void ShrinkPool(int max_num)const;
-
         FuncInfo();
         FuncInfo(const FuncInfo& other);
         FuncInfo(FuncInfo&& other) noexcept;
         ~FuncInfo();
-    private:
-        /// Members of FuncInfo are immutable at run time, except for VaraibleInfoPool & VariableInfoStore, which uses Pointers 
-        /// to preserve the const semantics of FuncInfo. 
-        /// Stack operations are used to use recently used memory for better locality, while deques are used to shrink memory.
-        std::deque<VariableInfo*>* VariableInfoPool;
-        std::vector<VariableInfo*>* VariableInfoStore;
     };
 
     struct RuntimeStackInfo final
@@ -505,7 +497,7 @@ namespace Brace
     class IBraceApiFactory
     {
     public:
-        virtual IBraceApi* Create(BraceScript& interpreter) = 0;
+        virtual IBraceApi* Create(BraceCodeStructure& codeStructure) = 0;
     public:
         virtual ~IBraceApiFactory() {}
     };
@@ -545,28 +537,22 @@ namespace Brace
         void AddApiInstance(IBraceApi* p)const;
         BraceApiExecutor LoadHelper(const DslData::ISyntaxComponent& syntaxUnit, OperandLoadtimeInfo& resultInfo)const;
     protected:
-        bool IsForceQuit()const;
         FuncInfo* GlobalFuncInfo()const;
-        VariableInfo* GlobalVariables()const;
-        const FuncInfo* CurRuntimeFuncInfo()const;
-        VariableInfo* CurRuntimeVariables()const;
-        void PushRuntimeStack(const FuncInfo* funcInfo)const;
-        void PopRuntimeStack()const;
     protected:
         FuncInfo* CurFuncInfo()const;
         AbstractBraceApi* GetFailbackApi()const;
         const std::shared_ptr<void>& GetContextObject()const;
     protected:
-        BraceApiImplHelper(BraceScript& interpreter) :m_Interpreter(interpreter)
+        BraceApiImplHelper(BraceCodeStructure& interpreter) :m_CodeStructure(interpreter)
         {}
-        BraceScript& GetInterpreter()const { return m_Interpreter; }
+        BraceCodeStructure& GetCodeStructure()const { return m_CodeStructure; }
     private:
         BraceApiImplHelper(const BraceApiImplHelper&) = delete;
         BraceApiImplHelper& operator=(const BraceApiImplHelper&) = delete;
         BraceApiImplHelper(BraceApiImplHelper&&) noexcept = delete;
         BraceApiImplHelper& operator=(BraceApiImplHelper&&) noexcept = delete;
     private:
-        BraceScript& m_Interpreter;
+        BraceCodeStructure& m_CodeStructure;
     protected:
         static void FreeObjVars(VariableInfo& vars, const std::vector<int>& objVars);
     };
@@ -595,7 +581,7 @@ namespace Brace
             return false;
         }
     protected:
-        AbstractBraceApi(BraceScript& interpreter) :BraceApiImplHelper(interpreter)
+        AbstractBraceApi(BraceCodeStructure& interpreter) :BraceApiImplHelper(interpreter)
         {}
     private:
         AbstractBraceApi(const AbstractBraceApi&) = delete;
@@ -607,20 +593,20 @@ namespace Brace
     class FunctionExecutor final : public AbstractBraceApi
     {
     public:
-        FunctionExecutor(BraceScript& interpreter);
+        FunctionExecutor(BraceCodeStructure& interpreter);
     public:
         void Reset();
         void Build(const std::string& func) { Build(*CurFuncInfo(), func); }
         void Build(const FuncInfo& callerFunc, const std::string& func);
         bool IsValid()const;
-        int Run(VariableInfo& gvars, VariableInfo& lvars)const;
+        int Run(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars)const;
         int GetArgCount()const;
         const OperandRuntimeInfo* ArgInfo(int ix) const;
         const OperandRuntimeInfo* ResultInfo() const;
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     private:
-        int Execute(VariableInfo& gvars, VariableInfo& lvars)const;
+        int Execute(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars)const;
     private:
         const FuncInfo* m_Func;
         std::vector<BraceApiExecutor> m_Args;
@@ -635,7 +621,7 @@ namespace Brace
     class UnaryOperatorBaseExp : public AbstractBraceApi
     {
     public:
-        UnaryOperatorBaseExp(BraceScript& interpreter, bool isAssignment);
+        UnaryOperatorBaseExp(BraceCodeStructure& interpreter, bool isAssignment);
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
@@ -649,7 +635,7 @@ namespace Brace
     class BinaryOperatorBaseExp : public AbstractBraceApi
     {
     public:
-        BinaryOperatorBaseExp(BraceScript& interpreter, bool isAssignment);
+        BinaryOperatorBaseExp(BraceCodeStructure& interpreter, bool isAssignment);
     protected:
         virtual bool LoadCall(const FuncInfo& curFunc, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
@@ -669,14 +655,15 @@ namespace Brace
     class SimpleBraceApiBase : public AbstractBraceApi
     {
     public:
-        SimpleBraceApiBase(BraceScript& interpreter);
+        SimpleBraceApiBase(BraceCodeStructure& interpreter);
     protected:
         virtual bool LoadCall(const FuncInfo& func, const DslData::FunctionData& data, std::vector<OperandLoadtimeInfo>& argLoadInfos, std::vector<BraceApiExecutor>& args, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override;
     protected:
         virtual bool TypeInference(const FuncInfo& func, const DslData::FunctionData& data, const std::vector<OperandLoadtimeInfo>& argInfos, OperandLoadtimeInfo& resultInfo);
         virtual void Execute(VariableInfo& gvars, VariableInfo& lvars, const std::vector<OperandRuntimeInfo>& argInfos, const OperandRuntimeInfo& resultInfo)const = 0;
+        virtual void Execute(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars, const std::vector<OperandRuntimeInfo>& argInfos, const OperandRuntimeInfo& resultInfo)const;
     private:
-        int ExecuteImpl(VariableInfo& gvars, VariableInfo& lvars)const;
+        int ExecuteImpl(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars)const;
     private:
         std::vector<Brace::BraceApiExecutor> m_Args;
         std::vector<Brace::OperandRuntimeInfo> m_ArgInfos;
@@ -687,9 +674,9 @@ namespace Brace
     class BraceApiFactory final : public IBraceApiFactory
     {
     public:
-        virtual IBraceApi* Create(BraceScript& interpreter) override
+        virtual IBraceApi* Create(BraceCodeStructure& codeStructure) override
         {
-            return new ApiT(interpreter);
+            return new ApiT(codeStructure);
         }
     };
     template<typename ApiT, typename... Args>
@@ -701,9 +688,9 @@ namespace Brace
     public:
         CtorBinder(A1 a1) :m_A1(a1)
         {}
-        IBraceApi* ctor(BraceScript& interpreter)
+        IBraceApi* ctor(BraceCodeStructure& codeStructure)
         {
-            return new ApiT(interpreter, m_A1);
+            return new ApiT(codeStructure, m_A1);
         }
     private:
         std::remove_cv_t<std::remove_reference_t<A1>> m_A1;
@@ -714,9 +701,9 @@ namespace Brace
     public:
         CtorBinder(A1 a1, A2 a2) :m_A1(a1), m_A2(a2)
         {}
-        IBraceApi* ctor(BraceScript& interpreter)
+        IBraceApi* ctor(BraceCodeStructure& codeStructure)
         {
-            return new ApiT(interpreter, m_A1, m_A2);
+            return new ApiT(codeStructure, m_A1, m_A2);
         }
     private:
         std::remove_cv_t<std::remove_reference_t<A1>> m_A1;
@@ -728,9 +715,9 @@ namespace Brace
     public:
         CtorBinder(A1 a1, A2 a2, A3 a3) :m_A1(a1), m_A2(a2), m_A3(a3)
         {}
-        IBraceApi* ctor(BraceScript& interpreter)
+        IBraceApi* ctor(BraceCodeStructure& codeStructure)
         {
-            return new ApiT(interpreter, m_A1, m_A2, m_A3);
+            return new ApiT(codeStructure, m_A1, m_A2, m_A3);
         }
     private:
         std::remove_cv_t<std::remove_reference_t<A1>> m_A1;
@@ -743,9 +730,9 @@ namespace Brace
     public:
         BraceApiFactoryWithArgs(Args... args) :m_Binder(args...)
         {}
-        virtual IBraceApi* Create(BraceScript& interpreter) override
+        virtual IBraceApi* Create(BraceCodeStructure& codeStructure) override
         {
-            return m_Binder.ctor(interpreter);
+            return m_Binder.ctor(codeStructure);
         }
     private:
         CtorBinder<ApiT, Args...> m_Binder;
@@ -763,6 +750,182 @@ namespace Brace
     using LoadFunctionFailedDelegation = std::function<bool(const DslData::FunctionData&, OperandLoadtimeInfo&, BraceApiExecutor&)>;
     using LoadStatementFailedDelegation = std::function<bool(const DslData::StatementData&, OperandLoadtimeInfo&, BraceApiExecutor&)>;
     using GetRuntimeStackDelegation = std::function<RuntimeStack*()>;
+    class BraceRuntime final
+    {
+    public:
+        BraceRuntime(std::shared_ptr<BraceCodeStructure> codeStructure, GetRuntimeStackDelegation onGetRuntimeStack);
+        ~BraceRuntime();
+    public:
+        void Reset();
+        void SyncGlobalVariables();
+        void SetRuntimeStackDelegation(GetRuntimeStackDelegation onGetRuntimeStack) { m_OnGetRuntimeStack = std::move(onGetRuntimeStack); }
+        VariableInfo* GlobalVariables()const;
+        const FuncInfo* CurRuntimeFuncInfo()const;
+        VariableInfo* CurRuntimeVariables()const;
+        void PushRuntimeStack(const FuncInfo* funcInfo);
+        void PopRuntimeStack();
+        bool IsForceQuit()const { return m_ForceQuit; }
+        void SetForceQuit(bool forceQuit) { m_ForceQuit = forceQuit; }
+        const RuntimeStack& GetRuntimeStack()const;
+        RuntimeStack& GetRuntimeStack();
+    private:
+        class FramePool final
+        {
+        public:
+            VariableInfo* Alloc(const FuncInfo& funcInfo);
+            void Recycle(VariableInfo* p);
+            ~FramePool();
+        private:
+            std::deque<VariableInfo*> m_Free;
+            std::vector<VariableInfo*> m_Store;
+        };
+        VariableInfo* AllocVariableInfo(const FuncInfo& funcInfo);
+        void RecycleVariableInfo(const FuncInfo& funcInfo, VariableInfo* p);
+    private:
+        std::shared_ptr<BraceCodeStructure> m_CodeStructure;
+        GetRuntimeStackDelegation m_OnGetRuntimeStack;
+        VariableInfo* m_GlobalVariables;
+        RuntimeStack m_RuntimeStack;
+        std::unordered_map<const FuncInfo*, FramePool> m_FramePools;
+        bool m_ForceQuit;
+    private:
+        BraceRuntime(const BraceRuntime&) = delete;
+        BraceRuntime& operator=(const BraceRuntime&) = delete;
+        BraceRuntime(BraceRuntime&&) noexcept = delete;
+        BraceRuntime& operator=(BraceRuntime&&) noexcept = delete;
+    };
+    class BraceApiRegistry final
+    {
+    public:
+        BraceApiRegistry();
+        ~BraceApiRegistry();
+    public:
+        const std::unordered_set<std::string>& GetLinqMethods()const;
+        std::unordered_set<std::string>& GetLinqMethods();
+        void RegisterApi(const std::string& id, const std::string& doc, IBraceApiFactory* pApiFactory);
+        void RegisterApi(std::string&& id, std::string&& doc, IBraceApiFactory* pApiFactory);
+        const std::map<std::string, std::string>& GetApiDocs()const;
+        IBraceApiFactory* FindApiFactory(const std::string& name)const;
+        bool TryMarkInnerApisRegistered();
+    private:
+        std::unordered_set<std::string> m_LinqMethods;
+        std::map<std::string, std::string> m_ApiDocs;
+        std::unordered_map<std::string, IBraceApiFactory*> m_ApiFactories;
+        bool m_InnerApisRegistered = false;
+    private:
+        BraceApiRegistry(const BraceApiRegistry&) = delete;
+        BraceApiRegistry& operator=(const BraceApiRegistry&) = delete;
+    };
+    class BraceCodeStructure final : public std::enable_shared_from_this<BraceCodeStructure>
+    {
+        friend class BraceApiImplHelper;
+        friend class BraceScript;
+        struct BlockInfo final
+        {
+            int BlockId;
+            std::vector<int> ObjVars;
+            std::vector<Instruction> BasicBlock;
+            BlockInfo(int blockId) :BlockId(blockId), ObjVars(), BasicBlock() {}
+        };
+    public:
+        BraceCodeStructure();
+        explicit BraceCodeStructure(std::shared_ptr<BraceApiRegistry> registry);
+        ~BraceCodeStructure();
+    public:
+        LogDelegation OnInfo;
+        LogDelegation OnWarn;
+        LogDelegation OnError;
+        GetObjectTypeIdDelegation OnGetObjectTypeId;
+        GetObjectTypeNameDelegation OnGetObjectTypeName;
+        ObjectAssignCheckDelegation OnObjectAssignCheck;
+        FilterLoadDelegation OnFilterLoad;
+        LoadValueFailedDelegation OnLoadValueFailed;
+        LoadFunctionFailedDelegation OnLoadFunctionFailed;
+        LoadStatementFailedDelegation OnLoadStatementFailed;
+    public:
+        void Reset();
+        void LoadFuncApiTypeInfo(const DslData::DslFile& dslInfos);
+        void AddFuncApiTypeInfo(const std::string& name, const FuncApiTypeInfo& info);
+        void AddFuncApiTypeInfo(std::string&& name, FuncApiTypeInfo&& info);
+        FuncInfo* GetOrAddFuncInfo(const std::string& name);
+        void LoadScript(const DslData::DslFile& file);
+        int GetGlobalCodeNum()const;
+        FuncInfo* GlobalFuncInfo()const;
+        bool HasWarn()const { return m_HasWarn; }
+        bool HasError()const { return m_HasError; }
+        void AddSyntaxComponent(DslData::ISyntaxComponent* p);
+        void AddApiInstance(IBraceApi* p);
+        IBraceApi* CreateApi(const std::string& name);
+        void SetFailbackApi(AbstractBraceApi* pFailbackApi);
+        AbstractBraceApi* GetFailbackApi()const;
+        void SetContextObject(const std::shared_ptr<void>& pContext);
+        const std::shared_ptr<void>& GetContextObject()const;
+        std::shared_ptr<BraceApiRegistry> GetApiRegistry()const { return m_ApiRegistry; }
+        void RegisterApi(const std::string& id, const std::string& doc, IBraceApiFactory* pApiFactory);
+        void RegisterApi(std::string&& id, std::string&& doc, IBraceApiFactory* pApiFactory);
+        const std::unordered_set<std::string>& GetLinqMethods()const;
+    private:
+        void LogInfo(const std::string& info);
+        void LogWarn(const std::string& warn);
+        void LogError(const std::string& error);
+        int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
+        const char* GetObjectTypeName(int objTypeId)const;
+        ParamTypeInfo ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const;
+        bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId) const;
+        const FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name)const;
+        FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name);
+        const FuncInfo* GetFuncInfo(const std::string& name)const;
+        FuncInfo* GetFuncInfo(const std::string& name);
+        const FuncInfo* CurFuncInfo()const;
+        FuncInfo* CurFuncInfo();
+        FuncInfo* PushFuncInfo(const std::string& name);
+        void PopFuncInfo();
+        int GenNextUniqueId() { return m_NextUniqueId++; }
+        int CurBlockId()const;
+        const std::vector<int>& CurBlockObjVars()const;
+        std::vector<int>& CurBlockObjVars();
+        const std::vector<Instruction>& CurBasicBlock()const;
+        std::vector<Instruction>& CurBasicBlock();
+        void PushBlock();
+        void PopBlock();
+        std::string CalcVarKey(const std::string& name, int level)const;
+        std::string CalcConstKey(int tok_type, const std::string& name)const;
+        int AllocGlobalVariable(const std::string& name, int type, int objTypeId);
+        auto FindVariable(FuncInfo* func, const std::string& name, std::string& key, int& level)const -> decltype(func->VarTypeInfos.end());
+        int AllocVariable(const std::string& name, int type, int objTypeId);
+        int AllocConst(int tok_type, const std::string& value, int& type, int& objTypeId);
+        BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, OperandLoadtimeInfo& resultInfo);
+        BraceApiExecutor LoadValue(const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo);
+        BraceApiExecutor LoadFunction(const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo);
+        BraceApiExecutor LoadStatement(const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo);
+        bool DoFilterLoad(const DslData::ISyntaxComponent& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
+        bool DoLoadValueFailed(const DslData::ValueData& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
+        bool DoLoadFunctionFailed(const DslData::FunctionData& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
+        bool DoLoadStatementFailed(const DslData::StatementData& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
+        void RegisterInnerApis();
+        void Init();
+        void Release();
+        bool DoLoadTypeInfo(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&);
+    private:
+        std::shared_ptr<BraceApiRegistry> m_ApiRegistry;
+        std::vector<DslData::ISyntaxComponent*> m_AddedSyntaxComponents;
+        std::vector<IBraceApi*> m_ApiInstances;
+        std::unordered_map<std::string, FuncApiTypeInfo> m_FuncApiTypeInfos;
+        std::unordered_map<std::string, FuncInfo> m_Funcs;
+        bool m_HasWarn;
+        bool m_HasError;
+        FuncInfoStack m_FuncInfoStack;
+        int m_NextUniqueId;
+        int m_LastBlockId;
+        std::vector<BlockInfo> m_LexicalScopeStack;
+        FuncInfo* m_GlobalFunc;
+        LoadTypeInfoDelegation m_LoadTypeInfo;
+        AbstractBraceApi* m_FailbackApi;
+        std::shared_ptr<void> m_ContextObj;
+    private:
+        BraceCodeStructure(const BraceCodeStructure&) = delete;
+        BraceCodeStructure& operator=(const BraceCodeStructure&) = delete;
+    };
     class BraceScript final
     {
         friend class BraceApiImplHelper;
@@ -837,92 +1000,26 @@ namespace Brace
         int GetGlobalCodeNum()const;
         FuncInfo* GlobalFuncInfo()const;
         VariableInfo* GlobalVariables()const;
-        bool HasWarn()const { return m_HasWarn; }
-        bool HasError()const { return m_HasError; }
-        bool IsForceQuit()const { return m_ForceQuit; }
-        void SetForceQuit(bool forceQuit) { m_ForceQuit = forceQuit; }
+        bool HasWarn()const { return m_CodeStructure->HasWarn(); }
+        bool HasError()const { return m_CodeStructure->HasError(); }
+        bool IsForceQuit()const { return m_Runtime->IsForceQuit(); }
+        void SetForceQuit(bool forceQuit) { m_Runtime->SetForceQuit(forceQuit); }
     public:
+        std::shared_ptr<BraceCodeStructure> GetCodeStructure()const { return m_CodeStructure; }
+        std::shared_ptr<BraceRuntime> GetRuntime()const;
         void AddSyntaxComponent(DslData::ISyntaxComponent* p);
-        void AddApiInstance(IBraceApi* p); 
+        void AddApiInstance(IBraceApi* p);
         IBraceApi* CreateApi(const std::string& name);
     private:
-        const FuncInfo* CurRuntimeFuncInfo()const;
-        VariableInfo* CurRuntimeVariables()const;
-        void PushRuntimeStack(const FuncInfo* funcInfo);
-        void PopRuntimeStack();
-    private:
-        void LogInfo(const std::string& info);
-        void LogWarn(const std::string& warn);
-        void LogError(const std::string& error);
-        int GetObjectTypeId(const DslData::ISyntaxComponent& typeSyntax)const;
-        const char* GetObjectTypeName(int objTypeId)const;
-        ParamTypeInfo ParseParamTypeInfo(const DslData::ISyntaxComponent& syntax)const;
-        bool CanAssign(int destType, int destObjTypeId, int srcType, int srcObjTypeId) const;
-        const FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name)const;
-        FuncApiTypeInfo* GetFuncApiTypeInfo(const std::string& name);
-        const FuncInfo* GetFuncInfo(const std::string& name)const;
-        FuncInfo* GetFuncInfo(const std::string& name);
-        const FuncInfo* CurFuncInfo()const;
-        FuncInfo* CurFuncInfo();
-        FuncInfo* PushFuncInfo(const std::string& name);
-        void PopFuncInfo();
-        int GenNextUniqueId() { return m_NextUniqueId++; }
-        int CurBlockId()const;
-        const std::vector<int>& CurBlockObjVars()const;
-        std::vector<int>& CurBlockObjVars();
-        const std::vector<Instruction>& CurBasicBlock()const;
-        std::vector<Instruction>& CurBasicBlock();
-        void PushBlock();
-        void PopBlock();
-        std::string CalcVarKey(const std::string& name, int level)const;
-        std::string CalcConstKey(int tok_type, const std::string& name)const;
-        int AllocGlobalVariable(const std::string& name, int type, int objTypeId);
-        auto FindVariable(FuncInfo* func, const std::string& name, std::string& key, int& level)const -> decltype(func->VarTypeInfos.end());
-        int AllocVariable(const std::string& name, int type, int objTypeId);
-        int AllocConst(int tok_type, const std::string& value, int& type, int& objTypeId);
-        BraceApiExecutor Load(const DslData::ISyntaxComponent& syntaxUnit, OperandLoadtimeInfo& resultInfo);
-    private:
-        BraceApiExecutor LoadValue(const DslData::ValueData& data, OperandLoadtimeInfo& resultInfo);
-        BraceApiExecutor LoadFunction(const DslData::FunctionData& data, OperandLoadtimeInfo& resultInfo);
-        BraceApiExecutor LoadStatement(const DslData::StatementData& data, OperandLoadtimeInfo& resultInfo);
-        bool DoFilterLoad(const DslData::ISyntaxComponent& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
-        bool DoLoadValueFailed(const DslData::ValueData& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
-        bool DoLoadFunctionFailed(const DslData::FunctionData& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
-        bool DoLoadStatementFailed(const DslData::StatementData& syntaxUnit, OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor);
-        void RegisterInnerApis();
-        void Init();
-        void Release();
-        bool DoLoadTypeInfo(const DslData::ISyntaxComponent&, OperandLoadtimeInfo&);
-        const RuntimeStack& GetRuntimeStack()const;
-        RuntimeStack& GetRuntimeStack();
+        void SyncCallbacks();
     private:
         BraceScript(const BraceScript&) = delete;
         BraceScript& operator=(const BraceScript&) = delete;
         BraceScript(BraceScript&&) noexcept = delete;
         BraceScript& operator=(BraceScript&&) noexcept = delete;
     private:
-        std::unordered_set<std::string> m_LinqMethods;
-        std::map<std::string, std::string> m_ApiDocs;
-        std::unordered_map<std::string, IBraceApiFactory*> m_ApiFactories;
-        std::vector<DslData::ISyntaxComponent*> m_AddedSyntaxComponents;
-        std::vector<IBraceApi*> m_ApiInstances;
-        std::unordered_map<std::string, FuncApiTypeInfo> m_FuncApiTypeInfos;
-        std::unordered_map<std::string, FuncInfo> m_Funcs;
-
-        bool m_ForceQuit;
-        bool m_HasWarn;
-        bool m_HasError;
-        FuncInfoStack m_FuncInfoStack;
-        int m_NextUniqueId;
-        int m_LastBlockId;
-        std::vector<BlockInfo> m_LexicalScopeStack;
-        FuncInfo* m_GlobalFunc;
-        VariableInfo* m_GlobalVariables;
-        RuntimeStack m_RuntimeStack;
-
-        LoadTypeInfoDelegation m_LoadTypeInfo;
-        AbstractBraceApi* m_FailbackApi;
-        std::shared_ptr<void> m_ContextObj;
+        std::shared_ptr<BraceCodeStructure> m_CodeStructure;
+        std::shared_ptr<BraceRuntime> m_Runtime;
     };
 
     void TranslateBraceDslError(std::string& err);

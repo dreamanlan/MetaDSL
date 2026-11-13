@@ -2,8 +2,6 @@
 // Scope: ValueData/FunctionData/StatementData/DelimiterInfo/Utility (text output + binary BDSL).
 // Lua/Cpp frontends and Gpp preprocessing are intentionally not ported.
 
-'use strict';
-
 const ParamClassEnum = Object.freeze({
     PARAM_CLASS_MIN: 0,
     PARAM_CLASS_NOTHING: 0,
@@ -1421,7 +1419,7 @@ Object.assign(Utility, {
     },
 });
 
-const Dsl = {
+export {
     ParamClassEnum,
     DslBinaryCode,
     ByteStream,
@@ -1439,10 +1437,3 @@ const Dsl = {
     StatementData,
     Utility,
 };
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Dsl;
-}
-if (typeof globalThis !== 'undefined') {
-    globalThis.Dsl = Object.assign(globalThis.Dsl || {}, Dsl);
-}

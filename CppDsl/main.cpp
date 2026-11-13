@@ -169,11 +169,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
             script.LoadScript(dslFile);
             script.Run();
 
-            Brace::FunctionExecutor funcExer(script);
+            Brace::FunctionExecutor funcExer(*script.GetCodeStructure());
             funcExer.Build("main");
             Brace::VarSetI64(*script.GlobalVariables(), funcExer.ArgInfo(0)->Type, funcExer.ArgInfo(0)->VarIndex, 345);
             Brace::VarSetF64(*script.GlobalVariables(), funcExer.ArgInfo(1)->Type, funcExer.ArgInfo(1)->VarIndex, 3.14);
-            funcExer.Run(*script.GlobalVariables(), *script.GlobalVariables());
+            funcExer.Run(*script.GetRuntime(), *script.GlobalVariables(), *script.GlobalVariables());
             int64_t v = Brace::VarGetI64(*script.GlobalVariables(), funcExer.ResultInfo()->Type, funcExer.ResultInfo()->VarIndex);
             printf("FunctionExecutor result: %lld\n", static_cast<long long>(v));
         }
@@ -229,7 +229,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
 class WaitExp final : public Brace::SimpleBraceApiBase
 {
 public:
-    WaitExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+    WaitExp(Brace::BraceCodeStructure& interpreter) :Brace::SimpleBraceApiBase(interpreter)
     {
     }
 protected:
@@ -272,7 +272,7 @@ protected:
 class TimeExp final : public Brace::SimpleBraceApiBase
 {
 public:
-    TimeExp(Brace::BraceScript& interpreter) :Brace::SimpleBraceApiBase(interpreter)
+    TimeExp(Brace::BraceCodeStructure& interpreter) :Brace::SimpleBraceApiBase(interpreter)
     {
     }
 protected:

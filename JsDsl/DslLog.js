@@ -1,7 +1,5 @@
 // DslLog.js - JavaScript port of MetaDSL Common/DslLog.cs.
 
-'use strict';
-
 // Minimal C# string.Format replacement: {0}, {1}, ... placeholders only.
 function format(fmt, args) {
     return String(fmt).replace(/\{(\d+)\}/g, (m, ix) => {
@@ -25,9 +23,4 @@ class DslLog {
     }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { DslLog };
-}
-if (typeof globalThis !== 'undefined') {
-    globalThis.DslLog = DslLog;
-}
+export { DslLog };

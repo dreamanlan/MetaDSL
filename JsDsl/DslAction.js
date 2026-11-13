@@ -1,14 +1,12 @@
 // DslAction.js - JavaScript port of MetaDSL Common/DslAction.cs (DSL grammar semantic actions only).
 
-'use strict';
-
-const {
+import {
     ParamClassEnum,
     AbstractSyntaxComponent,
     ValueData,
     FunctionData,
     StatementData,
-} = require('./Dsl.js');
+} from './Dsl.js';
 
 const OperatorCategoryEnum = Object.freeze({
     OPERATOR_CATEGORY_NORMAL: 0,
@@ -736,11 +734,4 @@ class DslAction {
     }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { DslAction, OperatorCategoryEnum, PairTypeEnum };
-}
-if (typeof globalThis !== 'undefined') {
-    globalThis.DslAction = DslAction;
-    globalThis.OperatorCategoryEnum = OperatorCategoryEnum;
-    globalThis.PairTypeEnum = PairTypeEnum;
-}
+export { DslAction, OperatorCategoryEnum, PairTypeEnum };

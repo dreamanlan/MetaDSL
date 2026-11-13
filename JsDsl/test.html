@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript MetaDSL Browser Test</title>
+</head>
+<body>
+    <h1>JavaScript MetaDSL Browser Test</h1>
+    <p>This page loads the ESM library and runs the same tests as <code>node test.js</code>. Serve the project over HTTP before opening it.</p>
+    <pre id="output">Running...</pre>
+    <script>
+        const output = document.getElementById('output');
+        const originalLog = console.log;
+        output.textContent = '';
+        console.log = (...args) => {
+            originalLog.apply(console, args);
+            output.textContent += args.map(String).join(' ') + '\n';
+        };
+        window.addEventListener('error', event => {
+            output.textContent += 'ERROR: ' + event.message + '\n';
+        });
+        window.addEventListener('unhandledrejection', event => {
+            output.textContent += 'ERROR: ' + String(event.reason) + '\n';
+        });
+    </script>
+    <script type="module" src="test.js"></script>
+</body>
+</html>

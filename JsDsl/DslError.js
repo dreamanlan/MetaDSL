@@ -1,9 +1,7 @@
 // DslError.js - JavaScript port of MetaDSL DslParser/DslError.cs.
 // Signatures follow the JS SLK parser: mismatch(terminal, token), no_entry(nonterminal, token, level).
 
-'use strict';
-
-const { GetSymbolName } = require('./DslParserWrap.js');
+import { GetSymbolName } from './DslParserWrap.js';
 
 class DslError {
     constructor(log, tokens) {
@@ -34,9 +32,4 @@ class DslError {
     }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { DslError };
-}
-if (typeof globalThis !== 'undefined') {
-    globalThis.DslError = DslError;
-}
+export { DslError };
