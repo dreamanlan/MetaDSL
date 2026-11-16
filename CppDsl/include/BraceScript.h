@@ -967,18 +967,19 @@ namespace Brace
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
         /// See ExternalAPiRef.txt
         /// -----------------------------------------------------------------------------------------------------------
-        /// RegisterApi("membercall", new BraceApiFactory<MemberCallExp>());
-        /// RegisterApi("memberset", new BraceApiFactory<MemberSetExp>());
-        /// RegisterApi("memberget", new BraceApiFactory<MemberGetExp>());
-        /// RegisterApi("collectioncall", new BraceApiFactory<CollectionCallExp>());
-        /// RegisterApi("collectionset", new BraceApiFactory<CollectionSetExp>());
-        /// RegisterApi("collectionget", new BraceApiFactory<CollectionGetExp>());
-        /// RegisterApi("linq", new BraceApiFactory<LinqExp>());
-        /// RegisterApi("select", new Brace::BraceApiFactory<SelectExp>());
-        /// RegisterApi("lambda", new BraceApiFactory<LambdaExp>());
-        /// RegisterApi("array", new BraceApiFactory<ArrayExp>());
-        /// RegisterApi("hashtable", new BraceApiFactory<HashtableExp>());
-        /// RegisterApi("looplist", new BraceApiFactory<LoopListExp>());
+        /// RegisterApi("member_call", "member_call api", new BraceApiFactory<MemberCallExp>());
+        /// RegisterApi("member_set", "member_set api", new BraceApiFactory<MemberSetExp>());
+        /// RegisterApi("member_get", "member_get api", new BraceApiFactory<MemberGetExp>());
+        /// RegisterApi("collection_call", "collection_call api", new BraceApiFactory<CollectionCallExp>());
+        /// RegisterApi("collection_set", "collection_set api", new BraceApiFactory<CollectionSetExp>());
+        /// RegisterApi("collection_get", "collection_get api", new BraceApiFactory<CollectionGetExp>());
+        /// RegisterApi("linq", "linq statement", new BraceApiFactory<LinqExp>());
+        /// RegisterApi("lambda", "lamdba expression", new BraceApiFactory<LambdaExp>());
+        /// RegisterApi("tuple", "(v1,v2,...) or tuple(v1,v2,...) object", new BraceApiFactory<TupleExp>());
+        /// RegisterApi("tuple_set", "(var1,var2,...) = (v1,v2,...) or tuple_set((var1,var2,...), (v1,v2,...))", new BraceApiFactory<TupleSetExp>());
+        /// RegisterApi("array", "array object", new BraceApiFactory<ArrayExp>());
+        /// RegisterApi("hashtable", "hashtable object", new BraceApiFactory<HashtableExp>());
+        /// RegisterApi("loop_list", "loop_list statement", new BraceApiFactory<LoopListExp>());
         /// -----------------------------------------------------------------------------------------------------------
         const std::unordered_set<std::string>& GetLinqMethods()const;
         std::unordered_set<std::string>& GetLinqMethods();

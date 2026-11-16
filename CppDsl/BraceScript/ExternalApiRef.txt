@@ -268,7 +268,7 @@ namespace BraceScriptInterpreter
         {}
     };
     /// <summary>
-    /// We make a objtypeid -> BraceObjectInfo map, which allows object category info to process class by category,
+    /// We make a obj_type_id -> BraceObjectInfo map, which allows object category info to process class by category,
     /// Such as DispatchObject, CustomObject, UObject etc.
     /// </summary>
     class BraceObjectInfoManager final
@@ -1038,10 +1038,10 @@ namespace BraceScriptInterpreter
     protected:
         virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
         {
-            //typetag(type) or typetag(exp)
+            //type_tag(type) or type_tag(exp)
             if (data.GetParamNum() != 1) {
                 std::stringstream ss;
-                ss << "expected typetag(type) or typetag(exp), line: " << data.GetLine();
+                ss << "expected type_tag(type) or type_tag(exp), line: " << data.GetLine();
                 LogError(ss.str());
                 return false;
             }
@@ -1072,10 +1072,10 @@ namespace BraceScriptInterpreter
     protected:
         virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
         {
-            //typeid(type) or typeid(exp)
+            //type_id(type) or type_id(exp)
             if (data.GetParamNum() != 1) {
                 std::stringstream ss;
-                ss << "expected typeid(type) or typeid(exp), line: " << data.GetLine();
+                ss << "expected type_id(type) or type_id(exp), line: " << data.GetLine();
                 LogError(ss.str());
                 return false;
             }
@@ -1122,10 +1122,10 @@ namespace BraceScriptInterpreter
     protected:
         virtual bool LoadFunction(const Brace::FuncInfo& func, const DslData::FunctionData& data, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
         {
-            //objtypeid(type) or objtypeid(exp)
+            //obj_type_id(type) or obj_type_id(exp)
             if (data.GetParamNum() != 1) {
                 std::stringstream ss;
-                ss << "expected objtypeid(type) or objtypeid(exp), line: " << data.GetLine();
+                ss << "expected obj_type_id(type) or obj_type_id(exp), line: " << data.GetLine();
                 LogError(ss.str());
                 return false;
             }
@@ -1183,7 +1183,7 @@ namespace BraceScriptInterpreter
                 }
             }
             std::stringstream ss;
-            ss << "expected getobjtypename(objtypeid), line: " << data.GetLine();
+            ss << "expected get_obj_type_name(obj_type_id), line: " << data.GetLine();
             LogError(ss.str());
             return false;
         }
@@ -1215,7 +1215,7 @@ namespace BraceScriptInterpreter
                 }
             }
             std::stringstream ss;
-            ss << "expected getobjcategory(objtypeid), line: " << data.GetLine();
+            ss << "expected get_obj_category(obj_type_id), line: " << data.GetLine();
             LogError(ss.str());
             return false;
         }
@@ -1247,7 +1247,7 @@ namespace BraceScriptInterpreter
                 }
             }
             std::stringstream ss;
-            ss << "expected gettypeparamcount(objtypeid), line: " << data.GetLine();
+            ss << "expected get_type_param_count(obj_type_id), line: " << data.GetLine();
             LogError(ss.str());
             return false;
         }
@@ -1280,7 +1280,7 @@ namespace BraceScriptInterpreter
                 }
             }
             std::stringstream ss;
-            ss << "expected gettypeparamtype(objtypeid, index), line: " << data.GetLine();
+            ss << "expected get_type_param_type(obj_type_id, index), line: " << data.GetLine();
             LogError(ss.str());
             return false;
         }
@@ -1315,7 +1315,7 @@ namespace BraceScriptInterpreter
                 }
             }
             std::stringstream ss;
-            ss << "expected gettypeparamobjtypeid(objtypeid, index), line: " << data.GetLine();
+            ss << "expected get_type_param_obj_type_id(obj_type_id, index), line: " << data.GetLine();
             LogError(ss.str());
             return false;
         }
@@ -3393,10 +3393,10 @@ namespace BraceScriptInterpreter
         const BraceObjectInfo* m_pObjectInfo;
         Brace::OperandRuntimeInfo m_ResultInfo;
     };
-    class ReInterpretAsExp final : public Brace::AbstractBraceApi
+    class ReinterpretAsExp final : public Brace::AbstractBraceApi
     {
     public:
-        ReInterpretAsExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter), m_pObjectInfo(nullptr)
+        ReinterpretAsExp(Brace::BraceScript& interpreter) :Brace::AbstractBraceApi(interpreter), m_pObjectInfo(nullptr)
         {
         }
     protected:
@@ -3418,7 +3418,7 @@ namespace BraceScriptInterpreter
                         resultInfo.VarIndex = AllocVariable(resultInfo.Name, resultInfo.Type, resultInfo.ObjectTypeId);
                         m_ResultInfo = resultInfo;
 
-                        executor.attach(this, &ReInterpretAsExp::Execute);
+                        executor.attach(this, &ReinterpretAsExp::Execute);
                         return true;
                     }
                 }
@@ -8870,7 +8870,7 @@ namespace BraceScriptInterpreter
         }
         virtual bool LoadStatement(const Brace::FuncInfo& func, const DslData::StatementData& statementData, Brace::OperandLoadtimeInfo& resultInfo, Brace::BraceApiExecutor& executor) override
         {
-            //looplist(exp) func(args);
+            //loop_list(exp) func(args);
             if (statementData.GetFunctionNum() == 2) {
                 auto* first = statementData.GetFirst()->AsFunction();
                 //const std::string& firstId = first->GetId();
@@ -9201,30 +9201,30 @@ namespace BraceScriptInterpreter
 	};
 
 	/// missing language features
-        m_pBraceScript->RegisterApi("membercall", "object member call", new Brace::BraceApiFactory<MemberCallExp>());
-        m_pBraceScript->RegisterApi("memberset", "object property set", new Brace::BraceApiFactory<MemberSetExp>());
-        m_pBraceScript->RegisterApi("memberget", "object property get", new Brace::BraceApiFactory<MemberGetExp>());
-        m_pBraceScript->RegisterApi("collectioncall", "collection member call", new Brace::BraceApiFactory<CollectionCallExp>());
-        m_pBraceScript->RegisterApi("collectionset", "collection property set", new Brace::BraceApiFactory<CollectionSetExp>());
-        m_pBraceScript->RegisterApi("collectionget", "collection property get", new Brace::BraceApiFactory<CollectionGetExp>());
+        m_pBraceScript->RegisterApi("member_call", "object member call", new Brace::BraceApiFactory<MemberCallExp>());
+        m_pBraceScript->RegisterApi("member_set", "object property set", new Brace::BraceApiFactory<MemberSetExp>());
+        m_pBraceScript->RegisterApi("member_get", "object property get", new Brace::BraceApiFactory<MemberGetExp>());
+        m_pBraceScript->RegisterApi("collection_call", "collection member call", new Brace::BraceApiFactory<CollectionCallExp>());
+        m_pBraceScript->RegisterApi("collection_set", "collection property set", new Brace::BraceApiFactory<CollectionSetExp>());
+        m_pBraceScript->RegisterApi("collection_get", "collection property get", new Brace::BraceApiFactory<CollectionGetExp>());
         m_pBraceScript->RegisterApi("linq", "objs.where(args) or objs.orderby(args) or objs.orderbydesc(args) or objs.top(args) or linq(objs,method_str,arg1,arg2,...) statement", new Brace::BraceApiFactory<LinqExp>());
         m_pBraceScript->RegisterApi("select", "select(fields)top(10)from(objlist)where(exp)oderby(exps)groupby(exps)having(exp){statements;} statement", new Brace::BraceApiFactory<SelectExp>());
         m_pBraceScript->RegisterApi("lambda", "lambda expression, (args) => {...} or (args)int => {...} or [...](args) => {...} or [...](args)int => {...}", new Brace::BraceApiFactory<LambdaExp>());
         m_pBraceScript->RegisterApi("array", "[v1,v2,...] or array(v1,v2,...) or array<:type:>(v1,v2,...) object", new Brace::BraceApiFactory<ArrayExp>());
         m_pBraceScript->RegisterApi("hashtable", "{k1=>v1,k2=>v2,...} or {k1:v1,k2:v2,...} or hashtable(k1=>v1,k2=>v2,...) or hashtable(k1:v1,k2:v2,...) or hashtable<:key_type,val_type:>(k1=>v1,k2=>v2,...) or hashtable<:key_type,val_type:>(k1:v1,k2:v2,...) object", new Brace::BraceApiFactory<HashtableExp>());
-        m_pBraceScript->RegisterApi("looplist", "looplist statement", new Brace::BraceApiFactory<LoopListExp>());
+        m_pBraceScript->RegisterApi("loop_list", "loop_list statement", new Brace::BraceApiFactory<LoopListExp>());
         m_pBraceScript->RegisterApi("cast", "cast(exp,type) api", new Brace::BraceApiFactory<CastExp>());
-        m_pBraceScript->RegisterApi("typetag", "typetag(type) or typetag(exp) api", new Brace::BraceApiFactory<TypeTagExp>());
-        m_pBraceScript->RegisterApi("typeid", "typeid(type) or typeid(exp) api", new Brace::BraceApiFactory<TypeIdExp>());
-        m_pBraceScript->RegisterApi("objtypeid", "objtypeid(type) or objtypeid(exp) api", new Brace::BraceApiFactory<ObjTypeIdExp>());
-        m_pBraceScript->RegisterApi("getobjtypename", "getobjtypename(objtypeid) api", new Brace::BraceApiFactory<GetObjTypeNameExp>());
-        m_pBraceScript->RegisterApi("getobjcategory", "getobjcategory(objtypeid) api", new Brace::BraceApiFactory<GetObjCategoryExp>());
-        m_pBraceScript->RegisterApi("gettypeparamcount", "gettypeparamcount(objtypeid) api", new Brace::BraceApiFactory<GetTypeParamCountExp>());
-        m_pBraceScript->RegisterApi("gettypeparamtype", "gettypeparamtype(objtypeid,index) api", new Brace::BraceApiFactory<GetTypeParamTypeExp>());
-        m_pBraceScript->RegisterApi("gettypeparamobjtypeid", "gettypeparamobjtypeid(objtypeid,index) api", new Brace::BraceApiFactory<GetTypeParamObjTypeIdExp>());
+        m_pBraceScript->RegisterApi("type_tag", "type_tag(type) or type_tag(exp) api", new Brace::BraceApiFactory<TypeTagExp>());
+        m_pBraceScript->RegisterApi("type_id", "type_id(type) or type_id(exp) api", new Brace::BraceApiFactory<TypeIdExp>());
+        m_pBraceScript->RegisterApi("obj_type_id", "obj_type_id(type) or obj_type_id(exp) api", new Brace::BraceApiFactory<ObjTypeIdExp>());
+        m_pBraceScript->RegisterApi("get_obj_type_name", "get_obj_type_name(obj_type_id) api", new Brace::BraceApiFactory<GetObjTypeNameExp>());
+        m_pBraceScript->RegisterApi("get_obj_category", "get_obj_category(obj_type_id) api", new Brace::BraceApiFactory<GetObjCategoryExp>());
+        m_pBraceScript->RegisterApi("get_type_param_count", "get_type_param_count(obj_type_id) api", new Brace::BraceApiFactory<GetTypeParamCountExp>());
+        m_pBraceScript->RegisterApi("get_type_param_type", "get_type_param_type(obj_type_id,index) api", new Brace::BraceApiFactory<GetTypeParamTypeExp>());
+        m_pBraceScript->RegisterApi("get_type_param_obj_type_id", "get_type_param_obj_type_id(obj_type_id,index) api", new Brace::BraceApiFactory<GetTypeParamObjTypeIdExp>());
         m_pBraceScript->RegisterApi("swap", "swap(var1,var2) api", new Brace::BraceApiFactory<SwapExp>());
         m_pBraceScript->RegisterApi("struct", "struct(name){a:int32;b:int32;...}, define struct", new Brace::BraceApiFactory<StructExp>());
-        m_pBraceScript->RegisterApi("newstruct", "newstruct(struct_type) api", new Brace::BraceApiFactory<NewStructExp>());
-        m_pBraceScript->RegisterApi("reinterpretas", "reinterpret_cast(uint,struct_type) api", new Brace::BraceApiFactory<ReInterpretAsExp>());
+        m_pBraceScript->RegisterApi("new_struct", "new_struct(struct_type) api", new Brace::BraceApiFactory<NewStructExp>());
+        m_pBraceScript->RegisterApi("reinterpret_as", "reinterpret_cast(uint,struct_type) api", new Brace::BraceApiFactory<ReinterpretAsExp>());
 
 */

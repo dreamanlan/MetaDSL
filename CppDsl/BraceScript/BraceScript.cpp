@@ -3205,25 +3205,25 @@ namespace Brace
         RegisterApi("if", "if(cond)func(args); or if(cond){...}[elif/elseif(cond){...}else{...}]; statement", new BraceApiFactory<IfExp>());
         RegisterApi("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", new BraceApiFactory<WhileExp>());
         RegisterApi("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", new BraceApiFactory<LoopExp>());
-        RegisterApi("foreachvalue", "foreachvalue(args)func(args); or foreachvalue(args){...}; statement, iterator is $$", new BraceApiFactory<ForEachValueExp>());
+        RegisterApi("for_each_value", "for_each_value(args)func(args); or for_each_value(args){...}; statement, iterator is $$", new BraceApiFactory<ForEachValueExp>());
         RegisterApi("return", "return(exp); or return <- exp; or return val; statement", new BraceApiFactory<ReturnExp>());
         RegisterApi("func", "func(name){...}; or func(name)params($a:int32,$b:int8,...)int{...}; or func(name)params($a:int32,$b:int8,...){...}; define function", new BraceApiFactory<FunctionDefine>());
 
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
         /// -----------------------------------------------------------------------------------------------------------
-        /// RegisterApi("membercall", "membercall api", new BraceApiFactory<MemberCallExp>());
-        /// RegisterApi("memberset", "memberset api", new BraceApiFactory<MemberSetExp>());
-        /// RegisterApi("memberget", "memberget api", new BraceApiFactory<MemberGetExp>());
-        /// RegisterApi("collectioncall", "collectioncall api", new BraceApiFactory<CollectionCallExp>());
-        /// RegisterApi("collectionset", "collectionset api", new BraceApiFactory<CollectionSetExp>());
-        /// RegisterApi("collectionget", "collectionget api", new BraceApiFactory<CollectionGetExp>());
+        /// RegisterApi("member_call", "member_call api", new BraceApiFactory<MemberCallExp>());
+        /// RegisterApi("member_set", "member_set api", new BraceApiFactory<MemberSetExp>());
+        /// RegisterApi("member_get", "member_get api", new BraceApiFactory<MemberGetExp>());
+        /// RegisterApi("collection_call", "collection_call api", new BraceApiFactory<CollectionCallExp>());
+        /// RegisterApi("collection_set", "collection_set api", new BraceApiFactory<CollectionSetExp>());
+        /// RegisterApi("collection_get", "collection_get api", new BraceApiFactory<CollectionGetExp>());
         /// RegisterApi("linq", "linq statement", new BraceApiFactory<LinqExp>());
         /// RegisterApi("lambda", "lamdba expression", new BraceApiFactory<LambdaExp>());
         /// RegisterApi("tuple", "(v1,v2,...) or tuple(v1,v2,...) object", new BraceApiFactory<TupleExp>());
-        /// RegisterApi("tupleset", "(var1,var2,...) = (v1,v2,...) or tupleset((var1,var2,...), (v1,v2,...))", new BraceApiFactory<TupleSetExp>());
+        /// RegisterApi("tuple_set", "(var1,var2,...) = (v1,v2,...) or tuple_set((var1,var2,...), (v1,v2,...))", new BraceApiFactory<TupleSetExp>());
         /// RegisterApi("array", "array object", new BraceApiFactory<ArrayExp>());
         /// RegisterApi("hashtable", "hashtable object", new BraceApiFactory<HashtableExp>());
-        /// RegisterApi("looplist", "looplist statement", new BraceApiFactory<LoopListExp>());
+        /// RegisterApi("loop_list", "loop_list statement", new BraceApiFactory<LoopListExp>());
         /// ----------------------------------------------------------------------------------------------------------
     }
     void BraceCodeStructure::Init()
