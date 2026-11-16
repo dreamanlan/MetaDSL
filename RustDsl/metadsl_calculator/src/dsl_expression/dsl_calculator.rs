@@ -2320,8 +2320,8 @@ impl<'a> DslCalculator<'a> {
         self.register_api("args", "args() api", create_expression_factory::<ArgsGet>());
         self.register_api("arg", "arg(ix) api", create_expression_factory::<ArgGet>());
         self.register_api(
-            "argnum",
-            "argnum() api",
+            "arg_num",
+            "arg_num() api",
             create_expression_factory::<ArgNumGet>(),
         );
 
@@ -2423,13 +2423,13 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<LoopExp>(),
         );
         self.register_api(
-            "looplist",
-            "looplist(list)func(args); or looplist(list){...}; statement, iterator is $$",
+            "loop_list",
+            "loop_list(list)func(args); or loop_list(list){...}; statement, iterator is $$",
             create_expression_factory::<LoopListExp>(),
         );
         self.register_api(
-            "foreachvalue",
-            "foreachvalue(args)func(args); or foreachvalue(args){...}; statement, iterator is $$",
+            "for_each_value",
+            "for_each_value(args)func(args); or for_each_value(args){...}; statement, iterator is $$",
             create_expression_factory::<ForEachValueExp>(),
         );
 
@@ -2439,8 +2439,8 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<TupleExp>(),
         );
         self.register_api(
-            "tupleset",
-            "(var1,var2,...) = (v1,v2,...) or tupleset((var1,var2,...), (v1,v2,...))",
+            "tuple_set",
+            "(var1,var2,...) = (v1,v2,...) or tuple_set((var1,var2,...), (v1,v2,...))",
             create_expression_factory::<TupleSetExp>(),
         );
         self.register_api(
@@ -2527,13 +2527,13 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<DoubleExp>(),
         );
         self.register_api(
-            "tostring",
-            "tostring(v) api",
+            "to_string",
+            "to_string(v) api",
             create_expression_factory::<ToStringExp>(),
         );
         self.register_api(
-            "gettypestr",
-            "gettypestr(v) api",
+            "get_type_str",
+            "get_type_str(v) api",
             create_expression_factory::<GetTypeStrExp>(),
         );
         self.register_api(
@@ -2577,99 +2577,99 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<UtodExp>(),
         );
         self.register_api(
-            "isnull",
-            "isnull(v) api",
+            "is_null",
+            "is_null(v) api",
             create_expression_factory::<IsNullExp>(),
         );
         self.register_api("null", "null() api", create_expression_factory::<NullExp>());
         self.register_api(
-            "isarray",
-            "isarray(v) api",
+            "is_array",
+            "is_array(v) api",
             create_expression_factory::<IsArrayExp>(),
         );
         self.register_api(
-            "ishashmap",
-            "ishashmap(v) api",
+            "is_hashmap",
+            "is_hashmap(v) api",
             create_expression_factory::<IsHashmapExp>(),
         );
         self.register_api(
-            "isdeque",
-            "isdeque(v) api",
+            "is_deque",
+            "is_deque(v) api",
             create_expression_factory::<IsDequeExp>(),
         );
         self.register_api(
-            "isobject",
-            "isobject(v) api",
+            "is_object",
+            "is_object(v) api",
             create_expression_factory::<IsObjectExp>(),
         );
         self.register_api(
-            "isstring",
-            "isstring(v) api",
+            "is_string",
+            "is_string(v) api",
             create_expression_factory::<IsStringExp>(),
         );
         self.register_api(
-            "isbool",
-            "isbool(v) api",
+            "is_bool",
+            "is_bool(v) api",
             create_expression_factory::<IsBoolExp>(),
         );
         self.register_api(
-            "ischar",
-            "ischar(v) api",
+            "is_char",
+            "is_char(v) api",
             create_expression_factory::<IsCharExp>(),
         );
         self.register_api(
-            "isinteger",
-            "isinteger(v) api",
+            "is_integer",
+            "is_integer(v) api",
             create_expression_factory::<IsIntegerExp>(),
         );
         self.register_api(
-            "issigned",
-            "issigned(v) api",
+            "is_signed",
+            "is_signed(v) api",
             create_expression_factory::<IsSignedExp>(),
         );
         self.register_api(
-            "isunsigned",
-            "isunsigned(v) api",
+            "is_unsigned",
+            "is_unsigned(v) api",
             create_expression_factory::<IsUnsignedExp>(),
         );
         self.register_api(
-            "isinteger128",
-            "isinteger128(v) api",
+            "is_integer_128",
+            "is_integer_128(v) api",
             create_expression_factory::<IsInteger128Exp>(),
         );
         self.register_api(
-            "issigned128",
-            "issigned128(v) api",
+            "is_signed_128",
+            "is_signed_128(v) api",
             create_expression_factory::<IsSigned128Exp>(),
         );
         self.register_api(
-            "isunsigned128",
-            "isunsigned128(v) api",
+            "is_unsigned_128",
+            "is_unsigned_128(v) api",
             create_expression_factory::<IsUnsigned128Exp>(),
         );
         self.register_api(
-            "isfloat",
-            "isfloat(v) api",
+            "is_float",
+            "is_float(v) api",
             create_expression_factory::<IsFloatExp>(),
         );
         self.register_api(
-            "issinglefloat",
-            "issinglefloat(v) api",
+            "is_single_float",
+            "is_single_float(v) api",
             create_expression_factory::<IsSingleFloatExp>(),
         );
         self.register_api(
-            "isdoublefloat",
-            "isdoublefloat(v) api",
+            "is_double_float",
+            "is_double_float(v) api",
             create_expression_factory::<IsDoubleFloatExp>(),
         );
         self.register_api(
-            "rndint",
-            "rndint(min,max) api",
+            "rnd_int",
+            "rnd_int(min,max) api",
             create_expression_factory::<RndIntExp>(),
         );
         self.register_api(
-            "rndfloat",
-            "rndfloat(min,max) api",
+            "rnd_float",
+            "rnd_float(min,max) api",
             create_expression_factory::<RndFloatExp>(),
         );
         self.register_api(
@@ -2684,19 +2684,19 @@ impl<'a> DslCalculator<'a> {
         );
         self.register_api("exp", "exp(v) api", create_expression_factory::<ExpExp>());
         self.register_api(
-            "exp2",
-            "exp2(v) api",
+            "exp_2",
+            "exp_2(v) api",
             create_expression_factory::<Exp2Exp>(),
         );
         self.register_api(
-            "expm1",
-            "expm1(v) api",
+            "exp_m1",
+            "exp_m1(v) api",
             create_expression_factory::<ExpM1Exp>(),
         );
         self.register_api("ln", "ln(v) api", create_expression_factory::<LnExp>());
         self.register_api(
-            "ln1p",
-            "ln1p(v) api",
+            "ln_1p",
+            "ln_1p(v) api",
             create_expression_factory::<Ln1pExp>(),
         );
         self.register_api(
@@ -2705,13 +2705,13 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<LogExp>(),
         );
         self.register_api(
-            "log10",
-            "log10(v) api",
+            "log_10",
+            "log_10(v) api",
             create_expression_factory::<Log10Exp>(),
         );
         self.register_api(
-            "log2",
-            "log2(v) api",
+            "log_2",
+            "log_2(v) api",
             create_expression_factory::<Log2Exp>(),
         );
         self.register_api(
@@ -2726,8 +2726,8 @@ impl<'a> DslCalculator<'a> {
         );
         self.register_api("abs", "abs(v) api", create_expression_factory::<AbsExp>());
         self.register_api(
-            "absdiff",
-            "absdiff(v) api",
+            "abs_diff",
+            "abs_diff(v) api",
             create_expression_factory::<AbsDiffExp>(),
         );
         self.register_api(
@@ -2751,35 +2751,35 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<RoundExp>(),
         );
         self.register_api(
-            "roundeven",
-            "roundeven(v) api",
+            "round_even",
+            "round_even(v) api",
             create_expression_factory::<RoundEvenExp>(),
         );
         self.register_api(
-            "floortoint",
-            "floortoint(v) api",
+            "floor_to_int",
+            "floor_to_int(v) api",
             create_expression_factory::<FloorToIntExp>(),
         );
         self.register_api(
-            "ceilingtoint",
-            "ceilingtoint(v) api",
+            "ceiling_to_int",
+            "ceiling_to_int(v) api",
             create_expression_factory::<CeilingToIntExp>(),
         );
         self.register_api(
-            "roundtoint",
-            "roundtoint(v) api",
+            "round_to_int",
+            "round_to_int(v) api",
             create_expression_factory::<RoundToIntExp>(),
         );
         self.register_api(
-            "roundeventoint",
-            "roundeventoint(v) api",
+            "round_even_to_int",
+            "round_even_to_int(v) api",
             create_expression_factory::<RoundEvenToIntExp>(),
         );
         self.register_api("sin", "sin(v) api", create_expression_factory::<SinExp>());
         self.register_api("cos", "cos(v) api", create_expression_factory::<CosExp>());
         self.register_api(
-            "sincos",
-            "sincos(v) api",
+            "sin_cos",
+            "sin_cos(v) api",
             create_expression_factory::<SinCosExp>(),
         );
         self.register_api("tan", "tan(v) api", create_expression_factory::<TanExp>());
@@ -2799,8 +2799,8 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<AtanExp>(),
         );
         self.register_api(
-            "atan2",
-            "atan2(v1,v2) api",
+            "atan_2",
+            "atan_2(v1,v2) api",
             create_expression_factory::<Atan2Exp>(),
         );
         self.register_api(
@@ -2839,8 +2839,8 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<ClampExp>(),
         );
         self.register_api(
-            "clamp01",
-            "clamp01(v) api",
+            "clamp_01",
+            "clamp_01(v) api",
             create_expression_factory::<Clamp01Exp>(),
         );
         self.register_api(
@@ -2849,18 +2849,18 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<LerpExp>(),
         );
         self.register_api(
-            "lerpunclamped",
-            "lerpunclamped(a,b,t) api",
+            "lerp_unclamped",
+            "lerp_unclamped(a,b,t) api",
             create_expression_factory::<LerpUnclampedExp>(),
         );
         self.register_api(
-            "lerpangle",
-            "lerpangle(a,b,t) api",
+            "lerp_angle",
+            "lerp_angle(a,b,t) api",
             create_expression_factory::<LerpAngleExp>(),
         );
         self.register_api(
-            "smoothstep",
-            "smoothstep(from,to,t) api",
+            "smooth_step",
+            "smooth_step(from,to,t) api",
             create_expression_factory::<SmoothStepExp>(),
         );
         self.register_api(
@@ -2869,18 +2869,18 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<ApproximatelyExp>(),
         );
         self.register_api(
-            "ispoweroftwo",
-            "ispoweroftwo(v) api",
+            "is_power_of_two",
+            "is_power_of_two(v) api",
             create_expression_factory::<IsPowerOfTwoExp>(),
         );
         self.register_api(
-            "closestpoweroftwo",
-            "closestpoweroftwo(v) api",
+            "closest_power_of_two",
+            "closest_power_of_two(v) api",
             create_expression_factory::<ClosestPowerOfTwoExp>(),
         );
         self.register_api(
-            "nextpoweroftwo",
-            "nextpoweroftwo(v) api",
+            "next_power_of_two",
+            "next_power_of_two(v) api",
             create_expression_factory::<NextPowerOfTwoExp>(),
         );
         self.register_api(
@@ -2889,73 +2889,73 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<DistExp>(),
         );
         self.register_api(
-            "distsqr",
-            "distsqr(x1,y1,x2,y2) api",
+            "dist_sqr",
+            "dist_sqr(x1,y1,x2,y2) api",
             create_expression_factory::<DistSqrExp>(),
         );
         self.register_api(
-            "isempty",
-            "isempty(str) api",
+            "is_empty",
+            "is_empty(str) api",
             create_expression_factory::<IsEmptyExp>(),
         );
         self.register_api(
-            "str2int",
-            "str2int(str) api",
+            "str_2_int",
+            "str_2_int(str) api",
             create_expression_factory::<Str2IntExp>(),
         );
         self.register_api(
-            "str2uint",
-            "str2uint(str) api",
+            "str_2_uint",
+            "str_2_uint(str) api",
             create_expression_factory::<Str2UintExp>(),
         );
         self.register_api(
-            "str2long",
-            "str2long(str) api",
+            "str_2_long",
+            "str_2_long(str) api",
             create_expression_factory::<Str2LongExp>(),
         );
         self.register_api(
-            "str2ulong",
-            "str2ulong(str) api",
+            "str_2_ulong",
+            "str_2_ulong(str) api",
             create_expression_factory::<Str2UlongExp>(),
         );
         self.register_api(
-            "str2float",
-            "str2float(str) api",
+            "str_2_float",
+            "str_2_float(str) api",
             create_expression_factory::<Str2FloatExp>(),
         );
         self.register_api(
-            "str2double",
-            "str2double(str) api",
+            "str_2_double",
+            "str_2_double(str) api",
             create_expression_factory::<Str2DoubleExp>(),
         );
         self.register_api(
-            "hex2int",
-            "hex2int(str) api",
+            "hex_2_int",
+            "hex_2_int(str) api",
             create_expression_factory::<Hex2IntExp>(),
         );
         self.register_api(
-            "hex2uint",
-            "hex2uint(str) api",
+            "hex_2_uint",
+            "hex_2_uint(str) api",
             create_expression_factory::<Hex2UintExp>(),
         );
         self.register_api(
-            "hex2long",
-            "hex2long(str) api",
+            "hex_2_long",
+            "hex_2_long(str) api",
             create_expression_factory::<Hex2LongExp>(),
         );
         self.register_api(
-            "hex2ulong",
-            "hex2ulong(str) api",
+            "hex_2_ulong",
+            "hex_2_ulong(str) api",
             create_expression_factory::<Hex2UlongExp>(),
         );
         self.register_api(
-            "tohex",
-            "tohex(num[,bool_upper_case]) api",
+            "to_hex",
+            "to_hex(num[,bool_upper_case]) api",
             create_expression_factory::<ToHexExp>(),
         );
         self.register_api(
-            "strconcat",
-            "strconcat(arg1,arg2,...) api",
+            "str_concat",
+            "str_concat(arg1,arg2,...) api",
             create_expression_factory::<StrConcatExp>(),
         );
         self.register_api(
@@ -2964,98 +2964,98 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<SubStringExp>(),
         );
         self.register_api(
-            "stringappend",
-            "stringappend(sb,arg1,arg2,...) api",
+            "string_append",
+            "string_append(sb,arg1,arg2,...) api",
             create_expression_factory::<StringAppendExp>(),
         );
         self.register_api(
-            "stringappendline",
-            "stringappendline(sb,arg1,arg2,...) api",
+            "string_append_line",
+            "string_append_line(sb,arg1,arg2,...) api",
             create_expression_factory::<StringAppendLineExp>(),
         );
         self.register_api(
-            "stringjoin",
-            "stringjoin(sep,list) api",
+            "string_join",
+            "string_join(sep,list) api",
             create_expression_factory::<StringJoinExp>(),
         );
         self.register_api(
-            "stringsplit",
-            "stringsplit(str,sep_list) api",
+            "string_split",
+            "string_split(str,sep_list) api",
             create_expression_factory::<StringSplitExp>(),
         );
         self.register_api(
-            "stringtrim",
-            "stringtrim(str) api",
+            "string_trim",
+            "string_trim(str) api",
             create_expression_factory::<StringTrimExp>(),
         );
         self.register_api(
-            "stringtrimstart",
-            "stringtrimstart(str) api",
+            "string_trim_start",
+            "string_trim_start(str) api",
             create_expression_factory::<StringTrimStartExp>(),
         );
         self.register_api(
-            "stringtrimend",
-            "stringtrimend(str) api",
+            "string_trim_end",
+            "string_trim_end(str) api",
             create_expression_factory::<StringTrimEndExp>(),
         );
         self.register_api(
-            "stringtrimmatches",
-            "stringtrimmatches(str,pattern) api",
+            "string_trim_matches",
+            "string_trim_matches(str,pattern) api",
             create_expression_factory::<StringTrimMatchesExp>(),
         );
         self.register_api(
-            "stringtrimstartmatches",
-            "stringtrimstartmatches(str,pattern) api",
+            "string_trim_start_matches",
+            "string_trim_start_matches(str,pattern) api",
             create_expression_factory::<StringTrimStartMatchesExp>(),
         );
         self.register_api(
-            "stringtrimendmatches",
-            "stringtrimendmatches(str,pattern) api",
+            "string_trim_end_matches",
+            "string_trim_end_matches(str,pattern) api",
             create_expression_factory::<StringTrimEndMatchesExp>(),
         );
         self.register_api(
-            "stringtolower",
-            "stringtolower(str) api",
+            "string_to_lower",
+            "string_to_lower(str) api",
             create_expression_factory::<StringToLowerExp>(),
         );
         self.register_api(
-            "stringtoupper",
-            "stringtoupper(str) api",
+            "string_to_upper",
+            "string_to_upper(str) api",
             create_expression_factory::<StringToUpperExp>(),
         );
         self.register_api(
-            "stringreplace",
-            "stringreplace(str,key,rep_str) api",
+            "string_replace",
+            "string_replace(str,key,rep_str) api",
             create_expression_factory::<StringReplaceExp>(),
         );
         self.register_api(
-            "stringreplacechar",
-            "stringreplacechar(str,key,char_as_str) api",
+            "string_replace_char",
+            "string_replace_char(str,key,char_as_str) api",
             create_expression_factory::<StringReplaceCharExp>(),
         );
         self.register_api(
-            "makestring",
-            "makestring(char1_as_str_or_int,char2_as_str_or_int,...) api",
+            "make_string",
+            "make_string(char1_as_str_or_int,char2_as_str_or_int,...) api",
             create_expression_factory::<MakeStringExp>(),
         );
         self.register_api(
-            "stringcontains",
-            "stringcontains(str,str_or_list_1,str_or_list_2,...) api",
+            "string_contains",
+            "string_contains(str,str_or_list_1,str_or_list_2,...) api",
             create_expression_factory::<StringContainsExp>(),
         );
         self.register_api(
-            "stringnotcontains",
-            "stringnotcontains(str,str_or_list_1,str_or_list_2,...) api",
+            "string_not_contains",
+            "string_not_contains(str,str_or_list_1,str_or_list_2,...) api",
             create_expression_factory::<StringNotContainsExp>(),
         );
         self.register_api(
-            "stringcontainsany",
-            "stringcontainsany(str,str_or_list_1,str_or_list_2,...) api",
+            "string_contains_any",
+            "string_contains_any(str,str_or_list_1,str_or_list_2,...) api",
             create_expression_factory::<StringContainsAnyExp>(),
         );
         self.register_api(
-            "stringnotcontainsany",
-            "stringnotcontainsany(str,str_or_list_1,str_or_list_2,...) api",
+            "string_not_contains_any",
+            "string_not_contains_any(str,str_or_list_1,str_or_list_2,...) api",
             create_expression_factory::<StringNotContainsAnyExp>(),
         );
 
@@ -3065,103 +3065,103 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<ArrayExp>(),
         );
         self.register_api(
-            "listsize",
-            "listsize(list) api",
+            "list_size",
+            "list_size(list) api",
             create_expression_factory::<ListSizeExp>(),
         );
         self.register_api(
-            "listget",
-            "listget(list,index[,defval]) api",
+            "list_get",
+            "list_get(list,index[,defval]) api",
             create_expression_factory::<ListGetExp>(),
         );
         self.register_api(
-            "listset",
-            "listset(list,index,val) api",
+            "list_set",
+            "list_set(list,index,val) api",
             create_expression_factory::<ListSetExp>(),
         );
         self.register_api(
-            "listindexof",
-            "listindexof(list,val) api",
+            "list_index_of",
+            "list_index_of(list,val) api",
             create_expression_factory::<ListIndexOfExp>(),
         );
         self.register_api(
-            "listadd",
-            "listadd(list,val) api",
+            "list_add",
+            "list_add(list,val) api",
             create_expression_factory::<ListAddExp>(),
         );
         self.register_api(
-            "listremove",
-            "listremove(list,val) api",
+            "list_remove",
+            "list_remove(list,val) api",
             create_expression_factory::<ListRemoveExp>(),
         );
         self.register_api(
-            "listinsert",
-            "listinsert(list,index,val) api",
+            "list_insert",
+            "list_insert(list,index,val) api",
             create_expression_factory::<ListInsertExp>(),
         );
         self.register_api(
-            "listremoveat",
-            "listremoveat(list,index) api",
+            "list_remove_at",
+            "list_remove_at(list,index) api",
             create_expression_factory::<ListRemoveAtExp>(),
         );
         self.register_api(
-            "listclear",
-            "listclear(list) api",
+            "list_clear",
+            "list_clear(list) api",
             create_expression_factory::<ListClearExp>(),
         );
         self.register_api(
-            "listsplit",
-            "listsplit(list,ct) api, return list of list",
+            "list_split",
+            "list_split(list,ct) api, return list of list",
             create_expression_factory::<ListSplitExp>(),
         );
         self.register_api(
-            "hashtablesize",
-            "hashtablesize(hash) api",
+            "hashtable_size",
+            "hashtable_size(hash) api",
             create_expression_factory::<HashtableSizeExp>(),
         );
         self.register_api(
-            "hashtableget",
-            "hashtableget(hash,key[,defval]) api",
+            "hashtable_get",
+            "hashtable_get(hash,key[,defval]) api",
             create_expression_factory::<HashtableGetExp>(),
         );
         self.register_api(
-            "hashtableset",
-            "hashtableset(hash,key,val) api",
+            "hashtable_set",
+            "hashtable_set(hash,key,val) api",
             create_expression_factory::<HashtableSetExp>(),
         );
         self.register_api(
-            "hashtableadd",
-            "hashtableadd(hash,key,val) api",
+            "hashtable_add",
+            "hashtable_add(hash,key,val) api",
             create_expression_factory::<HashtableAddExp>(),
         );
         self.register_api(
-            "hashtableremove",
-            "hashtableremove(hash,key) api",
+            "hashtable_remove",
+            "hashtable_remove(hash,key) api",
             create_expression_factory::<HashtableRemoveExp>(),
         );
         self.register_api(
-            "hashtableclear",
-            "hashtableclear(hash) api",
+            "hashtable_clear",
+            "hashtable_clear(hash) api",
             create_expression_factory::<HashtableClearExp>(),
         );
         self.register_api(
-            "hashtablekeys",
-            "hashtablekeys(hash) api",
+            "hashtable_keys",
+            "hashtable_keys(hash) api",
             create_expression_factory::<HashtableKeysExp>(),
         );
         self.register_api(
-            "hashtablevalues",
-            "hashtablevalues(hash) api",
+            "hashtable_values",
+            "hashtable_values(hash) api",
             create_expression_factory::<HashtableValuesExp>(),
         );
         self.register_api(
-            "listhashtable",
-            "listhashtable(hash) api, return list of pair",
+            "list_hashtable",
+            "list_hashtable(hash) api, return list of pair",
             create_expression_factory::<ListHashtableExp>(),
         );
         self.register_api(
-            "hashtablesplit",
-            "hashtablesplit(hash,ct) api, return list of hashtable",
+            "hashtable_split",
+            "hashtable_split(hash,ct) api, return list of hashtable",
             create_expression_factory::<HashtableSplitExp>(),
         );
         self.register_api(
@@ -3170,8 +3170,8 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<DequeExp>(),
         );
         self.register_api(
-            "dequesize",
-            "dequesize(deque) api",
+            "deque_size",
+            "deque_size(deque) api",
             create_expression_factory::<DequeSizeExp>(),
         );
         self.register_api(
@@ -3185,28 +3185,28 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<DequeBackExp>(),
         );
         self.register_api(
-            "pushback",
-            "pushback(deque,v) api",
+            "push_back",
+            "push_back(deque,v) api",
             create_expression_factory::<DequePushBackExp>(),
         );
         self.register_api(
-            "popback",
-            "popback(deque) api",
+            "pop_back",
+            "pop_back(deque) api",
             create_expression_factory::<DequePopBackExp>(),
         );
         self.register_api(
-            "pushfront",
-            "pushfront(deque,v) api",
+            "push_front",
+            "push_front(deque,v) api",
             create_expression_factory::<DequePushFrontExp>(),
         );
         self.register_api(
-            "popfront",
-            "popfront(deque) api",
+            "pop_front",
+            "pop_front(deque) api",
             create_expression_factory::<DequePopFrontExp>(),
         );
         self.register_api(
-            "dequeclear",
-            "dequeclear(queue) api",
+            "deque_clear",
+            "deque_clear(queue) api",
             create_expression_factory::<DequeClearExp>(),
         );
 
@@ -3216,107 +3216,107 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<FormatExp>(),
         );
         self.register_api(
-            "objectnew",
-            "objectnew(name)",
+            "object_new",
+            "object_new(name)",
             create_expression_factory::<ObjectNewExp>(),
         );
         self.register_api(
-            "objectrelease",
-            "objectrelease(obj)",
+            "object_release",
+            "object_release(obj)",
             create_expression_factory::<ObjectReleaseExp>(),
         );
         self.register_api(
-            "objnewwithstr",
-            "objnewwithstr(name_str)",
+            "obj_new_with_str",
+            "obj_new_with_str(name_str)",
             create_expression_factory::<ObjNewWithStrExp>(),
         );
         self.register_api(
-            "objgetclassname",
-            "objgetclassname(obj)",
+            "obj_get_class_name",
+            "obj_get_class_name(obj)",
             create_expression_factory::<ObjGetClassNameExp>(),
         );
         self.register_api(
-            "objgetdispid",
-            "objgetdispid(obj,member_name)",
+            "obj_get_disp_id",
+            "obj_get_disp_id(obj,member_name)",
             create_expression_factory::<ObjGetDispIdExp>(),
         );
         self.register_api(
-            "collectioncall",
-            "collectioncall api, fn implementation, using object syntax",
+            "collection_call",
+            "collection_call api, fn implementation, using object syntax",
             create_expression_factory::<CollectionCallExp>(),
         );
         self.register_api(
-            "collectionset",
-            "collectionset api, fn implementation, using object syntax",
+            "collection_set",
+            "collection_set api, fn implementation, using object syntax",
             create_expression_factory::<CollectionSetExp>(),
         );
         self.register_api(
-            "collectionget",
-            "collectionget api, fn implementation, using object syntax",
+            "collection_get",
+            "collection_get api, fn implementation, using object syntax",
             create_expression_factory::<CollectionGetExp>(),
         );
         self.register_api(
-            "objectcall",
-            "objectcall api, fn implementation, using object syntax",
+            "object_call",
+            "object_call api, fn implementation, using object syntax",
             create_expression_factory::<ObjectCallExp>(),
         );
         self.register_api(
-            "objectset",
-            "objectset api, fn implementation, using object syntax",
+            "object_set",
+            "object_set api, fn implementation, using object syntax",
             create_expression_factory::<ObjectSetExp>(),
         );
         self.register_api(
-            "objectget",
-            "objectget api, fn implementation, using object syntax",
+            "object_get",
+            "object_get api, fn implementation, using object syntax",
             create_expression_factory::<ObjectGetExp>(),
         );
-        self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/orderbydesc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
+        self.register_api("linq", "linq(list,method,arg1,arg2,...) statement, fn implementation, using obj.method(arg1,arg2,...) syntax, method can be orderby/order_by_desc/where/top, iterator is $$", create_expression_factory::<LinqExp>());
         /*
-        self.register_api("datetimestr", "datetimestr(fmt) api", create_expression_factory::<DatetimeStrExp>());
-        self.register_api("longdatestr", "longdatestr() api", create_expression_factory::<LongDateStrExp>());
-        self.register_api("longtimestr", "longtimestr() api", create_expression_factory::<LongTimeStrExp>());
-        self.register_api("shortdatestr", "shortdatestr() api", create_expression_factory::<ShortDateStrExp>());
-        self.register_api("shorttimestr", "shorttimestr() api", create_expression_factory::<ShortTimeStrExp>());
+        self.register_api("datetime_str", "datetime_str(fmt) api", create_expression_factory::<DatetimeStrExp>());
+        self.register_api("long_date_str", "long_date_str() api", create_expression_factory::<LongDateStrExp>());
+        self.register_api("long_time_str", "long_time_str() api", create_expression_factory::<LongTimeStrExp>());
+        self.register_api("short_date_str", "short_date_str() api", create_expression_factory::<ShortDateStrExp>());
+        self.register_api("short_time_str", "short_time_str() api", create_expression_factory::<ShortTimeStrExp>());
 
-        self.register_api("getfullpath", "getfullpath(path) api", create_expression_factory::<GetFullPathExp>());
-        self.register_api("getpathroot", "getpathroot(path) api", create_expression_factory::<GetPathRootExp>());
-        self.register_api("getrandomfilename", "getrandomfilename() api", create_expression_factory::<GetRandomFileNameExp>());
-        self.register_api("gettempfilename", "gettempfilename() api", create_expression_factory::<GetTempFileNameExp>());
-        self.register_api("gettemppath", "gettemppath() api", create_expression_factory::<GetTempPathExp>());
-        self.register_api("hasextension", "hasextension(path) api", create_expression_factory::<HasExtensionExp>());
-        self.register_api("ispathrooted", "ispathrooted(path) api", create_expression_factory::<IsPathRootedExp>());
-        self.register_api("getfilename", "getfilename(path) api", create_expression_factory::<GetFileNameExp>());
-        self.register_api("getfilenamewithoutextension", "getfilenamewithoutextension(path) api", create_expression_factory::<GetFileNameWithoutExtensionExp>());
-        self.register_api("getextension", "getextension(path) api", create_expression_factory::<GetExtensionExp>());
-        self.register_api("getdirectoryname", "getdirectoryname(path) api", create_expression_factory::<GetDirectoryNameExp>());
-        self.register_api("combinepath", "combinepath(path1,path2) api", create_expression_factory::<CombinePathExp>());
-        self.register_api("changeextension", "changeextension(path,ext) api", create_expression_factory::<ChangeExtensionExp>());
-        self.register_api("quotepath", "quotepath(path[,only_needed,single_quote]) api", create_expression_factory::<QuotePathExp>());
+        self.register_api("get_full_path", "get_full_path(path) api", create_expression_factory::<GetFullPathExp>());
+        self.register_api("get_path_root", "get_path_root(path) api", create_expression_factory::<GetPathRootExp>());
+        self.register_api("get_random_file_name", "get_random_file_name() api", create_expression_factory::<GetRandomFileNameExp>());
+        self.register_api("get_temp_file_name", "get_temp_file_name() api", create_expression_factory::<GetTempFileNameExp>());
+        self.register_api("get_temp_path", "get_temp_path() api", create_expression_factory::<GetTempPathExp>());
+        self.register_api("has_extension", "has_extension(path) api", create_expression_factory::<HasExtensionExp>());
+        self.register_api("is_path_rooted", "is_path_rooted(path) api", create_expression_factory::<IsPathRootedExp>());
+        self.register_api("get_file_name", "get_file_name(path) api", create_expression_factory::<GetFileNameExp>());
+        self.register_api("get_file_name_without_extension", "get_file_name_without_extension(path) api", create_expression_factory::<GetFileNameWithoutExtensionExp>());
+        self.register_api("get_extension", "get_extension(path) api", create_expression_factory::<GetExtensionExp>());
+        self.register_api("get_directory_name", "get_directory_name(path) api", create_expression_factory::<GetDirectoryNameExp>());
+        self.register_api("combine_path", "combine_path(path1,path2) api", create_expression_factory::<CombinePathExp>());
+        self.register_api("change_extension", "change_extension(path,ext) api", create_expression_factory::<ChangeExtensionExp>());
+        self.register_api("quote_path", "quote_path(path[,only_needed,single_quote]) api", create_expression_factory::<QuotePathExp>());
 
-        self.register_api("direxist", "direxist(dir) api", create_expression_factory::<DirectoryExistExp>());
-        self.register_api("fileexist", "fileexist(file) api", create_expression_factory::<FileExistExp>());
-        self.register_api("listdirs", "listdirs(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListDirectoriesExp>());
-        self.register_api("listfiles", "listfiles(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListFilesExp>());
-        self.register_api("listalldirs", "listalldirs(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListAllDirectoriesExp>());
-        self.register_api("listallfiles", "listallfiles(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListAllFilesExp>());
-        self.register_api("createdir", "createdir(dir) api", create_expression_factory::<CreateDirectoryExp>());
-        self.register_api("copydir", "copydir(dir1,dir2,filter_list_or_str_1,filter_list_or_str_2,...) api, include subdir", create_expression_factory::<CopyDirectoryExp>());
-        self.register_api("movedir", "movedir(dir1,dir2) api", create_expression_factory::<MoveDirectoryExp>());
-        self.register_api("deletedir", "deletedir(dir) api", create_expression_factory::<DeleteDirectoryExp>());
-        self.register_api("copyfile", "copyfile(file1,file2) api", create_expression_factory::<CopyFileExp>());
-        self.register_api("copyfiles", "copyfiles(dir1,dir2,filter_list_or_str_1,filter_list_or_str_2,...) api, dont include subdir", create_expression_factory::<CopyFilesExp>());
-        self.register_api("movefile", "movefile(file1,file2) api", create_expression_factory::<MoveFileExp>());
-        self.register_api("deletefile", "deletefile(file) api", create_expression_factory::<DeleteFileExp>());
-        self.register_api("deletefiles", "deletefiles(dir,filter_list_or_str_1,filter_list_or_str_2,...) api, dont include subdir", create_expression_factory::<DeleteFilesExp>());
-        self.register_api("deleteallfiles", "deleteallfiles(dir,filter_list_or_str_1,filter_list_or_str_2,...) api, include subdir", create_expression_factory::<DeleteAllFilesExp>());
-        self.register_api("getfileinfo", "getfileinfo(file) api", create_expression_factory::<GetFileInfoExp>());
-        self.register_api("getdirinfo", "getdirinfo(dir) api", create_expression_factory::<GetDirectoryInfoExp>());
-        self.register_api("getdriveinfo", "getdriveinfo(drive) api", create_expression_factory::<GetDriveInfoExp>());
-        self.register_api("getdrivesinfo", "getdrivesinfo() api", create_expression_factory::<GetDrivesInfoExp>());
-        self.register_api("readalllines", "readalllines(file[,encoding]) api", create_expression_factory::<ReadAllLinesExp>());
-        self.register_api("writealllines", "writealllines(file,lines[,encoding]) api", create_expression_factory::<WriteAllLinesExp>());
-        self.register_api("readalltext", "readalltext(file[,encoding]) api", create_expression_factory::<ReadAllTextExp>());
-        self.register_api("writealltext", "writealltext(file,txt[,encoding]) api", create_expression_factory::<WriteAllTextExp>());
+        self.register_api("dir_exist", "dir_exist(dir) api", create_expression_factory::<DirectoryExistExp>());
+        self.register_api("file_exist", "file_exist(file) api", create_expression_factory::<FileExistExp>());
+        self.register_api("list_dirs", "list_dirs(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListDirectoriesExp>());
+        self.register_api("list_files", "list_files(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListFilesExp>());
+        self.register_api("list_all_dirs", "list_all_dirs(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListAllDirectoriesExp>());
+        self.register_api("list_all_files", "list_all_files(dir,filter_list_or_str_1,filter_list_or_str_2,...) api", create_expression_factory::<ListAllFilesExp>());
+        self.register_api("create_dir", "create_dir(dir) api", create_expression_factory::<CreateDirectoryExp>());
+        self.register_api("copy_dir", "copy_dir(dir1,dir2,filter_list_or_str_1,filter_list_or_str_2,...) api, include subdir", create_expression_factory::<CopyDirectoryExp>());
+        self.register_api("move_dir", "move_dir(dir1,dir2) api", create_expression_factory::<MoveDirectoryExp>());
+        self.register_api("delete_dir", "delete_dir(dir) api", create_expression_factory::<DeleteDirectoryExp>());
+        self.register_api("copy_file", "copy_file(file1,file2) api", create_expression_factory::<CopyFileExp>());
+        self.register_api("copy_files", "copy_files(dir1,dir2,filter_list_or_str_1,filter_list_or_str_2,...) api, dont include subdir", create_expression_factory::<CopyFilesExp>());
+        self.register_api("move_file", "move_file(file1,file2) api", create_expression_factory::<MoveFileExp>());
+        self.register_api("delete_file", "delete_file(file) api", create_expression_factory::<DeleteFileExp>());
+        self.register_api("delete_files", "delete_files(dir,filter_list_or_str_1,filter_list_or_str_2,...) api, dont include subdir", create_expression_factory::<DeleteFilesExp>());
+        self.register_api("delete_all_files", "delete_all_files(dir,filter_list_or_str_1,filter_list_or_str_2,...) api, include subdir", create_expression_factory::<DeleteAllFilesExp>());
+        self.register_api("get_file_info", "get_file_info(file) api", create_expression_factory::<GetFileInfoExp>());
+        self.register_api("get_dir_info", "get_dir_info(dir) api", create_expression_factory::<GetDirectoryInfoExp>());
+        self.register_api("get_drive_info", "get_drive_info(drive) api", create_expression_factory::<GetDriveInfoExp>());
+        self.register_api("get_drives_info", "get_drives_info() api", create_expression_factory::<GetDrivesInfoExp>());
+        self.register_api("read_all_lines", "read_all_lines(file[,encoding]) api", create_expression_factory::<ReadAllLinesExp>());
+        self.register_api("write_all_lines", "write_all_lines(file,lines[,encoding]) api", create_expression_factory::<WriteAllLinesExp>());
+        self.register_api("read_all_text", "read_all_text(file[,encoding]) api", create_expression_factory::<ReadAllTextExp>());
+        self.register_api("write_all_text", "write_all_text(file,txt[,encoding]) api", create_expression_factory::<WriteAllTextExp>());
         */
     }
     pub fn register_api(&mut self, name: &'a str, doc: &'a str, factory: ExpressionFactoryBox<'a>) {
@@ -4031,17 +4031,17 @@ impl<'a> DslCalculator<'a> {
                             if inner_param_class == dsl::PARAM_CLASS_PERIOD
                                 || inner_param_class == dsl::PARAM_CLASS_BRACKET
                             {
-                                //obj.property = val -> objectset(obj, property, val)
-                                //obj[property] = val -> collectionset(obj, property, val)
+                                //obj.property = val -> object_set(obj, property, val)
+                                //obj[property] = val -> collection_set(obj, property, val)
                                 let mut new_call = FunctionData::new();
                                 if inner_param_class == dsl::PARAM_CLASS_PERIOD {
                                     new_call.set_name(Box::new(ValueData::from_string_type(
-                                        String::from("objectset"),
+                                        String::from("object_set"),
                                         dsl::ID_TOKEN,
                                     )));
                                 } else {
                                     new_call.set_name(Box::new(ValueData::from_string_type(
-                                        String::from("collectionset"),
+                                        String::from("collection_set"),
                                         dsl::ID_TOKEN,
                                     )));
                                 }
@@ -4131,20 +4131,20 @@ impl<'a> DslCalculator<'a> {
                                 && (inner_param_class == dsl::PARAM_CLASS_PERIOD
                                     || inner_param_class == dsl::PARAM_CLASS_BRACKET)
                             {
-                                //obj.member(a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> objectcall(obj,member,a,b,...)
-                                //obj[member](a,b,...) -> collectioncall(obj,member,a,b,...)
+                                //obj.member(a,b,...) or obj.(member)(a,b,...) or obj.[member](a,b,...) or obj.{member}(a,b,...) -> object_call(obj,member,a,b,...)
+                                //obj[member](a,b,...) -> collection_call(obj,member,a,b,...)
                                 let api_name;
                                 let member = inner_call.get_param_id(0);
                                 if member == "orderby"
-                                    || member == "orderbydesc"
+                                    || member == "order_by_desc"
                                     || member == "where"
                                     || member == "top"
                                 {
                                     api_name = "linq";
                                 } else if inner_param_class == dsl::PARAM_CLASS_PERIOD {
-                                    api_name = "objectcall";
+                                    api_name = "object_call";
                                 } else {
-                                    api_name = "collectioncall";
+                                    api_name = "collection_call";
                                 }
                                 let mut new_call = FunctionData::new();
                                 new_call.set_name(Box::new(ValueData::from_string_type(
@@ -4195,17 +4195,17 @@ impl<'a> DslCalculator<'a> {
                     if param_class == dsl::PARAM_CLASS_PERIOD
                         || param_class == dsl::PARAM_CLASS_BRACKET
                     {
-                        //obj.property or obj.(property) or obj.[property] or obj.{property} -> objectget(obj,property)
-                        //obj[property] -> collectionget(obj,property)
+                        //obj.property or obj.(property) or obj.[property] or obj.{property} -> object_get(obj,property)
+                        //obj[property] -> collection_get(obj,property)
                         let mut new_call = FunctionData::new();
                         if param_class == dsl::PARAM_CLASS_PERIOD {
                             new_call.set_name(Box::new(ValueData::from_string_type(
-                                String::from("objectget"),
+                                String::from("object_get"),
                                 dsl::ID_TOKEN,
                             )));
                         } else {
                             new_call.set_name(Box::new(ValueData::from_string_type(
-                                String::from("collectionget"),
+                                String::from("collection_get"),
                                 dsl::ID_TOKEN,
                             )));
                         }

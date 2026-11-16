@@ -149,11 +149,11 @@ fn main() {
                 loop(5){
                     echo("loop:",$$+1,'\n');
                 };
-                looplist([1,2,3,4,5]){
-                    echo("looplist:",$$,'\n');
+                loop_list([1,2,3,4,5]){
+                    echo("loop_list:",$$,'\n');
                 };
-                foreachvalue(1,2,3,4,5){
-                    echo("foreachvalue:",$$,'\n');
+                for_each_value(1,2,3,4,5){
+                    echo("for_each_value:",$$,'\n');
                 };
                 $ct=5;
                 $ix=0;
@@ -182,15 +182,15 @@ fn main() {
                     echo($a2,$b2,$c2,'\n');
                 };
 
-                ($a,$b)=sincos(1.57);
+                ($a,$b)=sin_cos(1.57);
                 echo($a,",",$b,'\n');
 
                 echo(format("{} {}\n", 1231, 456));
 
-                $a = [13,2,4,5].orderbydesc($$);
+                $a = [13,2,4,5].order_by_desc($$);
                 echo($a[0],",",$a[1],",",$a[2],",",$a[3],'\n');
 
-                $obj = objectnew(ObjectTest);
+                $obj = object_new(ObjectTest);
                 $obj.test = "test";
                 echo("call:",$obj.test_call("some info")," get:",$obj.test,'\n');
             };

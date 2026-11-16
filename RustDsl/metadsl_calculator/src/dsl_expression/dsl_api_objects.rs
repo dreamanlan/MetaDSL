@@ -827,7 +827,7 @@ impl<'a> AbstractExpression<'a> for LinqExp<'a>
         }
         if let DslCalculatorValue::String(method) = &method_val {
             let asc = method == "orderby";
-            let desc = method == "orderbydesc";
+            let desc = method == "order_by_desc";
             if asc || desc {
                 let list_cloned = list_val.clone();
                 if let DslCalculatorValue::Array(list) = &list_cloned {
