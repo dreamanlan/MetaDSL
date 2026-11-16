@@ -72,10 +72,10 @@ script(main)
 script(writeVarAssign)args($braceTypeNames, $specTypeNames)
 {
     //VarAssign
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $typeName = $braceTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssign{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -84,10 +84,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
         :};        
     };
     //VarAssignFromRef
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $typeName = $braceTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssignFromRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -97,10 +97,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
         :};        
     };
     //VarAssignToRef
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $typeName = $braceTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssignToRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -110,10 +110,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
         :};        
     };
     //VarAssignFromToRef
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $typeName = $braceTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssignFromToRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -125,10 +125,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
     };
     //--------------
     //VarAssign
-    loop(listsize($specTypeNames)){
+    loop(list_size($specTypeNames)){
         $typeName = $specTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssign{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -137,10 +137,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
         :};        
     };
     //VarAssignFromRef
-    loop(listsize($specTypeNames)){
+    loop(list_size($specTypeNames)){
         $typeName = $specTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssignFromRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -150,10 +150,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
         :};        
     };
     //VarAssignToRef
-    loop(listsize($specTypeNames)){
+    loop(list_size($specTypeNames)){
         $typeName = $specTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssignToRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -163,10 +163,10 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
         :};        
     };
     //VarAssignFromToRef
-    loop(listsize($specTypeNames)){
+    loop(list_size($specTypeNames)){
         $typeName = $specTypeNames[$$];
 
-        writeblock
+        write_block
         {:
     static inline void VarAssignFromToRef{% $typeName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -180,11 +180,11 @@ script(writeVarAssign)args($braceTypeNames, $specTypeNames)
 script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
 {
     //VarCastAssign
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $firstName = $braceTypeNames[$$];
         $firstType = $cppTypes[$$];
         
-        loop(listsize($braceTypeNames)){
+        loop(list_size($braceTypeNames)){
             $secondName = $braceTypeNames[$$];
             $secondType = $cppTypes[$$];
 
@@ -195,7 +195,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
             elseif($secondName=="Bool" && ($firstName=="Float" || $firstName=="Double")){
             }
             else{
-                writeblock
+                write_block
                 {:
     static inline void VarCastAssign{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -207,11 +207,11 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
     };
 
     //VarCastAssignFromRef
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $firstName = $braceTypeNames[$$];
         $firstType = $cppTypes[$$];
         
-        loop(listsize($braceTypeNames)){
+        loop(list_size($braceTypeNames)){
             $secondName = $braceTypeNames[$$];
             $secondType = $cppTypes[$$];
 
@@ -222,7 +222,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
             elseif($secondName=="Bool" && ($firstName=="Float" || $firstName=="Double")){
             }
             else{
-                writeblock
+                write_block
                 {:
     static inline void VarCastAssignFromRef{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -235,11 +235,11 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
     };
 
     //VarCastAssignToRef
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $firstName = $braceTypeNames[$$];
         $firstType = $cppTypes[$$];
         
-        loop(listsize($braceTypeNames)){
+        loop(list_size($braceTypeNames)){
             $secondName = $braceTypeNames[$$];
             $secondType = $cppTypes[$$];
 
@@ -250,7 +250,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
             elseif($secondName=="Bool" && ($firstName=="Float" || $firstName=="Double")){
             }
             else{
-                writeblock
+                write_block
                 {:
     static inline void VarCastAssignToRef{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -263,11 +263,11 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
     };
 
     //VarCastAssignFromToRef
-    loop(listsize($braceTypeNames)){
+    loop(list_size($braceTypeNames)){
         $firstName = $braceTypeNames[$$];
         $firstType = $cppTypes[$$];
         
-        loop(listsize($braceTypeNames)){
+        loop(list_size($braceTypeNames)){
             $secondName = $braceTypeNames[$$];
             $secondType = $cppTypes[$$];
 
@@ -278,7 +278,7 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
             elseif($secondName=="Bool" && ($firstName=="Float" || $firstName=="Double")){
             }
             else{
-                writeblock
+                write_block
                 {:
     static inline void VarCastAssignFromToRef{% $firstName %}{% $secondName %}(VariableInfo& info, int destIndex, VariableInfo& srcInfo, int srcIndex)
     {
@@ -295,13 +295,13 @@ script(writeVarCastAssign)args($braceTypeNames, $cppTypes)
 script(writeSwitch)args($braceTypes, $braceTypeNames, $refMark)
 {
     echo("\t\t\tswitch(varType){");
-    loop(listsize($braceTypes)){
+    loop(list_size($braceTypes)){
         $first = $braceTypes[$$];
         $firstTypeName = $braceTypeNames[$$];
 
         echo("\t\t\tcase {0}:", $first);
         echo("\t\t\t\tswitch(srcVarType){");
-        loop(listsize($braceTypes)){
+        loop(list_size($braceTypes)){
             $second = $braceTypes[$$];
             $secondTypeName = $braceTypeNames[$$];
 
@@ -322,7 +322,7 @@ script(writeSwitch)args($braceTypes, $braceTypeNames, $refMark)
         };
         echo("\t\t\t\t}");
     };
-    writeblock
+    write_block
     {:
                 case BRACE_DATA_TYPE_STRING: {
                     switch (srcVarType) {
@@ -610,10 +610,10 @@ script(writeBinaryExp)args($className, $op)
         "||" => true
     };
 
-    $checkString = hashtableget($strOps, $op);
-    $checkFloat = hashtableget($floatOps, $op);
-    $boolRet = hashtableget($cmpOps, $op);
-    $logicArith = hashtableget($logicOps, $op);
+    $checkString = hashtable_get($strOps, $op);
+    $checkFloat = hashtable_get($floatOps, $op);
+    $boolRet = hashtable_get($cmpOps, $op);
+    $logicArith = hashtable_get($logicOps, $op);
 
     $maxType = "BRACE_DATA_TYPE_UINT64";
     $buildArithExecutor = "";
@@ -954,7 +954,7 @@ script(writeBinaryExp)args($className, $op)
         :};
     };
 
-    writeblock
+    write_block
     {:
     class {% $className %} final : public BinaryOperatorBaseExp
     {
@@ -1204,7 +1204,7 @@ script(writeUnaryNumericExp)args($className, $op)
 {% getUnaryExecuteCode("Float", "double", "VarGetF64", "VarSetF64", $op); %}
         :};
     };
-    writeblock
+    write_block
     {:
     class {% $className %} final : public UnaryOperatorBaseExp
     {
@@ -1232,7 +1232,7 @@ script(writeUnaryNumericExp)args($className, $op)
 };
 script(writeNotExp)
 {
-    writeblock
+    write_block
     {:
     class NotExp final : public UnaryOperatorBaseExp
     {
