@@ -2684,8 +2684,8 @@ impl<'a> DslCalculator<'a> {
         );
         self.register_api("exp", "exp(v) api", create_expression_factory::<ExpExp>());
         self.register_api(
-            "exp_2",
-            "exp_2(v) api",
+            "exp2",
+            "exp2(v) api",
             create_expression_factory::<Exp2Exp>(),
         );
         self.register_api(
@@ -2705,13 +2705,13 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<LogExp>(),
         );
         self.register_api(
-            "log_10",
-            "log_10(v) api",
+            "log10",
+            "log10(v) api",
             create_expression_factory::<Log10Exp>(),
         );
         self.register_api(
-            "log_2",
-            "log_2(v) api",
+            "log2",
+            "log2(v) api",
             create_expression_factory::<Log2Exp>(),
         );
         self.register_api(
@@ -2799,8 +2799,8 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<AtanExp>(),
         );
         self.register_api(
-            "atan_2",
-            "atan_2(v1,v2) api",
+            "atan2",
+            "atan2(v1,v2) api",
             create_expression_factory::<Atan2Exp>(),
         );
         self.register_api(
@@ -2839,8 +2839,8 @@ impl<'a> DslCalculator<'a> {
             create_expression_factory::<ClampExp>(),
         );
         self.register_api(
-            "clamp_01",
-            "clamp_01(v) api",
+            "clamp01",
+            "clamp01(v) api",
             create_expression_factory::<Clamp01Exp>(),
         );
         self.register_api(
