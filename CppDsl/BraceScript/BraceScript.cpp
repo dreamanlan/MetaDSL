@@ -377,7 +377,7 @@ namespace Brace
                 r = BRACE_FLOW_CONTROL_NORMAL;
                 goto L_EXIT;
             case BRACE_FLOW_CONTROL_EXCEPTION:
-                break;
+                goto L_EXIT;
             case BRACE_FLOW_CONTROL_EFFECT:
                 break;
             }
@@ -462,11 +462,14 @@ namespace Brace
     int SimpleBraceApiBase::ExecuteImpl(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars)const
     {
         for (auto&& op : m_Args) {
-            if (!op.isNull())
+            if (!op.isNull()) {
                 op(runtime, gvars, lvars);
+                if (runtime.HasScriptError())
+                    return Brace::BRACE_FLOW_CONTROL_EXCEPTION;
+            }
         }
         Execute(runtime, gvars, lvars, m_ArgInfos, m_ResultInfo);
-        return Brace::BRACE_FLOW_CONTROL_NORMAL;
+        return runtime.HasScriptError() ? Brace::BRACE_FLOW_CONTROL_EXCEPTION : Brace::BRACE_FLOW_CONTROL_NORMAL;
     }
 
     class GlobalVarDecl final : public AbstractBraceApi
@@ -1010,6 +1013,41 @@ namespace Brace
         OperandRuntimeInfo m_ArgInfo;
         OperandRuntimeInfo m_ResultInfo;
         VarAssignPtr m_Assign;
+    };
+    class ThrowExp final : public SimpleBraceApiBase
+    {
+    public:
+        ThrowExp(BraceCodeStructure& interpreter) :SimpleBraceApiBase(interpreter)
+        {
+        }
+    protected:
+        virtual bool TypeInference([[maybe_unused]] const FuncInfo& func, const DslData::FunctionData& data, const std::vector<OperandLoadtimeInfo>& argInfos, OperandLoadtimeInfo& resultInfo) override
+        {
+            resultInfo = OperandLoadtimeInfo();
+            if (argInfos.size() > 1 || (!argInfos.empty() && argInfos[0].Type != BRACE_DATA_TYPE_STRING)) {
+                std::stringstream ss;
+                ss << "throw syntax error, expected throw([message:string]), line " << data.GetLine();
+                LogError(ss.str());
+                return false;
+            }
+            return true;
+        }
+        virtual void Execute([[maybe_unused]] VariableInfo& gvars, [[maybe_unused]] VariableInfo& lvars, [[maybe_unused]] const std::vector<OperandRuntimeInfo>& argInfos, [[maybe_unused]] const OperandRuntimeInfo& resultInfo)const override
+        {
+        }
+        virtual void Execute(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars, const std::vector<OperandRuntimeInfo>& argInfos, [[maybe_unused]] const OperandRuntimeInfo& resultInfo)const override
+        {
+            if (argInfos.empty()) {
+                if (runtime.HasCurrentScriptError())
+                    runtime.SetScriptError(runtime.GetCurrentScriptError());
+                else
+                    runtime.SetScriptError("no current script error");
+            }
+            else {
+                const auto& info = argInfos[0];
+                runtime.SetScriptError(VarGetString(info.IsGlobal ? gvars : lvars, info.VarIndex));
+            }
+        }
     };
     class FunctionDefine final : public AbstractBraceApi
     {
@@ -1665,6 +1703,193 @@ namespace Brace
         };
 
         std::vector<Clause> m_Clauses;
+    };
+    class TryExp final : public AbstractBraceApi
+    {
+    public:
+        TryExp(BraceCodeStructure& interpreter) :AbstractBraceApi(interpreter), m_Try(), m_Catch(), m_Finally(), m_CatchVarIndex(INVALID_INDEX), m_HasCatch(false), m_HasFinally(false)
+        {
+        }
+    protected:
+        virtual bool LoadStatement([[maybe_unused]] const FuncInfo& curFunc, const DslData::StatementData& data, [[maybe_unused]] OperandLoadtimeInfo& resultInfo, BraceApiExecutor& executor) override
+        {
+            int num = data.GetFunctionNum();
+            for (int ix = 0; ix < num; ++ix) {
+                auto* fd = data.GetFunction(ix);
+                auto* fData = nullptr != fd ? fd->AsFunction() : nullptr;
+                if (nullptr == fData) {
+                    LogSyntaxError(*fd);
+                    continue;
+                }
+                const std::string& id = fData->GetId();
+                if (id == "try") {
+                    if (ix != 0 || HasClauseArguments(*fData)) {
+                        LogSyntaxError(*fData);
+                    }
+                    else {
+                        LoadBlock(*fData, m_Try);
+                    }
+                }
+                else if (id == "catch") {
+                    if (m_HasCatch || m_HasFinally) {
+                        LogSyntaxError(*fData);
+                    }
+                    else {
+                        m_HasCatch = true;
+                        if (fData->IsHighOrder()) {
+                            auto& lower = fData->GetLowerOrderFunction();
+                            int paramNum = lower.GetParamNum();
+                            if (paramNum == 1) {
+                                const std::string& varId = lower.GetParamId(0);
+                                if (!varId.empty() && varId[0] == '$') {
+                                    auto* varInfo = GetVarInfo(varId);
+                                    if (nullptr != varInfo) {
+                                        if (varInfo->Type == BRACE_DATA_TYPE_STRING)
+                                            m_CatchVarIndex = varInfo->VarIndex;
+                                        else
+                                            LogSyntaxError(*fData);
+                                    }
+                                    else {
+                                        m_CatchVarIndex = AllocVariable(varId, BRACE_DATA_TYPE_STRING, PREDEFINED_BRACE_OBJECT_TYPE_NOTOBJ);
+                                    }
+                                }
+                                else {
+                                    LogSyntaxError(*fData);
+                                }
+                            }
+                            else if (paramNum > 1) {
+                                LogSyntaxError(*fData);
+                            }
+                        }
+                        LoadBlock(*fData, m_Catch);
+                    }
+                }
+                else if (id == "finally") {
+                    if (m_HasFinally || ix != num - 1 || HasClauseArguments(*fData)) {
+                        LogSyntaxError(*fData);
+                    }
+                    else {
+                        m_HasFinally = true;
+                        LoadBlock(*fData, m_Finally);
+                    }
+                }
+                else {
+                    LogSyntaxError(*fData);
+                }
+            }
+            if (!m_HasCatch && !m_HasFinally) {
+                LogSyntaxError(data);
+            }
+            executor.attach(this, &TryExp::Execute);
+            return true;
+        }
+    private:
+        struct Block final
+        {
+            std::vector<BraceApiExecutor> Statements;
+            std::vector<int> ObjVars;
+        };
+    private:
+        static bool HasClauseArguments(const DslData::FunctionData& data)
+        {
+            return data.IsHighOrder() && data.GetLowerOrderFunction().GetParamNum() != 0;
+        }
+        void LoadBlock(const DslData::FunctionData& data, Block& block)
+        {
+            PushBlock();
+            for (int ix = 0; ix < data.GetParamNum(); ++ix) {
+                OperandLoadtimeInfo loadInfo;
+                auto statement = LoadHelper(*data.GetParam(ix), loadInfo);
+                if (!statement.isNull())
+                    block.Statements.push_back(std::move(statement));
+            }
+            block.ObjVars = CurBlockObjVars();
+            PopBlock();
+        }
+        static int ExecuteBlock(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars, const Block& block)
+        {
+            if (runtime.IsForceQuit()) {
+                FreeObjVars(lvars, block.ObjVars);
+                return BRACE_FLOW_CONTROL_NORMAL;
+            }
+            for (auto&& statement : block.Statements) {
+                int flow = statement(runtime, gvars, lvars);
+                if (flow == BRACE_FLOW_CONTROL_NORMAL && runtime.HasScriptError())
+                    flow = BRACE_FLOW_CONTROL_EXCEPTION;
+                if (runtime.IsForceQuit()) {
+                    FreeObjVars(lvars, block.ObjVars);
+                    return flow;
+                }
+                if (flow != BRACE_FLOW_CONTROL_NORMAL) {
+                    FreeObjVars(lvars, block.ObjVars);
+                    return flow;
+                }
+            }
+            FreeObjVars(lvars, block.ObjVars);
+            return BRACE_FLOW_CONTROL_NORMAL;
+        }
+        int Execute(BraceRuntime& runtime, VariableInfo& gvars, VariableInfo& lvars)const
+        {
+            int pendingFlow = ExecuteBlock(runtime, gvars, lvars, m_Try);
+            bool hasPendingError = pendingFlow == BRACE_FLOW_CONTROL_EXCEPTION;
+            std::string pendingError;
+            if (hasPendingError) {
+                pendingError = runtime.GetScriptError();
+                runtime.ClearScriptError();
+                if (m_HasCatch) {
+                    if (m_CatchVarIndex != INVALID_INDEX)
+                        VarSetString(lvars, m_CatchVarIndex, pendingError);
+                    bool hadCurrentError = runtime.HasCurrentScriptError();
+                    std::string previousError = hadCurrentError ? runtime.GetCurrentScriptError() : std::string();
+                    runtime.SetCurrentScriptError(pendingError);
+                    pendingFlow = ExecuteBlock(runtime, gvars, lvars, m_Catch);
+                    if (hadCurrentError)
+                        runtime.SetCurrentScriptError(previousError);
+                    else
+                        runtime.ClearCurrentScriptError();
+                    hasPendingError = pendingFlow == BRACE_FLOW_CONTROL_EXCEPTION;
+                    if (hasPendingError) {
+                        pendingError = runtime.GetScriptError();
+                        runtime.ClearScriptError();
+                    }
+                }
+            }
+            if (m_HasFinally) {
+                int finallyFlow = ExecuteBlock(runtime, gvars, lvars, m_Finally);
+                if (finallyFlow == BRACE_FLOW_CONTROL_EXCEPTION) {
+                    pendingFlow = finallyFlow;
+                    hasPendingError = true;
+                    pendingError = runtime.GetScriptError();
+                }
+                else if (finallyFlow != BRACE_FLOW_CONTROL_NORMAL) {
+                    pendingFlow = finallyFlow;
+                    hasPendingError = false;
+                    pendingError.clear();
+                }
+                else if (hasPendingError) {
+                    pendingFlow = BRACE_FLOW_CONTROL_EXCEPTION;
+                }
+            }
+            if (hasPendingError) {
+                pendingFlow = BRACE_FLOW_CONTROL_EXCEPTION;
+                if (!runtime.HasScriptError())
+                    runtime.SetScriptError(pendingError);
+            }
+            return pendingFlow;
+        }
+        void LogSyntaxError(const DslData::ISyntaxComponent& syntax)const
+        {
+            std::stringstream ss;
+            ss << "BraceScript error, " << syntax.GetId() << " line " << syntax.GetLine();
+            LogError(ss.str());
+        }
+    private:
+        Block m_Try;
+        Block m_Catch;
+        Block m_Finally;
+        int m_CatchVarIndex;
+        bool m_HasCatch;
+        bool m_HasFinally;
     };
     class WhileExp final : public AbstractBraceApi
     {
@@ -3203,10 +3428,12 @@ namespace Brace
         RegisterApi("?", "conditional expression", new BraceApiFactory<CondExp>());
         RegisterApi("echo", "echo(arg,...) function", new BraceApiFactory<EchoExp>());
         RegisterApi("if", "if(cond)func(args); or if(cond){...}[elif/elseif(cond){...}else{...}]; statement", new BraceApiFactory<IfExp>());
+        RegisterApi("try", "try{...}[catch[(err)]{...}][finally{...}]; at least one catch/finally clause is required", new BraceApiFactory<TryExp>());
         RegisterApi("while", "while(cond)func(args); or while(cond){...}; statement, iterator is $$", new BraceApiFactory<WhileExp>());
         RegisterApi("loop", "loop(ct)func(args); or loop(ct){...}; statement, iterator is $$", new BraceApiFactory<LoopExp>());
         RegisterApi("for_each_value", "for_each_value(args)func(args); or for_each_value(args){...}; statement, iterator is $$", new BraceApiFactory<ForEachValueExp>());
         RegisterApi("return", "return(exp); or return <- exp; or return val; statement", new BraceApiFactory<ReturnExp>());
+        RegisterApi("throw", "throw([message:string]); raise a script error", new BraceApiFactory<ThrowExp>());
         RegisterApi("func", "func(name){...}; or func(name)params($a:int32,$b:int8,...)int{...}; or func(name)params($a:int32,$b:int8,...){...}; define function", new BraceApiFactory<FunctionDefine>());
 
         /// Because we didn't implement Object internally, we kept these apis, but we had to implement them externally
@@ -3364,7 +3591,7 @@ namespace Brace
     {
         return m_CodeStructure->CreateApi(name);
     }
-    BraceRuntime::BraceRuntime(std::shared_ptr<BraceCodeStructure> codeStructure, GetRuntimeStackDelegation onGetRuntimeStack) :m_CodeStructure(std::move(codeStructure)), m_OnGetRuntimeStack(std::move(onGetRuntimeStack)), m_GlobalVariables(nullptr), m_ForceQuit(false)
+    BraceRuntime::BraceRuntime(std::shared_ptr<BraceCodeStructure> codeStructure, GetRuntimeStackDelegation onGetRuntimeStack) :m_CodeStructure(std::move(codeStructure)), m_OnGetRuntimeStack(std::move(onGetRuntimeStack)), m_GlobalVariables(nullptr), m_ForceQuit(false), m_HasScriptError(false), m_ScriptError(), m_HasCurrentScriptError(false), m_CurrentScriptError()
     {
         SyncGlobalVariables();
     }
@@ -3383,6 +3610,8 @@ namespace Brace
         }
         m_FramePools.clear();
         m_ForceQuit = false;
+        ClearScriptError();
+        ClearCurrentScriptError();
         if (nullptr != m_GlobalVariables) {
             delete m_GlobalVariables;
             m_GlobalVariables = nullptr;
@@ -3612,7 +3841,10 @@ namespace Brace
                 r = BRACE_FLOW_CONTROL_NORMAL;
                 break;
             case BRACE_FLOW_CONTROL_EXCEPTION:
-                break;
+                if (OnError)
+                    OnError("BraceScript error: " + m_Runtime->GetScriptError());
+                m_Runtime->ClearScriptError();
+                return;
             case BRACE_FLOW_CONTROL_EFFECT:
                 break;
             }

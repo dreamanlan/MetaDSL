@@ -21,7 +21,10 @@ ScriptableDslHelper::ScriptableDslHelper() :
         { "while", PAIR_TAG_WHILE },
         { "foreachvalue", PAIR_TAG_FOREACH },
         { "loop", PAIR_TAG_LOOP },
-        { "looplist", PAIR_TAG_LOOPLIST }
+        { "looplist", PAIR_TAG_LOOPLIST },
+        { "try", PAIR_TAG_TRY },
+        { "catch", PAIR_TAG_CATCH },
+        { "finally", PAIR_TAG_FINALLY }
 },
 m_FirstLastKeyOfCompoundStatements{
       { "if", "else" },
@@ -31,6 +34,7 @@ m_FirstLastKeyOfCompoundStatements{
       { "loopi", "loopi" },
       { "loopd", "loopd" },
       { "looplist", "looplist" },
+      { "try", "finally" },
       { "struct", "struct" }
 },
 m_SuccessorsOfCompoundStatements{
@@ -45,6 +49,15 @@ m_SuccessorsOfCompoundStatements{
     },
     {
         "else", {}
+    },
+    {
+        "try", { "catch", "finally" }
+    },
+    {
+        "catch", { "finally" }
+    },
+    {
+        "finally", {}
     },
     {
         "while", {}
@@ -69,7 +82,7 @@ m_SuccessorsOfCompoundStatements{
     }
 },
 m_CompoundStatements{
-        "if", "while", "foreachvalue", "loop", "looplist", "struct", "script", "story"
+        "if", "while", "foreachvalue", "loop", "looplist", "try", "struct", "script", "story"
 }
 {
 }

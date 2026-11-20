@@ -766,6 +766,14 @@ namespace Brace
         void PopRuntimeStack();
         bool IsForceQuit()const { return m_ForceQuit; }
         void SetForceQuit(bool forceQuit) { m_ForceQuit = forceQuit; }
+        bool HasScriptError()const { return m_HasScriptError; }
+        const std::string& GetScriptError()const { return m_ScriptError; }
+        void SetScriptError(std::string message) { m_HasScriptError = true; m_ScriptError = std::move(message); }
+        void ClearScriptError() { m_HasScriptError = false; m_ScriptError.clear(); }
+        bool HasCurrentScriptError()const { return m_HasCurrentScriptError; }
+        const std::string& GetCurrentScriptError()const { return m_CurrentScriptError; }
+        void SetCurrentScriptError(std::string message) { m_HasCurrentScriptError = true; m_CurrentScriptError = std::move(message); }
+        void ClearCurrentScriptError() { m_HasCurrentScriptError = false; m_CurrentScriptError.clear(); }
         const RuntimeStack& GetRuntimeStack()const;
         RuntimeStack& GetRuntimeStack();
     private:
@@ -788,6 +796,10 @@ namespace Brace
         RuntimeStack m_RuntimeStack;
         std::unordered_map<const FuncInfo*, FramePool> m_FramePools;
         bool m_ForceQuit;
+        bool m_HasScriptError;
+        std::string m_ScriptError;
+        bool m_HasCurrentScriptError;
+        std::string m_CurrentScriptError;
     private:
         BraceRuntime(const BraceRuntime&) = delete;
         BraceRuntime& operator=(const BraceRuntime&) = delete;
